@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GenericTracker from '../../EventTrackers/GenericTracker.js';
 
 class CastleGuard extends DrawCard {
+    // Castle Guard (13067)
+    // Shadow (3).
+    // Reaction: After Castle Guard comes out of shadows, choose another character that came out of
+    // shadows this phase. Return that character to shadows.
     setupCardAbilities() {
         this.tracker = GenericTracker.forPhase(this.game, 'onCardOutOfShadows');
 

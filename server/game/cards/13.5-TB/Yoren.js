@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Yoren extends DrawCard {
+    // Yoren (13085)
+    // Reaction: After Yoren enters play, choose a character with printed cost 5 or lower. Take
+    // control of that character until Yoren leaves play.
     setupCardAbilities() {
         this.reaction({
             when: {

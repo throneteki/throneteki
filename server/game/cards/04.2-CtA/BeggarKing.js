@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class BeggarKing extends DrawCard {
+    // Beggar King (04034)
+    // [targaryen] character only.
+    // Attached character gains the King trait.
+    // Reaction: After an opponent reveals a plot card with a higher printed gold value than yours,
+    // kneel Beggar King to gain 1 gold. (2 gold instead if no opponent controls a King character.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'targaryen' });
         this.whileAttached({

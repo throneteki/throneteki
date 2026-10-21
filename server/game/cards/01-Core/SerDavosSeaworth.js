@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerDavosSeaworth extends DrawCard {
+    // Ser Davos Seaworth (01050)
+    // Stealth.
+    // Interrupt: When Ser Davos Seaworth is killed, return him to your hand instead of placing him
+    // in your dead pile.
     setupCardAbilities() {
         this.interrupt({
             when: {

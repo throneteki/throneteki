@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class ALannistersHonor extends DrawCard {
+    // A Lannister's Honor (25106)
+    // Reaction: After you win an [intrigue] challenge as the attacking player, the losing opponent
+    // must choose and kill a character with the lowest STR among characters they control. (Max 1
+    // per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

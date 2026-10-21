@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class EliaSand extends DrawCard {
+    // Elia Sand (19007)
+    // While Elia Sand is attacking, if you control another attacking Sand Snake character, raise
+    // the claim value on your revealed plot card by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking() && this.anotherSandSnakeIsAttacking(),

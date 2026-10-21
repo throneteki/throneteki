@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheSongOfTheSeven extends DrawCard {
+    // "The Song of the Seven" (08098)
+    // Reaction: After you lose dominance, move 2 power from the winning opponent's faction card to
+    // a The Seven character you control. (Max 1 per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             max: ability.limit.perRound(1),

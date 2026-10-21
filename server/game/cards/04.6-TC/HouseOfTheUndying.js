@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class HouseOfTheUndying extends DrawCard {
+    // House of the Undying (04114)
+    // Challenges Action: Remove House of the Undying from the game to choose an opponent. Put each
+    // character in that player's dead pile into play under your control. At the end of the phase,
+    // return each of those cards to its owner's dead pile (cannot be saved).
     setupCardAbilities(ability) {
         this.action({
             title: "Take control of opponent's dead characters",

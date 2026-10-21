@@ -3,6 +3,11 @@ import TextHelper from '../../TextHelper.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class TheRedKeep extends DrawCard {
+    // The Red Keep (01061)
+    // The Red Keep contributes 2 STR to your side during any [power] challenge in which you control
+    // a participating character.
+    // Interrupt: When the challenges phase ends, if you have not lost a [power] challenge this
+    // round, kneel The Red Keep to draw 2 cards.
     setupCardAbilities(ability) {
         this.tracker = ChallengeTracker.forRound(this.game);
 

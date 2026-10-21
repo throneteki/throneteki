@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheonGreyjoy extends DrawCard {
+    // Theon Greyjoy (26083)
+    // Forced Reaction: After a player collects income, they must choose and kill a character they
+    // control.
+    // Forced Interrupt: When Theon Greyjoy leaves play, each opponent gains 2 power for their
+    // faction.
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {

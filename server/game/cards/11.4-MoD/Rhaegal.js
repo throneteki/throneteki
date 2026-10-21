@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Rhaegal extends DrawCard {
+    // Rhaegal (11073)
+    // Ambush (5). No attachments.
+    // Reaction: After an opponent's character is killed by a card effect, stand Rhaegal.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class FieryTalons extends DrawCard {
+    // Fiery Talons (27022)
+    // Action: Kneel a R'hllor character to choose a participating character. Until the end of the
+    // phase, that character gets -1 STR and is placed in shadows if its STR is 0.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character -1 STR',

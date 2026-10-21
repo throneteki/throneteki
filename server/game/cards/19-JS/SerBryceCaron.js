@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class SerBryceCaron extends DrawCard {
+    // Ser Bryce Caron (19016)
+    // Each Knight character you control gets +1 STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>

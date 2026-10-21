@@ -3,6 +3,9 @@ import TextHelper from '../../TextHelper.js';
 import GameActions from '../../GameActions/index.js';
 
 class ReturnToTheFields extends PlotCard {
+    // Return to the Fields (12047)
+    // When Revealed: You may sacrifice up to 3 characters. For each character sacrificed this way,
+    // draw 1 card and gain 1 gold.
     setupCardAbilities() {
         this.whenRevealed({
             target: {

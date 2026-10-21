@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class SerAlliserThorne extends DrawCard {
+    // Ser Alliser Thorne (02045)
+    // While you are the defending player, each [thenightswatch] character you control gains a
+    // [military] icon.
+    // Reaction: After a [military] challenge is initiated against you, kneel your faction card and
+    // pay 4 gold to put Ser Alliser Thorne into play from your hand.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge({ defendingPlayer: this.controller }),

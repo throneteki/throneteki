@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TrystaneMartell extends DrawCard {
+    // Trystane Martell (05029)
+    // Reaction: After you lose a challenge in which Trystane Martell is participating, choose a
+    // character with lower STR than his. Until the end of the phase, that character cannot be
+    // declared as a defender.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -3,6 +3,10 @@ import GameActions from '../../GameActions/index.js';
 import Messages from '../../Messages/index.js';
 
 class SummonedToCourt extends PlotCard {
+    // Summoned to Court (05048)
+    // Forced Interrupt: When the draw phase ends, each player chooses a card in his or her hand, if
+    // able. Then, reveal the chosen cards. Each player who revealed a character with the lowest
+    // printed cost may put that character into play.
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {

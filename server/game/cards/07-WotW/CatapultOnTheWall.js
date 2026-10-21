@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class CatapultOnTheWall extends DrawCard {
+    // Catapult on the Wall (07020)
+    // Action: Kneel Catapult on the Wall and attached character to choose and kill an attacking
+    // character with STR 4 or lower. Attached character cannot stand during the standing phase this
+    // round.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kill attacking character',

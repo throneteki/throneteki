@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class GuardDuty extends DrawCard {
+    // Guard Duty (13046)
+    // [thenightswatch] character only.
+    // Reaction: After attached character is declared as a defender, kneel Guard Duty to stand
+    // attached character.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'thenightswatch' });
         this.reaction({

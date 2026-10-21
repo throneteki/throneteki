@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class BoundForTheWall extends DrawCard {
+    // Bound for the Wall (17121)
+    // Reaction: After you win a challenge as the attacking player, discard the top 2 cards of the
+    // losing opponent's deck. You may put an eligible character of the losing player's choice from
+    // their discard pile into play under your control. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

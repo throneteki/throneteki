@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class AeronDamphair extends DrawCard {
+    // Aeron Damphair (04071)
+    // Reaction: After a character is saved, either: stand it, or kneel it.
     setupCardAbilities() {
         this.reaction({
             when: {

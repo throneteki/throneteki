@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class SecretSchemes extends DrawCard {
+    // Secret Schemes (06076)
+    // Action: Kneel your faction card to draw X cards. X is the number of plot cards in your used
+    // pile.
     setupCardAbilities(ability) {
         this.action({
             title: 'Draw cards',

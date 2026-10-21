@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Dalla extends DrawCard {
+    // Dalla (07040)
+    // Reaction: After a Wildling character enters play under your control, draw 1 card. (Limit once
+    // per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

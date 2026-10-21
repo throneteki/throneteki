@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class RedMountains extends DrawCard {
+    // Red Mountains (25088)
+    // Challenges Action: Kneel and sacrifice Red Mountains to choose an opponent. That player must
+    // initiate a [military] challenge against you as their next challenge this phase, if able.
+    // +1 Initiative.
     setupCardAbilities(ability) {
         this.plotModifiers({
             initiative: 1

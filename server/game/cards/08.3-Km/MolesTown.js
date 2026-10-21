@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class MolesTown extends DrawCard {
+    // Mole's Town (08046)
+    // Bestow (4).
+    // Challenges Action: Kneel Mole's Town to choose a character without gold. Move 1 gold from
+    // Mole's Town to that character. Then, that character cannot be declared as an attacker until
+    // the end of the phase.
     setupCardAbilities(ability) {
         this.action({
             title: 'Move gold to character',

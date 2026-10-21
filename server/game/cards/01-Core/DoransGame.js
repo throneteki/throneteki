@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class DoransGame extends DrawCard {
+    // Doran's Game (01119)
+    // Reaction: After you win an [intrigue] challenge by 5 or more STR, gain X power for your
+    // faction. X is the number of plot cards in your used pile. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             max: ability.limit.perChallenge(1),

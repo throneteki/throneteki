@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class EllariaSand extends DrawCard {
+    // Ellaria Sand (06075)
+    // Bestow (3).
+    // Reaction: After you lose a challenge in which Ellaria Sand is participating, discard 1 gold
+    // from her to stand each Bastard character you control.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

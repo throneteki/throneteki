@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Spearmaiden extends DrawCard {
+    // Spearmaiden (04055)
+    // Reaction: After Spearmaiden is declared as an attacker in a [military] challenge, choose a
+    // character controlled by the defending player. If you win the challenge by 5 or more STR, that
+    // character must be chosen for claim during this challenge, if able.
     setupCardAbilities() {
         this.reaction({
             when: {

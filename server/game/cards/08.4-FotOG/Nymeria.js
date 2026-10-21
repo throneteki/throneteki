@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Nymeria extends DrawCard {
+    // Nymeria (08061)
+    // Intimidate. No attachments.
+    // Action: During a challenge in which you control a participating [stark] character, kneel
+    // Nymeria and any number of other Direwolf characters to have each of those characters
+    // participate in the challenge on your side.
     setupCardAbilities(ability) {
         this.action({
             title: 'Add Direwolfs to challenge',

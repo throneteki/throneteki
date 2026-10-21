@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class WeirwoodBow extends DrawCard {
+    // Weirwood Bow (07043)
+    // [thenightswatch] or Wildling character only.
+    // Action: Kneel Weirwood Bow to choose a defending character. That character gets -2 STR until
+    // the end of the challenge.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'thenightswatch' }, { trait: 'Wildling' });
         this.action({

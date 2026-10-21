@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class IronVictory extends DrawCard {
+    // Iron Victory (06092)
+    // While you control Victarion Greyjoy, he gets +1 STR for each power he has.
+    // Reaction: After a [greyjoy] character is saved, that character gains 1 power. (Limit twice
+    // per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Victarion Greyjoy',

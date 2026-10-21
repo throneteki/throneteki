@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SarellaSand extends DrawCard {
+    // Sarella Sand (13075)
+    // Reaction: After you lose a challenge in which Sarella Sand is attacking, you may initiate an
+    // additional challenge of that type this phase. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

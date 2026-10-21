@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class TheDragonpit extends DrawCard {
+    // The Dragonpit (13054)
+    // Each character whose controller controls fewer cards in shadows than you gets -1 STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
             // Add an explicit condition so the effect gets recalculated as the

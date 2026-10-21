@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TowerOfTheHand extends DrawCard {
+    // Tower of the Hand (03030)
+    // Reaction: After you win an [intrigue] challenge, kneel Tower of the Hand and return a
+    // participating [lannister] character to your hand to choose a character with lower printed
+    // cost controlled by the losing opponent. Return that character to its owner's hand.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

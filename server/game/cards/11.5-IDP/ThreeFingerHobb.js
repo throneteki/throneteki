@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class ThreeFingerHobb extends DrawCard {
+    // Three-Finger Hobb (11085)
+    // No attachments except Weapon.
+    // Reaction: After you check reserve, if your hand size is lower than your reserve value, draw 2
+    // cards.
     setupCardAbilities() {
         this.reaction({
             when: {

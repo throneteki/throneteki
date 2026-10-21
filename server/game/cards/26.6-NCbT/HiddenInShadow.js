@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class HiddenInShadow extends DrawCard {
+    // Hidden in Shadow (26108)
+    // Character you control only. Shadow (0).
+    // Action: Sacrifice Hidden in Shadow to place attached character in shadows.
+    // Reaction: After Hidden in Shadow is discarded from shadows, draw 1 card.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ controller: 'current' });
         this.action({

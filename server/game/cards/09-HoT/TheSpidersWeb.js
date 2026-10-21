@@ -1,6 +1,10 @@
 import PlotCard from '../../plotcard.js';
 
 class TheSpidersWeb extends PlotCard {
+    // The Spider's Web (09049)
+    // Reaction: After claim is applied for an [intrigue] challenge you won, you may initiate an
+    // additional [intrigue] challenge this phase. Until the end of the phase, raise the claim value
+    // on your revealed plot card by 1 during [intrigue] challenges. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             limit: ability.limit.perPhase(1),

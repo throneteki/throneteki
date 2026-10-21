@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class GlassCandle extends DrawCard {
+    // Glass Candle (11059)
+    // Character you control only.
+    // If attached character has the Maester trait, it gains insight.
+    // Challenges Action: Kneel Glass Candle to look at the top card of any player's deck. You may
+    // discard that card.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ controller: 'current' });
         this.whileAttached({

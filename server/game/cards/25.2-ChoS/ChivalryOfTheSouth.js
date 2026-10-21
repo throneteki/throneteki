@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class ChivalryOfTheSouth extends PlotCard {
+    // Chivalry of the South (25036)
+    // Interrupt: When a challenge ends in which there are no participating characters, gain 2 power
+    // for your faction. (Limit 3 times per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

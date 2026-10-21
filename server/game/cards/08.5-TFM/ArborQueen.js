@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ArborQueen extends DrawCard {
+    // Arbor Queen (08084)
+    // Action: Kneel Arbor Queen to choose a [tyrell] character and a non-[tyrell] character. Until
+    // the end of the phase, each of those characters gets +2 STR.
     setupCardAbilities(ability) {
         this.action({
             title: 'Increase strength of 2 characters',

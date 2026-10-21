@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class RedKeepSpy extends DrawCard {
+    // Red Keep Spy (05012)
+    // Ambush (4).
+    // Reaction: After Red Keep Spy enters play using ambush, choose a character with printed cost 3
+    // or lower. If you have more cards in hand than that character's controller, return it to its
+    // owner's hand.
     setupCardAbilities() {
         this.reaction({
             when: {

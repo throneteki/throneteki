@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class Mhysa extends DrawCard {
+    // Mhysa (08094)
+    // Lady character only.
+    // During the first [power] challenge you initiate each round, attached character does not kneel
+    // when declared as an attacker and gets +1 STR for each attacking character.
     setupCardAbilities(ability) {
         this.tracker = ChallengeTracker.forRound(this.game);
 

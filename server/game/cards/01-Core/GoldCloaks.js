@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import CardEntersPlayTracker from '../../EventTrackers/CardEntersPlayTracker.js';
 
 class GoldCloaks extends DrawCard {
+    // Gold Cloaks (01092)
+    // Ambush (2).
+    // Forced Interrupt: When a phase ends in which Gold Cloaks entered play using ambush, discard
+    // it from play (cannot be saved).
     setupCardAbilities() {
         this.tracker = CardEntersPlayTracker.forPhase(this.game);
 

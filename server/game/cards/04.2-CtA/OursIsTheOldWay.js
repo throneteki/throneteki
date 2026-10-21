@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class OursIsTheOldWay extends DrawCard {
+    // Ours is the Old Way (04032)
+    // Challenges Action: Until the end of the phase, either: each [greyjoy] character you control
+    // gains stealth, or each non-[greyjoy] character loses stealth.
     setupCardAbilities() {
         this.action({
             title: 'Characters gain or lose stealth',

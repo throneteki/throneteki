@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SerCortnayPenrose extends DrawCard {
+    // Ser Cortnay Penrose (10025)
+    // Reaction: After you win a [power] challenge in which Ser Cortnay Penrose is participating,
+    // stand him.
     setupCardAbilities() {
         this.reaction({
             when: {

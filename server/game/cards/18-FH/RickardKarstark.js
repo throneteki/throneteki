@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class RickardKarstark extends DrawCard {
+    // Rickard Karstark (18011)
+    // Challenges Action: Kneel a The North location to have each player sacrifice a character or
+    // location. (Limit once per phase.)
+    // Reaction: After a Winter plot card is revealed, return a The North location from your discard
+    // pile to your hand. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Sacrifice character or location',

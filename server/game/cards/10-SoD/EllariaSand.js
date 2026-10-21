@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class EllariaSand extends DrawCard {
+    // Ellaria Sand (10002)
+    // Reaction: After Ellaria Sand is declared as an attacker, choose up to 3 characters controlled
+    // by the defending player. Each of those characters must be declared as a defender for this
+    // challenge, if able.
     setupCardAbilities() {
         this.reaction({
             when: {

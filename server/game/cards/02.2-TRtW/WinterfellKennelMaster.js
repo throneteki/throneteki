@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class WinterfellKennelMaster extends DrawCard {
+    // Winterfell Kennel Master (02021)
+    // Challenges Action: If you control a participating [stark] character, kneel a Direwolf
+    // character or a character with a Direwolf attachment to have it participate in the current
+    // challenge on your side. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel a Direwolf to have it participate in the current challenge',

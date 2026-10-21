@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class TheRiverroad extends DrawCard {
+    // The Riverroad (27038)
+    // Limited.
+    // Action: Kneel and sacrifice The Riverroad to choose a character. Until the end of the phase,
+    // that character gains a challenge icon of your choice.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.plotModifiers({
             gold: 1

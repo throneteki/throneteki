@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SerDavosSeaworth extends DrawCard {
+    // Ser Davos Seaworth (14006)
+    // Stealth.
+    // Reaction: After you win a challenge in which Ser Davos Seaworth is participating, discard 1
+    // power from the losing opponent's faction card. Then, you may have a King character you
+    // control gain 1 power.
     setupCardAbilities() {
         this.reaction({
             when: {

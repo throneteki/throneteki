@@ -2,6 +2,9 @@ import SatisfyClaim from '../../gamesteps/challenge/SatisfyClaim.js';
 import PlotCard from '../../plotcard.js';
 
 class NowItComesToWar extends PlotCard {
+    // Now It Comes To War (09050)
+    // Forced Interrupt: When claim is applied for an [intrigue] or [power] challenge, the attacking
+    // player may choose to apply [military] claim instead.
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {

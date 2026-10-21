@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class TourneyGrounds extends DrawCard {
+    // Tourney Grounds (03042)
+    // Action: Kneel Tourney Grounds to reduce the cost of the next event you play this phase by 1.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel to reduce event',

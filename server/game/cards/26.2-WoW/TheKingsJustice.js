@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheKingsJustice extends DrawCard {
+    // The King's Justice (26022)
+    // Unique character only.
+    // Reaction: After you win a [power] challenge, kneel attached character to choose and kill a
+    // kneeling character controlled by the losing opponent.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ unique: true });
         this.reaction({

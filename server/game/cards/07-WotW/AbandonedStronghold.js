@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class AbandonedStronghold extends DrawCard {
+    // Abandoned Stronghold (07018)
+    // Action: Kneel Abandoned Stronghold to choose a defending character. Until the end of the
+    // challenge, that character gets +X STR. X is the number of Builder characters you control.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character +STR',

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class StrongBelwas extends DrawCard {
+    // Strong Belwas (06073)
+    // Bestow (2).
+    // Interrupt: When another unique [targaryen] character would be killed, discard 1 gold from
+    // Strong Belwas to save it. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

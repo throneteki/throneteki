@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Plundered extends DrawCard {
+    // Plundered (10028)
+    // Opponent's location only. Terminal.
+    // Reaction: After attached location's controller loses a challenge as the defending player,
+    // kneel attached location. Then, you may sacrifice Plundered to gain 3 gold.
     setupCardAbilities() {
         this.attachmentRestriction({ type: 'location', controller: 'opponent' });
         this.reaction({

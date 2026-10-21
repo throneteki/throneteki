@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SeptonMeribald extends DrawCard {
+    // Septon Meribald (10040)
+    // Action: Kneel Septon Meribald to choose and stand up to 3 characters with printed STR 1 or
+    // lower. (Limit once per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand up to 3 characters',

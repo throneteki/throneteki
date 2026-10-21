@@ -6,6 +6,11 @@ class NorthernEncampment extends DrawCard {
         this.tracker = new DominanceTracker(this.game, this);
     }
 
+    // Northern Encampment (06088)
+    // Limited.
+    // Northern Encampment cannot stand during the standing phase unless you have won dominance this
+    // round.
+    // Marshaling Action: Kneel Northern Encampment to gain 2 gold.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

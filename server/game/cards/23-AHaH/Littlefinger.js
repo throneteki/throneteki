@@ -3,6 +3,12 @@ import GameActions from '../../GameActions/index.js';
 import Messages from '../../Messages/index.js';
 
 class Littlefinger extends DrawCard {
+    // Littlefinger (23017)
+    // Insight.
+    // Reaction: After you win a challenge in which Littlefinger is participating, each player
+    // chooses a card in their hand or shadows area. Then, reveal those cards. If no opponent
+    // revealed a card with the same cardtype as you, move 1 power from a card in play to
+    // Littlefinger.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

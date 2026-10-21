@@ -1,6 +1,11 @@
 import AgendaCard from '../../agendacard.js';
 
 class TheBrotherhoodWithoutBanners extends AgendaCard {
+    // The Brotherhood Without Banners (06119)
+    // You cannot include loyal characters in your deck.
+    // Reaction: After the challenges phase begins, kneel your faction card to choose a neutral
+    // character you control. Until the end of the phase, that character gains (choose one):
+    // insight, intimidate, renown, or stealth.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class AryaStark extends DrawCard {
+    // Arya Stark (08081)
+    // While Arya Stark is standing, characters cannot be saved.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => !this.kneeled,

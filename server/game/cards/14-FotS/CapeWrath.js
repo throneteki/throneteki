@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class CapeWrath extends DrawCard {
+    // Cape Wrath (14018)
+    // During [power] challenges in which you are the attacking or defending player, raise the claim
+    // value on the attacking player's revealed plot card by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

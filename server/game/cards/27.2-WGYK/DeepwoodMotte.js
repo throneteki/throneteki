@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class DeepwoodMotte extends DrawCard {
+    // Deepwood Motte (27024)
+    // Reaction: After a location is knelt by assault during a challenge in which you are the
+    // attacking player, kneel Deepwood Motte to choose and stand a Raider character you control or
+    // Asha Greyjoy.
+    // -2 Initiative.
     setupCardAbilities(ability) {
         this.plotModifiers({ initiative: -2 });
         this.reaction({

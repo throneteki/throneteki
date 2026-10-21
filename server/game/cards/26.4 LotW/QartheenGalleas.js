@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class QartheenGalleas extends DrawCard {
+    // Qartheen Galleas (26074)
+    // Shadow (1).
+    // You are considered to have 1 fewer card in your hand.
+    // Reaction: After Qartheen Galleas comes out of shadows, choose a card with shadow in your
+    // discard pile and return it to your hand.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',

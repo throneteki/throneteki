@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class DoreaSand extends DrawCard {
+    // Dorea Sand (08016)
+    // Reaction: After Dorea Sand enters play, choose another character with printed cost X or lower
+    // and return it to its owner's hand. X is the number of Sand Snake characters you control.
     setupCardAbilities() {
         this.reaction({
             when: {

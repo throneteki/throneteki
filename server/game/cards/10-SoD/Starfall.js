@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Starfall extends DrawCard {
+    // Starfall (10018)
+    // Challenges Action: Kneel Starfall to choose a character. Until the end of the phase, that
+    // character loses a challenge icon of your choice.
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove icon',

@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class AreoHotah extends DrawCard {
+    // Areo Hotah (10006)
+    // Ambush (6).
+    // Reduce the cost to ambush Areo Hotah by 1 for each plot in your used pile.
+    // Reaction: After you win a challenge in which Areo Hotah is defending, return him to your hand
+    // to raise the claim value on your revealed plot by 1 until the end of the phase.
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',

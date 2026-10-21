@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class CompelledByTheKing extends DrawCard {
+    // Compelled by the King (00009)
+    // Reaction: After the dominance phase begins, choose and stand a character you control. If you
+    // win dominance this phase, that character gains 1 power.
+    // Draft format only.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class GreyCliffs extends DrawCard {
+    // Grey Cliffs (27032)
+    // Interrupt: When Grey Cliffs is sacrificed, draw 1 card.
+    // +1 Initiative.
     setupCardAbilities() {
         this.plotModifiers({
             initiative: 1

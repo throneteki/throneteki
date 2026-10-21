@@ -3,6 +3,12 @@ import GameActions from '../../GameActions/index.js';
 import Message from '../../Message.js';
 
 class SamwellTarly extends DrawCard {
+    // Samwell Tarly (22013)
+    // Reaction: After you win a challenge in which Samwell Tarly is participating, if your reserve
+    // value is:
+    // - 6 or higher, draw 1 card.
+    // - 8 or higher, gain 1 power for your faction.
+    // - 10 or higher, choose and stand another character that shares a Trait with him, if able.
     setupCardAbilities() {
         this.reaction({
             when: {

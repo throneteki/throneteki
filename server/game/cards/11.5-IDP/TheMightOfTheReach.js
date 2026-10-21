@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheMightOfTheReach extends DrawCard {
+    // The Might of the Reach (11084)
+    // Challenges Action: Choose a participating character. Until the end of the challenge, that
+    // character gets +10 STR.
     setupCardAbilities() {
         this.action({
             title: 'Give +10 STR to participating character',

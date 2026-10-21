@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Smiler extends DrawCard {
+    // Smiler (26084)
+    // Ambush (2).
+    // Reaction: After you win an unopposed challenge in which attached character is attacking,
+    // kneel Smiler to have attached character gain intimidate or renown until the end of the
+    // challenge.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

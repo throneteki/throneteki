@@ -2,6 +2,8 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class RamsaySnow extends DrawCard {
+    // Ramsay Snow (08041)
+    // Forced Reaction: After Ramsay Snow enters play, each player sacrifices a character, if able.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

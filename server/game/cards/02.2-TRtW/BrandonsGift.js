@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class BrandonsGift extends DrawCard {
+    // Brandon's Gift (02026)
+    // Reaction: After you marshal a Builder character, reduce the cost of the next [thenightswatch]
+    // card you marshal this phase by 1. (Limit 3 times per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

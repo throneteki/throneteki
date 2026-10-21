@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class QueensMen extends DrawCard {
+    // Queen's Men (08008)
+    // Reaction: After you marshal Queen's Men, choose an opponent and look at his or her hand.
+    // Then, you may kneel a non-[baratheon] character to choose and discard 1 non-character card
+    // from that hand.
     setupCardAbilities() {
         this.reaction({
             when: {

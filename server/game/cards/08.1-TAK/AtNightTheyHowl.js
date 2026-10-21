@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class AtNightTheyHowl extends DrawCard {
+    // At Night They Howl (08003)
+    // Challenges Action: Choose and stand any number of Direwolf characters and characters with a
+    // Direwolf attachment.
     setupCardAbilities() {
         this.action({
             title: 'Stand Direwolves',

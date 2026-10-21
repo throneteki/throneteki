@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class BeggingBrother extends DrawCard {
+    // Begging Brother (06097)
+    // Bestow (3).
+    // Interrupt: When the effects of a triggered character ability would initiate, discard 1 gold
+    // from Begging Brother to cancel those effects.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

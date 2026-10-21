@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class OlennasMachinations extends DrawCard {
+    // Olenna's Machinations (06084)
+    // Challenges Action: You may initiate an additional [power] challenge this phase. (Max 1 per
+    // phase.)
+    // Reaction: After you win an [intrigue] challenge by 5 or more STR, pay 1 gold to return
+    // Olenna's Machinations from your discard pile to your hand.
     setupCardAbilities(ability) {
         this.action({
             max: ability.limit.perPhase(1),

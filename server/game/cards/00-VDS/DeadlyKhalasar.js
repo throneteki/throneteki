@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class DeadlyKhalasar extends DrawCard {
+    // Deadly Khalasar (00015)
+    // Challenges Action: Choose an attacking [targaryen] character you control. Until the end of
+    // the challenge, that character gets +1 STR for each Dothraki character you control and gains
+    // intimidate.
+    // Draft format only.
     setupCardAbilities() {
         this.action({
             title: 'Give character +STR and intimidate',

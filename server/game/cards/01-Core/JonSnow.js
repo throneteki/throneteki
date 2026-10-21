@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class JonSnow extends DrawCard {
+    // Jon Snow (01124)
+    // No attachments except Weapon.
+    // While Jon Snow is standing, he is considered to be participating in each challenge in which
+    // you control another attacking [thenightswatch] character.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => !this.kneeled && this.hasOtherAttackingNightsWatch(),

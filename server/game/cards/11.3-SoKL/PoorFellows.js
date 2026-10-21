@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class PoorFellows extends DrawCard {
+    // Poor Fellows (11057)
+    // No attachments.
+    // Reaction: After you win a challenge in which Poor Fellows is attacking, the losing opponent
+    // chooses, either: Poor Fellows gains 1 power, or you draw 1 card.
     setupCardAbilities() {
         this.reaction({
             when: {

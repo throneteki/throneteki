@@ -3,6 +3,9 @@ import GameActions from '../../GameActions/index.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class GriffinsRoostKnight extends DrawCard {
+    // Griffin's Roost Knight (14009)
+    // Interrupt: When the challenges phase ends, if you have not lost a [power] challenge this
+    // phase, stand Griffin's Roost Knight.
     setupCardAbilities() {
         this.tracker = ChallengeTracker.forPhase(this.game);
 

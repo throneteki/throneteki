@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class WolvesOfTheNorth extends DrawCard {
+    // Wolves of the North (03006)
+    // No attachments. Stealth.
+    // Reaction: After Wolves of the North bypasses a character using stealth, that character gets
+    // -X STR until the end of the phase. X is the number of Direwolf cards you control.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

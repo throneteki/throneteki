@@ -7,6 +7,10 @@ class Craster extends DrawCard {
         this.tracker = new KillTracker(this.game);
     }
 
+    // Craster (04085)
+    // Immune to Omen card effects.
+    // Action: Sacrifice Craster to put each character that was killed this phase into play from its
+    // owner's dead pile.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

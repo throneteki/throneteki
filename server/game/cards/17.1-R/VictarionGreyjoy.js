@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class VictarionGreyjoy extends DrawCard {
+    // Victarion Greyjoy (17102)
+    // Challenges Action: Kneel a Warship location to stand Victarion Greyjoy. (Limit twice per
+    // phase.)
+    // Challenges Action: Kneel a Warship location to either: choose and kneel a location, or have
+    // Victarion Greyjoy gain renown until the end of the challenge.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand Victarion',

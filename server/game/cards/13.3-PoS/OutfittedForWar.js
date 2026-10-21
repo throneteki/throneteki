@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class OutfittedForWar extends DrawCard {
+    // Outfitted for War (13052)
+    // Warship location only.
+    // Action: During a [military] challenge, kneel attached location to give a participating
+    // [greyjoy] character +3 STR until the end of the challenge.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ type: 'location', trait: 'Warship' });
 

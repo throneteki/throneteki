@@ -2,6 +2,13 @@ import AgendaCard from '../../agendacard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ValyrianSteel extends AgendaCard {
+    // Valyrian Steel (13118)
+    // Your minimum deck size is 75 cards. Your deck cannot include more than 1 copy of each
+    // attachment (by title).
+    // Action: Kneel your faction card and pay X gold to put an attachment with printed cost X into
+    // play from your hand.
+    // Reaction: After an attachment enters play under your control, either: draw a card or gain 1
+    // gold. (Limit 3 times per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Put attachment into play',

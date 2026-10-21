@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class SerAmoryLorch extends DrawCard {
+    // Ser Amory Lorch (04049)
+    // While an opponent controls 3 or fewer characters, Ser Amory Lorch gains renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.opponentHasThreeOrFewerChars(),

@@ -2,6 +2,8 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class HighGround extends DrawCard {
+    // High Ground (16019)
+    // Challenges Action: Kneel High Ground to choose and stand an Army character.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand character',

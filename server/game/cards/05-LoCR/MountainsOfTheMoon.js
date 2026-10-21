@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MountainsOfTheMoon extends DrawCard {
+    // Mountains of the Moon (05018)
+    // Reaction: After a Clansman character enters play, that character gains a challenge icon of
+    // your choice until the end of the phase.
     setupCardAbilities() {
         this.reaction({
             when: {

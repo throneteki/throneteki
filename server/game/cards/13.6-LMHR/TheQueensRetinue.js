@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheQueensRetinue extends DrawCard {
+    // The Queen's Retinue (13103)
+    // Shadow (4).
+    // Action: Put The Queen's Retinue into play from shadows. Then, each opponent draws 2 cards.
     setupCardAbilities() {
         this.action({
             title: 'Put into play',

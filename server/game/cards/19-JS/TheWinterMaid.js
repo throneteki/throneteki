@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheWinterMaid extends DrawCard {
+    // "The Winter Maid" (19012)
+    // Interrupt: When a plot card is revealed, that plot card gains the Winter trait until the end
+    // of the round. If there are no Summer plot cards revealed, return "The Winter Maid" to your
+    // hand instead of placing it in your discard pile. (Max 1 per phase.)
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

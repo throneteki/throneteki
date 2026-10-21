@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class JoffreysCrossbow extends DrawCard {
+    // Joffrey's Crossbow (26026)
+    // If attached character is Joffrey Baratheon, he gains intimidate.
+    // While attached character is attacking, unique characters must be chosen for [military] claim,
+    // if able.
     setupCardAbilities(ability) {
         this.whileAttached({
             match: (card) => card.name === 'Joffrey Baratheon',

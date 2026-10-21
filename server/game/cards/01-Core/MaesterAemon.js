@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MaesterAemon extends DrawCard {
+    // Maester Aemon (01125)
+    // No attachments.
+    // Interrupt: When a [thenightswatch] character would be killed, kneel Master Aemon to save it.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

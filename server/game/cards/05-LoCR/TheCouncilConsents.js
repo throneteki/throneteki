@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheCouncilConsents extends DrawCard {
+    // The Council Consents (05044)
+    // Reaction: After a player wins an [intrigue] challenge by 5 or more STR, stand each Small
+    // Council character.
     setupCardAbilities() {
         this.reaction({
             when: {

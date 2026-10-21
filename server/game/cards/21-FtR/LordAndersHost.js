@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class LordAndersHost extends DrawCard {
+    // Lord Anders's Host (21010)
+    // Ambush (8). Assault. No attachments.
+    // Reaction: After a card enters play from your hand or shadows area during a challenge, choose
+    // a participating character with a lower printed cost than that card's and return it to its
+    // owner's hand. (Limit once per round.)
+    // +1 Initiative
     setupCardAbilities(ability) {
         this.plotModifiers({
             initiative: 1

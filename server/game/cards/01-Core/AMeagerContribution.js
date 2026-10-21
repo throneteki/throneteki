@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class AMeagerContribution extends DrawCard {
+    // A Meager Contribution (01138)
+    // Reaction: After an opponent collects income, move 1 gold from that player's gold pool to your
+    // own. (Max 1 per round.)
     setupCardAbilities(ability) {
         this.reaction({
             max: ability.limit.perRound(1),

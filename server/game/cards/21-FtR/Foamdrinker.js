@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Foamdrinker extends DrawCard {
+    // Foamdrinker (21005)
+    // While you control Dagmer Cleftjaw, he gains assault.
+    // Action: Kneel Foamdrinker to choose a Captain or Raider character. Until the end of the
+    // phase, that character gains a challenge icon of your choice.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Dagmer Cleftjaw',

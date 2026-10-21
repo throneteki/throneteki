@@ -3,6 +3,9 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class PowerBehindTheThrone extends PlotCard {
+    // Power Behind the Throne (01018)
+    // When Revealed: Place 1 stand token on Power Behind the Throne.
+    // Action: Discard 1 stand token from Power Behind the Throne to choose and stand a character.
     setupCardAbilities(ability) {
         this.whenRevealed({
             message: '{player} uses {source} to place 1 stand token on {source}',

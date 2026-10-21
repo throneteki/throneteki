@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class GreyWorm extends DrawCard {
+    // Grey Worm (06053)
+    // No attachments except Weapon.
+    // Action: During a challenge in which Grey Worm is attacking, choose a defending character.
+    // Until the end of the challenge, that character gets -3 STR. (Limit once per challenge.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character -3 STR',

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SealOfTheHand extends DrawCard {
+    // Seal of the Hand (01032)
+    // Lord or Lady character only.
+    // Action: Kneel Seal of the Hand to stand attached character.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: ['Lord', 'Lady'] });
         this.action({

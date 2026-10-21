@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class Balerion extends DrawCard {
+    // Balerion (18018)
+    // Ambush (2). No attachments except Cat.
+    // Balerion cannot be killed.
+    // Action: Kneel Balerion to discard 1 gold from a card.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

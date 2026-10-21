@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class WestwatchByTheBridge extends DrawCard {
+    // Westwatch-by-the-Bridge (12032)
+    // Action: Kneel Westwatch-by-the-Bridge to choose and stand another [thenightswatch] location
+    // with printed cost 1 or lower. (Printed cost 4 or lower instead if you control a Ranger
+    // character, a Steward character, and a Builder character.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand location',

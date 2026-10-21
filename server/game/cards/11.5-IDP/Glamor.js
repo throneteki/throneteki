@@ -7,6 +7,11 @@ class Glamor extends DrawCard {
         this.tracker = new KillTracker(this.game);
     }
 
+    // Glamor (11088)
+    // Character you control only. Shadow (2). Terminal.
+    // Attached character gets +2 STR.
+    // Action: Kill attached character to choose another character in your dead pile that was killed
+    // this phase. Return the chosen character to play.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ controller: 'current' });
 

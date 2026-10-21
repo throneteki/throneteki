@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class AegonTargaryen extends DrawCard {
+    // Aegon Targaryen (11014)
+    // Shadow (3).
+    // Reaction: After Aegon Targaryen enters play, search your deck for an Army or Mercenary
+    // character, put it into play, and shuffle your deck. At the end of the phase, if that card is
+    // still in play, return it to your hand.
     setupCardAbilities() {
         this.reaction({
             when: {

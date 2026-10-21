@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class GreyguardArtisan extends DrawCard {
+    // Greyguard Artisan (26089)
+    // Shadow (2).
+    // Reaction: After Greyguard Artisan comes out of shadows, choose an attachment. Until the end
+    // of the phase, treat that attachment as if its printed text box were blank (except for
+    // Traits).
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -2,6 +2,8 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheWhiteSwords extends PlotCard {
+    // The White Swords (15048)
+    // When Revealed: You may put a Kingsguard character into play from your hand or discard pile.
     setupCardAbilities() {
         this.whenRevealed({
             target: {

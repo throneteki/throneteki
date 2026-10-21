@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class RitualOfRhllor extends DrawCard {
+    // Ritual of R'hllor (04088)
+    // Reaction: After you win dominance, choose X standing R'hllor characters. Each of those
+    // characters gains 1 power.
     setupCardAbilities() {
         this.xValue({
             min: () => 1,

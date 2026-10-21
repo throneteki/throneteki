@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class LyseniGalley extends DrawCard {
+    // Lyseni Galley (14019)
+    // Action: Kneel Lyseni Galley to choose a character. Until the end of the phase, that character
+    // gets +1 STR. If that character is a Captain or Smuggler, it gains stealth until the end of
+    // the phase.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give +1 STR',

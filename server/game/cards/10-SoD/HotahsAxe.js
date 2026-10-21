@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class HotahsAxe extends DrawCard {
+    // Hotah's Axe (10019)
+    // Attached character gets +3 STR.
+    // Reaction: After a [martell] character enters play during the challenges phase, put Hotah's
+    // Axe into play from your hand, attached to that character.
     setupCardAbilities(ability) {
         this.whileAttached({
             effect: ability.effects.modifyStrength(3)

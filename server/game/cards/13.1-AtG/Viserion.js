@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Viserion extends DrawCard {
+    // Viserion (13013)
+    // Ambush (5). No attachments.
+    // Reaction: After you win a challenge in which Viserion is attacking, discard 1 card from your
+    // hand to have Viserion gain intimidate until the end of the challenge.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

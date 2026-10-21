@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Clydas extends DrawCard {
+    // Clydas (17117)
+    // Action: Kneel Clydas or a Raven card to move 1 gold from an opponent's gold pool to your own.
+    // (Limit twice per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Move 1 gold to your gold pool',

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class IronMines extends DrawCard {
+    // Iron Mines (17108)
+    // Interrupt: When a character would be killed, if it is not the plot phase, kneel and sacrifice
+    // Iron Mines to save that character.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

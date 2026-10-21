@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class BearIsland extends DrawCard {
+    // Bear Island (04042)
+    // Reaction: After you marshal a loyal card, gain 1 gold. (Limit twice per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

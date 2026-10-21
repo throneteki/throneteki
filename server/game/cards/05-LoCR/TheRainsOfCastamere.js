@@ -9,6 +9,11 @@ class TheRainsOfCastamere extends AgendaCard {
         this.registerEvents(['onPlotDiscarded']);
     }
 
+    // "The Rains of Castamere" (05045)
+    // Your plot deck must be 12 cards, including exactly 5 different Scheme cards. During the plot
+    // phase, Scheme cards are not considered to be in your plot deck.
+    // Reaction: After you win an [intrigue] challenge by 5 or more STR, kneel your faction card to
+    // reveal a Scheme plot. If that card leaves play, remove it from the game.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

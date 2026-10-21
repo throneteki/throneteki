@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class NavalBombardment extends DrawCard {
+    // Naval Bombardment (26004)
+    // Challenges Action: Choose an opponent who controls fewer locations than you. Until the end of
+    // the phase, that player cannot initiate [intrigue] challenges against you.
     setupCardAbilities() {
         this.action({
             phase: 'challenge',

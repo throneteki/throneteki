@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class BalonGreyjoy extends DrawCard {
+    // Balon Greyjoy (12001)
+    // Pillage. Renown.
+    // Action: Kneel your faction card to choose a card in an opponent's discard pile and put it
+    // into play under your control. At the end of the phase, if that card is still in play, shuffle
+    // it into its owner's deck.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put card into play',

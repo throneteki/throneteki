@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class HighgardenMinstrel extends DrawCard {
+    // Highgarden Minstrel (06103)
+    // Reaction: After you play a Song event, gain 1 gold. (Limit 3 times per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

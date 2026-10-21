@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class RaffTheSweetling extends DrawCard {
+    // Raff the Sweetling (08049)
+    // Pillage.
+    // Reaction: After Raff the Sweetling discards a character using pillage, choose a character
+    // with printed cost 2 or lower and return it to its owner’s hand.
     setupCardAbilities() {
         this.reaction({
             when: {

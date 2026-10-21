@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class DrownedGodFanatic extends DrawCard {
+    // Drowned God Fanatic (17106)
+    // Action: Kill a [greyjoy] character you own and control to put Drowned God Fanatic into play
+    // from your dead pile. (Max once per round.)
+    // Interrupt: When the effects of an opponent's triggered character ability would initiate,
+    // discard Drowned God Fanatic from your hand to cancel those effects.
     setupCardAbilities(ability) {
         this.action({
             max: ability.limit.perRound(1),

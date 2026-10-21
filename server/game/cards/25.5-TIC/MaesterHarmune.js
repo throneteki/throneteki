@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class MaesterHarmune extends DrawCard {
+    // Maester Harmune (25089)
+    // Reaction: After gold is moved from an opponent's gold pool to your own, reveal the top card
+    // of that player's deck. If that card is a character, discard it and draw 1 card. (Limit twice
+    // per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

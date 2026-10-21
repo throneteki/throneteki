@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheKnight extends DrawCard {
+    // The Knight (12004)
+    // No attachments except Weapon.
+    // While The Knight is attacking alone, he gains stealth and renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

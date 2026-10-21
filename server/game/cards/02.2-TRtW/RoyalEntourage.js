@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class RoyalEntourage extends DrawCard {
+    // Royal Entourage (02027)
+    // Forced Reaction: After you lose an [intrigue] challenge, kneel Royal Entourage.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

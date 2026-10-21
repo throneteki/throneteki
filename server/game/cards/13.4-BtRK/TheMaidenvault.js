@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheMaidenvault extends DrawCard {
+    // The Maidenvault (13064)
+    // Shadow (1).
+    // Reaction: After The Maidenvault comes out of shadows, choose a participating Lady character.
+    // Stand it and remove it from the challenge.
+    // Interrupt: When the challenges phase ends, kneel The Maidenvault to return it to shadows.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

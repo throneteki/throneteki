@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class Grenn extends DrawCard {
+    // Grenn (07010)
+    // No attachments except Weapon.
+    // Reaction: After you win a challenge in which Grenn is attacking, move 1 power from the losing
+    // opponent's faction card to another attacking [thenightswatch] character. (Up to 2 power
+    // instead if that character is standing.)
     setupCardAbilities() {
         this.reaction({
             when: {

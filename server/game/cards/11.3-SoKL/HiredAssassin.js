@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class HiredAssassin extends DrawCard {
+    // Hired Assassin (11053)
+    // Shadow (2).
+    // Reaction: After Hired Assassin comes out of shadows, look at a card in shadows. If it is a
+    // character, you may place it in its owner's dead pile.
     setupCardAbilities() {
         this.reaction({
             when: {

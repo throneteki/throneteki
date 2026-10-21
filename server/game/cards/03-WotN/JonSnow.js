@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class JonSnow extends DrawCard {
+    // Jon Snow (03005)
+    // Action: Sacrifice a [stark] character to choose and stand a unique [stark] character. (Limit
+    // once per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand character',

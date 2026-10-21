@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class WeTakeWesteros extends PlotCard {
+    // We Take Westeros! (17109)
+    // Challenges Action: Kneel a Raider character to choose a location with lower printed cost in a
+    // discard pile and put it into play under your control. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             phase: 'challenge',

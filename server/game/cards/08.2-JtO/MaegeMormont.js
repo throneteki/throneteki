@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MaegeMormont extends DrawCard {
+    // Maege Mormont (08021)
+    // Renown.
+    // Reaction: After you win a challenge in which you control a participating House Mormont
+    // character, reveal the top card of your deck. If it is a [stark] card, draw it.
     setupCardAbilities() {
         this.reaction({
             when: {

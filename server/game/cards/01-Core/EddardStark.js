@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class EddardStark extends DrawCard {
+    // Eddard Stark (01144)
+    // Renown.
+    // Reaction: After a challenge is initiated against you, stand Eddard Stark.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class CaswellsKeep extends DrawCard {
+    // Caswell's Keep (04064)
+    // Reaction: After you reveal a plot card, choose a player. Look at the top 2 cards of that
+    // player's deck. Place 1 of those cards on the bottom of that deck, and the other on top.
     setupCardAbilities() {
         this.reaction({
             when: {

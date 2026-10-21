@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class PlazaOfPunishment extends DrawCard {
+    // Plaza of Punishment (01173)
+    // Reaction: After you win a [power] challenge, kneel Plaza of Punishment to choose a character
+    // without attachments. Until the end of the phase, that character gets -2 STR and is killed if
+    // its STR is 0.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheNewGift extends DrawCard {
+    // The New Gift (07017)
+    // Limited.
+    // Marshaling Action: Kneel a Steward character to gain 1 gold. (Limit twice per phase.)
+    // Challenges Action: Kneel a Steward character to draw 1 card. (Limit twice per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Gain 1 gold',

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class RedAppleKnight extends DrawCard {
+    // Red-Apple Knight (25015)
+    // While you control exactly 1 unique [tyrell] Knight character, Red-Apple Knight gets +X STR. X
+    // is that character's STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.getSingleKnight(),

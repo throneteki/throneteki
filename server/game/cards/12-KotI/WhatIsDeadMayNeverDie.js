@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class WhatIsDeadMayNeverDie extends DrawCard {
+    // What Is Dead May Never Die (12023)
+    // Reaction: After you win dominance, choose a [greyjoy] character in your dead pile and put it
+    // into play.
     setupCardAbilities() {
         this.reaction({
             when: {

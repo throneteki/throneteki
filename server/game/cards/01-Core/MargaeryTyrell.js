@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MargaeryTyrell extends DrawCard {
+    // Margaery Tyrell (01181)
+    // Challenges Action: Kneel Margaery Tyrell to choose a character. Until the end of the phase,
+    // that character gets +3 STR.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character +3 STR',

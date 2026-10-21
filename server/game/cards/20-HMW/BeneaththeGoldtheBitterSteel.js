@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/Tokens.js';
 
 class BeneaththeGoldtheBitterSteel extends DrawCard {
+    // Beneath the Gold, the Bitter Steel (20035)
+    // Challenges Action: Choose a Mercenary character with 1 or more gold. Until the end of the
+    // phase, it gains renown and no attachments except Item. If it has 3 or more gold, it gains
+    // insight and intimidate until the end of the phase.
     setupCardAbilities() {
         this.action({
             target: {

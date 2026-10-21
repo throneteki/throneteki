@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Rakharo extends DrawCard {
+    // Rakharo (15009)
+    // Reaction: After you win a [military] challenge in which you control 2 or more attacking
+    // Dothraki characters, discard 1 card at random from the losing opponent's hand.
     setupCardAbilities() {
         this.reaction({
             when: {

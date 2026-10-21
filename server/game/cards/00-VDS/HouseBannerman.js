@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class HouseBannerman extends DrawCard {
+    // House Bannerman (00005)
+    // Marshaling Action: Kneel House Bannerman to reduce the cost of the next in-faction character
+    // you marshal this phase by 1.
+    // Draft format only.
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce character cost',

@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheHalfmansHorde extends DrawCard {
+    // The Halfman's Horde (23005)
+    // Assault. Intimidate. No attachments.
+    // Reaction: After you win a challenge in which The Halfman's Horde is attacking, discard 1 card
+    // at random from the losing opponent's hand for each other unique attacking Clansman character.
     setupCardAbilities() {
         this.reaction({
             when: {

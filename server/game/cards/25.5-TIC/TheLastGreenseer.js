@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class TheLastGreenseer extends PlotCard {
+    // The Last Greenseer (25100)
+    // When Revealed: Switch the base gold, claim, and reserve values on The Last Greenseer with
+    // those values on another revealed plot card until either card leaves play.
     setupCardAbilities() {
         const getBaseStats = (card) => {
             return {

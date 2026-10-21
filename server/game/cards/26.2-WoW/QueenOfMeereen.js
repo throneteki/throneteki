@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class QueenOfMeereen extends DrawCard {
+    // Queen of Meereen (26034)
+    // Lady character only.
+    // Attached character gains the Queen trait.
+    // Action: Kneel Queen of Meereen to discard 1 or more cards from your hand. Reduce the cost of
+    // the next card you marshal, ambush, or bring out of shadows this phase by 2 for each card
+    // discarded this way.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: ['Lady'] });
         this.whileAttached({

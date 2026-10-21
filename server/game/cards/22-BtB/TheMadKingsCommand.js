@@ -2,6 +2,10 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheMadKingsCommand extends PlotCard {
+    // The Mad King's Command (22030)
+    // Forced Reaction: After the challenges phase begins, each player chooses up to 3 characters,
+    // up to 3 locations, up to 3 attachments, and up to 3 cards in their hand and/or shadows area.
+    // Place each card not chosen on the bottom of its owner's deck (cannot be saved).
     setupCardAbilities() {
         this.forcedReaction({
             when: {

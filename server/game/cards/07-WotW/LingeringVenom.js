@@ -3,6 +3,11 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class LingeringVenom extends DrawCard {
+    // Lingering Venom (07032)
+    // Terminal.
+    // Reaction: After you lose a challenge, place a venom token on Lingering Venom. Then, if
+    // attached character's STR is equal to or lower than the number of venom tokens on Lingering
+    // Venom, kill it.
     setupCardAbilities() {
         this.reaction({
             when: {

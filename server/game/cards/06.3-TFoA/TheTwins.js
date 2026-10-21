@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheTwins extends DrawCard {
+    // The Twins (06058)
+    // During the third challenge you initiate each phase, if you control an attacking House Frey
+    // character, raise the claim value on your revealed plot card by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

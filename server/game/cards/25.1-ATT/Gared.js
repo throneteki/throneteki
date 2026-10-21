@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Gared extends DrawCard {
+    // Gared (25009)
+    // No attachments except Weapon.
+    // Interrupt: When an Omen plot card is revealed, kneel each opponent's faction card.
     setupCardAbilities() {
         this.interrupt({
             when: {

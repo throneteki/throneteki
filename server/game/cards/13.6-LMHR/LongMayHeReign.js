@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class LongMayHeReign extends DrawCard {
+    // Long May He Reign (13108)
+    // King character only.
+    // Attached character cannot be killed.
+    // Forced Reaction: After you lose a [power] challenge as the defending player, sacrifice Long
+    // May He Reign.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'King' });
         this.whileAttached({

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TakeTheBlack extends DrawCard {
+    // Take the Black (01139)
+    // Dominance Action: Choose a non-unique character with printed cost 6 or lower. Take control of
+    // that character. (Max 1 per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Take control of character',

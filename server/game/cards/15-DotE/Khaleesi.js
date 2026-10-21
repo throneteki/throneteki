@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Khaleesi extends DrawCard {
+    // Khaleesi (15019)
+    // Lady character only.
+    // Reaction: After you win a challenge in which attached character is participating, kneel
+    // Khaleesi to, either: stand attached character, or raise the claim value on your revealed plot
+    // card by 1 until the end of the challenge.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Lady' });
         this.reaction({

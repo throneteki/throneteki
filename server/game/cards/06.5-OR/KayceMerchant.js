@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class KayceMerchant extends DrawCard {
+    // Kayce Merchant (06089)
+    // Bestow (3).
+    // Reaction: After you collect income, discard 1 gold from Kayce Merchant to gain 2 gold.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

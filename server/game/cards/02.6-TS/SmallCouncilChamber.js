@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SmallCouncilChamber extends DrawCard {
+    // Small Council Chamber (02110)
+    // Immune to events.
+    // Reaction: After you win an [intrigue] challenge, Small Council Chamber gains 1 power.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

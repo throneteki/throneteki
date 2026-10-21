@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class UnswornApprentice extends DrawCard {
+    // Unsworn Apprentice (02025)
+    // No attachments except Weapon.
+    // Challenges Action: Unsworn Apprentice gains a challenge icon of your choice until the end of
+    // the phase. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Gain icon',

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class DonalNoye extends DrawCard {
+    // Donal Noye (06105)
+    // Bestow (3). No attachments except Weapon.
+    // Action: Discard 1 gold from Donal Noye to put a Weapon attachment into play from your hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put Weapon into play',

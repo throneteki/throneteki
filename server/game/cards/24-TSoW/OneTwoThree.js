@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class OneTwoThree extends DrawCard {
+    // One, Two, Three (24009)
+    // Reaction: After you win an [intrigue] challenge, choose a participating character you control
+    // and (choose one):
+    // - return it to its owner's hand.
+    // - place it in shadows.
+    // - have it gain insight until the end of the phase.
     setupCardAbilities() {
         this.reaction({
             when: {

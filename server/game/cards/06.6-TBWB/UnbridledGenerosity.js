@@ -2,6 +2,8 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class UnbridledGenerosity extends DrawCard {
+    // Unbridled Generosity (06118)
+    // Action: Choose up to 3 cards. Move 1 gold from the treasury to each of those cards.
     setupCardAbilities() {
         this.action({
             title: 'Put gold on cards',

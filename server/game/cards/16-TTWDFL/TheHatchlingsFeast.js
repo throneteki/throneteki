@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import Message from '../../Message.js';
 
 class TheHatchlingsFeast extends DrawCard {
+    // The Hatchlings' Feast (16014)
+    // Action: Choose 3 characters without attachments. Until the end of the phase, one of those
+    // characters gets -1 STR, one gets -2 STR, and one gets -3 STR.
     setupCardAbilities() {
         this.action({
             title: 'Give -STR',

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class CorpseLake extends DrawCard {
+    // Corpse Lake (09028)
+    // Reaction: After a character is discarded from an opponent's deck, Corpse Lake gains 1 power.
+    // (Limit 3 times per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

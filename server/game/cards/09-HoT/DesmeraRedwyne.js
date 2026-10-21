@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class DesmeraRedwyne extends DrawCard {
+    // Desmera Redwyne (09013)
+    // Reaction: After a character is removed from a challenge, pay 1 gold to give that character +2
+    // STR or -1 STR until the end of the phase.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

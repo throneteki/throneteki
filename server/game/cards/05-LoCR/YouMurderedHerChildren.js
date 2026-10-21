@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class YouMurderedHerChildren extends DrawCard {
+    // You Murdered Her Children (05030)
+    // Challenges Action: Choose a [martell] character you control. Until the end of the phase,
+    // double that character's STR. At the end of the phase, if that character is still in play,
+    // kill it.
     setupCardAbilities() {
         this.action({
             title: 'Double character strength',

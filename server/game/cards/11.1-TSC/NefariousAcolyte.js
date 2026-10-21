@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class NefariousAcolyte extends DrawCard {
+    // Nefarious Acolyte (11018)
+    // Shadow (2).
+    // Action: Kneel Nefarious Acolyte and pay 1 gold to choose a plot card. Until the end of the
+    // phase, treat it as if its printed text box were blank (except for Traits).
     setupCardAbilities(ability) {
         this.action({
             title: 'Blank a plot',

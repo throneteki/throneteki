@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class BenjenStark extends DrawCard {
+    // Benjen Stark (01122)
+    // Each Ranger character you control cannot be bypassed by stealth.
+    // Interrupt: When Benjen Stark is killed, gain 2 power for your faction. Then, shuffle him back
+    // into your deck instead of placing him in your dead pile.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.getType() === 'character' && card.hasTrait('Ranger'),

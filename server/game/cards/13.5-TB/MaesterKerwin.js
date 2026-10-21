@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MaesterKerwin extends DrawCard {
+    // Maester Kerwin (13091)
+    // Interrupt: When another character would be killed, kill Maester Kerwin to save that
+    // character.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

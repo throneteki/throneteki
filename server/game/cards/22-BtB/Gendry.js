@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class Gendry extends DrawCard {
+    // Gendry (22001)
+    // While you control no loyal characters, Gendry gains renown.
+    // Reaction: After the challenges phase begins, choose a non-loyal character with a Weapon
+    // attachment. Until the end of the phase, that character gets +2 STR and gains each of Gendry's
+    // keywords.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

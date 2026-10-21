@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class SchemingSnake extends DrawCard {
+    // Scheming Snake (25007)
+    // Shadow (2).
+    // Reaction: After Scheming Snake enters play during a challenge, choose a participating
+    // character with fewer than 2 challenge icons. That character does not contribute its STR to
+    // this challenge.
     setupCardAbilities() {
         this.reaction({
             when: {

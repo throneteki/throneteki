@@ -2,6 +2,8 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class OldtownCityWatch extends DrawCard {
+    // Oldtown City Watch (24023)
+    // Reaction: After Oldtown City Watch enters play, reveal the top card of each player's deck.
     setupCardAbilities() {
         this.reaction({
             when: {

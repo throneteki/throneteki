@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import SatisfyClaim from '../../gamesteps/challenge/SatisfyClaim.js';
 
 class VengeanceForElia extends DrawCard {
+    // Vengeance for Elia (02096)
+    // Interrupt: When claim is applied for a challenge in which you are the defending player,
+    // choose an opponent. That player must satisfy the normal claim effect instead of you as if he
+    // or she were the defending player.
     setupCardAbilities() {
         this.interrupt({
             when: {

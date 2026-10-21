@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class KnightsOfTheVale extends DrawCard {
+    // Knights of the Vale (23019)
+    // Assault. No attachments.
+    // Challenges Action: Kneel a neutral location with printed cost 1 or higher to choose a
+    // defending character that shares a Trait with Knights of the Vale. Until the end of the
+    // challenge, that character gets +2 STR. (+4 STR instead if your initiative value is 0.) (Limit
+    // once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character +STR',

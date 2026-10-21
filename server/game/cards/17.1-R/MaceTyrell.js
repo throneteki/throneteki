@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class MaceTyrell extends DrawCard {
+    // Mace Tyrell (17136)
+    // Reaction: After a unique [tyrell] character enters play under your control, pay 1 gold to
+    // have that character gain 1 power. (Limit once per phase.)
+    // Action: Kneel your faction card to remove another [tyrell] character you control from the
+    // game until the beginning of the next phase.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

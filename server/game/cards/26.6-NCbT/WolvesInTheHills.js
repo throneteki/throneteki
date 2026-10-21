@@ -3,6 +3,10 @@ import DrawCard from '../../drawcard.js';
 import SatisfyClaim from '../../gamesteps/challenge/SatisfyClaim.js';
 
 class WolvesInTheHills extends DrawCard {
+    // "Wolves in the Hills" (26112)
+    // Interrupt: When claim is applied for a challenge, return an attacking Direwolf character or
+    // an attacking character with a Direwolf attachment to your hand to apply claim of another
+    // challenge type instead.
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

@@ -3,6 +3,11 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class ChellaDaughterOfCheyk extends DrawCard {
+    // Chella Daughter of Cheyk (05007)
+    // Chella Daughter of Cheyk gets +1 STR for each ear token she has. While she has 3 or more ear
+    // tokens, she gains intimidate and renown.
+    // Reaction: After a character is killed during a challenge in which Chella Daughter of Cheyk is
+    // attacking, place an ear token on her.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

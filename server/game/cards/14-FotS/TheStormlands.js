@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheStormlands extends DrawCard {
+    // The Stormlands (14017)
+    // You may initiate an additional [power] challenge during the challenges phase.
+    // Reaction: After you win a [power] challenge, kneel The Stormlands to choose and stand a
+    // participating King or Queen character.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',

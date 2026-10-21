@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SeaDragonTower extends DrawCard {
+    // Sea Dragon Tower (10026)
+    // Challenges Action: Kneel Sea Dragon Tower to choose a character. Until the end of the phase,
+    // that character gains a [power] icon.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give power icon',

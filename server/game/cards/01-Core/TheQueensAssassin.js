@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class TheQueensAssassin extends DrawCard {
+    // The Queen's Assassin (01095)
+    // Ambush (4).
+    // Reaction: After The Queen's Assassin enters play using ambush, choose an opponent. If you
+    // have more cards in hand than that player, he or she must choose and kill a character he or
+    // she controls.
     setupCardAbilities() {
         this.reaction({
             when: {

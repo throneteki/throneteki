@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SeptaNysterica extends DrawCard {
+    // Septa Nysterica (08004)
+    // Action: Kneel Septa Nysterica to choose an attacking character with STR 4 or lower. Stand
+    // that character and remove it from the challenge.
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove character from challenge',

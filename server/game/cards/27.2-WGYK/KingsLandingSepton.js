@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class KingsLandingSepton extends DrawCard {
+    // King's Landing Septon (27025)
+    // Interrupt: When the effects of an opponent's triggered character, location, or attachment
+    // ability would initiate, return King's Landing Septon to your hand to cancel those effects.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

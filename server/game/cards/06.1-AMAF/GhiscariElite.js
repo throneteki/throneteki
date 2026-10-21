@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class GhiscariElite extends DrawCard {
+    // Ghiscari Elite (06013)
+    // Reaction: After Ghiscari Elite is knelt, choose an attachment or event in your discard pile,
+    // and place it on the bottom of your deck.
     setupCardAbilities() {
         this.reaction({
             when: {

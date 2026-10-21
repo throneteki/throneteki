@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class ASouthronPeace extends PlotCard {
+    // A Southron Peace (25039)
+    // When Revealed: Choose an opponent. Until you reveal a new plot card, you and that player
+    // cannot initiate [military] challenges against each other.
     setupCardAbilities() {
         this.whenRevealed({
             chooseOpponent: true,

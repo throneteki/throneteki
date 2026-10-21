@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheRegentsGuard extends DrawCard {
+    // The Regent's Guard (13029)
+    // Shadow (4).
+    // Action: Return a [lannister] non-Ally character with printed cost 4 or higher to your hand to
+    // put The Regent's Guard into play from shadows.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put into play',

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class InDaznaksPit extends DrawCard {
+    // In Daznak's Pit (11094)
+    // Shadow (3).
+    // Interrupt: When the challenges phase ends, stand each character. Following this phase, there
+    // is an additional challenges phase. (Max 1 per round.)
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

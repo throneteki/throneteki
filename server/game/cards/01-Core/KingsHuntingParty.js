@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class KingsHuntingParty extends DrawCard {
+    // King's Hunting Party (01055)
+    // No attachments.
+    // While an opponent controls a King character, King's Hunting Party gains an [intrigue] icon .
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.anyOpponentHasKing(),

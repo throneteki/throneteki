@@ -2,6 +2,10 @@ import CardEntersPlayTracker from '../../EventTrackers/CardEntersPlayTracker.js'
 import PlotCard from '../../plotcard.js';
 
 class StrainedReserves extends PlotCard {
+    // Strained Reserves (26060)
+    // Each player cannot marshal or put into play more than 2 characters, locations, or attachments
+    // this round. (4 characters, locations, or attachments instead if that player has a Summer plot
+    // card revealed.)
     setupCardAbilities(ability) {
         this.enterPlayTracker = CardEntersPlayTracker.forRound(this.game);
 

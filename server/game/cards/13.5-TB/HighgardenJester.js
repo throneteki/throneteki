@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import sample from 'lodash.sample';
 
 class HighgardenJester extends DrawCard {
+    // Highgarden Jester (13083)
+    // Insight.
+    // Forced Reaction: After Highgarden Jester draws a card using insight, place a random card from
+    // your hand on top of your deck. (Choose a card from your hand and place it on top of your deck
+    // instead if there is another Fool character in play.)
     setupCardAbilities() {
         this.forcedReaction({
             when: {

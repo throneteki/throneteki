@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class BloodOfMyBlood extends DrawCard {
+    // Blood of My Blood (04054)
+    // Challenges Action: Search your deck for a Bloodrider character and put it into play. Shuffle
+    // your deck. At the end of the phase, if that card is still in play, return it to your hand.
     setupCardAbilities() {
         this.action({
             title: 'Search deck for Bloodrider',

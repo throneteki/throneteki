@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class JonSnow extends DrawCard {
+    // Jon Snow (07001)
+    // Stealth.
+    // Reaction: After you win a challenge in which Jon Snow is participating, either: stand each
+    // attacking Wildling character, or stand each defending [thenightswatch] character. (Limit once
+    // per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

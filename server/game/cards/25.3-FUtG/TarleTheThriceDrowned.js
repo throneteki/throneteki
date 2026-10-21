@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TarleTheThriceDrowned extends DrawCard {
+    // Tarle the Thrice-Drowned (25043)
+    // Renown.
+    // Reaction: After a Drowned God character is placed in your dead pile, put it into play. Then,
+    // kill a character you control. (Limit once per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

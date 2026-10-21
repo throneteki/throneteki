@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class DolorousEdd extends DrawCard {
+    // Dolorous Edd (04025)
+    // Action: During an [intrigue] challenge in which you are the defending player, kneel your
+    // faction card to put Dolorous Edd into play from your hand knelt, participating as a defender.
+    // If you win the challenge, you may return him to your hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Add as a defender',

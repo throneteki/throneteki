@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ThorenSmallwood extends DrawCard {
+    // Thoren Smallwood (04045)
+    // No attachments except Weapon.
+    // Reaction: After you win a challenge as the defending player, gain 1 power for your faction.
     setupCardAbilities() {
         this.reaction({
             when: {

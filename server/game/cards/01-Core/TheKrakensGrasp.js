@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheKrakensGrasp extends DrawCard {
+    // The Kraken's Grasp (01082)
+    // Play only if you are the first player.
+    // Challenges Action: Choose a defending character with STR 5 or lower. That character does not
+    // contribute is STR to this challenge.
     setupCardAbilities() {
         this.action({
             title: "Remove character's strength",

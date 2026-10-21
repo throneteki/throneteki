@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class FreyBastard extends DrawCard {
+    // Frey Bastard (06078)
+    // Bestow (2).
+    // Reaction: After you win a challenge in which you control 2 or more attacking House Frey
+    // characters, discard 1 gold from Frey Bastard to gain 1 power for your faction.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

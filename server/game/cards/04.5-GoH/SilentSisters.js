@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class SilentSisters extends DrawCard {
+    // Silent Sisters (04097)
+    // Silent Sisters gets +1 STR for each character in your dead pile.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

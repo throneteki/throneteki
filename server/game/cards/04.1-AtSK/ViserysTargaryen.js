@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class ViserysTargaryen extends DrawCard {
+    // Viserys Targaryen (04014)
+    // While Viserys Targaryen is attacking, each King character must be declared as a defender, if
+    // able.
+    // Interrupt: When the dominance phase ends, if no opponent controls a King character, Viserys
+    // Targaryen gains 1 power.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),

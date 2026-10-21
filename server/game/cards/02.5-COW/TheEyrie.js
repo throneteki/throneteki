@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheEyrie extends DrawCard {
+    // The Eyrie (02098)
+    // Reaction: After a phase begins, kneel The Eyrie to choose a character. Until the end of the
+    // phase, that character cannot be killed.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

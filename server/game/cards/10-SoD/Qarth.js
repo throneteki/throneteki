@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Qarth extends DrawCard {
+    // Qarth (10036)
+    // Action: Kneel Qarth and pay 1 gold to choose an attachment attached to a card you control and
+    // discard it from play.
     setupCardAbilities(ability) {
         this.action({
             title: 'Discard attachment',

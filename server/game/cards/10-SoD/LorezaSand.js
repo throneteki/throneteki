@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class LorezaSand extends DrawCard {
+    // Loreza Sand (10013)
+    // Interrupt: When a unique [martell] character you control is killed, draw 1 card. (Limit once
+    // per phase.)
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

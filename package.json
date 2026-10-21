@@ -12,6 +12,7 @@
         "spec:new": "node test/tools/new-spec.js",
         "card": "node test/tools/card.js",
         "card-rules": "node test/tools/card-rules.js",
+        "card-text": "node test/tools/cardText.js",
         "lint": "eslint server/**/*.js client/**/*.jsx",
         "pack-lobby": "node ./pack.js",
         "start": "node ./index.js",

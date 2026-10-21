@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Lightbringer extends DrawCard {
+    // Lightbringer (01058)
+    // [baratheon] character only.
+    // If attached character is Stannis Baratheon, he gains renown.
+    // Reaction: After attached character gains 1 or more power, stand it. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'baratheon' });
         this.whileAttached({

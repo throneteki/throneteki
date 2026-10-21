@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class BrightWaterKnight extends DrawCard {
+    // Brightwater Knight (08023)
+    // Bestow (3).
+    // Marshaling Action: Discard 1 gold from Brightwater Knight to reduce the cost of the next
+    // Knight character you marshal this phase by 2. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce Knight character',

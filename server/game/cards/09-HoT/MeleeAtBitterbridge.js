@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class MeleeAtBitterbridge extends DrawCard {
+    // Melee at Bitterbridge (09022)
+    // Action: Choose X participating characters. Each character with the highest STR among those
+    // characters gains renown until the end of the challenge. Each other chosen character does not
+    // contribute its STR to the challenge.
     setupCardAbilities() {
         this.xValue({
             min: () => 1,

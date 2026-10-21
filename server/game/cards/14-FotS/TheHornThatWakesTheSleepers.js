@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheHornThatWakesTheSleepers extends DrawCard {
+    // The Horn that Wakes the Sleepers (14032)
+    // Reaction: After an opponent initiates a challenge against you, choose and stand a Builder
+    // character, a Ranger character, and a Steward character.
     setupCardAbilities() {
         this.reaction({
             when: {

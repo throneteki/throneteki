@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class PublicExecution extends DrawCard {
+    // Public Execution (13068)
+    // Marshaling Action: Choose and kill a kneeling character.
     setupCardAbilities() {
         this.action({
             phase: 'marshal',

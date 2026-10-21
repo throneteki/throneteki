@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class PaxterRedwyne extends DrawCard {
+    // Paxter Redwyne (27015)
+    // Renown. Shadow (5).
+    // Reaction: After you win a challenge in which Paxter Redwyne is participating, choose a
+    // location you own and return it to your hand. (You may place it in shadows instead if it has
+    // the Warship trait.) (Limit twice per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

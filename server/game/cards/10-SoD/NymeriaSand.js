@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class NymeriaSand extends DrawCard {
+    // Nymeria Sand (10007)
+    // Reaction: After you lose dominance, discard 1 card at random from the winning opponent's hand
+    // and draw 1 card.
     setupCardAbilities() {
         this.reaction({
             when: {

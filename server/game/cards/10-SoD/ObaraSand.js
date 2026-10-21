@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ObaraSand extends DrawCard {
+    // Obara Sand (10005)
+    // Challenges Action: Return a Sand Snake character to your hand to put a [martell] character
+    // with lower printed cost into play from your hand. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Put character into play',

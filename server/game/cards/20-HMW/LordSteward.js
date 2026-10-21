@@ -1,6 +1,13 @@
 import DrawCard from '../../drawcard.js';
 
 class LordSteward extends DrawCard {
+    // Lord Steward (20023)
+    // Unique character only.
+    // Attached character gains an [intrigue] icon and the Steward trait.
+    // Reaction: After you win an [intrigue] challenge in which you control a participating Steward
+    // character, choose a character with printed cost X or lower controlled by the losing opponent.
+    // Take control of it until the end of the phase. X is the number of Steward characters you
+    // control. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ unique: true });
         this.whileAttached({

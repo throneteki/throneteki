@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class TearsOfLys extends DrawCard {
+    // Tears of Lys (01044)
+    // Reaction: After you win an [intrigue] challenge as the attacking player, place a poison token
+    // on a character without an [intrigue] icon controlled by the losing opponent. At the end of
+    // the phase, if that character still has the poison token, remove it and kill that character.
+    // (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             max: ability.limit.perChallenge(1),

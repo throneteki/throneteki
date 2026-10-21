@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class HighSepton extends DrawCard {
+    // High Septon (05039)
+    // Interrupt: When an opponent chooses a character you control as the only target of a triggered
+    // ability, choose an eligible The Seven character you control to become the target of that
+    // triggered ability instead. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.interrupt({
             limit: ability.limit.perPhase(1),

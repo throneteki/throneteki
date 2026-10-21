@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheEyrie extends DrawCard {
+    // The Eyrie (23031)
+    // While your initiative value is 0, The Eyrie is immune to opponents' non-plot card effects.
+    // Challenges Action: During a challenge in which you control a participating loyal or House
+    // Arryn character, kneel The Eyrie to have it contribute 2 STR to your side this challenge for
+    // each participating character you control.
+    // -2 Initiative. +1 Reserve.
     setupCardAbilities(ability) {
         this.plotModifiers({
             initiative: -2,

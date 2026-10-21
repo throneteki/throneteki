@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class ShieldOfLannisport extends DrawCard {
+    // Shield of Lannisport (05020)
+    // [lannister] Lord or Lady character only.
+    // While you control no Lord or Lady characters with printed cost 4 or higher other than
+    // attached character, attached character gets +2 STR and gains renown.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'lannister', trait: ['Lord', 'Lady'] });
         this.whileAttached({

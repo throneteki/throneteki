@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class Shaggydog extends DrawCard {
+    // Shaggydog (11062)
+    // [stark] character you control only.
+    // Reaction: After you win a challenge in which attached character is attacking, the losing
+    // opponent must choose and kill a defending character.
+    // Action: Pay 1 gold to attach Shaggydog to a different character. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'stark', controller: 'current' });
         this.reaction({

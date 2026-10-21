@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class LockedAway extends DrawCard {
+    // Locked Away (06116)
+    // Terminal.
+    // Reaction: After the marshaling phase begins, return attached character to its owner's hand
+    // (cannot be saved).
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class AlesterFlorent extends DrawCard {
+    // Alester Florent (14007)
+    // Reaction: After a House Florent character enters play, draw a card. (Limit once per round.)
+    // Interrupt: When Alester Florent leaves play, if you control another R'hllor character, choose
+    // and kneel a character an opponent controls.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

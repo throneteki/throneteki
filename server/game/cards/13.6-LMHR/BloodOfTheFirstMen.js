@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class BloodOfTheFirstMen extends DrawCard {
+    // Blood of the First Men (13102)
+    // Character you control only.
+    // Attached character gains the Old Gods trait.
+    // Action: During a challenge in which you control a participating [stark] character, kneel
+    // attached character to have it participate in the challenge on your side.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ controller: 'current' });
         this.whileAttached({

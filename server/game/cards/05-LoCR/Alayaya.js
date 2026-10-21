@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Alayaya extends DrawCard {
+    // Alayaya (05013)
+    // Reaction: After you win a challenge in which Alayaya is participating, move 1 gold from the
+    // losing opponent's gold pool to your own.
     setupCardAbilities() {
         this.reaction({
             when: {

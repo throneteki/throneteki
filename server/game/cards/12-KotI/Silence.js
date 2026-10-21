@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Silence extends DrawCard {
+    // Silence (12016)
+    // Challenges Action: Kneel Silence to put a Warship location into play from your hand. Then, if
+    // you control Euron Crow's Eye, stand him.
+    // +2 Initiative.
     setupCardAbilities(ability) {
         this.plotModifiers({
             initiative: 2

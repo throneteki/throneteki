@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheHound extends DrawCard {
+    // The Hound (09029)
+    // No attachments except Weapon.
+    // Reaction: After The Hound enters play, choose a Knight character without attachments and
+    // return it to its owner's hand.
     setupCardAbilities() {
         this.reaction({
             when: {

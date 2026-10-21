@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class BranStark extends DrawCard {
+    // Bran Stark (22016)
+    // Each Old Gods character you control cannot be knelt by card effects.
+    // Interrupt: When claim is applied for an [intrigue] challenge in which you control a
+    // participating Old Gods character, instead of the normal claim effects, look at the defending
+    // player's hand. Choose and discard X cards from that hand, if able. X is the claim value on
+    // the attacking player's revealed plot card.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>

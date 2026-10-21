@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class PyatPree extends DrawCard {
+    // Pyat Pree (04073)
+    // Reaction: After you win a challenge in which Pyat Pree is participating, search the top X
+    // cards of your deck for a [targaryen] attachment or event, reveal it, and add it to your hand.
+    // Shuffle your deck. X is the STR by which you won the challenge.
     setupCardAbilities() {
         this.reaction({
             when: {

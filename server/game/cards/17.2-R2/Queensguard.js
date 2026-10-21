@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Queensguard extends DrawCard {
+    // Queensguard (17173)
+    // [targaryen] non-Lady character only. Shadow (2).
+    // Action: Discard 1 [targaryen] card from your hand to stand attached character. (Limit twice
+    // per round.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'targaryen', not: { trait: 'Lady' } });
         this.action({

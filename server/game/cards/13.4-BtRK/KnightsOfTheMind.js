@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class KnightsOfTheMind extends DrawCard {
+    // Knights of the Mind (13078)
+    // Challenge Action: Until the end of the phase, each Maester character you control gains a
+    // [military] icon.
     setupCardAbilities() {
         this.action({
             title: 'Give each Maester character you control a military icon',

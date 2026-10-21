@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class APinchOfPowder extends DrawCard {
+    // A Pinch of Powder (11099)
+    // Shadow (1).
+    // Reaction: After you win an [intrigue] or [power] challenge by 5 or more STR as the attacking
+    // player, return attached character to its owner's hand.
     setupCardAbilities() {
         this.reaction({
             when: {

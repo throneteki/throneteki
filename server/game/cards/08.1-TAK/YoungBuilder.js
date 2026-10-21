@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class YoungBuilder extends DrawCard {
+    // Young Builder (08006)
+    // Bestow (3). No attachments except Weapon.
+    // Reaction: After a [thenightswatch] location or attachment enters play under your control,
+    // discard 1 gold from Young Builder to draw 1 card.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

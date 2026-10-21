@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class WildlingScout extends DrawCard {
+    // Wildling Scout (02078)
+    // Action: Sacrifice Wildling Scout to choose a character. Until the end of the phase, that
+    // character gains stealth.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give another character stealth',

@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class KingsLandingRiot extends PlotCard {
+    // King's Landing Riot (13100)
+    // Forced Interrupt: When the challenges phase ends, if there are 3 or more City plot cards in
+    // your used pile, discard each character from play.
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {

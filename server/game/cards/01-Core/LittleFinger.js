@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class LittleFinger extends DrawCard {
+    // Littlefinger (01028)
+    // Reaction: After you marshal Littlefinger, draw 2 cards.
+    // +1 Income.
     setupCardAbilities() {
         this.reaction({
             when: {

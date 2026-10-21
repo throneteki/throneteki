@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class RobertBaratheon extends DrawCard {
+    // Robert Baratheon (14001)
+    // Renown.
+    // Reaction: After the standing phase begins (choose one):
+    // - other characters with printed cost 5 or higher cannot stand this phase.
+    // - characters with printed cost 4 or lower cannot stand this phase.
+    // - locations cannot stand this phase.
     setupCardAbilities() {
         this.reaction({
             when: {

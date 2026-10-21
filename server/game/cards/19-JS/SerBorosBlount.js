@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SerBorosBlount extends DrawCard {
+    // Ser Boros Blount (19006)
+    // Ambush (3). Shadow (1).
+    // Reaction: After Ser Boros Blount enters play, search the top 10 cards of your deck for a
+    // Kingsguard character or a non-[lannister] Knight character and put it into play. Shuffle your
+    // deck. At the end of the phase, if that card is still in play, discard it from play.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerWaymarRoyce extends DrawCard {
+    // Ser Waymar Royce (01128)
+    // No attachments except Weapon.
+    // Interrupt: When Ser Waymar Royce is killed, discard 1 card at random from each opponent's
+    // hand.
     setupCardAbilities() {
         this.interrupt({
             when: {

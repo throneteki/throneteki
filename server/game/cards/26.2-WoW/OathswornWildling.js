@@ -2,6 +2,8 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class OathswornWildling extends DrawCard {
+    // Oathsworn Wildling (26029)
+    // If you do not control another Wildling character or Jon Snow, sacrifice Oathsworn Wildling.
     setupCardAbilities() {
         this.stateCheck({
             condition: (context) =>

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerArchibaldYronwood extends DrawCard {
+    // Ser Archibald Yronwood (11055)
+    // Shadow (4). No attachments except Weapon.
+    // Reaction: After you lose dominance, the winning opponent must choose and kill a character he
+    // or she controls.
     setupCardAbilities() {
         this.reaction({
             when: {

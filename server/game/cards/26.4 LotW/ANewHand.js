@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ANewHand extends DrawCard {
+    // A New Hand (26062)
+    // Reaction: After a Small Council character you control leaves play, search your deck for a
+    // different Small Council character, reveal it, and add it to your hand. Shuffle your deck.
+    // (Max 1 per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

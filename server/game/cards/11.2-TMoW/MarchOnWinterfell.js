@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class MarchOnWinterfell extends DrawCard {
+    // March on Winterfell (11028)
+    // Play only during a challenge you initiated.
+    // Action: End the challenge with no winner or loser. You may initiate an additional [power]
+    // challenge this phase.
     setupCardAbilities() {
         this.action({
             title: 'End the challenge',

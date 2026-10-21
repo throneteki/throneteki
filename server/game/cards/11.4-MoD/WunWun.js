@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class WunWun extends DrawCard {
+    // Wun Wun (11077)
+    // No attachments except Weapon.
+    // Action: Kneel Wun Wun to have him participate in a challenge in which you control a
+    // participating Wildling character.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel Wun Wun to have him participate in the current challenge',

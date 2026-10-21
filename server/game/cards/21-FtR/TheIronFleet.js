@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheIronFleet extends DrawCard {
+    // The Iron Fleet (21004)
+    // Assault. No attachments. Pillage.
+    // Reduce the cost of each Raider character you marshal by 1.
+    // Reaction: After you initiate a challenge in which you control an attacking Raider character,
+    // discard the top card of each opponent's deck.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',

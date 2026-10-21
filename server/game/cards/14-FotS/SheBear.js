@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SheBear extends DrawCard {
+    // She-Bear (14033)
+    // Reaction: After you marshal She-Bear, you may put a [stark] character or attachment with
+    // printed cost 3 or lower into play from your hand.
     setupCardAbilities() {
         this.reaction({
             when: {

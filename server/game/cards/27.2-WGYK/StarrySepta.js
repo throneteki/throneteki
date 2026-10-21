@@ -3,6 +3,9 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class StarrySepta extends DrawCard {
+    // Starry Septa (27035)
+    // Action: Kneel Starry Septa to choose a participating character with gold or power. Stand that
+    // character and remove it from the challenge.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand and remove participating character',

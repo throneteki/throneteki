@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class ShadowblackAssassin extends DrawCard {
+    // Shadowblack Assassin (13073)
+    // Shadow (2).
+    // Reaction: After Shadowblack Assassin comes out of shadows, choose and kill a character with
+    // STR 1 or lower.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class JoffreyBaratheon extends DrawCard {
+    // Joffrey Baratheon (01086)
+    // Reaction: After a Lord or Lady character is killed, Joffrey Baratheon gains 1 power. (Limit 3
+    // times per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

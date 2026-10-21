@@ -3,6 +3,11 @@ import { Tokens } from '../../Constants/index.js';
 import GameActions from '../../GameActions/index.js';
 
 class Varys extends DrawCard {
+    // Varys (25077)
+    // Bestow (2). Stealth.
+    // Action: Discard 1 gold from Varys to name a card. Until the end of the phase, that card
+    // cannot be marshaled, played, or put into play. (Limit once per phase.)
+    // Reaction: After a Scheme plot card is revealed, Varys gains 1 gold.
     setupCardAbilities(ability) {
         this.action({
             title: 'Name a card',

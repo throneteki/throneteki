@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class NoSurprises extends DrawCard {
+    // No Surprises (13022)
+    // Action: Reveal your hand (of at least 1 card). Then, until the end of the phase, each
+    // opponent cannot play events or bring cards out of shadows.
     setupCardAbilities() {
         this.action({
             title: 'Reveal your hand',

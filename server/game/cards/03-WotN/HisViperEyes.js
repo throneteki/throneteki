@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class HisViperEyes extends DrawCard {
+    // His Viper Eyes (03032)
+    // Reaction: After you lose a [military] or [power] challenge as the defending player, look at
+    // the winning opponent's hand. Then, choose and discard 1 card from that hand.
     setupCardAbilities() {
         this.reaction({
             when: {

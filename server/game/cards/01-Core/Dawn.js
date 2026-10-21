@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Dawn extends DrawCard {
+    // Dawn (01115)
+    // Attached character gets +1 STR for each plot card in your used pile.
+    // While attached character has the House Dayne trait, it gains intimidate.
     setupCardAbilities(ability) {
         this.whileAttached({
             effect: ability.effects.dynamicStrength(() => this.controller.getNumberOfUsedPlots())

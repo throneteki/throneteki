@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class TyrionLannister extends DrawCard {
+    // Tyrion Lannister (13089)
+    // Shadow (5). Insight.
+    // Reaction: After a non-event card you control comes out of shadows, place another card you
+    // control in shadows with a shadow token on it. While that card is in shadows, it gains shadow
+    // (X). X is its printed cost. (Limit once per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

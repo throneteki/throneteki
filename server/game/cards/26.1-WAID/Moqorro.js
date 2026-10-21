@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Moqorro extends DrawCard {
+    // Moqorro (26003)
+    // Shadow (2).
+    // Reaction: After Moqorro comes out of shadows, choose a character. Until the end of the phase,
+    // that character gains an [intrigue] icon and stealth.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Squire extends DrawCard {
+    // Squire (21027)
+    // Marshaling Action: Kneel Squire to reduce the cost of the next Army or Knight character you
+    // marshal this phase by 1. (By 2 instead if that character's printed cost is 6 or higher.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce next marshalled character',

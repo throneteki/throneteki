@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class OldNan extends DrawCard {
+    // Old Nan (03010)
+    // Interrupt: When a plot card is revealed, kneel Old Nan to have that plot card gain the Summer
+    // or Winter trait until the end of the round.
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

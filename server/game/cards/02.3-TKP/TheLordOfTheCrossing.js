@@ -7,6 +7,11 @@ class TheLordOfTheCrossing extends AgendaCard {
         this.registerEvents(['afterChallenge']);
     }
 
+    // The Lord of the Crossing (02060)
+    // During the first challenge you initiate each phase, each of your participating characters
+    // gets -1 STR.
+    // During the third challenge you initiate each phase, each of your participating characters
+    // gets +2 STR. If you win this challenge, gain 1 power for your faction.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttackingDuringChallengeNumber(1),

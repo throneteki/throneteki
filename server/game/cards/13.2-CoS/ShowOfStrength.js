@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ShowOfStrength extends DrawCard {
+    // Show of Strength (13024)
+    // Challenges Action: Until the end of the phase, treat each character with STR 3 or lower as if
+    // its printed text box were blank (except for Traits).
     setupCardAbilities() {
         this.action({
             phase: 'challenge',

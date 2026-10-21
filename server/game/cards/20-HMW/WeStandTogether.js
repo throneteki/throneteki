@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class WeStandTogether extends DrawCard {
+    // We Stand Together (20050)
+    // Reaction: After you win a challenge, choose and stand an attacking House Frey character.
+    // (Stand each attacking House Frey character instead if it was the third challenge you
+    // initiated this phase.)
     setupCardAbilities() {
         this.reaction({
             when: {

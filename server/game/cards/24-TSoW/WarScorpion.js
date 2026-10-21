@@ -3,6 +3,11 @@ import Message from '../../Message.js';
 import GameActions from '../../GameActions/index.js';
 
 class WarScorpion extends DrawCard {
+    // War Scorpion (24012)
+    // Ambush (3).
+    // Attached character gets +2 STR.
+    // Challenges Action: Sacrifice War Scorpion to choose an attacking character, and remove it
+    // from the challenge. (You may kill that character instead if it has the Army or Dragon trait.)
     setupCardAbilities(ability) {
         this.whileAttached({
             effect: ability.effects.modifyStrength(2)

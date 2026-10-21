@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class BreakerOfChains extends DrawCard {
+    // Breaker of Chains (06074)
+    // Unique [targaryen] character only.
+    // Attached character gets +1 STR for each character you control with printed cost 2 or lower.
+    // Reaction: After attached character is declared as an attacker, put a character with printed
+    // cost 2 or lower into play from your hand.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'targaryen', unique: true });
 

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SupportOfHarlaw extends DrawCard {
+    // Support of Harlaw (08072)
+    // Challenges Action: Kneel a Warship location to have attached character gain (choose one):
+    // pillage, renown, or stealth until the end of the phase.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give keyword to parent',

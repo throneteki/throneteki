@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Castamere extends DrawCard {
+    // Castamere (25006)
+    // Reaction: After claim is applied for an [intrigue] challenge you won by 5 or more STR, kneel
+    // and sacrifice Castamere to apply [military] claim.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

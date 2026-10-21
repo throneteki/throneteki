@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class Motley extends DrawCard {
+    // Motley (03025)
+    // Opponent's character only.
+    // Attached character gains the Fool trait.
+    // Reaction: After attached character is declared as an attacker or defender, discard 1 card at
+    // random from its controller's hand.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ controller: 'opponent' });
         this.whileAttached({

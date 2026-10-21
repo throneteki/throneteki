@@ -4,6 +4,11 @@ import { Tokens } from '../../Constants/index.js';
 import { flatten } from '../../../Array.js';
 
 class VargoHoat extends DrawCard {
+    // Vargo Hoat (18017)
+    // Bestow (2).
+    // Reaction: After a card with bestow enters play, it gains 1 gold. (Limit twice per phase.)
+    // Action: Move 1 gold from Vargo Hoat to a character with 2 or less gold. Until the end of the
+    // phase, Vargo Hoat gains that character's keywords.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

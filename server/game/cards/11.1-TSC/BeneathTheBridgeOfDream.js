@@ -2,6 +2,11 @@ import sample from 'lodash.sample';
 import DrawCard from '../../drawcard.js';
 
 class BeneathTheBridgeOfDream extends DrawCard {
+    // Beneath the Bridge of Dream (11011)
+    // Shadow (0).
+    // Interrupt: When you choose a plot card to reveal in the plot phase, instead shuffle your used
+    // pile into your plot deck and choose a plot card to reveal at random. Until the end of the
+    // round, increase the gold value on your revealed plot card by 2.
     setupCardAbilities() {
         this.interrupt({
             when: {

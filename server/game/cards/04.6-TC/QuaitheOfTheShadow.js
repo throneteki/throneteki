@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class QuaitheOfTheShadow extends DrawCard {
+    // Quaithe of the Shadow (04113)
+    // Ambush (3).
+    // Reaction: After Quaithe of the Shadow enters play during a challenge, remove each character
+    // with STR 2 or lower from the challenge.
     setupCardAbilities() {
         this.reaction({
             when: {

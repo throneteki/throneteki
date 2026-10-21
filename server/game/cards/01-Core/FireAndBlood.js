@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class FireAndBlood extends DrawCard {
+    // Fire and Blood (01177)
+    // Challenges Action: Choose a unique [targaryen] character in your dead pile, and shuffle it
+    // back into your deck. If that character is a Hatchling, you may put it into play instead.
     setupCardAbilities() {
         this.action({
             title: 'Shuffle card from dead pile back into deck',

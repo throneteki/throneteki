@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ThereAreNoMenLikeMe extends DrawCard {
+    // There Are No Men Like Me (07030)
+    // Action: Choose a Knight character. Until the end of the phase, that character does not kneel
+    // when declared as an attacker or defender in a [military] challenge.
     setupCardAbilities() {
         this.action({
             title: "Select character that doesn't kneel for military challenges",

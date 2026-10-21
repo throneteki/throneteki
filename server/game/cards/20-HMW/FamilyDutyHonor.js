@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class FamilyDutyHonor extends DrawCard {
+    // Family, Duty, Honor (20029)
+    // Interrupt: When a House Tully character you control would leave play, discard 1 power from
+    // that character to save it.
     setupCardAbilities(ability) {
         let leftPlayCondition = (event) =>
             event.allowSave &&

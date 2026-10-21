@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class RecruitFromTheDungeons extends DrawCard {
+    // Recruit from the Dungeons (13105)
+    // Shadow (2).
+    // Action: During a challenge in which you are the defending player, kneel Recruit from the
+    // Dungeons to have it participate in the challenge on your side. If you lose the challenge,
+    // return Recruit from the Dungeons to shadows.
     setupCardAbilities(ability) {
         this.action({
             title: 'Have character participate in the challenge',

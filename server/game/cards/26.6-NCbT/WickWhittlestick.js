@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class WickWhittlestick extends DrawCard {
+    // Wick Whittlestick (26109)
+    // Shadow (3).
+    // Reaction: After Wick Whittlestick comes out of shadows during a challenge in which you
+    // control a participating character, each player must choose a participating character they
+    // control, if able, and discard it from play.
     setupCardAbilities() {
         this.reaction({
             when: {

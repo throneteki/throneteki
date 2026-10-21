@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class RalfKenning extends DrawCard {
+    // Ralf Kenning (25023)
+    // Pillage.
+    // While there is a Winter plot card revealed, reduce the income and reserve values on each
+    // opponent's revealed plot card by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

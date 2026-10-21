@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class KingRobbsHost extends DrawCard {
+    // King Robb's Host (03001)
+    // No attachments.
+    // Reaction: After you win a [military] challenge in which King Robb's Host is participating,
+    // move 1 power from the losing opponent's faction card to an attacking character. (2 power
+    // instead if there is a War plot card revealed.)
     setupCardAbilities() {
         this.reaction({
             when: {

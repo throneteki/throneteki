@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class NoGodlessMan extends DrawCard {
+    // No Godless Man (20010)
+    // Reaction: After you win a [power] challenge in which you control a participating Drowned God
+    // character, for every 5 STR by which you won the challenge, draw 1 card and discard 1 card at
+    // random from the losing opponent’s hand. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

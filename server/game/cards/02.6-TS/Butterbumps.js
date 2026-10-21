@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Butterbumps extends DrawCard {
+    // Butterbumps (02103)
+    // Insight.
+    // Forced Reaction: After you lose a challenge in which Butterbumps is participating, discard 1
+    // card at random from your hand.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

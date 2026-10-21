@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ToTheRoseBanner extends DrawCard {
+    // To the Rose Banner! (03038)
+    // Marshaling Action: Choose a [tyrell] character you control. Gain X gold, where X is that
+    // character's STR. Then, sacrifice that character.
     setupCardAbilities() {
         this.action({
             title: 'Gain gold then sacrifice character',

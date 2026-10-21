@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TowerOfTheHand extends DrawCard {
+    // Tower of the Hand (13062)
+    // Reaction: After a card you control comes out of shadows, if there is a Winter plot card
+    // revealed, choose and stand a [stark] character. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

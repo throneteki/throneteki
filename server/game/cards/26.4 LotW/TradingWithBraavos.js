@@ -2,6 +2,12 @@ import AgendaCard from '../../agendacard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TradingWithBraavos extends AgendaCard {
+    // Trading With Braavos (26080)
+    // Your deck may include non-loyal Warship locations from any faction. Your deck cannot include
+    // more than 1 copy of each non-limited location.
+    // Reaction: After claim is applied for a challenge you won, kneel your faction card to search
+    // the top 10 cards of your deck for a non-limited location, reveal it, and add it to your hand
+    // (you may place it in shadows instead if it has the Warship trait). Shuffle your deck.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

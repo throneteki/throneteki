@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class JeyneWesterling extends DrawCard {
+    // Jeyne Westerling (05033)
+    // Action: Kneel Jeyne Westerling to choose and stand a [stark] King or Lord character.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand a King or Lord',

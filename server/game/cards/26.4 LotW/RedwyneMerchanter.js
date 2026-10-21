@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class RedwyneMerchanter extends DrawCard {
+    // Redwyne Merchanter (26076)
+    // Shadow (1).
+    // Reaction: After Redwyne Merchanter comes out of shadows, choose a character. Until the end of
+    // the phase, that character gets +2 STR.
+    // +1 Income
     setupCardAbilities() {
         this.plotModifiers({
             gold: 1

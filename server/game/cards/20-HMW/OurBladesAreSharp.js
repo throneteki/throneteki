@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class OurBladesAreSharp extends DrawCard {
+    // Our Blades are Sharp (20028)
+    // While you control Harrenhal or The Dreadfort, reduce the cost to play Our Blades Are Sharp by
+    // 1.
+    // Action: Sacrifice a non-[stark] card to return up to 2 House Bolton cards from your discard
+    // and/or dead pile to your hand.
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class RenlysPavilion extends DrawCard {
+    // Renly's Pavilion (04104)
+    // Action: Kneel Renly's Pavilion to choose 2 characters. Until the end of the phase, one of
+    // those characters gets -1 STR, and the other gets +1 STR.
     setupCardAbilities(ability) {
         this.action({
             title: 'Modify strength of 2 characters',

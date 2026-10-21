@@ -3,6 +3,10 @@ import GameActions from '../../GameActions/index.js';
 import { flatten } from '../../../Array.js';
 
 class ALionStillHasClaws extends DrawCard {
+    // "A Lion Still Has Claws" (20014)
+    // Reduce the cost to play "A Lion Still Has Claws" by 1 for each Scheme plot card revealed.
+    // Reaction: After you win an [intrigue] challenge by 5 or more STR, choose a Trait. Return each
+    // character with that Trait and printed cost X or lower to its owner’s hand.
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',

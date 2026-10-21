@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class CatelynStark extends DrawCard {
+    // Catelyn Stark (03002)
+    // Catelyn Stark gets +1 STR for each power she has.
+    // Reaction: After a [stark] character you control is sacrificed or killed, Catelyn Stark gains
+    // 1 power. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

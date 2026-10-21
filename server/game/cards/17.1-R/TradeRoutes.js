@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class TradeRoutes extends PlotCard {
+    // Trade Routes (17160)
+    // When Revealed: Choose a player. Gain 1 gold for each location that player controls.
     setupCardAbilities() {
         this.whenRevealed({
             choosePlayer: () => true,

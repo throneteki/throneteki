@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class BrokenVows extends DrawCard {
+    // Broken Vows (09034)
+    // Marshaling Action: Give control of a [thenightswatch] character you control to an opponent.
+    // Then, take control of a non-loyal character that player controls with a lower printed cost.
     setupCardAbilities() {
         this.action({
             title: 'Exchange characters',

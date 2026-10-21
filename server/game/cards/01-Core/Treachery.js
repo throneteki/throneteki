@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Treachery extends DrawCard {
+    // Treachery (01102)
+    // Play only if you control a unique [lannister] character.
+    // Interrupt: When the effects of a triggered character, location, or attachment ability would
+    // initiate, cancel those effects.
     setupCardAbilities() {
         this.interrupt({
             canCancel: true,

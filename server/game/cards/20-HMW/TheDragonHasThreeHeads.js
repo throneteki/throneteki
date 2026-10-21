@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class TheDragonHasThreeHeads extends DrawCard {
+    // The Dragon Has Three Heads (20034)
+    // Action: Until the end of the phase, each Dragon character you control gains:
+    // - intimidate, if you control Drogon.
+    // - renown, if you control Rhaegal.
+    // - stealth, if you control Viserion.
     setupCardAbilities() {
         this.action({
             handler: (context) => {

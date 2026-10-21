@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheLateLordFrey extends PlotCard {
+    // The Late Lord Frey (20055)
+    // Reaction: After you initiate a challenge, put a House Frey card into play from your hand or
+    // discard pile.
     setupCardAbilities() {
         this.reaction({
             when: {

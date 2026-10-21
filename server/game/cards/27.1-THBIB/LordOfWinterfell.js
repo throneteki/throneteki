@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class LordOfWinterfell extends DrawCard {
+    // Lord of Winterfell (27012)
+    // [stark] Lord character only.
+    // While there is a Winter plot card revealed, attached character gains insight.
+    // Reaction: After you win a challenge in which you control a participating loyal character,
+    // kneel Lord of Winterfell to have attached character gain 1 power.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'stark', trait: 'Lord' });
 

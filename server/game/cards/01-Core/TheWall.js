@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheWall extends DrawCard {
+    // The Wall (01137)
+    // Each [thenightswatch] character you control gets +1 STR.
+    // Forced Reaction: After you lose an unopposed challenge, kneel The Wall.
+    // Interrupt: When the challenges phase ends, kneel The Wall to gain 2 power for your faction.
     setupCardAbilities(ability) {
         this.forcedReaction({
             when: {

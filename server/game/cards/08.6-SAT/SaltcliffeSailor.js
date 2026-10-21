@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class SaltcliffeSailor extends DrawCard {
+    // Saltcliffe Sailor (08111)
+    // Bestow (3).
+    // Each character you control with 1 or more gold gains stealth.
+    // Action: Move 1 gold from Saltcliffe Sailor to a non-[greyjoy] character you control.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.getType() === 'character' && card.hasToken(Tokens.gold),

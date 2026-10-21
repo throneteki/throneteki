@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class Tithe extends DrawCard {
+    // Tithe (03045)
+    // Action: Kneel a neutral character to gain 2 gold.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel character to gain 2 gold',

@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class VaryssRiddle extends PlotCard {
+    // Varys's Riddle (04020)
+    // When Revealed: Initiate the when revealed ability on a revealed non-Riddle plot card as if
+    // you had just revealed it.
     setupCardAbilities() {
         this.whenRevealed({
             handler: (context) => {

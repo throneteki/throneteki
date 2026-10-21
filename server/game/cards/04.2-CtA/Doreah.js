@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Doreah extends DrawCard {
+    // Doreah (04033)
+    // During a challenge in which you control a participating Lord or Lady character, Doreah gains
+    // insight.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.hasParticipatingLordOrLady(),

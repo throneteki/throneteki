@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ConsolidationOfPower extends DrawCard {
+    // Consolidation of Power (01062)
+    // Marshaling Action: Choose and kneel up to 4 total STR worth of characters controlled by the
+    // same player. Then, choose one of those characters, and have it gain 1 power.
     setupCardAbilities() {
         this.action({
             title: 'Kneel 4 STR worth of characters',

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class StannisBaratheon extends DrawCard {
+    // Stannis Baratheon (04067)
+    // During [power] challenges, each participating non-King character gets -1 STR.
+    // Reaction: After you win dominance, choose a non-loyal character. That character cannot stand
+    // during the standing phase this round.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge({ challengeType: 'power' }),

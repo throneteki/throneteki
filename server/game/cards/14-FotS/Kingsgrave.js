@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Kingsgrave extends DrawCard {
+    // Kingsgrave (14030)
+    // Reaction: After you lose a [power] challenge by 5 or more STR, kneel and sacrifice Kingsgrave
+    // to choose a participating character and return it to its owner's hand. (You may kill that
+    // character instead if it has the King trait.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

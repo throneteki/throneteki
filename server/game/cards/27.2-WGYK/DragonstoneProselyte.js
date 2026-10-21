@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class DragonstoneProselyte extends DrawCard {
+    // Dragonstone Proselyte (27021)
+    // Challenges Action: Kneel Dragonstone Proselyte to choose a character with STR 3 or lower.
+    // Until the end of the round, that character cannot stand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Prevent character from standing',

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MyrcellaBaratheon extends DrawCard {
+    // Myrcella Baratheon (10029)
+    // Myrcella Baratheon does not kneel when declared as an attacker against an opponent with fewer
+    // cards in his or her hand than you.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.opponentHoldsLessCards(),

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class DornishSpy extends DrawCard {
+    // Dornish Spy (06115)
+    // Ambush (4).
+    // Reaction: After Dornish Spy enters play, choose a character. Until the end of the phase, that
+    // character loses a challenge icon of your choice.
     setupCardAbilities() {
         this.reaction({
             when: {

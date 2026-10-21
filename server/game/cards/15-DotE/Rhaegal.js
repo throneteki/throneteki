@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Rhaegal extends DrawCard {
+    // Rhaegal (15003)
+    // No attachments.
+    // Reaction: After you win a challenge in which Rhaegal is attacking, choose and stand another
+    // character you control. Then, if that character has the Dragon or Stormborn trait, stand
+    // Rhaegal. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

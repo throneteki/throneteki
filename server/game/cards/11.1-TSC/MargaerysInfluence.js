@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class MargaerysInfluence extends DrawCard {
+    // Margaery's Influence (11005)
+    // Terminal.
+    // Action: While attached character is participating in a challenge, kneel Margaery's Influence
+    // and pay 1 gold to stand attached character and remove it from the challenge.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand parent and remove from challenge',

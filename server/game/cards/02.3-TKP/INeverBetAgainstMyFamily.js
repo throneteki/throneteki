@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class INeverBetAgainstMyFamily extends DrawCard {
+    // I Never Bet Against My Family (02050)
+    // Challenges Action: Kneel your faction card to reveal the bottom 5 cards of your deck. You may
+    // put 1 unique [lannister] character revealed by this effect into play; return the other cards
+    // to the bottom of your deck in any order. At the end of the phase, if that card is still in
+    // play, discard it from play (cannot be saved).
     setupCardAbilities(ability) {
         this.action({
             title: 'Put character in play from bottom of your deck',

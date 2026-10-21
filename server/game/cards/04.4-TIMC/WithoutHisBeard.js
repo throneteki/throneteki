@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class WithoutHisBeard extends DrawCard {
+    // Without His Beard (04070)
+    // Reaction: After you win an [intrigue] challenge, discard up to 3 cards at random from the
+    // losing opponent's hand. Then, that player draws 2 cards.
     setupCardAbilities() {
         this.reaction({
             when: {

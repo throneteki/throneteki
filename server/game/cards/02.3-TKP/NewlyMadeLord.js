@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class NewlyMadeLord extends DrawCard {
+    // Newly-Made Lord (02051)
+    // Reaction: After you marshal Newly-Made Lord, choose a non-limited location with printed cost
+    // 3 or lower, and discard it from play.
     setupCardAbilities() {
         this.reaction({
             when: {

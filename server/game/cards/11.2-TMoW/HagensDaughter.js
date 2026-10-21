@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class HagensDaughter extends DrawCard {
+    // Hagen's Daughter (11031)
+    // Shadow (2).
+    // Interrupt: When Hagen’s Daughter would be killed, save her and return her to shadows.
     setupCardAbilities() {
         this.interrupt({
             canCancel: true,

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class GreenDreams extends DrawCard {
+    // Green Dreams (03043)
+    // Terminal.
+    // Reaction: After attached character is knelt, look at the top card of your deck. You may put
+    // that card on the bottom of your deck.
     setupCardAbilities() {
         this.reaction({
             when: {

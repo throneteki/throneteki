@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class GreywaterWatch extends DrawCard {
+    // Greywater Watch (19011)
+    // Shadow (1).
+    // Action: Kneel and return Greywater Watch to shadows and kneel a [stark] character to have it
+    // participate in the current challenge on your side. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel a character to have it participate',

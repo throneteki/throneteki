@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheQueenOfThorns extends DrawCard {
+    // The Queen of Thorns (11023)
+    // Shadow (4). Stealth.
+    // Reaction: After you win a challenge in which The Queen of Thorns is participating, choose a
+    // card you control in shadows and put it into play.
     setupCardAbilities() {
         this.reaction({
             when: {

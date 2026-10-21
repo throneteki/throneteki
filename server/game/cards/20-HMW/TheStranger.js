@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class TheStranger extends PlotCard {
+    // The Stranger (20059)
+    // When Revealed: Each player chooses a character controlled by an opponent. Then, kill each
+    // character with the same printed cost as the chosen characters.
     setupCardAbilities() {
         this.whenRevealed({
             target: {

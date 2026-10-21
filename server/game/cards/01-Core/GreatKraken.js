@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class GreatKraken extends DrawCard {
+    // Great Kraken (01078)
+    // While you control Balon Greyjoy, he gains stealth.
+    // Reaction: After you win an unopposed challenge, either: draw 1 card, or gain 1 power for your
+    // faction. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Balon Greyjoy',

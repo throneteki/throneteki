@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Biter extends DrawCard {
+    // Biter (26037)
+    // Intimidate.
+    // Reaction: After Biter kneels a character with a lower STR than his using intimidate,
+    // sacrifice him to kill that character.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

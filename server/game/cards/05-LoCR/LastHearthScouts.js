@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class LastHearthScouts extends DrawCard {
+    // Last Hearth Scouts (05034)
+    // Forced Reaction: After a character enters play during the challenges phase, kneel that
+    // character.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

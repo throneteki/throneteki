@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class RhllorInfiltrator extends DrawCard {
+    // R'hllor Infiltrator (13007)
+    // Dominance Action: Kneel R'hllor Infiltrator to choose an opponent. Give control of R'hllor
+    // Infiltrator to that player and gain 1 power for your faction.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give control and gain 1 power',

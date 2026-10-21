@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class RelentlessAssault extends DrawCard {
+    // Relentless Assault (04118)
+    // Reaction: After you win a challenge by 5 or more STR as the attacking player, kneel your
+    // faction card. Then, you may initiate an additional challenge of that type this phase.
     setupCardAbilities() {
         this.reaction({
             when: {

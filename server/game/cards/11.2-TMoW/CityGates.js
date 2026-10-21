@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class CityGates extends DrawCard {
+    // City Gates (11038)
+    // Limited.
+    // Action: Pay 1 gold and discard City Gates from your hand to draw 1 card.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.plotModifiers({
             gold: 1

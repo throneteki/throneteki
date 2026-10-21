@@ -1,6 +1,10 @@
 import PlotCard from '../../plotcard.js';
 
 class BreakingTies extends PlotCard {
+    // Breaking Ties (17153)
+    // Action: Shuffle a standing loyal character into your deck to choose a non-loyal character or
+    // location and return it to its owner's hand. (Limit X times per round, where X is the number
+    // of opponents you have.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Return character/location to hand',

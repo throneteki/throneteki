@@ -3,6 +3,11 @@ import GameActions from '../../GameActions/index.js';
 import TextHelper from '../../TextHelper.js';
 
 class GrowingAmbition extends DrawCard {
+    // Growing Ambition (11044)
+    // Shadow (X).
+    // Challenges Action: Search your deck for X different cards and place them in your discard
+    // pile. Shuffle your deck. Then, choose an opponent. Return X cards of that opponent's choice
+    // from your discard pile to your hand.
     setupCardAbilities() {
         this.xValue({ min: () => 1, max: (context) => context.player.drawDeck.length });
 

@@ -4,6 +4,15 @@ import SimpleStep from '../../gamesteps/simplestep.js';
 import { Flags } from '../../Constants/index.js';
 
 class BattleoftheTrident extends AgendaCard {
+    // Battle of the Trident (21030)
+    // Your plot deck must be exactly 10 Edict, Siege, or War cards.
+    // Reaction: After claim is applied for a challenge in which you control an attacking Army or
+    // Commander character, kneel your faction card to reveal:
+    // - a War plot if it is a [military] challenge.
+    // - an Edict plot if it is an [intrigue] challenge.
+    // - a Siege plot if it is a [power] challenge.
+    // Then, choose a plot card in your used pile. Remove that card from the game until you have
+    // exactly 1 card in your plot deck.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

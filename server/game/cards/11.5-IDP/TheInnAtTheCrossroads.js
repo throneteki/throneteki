@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class TheInnAtTheCrossroads extends DrawCard {
+    // The Inn at the Crossroads (11098)
+    // Shadow (1).
+    // Dominance Action: Kneel The Inn at the Crossroads to draw 3 cards and choose an opponent.
+    // Give control of The Inn at the Crossroads to that player.
     setupCardAbilities(ability) {
         this.action({
             title: 'Draw 3 cards',

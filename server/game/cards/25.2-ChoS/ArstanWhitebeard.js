@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ArstanWhitebeard extends DrawCard {
+    // Arstan Whitebeard (25033)
+    // If you control Ser Barristan Selmy, sacrifice Arstan Whitebeard.
+    // While you control no Lord or Lady characters, Arstan Whitebeard cannot kneel.
     setupCardAbilities(ability) {
         this.stateCheck({
             condition: (context) =>

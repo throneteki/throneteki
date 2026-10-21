@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Blackbird extends DrawCard {
+    // Blackbird (13066)
+    // Shadow (1).
+    // Reaction: After Blackbird comes out of shadows, choose and stand another [thenightswatch]
+    // location.
+    // +1 Reserve.
     setupCardAbilities() {
         this.plotModifiers({
             reserve: 1

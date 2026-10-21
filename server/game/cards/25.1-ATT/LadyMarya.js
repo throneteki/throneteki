@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class LadyMarya extends DrawCard {
+    // Lady Marya (25002)
+    // You may marshal or play facedown cards attached to Lady Marya as if they were in your hand.
+    // Reaction: After you win a challenge in which you control an attacking Captain or Smuggler
+    // character, kneel Lady Marya to attach the top card of the losing opponent's deck to Lady
+    // Marya facedown under your control, as an attachment with the text: "Location only. Terminal."
     setupCardAbilities(ability) {
         this.persistentEffect({
             effect: [

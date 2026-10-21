@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SuperiorClaim extends DrawCard {
+    // Superior Claim (01043)
+    // Reaction: After you win a [power] challenge by 5 or more STR, gain 2 power for your faction.
+    // (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             max: ability.limit.perChallenge(1),

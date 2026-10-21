@@ -2,6 +2,11 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TheKnight extends DrawCard {
+    // The Knight (25083)
+    // Pillage.
+    // Action: During a challenge in which you are the attacking player, return 2 characters from
+    // the defending player's discard pile to their owner's hand. Then, raise the claim value on
+    // your revealed plot card by 1 until the end of the challenge. (Limit once per challenge.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Raise claim',

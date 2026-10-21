@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class FieldsOfTheReach extends DrawCard {
+    // Fields of the Reach (14038)
+    // Reaction: After you win a [power] challenge, kneel 3 The Reach locations to raise the claim
+    // value on your revealed plot card by 1 until the end of the challenge.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

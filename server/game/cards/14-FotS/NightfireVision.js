@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class NightfireVision extends DrawCard {
+    // Nightfire Visions (14024)
+    // Play only if you control a R'hllor character.
+    // Taxation Action: Name a Trait. If an opponent reveals a plot card with that Trait during the
+    // next plot phase, draw 3 cards.
     setupCardAbilities() {
         this.action({
             condition: () =>

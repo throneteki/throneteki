@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class TenTowersGalley extends DrawCard {
+    // Ten Towers Galley (15028)
+    // While Ten Towers Galley is standing, reduce the reserve value on each opponent's revealed
+    // plot by 1.
+    // Action: Kneel a location with printed cost 2 or higher to kneel Ten Towers Galley. Any player
+    // may initiate this ability.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => !this.kneeled,

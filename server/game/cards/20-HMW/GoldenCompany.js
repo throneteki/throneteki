@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class GoldenCompany extends DrawCard {
+    // Golden Company (20031)
+    // Bestow (1).
+    // While Golden Company has 1 or more gold, it gains renown.
+    // Interrupt: When a Mercenary character would be returned to your hand, discard 1 gold from
+    // Golden Company to save that character.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.hasToken(Tokens.gold),

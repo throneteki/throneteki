@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class MoonBoy extends DrawCard {
+    // Moon Boy (02047)
+    // Insight.
+    // Forced Reaction: After you lose a challenge in which Moon Boy is participating, discard 1
+    // card at random from your hand.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

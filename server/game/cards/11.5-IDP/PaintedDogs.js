@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class PaintedDogs extends DrawCard {
+    // Painted Dogs (11089)
+    // Ambush (4).
+    // Challenges Action: Return Painted Dogs to your hand to choose and stand a Clansman character
+    // or Tyrion Lannister.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand Clansman or Tyrion',

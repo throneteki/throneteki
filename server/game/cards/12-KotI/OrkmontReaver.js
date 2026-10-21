@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class OrkmontReaver extends DrawCard {
+    // Orkmont Reaver (12015)
+    // Pillage.
+    // While an opponent has 10 or more cards in his or her discard pile, Orkmont Reaver gains
+    // stealth.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

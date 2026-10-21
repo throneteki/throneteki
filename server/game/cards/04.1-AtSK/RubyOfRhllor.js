@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class RubyOfRhllor extends DrawCard {
+    // Ruby of R'hllor (04009)
+    // R'hllor character only.
+    // Reaction: After you win an [intrigue] challenge in which attached character is attacking,
+    // name a card. The losing opponent reveals his or her hand and discards each card with that
+    // name.
     setupCardAbilities() {
         this.attachmentRestriction({ trait: "R'hllor" });
         this.reaction({

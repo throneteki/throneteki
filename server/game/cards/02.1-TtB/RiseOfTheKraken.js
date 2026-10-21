@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class RiseOfTheKraken extends PlotCard {
+    // Rise of the Kraken (02012)
+    // Interrupt: When you gain power for winning an unopposed challenge, gain 2 power instead.
     setupCardAbilities() {
         this.interrupt({
             when: {

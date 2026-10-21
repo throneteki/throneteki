@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerGregorClegane extends DrawCard {
+    // Ser Gregor Clegane (14027)
+    // Intimidate. Pillage.
+    // Forced Reaction: After you win a challenge in which Ser Gregor Clegane is participating,
+    // choose and kill a character you control.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

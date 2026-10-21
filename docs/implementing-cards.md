@@ -47,6 +47,9 @@ class NobleLineage extends DrawCard {
 }
 ```
 
+Then run `npm run card-text -- --write`, which adds the card's text as a comment at the top of the
+class.
+
 ### Keywords
 
 Keywords are automatically parsed from the card text. It isn't necessary to explicitly implement them unless they are provided by a conditional persistent effect (e.g. Ser Jaime Lannister's military-only renown).

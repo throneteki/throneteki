@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SmallfolkMob extends DrawCard {
+    // Smallfolk Mob (13081)
+    // Shadow (4).
+    // Action: Sacrifice a unique [stark] character to put Smallfolk Mob into play from shadows.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put into play',

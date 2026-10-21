@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class OverwhelmingNumbers extends DrawCard {
+    // Overwhelming Numbers (15022)
+    // Play only during a challenge in which you control 2 or more attacking Dothraki characters.
+    // Action: Put up to 2 Dothraki characters into play from your hand and/or discard pile knelt,
+    // participating as attackers. At the end of the challenge, if any of those characters are still
+    // in play, return them to your hand. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Put characters into play',

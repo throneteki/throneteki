@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class DornishParamour extends DrawCard {
+    // Dornish Paramour (01111)
+    // Reaction: After Dornish Paramour is declared as an attacker, choose a character controlled by
+    // the defending player. That character must be declared as a defender for this challenge, if
+    // able.
     setupCardAbilities() {
         this.reaction({
             when: {

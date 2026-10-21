@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Hardhome extends DrawCard {
+    // Hardhome (11086)
+    // Shadow (2).
+    // Dominance Action: Kneel and sacrifice Hardhome to choose an opponent. That player sacrifices
+    // a standing character.
     setupCardAbilities(ability) {
         this.action({
             title: 'Force opponent to sacrifice',

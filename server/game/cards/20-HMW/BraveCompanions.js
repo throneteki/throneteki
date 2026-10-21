@@ -4,6 +4,12 @@ import GameActions from '../../GameActions/index.js';
 import { availableToPair } from '../../../Array.js';
 
 class BraveCompanions extends DrawCard {
+    // Brave Companions (20042)
+    // Bestow (1). Pillage.
+    // Brave Companions get +1 STR for each character you control with 1 or more gold.
+    // Reaction: After you marshal Brave Companions, search the top 10 cards of your deck for an
+    // Army character, a Commander character, and a Mercenary character, reveal them, and add them
+    // to your hand. Shuffle your deck.
     setupCardAbilities(ability) {
         const selectableTraits = ['Army', 'Commander', 'Mercenary'];
         this.persistentEffect({

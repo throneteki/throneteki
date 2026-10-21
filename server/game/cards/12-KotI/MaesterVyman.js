@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MaesterVyman extends DrawCard {
+    // Maester Vyman (12033)
+    // Reaction: After you win a [military] or [power] challenge, kneel Maester Vyman to choose
+    // another character that shares a Trait with him. That character gains 1 power.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

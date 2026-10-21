@@ -8,6 +8,11 @@ class TheGoldPrice extends AgendaCard {
         this.registerEvents(['onCardEntersPlay']);
     }
 
+    // The Gold Price (25040)
+    // Locations you control enter play knelt.
+    // Reaction: After a character is discarded at random from an opponent's hand, put it into play
+    // under your control. At the end of the phase, if that card is still in play, sacrifice it
+    // unless you pay X gold. X is that card's printed cost. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

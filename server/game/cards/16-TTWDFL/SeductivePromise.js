@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SeductivePromise extends DrawCard {
+    // Seductive Promise (16025)
+    // Reaction: After you win a [power] challenge by 5 or more STR, choose a non-unique character
+    // controlled by the losing opponent. Take control of that character. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

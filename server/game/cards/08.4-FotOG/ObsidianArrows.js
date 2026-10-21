@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class ObsidianArrows extends DrawCard {
+    // Obsidian Arrows (08066)
+    // Bestow (4).
+    // Action: While attached character is attacking, move 1 gold from Obsidian Arrows to a
+    // defending character to give that character –3 STR until the end of the challenge. (Limit once
+    // per challenge.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Give defending character -3 STR',

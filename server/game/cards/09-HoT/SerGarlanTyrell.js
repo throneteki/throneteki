@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerGarlanTyrell extends DrawCard {
+    // Ser Garlan Tyrell (09003)
+    // Action: During a challenge in which a Knight character you control is attacking alone,
+    // discard 1 card from your hand to raise the claim value on your revealed plot card by 1 until
+    // the end of the challenge. (Limit once per challenge.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Raise claim',

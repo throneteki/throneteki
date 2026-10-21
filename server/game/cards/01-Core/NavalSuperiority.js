@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class NavalSuperiority extends PlotCard {
+    // Naval Superiority (01017)
+    // Treat the base gold value on each revealed Kingdom and each revealed Edict plot card as if it
+    // were 0.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>

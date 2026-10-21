@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class ArianneMartell extends DrawCard {
+    // Arianne Martell (13055)
+    // Shadow (5). Stealth.
+    // Reaction: After a card comes out of shadows under your control, choose a character. Until the
+    // end of the phase, that character loses a challenge icon of your choice. (Limit 3 times per
+    // round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

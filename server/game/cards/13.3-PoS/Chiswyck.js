@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Chiswyck extends DrawCard {
+    // Chiswyck (13049)
+    // Pillage.
+    // Reaction: After you win a challenge in which Chiswyck is participating, discard the top card
+    // of your deck to draw 1 card.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

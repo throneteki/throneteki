@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ChatayasBrothel extends DrawCard {
+    // Chataya's Brothel (04090)
+    // Marshaling Action: Kneel a character with an [intrigue] icon to gain 1 gold. (Limit twice per
+    // phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Gain gold',

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SerKevanLannister extends DrawCard {
+    // Ser Kevan Lannister (05003)
+    // Reaction: After you marshal Ser Kevan Lannister, choose a [lannister] or neutral location or
+    // attachment in your discard pile and put it into play.
     setupCardAbilities() {
         this.reaction({
             when: {

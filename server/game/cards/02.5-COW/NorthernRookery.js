@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class NorthernRookery extends DrawCard {
+    // Northern Rookery (02086)
+    // Reaction: After you marshal Northern Rookery, draw 1 card.
+    // +1 Reserve.
     setupCardAbilities() {
         this.plotModifiers({
             reserve: 1

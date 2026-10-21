@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class WakingTheDragon extends DrawCard {
+    // Waking the Dragon (01178)
+    // Action: Choose and stand a unique [targaryen] character you control. At the end of the phase,
+    // if that character is still in play, return it to your hand.
     setupCardAbilities() {
         this.action({
             title: 'Stand a character',

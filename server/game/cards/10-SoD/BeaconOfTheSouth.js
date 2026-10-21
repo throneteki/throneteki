@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class BeaconOfTheSouth extends DrawCard {
+    // Beacon of the South (10038)
+    // [tyrell] character only.
+    // Reaction: After you win a challenge by 5 or more STR in which attached character is
+    // attacking, it gains 1 power.
     setupCardAbilities() {
         this.attachmentRestriction({ faction: 'tyrell' });
         this.reaction({

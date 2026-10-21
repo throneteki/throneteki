@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class ACityBesieged extends PlotCard {
+    // A City Besieged (13040)
+    // When Revealed: Choose and kneel a location. (Up to 2 locations instead if there is a City
+    // plot card in your used pile.)
     setupCardAbilities() {
         this.whenRevealed({
             handler: (context) => {

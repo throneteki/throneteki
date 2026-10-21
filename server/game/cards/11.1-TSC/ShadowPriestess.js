@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class ShadowPriestess extends DrawCard {
+    // Shadow Priestess (11008)
+    // Shadow (3).
+    // Reaction: After Shadow Priestess comes out of shadows, choose and kneel a character without
+    // attachments.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class EastwatchByTheSea extends DrawCard {
+    // Eastwatch-by-the-Sea (06006)
+    // Reaction: After the dominance phase begins, if you have a higher reserve value than an
+    // opponent, draw 1 card.
+    // +1 Reserve.
     setupCardAbilities() {
         this.plotModifiers({
             reserve: 1

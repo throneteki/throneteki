@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class MargaeryTyrell extends DrawCard {
+    // Margaery Tyrell (09006)
+    // While Margaery Tyrell is attacking, she gets +1 STR for each defending character.
+    // Reaction: After Margaery Tyrell is declared as an attacker, choose and kneel a character
+    // controlled by the defending player. That character is participating in the challenge as a
+    // defender.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),

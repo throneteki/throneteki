@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { flatten } from '../../../Array.js';
 
 class TheThingsIDoForLove extends DrawCard {
+    // The Things I Do For Love (01101)
+    // Play only if you control a [lannister] Lord or Lady character.
+    // Challenges Action: Kneel your faction card to choose a character with printed cost X or lower
+    // controlled by an opponent, and return it to its owner's hand.
     setupCardAbilities(ability) {
         this.xValue({
             min: () => this.getMinimumCharCost(),

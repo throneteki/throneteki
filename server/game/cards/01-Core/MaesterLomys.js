@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MaesterLomys extends DrawCard {
+    // Maester Lomys (01180)
+    // Reaction: After you win an [intrigue] challenge as the defending player, discard 1 card at
+    // random from the attacking player's hand.
     setupCardAbilities() {
         this.reaction({
             when: {

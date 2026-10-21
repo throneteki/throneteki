@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ThePackSurvives extends DrawCard {
+    // The Pack Survives (03023)
+    // Interrupt: When the effects of an opponent's event would initiate, sacrifice a Direwolf card
+    // or kneel 2 [stark] characters to cancel those effects.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

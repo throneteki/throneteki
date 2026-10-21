@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SeventyNineSentinels extends DrawCard {
+    // Seventy-Nine Sentinels (26110)
+    // Challenges Action: During a challenge in which you control a defending [thenightswatch]
+    // character, kneel any number of [thenightswatch] characters with 1 or fewer challenge icons to
+    // have them participate in the challenge on your side.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel to defend',

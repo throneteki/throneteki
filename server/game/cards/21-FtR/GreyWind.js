@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class GreyWind extends DrawCard {
+    // Grey Wind (21018)
+    // Unique [stark] character only.
+    // Attached character gains stealth.
+    // Interrupt: When the effects of a triggered character ability would initiate, return a
+    // Direwolf card to your hand to cancel those effects. (Limit once per phase.)
+    // Action: Pay 1 gold to attach Grey Wind to a different character. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'stark', unique: true });
         this.whileAttached({

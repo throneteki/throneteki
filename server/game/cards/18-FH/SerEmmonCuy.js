@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class SerEmmonCuy extends DrawCard {
+    // Ser Emmon Cuy (18016)
+    // Bestow (1).
+    // Reaction: After you initiate a challenge, discard 1 gold from Ser Emmon Cuy to raise the
+    // claim value on your revealed plot card by 1 until the end of the challenge. Then, if he has
+    // no gold, kill him. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class NorthernPatriarch extends DrawCard {
+    // Northern Patriarch (26091)
+    // Immune to opponents' Omen plot effects.
+    // Interrupt: When the effects of an opponent's event would initiate, cancel those effects
+    // unless that player moves 1 power from a card they control to Northern Patriarch. (Max once
+    // per round.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

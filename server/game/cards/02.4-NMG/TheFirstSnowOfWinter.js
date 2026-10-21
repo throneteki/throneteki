@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class TheFirstSnowOfWinter extends PlotCard {
+    // The First Snow of Winter (02079)
+    // Forced Reaction: After the challenges phase begins, return each character with printed cost 3
+    // or lower to its owner's hand.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

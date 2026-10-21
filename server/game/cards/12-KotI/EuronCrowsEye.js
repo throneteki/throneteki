@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class EuronCrowsEye extends DrawCard {
+    // Euron Crow's Eye (12002)
+    // Intimidate.
+    // Reaction: After you marshal Euron Crow's Eye, search your hand, deck, and discard pile for
+    // Silence and put it into play. Shuffle your deck.
     setupCardAbilities() {
         this.reaction({
             when: {

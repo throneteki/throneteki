@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheHound extends DrawCard {
+    // The Hound (02009)
+    // Ambush (4).
+    // Forced Reaction: After you win a challenge in which The Hound is participating, you may
+    // discard 1 card at random from your hand. If you do not, return The Hound to your hand.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

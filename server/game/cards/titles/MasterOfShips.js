@@ -1,6 +1,13 @@
 import TitleCard from '../../TitleCard.js';
 
 class MasterOfShips extends TitleCard {
+    // Master of Ships (01207)
+    // Supported by Master of Coin
+    // Supports: Master of Whispers
+    // Rivals: Master of Laws, Hand of the King
+    // Raise the claim value on your revealed plot card by 1 during [military] challenges in which
+    // you are attacking a rival.
+    // +1 STR [military]
     setupCardAbilities(ability) {
         this.supports('Master of Whispers');
         this.rivals('Master of Laws', 'Hand of the King');

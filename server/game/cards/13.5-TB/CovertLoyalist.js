@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class CovertLoyalist extends DrawCard {
+    // Covert Loyalist (13093)
+    // Shadow (4).
+    // Action: Discard a [targaryen] card with printed cost 4 or higher from your hand to put Covert
+    // Loyalist into play from shadows.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put into play',

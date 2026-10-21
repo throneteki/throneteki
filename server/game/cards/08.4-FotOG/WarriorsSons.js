@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class WarriorsSons extends DrawCard {
+    // Warrior's Sons (08077)
+    // No attachments.
+    // Reaction: After an opponent plays an event during a challenge in which Warrior’s Sons is
+    // participating, move 1 power from that opponent’s faction card to Warrior’s Sons.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -3,6 +3,11 @@ import { Tokens } from '../../Constants/index.js';
 import GameActions from '../../GameActions/index.js';
 
 class KindlyMan extends DrawCard {
+    // Kindly Man (20044)
+    // Ambush (4). Shadow (2).
+    // Reaction: After Kindly Man stands, choose an agenda or a card in play and, either: place a
+    // non-gold, non-power token of your choice on that card; or discard a non-gold, non-power token
+    // from that card. (Limit 3 times per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

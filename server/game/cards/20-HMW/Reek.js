@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Reek extends DrawCard {
+    // Reek (20027)
+    // Shadow (2).
+    // If you control Theon Greyjoy, sacrifice Reek.
+    // Reaction: After you win an unopposed challenge in which you control an attacking House Bolton
+    // character, give control of Reek to the losing opponent. Then, choose a non-loyal character
+    // controlled by that player and take control of it.
     setupCardAbilities() {
         this.stateCheck({
             condition: (context) =>

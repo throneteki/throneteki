@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class Qyburn extends DrawCard {
+    // Qyburn (08109)
+    // Reaction: After a character is killed, kneel Qyburn to draw 2 cards. Then, choose and discard
+    // 1 card from your hand.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

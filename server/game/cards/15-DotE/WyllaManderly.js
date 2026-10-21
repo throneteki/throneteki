@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class WyllaManderly extends DrawCard {
+    // Wylla Manderly (15035)
+    // Reaction: After a character you control is sacrificed or killed, choose another card in your
+    // discard pile and place it on the bottom of your deck. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

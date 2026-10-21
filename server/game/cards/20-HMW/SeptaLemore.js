@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SeptaLemore extends DrawCard {
+    // Septa Lemore (20032)
+    // While you control Aegon Targaryen, he gains insight.
+    // Interrupt: When Septa Lemore leaves play, choose a [targaryen] character you control with
+    // shadow. Return that character to shadows.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Aegon Targaryen',

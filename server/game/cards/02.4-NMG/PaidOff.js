@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class PaidOff extends DrawCard {
+    // Paid Off (02071)
+    // Opponent's character only. Ambush (1).
+    // Reaction: After you win an [intrigue] challenge, kneel attached character. Then, that
+    // character's controller may give you 1 gold from his or her gold pool to stand that character.
     setupCardAbilities() {
         this.attachmentRestriction({ controller: 'opponent' });
         this.reaction({

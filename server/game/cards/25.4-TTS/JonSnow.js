@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class JonSnow extends DrawCard {
+    // Jon Snow (25071)
+    // No attachments except Direwolf.
+    // Interrupt: When claim is applied for a [military] challenge, either: standing characters, or
+    // kneeling characters must be chosen for claim during this challenge, if able.
     setupCardAbilities() {
         this.interrupt({
             when: {

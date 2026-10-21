@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class PalaceSpearman extends DrawCard {
+    // Palace Spearman (01114)
+    // No attachments.
+    // While you are not the first player, Palace Spearman gains an [intrigue] icon.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

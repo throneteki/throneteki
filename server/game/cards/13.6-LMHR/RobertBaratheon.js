@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class RobertBaratheon extends DrawCard {
+    // Robert Baratheon (13107)
+    // Renown.
+    // Reaction: After Robert Baratheon gains power, gain 1 power for your faction. (Limit twice per
+    // round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

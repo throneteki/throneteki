@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class CompelledByTheFaith extends PlotCard {
+    // Compelled by the Faith (08100)
+    // When Revealed: Move each power from each card in play to its controller's faction card.
     setupCardAbilities() {
         this.whenRevealed({
             handler: (context) => {

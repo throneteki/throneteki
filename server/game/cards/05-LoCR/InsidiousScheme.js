@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class InsidiousScheme extends DrawCard {
+    // Insidious Scheme (05023)
+    // Reaction: After claim is applied for an [intrigue] challenge you won by 5 or more STR, draw 2
+    // cards. (4 cards instead if the losing opponent has no cards in his or her hand.)
     setupCardAbilities() {
         this.reaction({
             when: {

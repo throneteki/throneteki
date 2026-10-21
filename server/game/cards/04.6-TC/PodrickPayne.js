@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class PodrickPayne extends DrawCard {
+    // Podrick Payne (04109)
+    // Interrupt: When a character would be killed for [military] claim, pay 2 gold and put Podrick
+    // Payne into play from your hand to save it. Then, if that character was Tyrion Lannister, you
+    // may pay 2 gold to choose and kill an attacking character.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

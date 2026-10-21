@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class StormlandsFiefdom extends DrawCard {
+    // Stormlands Fiefdom (11009)
+    // Action: Kneel Stormlands Fiefdom to move 1 power from a character or location to its owner's
+    // faction card.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.action({
             title: 'Move a power',

@@ -1,6 +1,10 @@
 import PlotCard from '../../plotcard.js';
 
 class WardensOfTheNorth extends PlotCard {
+    // Wardens of the North (02062)
+    // Challenges Action: During a challenge in which you control a participating [stark] character,
+    // kneel another [stark] character to have it participate in that challenge on your side. (Limit
+    // twice per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel a character to have it participate in the current challenge',

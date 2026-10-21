@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class VaesDothrak extends DrawCard {
+    // Vaes Dothrak (02014)
+    // Reaction: After you reveal a plot card, discard an attachment from your hand to choose an
+    // attachment with equal or lower printed cost, and discard it from play.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

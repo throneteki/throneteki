@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class GivenToTheDrownedGod extends DrawCard {
+    // Given to the Drowned God (08092)
+    // Action: Kill a Drowned God character to draw X cards. X is that character's printed cost.
     setupCardAbilities(ability) {
         this.action({
             title: 'Draw cards',

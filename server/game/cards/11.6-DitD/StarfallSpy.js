@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class StarfallSpy extends DrawCard {
+    // Starfall Spy (11115)
+    // Shadow (3).
+    // Reaction: After you win a challenge in which Starfall Spy is participating, return it to
+    // shadows to choose another card you control in shadows and put it into play.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

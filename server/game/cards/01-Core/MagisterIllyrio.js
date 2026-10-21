@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class MagisterIllyrio extends DrawCard {
+    // Magister Illyrio (01163)
+    // Action: Pay 2 gold to choose and stand a character. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand a character',

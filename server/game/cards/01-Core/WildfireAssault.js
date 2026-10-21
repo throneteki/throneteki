@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class WildfireAssault extends PlotCard {
+    // Wildfire Assault (01026)
+    // When Revealed: Each player chooses up to 3 characters he or she controls. Kill each character
+    // not chosen (cannot be saved).
     setupCardAbilities() {
         this.whenRevealed({
             target: {

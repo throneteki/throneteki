@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Dorne extends DrawCard {
+    // Dorne (17113)
+    // Reaction: After you lose a [military] or [power] challenge, look at the top 2 cards of your
+    // deck. Add 1 to your hand and place the other on the bottom of your deck.
+    // +1 Reserve.
     setupCardAbilities() {
         this.plotModifiers({
             reserve: 1

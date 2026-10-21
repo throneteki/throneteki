@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class CerseisInformer extends DrawCard {
+    // Cersei's Informer (08089)
+    // Bestow (3).
+    // Action: Move 1 gold from Cersei's Informer to a non-Spy card you control to draw 1 card.
+    // Then, choose and discard 1 card from your hand. (Limit once per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Draw card',

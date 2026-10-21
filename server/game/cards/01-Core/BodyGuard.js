@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class BodyGuard extends DrawCard {
+    // Bodyguard (01033)
+    // Lord or Lady character only.
+    // Interrupt: When attached character would be killed or discarded from play, sacrifice
+    // Bodyguard to save that character.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: ['Lord', 'Lady'] });
         this.interrupt({

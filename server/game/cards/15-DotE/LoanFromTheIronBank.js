@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class LoanFromTheIronBank extends PlotCard {
+    // Loan from the Iron Bank (15051)
+    // While Loan from the Iron Bank is in your used pile, reduce the gold value on your revealed
+    // plot by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',

@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class SerGregorClegane extends DrawCard {
+    // Ser Gregor Clegane (02049)
+    // Pillage. Renown.
+    // Reaction: After Ser Gregor Clegane discards a character using pillage, place that card in its
+    // owner's dead pile. Then, you may choose and kill a character with printed cost equal to that
+    // card's printed cost.
     setupCardAbilities() {
         this.reaction({
             when: {

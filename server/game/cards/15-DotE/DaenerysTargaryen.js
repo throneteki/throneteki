@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class DaenerysTargaryen extends DrawCard {
+    // Daenerys Targaryen (15001)
+    // Action: Search the top 10 cards of your deck for an attachment or Dragon card, reveal it, and
+    // add it to your hand (you may put it into play instead if its printed cost is 3 or lower).
+    // Shuffle your deck. (Limit once per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Search deck',

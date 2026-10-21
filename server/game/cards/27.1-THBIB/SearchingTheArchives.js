@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class SearchingTheArchives extends PlotCard {
+    // Searching the Archives (27020)
+    // When Revealed: Choose up to 3 cards in your hand and place them facedown under your agenda.
+    // Then, draw that many cards.
     setupCardAbilities() {
         this.whenRevealed({
             target: {

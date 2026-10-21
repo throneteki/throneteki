@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SeizeTheInitiative extends DrawCard {
+    // Seize the Initiative (11013)
+    // X is the number of opponents you have.
+    // Interrupt: When the marshaling phase ends, you become the first player.
     setupCardAbilities() {
         this.xValue({
             value: (context) => this.game.getOpponents(context.player).length

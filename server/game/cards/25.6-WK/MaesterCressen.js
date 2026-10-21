@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MaesterCressen extends DrawCard {
+    // Maester Cressen (25101)
+    // Shadow (1).
+    // Reaction: After Maester Cressen comes out of shadows or enters your dead pile, place the top
+    // 2 cards of your deck facedown under your agenda.
     setupCardAbilities() {
         this.reaction({
             when: {

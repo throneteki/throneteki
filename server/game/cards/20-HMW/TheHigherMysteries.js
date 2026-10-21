@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheHigherMysteries extends DrawCard {
+    // The Higher Mysteries (20048)
+    // Reaction: After you win a challenge in which you control a participating Maester character,
+    // reveal the top card of your deck and put it into play.
     setupCardAbilities() {
         this.reaction({
             when: {

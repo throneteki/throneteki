@@ -2,6 +2,8 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class TheMander extends DrawCard {
+    // The Mander (01193)
+    // Reaction: After you win a challenge by 5 or more STR, kneel The Mander to draw 2 cards.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

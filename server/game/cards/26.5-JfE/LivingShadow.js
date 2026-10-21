@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class LivingShadow extends DrawCard {
+    // Living Shadow (26081)
+    // No attachments. Shadow (1). Stealth.
+    // Living Shadow cannot be killed.
+    // Forced Reaction: After Living Shadow bypasses a character using stealth, attach it to that
+    // character as a Condition attachment with the text: "Terminal. Attached character cannot be
+    // saved."
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

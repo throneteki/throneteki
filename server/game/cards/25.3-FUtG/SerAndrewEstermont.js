@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SerAndrewEstermont extends DrawCard {
+    // Ser Andrew Estermont (25041)
+    // Interrupt: When a unique [baratheon] character would be killed, kill a R'hllor character to
+    // save that character and have it gain 1 power. (Limit once per round.)
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

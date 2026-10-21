@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class RickonStark extends DrawCard {
+    // Rickon Stark (03016)
+    // Interrupt: When the effects of a triggered ability with the word "search" in it would
+    // initiate, sacrifice Rickon Stark to cancel those effects.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SerMerynTrant extends DrawCard {
+    // Ser Meryn Trant (15029)
+    // Interrupt: When a card is discarded from an opponent's hand, remove it from the game instead
+    // of placing it in his or her discard pile.
     setupCardAbilities() {
         this.interrupt({
             when: {

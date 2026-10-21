@@ -3,6 +3,9 @@ import Messages from '../../Messages/index.js';
 import { flatMap } from '../../../Array.js';
 
 class NothingBurnsLikeTheCold extends PlotCard {
+    // Nothing Burns Like The Cold (09052)
+    // When Revealed: Each player chooses an attachment and a non-limited location he or she
+    // controls, if able, and discards each of those cards from play (cannot be saved).
     setupCardAbilities() {
         this.whenRevealed({
             target: {

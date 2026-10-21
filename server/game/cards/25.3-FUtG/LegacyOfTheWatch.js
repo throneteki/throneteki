@@ -3,6 +3,12 @@ import DrawCard from '../../drawcard.js';
 import Message from '../../Message.js';
 
 class LegacyOfTheWatch extends DrawCard {
+    // Legacy of the Watch (25050)
+    // Unique [thenightswatch] location you control only.
+    // Reaction: After you win a challenge by 5 or more STR, if you control 2 or more participating:
+    // - Ranger characters, gain 1 power for your faction.
+    // - Steward characters, draw 2 cards.
+    // - Builder characters, stand a [thenightswatch] location.
     setupCardAbilities() {
         this.attachmentRestriction({
             type: 'location',

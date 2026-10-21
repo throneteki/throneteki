@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class Winterfell extends DrawCard {
+    // Winterfell (25104)
+    // Reaction: After you win an unopposed challenge, kneel Winterfell to choose a character
+    // controlled by the losing opponent. Until the end of the phase, take control of that
+    // character.
+    // -2 Initiative.
     setupCardAbilities(ability) {
         this.plotModifiers({
             initiative: -2

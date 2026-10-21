@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class BanishedFromTheLight extends DrawCard {
+    // Banished from the Light (11108)
+    // Shadow (2).
+    // Reaction: After you win a [power] challenge, choose a character. Place it in shadows with a
+    // shadow token on it. While that card is in shadows, it gains shadow (X). X is its printed
+    // cost.
     setupCardAbilities() {
         this.reaction({
             when: {

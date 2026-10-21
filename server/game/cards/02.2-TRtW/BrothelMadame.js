@@ -11,6 +11,10 @@ class BrothelMadame extends DrawCard {
         this.registerEvents(['onGoldTransferred']);
     }
 
+    // Brothel Madame (02029)
+    // Reaction: After the challenges phase begins, choose a player. That player may give you 1 gold
+    // from his or her gold pool. Until the end of the phase, if that player has not given you gold
+    // this phase, he or she cannot initiate [military] challenges against you.
     setupCardAbilities() {
         this.reaction({
             when: {

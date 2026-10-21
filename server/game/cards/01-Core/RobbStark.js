@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class RobbStark extends DrawCard {
+    // Robb Stark (01146)
+    // Renown.
+    // Reaction: After a [stark] character you control is sacrificed or killed, stand each character
+    // you control. (Limit once per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

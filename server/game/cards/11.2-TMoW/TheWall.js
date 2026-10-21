@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class TheWall extends DrawCard {
+    // The Wall (11026)
+    // Each character you control gains the [thenightswatch] affiliation and loses all other faction
+    // affiliations.
+    // Action: Kneel The Wall to choose an opponent. Put an eligible character of that player’s
+    // choice from his or her discard pile into play under your control.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.getType() === 'character',

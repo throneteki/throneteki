@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MinaRedwyne extends DrawCard {
+    // Mina Redwyne (20036)
+    // Reaction: After The Queen of Thorns or a House Redwyne card enters play under your control or
+    // your discard pile, draw 1 card. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

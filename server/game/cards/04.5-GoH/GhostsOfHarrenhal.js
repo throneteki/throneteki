@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class GhostsOfHarrenhal extends PlotCard {
+    // Ghosts of Harrenhal (04100)
+    // When Revealed: Put the top character in each player's dead pile into play.
     setupCardAbilities() {
         this.whenRevealed({
             handler: (context) => {

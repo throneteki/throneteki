@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class SerGarlanTyrell extends DrawCard {
+    // Ser Garlan Tyrell (06083)
+    // Bestow (3). Renown.
+    // Ser Garlan Tyrell gets +1 STR for each gold he has.
+    // Action: Discard 1 gold from Ser Garlan Tyrell to choose a [tyrell] character. Until the end
+    // of the phase, that character gets +2 STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

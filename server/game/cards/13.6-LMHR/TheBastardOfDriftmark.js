@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheBastardOfDriftmark extends DrawCard {
+    // The Bastard of Driftmark (13109)
+    // Reaction: After you win an [intrigue] challenge in which The Bastard of Driftmark is
+    // participating, choose and stand a location.
     setupCardAbilities() {
         this.reaction({
             when: {

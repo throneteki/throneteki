@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Moqorro extends DrawCard {
+    // Moqorro (11111)
+    // Shadow (5).
+    // Reaction: After Moqorro comes out of shadows during a challenge, choose a defending character
+    // and place it on top of its owner's deck.
     setupCardAbilities() {
         this.reaction({
             when: {

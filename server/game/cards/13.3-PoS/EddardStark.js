@@ -3,6 +3,10 @@ import GameActions from '../../GameActions/index.js';
 import Conditions from '../../Conditions.js';
 
 class EddardStark extends DrawCard {
+    // Eddard Stark (13041)
+    // Renown.
+    // Dominance Action: If each character you control has the [stark] affiliation, kneel Eddard
+    // Stark to choose and kill a character with printed cost 4 or lower. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Kill a character',

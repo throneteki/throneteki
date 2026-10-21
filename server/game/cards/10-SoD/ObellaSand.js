@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class ObellaSand extends DrawCard {
+    // Obella Sand (10010)
+    // Reaction: After Obella Sand is discarded for [intrigue] claim or killed for [military] claim,
+    // move 1 power from the winning opponent's faction card to your own. Shuffle Obella Sand from
+    // your discard or dead pile into your deck.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import { flatten } from '../../../Array.js';
 
 class FacelessMan extends DrawCard {
+    // Faceless Man (09040)
+    // Ambush (4).
+    // Challenges Action: Choose a character in a dead pile. Until the end of the phase, Faceless
+    // Man gains each of that character's printed challenge icons, keywords, faction affiliations,
+    // and Traits. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: "Gain character's icons, keywords, factions and traits",

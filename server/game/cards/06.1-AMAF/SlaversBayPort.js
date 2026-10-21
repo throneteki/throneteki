@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SlaversBayPort extends DrawCard {
+    // Slaver's Bay Port (06014)
+    // Limited.
+    // Marshaling Action: Kneel Slaver's Bay Port to gain 1 gold. (2 gold instead if an opponent has
+    // 4 or more characters in his or her dead pile.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Gain gold',

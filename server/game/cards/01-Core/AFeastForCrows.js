@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class AFeastForCrows extends PlotCard {
+    // A Feast for Crows (01002)
+    // Reaction: After you win dominance, gain 2 power for your faction.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -3,6 +3,11 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class WarriorsBraid extends DrawCard {
+    // Warrior's Braid (06114)
+    // [targaryen] character only.
+    // Attached character gains renown, and gets +1 STR for each bell token on Warrior's Braid.
+    // Reaction: After you win a [military] challenge in which attached character is attacking,
+    // place a bell token on Warrior's Braid.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'targaryen' });
         this.whileAttached({

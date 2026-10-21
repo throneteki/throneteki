@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class GoldMine extends DrawCard {
+    // Gold Mine (11050)
+    // Action: Kneel Gold Mine and discard 1 card from your hand to draw 1 card.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.action({
             title: 'Draw 1 card',

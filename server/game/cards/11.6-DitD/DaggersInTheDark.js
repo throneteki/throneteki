@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class DaggersInTheDark extends DrawCard {
+    // Daggers in the Dark (11106)
+    // Shadow (2).
+    // Reaction: After you win a challenge as the defending player, choose and kill an attacking
+    // character. The attacking player may sacrifice 2 characters to cancel this effect.
     setupCardAbilities() {
         this.reaction({
             when: {

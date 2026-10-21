@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class TorrhensSquare extends DrawCard {
+    // Torrhen's Square (23004)
+    // Reaction: After a [greyjoy] card you control comes out of shadows, kneel Torrhen's Square to
+    // choose up to 3 Raider characters with printed cost higher than your initiative value. Until
+    // the end of the phase, each of those characters discards an additional card using pillage.
+    // -2 Initiative.
     setupCardAbilities(ability) {
         this.plotModifiers({
             initiative: -2

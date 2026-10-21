@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import ChallengeTypes from '../../ChallengeTypes.js';
 
 class OlennasInformant extends DrawCard {
+    // Olenna's Informant (01189)
+    // Ambush (4).
+    // Reaction: After Olenna's Informant enters play during the challenges phase, name a challenge
+    // type. You may initiate an additional challenge of that type this phase.
     setupCardAbilities() {
         this.reaction({
             when: {

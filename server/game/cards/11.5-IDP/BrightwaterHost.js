@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class BrightwaterHost extends DrawCard {
+    // Brightwater Host (11083)
+    // No attachments.
+    // Reaction: After you win a challenge in which Brightwater Host is attacking, choose 1 card in
+    // shadows and return it to its owner's hand. Then, a unique [tyrell] character you control
+    // gains 2 power.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class LordRenlysRide extends DrawCard {
+    // "Lord Renly's Ride" (06024)
+    // Action: Choose a character. Until the end of the phase, that character gets +X STR and gains
+    // intimidate. X is the printed STR of the top character in your dead pile.
     setupCardAbilities() {
         this.action({
             title: 'Give +STR and intimidate',

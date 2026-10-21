@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheHighroad extends DrawCard {
+    // The Highroad (23034)
+    // Limited.
+    // Action: Kneel and sacrifice The Highroad to reduce the cost of the next non-character card
+    // you marshal or play this phase by 2.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.plotModifiers({
             gold: 1

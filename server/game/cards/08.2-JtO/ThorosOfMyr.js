@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class ThorosOfMyr extends DrawCard {
+    // Thoros of Myr (08037)
+    // Renown.
+    // Interrupt: When another non-loyal character you control would be killed, kneel Thoros of Myr
+    // and discard 1 power from him to save that character.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class CloseCall extends PlotCard {
+    // Close Call (02120)
+    // When Revealed: Move a character from your dead pile to your discard pile. Then, if there are
+    // no Winter plot cards in play, draw 1 card.
     setupCardAbilities() {
         this.whenRevealed({
             handler: (context) => {

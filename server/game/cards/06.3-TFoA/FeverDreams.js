@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class FeverDreams extends DrawCard {
+    // Fever Dreams (06050)
+    // Opponent's character only. Bestow (3).
+    // Reaction: After attached character is knelt, discard 1 gold from Fever Dreams to draw 2
+    // cards.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ controller: 'opponent' });
         this.reaction({

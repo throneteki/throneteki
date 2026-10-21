@@ -1,6 +1,10 @@
 import PlotCard from '../../plotcard.js';
 
 class ThePaleMare extends PlotCard {
+    // The Pale Mare (00008)
+    // When Revealed: Each player chooses any number of characters he or she controls with total
+    // printed cost 10 or lower. Kill each character not chosen (cannot be saved).
+    // Draft format only.
     setupCardAbilities() {
         this.whenRevealed({
             target: {

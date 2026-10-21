@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheRedViper extends DrawCard {
+    // The Red Viper (06095)
+    // Renown.
+    // While The Red Viper is attacking, each defending character with fewer than 2 challenge icons
+    // does not contribute its STR to the challenge.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),

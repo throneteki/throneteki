@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MyMindIsMyWeapon extends DrawCard {
+    // My Mind Is My Weapon (12028)
+    // Action: During a [military] challenge, choose a character you control with an [intrigue] icon
+    // and have it participate in the challenge on your side.
     setupCardAbilities() {
         this.action({
             title: 'Add to challenge',

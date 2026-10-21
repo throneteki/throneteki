@@ -2,6 +2,8 @@ import PlotCard from '../../plotcard.js';
 import { flatMap } from '../../../Array.js';
 
 class ValarMorghulis extends PlotCard {
+    // Valar Morghulis (04080)
+    // When Revealed: Kill each character.
     setupCardAbilities() {
         this.whenRevealed({
             handler: () => {

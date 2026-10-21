@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class KingRobertsWarhammer extends DrawCard {
+    // King Robert's Warhammer (02008)
+    // Attached character gets +1 STR.
+    // Reaction: After you win a challenge in which attached character is participating as an
+    // attacker, choose and kneel up to X total STR worth of characters, where X is attached
+    // character's STR. Then, sacrifice King Robert's Warhammer.
     setupCardAbilities(ability) {
         this.whileAttached({
             effect: ability.effects.modifyStrength(1)

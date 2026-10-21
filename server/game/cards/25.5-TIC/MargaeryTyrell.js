@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class MargaeryTyrell extends DrawCard {
+    // Margaery Tyrell (25095)
+    // Renown. Shadow (5).
+    // Interrupt: When 1 or more [tyrell] cards are revealed from your hand or deck, choose 1 of
+    // those cards and place it in shadows. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

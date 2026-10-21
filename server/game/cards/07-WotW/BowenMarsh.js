@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class BowenMarsh extends DrawCard {
+    // Bowen Marsh (07002)
+    // During [intrigue] challenges, each Steward character you control gains insight.
+    // +1 Reserve.
     setupCardAbilities(ability) {
         this.plotModifiers({
             reserve: 1

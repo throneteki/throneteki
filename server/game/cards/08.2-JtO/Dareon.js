@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Dareon extends DrawCard {
+    // Dareon (08025)
+    // Reaction: After you play a Song event, choose an opponent. Move 1 gold from that player's
+    // gold pool to your own. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

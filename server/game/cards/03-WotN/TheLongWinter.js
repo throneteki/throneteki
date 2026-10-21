@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class TheLongWinter extends PlotCard {
+    // The Long Winter (03049)
+    // When Revealed: Each player without a Summer plot revealed discards 1 power from a card he or
+    // she controls.
     setupCardAbilities() {
         this.whenRevealed({
             handler: () => {

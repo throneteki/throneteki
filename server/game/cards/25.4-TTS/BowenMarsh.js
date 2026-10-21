@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import ChallengeTypes from '../../ChallengeTypes.js';
 
 class BowenMarsh extends DrawCard {
+    // Bowen Marsh (25069)
+    // Insight. Shadow (4).
+    // Reaction: After a card you control comes out of shadows, choose a character and a challenge
+    // type. Until the end of the phase, that character cannot be declared as an attacker in
+    // challenges of that type. (Limit 3 times per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

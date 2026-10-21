@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class QuentynMartell extends DrawCard {
+    // Quentyn Martell (03031)
+    // While you are not the first player, Quentyn Martell gets +1 STR and gains stealth.
+    // Interrupt: When Quentyn Martell is killed, choose and kill a character with a lower STR than
+    // his.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => !this.controller.firstPlayer,

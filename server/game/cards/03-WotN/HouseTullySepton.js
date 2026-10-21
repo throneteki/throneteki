@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class HouseTullySepton extends DrawCard {
+    // House Tully Septon (03015)
+    // Marshaling Action: Discard 1 power from a character you control to reduce the cost of the
+    // next House Tully or The Seven character you marshal this phase by 2. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce next marshalled character',

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class WingedKnight extends DrawCard {
+    // Winged Knight (23029)
+    // Interrupt: When a Lord or Lady character is killed, sacrifice Winged Knight to remove that
+    // character from the game instead of placing it in its owner's dead pile.
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class ImprovedFortifications extends DrawCard {
+    // Improved Fortifications (06066)
+    // Location only.
+    // Interrupt: When attached location would leave play, sacrifice Improved Fortifications to save
+    // it.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ type: 'location' });
 

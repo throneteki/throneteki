@@ -3,6 +3,10 @@ import { Tokens } from '../../Constants/index.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheWolfsDen extends DrawCard {
+    // The Wolf's Den (23012)
+    // Reaction: After a character you control is sacrificed or killed, kneel The Wolf's Den to
+    // place the bottom card of your deck in shadows with a shadow token on it. While that card is
+    // in shadows, it gains shadow (X). X is its printed cost.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

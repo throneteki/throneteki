@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheLastOfTheGiants extends DrawCard {
+    // "The Last of the Giants" (07045)
+    // Action: Put a neutral character into play from your hand. Until the end of the phase, that
+    // character gains intimidate. At the end of the phase, if that character is still in play, kill
+    // it (cannot be saved).
     setupCardAbilities() {
         this.action({
             title: 'Put character into play',

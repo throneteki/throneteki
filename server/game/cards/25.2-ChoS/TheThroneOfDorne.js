@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TheThroneOfDorne extends DrawCard {
+    // The Throne of Dorne (25028)
+    // Reaction: After you lose dominance, kneel The Throne of Dorne to place a [martell] card you
+    // control in shadows.
+    // +1 Reserve.
     setupCardAbilities(ability) {
         this.plotModifiers({
             reserve: 1

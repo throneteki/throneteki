@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class WinterfellCastle extends DrawCard {
+    // Winterfell Castle (22018)
+    // Each character with the highest printed cost among unique [stark] characters you control
+    // gains the Old Gods trait and insight.
+    // Interrupt: When an Old Gods card would be killed or discarded from play, kneel that card to
+    // save it. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>

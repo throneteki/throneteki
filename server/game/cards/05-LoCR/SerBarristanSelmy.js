@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SerBarristanSelmy extends DrawCard {
+    // Ser Barristan Selmy (05035)
+    // Reaction: After you win a challenge in which Ser Barristan Selmy is participating, if you
+    // have fewer cards in hand than the losing opponent, stand him.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SouthronInformant extends DrawCard {
+    // Southron Informant (26067)
+    // Ambush (1).
+    // Forced Reaction: After Southron Informant enters play during the challenges phase, give
+    // control of it to an opponent. Then, discard 1 card at random from that player's hand and draw
+    // 1 card.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

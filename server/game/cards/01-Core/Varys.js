@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Varys extends DrawCard {
+    // Varys (01029)
+    // Stealth.
+    // Interrupt: When the dominance phase ends, remove Varys from the game to discard each
+    // character from play.
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

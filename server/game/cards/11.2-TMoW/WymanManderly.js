@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class WymanManderly extends DrawCard {
+    // Wyman Manderly (11021)
+    // Action: Sacrifice a character.
+    // Reaction: After 1 or more characters you control are sacrificed or killed, stand Wyman
+    // Manderly and draw 1 card. (Limit 3 times per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Sacrifice a character',

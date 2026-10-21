@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class GodryTheGiantslayer extends DrawCard {
+    // Godry the Giantslayer (18002)
+    // Bestow (1).
+    // X is the number of gold Godry the Giantslayer has. While he has 5 or more gold, he gains
+    // intimidate.
+    // Reaction: After you marshal or play another Knight or R'hllor card, Godry the Giantslayer
+    // gains 1 gold. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

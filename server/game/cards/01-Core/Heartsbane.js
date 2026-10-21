@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Heartsbane extends DrawCard {
+    // Heartsbane (01191)
+    // [tyrell] character only.
+    // Action: While attached character is participating in a challenge, kneel Heartsbane to give
+    // that character +3 STR until the end of the challenge.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'tyrell' });
         this.action({

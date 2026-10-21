@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class HightowerKnight extends DrawCard {
+    // Hightower Knight (14037)
+    // Action: Kneel a non-[tyrell] Knight character to put Hightower Knight into play from your
+    // hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put into play',

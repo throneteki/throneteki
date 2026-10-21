@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Esgred extends DrawCard {
+    // Esgred (04111)
+    // Stealth.
+    // If you control Asha Greyjoy, sacrifice Esgred. Then, your Asha Greyjoy gains 1 power.
+    // Esgred may bypass an additional character using stealth.
     setupCardAbilities(ability) {
         this.stateCheck({
             condition: (context) => !!this.getAsha(context.player),

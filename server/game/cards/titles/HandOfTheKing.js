@@ -2,6 +2,13 @@ import TitleCard from '../../TitleCard.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class HandOfTheKing extends TitleCard {
+    // Hand of the King (01208)
+    // Supported by Master of Whispers.
+    // Supports: Master of Laws.
+    // Rivals: Master of Coin, Master of Ships.
+    // You may initiate an additional [power] challenge during the challenges phase, against a
+    // different opponent.
+    // +1 STR [power]
     setupCardAbilities(ability) {
         this.tracker = ChallengeTracker.forPhase(this.game);
 

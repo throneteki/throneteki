@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class OldBearMormont extends DrawCard {
+    // Old Bear Mormont (07003)
+    // Reaction: After you win a challenge in which Old Bear Mormont is participating, choose a
+    // non-unique character in the losing opponent's discard pile, and put it into play under your
+    // control.
     setupCardAbilities() {
         this.reaction({
             when: {

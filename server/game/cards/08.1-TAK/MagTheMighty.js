@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MagTheMighty extends DrawCard {
+    // Mag the Mighty (08018)
+    // Renown. No attachments except Weapon.
+    // Forced Reaction: After you win a challenge in which Mag the Mighty is participating, choose
+    // and kill a character you control. Then, the losing opponent chooses and kills a character he
+    // or she controls.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

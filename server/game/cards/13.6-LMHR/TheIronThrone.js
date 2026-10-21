@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheIronThrone extends DrawCard {
+    // The Iron Throne (13117)
+    // Reaction: After a phase begins, kneel The Iron Throne to name a card. Until the end of the
+    // phase, that card cannot be marshaled, played, or put into play.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

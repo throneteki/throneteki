@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class UndergroundVault extends DrawCard {
+    // Underground Vault (06046)
+    // Limited.
+    // Marshaling Action: Kneel Underground Vault to gain 1 gold. (2 gold instead if the gold value
+    // on an opponent's revealed plot card is 5 or higher.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Gain gold',

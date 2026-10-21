@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SerGerrisDrinkwater extends DrawCard {
+    // Ser Gerris Drinkwater (11016)
+    // Renown. Shadow (5).
+    // Reaction: After Ser Gerris Drinkwater comes out of shadows, choose a card in your plot deck
+    // and switch it with a card in your used pile.
     setupCardAbilities() {
         this.reaction({
             when: {

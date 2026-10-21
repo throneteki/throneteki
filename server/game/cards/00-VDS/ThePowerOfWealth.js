@@ -7,6 +7,11 @@ class ThePowerOfWealth extends AgendaCard {
         this.registerEvents(['onDecksPrepared']);
     }
 
+    // The Power of Wealth (00001)
+    // When you announce The Power of Wealth as your agenda, name 1 faction. You may include cards
+    // from that faction in your draw deck and plot deck.
+    // Reduce the cost of the first in-faction card you marshal or play each round by 1.
+    // Draft format only.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class IShallWinNoGlory extends DrawCard {
+    // I Shall Win No Glory (07024)
+    // Reaction: After a challenge is initiated against you, kneel 3 Builder characters, 3 Ranger
+    // characters, or 3 Steward characters to end the challenge immediately with no winner or loser.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class VerteranBuilder extends DrawCard {
+    // Veteran Builder (01134)
+    // No attachments except Weapon.
+    // Action: Sacrifice Veteran Builder to choose and stand a location.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand a location',

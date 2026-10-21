@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Nymeria extends DrawCard {
+    // Nymeria (03019)
+    // Unique [stark] character only.
+    // Attached character gains intimidate.
+    // Action: Pay 1 gold to attach Nymeria to a different character. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'stark', unique: true });
         this.whileAttached({

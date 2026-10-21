@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Rakharo extends DrawCard {
+    // Rakharo (02033)
+    // While you control another Bloodrider character, Rakharo gains intimidate.
+    // Reaction: After a character is killed to satisfy claim during a challenge you initiated,
+    // Rakharo gains 1 power.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.hasAnotherBloodrider(),

@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class GoldenTooth extends DrawCard {
+    // Golden Tooth (05017)
+    // Limited.
+    // Action: Kneel Golden Tooth to gain 1 gold. (3 gold instead if an opponent has no cards in his
+    // or her hand.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Gain gold',

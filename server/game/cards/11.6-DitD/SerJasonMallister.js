@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerJasonMallister extends DrawCard {
+    // Ser Jason Mallister (11101)
+    // While there are no cards in shadows, Ser Jason Mallister gains renown.
+    // Reaction: After you win a challenge in which Ser Jason Mallister is attacking, choose a card
+    // in shadows controlled by the losing opponent, and discard it.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.getPlayers().every((player) => player.shadows.length === 0),

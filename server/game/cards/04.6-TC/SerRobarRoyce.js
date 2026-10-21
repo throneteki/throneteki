@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SerRobarRoyce extends DrawCard {
+    // Ser Robar Royce (04103)
+    // Reaction: After a Summer plot card is revealed, Ser Robar Royce gains 1 power. (Limit once
+    // per phase).
+    // Forced Reaction: After a Winter plot card is revealed, kneel Ser Robar Royce.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

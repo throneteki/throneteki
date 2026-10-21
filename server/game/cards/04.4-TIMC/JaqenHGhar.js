@@ -9,6 +9,11 @@ class JaqenHGhar extends DrawCard {
         this.registerEvents([{ 'onCardLeftPlay:forcedinterrupt': 'onCardLeftPlay' }]);
     }
 
+    // Jaqen H'ghar (04077)
+    // Reaction: After Jaqen H'ghar enters play, place a Valar Morghulis token on up to 3 different
+    // unique characters. If Jaqen H'ghar leaves play, discard those tokens from play.
+    // Reaction: After you win a challenge in which Jaqen H'ghar is attacking alone, choose and kill
+    // a character with a Valar Morghulis token.
     setupCardAbilities() {
         this.reaction({
             when: {

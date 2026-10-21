@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class WhiteHarbor extends DrawCard {
+    // White Harbor (11042)
+    // Reaction: After you win a challenge, reveal the top 2 cards of your deck. The losing opponent
+    // chooses 1 of those cards. Add that card to your hand, and place the other on the bottom of
+    // your deck.
     setupCardAbilities() {
         this.reaction({
             when: {

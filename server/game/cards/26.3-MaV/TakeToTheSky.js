@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TakeToTheSky extends DrawCard {
+    // Take to the Sky! (26054)
+    // Play only if you control a Dragon character.
+    // Interrupt: When a Dragon or Stormborn character would be killed or discarded from play, save
+    // it and return it to its owner's hand.
     setupCardAbilities() {
         this.interrupt({
             canCancel: true,

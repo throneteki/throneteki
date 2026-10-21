@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SyrioForel extends DrawCard {
+    // Syrio Forel (02037)
+    // Stealth.
+    // Challenges Action: Choose a character. Until the end of the phase, that character gains a
+    // [military] icon and stealth. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Give a character military icon and stealth',

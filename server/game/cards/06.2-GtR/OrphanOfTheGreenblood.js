@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class OrphanOfTheGreenblood extends DrawCard {
+    // Orphan of the Greenblood (06035)
+    // Bestow (3).
+    // Action: Discard 1 gold from Orphan of the Greenblood to return another character you control
+    // to its owner's hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Discard 1 gold from ' + this.name,

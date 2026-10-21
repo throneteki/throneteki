@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Dragonbinder extends DrawCard {
+    // Dragonbinder (11052)
+    // Character you control only.
+    // Attached character gains intimidate.
+    // Reaction: After you win dominance, kill attached character to, either: choose and take
+    // control of a Dragon character, or search the top 10 cards of your deck for a [greyjoy]
+    // character, put into play, and shuffle your deck.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ controller: 'current' });
         this.whileAttached({

@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class RhymesWithMeek extends DrawCard {
+    // Rhymes With Meek (11112)
+    // Shadow (0).
+    // Reaction: After you win an unopposed challenge, draw 2 cards (3 cards instead if you played
+    // this event from shadows).
     setupCardAbilities() {
         this.reaction({
             when: {

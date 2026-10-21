@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Nightflyer extends DrawCard {
+    // Nightflyer (13032)
+    // Shadow (X).
+    // Reaction: After Nightflyer comes out of shadows, choose a location with printed cost X or
+    // lower and discard it from play.
+    // +1 Initiative.
     setupCardAbilities() {
         this.plotModifiers({
             initiative: 1

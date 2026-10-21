@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class DragonstoneConvert extends DrawCard {
+    // Dragonstone Convert (15026)
+    // Challenges Action: Name an event. Until the end of the phase, events with that title cannot
+    // be played. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Prevent event',

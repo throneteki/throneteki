@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MessengerRaven extends DrawCard {
+    // Messenger Raven (01130)
+    // No attachments.
+    // Dominance Action: Return Messenger Raven to your hand to draw 1 card.
     setupCardAbilities(ability) {
         this.action({
             title: 'Draw 1 card',

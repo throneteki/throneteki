@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class DarkandFullofTerrors extends DrawCard {
+    // Dark and Full of Terrors (20003)
+    // Play only if you control a R'hllor character.
+    // Action: Choose a kneeling character with STR 3 or lower and place it in shadows with a shadow
+    // token on it. While that card is in shadows, it gains shadow (X). X is its printed cost.
     setupCardAbilities() {
         this.action({
             title: 'Place character in shadows',

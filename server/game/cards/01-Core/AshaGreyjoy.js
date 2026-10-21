@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class AshaGreyjoy extends DrawCard {
+    // Asha Greyjoy (01067)
+    // Stealth.
+    // Reaction: After you win an unopposed challenge in which Asha Greyjoy is participating, stand
+    // her.
     setupCardAbilities() {
         this.reaction({
             when: {

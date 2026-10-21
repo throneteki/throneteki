@@ -2,6 +2,8 @@ import DrawCard from '../../drawcard.js';
 import SatisfyClaim from '../../gamesteps/challenge/SatisfyClaim.js';
 
 class TrialByCombat extends DrawCard {
+    // Trial by Combat (02090)
+    // Interrupt: When claim is applied for an [intrigue] challenge, apply [military] claim instead.
     setupCardAbilities() {
         this.interrupt({
             when: {

@@ -3,6 +3,12 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class Harrenhal extends DrawCard {
+    // Harrenhal (16021)
+    // Prized 2.
+    // If Harrenhal has 3 or more ghost tokens on it, sacrifice it.
+    // Interrupt: When the effects of a non-plot, non-agenda triggered ability would initiate, kill
+    // a character you own and control to cancel those effects. Place a ghost token on Harrenhal.
+    // (Limit once per phase.)
     setupCardAbilities(ability) {
         this.stateCheck({
             condition: (context) => context.source.tokens[Tokens.ghost] >= 3,

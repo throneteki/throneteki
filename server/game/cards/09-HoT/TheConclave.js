@@ -8,6 +8,12 @@ class TheConclave extends AgendaCard {
         this.registerEvents(['onPlayerKeepHandOrMulligan']);
     }
 
+    // The Conclave (09045)
+    // Your deck may include non-loyal Maester characters from any faction. Your deck must include
+    // at least 12 Maester characters. Before placing setup cards, place the top 7 cards of your
+    // deck facedown under this agenda.
+    // Reaction: After you win a challenge in which you control a participating Maester character,
+    // choose 1 card under this agenda and switch it with the top card of your deck.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SerHobberRedwyne extends DrawCard {
+    // Ser Hobber Redwyne (02043)
+    // Reaction: After you marshal Ser Hobber Redwyne, search your deck for a Lady character, reveal
+    // it, and add it to your hand. Shuffle your deck.
     setupCardAbilities() {
         this.reaction({
             when: {

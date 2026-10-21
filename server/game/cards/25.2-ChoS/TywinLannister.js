@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TywinLannister extends DrawCard {
+    // Tywin Lannister (25025)
+    // Intimidate.
+    // Reaction: After you win a challenge in which Tywin Lannister is participating, he gains 1
+    // power for every 3 gold in your gold pool. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

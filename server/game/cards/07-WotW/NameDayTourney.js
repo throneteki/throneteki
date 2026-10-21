@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class NameDayTourney extends PlotCard {
+    // Name Day Tourney (07051)
+    // Reaction: After you win a challenge in which a Knight character you control is attacking or
+    // defending alone, choose a Lord or Lady character you control and have it gain 1 power.
     setupCardAbilities() {
         this.reaction({
             when: {

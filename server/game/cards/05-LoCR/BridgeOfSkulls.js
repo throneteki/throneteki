@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class BridgeOfSkulls extends DrawCard {
+    // Bridge of Skulls (05032)
+    // Interrupt: When the challenges phase ends, choose an opponent who did not initiate a military
+    // challenge against you this phase. That player discards one card at random from his or her
+    // hand.
     setupCardAbilities() {
         this.tracker = ChallengeTracker.forPhase(this.game);
 

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MaryaSeaworth extends DrawCard {
+    // Marya Seaworth (07025)
+    // Reaction: After a character is bypassed using stealth, pay 1 gold to kneel it. (Limit twice
+    // per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

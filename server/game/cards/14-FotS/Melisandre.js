@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Melisandre extends DrawCard {
+    // Melisandre (14003)
+    // Stealth.
+    // Reaction: After you win an [intrigue] challenge in which Melisandre is attacking, move 1
+    // power from a character controlled by the losing opponent to Melisandre. Then, if that
+    // character has no power, kill it.
     setupCardAbilities() {
         this.reaction({
             when: {

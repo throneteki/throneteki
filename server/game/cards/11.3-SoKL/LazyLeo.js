@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class LazyLeo extends DrawCard {
+    // Lazy Leo (11043)
+    // Shadow (2).
+    // Reaction: After Lazy Leo comes out of shadows, choose a player. Shuffle any number of events
+    // from that player's discard pile into his or her deck.
     setupCardAbilities() {
         this.reaction({
             when: {

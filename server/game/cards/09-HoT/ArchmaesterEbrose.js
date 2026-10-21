@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ArchmaesterEbrose extends DrawCard {
+    // Archmaester Ebrose (09039)
+    // Action: Kneel a Maester character to choose and stand another Maester character. (Limit once
+    // per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand Maester character',

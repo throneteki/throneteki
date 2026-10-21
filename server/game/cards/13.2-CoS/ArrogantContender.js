@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class ArrogantContender extends DrawCard {
+    // Arrogant Contender (13023)
+    // While Arrogant Contender is participating in a challenge, it gets +1 STR for each
+    // participating character an opponent controls.
+    // Reaction: After you win a challenge in which Arrogant Contender is attacking alone, it gains
+    // 1 power for each defending character (to a maximum of 3 power).
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge() && this.isParticipating(),

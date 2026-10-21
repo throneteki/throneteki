@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheFaithsDecree extends DrawCard {
+    // The Faith's Decree (13059)
+    // Play only if you control a The Seven character or location.
+    // Action: Name a non-agenda, non-plot card. Until the end of the phase, each opponent cannot
+    // trigger card abilities of cards with that name.
     setupCardAbilities() {
         this.action({
             title: 'Prevent abilities',

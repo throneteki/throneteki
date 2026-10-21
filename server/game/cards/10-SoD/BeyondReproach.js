@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class BeyondReproach extends PlotCard {
+    // Beyond Reproach (10049)
+    // When Revealed: Each player sacrifices each attachment that is attached to a character he or
+    // she does not control.
     setupCardAbilities() {
         this.whenRevealed({
             handler: (context) => {

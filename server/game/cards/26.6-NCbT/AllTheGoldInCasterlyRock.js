@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class AllTheGoldInCasterlyRock extends DrawCard {
+    // All the Gold in Casterly Rock (26106)
+    // Limited. Shadow (0).
+    // Reaction: After you win an [intrigue] challenge, gain 2 gold for each card you control in
+    // shadows.
     setupCardAbilities() {
         this.reaction({
             when: {

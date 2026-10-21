@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Morningstar extends DrawCard {
+    // Morningstar (27016)
+    // Character you control only.
+    // Reaction: After you win a [military] challenge in which attached character is participating,
+    // kneel Morningstar to stand attached character and remove it from the challenge.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ controller: 'current' });
 

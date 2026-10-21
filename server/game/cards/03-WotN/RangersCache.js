@@ -2,6 +2,8 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class RangersCache extends PlotCard {
+    // Ranger's Cache (03052)
+    // Interrupt: When the taxation phase ends, either: draw 2 cards or gain 3 gold.
     setupCardAbilities() {
         this.interrupt({
             when: {

@@ -2,6 +2,11 @@ import range from 'lodash.range';
 import DrawCard from '../../drawcard.js';
 
 class TheHouseOfBlackAndWhite extends DrawCard {
+    // The House of Black and White (08022)
+    // Bestow (10).
+    // Dominance Action: Kneel The House of Black and White and discard X gold from it to choose and
+    // kill a character with printed STR X or lower (X cannot be 0). You may move any number of gold
+    // from your gold pool to The House of Black and White.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kill character',

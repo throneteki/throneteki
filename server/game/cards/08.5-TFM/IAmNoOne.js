@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class IAmNoOne extends DrawCard {
+    // I Am No One (08082)
+    // Action: Choose a character you control with printed cost 3 or lower. Until the end of the
+    // phase, that character loses all faction affiliations and Traits, gains insight and stealth,
+    // and does not kneel when declared as an attacker.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character stealth/insight',

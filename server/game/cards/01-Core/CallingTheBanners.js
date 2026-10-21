@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class CallingTheBanners extends PlotCard {
+    // Calling the Banners (01007)
+    // When Revealed: Choose an opponent. Gain 1 gold for each character that player controls.
     setupCardAbilities() {
         this.whenRevealed({
             chooseOpponent: true,

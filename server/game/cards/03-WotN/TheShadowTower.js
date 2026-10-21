@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheShadowTower extends DrawCard {
+    // The Shadow Tower (03034)
+    // Reaction: After you win a challenge as the defending player, kneel The Shadow Tower to choose
+    // a character controlled by the losing opponent. That character cannot be declared as an
+    // attacker this phase.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

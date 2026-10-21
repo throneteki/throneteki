@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class CityFestival extends PlotCard {
+    // City Festival (19020)
+    // When Revealed: Gain 3 gold. (6 gold instead if there are 2 or more City plot cards in your
+    // used pile.)
     setupCardAbilities() {
         this.whenRevealed({
             handler: (context) => {

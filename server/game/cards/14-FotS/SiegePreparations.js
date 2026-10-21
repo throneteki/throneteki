@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class SiegePreparations extends PlotCard {
+    // Siege Preparations (14048)
+    // Dominance Action: Draw cards until your hand size is equal to your reserve value. (Limit once
+    // per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Draw cards',

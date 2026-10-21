@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class HostOfTheRiverlands extends DrawCard {
+    // Host of the Riverlands (08101)
+    // Bestow (3). No attachments.
+    // Reaction: After a House Tully character you control gains power, discard 1 gold from Host of
+    // the Riverlands to have that character gain 1 power. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

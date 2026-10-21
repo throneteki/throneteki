@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class JoryCassel extends DrawCard {
+    // Jory Cassel (03008)
+    // Interrupt: When a unique [stark] character you control would be killed, sacrifice Jory Cassel
+    // to save it. Then, if there is a Winter plot card revealed, that character gains 1 power.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

@@ -3,6 +3,11 @@ import GameActions from '../../GameActions/index.js';
 import { flatten } from '../../../Array.js';
 
 class AWallOfRoses extends DrawCard {
+    // A Wall of Roses (23016)
+    // Shadow (1).
+    // Reaction: After a challenge is initiated against you, reveal your hand (of at least 1 card).
+    // Then, choose up to 2 attacking characters. Stand each of those characters and remove them
+    // from the challenge. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

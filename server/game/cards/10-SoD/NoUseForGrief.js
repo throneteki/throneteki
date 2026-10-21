@@ -8,6 +8,11 @@ class NoUseForGrief extends DrawCard {
         this.tracker = new KillTracker(this.game);
     }
 
+    // No Use For Grief (10022)
+    // Play only if a [martell] character was killed under your control this round.
+    // Action: Search your deck for a Sand Snake character with printed cost 3 or lower, put it into
+    // play, and shuffle your deck. (Printed cost 6 or lower instead if The Red Viper is in your
+    // dead pile.)
     setupCardAbilities() {
         this.action({
             title: 'Put Sand Snake into play',

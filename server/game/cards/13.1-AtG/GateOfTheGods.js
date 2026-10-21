@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class GateOfTheGods extends DrawCard {
+    // Gate of the Gods (13004)
+    // Limited.
+    // Challenges Action: If you control a character with the highest STR in play, sacrifice Gate of
+    // the Gods to draw 2 cards.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.plotModifiers({
             gold: 1

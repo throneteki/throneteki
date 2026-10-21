@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Drogon extends DrawCard {
+    // Drogon (15002)
+    // No attachments.
+    // Each Stormborn character you control gains renown.
+    // Reaction: After you win a challenge in which Drogon is attacking, kill each character the
+    // defending player controls with STR 1 or lower.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.hasTrait('Stormborn'),

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class BurningTheDead extends DrawCard {
+    // Burning the Dead (11019)
+    // Action: Remove each non-unique character in each player's dead pile from the game. Draw 1
+    // card.
     setupCardAbilities() {
         this.action({
             title: 'Remove dead from game and draw 1',

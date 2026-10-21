@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class SerAddamMarbrand extends DrawCard {
+    // Ser Addam Marbrand (18005)
+    // Reaction: After an Army or Knight card enters play under your control, Ser Addam Marbrand
+    // gains 1 gold. (Limit once per phase.)
+    // Reaction: After a character enters your discard pile, discard 1 gold from Ser Addam Marbrand
+    // to return it to your hand. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

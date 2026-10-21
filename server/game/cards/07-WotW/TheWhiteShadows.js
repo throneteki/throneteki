@@ -1,6 +1,11 @@
 import PlotCard from '../../plotcard.js';
 
 class TheWhiteShadows extends PlotCard {
+    // The White Shadows (07050)
+    // Reaction: After a character an opponent controls is killed, put it into play under your
+    // control. While that character is in play, treat its printed text box as if it were blank. At
+    // the end of the phase, if that card is still in play, place it in its owner's dead pile
+    // (cannot be saved).
     setupCardAbilities() {
         this.reaction({
             when: {

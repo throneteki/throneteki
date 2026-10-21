@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheonGreyjoy extends DrawCard {
+    // Theon Greyjoy (01071)
+    // Stealth.
+    // Reaction: After you win an unopposed challenge in which Theon Greyjoy is participating, he
+    // gains 1 power.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class BlackWind extends DrawCard {
+    // Black Wind (08032)
+    // While you control Asha Greyjoy, she gains renown.
+    // Reaction: After a character you control discards a location or attachment using pillage, draw
+    // 1 card. (Limit twice per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Asha Greyjoy',

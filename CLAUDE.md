@@ -85,5 +85,7 @@ change state directly and `addMessage` calls.
 - Don't add comments unless they explain something critical to understanding the code, such as a
   non-obvious constraint or a behaviour that would otherwise look like a bug. Don't add comments
   that restate what the code does, describe a change, or document the obvious.
+- Card files start their class with the card's text as a generated comment. Don't edit it by hand:
+  `npm run card-text -- --write` writes it, and a spec fails when it is out of date.
 - The server and tests use ES modules (`import` / `export`).
 - Game messages use `{0}`-style placeholders, never string concatenation or template literals.

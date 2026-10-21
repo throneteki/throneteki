@@ -1,6 +1,10 @@
 import PlotCard from '../../plotcard.js';
 
 class UneasyTruce extends PlotCard {
+    // Uneasy Truce (11060)
+    // Each player cannot gain power for his or her faction except during challenges.
+    // Forced Reaction: After a challenge is initiated, move 1 power from the attacking player's
+    // faction card to the defending player's faction card.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => !this.game.isDuringChallenge(),

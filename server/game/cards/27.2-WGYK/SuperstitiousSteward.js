@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SuperstitiousSteward extends DrawCard {
+    // Superstitious Steward (27029)
+    // Reaction: After a phase begins, name a Trait. If an opponent reveals a plot card with that
+    // Trait during this phase, you may sacrifice Superstitious Steward to have that player choose a
+    // character they control and discard it from play.
     setupCardAbilities() {
         const revealingPlayer = (context) => context.event.plot.controller;
 

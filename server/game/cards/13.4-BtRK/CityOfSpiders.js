@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class CityOfSpiders extends PlotCard {
+    // City of Spiders (13080)
+    // When Revealed: Initiate the when revealed ability of a City plot card in your used pile as if
+    // you had just revealed it.
     setupCardAbilities() {
         this.whenRevealed({
             handler: (context) => {

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Chett extends DrawCard {
+    // Chett (02085)
+    // No attachments except Weapon.
+    // Dominance Action: Kneel a Steward character to return a Direwolf or Raven card from your
+    // discard pile to your hand. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Return a card to hand',

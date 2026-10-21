@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class Osha extends DrawCard {
+    // Osha (03011)
+    // Challenges Action: Remove Osha from the challenge. Then, stand her. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove Osha from the challenge and stand her',

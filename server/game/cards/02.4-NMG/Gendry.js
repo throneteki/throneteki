@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Gendry extends DrawCard {
+    // Gendry (02068)
+    // Reaction: After you win dominance, Gendry gains 1 power.
+    // Forced Reaction: After an opponent wins dominance, you may discard 1 power from Gendry. If
+    // you do not, sacrifice a Bastard character.
     setupCardAbilities() {
         this.reaction({
             when: {

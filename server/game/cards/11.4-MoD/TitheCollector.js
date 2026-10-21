@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TitheCollector extends DrawCard {
+    // Tithe Collector (11069)
+    // Reaction: After you collect income, pay 2 gold to have Tithe Collector gain 1 power.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.plotModifiers({
             gold: 1

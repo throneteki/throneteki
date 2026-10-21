@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class NymeriaSand extends DrawCard {
+    // Nymeria Sand (02035)
+    // Challenges Action: Choose an opponent's character. Until the end of the phase, that character
+    // loses a challenge icon of your choice, and each Sand Snake character you control gains that
+    // challenge icon. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove and gain icon',

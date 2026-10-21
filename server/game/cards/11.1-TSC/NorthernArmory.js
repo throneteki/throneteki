@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class NorthernArmory extends DrawCard {
+    // Northern Armory (11003)
+    // Northern Armory cannot stand.
+    // Action: Kneel Northern Armory to choose and stand a [stark] character.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.plotModifiers({
             gold: 1

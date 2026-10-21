@@ -2,6 +2,10 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SummonedByTheConclave extends PlotCard {
+    // Summoned by the Conclave (00007)
+    // When Revealed: Search the top 10 cards of your deck for an in-faction card, reveal it, and
+    // add it to your hand. Shuffle your deck.
+    // Draft format only.
     setupCardAbilities() {
         this.whenRevealed({
             message:

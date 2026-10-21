@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class TowerOfTheSun extends DrawCard {
+    // Tower of the Sun (04017)
+    // Reaction: After an event is played, gain 1 gold. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

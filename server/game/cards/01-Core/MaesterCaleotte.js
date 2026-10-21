@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MaesterCaleotte extends DrawCard {
+    // Maester Caleotte (01107)
+    // Reaction: After you lose a challenge in which Maester Caleotte is participating, choose a
+    // character. That character loses a challenge icon of your choice until the end of the phase.
     setupCardAbilities() {
         this.reaction({
             when: {

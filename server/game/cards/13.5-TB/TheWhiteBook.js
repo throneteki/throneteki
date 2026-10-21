@@ -2,6 +2,12 @@ import AgendaCard from '../../agendacard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheWhiteBook extends AgendaCard {
+    // The White Book (13099)
+    // You may include non-loyal Kingsguard characters from any faction in your deck. You must
+    // include at least 7 different Kingsguard characters in your deck.
+    // Reaction: After you win a challenge, kneel your faction card to stand each defending
+    // Kingsguard character you control. (Each participating Kingsguard character you control
+    // instead if you control a King or Queen character.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

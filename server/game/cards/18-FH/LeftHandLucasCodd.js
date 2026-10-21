@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class LeftHandLucasCodd extends DrawCard {
+    // Left-Hand Lucas Codd (18003)
+    // Stealth.
+    // Reaction: After no defenders are declared in a challenge in which you control an attacking
+    // Raider character, place 1 gold from the treasury on a card.
     setupCardAbilities() {
         this.reaction({
             when: {

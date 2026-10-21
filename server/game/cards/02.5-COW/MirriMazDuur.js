@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class MirriMazDuur extends DrawCard {
+    // Mirri Maz Duur (02093)
+    // Interrupt: When claim is applied for a challenge in which Mirri Maz Duur is attacking alone,
+    // choose a character controlled by the losing opponent. Instead of the normal claim effects,
+    // kill that character.
     setupCardAbilities() {
         this.interrupt({
             when: {

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class LightOfTheLord extends DrawCard {
+    // Light of the Lord (06028)
+    // [baratheon] or R'hllor character only.
+    // Reaction: After the dominance phase begins, stand attached character and gain 1 gold.
     setupCardAbilities() {
         this.attachmentRestriction({ faction: 'baratheon' }, { trait: "R'hllor" });
         this.reaction({

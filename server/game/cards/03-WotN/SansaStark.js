@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SansaStark extends DrawCard {
+    // Sansa Stark (03013)
+    // Sansa Stark gets -1 STR for each [stark] character in your dead pile.
+    // While Sansa Stark's STR is 0, she gains insight.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card === this,

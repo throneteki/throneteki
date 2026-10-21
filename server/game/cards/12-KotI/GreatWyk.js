@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class GreatWyk extends DrawCard {
+    // Great Wyk (12017)
+    // Reaction: After a character enters play from your dead pile, each opponent chooses and
+    // discards 1 card from his or her hand. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

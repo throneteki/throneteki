@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class ConsumingFlames extends DrawCard {
+    // Consuming Flames (08034)
+    // Challenges Action: Discard another [targaryen] card from your hand to choose a participating
+    // character. Until the end of the phase, that character gets -3 STR and is killed if its STR is
+    // 0.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character -3 STR',

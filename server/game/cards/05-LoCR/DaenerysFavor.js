@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class DaenerysFavor extends DrawCard {
+    // Daenerys's Favor (05036)
+    // [targaryen] character only.
+    // While attached character is participating in a challenge, each other participating character
+    // gets -1 STR.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'targaryen' });
         this.persistentEffect({

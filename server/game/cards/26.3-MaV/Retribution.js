@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Retribution extends DrawCard {
+    // Retribution (26048)
+    // Reaction: After a character you control is killed for [military] claim, if you control fewer
+    // characters than the attacking player, that player must choose and kill an attacking
+    // character.
     setupCardAbilities() {
         this.reaction({
             when: {

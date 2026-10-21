@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class AdvisorToTheCrown extends DrawCard {
+    // Advisor to the Crown (13077)
+    // Action: Kneel Advisor to the Crown to reduce the cost of the next Maester character you
+    // marshal this phase by 1.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel to reduce',

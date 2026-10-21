@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class TheLongPlan extends PlotCard {
+    // The Long Plan (02016)
+    // You do not return unspent gold to the treasury during the taxation phase.
+    // Reaction: After you lose a challenge, gain 1 gold.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

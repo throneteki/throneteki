@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Satin extends DrawCard {
+    // Satin (07013)
+    // No attachments except Weapon.
+    // Reaction: After Satin is knelt, choose and stand another Steward character. (Limit twice per
+    // phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

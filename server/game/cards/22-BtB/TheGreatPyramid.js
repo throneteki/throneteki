@@ -8,6 +8,12 @@ class TheGreatPyramid extends DrawCard {
 
         this.registerEvents([{ 'onCardLeftPlay:forcedinterrupt': 'onCardLeftPlay' }]);
     }
+    // The Great Pyramid (22021)
+    // Twice per round, you may marshal or play a facedown card under a Meereen location you control
+    // as if it were in your hand.
+    // Reaction: After 1 or more cards are discarded from your hand, place them facedown under The
+    // Great Pyramid. If The Great Pyramid leaves play, remove each card you placed under it from
+    // the game. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.marshalledTracker = GenericTracker.forRound(this.game, 'onCardMarshalled');
         this.playedTracker = GenericTracker.forRound(this.game, 'onCardPlayed');

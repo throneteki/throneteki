@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class ThrowingAxe extends DrawCard {
+    // Throwing Axe (01077)
+    // Ironborn character only.
+    // Reaction: After you win a challenge in which attached character is participating as an
+    // attacker, sacrifice Throwing Axe to choose and kill a defending character.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Ironborn' });
         this.reaction({

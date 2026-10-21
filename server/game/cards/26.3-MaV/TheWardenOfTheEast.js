@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheWardenOfTheEast extends DrawCard {
+    // The Warden of the East (26058)
+    // House Arryn character only.
+    // Attached character gets +2 STR and gains the Commander trait.
+    // Reaction: After 1 or more characters are revealed from an opponent's hand, deck, or shadows
+    // area, attached character gains 1 power. (Limit 3 times per round.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'House Arryn' });
         this.whileAttached({

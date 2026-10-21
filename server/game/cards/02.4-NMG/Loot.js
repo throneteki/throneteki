@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Loot extends DrawCard {
+    // Loot (02073)
+    // You may only use gold from the losing opponent's gold pool to pay for Loot.
+    // Reaction: After you win an unopposed challenge, discard the top X cards from the losing
+    // opponent's deck.
     setupCardAbilities() {
         this.xValue({
             min: () => 1,

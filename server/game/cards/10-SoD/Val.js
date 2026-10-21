@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Val extends DrawCard {
+    // Val (10039)
+    // Reaction: After Val is declared as an attacker, put a Wildling character with printed cost 4
+    // or lower into play from your hand knelt, participating as an attacker.
     setupCardAbilities() {
         this.reaction({
             when: {

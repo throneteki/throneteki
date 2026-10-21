@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class CroneOfVaesDothrak extends DrawCard {
+    // Crone of Vaes Dothrak (02053)
+    // Reaction: After a character is discarded from an opponent's hand or deck, kneel a Dothraki
+    // character to place that card in its owner's dead pile.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

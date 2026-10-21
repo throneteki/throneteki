@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import CardEntersPlayTracker from '../../EventTrackers/CardEntersPlayTracker.js';
 
 class GreyGhost extends DrawCard {
+    // Grey Ghost (11072)
+    // Shadow (2).
+    // Action: Kneel Grey Ghost to choose 1 character (up to 2 characters instead if Grey Ghost came
+    // out of shadows this phase). Until the end of the phase, each chosen character cannot be
+    // declared as a defender.
     setupCardAbilities(ability) {
         this.tracker = CardEntersPlayTracker.forPhase(this.game);
 

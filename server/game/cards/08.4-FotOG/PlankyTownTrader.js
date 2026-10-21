@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class PlankyTownTrader extends DrawCard {
+    // Planky Town Trader (08075)
+    // Bestow (5).
+    // Interrupt: When Planky Town Trader leaves play, put a non-[martell] character with printed
+    // cost X or lower into play from your hand. X is the number of gold on Planky Town Trader.
+    // Until the end of the phase, that character cannot leave play.
     setupCardAbilities() {
         this.interrupt({
             when: {

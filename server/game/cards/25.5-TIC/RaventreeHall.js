@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class RaventreeHall extends DrawCard {
+    // Raventree Hall (25092)
+    // Reaction: After power is gained by or moved to a character you control, gain 1 gold. (Limit
+    // once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

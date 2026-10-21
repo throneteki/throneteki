@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class ToTheSpears extends DrawCard {
+    // To The Spears! (10024)
+    // Play only if there are 3 or more plot cards in your used pile.
+    // Challenges Action: Each [martell] character you control does not kneel when declared as an
+    // attacker in the next challenge you initiate this phase.
     setupCardAbilities() {
         this.tracker = ChallengeTracker.forPhase(this.game);
 

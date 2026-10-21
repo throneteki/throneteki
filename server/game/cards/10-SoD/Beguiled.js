@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Beguiled extends DrawCard {
+    // Beguiled (10021)
+    // Terminal.
+    // Challenges Action: Kneel Beguiled to have attached character lose a challenge icon of your
+    // choice until the end of the phase.
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove icon',

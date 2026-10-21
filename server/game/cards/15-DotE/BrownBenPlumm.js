@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class BrownBenPlumm extends DrawCard {
+    // Brown Ben Plumm (15016)
+    // Forced Interrupt: When the challenges phase ends, if you have no gold in your gold pool,
+    // sacrifice Brown Ben Plumm.
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {

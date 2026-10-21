@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class GiftsForTheWidow extends DrawCard {
+    // Gifts for the Widow (11114)
+    // Action: Search your deck for an attachment with printed cost X or lower and put it into play
+    // attached to a character you control. Shuffle your deck.
     setupCardAbilities() {
         this.xValue({ min: () => 0, max: () => 99 });
 

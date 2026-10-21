@@ -3,6 +3,9 @@ import GameActions from '../../GameActions/index.js';
 import KneelCard from '../../GameActions/KneelCard.js';
 
 class ForcedMarch extends PlotCard {
+    // Forced March (17154)
+    // When Revealed: Kneel X characters you control with a [military] icon. Then, each opponent
+    // must choose and kneel X characters they control with a [military] icon, if able.
     setupCardAbilities() {
         const isStandingAndKneelableMilIcon = (card) => {
             return (

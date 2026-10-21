@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class MaesterBallabar extends DrawCard {
+    // Maester Ballabar (09014)
+    // Action: During a challenge in which you control a participating character, kneel Maester
+    // Ballabar to choose a character with the lowest STR among participating characters. Stand that
+    // character and remove it from the challenge.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand and remove character from challenge',

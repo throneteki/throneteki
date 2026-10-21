@@ -3,6 +3,11 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class LannisportTreasury extends DrawCard {
+    // Lannisport Treasury (05019)
+    // Reaction: After the taxation phase begins, place 1 gold from your gold pool on Lannisport
+    // Treasury.
+    // Marshaling Action: Kneel Lannisport Treasury to move any number of gold from Lannisport
+    // Treasury to your gold pool.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

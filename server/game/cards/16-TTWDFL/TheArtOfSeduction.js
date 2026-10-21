@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class TheArtOfSeduction extends PlotCard {
+    // The Art of Seduction (16035)
+    // When Revealed: Choose an opponent. That opponent cannot reveal a new plot card during the
+    // next plot phase.
     setupCardAbilities() {
         this.whenRevealed({
             chooseOpponent: true,

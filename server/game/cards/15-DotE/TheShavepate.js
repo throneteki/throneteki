@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheShavepate extends DrawCard {
+    // The Shavepate (15008)
+    // Challenges Action: Pay X gold to put a character with printed cost X or lower into play from
+    // your discard pile. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Put character into play',

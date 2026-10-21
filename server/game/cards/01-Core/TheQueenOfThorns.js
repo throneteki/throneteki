@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheQueenOfThorns extends DrawCard {
+    // The Queen of Thorns (01186)
+    // Reaction: After you win an [intrigue] challenge in which The Queen of Thorns is
+    // participating, put a [tyrell] character with printed cost 6 or lower into play from your
+    // hand.
     setupCardAbilities() {
         this.reaction({
             when: {

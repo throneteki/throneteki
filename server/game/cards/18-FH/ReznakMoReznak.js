@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ReznakMoReznak extends DrawCard {
+    // Reznak mo Reznak (18013)
+    // Bestow (3).
+    // Reaction: After a character is discarded from your hand, Reznak mo Reznak gains 1 gold. Then,
+    // you may discard X gold from him to put that character into play from your discard pile, where
+    // X is that character's printed cost. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.reaction({
             limit: ability.limit.perRound(2),

@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ACaskOfAle extends DrawCard {
+    // "A Cask of Ale" (14023)
+    // Reaction: After you win a [power] challenge, choose 2 cards controlled by the same player.
+    // Move up to 2 power from one of those cards to the other.
     setupCardAbilities() {
         this.reaction({
             when: {

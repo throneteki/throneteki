@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class LaughingLord extends DrawCard {
+    // Laughing Lord (08048)
+    // Reaction: After you initiate a challenge, kneel Laughing Lord to choose an attacking
+    // [baratheon] character. Until the end of the challenge, that character gains intimidate.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

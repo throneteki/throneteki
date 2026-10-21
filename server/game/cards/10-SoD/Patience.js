@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Patience extends DrawCard {
+    // Patience (10020)
+    // Character you control only.
+    // Challenges Action: Return attached character to its owner's hand.
     setupCardAbilities() {
         this.attachmentRestriction({ controller: 'current' });
         this.action({

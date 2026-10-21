@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class TunnelsOfTheRedKeep extends DrawCard {
+    // Tunnels of the Red Keep (13070)
+    // Shadow (2).
+    // Action: Kneel Tunnels of the Red Keep to return it to shadows. Then, until the end of the
+    // phase, each character you control gets +1 STR for each card you control in shadows. (Max 1
+    // per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel and return to shadows',

@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class WanderingDisciple extends DrawCard {
+    // Wandering Disciple (26043)
+    // Shadow (3).
+    // Reaction: After Wandering Disciple comes out of shadows, put a non-unique Drowned God
+    // character into play from your dead pile. At the end of the phase, if that card is still in
+    // play, discard it from play.
     setupCardAbilities() {
         this.reaction({
             when: {

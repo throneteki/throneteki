@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Sunspear extends DrawCard {
+    // Sunspear (01117)
+    // Reaction: After you lose a challenge as the defending player, kneel Sunspear to raise the
+    // claim value on your revealed plot card by 1 during challenges of this same type until the end
+    // of the phase.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

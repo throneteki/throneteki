@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheVipersSpear extends DrawCard {
+    // The Viper's Spear (26088)
+    // Sand Snake character or The Red Viper only.
+    // During [military] challenges, attached character gets +3 STR and does not kneel when declared
+    // as an attacker against an opponent who controls more characters than you.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Sand Snake' }, { name: 'The Red Viper' });
         this.whileAttached({

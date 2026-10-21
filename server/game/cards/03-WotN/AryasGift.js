@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class AryasGift extends DrawCard {
+    // Arya's Gift (03024)
+    // Action: Move an attachment from a [stark] character you control to another eligible character
+    // you control.
     setupCardAbilities() {
         this.action({
             title: 'Move attachment',

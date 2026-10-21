@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Yoren extends DrawCard {
+    // Yoren (17116)
+    // Reaction: After Yoren enters play, choose an opponent. That player must choose a standing
+    // character they control with printed cost 5 or lower. Take control of that character until
+    // Yoren leaves play.
     setupCardAbilities() {
         this.reaction({
             when: {

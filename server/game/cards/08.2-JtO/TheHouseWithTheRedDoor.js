@@ -46,6 +46,11 @@ class TheHouseWithTheRedDoor extends AgendaCard {
         );
     }
 
+    // The House With the Red Door (08039)
+    // After all agendas are announced, search your deck for a non-limited unique location with
+    // printed cost 3 or lower and put it into play. That location cannot be discarded from play by
+    // card effects.
+    // You cannot spend more than 4 gold during setup.
     setupCardAbilities(ability) {
         this.persistentEffect({
             effect: ability.effects.setSetupGold(4)

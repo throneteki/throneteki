@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Highgarden extends DrawCard {
+    // Highgarden (01192)
+    // Challenges Action: Kneel Highgarden and pay 1 gold to choose an attacking character. Stand
+    // that character and remove it from the challenge.
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove character from challenge',

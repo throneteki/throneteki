@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class NighttimeMarauders extends DrawCard {
+    // Nighttime Marauders (17104)
+    // Pillage. Shadow (3).
+    // Reaction: After Nighttime Marauders comes out of shadows during the challenges phase, choose
+    // a card in an opponent's discard pile. That player reveals their hand and discards from it
+    // each card with the same printed cost as the chosen card.
     setupCardAbilities() {
         this.reaction({
             when: {

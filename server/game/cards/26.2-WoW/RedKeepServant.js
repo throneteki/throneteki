@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class RedKeepServant extends DrawCard {
+    // Red Keep Servant (26021)
+    // While you control a King's Landing location, Red Keep Servant gains an [intrigue] icon and
+    // cannot be bypassed by stealth.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class TheGreatSeptOfBaelor extends DrawCard {
+    // The Great Sept of Baelor (08118)
+    // Bestow (3).
+    // Reaction: After a character enters play, kneel The Great Sept of Baelor and discard 1 gold
+    // from it to treat that character’s printed text box as if it were blank (except for Traits)
+    // until the end of the round.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

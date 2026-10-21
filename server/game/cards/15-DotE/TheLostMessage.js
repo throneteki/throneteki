@@ -5,6 +5,10 @@ import TextHelper from '../../TextHelper.js';
 import { flatten } from '../../../Array.js';
 
 class TheLostMessage extends PlotCard {
+    // The Lost Message (15047)
+    // Action: Each player shuffles his or her hand into his or her deck. Then, each player adds the
+    // top X cards of his or her deck to his or her hand. X is the number of cards he or she
+    // shuffled this way. (Limit once per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Shuffle cards into deck',

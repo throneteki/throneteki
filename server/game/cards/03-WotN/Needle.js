@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class Needle extends DrawCard {
+    // Needle (03020)
+    // [stark] character only.
+    // Attached character gets +2 STR.
+    // Interrupt: When attached character is sacrificed, sacrifice Needle to return that character
+    // to your hand instead of placing it in your discard pile.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'stark' });
         this.whileAttached({

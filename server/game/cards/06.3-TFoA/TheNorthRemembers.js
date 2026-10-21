@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheNorthRemembers extends DrawCard {
+    // The North Remembers (06042)
+    // Challenges Action: Each player sacrifices a character or location.
+    // Reaction: After a character you control is killed, pay 1 gold to return The North Remembers
+    // from your discard pile to your hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Each player sacrifices a character or location',

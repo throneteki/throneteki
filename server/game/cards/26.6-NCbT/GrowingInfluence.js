@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class GrowingInfluence extends DrawCard {
+    // Growing Influence (26116)
+    // Interrupt: When the effects of an opponent's triggered character or location ability would
+    // initiate, give that player 1 gold from your gold pool to cancel those effects.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

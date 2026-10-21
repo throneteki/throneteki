@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class FirstRanger extends DrawCard {
+    // First Ranger (20022)
+    // Unique character only.
+    // Attached character gains a [military] icon and the Ranger trait.
+    // Reaction: After you win a [military] challenge in which you control a participating Ranger
+    // character, choose and kill a non-unique character with STR X or lower controlled by the
+    // losing opponent. X is the number of Ranger characters you control. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ unique: true });
         this.whileAttached({

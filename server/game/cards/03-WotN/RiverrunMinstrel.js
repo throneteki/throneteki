@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class RiverrunMinstrel extends DrawCard {
+    // Riverrun Minstrel (03009)
+    // Reaction: After Riverrun Minstrel enters play, choose a House Tully character. That character
+    // gains 1 power.
     setupCardAbilities() {
         this.reaction({
             when: {

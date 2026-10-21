@@ -3,6 +3,10 @@ import ChallengeTypes from '../../ChallengeTypes.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheFreeFolk extends AgendaCard {
+    // The Free Folk (11079)
+    // Your plot deck and draw deck can only include neutral cards.
+    // Reaction: After claim is applied for a challenge in which you control an attacking Wildling
+    // character, kneel your faction card to apply the claim of another challenge type.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

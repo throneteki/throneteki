@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class RandyllTarly extends DrawCard {
+    // Randyll Tarly (17174)
+    // Renown.
+    // Action: Kneel a The Reach location to, either: stand an Army character, or reveal the top
+    // card of your deck. If it is a location, draw it (put it into play instead if it has the The
+    // Reach trait). (Limit twice per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand Army or reveal top card',

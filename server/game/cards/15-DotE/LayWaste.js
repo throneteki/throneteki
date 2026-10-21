@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class LayWaste extends DrawCard {
+    // Lay Waste (15044)
+    // Dominance Action: Choose a non-limited location or attachment and discard it from play. Then,
+    // that card's owner may search his or her deck for a location or attachment with lower printed
+    // cost, put it into play, and shuffle his or her deck.
     setupCardAbilities() {
         this.action({
             title: 'Discard location or attachment',

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class MotherOfDragons extends DrawCard {
+    // Mother of Dragons (04094)
+    // Stormborn character you control only.
+    // Challenges Action: During a challenge in which you control a participating Dragon character,
+    // kneel Mother of Dragons to have attached character participate in the challenge on your side.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Stormborn' });
         this.action({

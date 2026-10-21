@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class Summerhall extends DrawCard {
+    // Summerhall (21003)
+    // While Summerhall is standing, cards cannot enter or leave play during [power] challenges.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'any',

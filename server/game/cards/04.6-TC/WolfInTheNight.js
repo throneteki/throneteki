@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class WolfInTheNight extends DrawCard {
+    // "Wolf in the Night" (04102)
+    // Action: Choose a [stark] character that is attacking alone. Until the end of the challenge,
+    // that character gets +3 STR and gains renown.
     setupCardAbilities() {
         this.action({
             title: 'Give +3 STR and renown to character',

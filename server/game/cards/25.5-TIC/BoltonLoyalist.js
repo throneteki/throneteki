@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class BoltonLoyalist extends DrawCard {
+    // Bolton Loyalist (25091)
+    // Forced Reaction: After you lose an [intrigue] challenge, give control of Bolton Loyalist to
+    // the winning opponent unless you sacrifice another character.
     setupCardAbilities() {
         this.forcedReaction({
             cannotBeCanceled: true,

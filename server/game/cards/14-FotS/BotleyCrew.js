@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class BotleyCrew extends DrawCard {
+    // Botley Crew (14025)
+    // Reaction: After an opponent collects income, return 1 gold from that player's gold pool to
+    // the treasury.
     setupCardAbilities() {
         this.reaction({
             when: {

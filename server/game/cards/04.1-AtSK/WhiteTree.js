@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class WhiteTree extends DrawCard {
+    // White Tree (04007)
+    // Reaction: After an opponent collects income, kneel White Tree to move 1 gold from that
+    // player's gold pool to your own.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

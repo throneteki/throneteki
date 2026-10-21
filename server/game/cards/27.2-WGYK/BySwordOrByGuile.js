@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import SatisfyClaim from '../../gamesteps/challenge/SatisfyClaim.js';
 
 class BySwordOrByGuile extends DrawCard {
+    // By Sword or By Guile (27034)
+    // Interrupt: When claim is applied for a [military] or [intrigue] challenge in which you
+    // control an attacking Army or Dragon character, apply [power] claim instead.
     setupCardAbilities() {
         this.interrupt({
             when: {

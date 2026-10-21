@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TrystaneMartell extends DrawCard {
+    // Trystane Martell (22010)
+    // Shadow (2).
+    // Reaction: After Trystane Martell enters play, choose a character with no challenge icons and
+    // return it to its owner's hand.
     setupCardAbilities() {
         this.reaction({
             when: {

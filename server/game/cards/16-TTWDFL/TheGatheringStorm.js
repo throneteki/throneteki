@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import RevealPlots from '../../gamesteps/revealplots.js';
 
 class TheGatheringStorm extends PlotCard {
+    // The Gathering Storm (16036)
+    // When Revealed: Each opponent may return his or her revealed plot card to his or her plot deck
+    // and reveal a new plot card.
     setupCardAbilities() {
         this.whenRevealed({
             target: {

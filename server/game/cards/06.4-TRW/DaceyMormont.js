@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class DaceyMormont extends DrawCard {
+    // Dacey Mormont (06061)
+    // Renown.
+    // X is the number of [stark] characters you control.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

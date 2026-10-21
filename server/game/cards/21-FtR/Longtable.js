@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Longtable extends DrawCard {
+    // Longtable (21023)
+    // Each Small Council character you control gets +1 STR.
+    // Reduce the cost of the first Small Council or Spy character you marshal, ambush, or bring out
+    // of shadows each phase by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.hasTrait('Small Council') && card.controller === this.controller,

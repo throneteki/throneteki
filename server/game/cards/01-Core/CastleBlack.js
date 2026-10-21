@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class CastleBlack extends DrawCard {
+    // Castle Black (01136)
+    // Action: Kneel Castle Black to choose and stand a defending [thenightswatch] character. Until
+    // the end of the challenge, that character gets +2 STR.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand and give defending character +2 STR',

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ObaraSand extends DrawCard {
+    // Obara Sand (01108)
+    // Obara Sand may be declared as a defender during [power] challenges in which you are the
+    // defending player, even while kneeling.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

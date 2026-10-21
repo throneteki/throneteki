@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class LeytonHightower extends DrawCard {
+    // Leyton Hightower (10037)
+    // Action: Kneel Leyton Hightower to put a non-limited [tyrell] card with printed cost 4 or
+    // lower into play from your hand knelt.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put card into play',

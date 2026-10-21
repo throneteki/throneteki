@@ -1,6 +1,13 @@
 import DrawCard from '../../drawcard.js';
 
 class ValyriansCrew extends DrawCard {
+    // Valyrian's Crew (11047)
+    // Stealth.
+    // You may marshal or play facedown cards attached to Valyrian's Crew as if they were in your
+    // hand.
+    // Reaction: After you win a challenge in which Valyrian's Crew is attacking, attach the top
+    // card of the losing opponent's deck to Valyrian's Crew facedown under your control, as an
+    // attachment with terminal.
     setupCardAbilities(ability) {
         this.persistentEffect({
             effect: [

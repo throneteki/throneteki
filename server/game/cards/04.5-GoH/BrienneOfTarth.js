@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class BrienneOfTarth extends DrawCard {
+    // Brienne of Tarth (04083)
+    // Renown.
+    // While you control a King character or Catelyn Stark, Brienne of Tarth does not kneel when
+    // declared as a defender.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

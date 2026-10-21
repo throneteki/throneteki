@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Ghost extends DrawCard {
+    // Ghost (07021)
+    // [thenightswatch] or [stark] character only.
+    // Interrupt: When attached character would be killed, return Ghost to your hand to save that
+    // character.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: ['thenightswatch', 'stark'] });
         this.interrupt({

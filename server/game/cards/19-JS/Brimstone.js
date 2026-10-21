@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Brimstone extends DrawCard {
+    // Brimstone (19008)
+    // Each Sand Snake character you control gets +1 STR.
+    // Challenges Action: Kneel Brimstone and return a Sand Snake character to your hand to gain 1
+    // gold.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>

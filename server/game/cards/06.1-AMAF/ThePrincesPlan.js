@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class ThePrincesPlan extends DrawCard {
+    // The Prince's Plan (06016)
+    // Action: Choose a character. Until the end of the phase, that character gets +1 STR for each
+    // plot card in your used pile and gains a challenge icon of your choice.
+    // Reaction: After you lose a challenge, pay 1 gold to return The Prince's Plan from your
+    // discard pile to your hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give +1 STR per used plot + icon',

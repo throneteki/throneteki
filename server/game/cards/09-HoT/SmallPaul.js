@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SmallPaul extends DrawCard {
+    // Small Paul (09033)
+    // No attachments except Weapon.
+    // Interrupt: When Small Paul is killed, search the top X cards of your deck for any number of
+    // Steward characters, reveal them, and add them to your hand. X is your reserve value. Shuffle
+    // your deck.
     setupCardAbilities() {
         this.interrupt({
             when: {

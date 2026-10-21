@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheTitansBastard extends DrawCard {
+    // The Titan's Bastard (15010)
+    // Action: Kneel The Titan's Bastard to return a Mercenary character from your discard pile to
+    // your hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Return a Mercenary',

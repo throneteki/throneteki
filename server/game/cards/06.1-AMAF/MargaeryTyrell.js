@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MargaeryTyrell extends DrawCard {
+    // Margaery Tyrell (06003)
+    // Renown.
+    // Reaction: After a unique King or Lord character you control is killed, search your deck for a
+    // unique King or Lord character and put it into play. Shuffle your deck. (Limit once per
+    // round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

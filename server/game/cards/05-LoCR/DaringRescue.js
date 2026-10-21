@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class DaringRescue extends DrawCard {
+    // Daring Rescue (05024)
+    // Play only if you control a Knight character.
+    // Challenges Action: Return a character you control to its owner's hand. Then, have a Knight
+    // character you control gain 1 power.
     setupCardAbilities() {
         this.action({
             title: 'Return character then have knight gain power',

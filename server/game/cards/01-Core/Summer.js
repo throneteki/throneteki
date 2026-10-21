@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Summer extends DrawCard {
+    // Summer (01148)
+    // No attachments.
+    // While you control Bran Stark, he gains insight.
+    // Reaction: After Summer enters play, return a [stark] character with printed STR 2 or lower
+    // from your discard or dead pile to your hand.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Bran Stark',

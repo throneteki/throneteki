@@ -2,6 +2,12 @@ import AgendaCard from '../../agendacard.js';
 import { flatten } from '../../../Array.js';
 
 class TheManyFacedGod extends AgendaCard {
+    // The Many-Faced God (20052)
+    // Your plot deck cannot include Kingdom plot cards.
+    // Reduce the cost of the first card you ambush each round by 1.
+    // Action: Kneel your faction card to choose a character you control and a player. Until the end
+    // of the phase, that character gains each of the printed challenge icons, keywords, faction
+    // affiliations, and Traits of the top character in that player's dead pile.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',

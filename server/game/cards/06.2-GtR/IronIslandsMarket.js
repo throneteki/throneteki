@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class IronIslandsMarket extends DrawCard {
+    // Iron Islands Market (06032)
+    // Limited.
+    // Marshaling Action: Kneel Iron Islands Market to gain 1 gold. (2 gold instead if an opponent
+    // has 8 or more cards in his or her discard pile.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Gain gold',

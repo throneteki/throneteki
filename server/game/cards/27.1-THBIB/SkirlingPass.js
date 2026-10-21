@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class SkirlingPass extends DrawCard {
+    // Skirling Pass (27010)
+    // While Skirling Pass is standing, each non-Wildling character loses stealth.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => !this.kneeled,

@@ -1,6 +1,13 @@
 import AgendaCard from '../../agendacard.js';
 
 class AMummersFarce extends AgendaCard {
+    // A Mummer's Farce (20051)
+    // Your deck may include non-loyal Fool characters from any faction.
+    // You may marshal or play facedown cards you control attached to a Fool character as if they
+    // were in your hand.
+    // Forced Reaction: After a Fool character you control stands, attach the top card of your deck
+    // facedown to it, as a Weapon attachment with the text: "Terminal. Attached character gets +1
+    // STR."
     setupCardAbilities(ability) {
         this.persistentEffect({
             effect: [

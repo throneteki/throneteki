@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheImpsAgent extends DrawCard {
+    // The Imp's Agent (26025)
+    // Shadow (3).
+    // Reaction: After you win a challenge in which The Imp's Agent is participating, return it to
+    // shadows to have the losing opponent choose a card in their hand and place it on the top or
+    // bottom of their deck.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

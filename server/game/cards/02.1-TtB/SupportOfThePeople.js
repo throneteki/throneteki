@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SupportOfThePeople extends DrawCard {
+    // Support of the People (02017)
+    // Reaction: After you win a [power] challenge by 5 or more STR, search your deck for a location
+    // with printed cost 3 or lower, and put it into play. Shuffle your deck. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

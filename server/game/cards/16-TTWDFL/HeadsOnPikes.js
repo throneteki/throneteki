@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class HeadsOnPikes extends DrawCard {
+    // Heads on Pikes (16023)
+    // Prized 2.
+    // Dominance Action: For each character in his or her dead pile, each opponent discards the top
+    // 2 cards of his or her deck. (Max 1 per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Discard cards',

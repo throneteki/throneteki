@@ -2,6 +2,8 @@ import PlotCard from '../../plotcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class CountingCoppers extends PlotCard {
+    // Counting Coppers (01010)
+    // When Revealed: Draw 3 cards.
     setupCardAbilities() {
         this.whenRevealed({
             handler: (context) => {

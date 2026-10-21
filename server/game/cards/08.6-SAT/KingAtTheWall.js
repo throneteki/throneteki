@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class KingAtTheWall extends DrawCard {
+    // King at the Wall (08108)
+    // Unique [baratheon] character only.
+    // Attached character gains the King trait.
+    // Reaction: After you win a [power] challenge in which attached character is participating,
+    // draw 1 card for each out-of-faction location you control.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'baratheon', unique: true });
         this.whileAttached({

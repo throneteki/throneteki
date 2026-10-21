@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class FearCutsDeeperThanSwords extends DrawCard {
+    // Fear Cuts Deeper Than Swords (04022)
+    // Interrupt: When the effects of an ability that chooses a [stark] character you control as its
+    // only target would initiate, cancel those effects and stand that character.
     setupCardAbilities() {
         this.interrupt({
             canCancel: true,

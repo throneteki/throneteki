@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerBarristanSelmy extends DrawCard {
+    // Ser Barristan Selmy (02107)
+    // Renown.
+    // Interrupt: When a Lord or Lady character you control would be killed, stand Ser Barristan
+    // Selmy to save that character.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

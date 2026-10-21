@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class TyrionLannister extends DrawCard {
+    // Tyrion Lannister (00011)
+    // Stealth.
+    // Reaction: After you win an [intrigue] challenge or a challenge in which Tyrion Lannister is
+    // participating, pay 1 gold to draw 1 card.
+    // Draft format only.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

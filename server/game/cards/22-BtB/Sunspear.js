@@ -3,6 +3,10 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class Sunspear extends DrawCard {
+    // Sunspear (22012)
+    // During the challenges phase, you may spend gold on Sunspear as if it were in your gold pool.
+    // Reaction: After a [martell] card enters play under your control, Sunspear gains 1 gold. (2
+    // gold instead if that card is a Lord or Lady character.) (Limit once per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.currentPhase === 'challenge',

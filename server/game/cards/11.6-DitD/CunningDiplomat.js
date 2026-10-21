@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class CunningDiplomat extends DrawCard {
+    // Shrewd Diplomat (11103)
+    // Ambush (5). Shadow (3).
+    // Reaction: After Shrewd Diplomat enters play during a challenge, choose a participating
+    // character. Stand that character and remove it from the challenge.
     setupCardAbilities() {
         this.reaction({
             when: {

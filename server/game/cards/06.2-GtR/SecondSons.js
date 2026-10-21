@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class SecondSons extends DrawCard {
+    // Second Sons (06033)
+    // Bestow (3).
+    // Forced Interrupt: When the challenges phase ends, sacrifice Second Sons unless you discard 1
+    // gold from it.
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {

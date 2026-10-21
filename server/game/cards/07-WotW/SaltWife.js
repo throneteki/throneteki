@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SaltWife extends DrawCard {
+    // Salt Wife (07027)
+    // Challenges Action: Sacrifice Salt Wife to choose a character. Until the end of the phase,
+    // that character cannot be declared as a defender.
     setupCardAbilities(ability) {
         this.action({
             title: 'Sacrifice Salt Wife',

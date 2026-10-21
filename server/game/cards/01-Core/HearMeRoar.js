@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class HearMeRoar extends DrawCard {
+    // Hear Me Roar! (01100)
+    // Action: Put a [lannister] character into play from your hand. At the end of the phase, if
+    // that card is still in play, discard it from play (cannot be saved).
     setupCardAbilities() {
         this.action({
             title: 'Put character into play',

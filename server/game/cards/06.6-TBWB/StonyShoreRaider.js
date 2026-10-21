@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class StonyShoreRaider extends DrawCard {
+    // Stony Shore Raider (06111)
+    // Bestow (3).
+    // Action: Discard 1 gold from Stony Shore Raider to choose and kneel a location with printed
+    // cost 3 or lower. (Limit once per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel location',

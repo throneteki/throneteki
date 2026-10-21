@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import RevealPlots from '../../gamesteps/revealplots.js';
 
 class WheelsWithinWheels extends DrawCard {
+    // Wheels Within Wheels (16006)
+    // Action: Kneel a unique [lannister] character to choose and reveal a new plot card. (Max 1 per
+    // round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Reveal a new plot',

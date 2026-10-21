@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class UnexpectedGuile extends DrawCard {
+    // Unexpected Guile (17139)
+    // Character with shadow you control only. Shadow (0).
+    // Attached character gets +2 STR.
+    // Reaction: After you win a challenge in which attached character is participating, return it
+    // to shadows.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ controller: 'current', shadow: true });
         this.whileAttached({

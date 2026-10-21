@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class PoliticalDisaster extends PlotCard {
+    // Political Disaster (02040)
+    // When Revealed: Each player chooses up to 2 locations he or she controls. Each location not
+    // chosen is discarded from play.
     setupCardAbilities() {
         this.whenRevealed({
             target: {

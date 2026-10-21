@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class BlackwaterRush extends DrawCard {
+    // Blackwater Rush (13088)
+    // Shadow (2).
+    // Reaction: After a card you control comes out of shadows, kneel Blackwater Rush to choose a
+    // [baratheon] character. That character gains 1 power.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

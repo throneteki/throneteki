@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class DoubtingSepta extends DrawCard {
+    // Doubting Septa (13069)
+    // Reaction: After you win an [intrigue] challenge, sacrifice Doubting Septa to choose a
+    // character or location you control. That card gains 1 power.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

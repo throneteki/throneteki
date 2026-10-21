@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheCrag extends DrawCard {
+    // The Crag (24018)
+    // You cannot initiate [intrigue] challenges.
+    // Reaction: After you win a [military] challenge as the attacking player, The Crag gains 1
+    // power. (2 power instead if you control a [stark] King character.) (Limit twice per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',

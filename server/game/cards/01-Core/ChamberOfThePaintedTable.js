@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ChamberOfThePaintedTable extends DrawCard {
+    // Chamber of the Painted Table (01060)
+    // Reaction: After you win dominance, kneel Chamber of the Painted Table to move 1 power from an
+    // opponent's faction card to your own.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

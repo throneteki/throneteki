@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Harrenhal extends DrawCard {
+    // Harrenhal (04082)
+    // Reaction: After a character enters play, kneel your faction card and sacrifice Harrenhal to
+    // kill it.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

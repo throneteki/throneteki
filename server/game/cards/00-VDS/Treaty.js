@@ -7,6 +7,12 @@ class Treaty extends AgendaCard {
         this.registerEvents(['onDecksPrepared']);
     }
 
+    // Treaty (00003)
+    // When you announce Treaty as your agenda, name 2 factions. You may include cards from those
+    // factions in your draw deck and plot deck.
+    // Action: Kneel your faction card to draw 1 card. Then, choose and discard 1 card from your
+    // hand.
+    // Draft format only.
     setupCardAbilities(ability) {
         this.action({
             title: 'Draw card then discard card',

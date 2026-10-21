@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class PrivilegedPosition extends DrawCard {
+    // Privileged Position (11068)
+    // Play only if you have not lost a [power] challenge this round.
+    // Interrupt: When the effects of an opponent's event or triggered location ability would
+    // initiate, cancel those effects.
     setupCardAbilities() {
         this.tracker = ChallengeTracker.forRound(this.game);
 

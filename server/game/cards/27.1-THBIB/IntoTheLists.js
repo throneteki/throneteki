@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class IntoTheLists extends PlotCard {
+    // Into the Lists (27019)
+    // When Revealed: Each player may choose and kneel a non-Army character they control with a
+    // [military] icon. Then, if exactly 1 character has the highest STR among characters knelt this
+    // way, it gains 2 power.
     setupCardAbilities() {
         this.whenRevealed({
             target: {

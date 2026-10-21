@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheodanTheTrue extends DrawCard {
+    // Theodan the True (27037)
+    // No attachments except The Seven.
+    // Reaction: After you win a challenge in which Theodan the True is participating, choose a The
+    // Seven character. Until the end of the phase, that character gains insight or renown. (Limit
+    // twice per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

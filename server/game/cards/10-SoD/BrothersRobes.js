@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class BrothersRobes extends DrawCard {
+    // Brother's Robes (10043)
+    // The Seven character only.
+    // Reaction: After attached character is knelt, choose a location or attachment. Until the end
+    // of the phase, treat that card as if its printed text box were blank (except for Traits).
     setupCardAbilities() {
         this.attachmentRestriction({ trait: 'The Seven' });
         this.reaction({

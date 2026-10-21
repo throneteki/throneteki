@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class WhiteRaven extends DrawCard {
+    // White Raven (04008)
+    // Forced Reaction: After you lose a [power] challenge, sacrifice White Raven.
+    // Reaction: After you win dominance, if there is a Summer or Winter plot card revealed, gain 1
+    // power for your faction.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

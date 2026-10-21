@@ -3,6 +3,11 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class SerGuyardMorrigen extends DrawCard {
+    // Ser Guyard Morrigen (20037)
+    // Bestow (1).
+    // Each Rainbow Guard character you control with 1 or more gold gains an [intrigue] icon.
+    // Reaction: After a Summer plot card is revealed, place 1 gold from the treasury on, either: a
+    // Knight character, or each Rainbow Guard character you control. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>

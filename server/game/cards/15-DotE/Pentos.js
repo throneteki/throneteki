@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Pentos extends DrawCard {
+    // Pentos (15018)
+    // Reaction: After you draw an attachment, kneel Pentos to reveal that attachment and put it
+    // into play. Then, draw a card.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

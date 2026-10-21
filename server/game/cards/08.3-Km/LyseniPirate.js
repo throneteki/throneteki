@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class LyseniPirate extends DrawCard {
+    // Lyseni Pirate (08047)
+    // While you control a Warship location, Lyseni Pirate gains stealth.
+    // Reaction: After you win a challenge in which Lyseni Pirate is attacking, move 1 gold from the
+    // losing opponent’s gold pool or a card that player controls to your gold pool.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class EastwatchCarpenter extends DrawCard {
+    // Eastwatch Carpenter (06005)
+    // No attachments except Weapon.
+    // Reaction: After you collect income, gain 1 gold for every 2 [thenightswatch] locations you
+    // control.
     setupCardAbilities() {
         this.reaction({
             when: {

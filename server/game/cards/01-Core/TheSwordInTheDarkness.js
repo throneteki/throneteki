@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheSwordInTheDarkness extends DrawCard {
+    // The Sword in the Darkness (01140)
+    // Play only during a challenge in which you control a participating [thenightswatch] character.
+    // Reaction: After you win a challenge by 5 or more STR as the defending player, the losing
+    // opponent cannot initiate challenges against you this round.
     setupCardAbilities() {
         this.reaction({
             when: {

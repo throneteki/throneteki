@@ -1,6 +1,10 @@
 import PlotCard from '../../plotcard.js';
 
 class ChampionsChallenge extends PlotCard {
+    // Champion's Challenge (15049)
+    // Reaction: After an opponent initiates a challenge against you, kneel a character with the
+    // highest STR among character you control to end the challenge with no winner or loser. (Limit
+    // once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

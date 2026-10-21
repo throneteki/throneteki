@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class DaenerysTargaryen extends DrawCard {
+    // Daenerys Targaryen (08093)
+    // Daenerys Targaryen's STR cannot be reduced by card effects.
+    // Reaction: After you play a [targaryen] event, choose a character. Until the end of the phase,
+    // that character gets -1 STR and is killed if its STR is 0. (Limit 3 times per round.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

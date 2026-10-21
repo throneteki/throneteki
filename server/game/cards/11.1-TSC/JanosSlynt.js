@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class JanosSlynt extends DrawCard {
+    // Janos Slynt (11006)
+    // Shadow (0).
+    // Forced Reaction: After Janos Slynt comes out of shadows, sacrifice a [thenightswatch]
+    // character.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

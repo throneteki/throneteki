@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class SerMandonMoore extends DrawCard {
+    // Ser Mandon Moore (13009)
+    // Shadow (3).
+    // Reaction: After Ser Mandon Moore comes out of shadows, choose an opponent. That player must
+    // choose and kill a character he or she controls unless he or she chooses and discards 2 cards
+    // from his or her hand.
     setupCardAbilities() {
         this.reaction({
             when: {

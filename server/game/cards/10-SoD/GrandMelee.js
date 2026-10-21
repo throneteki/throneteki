@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class GrandMelee extends PlotCard {
+    // Grand Melee (10051)
+    // Each character that is attacking or defending alone does not contribute its STR to the
+    // challenge.
     setupCardAbilities(ability) {
         this.persistentEffect({
             // Add always-on condition so that attacking / defending alone is

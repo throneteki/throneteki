@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class PayTheIronPrice extends DrawCard {
+    // Pay The Iron Price (06112)
+    // Challenges Action: Choose an attachment in an opponent's discard pile, and put it into play
+    // under your control.
+    // Reaction: After you win an unopposed challenge, pay 1 gold to return Pay The Iron Price from
+    // your discard pile to your hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put attachment into play',

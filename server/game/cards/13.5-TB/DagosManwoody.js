@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class DagosManwoody extends DrawCard {
+    // Dagos Manwoody (13095)
+    // While there are 5 or more different Traits among plot cards in your used pile, Dagos Manwoody
+    // gains renown and stealth.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.numOfTraitsInUsedPile() >= 5,

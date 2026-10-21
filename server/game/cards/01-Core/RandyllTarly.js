@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class RandyllTarly extends DrawCard {
+    // Randyll Tarly (01183)
+    // Renown.
+    // Reaction: After Randyll Tarly's STR is increased by a card effect, stand him. (Limit twice
+    // per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

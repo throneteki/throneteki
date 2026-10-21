@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ShadowOfTheThrone extends DrawCard {
+    // Shadow of the Throne (13048)
+    // Shadow (1).
+    // Action: Choose and kneel any number of locations with total printed cost 3 or lower. If there
+    // is a Kingdom plot card revealed, return Shadow of the Throne to your hand instead of placing
+    // it in your discard pile.
     setupCardAbilities() {
         this.action({
             title: 'Kneel locations',

@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class TheBastardsLetter extends DrawCard {
+    // The Bastard's Letter (11102)
+    // Shadow (3).
+    // Reaction: After an opponent initiates a [military] challenge against you, stand any number of
+    // characters you control with a [military] icon. If you win the challenge, kill each attacking
+    // character.
     setupCardAbilities() {
         this.reaction({
             when: {

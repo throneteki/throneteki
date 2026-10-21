@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class DaleSeaworth extends DrawCard {
+    // Dale Seaworth (14010)
+    // Reaction: After you marshal Dale Seaworth, choose a [baratheon] location in your discard pile
+    // and return it to your hand.
     setupCardAbilities() {
         this.reaction({
             when: {

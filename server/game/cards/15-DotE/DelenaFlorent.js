@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class DelenaFlorent extends DrawCard {
+    // Delena Florent (15025)
+    // During the challenges phase, non-Bastard characters cannot stand.
+    // Reaction: After Delena Florent enters play, search your deck for a Bastard character, reveal
+    // it, and add it to your hand. Shuffle your deck.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.currentPhase === 'challenge',

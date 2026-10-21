@@ -3,6 +3,10 @@ import GameActions from '../../GameActions/index.js';
 import GenericTracker from '../../EventTrackers/GenericTracker.js';
 
 class NarrowEscape extends DrawCard {
+    // Narrow Escape (16024)
+    // Action: Put each character that was killed or discarded from play this phase into play from
+    // its owner's dead or discard pile. An opponent may discard his or her hand (of at least 1
+    // card) to cancel this effect. (Max 1 per phase.)
     setupCardAbilities(ability) {
         this.killTracker = GenericTracker.forPhase(this.game, 'onCharacterKilled');
         this.discardTracker = GenericTracker.forPhase(this.game, 'onCardDiscarded');

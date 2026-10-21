@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class BlueGraces extends DrawCard {
+    // Blue Graces (15013)
+    // Challenges Action: Remove Blue Graces from the game to choose a card with printed cost 6 or
+    // higher in your discard or dead pile and shuffle it into your deck.
     setupCardAbilities(ability) {
         this.action({
             title: 'Shuffle card back into deck',

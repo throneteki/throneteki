@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class TrisBotley extends DrawCard {
+    // Tris Botley (08031)
+    // Pillage.
+    // Action: Choose a card in an opponent's discard pile and remove it from the game. Until Tris
+    // Botley leaves play, that player cannot marshal or play any copy of that card. (Limit once per
+    // round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove card from game',

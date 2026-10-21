@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TyrionsChain extends DrawCard {
+    // Tyrion's Chain (04110)
+    // Reaction: After you win a challenge in which you control a participating unique [lannister]
+    // character, choose a revealed War plot card. Initiate the when revealed ability on that plot
+    // card as if you had just revealed it. (Max 1 per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

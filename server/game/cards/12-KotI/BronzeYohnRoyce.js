@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class BronzeYohnRoyce extends DrawCard {
+    // Bronze Yohn Royce (12039)
+    // Renown.
+    // Reaction: After you win a challenge in which Bronze Yohn Royce is defending, kneel a neutral
+    // location with printed cost 1 or higher to stand him. (Limit twice per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

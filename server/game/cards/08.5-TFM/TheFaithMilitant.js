@@ -1,6 +1,10 @@
 import AgendaCard from '../../agendacard.js';
 
 class TheFaithMilitant extends AgendaCard {
+    // The Faith Militant (08099)
+    // Non-The Seven characters and locations you control cannot gain power.
+    // Reaction: After you win a challenge, kneel your faction card to move 1 power from the losing
+    // opponent's faction card to a participating The Seven character you control.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>

@@ -3,6 +3,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class GhostHillElite extends DrawCard {
+    // Ghost Hill Elite (26027)
+    // Ambush (6). No attachments.
+    // Reaction: After Ghost Hill Elite enters play, choose a character. Until the end of the phase,
+    // that character loses an [intrigue] or [power] icon and Ghost Hill Elite gains that icon.
+    // Then, if that character has no challenge icons, kill it.
     setupCardAbilities() {
         this.reaction({
             when: {

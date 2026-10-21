@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class GreatRanging extends DrawCard {
+    // Great Ranging (17170)
+    // Assault. Intimidate. No attachments.
+    // Reaction: After you marshal Great Ranging, search your hand, deck, and discard pile for Fist
+    // of the First Men and put it into play. Shuffle your deck.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ATraitorsWhisper extends DrawCard {
+    // A Traitor's Whisper (23008)
+    // Play only if there is a card with shadow in your discard pile.
+    // Action: Choose and reveal a card from each player's shadows area, if able. You may put those
+    // cards into play.
     setupCardAbilities() {
         this.action({
             condition: (context) => context.player.discardPile.some((card) => card.isShadow()),

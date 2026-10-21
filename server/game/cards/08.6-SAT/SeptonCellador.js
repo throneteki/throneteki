@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SeptonCellador extends DrawCard {
+    // Septon Cellador (08105)
+    // Challenges Action: Kneel Septon Cellador to choose an opponent. That player must choose and
+    // discard a character from his or her hand unless he or she reveals a hand containing no
+    // characters.
     setupCardAbilities(ability) {
         this.action({
             title: 'Opponent discards character',

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Varys extends DrawCard {
+    // Varys (11119)
+    // Shadow (8). Stealth.
+    // Reduce the cost to bring Varys out of shadows by 1 for each other card in shadows.
+    // Reaction: After Varys comes out of shadows, choose and kill a character with power.
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',

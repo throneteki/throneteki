@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Stormlord extends DrawCard {
+    // Stormlord (26041)
+    // Renown.
+    // Forced Reaction: After the dominance phase begins, if you control no King characters,
+    // sacrifice a character.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

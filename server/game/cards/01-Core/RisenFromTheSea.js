@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class RisenFromTheSea extends DrawCard {
+    // Risen from the Sea (01081)
+    // Interrupt: When a [greyjoy] character would be killed, save it. Then, attach Risen from the
+    // Sea to that character as a Condition attachment with the text: "Terminal. Attached character
+    // gets +1 STR."
     setupCardAbilities() {
         this.interrupt({
             canCancel: true,

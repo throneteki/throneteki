@@ -2,6 +2,8 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class FuneralPyre extends DrawCard {
+    // Funeral Pyre (02114)
+    // Reaction: After a Lord or Lady character is killed, kneel your faction card to draw 3 cards.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

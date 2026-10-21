@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SerJaimeLannister extends DrawCard {
+    // Ser Jaime Lannister (01087)
+    // Ser Jaime Lannister does not kneel when declared as an attacker in a [military] challenge,
+    // and gains renown while participating in a [military] challenge.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

@@ -3,6 +3,11 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class BelligerentHeir extends DrawCard {
+    // Belligerent Heir (25057)
+    // Belligerent Heir gets +1 STR for each gold it has.
+    // Reaction: After you initiate a challenge, place 1 gold from the treasury on an attacking
+    // neutral character. If you lose the challenge, sacrifice that character. (Limit once per
+    // phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

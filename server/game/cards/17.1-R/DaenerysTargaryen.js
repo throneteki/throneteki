@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class DaenerysTargaryen extends DrawCard {
+    // Daenerys Targaryen (17128)
+    // Action: Kneel your faction card to search the top 10 cards of your deck for a Dragon or Title
+    // card and put it into play. Shuffle your deck. At the end of the phase, if that card is still
+    // in play and not attached to Daenerys Targaryen, return it to your hand (cannot be saved).
     setupCardAbilities(ability) {
         this.action({
             title: 'Search deck',

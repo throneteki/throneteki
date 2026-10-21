@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class AlysKarstark extends DrawCard {
+    // Alys Karstark (27009)
+    // Reaction: After Alys Karstark stands, choose another Wildling character you control and have
+    // it gain 1 power. Then, if that character was Sigorn, draw 1 card. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

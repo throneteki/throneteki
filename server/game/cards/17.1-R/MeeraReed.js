@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MeeraReed extends DrawCard {
+    // Meera Reed (17123)
+    // Shadow (2). Stealth.
+    // Forced Reaction: After a Winter plot card is revealed, return Meera Reed to shadows.
+    // Reaction: After Meera Reed comes out of shadows, choose a character. Until the end of the
+    // phase, treat it as if its printed text box were blank (except for Traits).
     setupCardAbilities(ability) {
         this.forcedReaction({
             when: {

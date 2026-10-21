@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class HollowHill extends DrawCard {
+    // Hollow Hill (00018)
+    // Reaction: After you marshal a character with a faction affiliation that does not match any
+    // other card you control, draw 1 card.
+    // Draft format only.
     setupCardAbilities() {
         this.reaction({
             when: {

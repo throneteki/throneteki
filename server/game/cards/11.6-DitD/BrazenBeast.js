@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class BrazenBeast extends DrawCard {
+    // Brazen Beast (11113)
+    // No attachments. Shadow (3).
+    // Marshaling Action: Pay 3 gold to put Brazen Beast into shadows from your discard pile.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put into shadows',

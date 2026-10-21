@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class WardensOfTheWest extends PlotCard {
+    // Wardens of the West (02030)
+    // Reaction: After you win an [intrigue] challenge, pay 2 gold to have the losing opponent
+    // choose and discard 2 cards from his or her hand.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

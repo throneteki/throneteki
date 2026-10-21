@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheMountainsSkull extends DrawCard {
+    // The Mountain's Skull (13096)
+    // Attached character gets +2 STR and gains renown.
+    // Reaction: After an opponent's character with printed STR 6 or higher is killed, put The
+    // Mountain's Skull into play from your hand or discard pile.
     setupCardAbilities(ability) {
         this.whileAttached({
             effect: [ability.effects.modifyStrength(2), ability.effects.addKeyword('Renown')]

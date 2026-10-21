@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class TheDoomOfValyria extends PlotCard {
+    // The Doom of Valyria (26100)
+    // When Revealed: If there are 3 or more plot cards in your used pile, discard each non-limited
+    // card from play, and each card in shadows. An opponent may discard their hand (of at least 3
+    // cards) to cancel this effect.
     setupCardAbilities() {
         this.whenRevealed({
             condition: (context) => context.player.getNumberOfUsedPlots() >= 3,

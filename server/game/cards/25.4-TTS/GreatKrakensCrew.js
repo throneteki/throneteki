@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class GreatKrakensCrew extends DrawCard {
+    // Great Kraken's Crew (25063)
+    // No attachments. Shadow (2).
+    // Reaction: After Great Kraken's Crew comes out of shadows during a challenge, choose a
+    // defending character with printed cost 3 or lower. That character does not contribute its STR
+    // to this challenge.
     setupCardAbilities() {
         this.reaction({
             when: {

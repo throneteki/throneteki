@@ -3,6 +3,11 @@ import shuffle from 'lodash.shuffle';
 import GameActions from '../../GameActions/index.js';
 
 class BoundForTheWall extends DrawCard {
+    // Bound for the Wall (13086)
+    // Reaction: After you win a challenge as the attacking player, reveal the top 5 cards of the
+    // losing opponent's deck. You may put a character revealed this way into play under your
+    // control. Place the other revealed cards on the bottom of that player's deck in a random
+    // order. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

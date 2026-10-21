@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class EdricDayne extends DrawCard {
+    // Edric Dayne (20017)
+    // Reaction: After a non-loyal card enters your discard pile, place it in shadows (without that
+    // card gaining the shadow keyword.). (Limit once per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

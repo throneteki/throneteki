@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class MountainsMan extends DrawCard {
+    // Mountain's Man (20013)
+    // [lannister] character only.
+    // Attached character gains the House Clegane trait.
+    // Reaction: After attached character discards a card using pillage, choose and kneel a card
+    // with lower printed cost than that card's.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'lannister' });
         this.whileAttached({

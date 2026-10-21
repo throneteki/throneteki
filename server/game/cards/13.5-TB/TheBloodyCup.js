@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheBloodyCup extends DrawCard {
+    // "The Bloody Cup" (13092)
+    // Reaction: After you win an unopposed challenge, choose a character controlled by the losing
+    // opponent and place it on top of its owner's deck. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheBlackCells extends DrawCard {
+    // The Black Cells (13028)
+    // Shadow (2).
+    // Reaction: After a card you control comes out of shadows, kneel The Black Cells to choose an
+    // opponent's character. Until the end of the phase, that character cannot kneel or stand.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

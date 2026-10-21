@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class VictarionGreyjoy extends DrawCard {
+    // Victarion Greyjoy (05027)
+    // Intimidate. Renown.
+    // Interrupt: When Victarion Greyjoy would be killed, discard 2 power from him to save him.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

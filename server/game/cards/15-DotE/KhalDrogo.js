@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class KhalDrogo extends DrawCard {
+    // Khal Drogo (15005)
+    // Renown.
+    // Interrupt: When an Army or Dothraki character would be returned to your hand, discard 1 card
+    // from your hand to save it.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Bronn extends DrawCard {
+    // Bronn (02089)
+    // During a challenge in which you are the defending player, Bronn gains a [military], an
+    // [intrigue], and a [power] icon.
+    // Marshaling Action: Pay 1 gold to take control of Bronn. (Any player may initiate this
+    // ability.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Take control of Bronn',

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class AreoHotah extends DrawCard {
+    // Areo Hotah (01103)
+    // Ambush (5).
+    // Reaction: After Areo Hotah enters play during a challenge, choose a participating character,
+    // and remove it from the challenge.
     setupCardAbilities() {
         this.reaction({
             when: {

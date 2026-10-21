@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class BurningTheBooks extends PlotCard {
+    // Burning the Books (25119)
+    // When Revealed: Each opponent chooses a non-The Seven attachment they control, if able, and
+    // discards it from play. Then, you may discard 1 power from a character you control to initiate
+    // this effect again.
     setupCardAbilities(ability) {
         this.whenRevealed({
             target: {

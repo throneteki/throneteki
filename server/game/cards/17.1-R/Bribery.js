@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Bribery extends DrawCard {
+    // Bribery (17146)
+    // Action: Choose and kneel a character with printed cost X or lower. Then, if there is no
+    // attachment attached to that character and it has the Ally or Mercenary trait, you may take
+    // control of it.
     setupCardAbilities() {
         this.xValue({
             min: () => this.getMinXValue(),

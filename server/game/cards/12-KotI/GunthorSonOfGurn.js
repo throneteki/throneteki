@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class GunthorSonOfGurn extends DrawCard {
+    // Gunthor Son of Gurn (12027)
+    // Ambush (4).
+    // Reaction: After you win a challenge in which Gunthor Son of Gurn is attacking, the losing
+    // opponent must choose and discard 1 card from his or her hand.
     setupCardAbilities() {
         this.reaction({
             when: {

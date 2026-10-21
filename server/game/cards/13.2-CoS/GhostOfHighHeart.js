@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class GhostOfHighHeart extends DrawCard {
+    // Ghost of High Heart (13037)
+    // While you control no loyal characters, each character you control gets +1 STR.
+    // Challenges Action: Kneel Ghost of High Heart to look at a player's hand. Choose and discard 1
+    // card from that hand. Then, that player draws 1 card.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

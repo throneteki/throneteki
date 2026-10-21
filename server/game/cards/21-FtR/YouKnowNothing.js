@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class YouKnowNothing extends DrawCard {
+    // You Know Nothing (21015)
+    // Challenges Action: Until the end of the phase, each non-Army character an opponent controls
+    // loses all keywords.
     setupCardAbilities() {
         this.action({
             phase: 'challenge',

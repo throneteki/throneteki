@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class StatueOfBaelor extends DrawCard {
+    // Statue of Baelor (13058)
+    // Action: Kneel Statue of Baelor and discard 1 power from another character or location you
+    // control to stand that character or location.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand card',

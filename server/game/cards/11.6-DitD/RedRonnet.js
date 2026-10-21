@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class RedRonnet extends DrawCard {
+    // Red Ronnet (11107)
+    // No attachments except Weapon.
+    // While Red Ronnet is attacking, if the defending player controls a card in shadows, raise the
+    // claim value on your revealed plot card by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

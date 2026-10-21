@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class BeholdOurBounty extends DrawCard {
+    // Behold our Bounty (20038)
+    // Reaction: After you win a challenge, return an attacking Small Council or Spy character to
+    // your hand to raise the claim value on your revealed plot card by 1 until the end of the
+    // challenge.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

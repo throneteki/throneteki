@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class BowelsOfCasterlyRock extends DrawCard {
+    // Bowels of Casterly Rock (11030)
+    // Reaction: After a card you control comes out of shadows, either: gain 2 gold, or draw 1 card.
+    // (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

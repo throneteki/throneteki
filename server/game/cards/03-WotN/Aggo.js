@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Aggo extends DrawCard {
+    // Aggo (03035)
+    // Action: If there is a Summer plot card revealed, choose and stand a Bloodrider character.
+    // (Limit once per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand a Bloodrider',

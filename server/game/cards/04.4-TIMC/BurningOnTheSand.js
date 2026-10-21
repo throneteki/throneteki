@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class BurningOnTheSand extends DrawCard {
+    // Burning on the Sand (04076)
+    // Reaction: After you lose an unopposed challenge, set the claim value on the winning
+    // opponent's revealed plot card to 0 until the end of the challenge.
     setupCardAbilities() {
         this.reaction({
             when: {

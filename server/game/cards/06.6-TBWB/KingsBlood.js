@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class KingsBlood extends DrawCard {
+    // King's Blood (06108)
+    // Bastard or King character you control only. Bestow (3).
+    // Plot Action: Kneel attached character and sacrifice King's Blood to discard X power from each
+    // opponent's faction card. X is the number of gold King's Blood has.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: ['Bastard', 'King'], controller: 'current' });
         this.action({

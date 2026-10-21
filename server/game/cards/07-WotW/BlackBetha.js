@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class BlackBetha extends DrawCard {
+    // Black Betha (07026)
+    // While you control Ser Davos Seaworth, he gains renown.
+    // Action: Kneel Black Betha to choose an attacking character. Until the end of the challenge,
+    // that character gets +X STR. X is the number of kneeling characters the defending player
+    // controls.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Ser Davos Seaworth',

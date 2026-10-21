@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class WinterfellCastle extends DrawCard {
+    // Winterfell Castle (02022)
+    // During a [military] or [power] challenge in which you control 2 or more unique participating
+    // [stark] characters, each of those characters gets +2 STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.hasParticipatingUniqueStarks(),

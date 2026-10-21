@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class AeronDamphair extends DrawCard {
+    // Aeron Damphair (12005)
+    // Insight.
+    // Reaction: After another Drowned God character you control is killed, draw 1 card. (Limit once
+    // per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

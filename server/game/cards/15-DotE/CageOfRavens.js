@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class CageOfRavens extends DrawCard {
+    // Cage of Ravens (15034)
+    // Steward character only.
+    // Action: Kneel Cage of Ravens to put a card with printed cost 1 or lower into play from your
+    // hand.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Steward' });
         this.action({

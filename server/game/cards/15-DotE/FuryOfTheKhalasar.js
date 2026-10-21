@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class FuryOfTheKhalasr extends PlotCard {
+    // Fury of the Khalasar (15046)
+    // Reaction: After the challenges phase begins, put a Dothraki character into play from your
+    // hand. At the end of the phase, if that card is still in play, return it to your hand.
     setupCardAbilities() {
         this.reaction({
             when: {

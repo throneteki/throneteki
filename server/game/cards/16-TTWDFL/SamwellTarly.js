@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SamwellTarly extends DrawCard {
+    // Samwell Tarly (16009)
+    // No attachments except Raven.
+    // Action: Kneel Samwell Tarly to look at the top 4 cards of your deck. Switch one of those
+    // cards with a card in your hand, if able. Then, place the remaining cards on top of your deck
+    // in any order.
     setupCardAbilities(ability) {
         this.action({
             title: 'Look at top 4 cards',

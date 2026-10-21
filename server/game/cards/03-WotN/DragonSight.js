@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class DragonSight extends DrawCard {
+    // Dragon Sight (03036)
+    // Action: Each participating non-Dragon character gets -1 STR until the end of the challenge.
     setupCardAbilities() {
         this.action({
             title: 'Reduce non-Dragon characters STR by 1',

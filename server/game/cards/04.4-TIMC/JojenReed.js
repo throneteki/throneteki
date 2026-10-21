@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class JojenReed extends DrawCard {
+    // Jojen Reed (04061)
+    // Stealth.
+    // Reaction: After Jojen Reed stands, reveal the top card of each player's deck. You may either:
+    // discard each of those cards, or have each player draw 1 card.
     setupCardAbilities() {
         this.reaction({
             when: {

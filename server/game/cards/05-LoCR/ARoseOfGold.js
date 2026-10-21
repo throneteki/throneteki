@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ARoseOfGold extends DrawCard {
+    // "A Rose of Gold" (05038)
+    // Challenges Action: Look at the top 3 cards of your deck. Add 1 to your hand, and place the
+    // others on the bottom of your deck in any order.
     setupCardAbilities() {
         this.action({
             title: 'Look at top 3 cards of deck',

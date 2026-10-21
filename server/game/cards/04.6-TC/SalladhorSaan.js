@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SalladhorSaan extends DrawCard {
+    // Salladhor Saan (04107)
+    // Reaction: After you win a challenge in which Salladhor Saan is participating, put a Warship
+    // location or Weapon attachment into play from your hand.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class Harwin extends DrawCard {
+    // Harwin (18012)
+    // Bestow (2). No attachments except Warhorse.
+    // Action: During a challenge in which you control a participating non-loyal character, discard
+    // 1 gold from Harwin to choose a character you control with 2 or more keywords and have it
+    // participate in the challenge on your side. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Discard 1 gold',

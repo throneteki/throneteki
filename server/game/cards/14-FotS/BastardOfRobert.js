@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class BastardOfRobert extends DrawCard {
+    // Bastard of Robert (14015)
+    // While you control Robert Baratheon, reduce the cost to marshal Bastard of Robert by 2.
+    // Reaction: After Bastard of Robert enters play, if you control a King character, draw a card.
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',

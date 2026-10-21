@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class RecruiterForTheWatch extends DrawCard {
+    // Recruiter for the Watch (06045)
+    // You may choose not to stand Recruiter for the Watch during the standing phase.
+    // Marshaling Action: Kneel Recruiter for the Watch to choose a character with printed cost 2 or
+    // lower. Take control of that character until Recruiter for the Watch stands or leaves play.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

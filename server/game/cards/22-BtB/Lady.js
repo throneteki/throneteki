@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Lady extends DrawCard {
+    // Lady (22017)
+    // No attachments.
+    // Interrupt: When another Direwolf card or Sansa Stark would leave play, kill Lady to save that
+    // card.
     setupCardAbilities(ability) {
         let leftPlayCondition = (event) =>
             event.allowSave &&

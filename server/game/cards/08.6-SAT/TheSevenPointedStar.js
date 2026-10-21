@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheSevenPointedStar extends DrawCard {
+    // The Seven-Pointed Star (08119)
+    // Attached character gains The Seven trait.
+    // Marshaling Action: Kneel attached character to reduce the cost of the next The Seven card you
+    // marshal this phase by 2.
     setupCardAbilities(ability) {
         this.whileAttached({
             effect: ability.effects.addTrait('The Seven')

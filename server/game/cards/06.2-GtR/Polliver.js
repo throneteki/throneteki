@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Polliver extends DrawCard {
+    // Polliver (06029)
+    // Pillage.
+    // Reaction: After Polliver discards a character using pillage, return 2 gold from the losing
+    // opponent's gold pool to the treasury.
     setupCardAbilities() {
         this.reaction({
             when: {

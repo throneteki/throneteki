@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class DornishFiefdom extends DrawCard {
+    // Dornish Fiefdom (06056)
+    // Limited.
+    // Marshaling Action: Kneel Dornish Fiefdom to gain 1 gold. (2 gold instead if you are not the
+    // first player.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Gain gold',

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheRatCook extends DrawCard {
+    // "The Rat Cook" (08007)
+    // Marshaling Action: Choose a character with printed cost X or lower. X is the number of
+    // Steward characters you control. Until the end of the round, take control of that character,
+    // and treat its printed text box as if it were blank (except for Traits).
     setupCardAbilities() {
         this.action({
             title: 'Blank and take control of character',

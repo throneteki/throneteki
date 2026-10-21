@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class RattleshirtsRaiders extends DrawCard {
+    // Rattleshirt's Raiders (01030)
+    // No attachments.
+    // Reaction: After you win a challenge in which Rattleshirt's Raiders is participating as an
+    // attacker, choose an attachment controlled by the losing opponent, and discard it from play.
     setupCardAbilities() {
         this.reaction({
             when: {

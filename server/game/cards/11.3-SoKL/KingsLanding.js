@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GenericTracker from '../../EventTrackers/GenericTracker.js';
 
 class KingsLanding extends DrawCard {
+    // King's Landing (11058)
+    // Once per marshaling phase, you may marshal a location from your discard pile as if it were in
+    // your hand.
+    // Challenges Action: Kneel King's Landing and discard 1 location from your hand to draw 1 card.
     setupCardAbilities(ability) {
         this.tracker = GenericTracker.forPhase(this.game, 'onCardMarshalled');
 

@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class HightowerSpy extends DrawCard {
+    // Hightower Spy (08063)
+    // Ambush (3).
+    // Reaction: After Hightower Spy enters play, choose a character and reveal the top card of your
+    // deck. Until the end of the phase, that character gets +X STR. X is the printed cost of the
+    // revealed card.
     setupCardAbilities() {
         this.reaction({
             when: {

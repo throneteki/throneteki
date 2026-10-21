@@ -3,6 +3,10 @@ import GenericTracker from '../../EventTrackers/GenericTracker.js';
 import CardEntersPlayTracker from '../../EventTrackers/CardEntersPlayTracker.js';
 
 class MaesterGormon extends DrawCard {
+    // Maester Gormon (13043)
+    // You may look at the top card of your deck.
+    // Once per phase, if the top card of your deck is a non-[tyrell] card, you may marshal or play
+    // it as if it were in your hand.
     setupCardAbilities(ability) {
         this.enterPlayTracker = CardEntersPlayTracker.forPhase(this.game);
         this.playedTracker = GenericTracker.forPhase(this.game, 'onCardPlayed');

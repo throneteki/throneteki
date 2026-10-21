@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class SeizedByTheGuard extends DrawCard {
+    // Seized by the Guard (08078)
+    // Non-limited location only. Bestow (4). Terminal.
+    // Treat attached location as if its printed text box were blank (except for Traits).
+    // Forced Reaction: After the marshaling phase begins, sacrifice Seized by the Guard unless you
+    // discard 1 gold from it.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ type: 'location', limited: false });
         this.whileAttached({

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class RogueWildling extends DrawCard {
+    // Rogue Wildling (12040)
+    // Ambush (5).
+    // Reaction: After Rogue Wildling enters play, choose and stand a Wildling character you
+    // control.
     setupCardAbilities() {
         this.reaction({
             when: {

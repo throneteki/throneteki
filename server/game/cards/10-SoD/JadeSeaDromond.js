@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class JadeSeaDromond extends DrawCard {
+    // Jade Sea Dromond (10042)
+    // Limited.
+    // Dominance Action: Kneel and sacrifice Jade Sea Dromond to choose a non-limited location with
+    // printed cost 3 or lower and discard it from play.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.plotModifiers({
             gold: 1

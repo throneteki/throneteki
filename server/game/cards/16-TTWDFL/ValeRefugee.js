@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ValeRefugee extends DrawCard {
+    // Vale Refugee (16018)
+    // Forced Reaction: After dominance is determined, if you did not win, discard Vale Refugee from
+    // play unless you pay 2 gold.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

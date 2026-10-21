@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class DragonGate extends DrawCard {
+    // Dragon Gate (13014)
+    // Limited.
+    // Challenges Action: If you control 2 or more attachments, sacrifice Dragon Gate to draw 2
+    // cards.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.plotModifiers({
             gold: 1

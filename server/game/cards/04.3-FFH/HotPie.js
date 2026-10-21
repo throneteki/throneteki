@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class HotPie extends DrawCard {
+    // Hot Pie (04057)
+    // Marshaling Action: Kneel a Companion character to reduce the cost of the next unique
+    // character you marshal this phase by 1.
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce next marshalled character',

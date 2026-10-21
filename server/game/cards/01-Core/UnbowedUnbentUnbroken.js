@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import ChallengeTypes from '../../ChallengeTypes.js';
 
 class UnbowedUnbentUnbroken extends DrawCard {
+    // Unbowed, Unbent, Unbroken (01120)
+    // Play only if you are not the first player.
+    // Reaction: After you lose a challenge as the defending player, name a challenge type. Until
+    // the end of the phase, the winner of the challenge cannot initiate challenges of that type.
+    // (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             max: ability.limit.perChallenge(1),

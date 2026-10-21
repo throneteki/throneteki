@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class EddardStark extends DrawCard {
+    // Eddard Stark (03003)
+    // Renown.
+    // Reaction: After Eddard Stark gains power using renown, choose another participating character
+    // you control. That character gains 1 power.
     setupCardAbilities() {
         this.reaction({
             when: {

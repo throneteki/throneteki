@@ -4,6 +4,12 @@ import Message from '../../Message.js';
 import range from 'lodash.range';
 
 class Highgarden extends DrawCard {
+    // Highgarden (22023)
+    // Action: Kneel Highgarden to reveal up to 3 [tyrell] characters from your hand. For each card
+    // revealed this way, choose a character. Until the end of the phase, that character gets +2
+    // STR. (You may choose the same character more than once.)
+    // Challenges Action: Return a unique [tyrell] character you control to your hand. (Limit once
+    // per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Give characters +STR',

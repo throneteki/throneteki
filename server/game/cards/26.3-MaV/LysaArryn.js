@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class LysaArryn extends DrawCard {
+    // Lysa Arryn (26057)
+    // Each House Arryn character you control is considered to be loyal.
+    // While your initiative value is 0, Lysa Arryn gains the keywords of each other loyal character
+    // you control.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>

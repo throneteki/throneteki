@@ -3,6 +3,10 @@ import { ChallengeTracker } from '../../EventTrackers/ChallengeTracker.js';
 import GameActions from '../../GameActions/index.js';
 
 class AGameOfCyvasse extends DrawCard {
+    // A Game of Cyvasse (27028)
+    // Challenges Action: Each player cannot declare more than 1 character as an attacker or
+    // defender in the next [intrigue] challenge you initiate this phase. If you win that challenge,
+    // you may initiate an additional [intrigue] challenge this phase. (Max 1 per phase.)
     setupCardAbilities(ability) {
         this.tracker = ChallengeTracker.forPhase(this.game);
 

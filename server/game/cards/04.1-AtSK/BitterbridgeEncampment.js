@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class BitterbridgeEncampment extends DrawCard {
+    // Bitterbridge Encampment (04005)
+    // Reaction: After a Summer plot card is revealed, kneel Bitterbridge Encampment. Then, each
+    // player may put a character into play from his or her hand.
     setupCardAbilities() {
         this.reaction({
             when: {

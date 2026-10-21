@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheWardenOfTheSouth extends DrawCard {
+    // The Warden of the South (25056)
+    // [tyrell] Lord character only.
+    // Attached character gets +1 STR and gains the Commander trait.
+    // Reaction: After attached character's STR is increased by a card effect, kneel The Warden of
+    // the South to stand attached character.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'tyrell', trait: 'Lord' });
 

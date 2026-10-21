@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheRedViper extends DrawCard {
+    // The Red Viper (01109)
+    // Reaction: After you win a challenge in which The Red Viper is participating as an attacker,
+    // he gains 1 power for every 5 STR by which you won the challenge.
     setupCardAbilities() {
         this.reaction({
             when: {

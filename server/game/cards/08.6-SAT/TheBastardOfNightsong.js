@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheBastardOfNightsong extends DrawCard {
+    // The Bastard of Nightsong (08107)
+    // Reaction: After you win a [power] challenge in which The Bastard of Nightsong is
+    // participating, move 1 power from the losing opponent’s faction card to your own.
     setupCardAbilities() {
         this.reaction({
             when: {

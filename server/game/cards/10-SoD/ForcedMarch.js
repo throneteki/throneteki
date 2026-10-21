@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ForcedMarch extends PlotCard {
+    // Forced March (10048)
+    // When Revealed: Each opponent kneels 1 character he or she controls with a [military] icon.
+    // Then, you may kneel a character with a [military] icon to initiate this effect again.
     setupCardAbilities(ability) {
         this.whenRevealed({
             target: {

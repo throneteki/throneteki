@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class GreenbloodTrader extends DrawCard {
+    // Greenblood Trader (01112)
+    // Reaction: After Greenblood Trader enters play, look at the top 2 cards of your deck. Add up
+    // to 1 of those cards to your hand, and place the others on the bottom of your deck in any
+    // order.
     setupCardAbilities() {
         this.reaction({
             when: {

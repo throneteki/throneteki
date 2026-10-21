@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Mord extends DrawCard {
+    // Mord (23025)
+    // Action: Kneel Mord to choose a character controlled by a player whose initiative value is
+    // equal to or higher than yours. Until Mord stands or leaves play, treat that character as if
+    // its printed text box were blank (except for Traits).
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel to blank character',

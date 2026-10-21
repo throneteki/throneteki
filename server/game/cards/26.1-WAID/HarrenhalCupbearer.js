@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class HarrenhalCupbearer extends DrawCard {
+    // Harrenhal Cupbearer (26017)
+    // Shadow (3).
+    // Reaction: After you win a challenge in which Harrenhal Cupbearer is participating, return it
+    // to shadows to choose and kneel a character with printed cost 5 or lower controlled by the
+    // losing opponent.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

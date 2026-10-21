@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MothersMen extends DrawCard {
+    // Mother's Men (21020)
+    // Assault. No attachments.
+    // Reaction: After an opponent’s character is killed by a card effect, put Mother's Men into
+    // play from your discard pile.
     setupCardAbilities() {
         this.reaction({
             when: {

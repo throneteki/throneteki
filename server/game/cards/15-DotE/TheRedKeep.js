@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheRedKeep extends DrawCard {
+    // The Red Keep (15030)
+    // Interrupt: When the effects of an opponent's triggered character, location, or attachment
+    // ability would initiate, kneel The Red Keep to cancel those effects.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

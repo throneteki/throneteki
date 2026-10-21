@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class OthellYarwyck extends DrawCard {
+    // Othell Yarwyck (06065)
+    // Action: Kneel a [thenightswatch] location to choose a [thenightswatch] character. Until the
+    // end of the phase, that character gains a challenge icon of your choice.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give icon',

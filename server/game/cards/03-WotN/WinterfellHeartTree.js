@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class WinterfellHeartTree extends DrawCard {
+    // Winterfell Heart Tree (03018)
+    // Reaction: After a phase begins, sacrifice Winterfell Heart Tree to choose a [stark] card you
+    // control. Until the end of the phase, that card gains "immune to opponents' plot effects."
     setupCardAbilities(ability) {
         this.reaction({
             when: {

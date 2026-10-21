@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class KingsLandingProselyte extends DrawCard {
+    // King's Landing Proselyte (13051)
+    // Shadow (4).
+    // Action: Kill a standing [greyjoy] character to put King's Landing Proselyte into play from
+    // shadows.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put into play',

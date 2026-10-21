@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SonsOfTheHarpy extends DrawCard {
+    // Sons of the Harpy (27013)
+    // Shadow (2).
+    // Reaction: After Sons of the Harpy comes out of shadows, choose a participating character.
+    // Until the end of the phase, that character gets -2 STR.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class BalonGreyjoy extends DrawCard {
+    // Balon Greyjoy (04031)
+    // Renown.
+    // Balon Greyjoy does not kneel when declared as an attacker in a [military] challenge against
+    // an opponent who does not control a King character.
+    // Action: Kneel a [greyjoy] location to give each loyal character you control +1 STR until the
+    // end of the challenge. (Limit once per challenge.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => {

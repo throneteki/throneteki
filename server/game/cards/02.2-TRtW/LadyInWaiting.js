@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class LadyInWaiting extends DrawCard {
+    // Lady-in-Waiting (02023)
+    // Lady-in-Waiting may be marshaled as a duplicate (at no cost) on a Lady character you own and
+    // control.
     setupCardAbilities() {
         this.playAction({
             title: 'Marshal as dupe',

@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ShadowCitySepton extends DrawCard {
+    // Shadow City Septon (27027)
+    // Shadow (3).
+    // Reaction: After you lose dominance, return Shadow City Septon to shadows to have the winning
+    // opponent choose a standing character they control. Return that character to its owner's hand.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

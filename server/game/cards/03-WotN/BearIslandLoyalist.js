@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class BearIslandLoyalist extends DrawCard {
+    // Bear Island Loyalist (03012)
+    // While Bear Island Loyalist is participating in a challenge, each other participating [stark]
+    // character you control gains "immune to opponents' events."
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isParticipating(),

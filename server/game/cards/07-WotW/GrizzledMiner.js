@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class GrizzledMiner extends DrawCard {
+    // Grizzled Miner (07006)
+    // No attachments except Weapon.
+    // Reduce the cost to marshal Grizzled Miner by 1 for each [thenightswatch] attachment and
+    // location you control (to a minimum of 1).
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',

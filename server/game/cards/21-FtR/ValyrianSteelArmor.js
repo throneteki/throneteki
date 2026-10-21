@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class ValyrianSteelArmor extends DrawCard {
+    // Valyrian Steel Armor (21006)
+    // If attached character is Euron Crow's Eye, he gains insight.
+    // While you control no non-Army characters with printed cost 6 or higher other than attached
+    // character, attached character cannot be killed or discarded from play.
     setupCardAbilities(ability) {
         this.whileAttached({
             condition: () => this.noOtherBigNonArmy(),

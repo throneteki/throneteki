@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class WilySmuggler extends DrawCard {
+    // Wily Smuggler (14016)
+    // Action: Choose 1 card from your hand and place it on top of your deck. Then, at the end of
+    // the phase, draw 1 card. (Limit once per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Place card on top of deck',

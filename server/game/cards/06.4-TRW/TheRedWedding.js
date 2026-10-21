@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class TheRedWedding extends PlotCard {
+    // The Red Wedding (06080)
+    // Interrupt: When you win a challenge as the attacking player, choose and kill a Lord or Lady
+    // character controlled by the losing opponent. (Any player may initiate this ability.)
     setupCardAbilities() {
         this.interrupt({
             when: {

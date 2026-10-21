@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class CoastalReaver extends DrawCard {
+    // Coastal Reaver (08071)
+    // Reaction: After Coastal Reaver enters play, choose an opponent. That player chooses a card in
+    // his or her hand and places it on top of his or her deck.
     setupCardAbilities() {
         this.reaction({
             when: {

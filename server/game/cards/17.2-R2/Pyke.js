@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Pyke extends DrawCard {
+    // Pyke (17163)
+    // Each Warship location in your hand gains ambush (X). X is 1 less than that card's printed
+    // cost.
+    // Reaction: After a Warship location enters play under your control, choose another non-loyal,
+    // non-limited card with equal or lower printed cost. Kneel Pyke to place that card on top of
+    // its owner's deck. Then, at the end of the phase, that player draws 1 card.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetLocation: 'hand',

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class StinkingDrunk extends DrawCard {
+    // Stinking Drunk (02088)
+    // Opponent's character only.
+    // Reaction: After attached character stands, sacrifice Stinking Drunk to kneel that character.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ controller: 'opponent' });
         this.reaction({

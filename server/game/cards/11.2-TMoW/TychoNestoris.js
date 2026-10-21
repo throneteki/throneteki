@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class TychoNestoris extends DrawCard {
+    // Tycho Nestoris (11037)
+    // You cannot win the game.
+    // Action: Pay 6 gold to treat Tycho Nestoris’s printed text box as if it were blank (except for
+    // Traits) until the end of the phase.
+    // +3 Income.
     setupCardAbilities(ability) {
         this.plotModifiers({
             gold: 3

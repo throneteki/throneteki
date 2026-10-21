@@ -8,6 +8,10 @@ class Hornvale extends DrawCard {
         this.registerEvents([{ 'onCardLeftPlay:forcedinterrupt': 'onCardLeftPlay' }]);
     }
 
+    // Hornvale (27026)
+    // Reaction: After you win an [intrigue] challenge, kneel Hornvale to have the losing opponent
+    // choose a card in their hand and place it facedown under Hornvale. If Hornvale leaves play,
+    // return each card under it to its owner's hand.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

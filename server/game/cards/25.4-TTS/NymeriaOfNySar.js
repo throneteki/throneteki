@@ -3,6 +3,10 @@ import RevealPlots from '../../gamesteps/revealplots.js';
 import { Flags } from '../../Constants/index.js';
 
 class NymeriaOfNySar extends DrawCard {
+    // Nymeria of Ny Sar (25068)
+    // Unique [martell] location you control only.
+    // Reaction: After you win a challenge by 5 or more STR, kneel Nymeria of Ny Sar to reveal a
+    // [martell] or Summer plot.
     setupCardAbilities(ability) {
         this.attachmentRestriction({
             type: 'location',

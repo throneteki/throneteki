@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheHoneywine extends DrawCard {
+    // The Honeywine (07038)
+    // Reaction: After you win a challenge by 5 or more STR as the attacking player, The Honeywine
+    // gains 1 power.
     setupCardAbilities() {
         this.reaction({
             when: {

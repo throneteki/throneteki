@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class CitadelArchivist extends DrawCard {
+    // Citadel Archivist (12041)
+    // Reaction: After Citadel Archivist enters your discard pile, each player shuffles his or her
+    // discard pile into his or her deck.
     setupCardAbilities() {
         this.reaction({
             when: {

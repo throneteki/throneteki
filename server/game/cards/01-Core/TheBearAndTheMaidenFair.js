@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheBearAndTheMaidenFair extends DrawCard {
+    // "The Bear and the Maiden Fair" (01197)
+    // Action: Choose a player. Look at the top 5 cards of that player's deck. Place up to 3 of
+    // those cards on the bottom of that deck, and the others on top, in any order.
     setupCardAbilities() {
         this.action({
             title: 'Look at top 5 cards of a deck',

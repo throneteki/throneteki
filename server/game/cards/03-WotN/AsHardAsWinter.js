@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class AsHardAsWinter extends DrawCard {
+    // As Hard as Winter (03022)
+    // Play only if there is a Winter plot card in your used pile.
+    // Reaction: After a [stark] character you control is sacrificed or killed, put a [stark]
+    // character with equal or lower printed cost into play from your hand.
     setupCardAbilities() {
         this.reaction({
             when: {

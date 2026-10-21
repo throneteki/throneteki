@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class AllMenAreFools extends DrawCard {
+    // All Men Are Fools (06004)
+    // Reaction: After you win a challenge by 5 or more STR, each Lady character you control gains 1
+    // power. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             max: ability.limit.perChallenge(1),

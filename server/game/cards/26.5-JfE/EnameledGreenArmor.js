@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class EnameledGreenArmor extends DrawCard {
+    // Enameled Green Armor (26096)
+    // Character you control only.
+    // Attached character gains renown.
+    // Challenges Action: During a challenge in which attached character is participating, kneel
+    // Enameled Green Armor to choose a participating character. That character contributes its STR
+    // to your side this challenge.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ controller: 'current' });
         this.whileAttached({

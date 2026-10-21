@@ -2,6 +2,11 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class DaenerysTargaryen extends DrawCard {
+    // Daenerys Targaryen (25053)
+    // Insight.
+    // While you control Khal Drogo, he gains intimidate.
+    // Reaction: After you win a challenge as the attacking player, gain 1 power for your faction
+    // for each unique attacking Bloodrider character. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Khal Drogo' && card.controller === this.controller,

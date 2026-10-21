@@ -8,6 +8,12 @@ class ArmedToTheTeeth extends AgendaCard {
         this.registerEvents(['onDecksPrepared']);
     }
 
+    // Armed to the Teeth (26120)
+    // Your deck cannot include non-Weapon attachments.
+    // After all agendas are announced, search your deck for up to 5 different attachments, reveal
+    // them, and place them facedown under this agenda.
+    // Reaction: After you win a challenge, kneel your faction card and pay X gold to put an
+    // attachment with printed cost X into play from under this agenda.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

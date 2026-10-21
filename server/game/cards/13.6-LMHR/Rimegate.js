@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class RimeGate extends DrawCard {
+    // Rimegate (13106)
+    // Interrupt: When another location you control would be discarded from play, kneel Rimegate to
+    // save it.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MaesterOfSunspear extends DrawCard {
+    // Maester of Sunspear (06055)
+    // Reaction: After you lose a challenge in which Maester of Sunspear is participating, choose an
+    // attachment and return it to its owner's hand.
     setupCardAbilities() {
         this.reaction({
             when: {

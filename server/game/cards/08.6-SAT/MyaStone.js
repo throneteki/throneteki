@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import SatisfyClaim from '../../gamesteps/challenge/SatisfyClaim.js';
 
 class MyaStone extends DrawCard {
+    // Mya Stone (08117)
+    // Interrupt: When claim is applied for a [military] or [intrigue] challenge in which you are
+    // the defending player, kneel Mya Stone to apply [power] claim instead.
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

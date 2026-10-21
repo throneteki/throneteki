@@ -3,6 +3,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class WidowsFord extends DrawCard {
+    // "Widow's Ford" (26118)
+    // Shadow (0).
+    // Reaction: After an attachment or location enters your discard pile, place it in shadows with
+    // a shadow token on it. While that card is in shadows, it gains shadow (X). X is its printed
+    // cost.
     setupCardAbilities() {
         this.reaction({
             when: {

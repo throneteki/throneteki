@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Braavos extends DrawCard {
+    // Braavos (15042)
+    // Marshaling Action: Kneel Braavos to gain X gold. X is the number of different factions among
+    // characters you control.
     setupCardAbilities(ability) {
         this.action({
             title: 'Gain gold',

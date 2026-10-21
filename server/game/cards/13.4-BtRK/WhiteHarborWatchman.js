@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class WhiteHarborWatchman extends DrawCard {
+    // White Harbor Watchman (13061)
+    // Reaction: After a character comes out of shadows, sacrifice White Harbor Watchman to kill
+    // that character.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

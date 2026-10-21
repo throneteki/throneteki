@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class CatelynStark extends DrawCard {
+    // Catelyn Stark (16011)
+    // Action: During an [intrigue] or [power] challenge in which you are the defending player, put
+    // Catelyn Stark into play from your hand knelt, participating as a defender. At the end of the
+    // phase, if Catelyn Stark is still in play, return her to your hand.
     setupCardAbilities() {
         this.action({
             title: 'Add as a defender',

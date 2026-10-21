@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class MaesterMyles extends DrawCard {
+    // Maester Myles (11095)
+    // Challenges Action: Kneel Maester Myles to choose a character with printed cost equal to or
+    // lower than the number of plot cards in your used pile. Until the end of the phase, that
+    // character loses a challenge icon of your choice.
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove icon',

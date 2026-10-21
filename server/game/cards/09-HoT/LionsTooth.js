@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class LionsTooth extends DrawCard {
+    // Lion's Tooth (09030)
+    // Unique [lannister] character only. Ambush (2).
+    // Attached character gets +1 STR.
+    // Action: During a challenge in which attached character is participating, sacrifice Lion’s
+    // Tooth to choose a participating character with printed cost 3 or lower and return it to its
+    // owner’s hand.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'lannister', unique: true });
         this.whileAttached({

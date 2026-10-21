@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class GuardingTheRealm extends DrawCard {
+    // Guarding the Realm (06026)
+    // Marshaling Action: Choose a character with printed cost 3 or lower in an opponent's discard
+    // pile, and put it into play under your control.
+    // Reaction: After you win a challenge as the defending player, pay 1 gold to return Guarding
+    // the Realm from your discard pile to your hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Take control of character in discard pile',

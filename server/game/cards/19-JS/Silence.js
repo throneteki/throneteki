@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Silence extends DrawCard {
+    // Silence (19004)
+    // Each Raider character you control gains pillage.
+    // While an opponent has 10 or more cards in their discard pile, each Raider character you
+    // control gets +1 STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>

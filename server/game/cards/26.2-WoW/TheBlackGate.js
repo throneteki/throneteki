@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheBlackGate extends DrawCard {
+    // The Black Gate (26030)
+    // Action: Kneel The Black Gate and sacrifice a [thenightswatch] character to put a character
+    // with equal or lower printed cost that shares a Trait with that character into play from your
+    // hand or shadows area.
     setupCardAbilities(ability) {
         this.action({
             title: 'Sacrifice character',

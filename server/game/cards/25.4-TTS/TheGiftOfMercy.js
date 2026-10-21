@@ -3,6 +3,12 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class TheGiftOfMercy extends AgendaCard {
+    // The Gift of Mercy (25080)
+    // Your plot deck cannot include Omen plot cards.
+    // Reaction: After you win a challenge, place a Valar Morghulis token on a character controlled
+    // by the losing opponent.
+    // Interrupt: When a character with 3 or more Valar Morghulis tokens leaves play, each player
+    // who does not control it gains 2 power for their faction.
     setupCardAbilities() {
         this.reaction({
             when: {

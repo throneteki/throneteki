@@ -2,6 +2,9 @@ import SatisfyClaim from '../../gamesteps/challenge/SatisfyClaim.js';
 import PlotCard from '../../plotcard.js';
 
 class TheHandsTourney extends PlotCard {
+    // The Hand's Tourney (14051)
+    // Forced Interrupt: When claim is applied for a [military] challenge, apply [power] claim
+    // instead.
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {

@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Arry extends DrawCard {
+    // Arry (04006)
+    // Ambush (4).
+    // If you control Arya Stark, sacrifice Arry.
+    // Action: Return Arry to your hand to draw 1 card.
     setupCardAbilities(ability) {
         this.stateCheck({
             condition: (context) =>

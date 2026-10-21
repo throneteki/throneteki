@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class HouseYronwoodKnight extends DrawCard {
+    // House Yronwood Knight (08095)
+    // Reaction: After you lose a challenge in which House Yronwood Knight is participating, discard
+    // 1 card at random from the winning opponent's hand.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class PrinceOfTheNarrowSea extends DrawCard {
+    // Prince of the Narrow Sea (23002)
+    // Unique [baratheon] character only.
+    // If attached character is Salladhor Saan, he gains the Commander trait and renown.
+    // Reaction: After you lose initiative, return a Captain or Smuggler character to your hand to
+    // choose and kneel 1 character and 1 location, each with lower printed cost.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'baratheon', unique: true });
         this.whileAttached({

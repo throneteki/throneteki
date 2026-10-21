@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SerIlynPayne extends DrawCard {
+    // Ser Ilyn Payne (02109)
+    // Marshaling Action: Kneel Ser Ilyn Payne to choose and kill a character with printed cost 3 or
+    // lower.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kill a character',

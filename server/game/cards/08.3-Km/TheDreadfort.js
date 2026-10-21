@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheDreadfort extends DrawCard {
+    // The Dreadfort (08042)
+    // Reaction: After a character you control is sacrificed, kneel The Dreadfort to choose and
+    // stand a House Bolton or non-[stark] character.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

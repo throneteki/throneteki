@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class SavingTheKingdom extends DrawCard {
+    // Saving the Kingdom (06068)
+    // Challenges Action: Choose and kneel a character with STR 3 or lower. That character cannot
+    // stand during the standing phase this round.
+    // Reaction: After you win dominance, pay 1 gold to return Saving the Kingdom from your discard
+    // pile to your hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel and make character unable to stand',

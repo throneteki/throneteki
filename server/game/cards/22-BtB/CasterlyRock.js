@@ -3,6 +3,11 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class CasterlyRock extends DrawCard {
+    // Casterly Rock (22008)
+    // While Casterly Rock is standing, you may spend gold on [lannister] cards you control as if it
+    // were in your gold pool.
+    // Marshaling Action: Kneel Casterly Rock to choose up to 3 cards. Each of those cards gains 1
+    // gold.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => !this.kneeled,

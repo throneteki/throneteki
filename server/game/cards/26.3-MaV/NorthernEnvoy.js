@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class NorthernEnvoy extends DrawCard {
+    // Northern Envoy (26049)
+    // Reaction: After Northern Envoy enters play, reveal the top 10 cards of an opponent's deck.
+    // Choose 1 non-unique character revealed this way and place it in that player's discard pile.
+    // Shuffle that player's deck.
     setupCardAbilities() {
         this.reaction({
             when: {

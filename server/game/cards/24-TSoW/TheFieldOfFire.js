@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheFieldOfFire extends DrawCard {
+    // The Field of Fire (24021)
+    // Challenges Action: Until the end of the phase, each non-Dragon character without attachments
+    // gets -1 STR for each Dragon character you control with printed cost 7 or higher. (Max 1 per
+    // phase.)
     setupCardAbilities(ability) {
         this.action({
             title: "Give non-Dragon's -STR",

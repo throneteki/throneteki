@@ -7,6 +7,11 @@ class PleasureBarge extends DrawCard {
         this.tracker = new DrawTracker(this.game, this.controller);
     }
 
+    // Pleasure Barge (02006)
+    // Immune to card effects.
+    // Reaction: After you marshal Pleasure Barge, if you have not yet drawn any cards this phase,
+    // draw 3 cards.
+    // -1 Income.
     setupCardAbilities(ability) {
         this.plotModifiers({
             gold: -1

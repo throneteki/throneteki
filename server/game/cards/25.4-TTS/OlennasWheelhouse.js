@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class OlennasWheelhouse extends DrawCard {
+    // Olenna's Wheelhouse (25076)
+    // Bestow (3).
+    // Marshaling Action: Kneel Olenna's Wheelhouse and discard 1 gold from it to remove a [tyrell]
+    // character you control from the game until the beginning of the next phase.
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove a character from game',

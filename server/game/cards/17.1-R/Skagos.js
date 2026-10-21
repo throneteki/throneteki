@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Skagos extends DrawCard {
+    // Skagos (17125)
+    // Shadow (1).
+    // Action: Kneel and return Skagos to shadows and sacrifice a standing [stark] card to search
+    // your deck for a card with the same title as the sacrificed card and put it into play knelt.
+    // Shuffle your deck.
     setupCardAbilities(ability) {
         this.action({
             title: 'Replace standing Stark card',

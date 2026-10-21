@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ChangeOfPlans extends DrawCard {
+    // Change of Plans (08036)
+    // Reaction: After you lose a challenge, if there are fewer than 5 plot cards in your used pile,
+    // move a card from your plot deck to the bottom of your used pile.
     setupCardAbilities() {
         this.reaction({
             when: {

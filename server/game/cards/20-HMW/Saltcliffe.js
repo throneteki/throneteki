@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class Saltcliffe extends DrawCard {
+    // Saltcliffe (20008)
+    // Action: Kneel Saltcliffe to move 1 gold from the treasury or a card in play to a Raider
+    // character without gold.
     setupCardAbilities(ability) {
         this.action({
             title: 'Move gold',

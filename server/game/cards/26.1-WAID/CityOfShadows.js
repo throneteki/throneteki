@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class CityOfShadows extends PlotCard {
+    // City of Shadows (26019)
+    // When Revealed: Choose a card you control with shadow and return it to your hand. (You may
+    // return it to shadows instead if there is a City plot card in your used pile.)
     setupCardAbilities() {
         this.whenRevealed({
             target: {

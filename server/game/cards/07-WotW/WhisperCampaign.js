@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class WhisperCampaign extends PlotCard {
+    // Whisper Campaign (07048)
+    // Forced Reaction: After a character without an [intrigue] icon enters play, kneel it.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

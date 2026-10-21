@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class AsHighAsHonor extends DrawCard {
+    // As High as Honor (20049)
+    // Marshaling Action: Kneel a neutral location with printed cost 1 or higher to put a neutral
+    // card into play from your hand knelt. Then, if that card has the House Arryn trait, stand it.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put card into play',

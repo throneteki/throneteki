@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class KingBeyondTheWall extends DrawCard {
+    // King Beyond the Wall (04079)
+    // Wildling character only.
+    // Attached character gains the King trait.
+    // While attached character is attacking a player with a higher power total than you, raise the
+    // claim value on your revealed plot card by 1.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Wildling' });
         this.whileAttached({

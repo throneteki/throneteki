@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TasteForFlesh extends DrawCard {
+    // Taste For Flesh (10034)
+    // Reaction: After you win a challenge in which you control an attacking Direwolf character or
+    // an attacking character with a Direwolf attachment, choose and kill a defending character.
     setupCardAbilities() {
         this.reaction({
             when: {

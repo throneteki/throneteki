@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class AsshaiPriestess extends DrawCard {
+    // Asshai Priestess (04047)
+    // Reaction: After you marshal Asshai Priestess, choose and kneel a character with STR 2 or
+    // lower.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class JoffreyBaratheon extends DrawCard {
+    // Joffrey Baratheon (04089)
+    // Reaction: After you marshal a loyal character, kneel that character and your faction card to
+    // choose and kill a non-King character with a lower printed cost.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

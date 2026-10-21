@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class GylesRosby extends DrawCard {
+    // Gyles Rosby (26065)
+    // If you have no gold in your gold pool during the challenges phase, kill Gyles Rosby.
+    // +2 Income.
     setupCardAbilities() {
         this.stateCheck({
             condition: (context) =>

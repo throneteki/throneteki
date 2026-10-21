@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SpottedSylva extends DrawCard {
+    // Spotted Sylva (15031)
+    // Forced Reaction: After you lose a challenge in which Spotted Sylva is attacking, each player
+    // must choose a participating character he or she controls, if able, and return it to its
+    // owner's hand.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

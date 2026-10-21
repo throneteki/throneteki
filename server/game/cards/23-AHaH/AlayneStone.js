@@ -23,6 +23,11 @@ class AlayneStone extends DrawCard {
         sansa.addDuplicate(this);
     }
 
+    // Alayne Stone (23020)
+    // Stealth.
+    // If you control Sansa Stark, place Alayne Stone on her as a duplicate.
+    // While Alayne Stone is kneeling, players cannot trigger abilities on in-faction Lord or Lady
+    // characters during the challenges phase.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'any',

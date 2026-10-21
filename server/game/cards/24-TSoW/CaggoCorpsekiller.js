@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class CaggoCorpsekiller extends DrawCard {
+    // Caggo Corpsekiller (24011)
+    // Interrupt: When another character is returned to a player's hand or placed in shadows, return
+    // Caggo Corpsekiller to your hand to place that character in its owner's dead pile instead.
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

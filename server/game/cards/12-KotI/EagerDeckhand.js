@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class EagerDeckhand extends DrawCard {
+    // Eager Deckhand (12014)
+    // Reaction: After a Warship location enters play under your control, put Eager Deckhand into
+    // play from your hand.
     setupCardAbilities() {
         this.reaction({
             when: {

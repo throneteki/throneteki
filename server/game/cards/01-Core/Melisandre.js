@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Melisandre extends DrawCard {
+    // Melisandre (01047)
+    // Reaction: After you marshal or play a R'hllor card, choose and kneel a character. (Limit once
+    // per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

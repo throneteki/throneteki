@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Godsgrace extends DrawCard {
+    // Godsgrace (27008)
+    // Reaction: After a [martell] character you control gains power, if there is a Summer plot card
+    // revealed, kneel Godsgrace to have that character gain 1 power.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

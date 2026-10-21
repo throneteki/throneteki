@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class DeepwoodMotte extends DrawCard {
+    // Deepwood Motte (25102)
+    // Reaction: After a Winter plot card is revealed, kneel Deepwood Motte to choose and kneel
+    // another non-limited location.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SansaStark extends DrawCard {
+    // Sansa Stark (01147)
+    // Sansa Stark enters play knelt.
+    // Reaction: After Sansa Stark stands, gain 1 power for your faction. (Limit once per round.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class ScalingTheWall extends DrawCard {
+    // Scaling the Wall (07044)
+    // Reaction: After you win a challenge in which you control an attacking Wildling character,
+    // choose a non-limited location controlled by the losing opponent. Return that location to its
+    // owner's hand.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class FavorsFromTheCrown extends PlotCard {
+    // Favors From the Crown (06120)
+    // Reaction: After a card with bestow enters play, place 1 gold from the treasury on that card.
+    // (2 gold instead if that card has 3 or more gold on it.)
     setupCardAbilities() {
         this.reaction({
             when: {

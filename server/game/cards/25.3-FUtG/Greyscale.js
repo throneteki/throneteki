@@ -3,6 +3,12 @@ import DrawCard from '../../drawcard.js';
 import Message from '../../Message.js';
 
 class Greyscale extends DrawCard {
+    // Greyscale (25059)
+    // Terminal.
+    // Dominance Action: Kneel Greyscale to choose an opponent and reveal 1 card at random from
+    // their hand. If that card’s printed cost is equal to or higher than attached character’s, kill
+    // attached character and attach Greyscale to a different character. Otherwise, that player
+    // draws 1 card.
     setupCardAbilities(ability) {
         this.action({
             title: 'Reveal from hand',

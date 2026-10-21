@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class BurningBright extends DrawCard {
+    // Burning Bright (20015)
+    // Action: Put an Army or Knight character into play from your discard pile. At the end of the
+    // phase, if that card is still in play, discard it from play (cannot be saved).
     setupCardAbilities() {
         this.action({
             title: 'Put character into play',

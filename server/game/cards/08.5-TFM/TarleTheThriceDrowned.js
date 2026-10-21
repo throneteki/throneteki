@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TarleTheThriceDrowned extends DrawCard {
+    // Tarle the Thrice-Drowned (08091)
+    // You may marshal non-unique Drowned God characters from your dead pile as if they were in your
+    // hand.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SouthronMessenger extends DrawCard {
+    // Southron Messenger (07031)
+    // Ambush (5).
+    // Reaction: After Southron Messenger enters play during a challenge, choose a participating
+    // character with fewer than 2 challenge icons, and return that character to its owner's hand.
     setupCardAbilities() {
         this.reaction({
             when: {

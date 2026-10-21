@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Pyromancers extends DrawCard {
+    // Pyromancers (04018)
+    // Dominance Action: Kneel Pyromancers and discard 1 power from your faction card to choose a
+    // non-limited location, and discard it from play.
     setupCardAbilities(ability) {
         this.action({
             title: 'Discard a location',

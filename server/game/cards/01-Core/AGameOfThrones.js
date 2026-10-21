@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class AGameOfThrones extends PlotCard {
+    // A Game of Thrones (01003)
+    // A player cannot initiate a [military] or [power] challenge unless he or she has won an
+    // [intrigue] challenge that phase.
     setupCardAbilities(ability) {
         this.tracker = ChallengeTracker.forPhase(this.game);
 

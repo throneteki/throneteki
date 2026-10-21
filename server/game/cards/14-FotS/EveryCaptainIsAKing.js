@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class EveryCaptainIsAKing extends DrawCard {
+    // Every Captain is a King (14026)
+    // Action: Until the end of the phase, each Captain character you control gains the King trait
+    // and does not kneel when declared as an attacker in [power] challenges.
     setupCardAbilities() {
         this.action({
             title: 'Grant King trait',

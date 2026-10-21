@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import ChallengeTypes from '../../ChallengeTypes.js';
 
 class MaesterMullin extends DrawCard {
+    // Maester Mullin (13045)
+    // Action: Kneel Maester Mullin to choose a character and a challenge type. Until the end of the
+    // phase, that character cannot be declared as an attacker in challenges of that type.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel to choose a character',

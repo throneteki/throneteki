@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SerClaytonSuggs extends DrawCard {
+    // Ser Clayton Suggs (26001)
+    // Reaction: After power is gained by or moved to a character, that character gets +1 STR or -1
+    // STR until the end of the phase. (Limit 3 times per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class WordsAreWind extends DrawCard {
+    // Words Are Wind (09044)
+    // Interrupt: When the effects of an opponent's event would initiate, that opponent must choose,
+    // either: cancel those effects, or you draw 2 cards.
     setupCardAbilities() {
         this.interrupt({
             canCancel: true,

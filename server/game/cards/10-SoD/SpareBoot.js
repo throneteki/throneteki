@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SpareBoot extends DrawCard {
+    // Spare Boot (10031)
+    // Challenges Action: Choose an attachment attached to a character you control. Stand that
+    // attachment and move it to Spare Boot. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand and move attachment',

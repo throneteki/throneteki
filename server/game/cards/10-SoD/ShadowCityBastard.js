@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class ShadowCityBastard extends DrawCard {
+    // Shadow City Bastard (10016)
+    // Ambush (3).
+    // Challenges Action: Sacrifice Shadow City Bastard to choose a character with printed cost 5 or
+    // lower. Until the end of the phase, that characters loses a [military], an [intrigue], and a
+    // [power] icon.
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove icons from character',

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Dragonstone extends DrawCard {
+    // Dragonstone (24003)
+    // You may choose not to stand Dragonstone during the standing phase.
+    // Reaction: After a card is placed in shadows by a card effect, kneel Dragonstone. Then, until
+    // Dragonstone stands or leaves play, that card cannot come out of shadows.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

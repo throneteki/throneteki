@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Missandei extends DrawCard {
+    // Missandei (10035)
+    // Interrupt: When Missandei is discarded from your hand or deck, put her into play instead of
+    // placing her in your discard pile.
     setupCardAbilities() {
         this.interrupt({
             when: {

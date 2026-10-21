@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class EmissaryOfTheHightower extends DrawCard {
+    // Emissary of the Hightower (09011)
+    // Ambush (4).
+    // Reaction: After Emissary of the Hightower enters play, choose an event in your discard pile.
+    // Until the end of the phase, you may play that event as if it were in your hand. If you do,
+    // remove it from the game instead of placing it into your discard pile.
     setupCardAbilities() {
         this.reaction({
             when: {

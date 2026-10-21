@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class CrownOfGoldenRoses extends DrawCard {
+    // Crown of Golden Roses (04044)
+    // Lord character only.
+    // Attached character gains the King trait.
+    // Action: Discard 1 card from your hand to give attached character +X STR until the end of the
+    // phase. X is the number of challenge icons attached character has. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Lord' });
 

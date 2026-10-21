@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import CardEntersPlayTracker from '../../EventTrackers/CardEntersPlayTracker.js';
 
 class TheMother extends PlotCard {
+    // The Mother (20057)
+    // Reaction: After a character enters play under an opponent's control, if another character
+    // entered play under that player's control this round, draw 1 card. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.tracker = CardEntersPlayTracker.forRound(this.game);
 

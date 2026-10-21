@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class AtTheTowerOfJoy extends PlotCard {
+    // At the Tower of Joy (25019)
+    // When Revealed: Choose a character. Until you reveal a new plot card, that character cannot be
+    // killed.
     setupCardAbilities() {
         this.whenRevealed({
             target: {

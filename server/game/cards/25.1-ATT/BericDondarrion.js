@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class BericDondarrion extends DrawCard {
+    // Beric Dondarrion (25001)
+    // Renown.
+    // Reaction: After you win a challenge in which Beric Dondarrion is attacking, choose a
+    // character controlled by the losing opponent. Until the end of the round, that character
+    // cannot kneel or stand. (Limit once per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

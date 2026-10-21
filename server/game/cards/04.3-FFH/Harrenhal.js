@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Harrenhal extends DrawCard {
+    // Harrenhal (04050)
+    // Challenges Action: Kneel Harrenhal to put a [lannister] or House Bolton character into play
+    // from your hand. At the end of the phase, if that character is still in play, kill it (cannot
+    // be saved).
     setupCardAbilities(ability) {
         this.action({
             title: 'Put character into play',

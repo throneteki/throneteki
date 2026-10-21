@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ShadowblackLane extends DrawCard {
+    // Shadowblack Lane (02038)
+    // Reaction: After you win an [intrigue] challenge, kneel your faction card to search the top 10
+    // cards of your deck for an in-faction event, reveal it, and add it to your hand. Shuffle your
+    // deck.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

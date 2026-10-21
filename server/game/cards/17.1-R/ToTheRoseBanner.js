@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ToTheRoseBanner extends DrawCard {
+    // To the Rose Banner! (17141)
+    // Action: Kneel your faction card to remove a [tyrell] character you control from the game
+    // until the beginning of the next phase.
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove character from game',

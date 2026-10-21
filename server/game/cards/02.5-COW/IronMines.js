@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class IronMines extends DrawCard {
+    // Iron Mines (02092)
+    // Interrupt: When a character would be killed, sacrifice Iron Mines to save that character.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

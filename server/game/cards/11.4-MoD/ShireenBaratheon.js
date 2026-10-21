@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class ShireenBaratheon extends DrawCard {
+    // Shireen Baratheon (11067)
+    // Shadow (3).
+    // Action: During a challenge in which Shireen Baratheon is participating, choose a
+    // participating character. That character and Shireen Baratheon do not contribute their STR to
+    // the challenge. (Limit once per challenge.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove STR contribution',

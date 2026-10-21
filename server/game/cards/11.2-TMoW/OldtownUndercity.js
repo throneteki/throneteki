@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class OldtownUndercity extends DrawCard {
+    // Oldtown Undercity (11024)
+    // Shadow (2).
+    // Reaction: After a card you control comes out of shadows, look at the top 3 cards of your
+    // deck. Add 1 to your hand, place 1 on the bottom of your deck, and place the other on top of
+    // your deck. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

@@ -8,6 +8,12 @@ class ThePrinceThatWasPromised extends AgendaCard {
         this.registerEvents(['onDecksPrepared']);
     }
 
+    // The Prince that was Promised (14045)
+    // After all agendas are announced, name a unique character.
+    // Other characters you control cannot gain power.
+    // Reaction: After you win a [power] challenge by 5 or more STR, kneel your faction card to,
+    // either: stand the named character and draw a card; or, search your deck, discard pile, and
+    // dead pile for the named character, reveal it, add it to your hand, and shuffle your deck.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheTickler extends DrawCard {
+    // The Tickler (01088)
+    // Dominance Action: Kneel The Tickler to discard the top card of an opponent's deck. Then, you
+    // may choose 1 copy of that card, and discard it from play.
     setupCardAbilities(ability) {
         this.action({
             title: 'Discard opponents top card',

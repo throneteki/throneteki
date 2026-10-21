@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class ATourneyForTheKing extends PlotCard {
+    // A Tourney for the King (02059)
+    // Each Knight character you control gains renown and "immune to opponents' events."
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.getType() === 'character' && card.hasTrait('Knight'),

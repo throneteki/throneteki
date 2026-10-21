@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class TheRedViper extends DrawCard {
+    // The Red Viper (10003)
+    // Intimidate.
+    // The Red Viper gets +1 STR for each power he has.
+    // Reaction: After you win a challenge in which you control an attacking Bastard character, The
+    // Red Viper gains 1 power.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

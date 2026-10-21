@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class Kingslayer extends DrawCard {
+    // Kingslayer (08030)
+    // Kingsguard character only. Terminal.
+    // Action: Kneel attached character to choose and kill a character with 2 or more power. (Limit
+    // once per game.)
+    // Forced Interrupt: When attached character leaves play, each opponent gains 2 power for his or
+    // her faction.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Kingsguard' });
 

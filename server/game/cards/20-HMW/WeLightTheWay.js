@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class WeLightTheWay extends DrawCard {
+    // We Light the Way (20040)
+    // Action: Kneel a House Hightower or Oldtown card to place the top card of your deck in shadows
+    // with a shadow token on it. While that card is in shadows, it gains shadow (X). X is its
+    // printed cost.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put card into shadows',

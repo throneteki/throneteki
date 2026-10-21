@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class HedgeKnight extends DrawCard {
+    // Hedge Knight (02057)
+    // While you control another Knight character, Hedge Knight gets +1 STR and gains a [power]
+    // icon.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isControlAnotherKnight(),

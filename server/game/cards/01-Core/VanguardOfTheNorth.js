@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class VanguardOfTheNorth extends DrawCard {
+    // Vanguard of the North (01151)
+    // No attachments.
+    // While a player has a War plot revealed, Vanguard of the North does not kneel when declared as
+    // an attacker in a [military] challenge.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class OffToGulltown extends DrawCard {
+    // "Off To Gulltown" (10044)
+    // Challenges Action: Choose a character. Until the end of the phase, that character gains a
+    // [military], an [intrigue], and a [power] icon. Draw 1 card.
     setupCardAbilities() {
         this.action({
             title: 'Give icons to character',

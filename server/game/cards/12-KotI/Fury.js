@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Fury extends DrawCard {
+    // Fury (12026)
+    // While you control Stannis Baratheon, he gains intimidate.
+    // Reaction: After you win a [power] challenge, kneel Fury to choose a character or location.
+    // Move 1 power from that card to your faction card.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Stannis Baratheon',

@@ -3,6 +3,9 @@ import PlotCard from '../../plotcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class FalseSpring extends PlotCard {
+    // False Spring (10052)
+    // When Revealed: Each opponent chooses and reveals 3 cards from his or her hand, if able. You
+    // may choose and discard 1 revealed card from any number of those hands.
     setupCardAbilities() {
         this.whenRevealed({
             message: '{player} uses {source} to have each opponent choose 3 cards from their hand',

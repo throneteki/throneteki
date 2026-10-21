@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class FistOfTheFirstMen extends DrawCard {
+    // Fist of the First Men (04106)
+    // While your reserve value is higher than an opponent's, each Ranger character you control gets
+    // +1 STR and cannot be bypassed by stealth.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.hasHigherReserveThanOpponent(),

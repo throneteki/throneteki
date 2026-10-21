@@ -2,6 +2,9 @@ import ChallengeTypes from '../../ChallengeTypes.js';
 import PlotCard from '../../plotcard.js';
 
 class BattleBeneathTheWall extends PlotCard {
+    // Battle Beneath the Wall (26059)
+    // When Revealed: Name a challenge type. Until you reveal a new plot card, each player must
+    // declare all eligible characters as attackers or defenders during challenges of that type.
     setupCardAbilities() {
         this.whenRevealed({
             handler: (context) => {

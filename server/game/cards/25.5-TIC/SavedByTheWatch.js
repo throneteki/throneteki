@@ -2,6 +2,11 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SavedByTheWatch extends DrawCard {
+    // Saved by the Watch (25090)
+    // Reaction: After an opponent's character is sacrificed or discarded from play, kneel your
+    // faction card to put that character into play. Then, attach Saved by the Watch to that
+    // character as a Condition attachment with the text: "Terminal. Take control of attached
+    // character."
     setupCardAbilities(ability) {
         this.reaction({
             when: {

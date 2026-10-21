@@ -3,6 +3,11 @@ import GameActions from '../../GameActions/index.js';
 import Messages from '../../Messages/index.js';
 
 class ShadowOfTheIsles extends DrawCard {
+    // Shadow of the Isles (13072)
+    // Shadow (1).
+    // Action: Each player chooses a non-limited location he or she controls and discards it from
+    // play. If there is a War plot card revealed, return Shadow of the Isles to your hand instead
+    // of placing it in your discard pile.
     setupCardAbilities() {
         this.action({
             title: 'Choose and discard locations',

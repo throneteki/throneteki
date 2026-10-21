@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TywinLannister extends DrawCard {
+    // Tywin Lannister (01090)
+    // Renown.
+    // Tywin Lannister gets +1 STR for each gold in your gold pool.
+    // +2 Income.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

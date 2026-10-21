@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class AndersYronwood extends DrawCard {
+    // Anders Yronwood (20016)
+    // Intimidate.
+    // While you are not the first player, each House Yronwood character you control does not kneel
+    // when declared as an attacker in the first challenge you initiate each phase.
     setupCardAbilities(ability) {
         this.tracker = ChallengeTracker.forPhase(this.game);
 

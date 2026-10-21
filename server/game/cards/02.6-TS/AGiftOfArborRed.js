@@ -4,6 +4,10 @@ import Message from '../../Message.js';
 import { flatMap } from '../../../Array.js';
 
 class AGiftOfArborRed extends DrawCard {
+    // A Gift of Arbor Red (02104)
+    // Action: Kneel your faction card to have each player reveal the top 4 cards of his or her
+    // deck. Choose 1 card revealed by each player, and add it to that player's hand. Shuffle the
+    // other cards back into their owners' decks.
     setupCardAbilities(ability) {
         this.action({
             title: 'Reveal top 4 cards of each deck',

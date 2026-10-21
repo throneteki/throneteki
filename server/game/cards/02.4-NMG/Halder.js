@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Halder extends DrawCard {
+    // Halder (02065)
+    // No attachments except Weapon.
+    // Action: Kneel a [thenightswatch] location or attachment to choose a [thenightswatch]
+    // character. Until the end of the phase, that character gets +1 STR.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel a location or attachment',

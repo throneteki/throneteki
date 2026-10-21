@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class RobertBaratheon extends DrawCard {
+    // Robert Baratheon (01048)
+    // Intimidate. Renown.
+    // Robert Baratheon gets +1 STR for each other kneeling character in play.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class NuteTheBarber extends DrawCard {
+    // Nute the Barber (06091)
+    // Pillage.
+    // Reaction: After a character you control discards a card using pillage, return a card from the
+    // losing opponent's discard pile to its owner's hand. Then, draw 1 card. (Limit 3 times per
+    // phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

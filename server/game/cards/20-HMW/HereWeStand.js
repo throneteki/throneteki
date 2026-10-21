@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class HereWeStand extends DrawCard {
+    // Here We Stand (20030)
+    // Play only if you control a standing House Mormont character.
+    // Dominance Action: Search the top 10 cards of your deck for any number of Bear Island,
+    // Bearskin Cloak, and House Mormont cards, reveal them, and add them to your hand. Shuffle your
+    // deck.
     setupCardAbilities() {
         this.action({
             title: 'Search for Mormont cards',

@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class FreyHospitality extends DrawCard {
+    // Frey Hospitality (06079)
+    // Reaction: After you win a challenge in which you control an attacking House Frey character,
+    // if it was the third challenge you initiated this phase, choose and kill a character
+    // controlled by the losing opponent. (Choose and kill 3 characters instead if you won by 20 or
+    // more STR.)
     setupCardAbilities() {
         this.reaction({
             when: {

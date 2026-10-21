@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class ArborMarket extends DrawCard {
+    // Arbor Marketplace (11104)
+    // Challenges Action: Kneel Arbor Marketplace to choose a participating character. Until the end
+    // of the challenge, that character gets +1 STR.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.plotModifiers({
             gold: 1

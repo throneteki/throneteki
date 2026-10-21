@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class WinterIsComing extends DrawCard {
+    // Winter Is Coming (01159)
+    // Play only during a challenge.
+    // Action: Until the end of the challenge, raise the claim value on your revealed plot card by
+    // 1. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Raise claim by 1',

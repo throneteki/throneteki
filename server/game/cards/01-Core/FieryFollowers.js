@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class FieryFollowers extends DrawCard {
+    // Fiery Followers (01054)
+    // Reaction: After the dominance phase begins, stand Fiery Followers.
     setupCardAbilities() {
         this.reaction({
             when: {

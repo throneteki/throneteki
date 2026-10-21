@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class SecretsOfTheConclave extends PlotCard {
+    // Secrets of the Conclave (12051)
+    // Reaction: After the challenges phase begins, look at the top 5 cards of your deck. Add 1 to
+    // your hand, discard 1, and put the others back on top of your deck in any order.
     setupCardAbilities() {
         this.reaction({
             when: {

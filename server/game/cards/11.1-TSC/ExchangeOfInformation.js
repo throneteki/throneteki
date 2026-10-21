@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class ExchangeOfInformation extends PlotCard {
+    // Exchange of Information (11020)
+    // When Revealed: Choose an opponent and reveal the top 10 cards of your deck. That opponent
+    // chooses 1 character, 1 location, 1 attachment, and 1 event revealed this way, if able, and
+    // adds them to your hand. Shuffle your deck.
     setupCardAbilities() {
         this.whenRevealed({
             chooseOpponent: true,

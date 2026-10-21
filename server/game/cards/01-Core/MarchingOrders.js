@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class MarchingOrders extends PlotCard {
+    // Marching Orders (01016)
+    // You cannot marshal locations or attachments, or play events.
     setupCardAbilities(ability) {
         this.persistentEffect({
             effect: [

@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Sigorn extends DrawCard {
+    // Sigorn (27017)
+    // Reaction: After you win a [military] challenge in which Sigorn is attacking, choose and stand
+    // another Wildling character you control. Then, if that character was Alys Karstark, stand
+    // Sigorn.
     setupCardAbilities() {
         this.reaction({
             when: {

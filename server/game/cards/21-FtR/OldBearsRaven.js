@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class OldBearsRaven extends DrawCard {
+    // Old Bear's Raven (21014)
+    // Ambush (2). No attachments.
+    // Action: Return Old Bear's Raven to your hand to stand Old Bear Mormont. (Max twice per
+    // round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand Old Bear',

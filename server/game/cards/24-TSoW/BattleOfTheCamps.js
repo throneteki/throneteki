@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class BattleOfTheCamps extends PlotCard {
+    // Battle of the Camps (24030)
+    // Reaction: After you win a [military] challenge as the attacking player, choose and kneel a
+    // character controlled by the losing opponent. (You may kill that character instead if it has
+    // the Army trait.) (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

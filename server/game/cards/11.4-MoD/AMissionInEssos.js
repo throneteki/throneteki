@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class AMissionInEssos extends DrawCard {
+    // A Mission in Essos (11076)
+    // Shadow (2).
+    // Action: Remove all but the bottom card of your deck from the game facedown. Then, shuffle
+    // your discard pile into your deck and draw 3 cards.
     setupCardAbilities() {
         this.action({
             title: 'Remove deck from game',

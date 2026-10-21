@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class SerJonFossoway extends DrawCard {
+    // Ser Jon Fossoway (07037)
+    // While Ser Jon Fossoway's STR is 5 or higher, he gains renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.getStrength() >= 5,

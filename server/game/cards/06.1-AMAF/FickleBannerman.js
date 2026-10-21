@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class FickleBannerman extends DrawCard {
+    // Fickle Bannerman (06007)
+    // Bestow (2). Renown.
+    // Forced Reaction: After you lose a [power] challenge, the winning opponent takes control of
+    // Fickle Bannerman unless you discard 1 gold from it.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

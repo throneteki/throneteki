@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class AeronDamphair extends DrawCard {
+    // Aeron Damphair (01065)
+    // Reaction: After you win dominance, put an Ironborn character into play from your dead pile.
     setupCardAbilities() {
         this.reaction({
             when: {

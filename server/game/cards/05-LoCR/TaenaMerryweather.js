@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class TaenaMerryweather extends DrawCard {
+    // Taena Merryweather (05010)
+    // Reaction: After you play an event, choose and discard 1 card from your hand to draw 1 card.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

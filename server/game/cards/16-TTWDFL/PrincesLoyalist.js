@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class PrincesLoyalist extends DrawCard {
+    // Prince's Loyalist (16007)
+    // Prized 1. Stealth. Immune to events.
+    // Interrupt: When the effects of a triggered character ability would initiate, pay 2 gold to
+    // cancel those effects.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

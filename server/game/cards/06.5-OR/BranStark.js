@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class BranStark extends DrawCard {
+    // Bran Stark (06081)
+    // Action: Kneel Bran Stark to choose and stand a Direwolf character. Until the end of the
+    // phase, that character gains a challenge icon of your choice.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand and give Direwolf icon',

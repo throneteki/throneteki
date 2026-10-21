@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class GreatHall extends DrawCard {
+    // Great Hall (17144)
+    // Limited.
+    // Marshaling Action: Kneel Great Hall to reduce the cost of the next unique character you
+    // marshal this phase by 1. (By 2 instead if that character's printed cost is 6 or higher.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce next unique character',

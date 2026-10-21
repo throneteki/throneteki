@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class OfferOfAPeach extends DrawCard {
+    // Offer of a Peach (04084)
+    // Play only if you control Renly Baratheon or a Lady character.
+    // Challenges Action: Choose an attacking character. Stand that character and remove it from the
+    // challenge.
     setupCardAbilities() {
         this.action({
             title: 'Remove character from challenge',

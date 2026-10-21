@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class DanceOfTheDragons extends DrawCard {
+    // "Dance of the Dragons" (12036)
+    // Action: Choose a non-event card with printed cost 3 or lower in your discard pile and return
+    // it to your hand.
     setupCardAbilities() {
         this.action({
             title: 'Return card to hand',

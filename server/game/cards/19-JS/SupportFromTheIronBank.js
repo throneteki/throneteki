@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SupportFromTheIronBank extends DrawCard {
+    // Support from the Iron Bank (19002)
+    // Action: Reduce the cost of each [baratheon] non-character card you marshal or play this phase
+    // by 1.
     setupCardAbilities() {
         this.action({
             handler: (context) => {

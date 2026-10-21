@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class HiddenThorns extends DrawCard {
+    // Hidden Thorns (09024)
+    // Reaction: After you win an [intrigue] challenge by 5 or more STR, the losing opponent chooses
+    // and discards 2 cards from his or her hand. Then, if you control The Queen of Thorns, return
+    // Hidden Thorns to your hand instead of placing it in your discard pile. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             max: ability.limit.perChallenge(1),

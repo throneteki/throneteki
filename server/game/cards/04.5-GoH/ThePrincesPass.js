@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class ThePrincesPass extends DrawCard {
+    // The Prince's Pass (04096)
+    // Reaction: After you lose a challenge as the defending player, kneel The Prince's Pass to
+    // choose an attacking character. Until the end of the phase, that character loses a challenge
+    // icon of your choice. Then, if it has no challenge icons, you may sacrifice The Prince's Pass
+    // to discard it from play.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

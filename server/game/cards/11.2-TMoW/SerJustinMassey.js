@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SerJustinMassey extends DrawCard {
+    // Ser Justin Massey (11027)
+    // While you control a King character, Ser Justin Massey gains renown.
+    // Reaction: After a [baratheon] character gains power, stand it. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

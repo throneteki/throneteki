@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class KingOfSaltAndRock extends DrawCard {
+    // King of Salt and Rock (04052)
+    // Ironborn character only.
+    // Attached character gains the King trait and pillage.
+    // Reaction: After an attachment or location is discarded using pillage, attached character
+    // gains 1 power.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Ironborn' });
         this.whileAttached({

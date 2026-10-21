@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { Flags } from '../../Constants/index.js';
 
 class TasteTheBlood extends DrawCard {
+    // Taste the Blood (25032)
+    // Reaction: After you win an [intrigue] challenge in which you control a participating Old Gods
+    // character, kneel your faction card to choose a plot card in any player's used pile. Initiate
+    // the when revealed ability on that card as if you had just revealed it.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

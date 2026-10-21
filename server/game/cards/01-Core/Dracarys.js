@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Dracarys extends DrawCard {
+    // Dracarys! (01176)
+    // Action: Kneel a Dragon character or Daenerys Targaryen to choose a participating character.
+    // Until the end of the phase, that character gets -4 STR and is killed if its STR is 0.
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce character STR by 4',

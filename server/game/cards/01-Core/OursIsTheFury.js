@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class OursIsTheFury extends DrawCard {
+    // Ours is the Fury (01063)
+    // Play only during a challenge in which you are the defending player.
+    // Action: Choose a kneeling [baratheon] character you control. That character is now
+    // participating as a defender. If you win this challenge, stand that character.
     setupCardAbilities() {
         this.action({
             title: 'Add knelt Baratheon as defender',

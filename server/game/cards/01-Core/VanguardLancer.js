@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class VanguardLancer extends DrawCard {
+    // Vanguard Lancer (01057)
+    // Reaction: After Vanguard Lancer enters play, choose an opponent's character or faction card,
+    // and discard 1 power from that card.
     setupCardAbilities() {
         this.reaction({
             when: {

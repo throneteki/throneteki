@@ -3,6 +3,9 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class KingsLandingSmuggler extends DrawCard {
+    // King's Landing Smuggler (19018)
+    // Interrupt: When King's Landing Smuggler leaves play, place 1 gold from the treasury on a card
+    // without gold.
     setupCardAbilities() {
         this.interrupt({
             when: {

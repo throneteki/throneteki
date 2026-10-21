@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ViserysTargaryen extends DrawCard {
+    // Viserys Targaryen (01167)
+    // Interrupt: When Viserys Targaryen leaves play, choose an attachment, and discard it from
+    // play.
     setupCardAbilities() {
         this.interrupt({
             when: {

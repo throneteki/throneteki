@@ -11,6 +11,11 @@ class AryaStark extends DrawCard {
         this.selectedCards = [];
     }
 
+    // Arya Stark (13101)
+    // Shadow (4). Stealth.
+    // Reaction: After Arya Stark enters play, place a prayer token on up to 5 different characters
+    // you don't control. If Arya Stark leaves play, discard those tokens.
+    // Reaction: After a character with a prayer token is killed, stand Arya Stark and draw 1 card.
     setupCardAbilities() {
         this.reaction({
             when: {

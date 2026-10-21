@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerTalbertSerry extends DrawCard {
+    // Ser Talbert Serry (12037)
+    // No attachments except Weapon.
+    // Reaction: After an opponent triggers a location ability, Ser Talbert Serry gets +2 STR until
+    // the end of the phase. (Limit 3 times per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

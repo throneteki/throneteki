@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class BlackLorren extends DrawCard {
+    // Black Lorren (20006)
+    // Bestow (1).
+    // Reaction: After you win a challenge in which Black Lorren is attacking, discard 1 gold from
+    // an attacking Raider character to choose and kill a defending character.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

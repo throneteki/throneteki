@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class SwiftLongship extends DrawCard {
+    // Swift Longship (26024)
+    // Shadow (0).
+    // Reaction: After Swift Longship comes out of shadows during a challenge, choose a defending
+    // character with printed STR 4 or lower. That character does not contribute its STR to this
+    // challenge.
+    // +1 Initiative.
     setupCardAbilities() {
         this.plotModifiers({
             initiative: 1

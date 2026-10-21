@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class StannisBaratheon extends DrawCard {
+    // Stannis Baratheon (14002)
+    // Immune to opponents' events.
+    // Reaction: After you win a [power] challenge, draw X cards. X is the claim value on the
+    // attacking player's revealed plot card.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

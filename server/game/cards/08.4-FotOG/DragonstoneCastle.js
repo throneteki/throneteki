@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class DragonstoneCastle extends DrawCard {
+    // Dragonstone Castle (08068)
+    // Reaction: After a phase begins, kneel Dragonstone Castle to choose a character. Until the end
+    // of the phase, that character cannot stand.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

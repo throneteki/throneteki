@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class NightGathers extends DrawCard {
+    // Night Gathers... (04046)
+    // Marshaling Action: Choose an opponent whose reserve value is lower than yours. Until the end
+    // of the phase, you may marshal characters from that player's discard pile as if they were in
+    // your hand.
     setupCardAbilities() {
         this.action({
             title: 'Allow marshaling from opponent discard',

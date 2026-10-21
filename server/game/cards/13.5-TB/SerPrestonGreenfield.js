@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SerPrestonGreenfield extends DrawCard {
+    // Ser Preston Greenfield (13087)
+    // Shadow (4).
+    // Reaction: After you win a challenge in which Ser Preston Greenfield is participating, the
+    // losing opponent must move 1 power from his or her faction card to a standing character he or
+    // she controls.
     setupCardAbilities() {
         this.reaction({
             when: {

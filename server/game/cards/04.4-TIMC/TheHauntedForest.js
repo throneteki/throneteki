@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheHauntedForest extends DrawCard {
+    // The Haunted Forest (04066)
+    // While The Haunted Forest is standing, it contributes 1 STR to your side during any challenge
+    // in which you are the defending player.
+    // Forced Reaction: After you lose a challenge, kneel The Haunted Forest.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

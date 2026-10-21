@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class HeirToTheIronThrone extends PlotCard {
+    // Heir to the Iron Throne (12048)
+    // When Revealed: Search the top 10 cards of your deck for a Lord or Lady character and put it
+    // into play. Shuffle your deck. Then, sacrifice a Lord or Lady character.
     setupCardAbilities() {
         this.whenRevealed({
             message:

@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import DetermineDominance from '../../gamesteps/DetermineDominance.js';
 
 class TheRegentsCouncil extends DrawCard {
+    // The Regent's Council (26046)
+    // Reaction: After you win an [intrigue] challenge in which you control a participating Small
+    // Council character or Cersei Lannister, determine dominance. (Max 1 per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

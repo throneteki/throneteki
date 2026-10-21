@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class CaptainOfTheIronFleet extends DrawCard {
+    // Captain of the Iron Fleet (27004)
+    // Ironborn character you control only.
+    // Attached character gains the Captain trait.
+    // Action: During a [military] or [power] challenge, kneel Captain of the Iron Fleet and a
+    // Warship location to have attached character contribute its STR to your side this challenge.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Ironborn' });
         this.whileAttached({

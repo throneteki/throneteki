@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class LadySansasRose extends DrawCard {
+    // Lady Sansa's Rose (02024)
+    // Reaction: After you win a challenge in which you control a Knight character that is attacking
+    // or defending alone, that character gains 1 power. (3 power instead if you control a Lady
+    // character.) (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

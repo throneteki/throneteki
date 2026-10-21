@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class BranTheBreaker extends DrawCard {
+    // Bran the Breaker (25112)
+    // Unique [stark] location you control only.
+    // Action: During a challenge in which you control 2 or more unique attacking [stark]
+    // characters, kneel Bran the Breaker to raise the claim value on your revealed plot card by 1
+    // until the end of the challenge.
     setupCardAbilities(ability) {
         this.attachmentRestriction({
             type: 'location',

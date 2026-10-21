@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Jhogo extends DrawCard {
+    // Jhogo (15007)
+    // Reaction: After you win a [military] challenge in which you control 2 or more attacking
+    // Dothraki characters, move 1 power from the losing opponent's faction card to your own.
     setupCardAbilities() {
         this.reaction({
             when: {

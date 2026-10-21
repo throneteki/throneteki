@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class QhorinHalfhand extends DrawCard {
+    // Qhorin Halfhand (04105)
+    // Renown. No attachments except Weapon.
+    // Reaction: After you win a [military] challenge in which Qhorin Halfhand is participating,
+    // choose and kill a non-unique character with lower STR than his controlled by the losing
+    // opponent.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class RaidingLongship extends DrawCard {
+    // Raiding Longship (02032)
+    // Challenges Action: If you are the first player, kneel Raiding Longship to choose a defending
+    // character without attachments. That character does not contribute its STR to this challenge.
     setupCardAbilities(ability) {
         this.action({
             title: "Remove character's STR from challenge",

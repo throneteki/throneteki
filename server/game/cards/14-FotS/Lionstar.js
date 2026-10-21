@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Lionstar extends DrawCard {
+    // Lionstar (14028)
+    // Action: Kneel Lionstar to put a [lannister] character with printed cost 4 or lower into play
+    // from your hand. At the end of the phase, if that card is still in play, discard it from play.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put a character into play',

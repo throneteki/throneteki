@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SorrowfulMan extends DrawCard {
+    // Sorrowful Man (26033)
+    // Shadow (2).
+    // Reaction: After Sorrowful Man comes out of shadows, switch a character in an opponent's
+    // discard pile with a character in that player's dead pile.
     setupCardAbilities() {
         this.reaction({
             when: {

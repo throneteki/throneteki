@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MaesterOfStarfall extends DrawCard {
+    // Maester of Starfall (02076)
+    // Challenges Action: Kneel Maester of Starfall to choose a character. Until the end of the
+    // phase, that character loses (choose one): insight, intimidate, pillage, or renown.
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove a keyword',

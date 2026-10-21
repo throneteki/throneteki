@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class LaySiege extends DrawCard {
+    // Lay Siege (06059)
+    // Action: Choose and kneel a location. Then, if that location is Contested, discard it from
+    // play.
     setupCardAbilities() {
         this.action({
             title: 'Kneel or discard location',

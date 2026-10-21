@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Leathers extends DrawCard {
+    // Leathers (18010)
+    // Each Giant character you control gains an [intrigue] icon.
+    // Each Wildling character you control gains the [thenightswatch] affiliation.
+    // Reaction: After Leathers enters play, search your deck for a Giant character, reveal it and
+    // add it to your hand. Shuffle your deck.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>

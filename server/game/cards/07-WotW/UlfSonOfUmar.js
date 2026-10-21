@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class UlfSonOfUmar extends DrawCard {
+    // Ulf Son of Umar (07029)
+    // Reaction: After a Clansman character enters play under your control, Ulf Son of Umar gets +X
+    // STR until the end of the phase. X is that character's printed STR. (Limit 3 times per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

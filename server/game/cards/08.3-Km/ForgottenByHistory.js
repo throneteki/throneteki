@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ForgottenByHistory extends DrawCard {
+    // Forgotten By History (08059)
+    // Dominance Action: Kneel your faction card to choose a character with printed cost X or lower,
+    // and shuffle it into its owner's deck. X is the amount of power on the faction card of that
+    // character's controller.
     setupCardAbilities(ability) {
         this.action({
             title: 'Shuffle character into deck',

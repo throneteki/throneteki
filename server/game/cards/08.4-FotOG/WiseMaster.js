@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class WiseMaster extends DrawCard {
+    // Wise Master (08073)
+    // Bestow (3).
+    // Action: Discard 1 gold from Wise Master to return an out-of-faction attachment or event from
+    // your discard pile to your hand. (Limit once per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Return attachment/event to hand',

@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class BattleOfTheBlackwater extends PlotCard {
+    // Battle of the Blackwater (04120)
+    // When Revealed: Choose an opponent. Discard each duplicate you control and each duplicate
+    // controlled by that opponent from play.
     setupCardAbilities() {
         this.whenRevealed({
             chooseOpponent: true,

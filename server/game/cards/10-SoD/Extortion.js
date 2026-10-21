@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Extortion extends DrawCard {
+    // Extortion (10030)
+    // Reaction: After you win an [intrigue] challenge as the attacking player, gain 3 gold and
+    // return up to 3 gold from the losing opponent's gold pool to the treasury.
     setupCardAbilities() {
         this.reaction({
             when: {

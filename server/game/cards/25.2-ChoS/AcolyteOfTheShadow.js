@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class AcolyteOfTheShadow extends DrawCard {
+    // Acolyte of the Shadow (25021)
+    // While an opponent controls a card in shadows, Acolyte of the Shadow gains insight.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

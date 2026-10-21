@@ -3,6 +3,11 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class SerJorahMormont extends DrawCard {
+    // Ser Jorah Mormont (01165)
+    // Renown.
+    // If Ser Jorah Mormont has 3 or more betrayal tokens on him, sacrifice him.
+    // Forced Reaction: After you win a challenge in which Ser Jorah Mormont is participating, place
+    // 1 betrayal token on him.
     setupCardAbilities() {
         this.stateCheck({
             condition: (context) => context.source.tokens[Tokens.betrayal] >= 3,

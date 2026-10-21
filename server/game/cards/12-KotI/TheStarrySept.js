@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheStarrySept extends DrawCard {
+    // The Starry Sept (12042)
+    // Action: Move 1 power from The Starry Sept to a character. Until the end of the phase, treat
+    // that character as if its printed text box were blank (except for Traits).
+    // Reaction: After you win a [power] challenge, The Starry Sept gains 1 power.
     setupCardAbilities() {
         this.action({
             title: 'Move 1 power + blank',

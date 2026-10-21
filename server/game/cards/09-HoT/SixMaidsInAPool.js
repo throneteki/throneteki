@@ -2,6 +2,8 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class SixMaidsInAPool extends DrawCard {
+    // "Six Maids in a Pool" (09023)
+    // Action: Draw 1 card for each Lady character you control.
     setupCardAbilities() {
         this.action({
             title: 'Draw cards',

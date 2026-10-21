@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class ShadowOfTheEast extends DrawCard {
+    // Shadow of the East (13034)
+    // Shadow (0).
+    // Action: Choose an attachment and discard it from play. If there is a Summer plot card
+    // revealed, return Shadow of the East to your hand instead of placing it in your discard pile.
     setupCardAbilities() {
         this.action({
             title: 'Select an attachment',

@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class MilkSnakes extends DrawCard {
+    // Milk Snakes (19005)
+    // Ambush (4). Bestow (1). Stealth.
+    // Each Clansman character you control with 1 or more gold gains a [power] icon.
+    // Action: Move 1 gold from Milk Snakes to a Clansman character you control.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>

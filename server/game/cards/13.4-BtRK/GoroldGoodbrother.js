@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class GoroldGoodbrother extends DrawCard {
+    // Gorold Goodbrother (13071)
+    // Pillage. Renown.
+    // Reaction: After a location enters an opponent's discard pile, stand Gorold Goodbrother.
+    // (Limit twice per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

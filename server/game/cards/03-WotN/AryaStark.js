@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class AryaStark extends DrawCard {
+    // Arya Stark (03007)
+    // Reaction: After a [stark] character you control is killed, sacrifice Arya Stark to choose and
+    // kill a character with STR 3 or lower.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

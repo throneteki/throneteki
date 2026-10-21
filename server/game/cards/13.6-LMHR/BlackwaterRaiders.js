@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class BlackwaterRaiders extends DrawCard {
+    // Blackwater Raiders (13111)
+    // Shadow (3).
+    // Reaction: After Blackwater Raiders comes out of shadows, choose a location with printed cost
+    // 2 or lower in an opponent's discard pile. Put it into play under your control.
     setupCardAbilities() {
         this.reaction({
             when: {

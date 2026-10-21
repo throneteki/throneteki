@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class OldtownScholar extends DrawCard {
+    // Oldtown Scholar (10041)
+    // Reaction: After an opponent draws 1 or more cards, if it is not the draw phase, kneel Oldtown
+    // Scholar to draw that many cards.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

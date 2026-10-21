@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Will extends DrawCard {
+    // Will (02001)
+    // Stealth. Insight.
+    // Forced Reaction: After you lose an unopposed challenge, sacrifice a Ranger character you
+    // control.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

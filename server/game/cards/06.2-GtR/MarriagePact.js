@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class MarriagePact extends DrawCard {
+    // Marriage Pact (06022)
+    // Terminal.
+    // Attached character cannot participate in challenges against you.
+    // Forced Interrupt: When attached character leaves play, sacrifice a character you control.
     setupCardAbilities(ability) {
         this.whileAttached({
             effect: ability.effects.cannotParticipate()

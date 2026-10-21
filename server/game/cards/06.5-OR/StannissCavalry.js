@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class StannissCavalry extends DrawCard {
+    // Stannis's Cavalry (06087)
+    // Bestow (8). No attachments.
+    // Each character an opponent controls with printed cost X cannot stand during the standing
+    // phase. X is the number of gold Stannis's Cavalry has.
+    // Standing Action: Move 1 gold from your gold pool to Stannis's Cavalry. (Limit twice per
+    // phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.currentPhase === 'standing',

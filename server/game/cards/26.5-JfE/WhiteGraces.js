@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class WhiteGraces extends DrawCard {
+    // White Graces (26093)
+    // Interrupt: When White Graces is discarded from your hand or deck, place it on a unique Lady
+    // or Grace character as a duplicate instead of placing it in your discard pile.
     setupCardAbilities() {
         this.interrupt({
             when: {

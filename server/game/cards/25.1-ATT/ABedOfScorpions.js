@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class ABedOfScorpions extends DrawCard {
+    // A Bed of Scorpions (25008)
+    // Reaction: After you win an [intrigue] challenge, choose and kill a participating character.
+    // (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

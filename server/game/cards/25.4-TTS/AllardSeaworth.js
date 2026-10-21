@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class AllardSeaworth extends DrawCard {
+    // Allard Seaworth (25061)
+    // Dominance Action: Discard a facedown card attached to a [baratheon] card you control to gain
+    // 1 power for your faction. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Discard facedown card',

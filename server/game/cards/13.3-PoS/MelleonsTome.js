@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MalleonsTome extends DrawCard {
+    // Malleon's Tome (13042)
+    // Shadow (1).
+    // Attached character gains an [intrigue] icon.
+    // Reaction: After you win a challenge in which attached character is attacking, look at the
+    // losing opponent's hand. If attached character is Eddard Stark or has the Maester trait, stand
+    // it. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.whileAttached({
             effect: ability.effects.addIcon('intrigue')

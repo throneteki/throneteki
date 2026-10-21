@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class TheAnnalsOfCastleBlack extends PlotCard {
+    // The Annals of Castle Black (06040)
+    // Each player may play events in his or her discard pile as if they were in his or her hand.
+    // Forced Reaction: After an event is placed in a discard pile, remove it from the game.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'any',

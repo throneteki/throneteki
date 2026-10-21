@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class ForestPatrol extends DrawCard {
+    // Forest Patrol (13065)
+    // Shadow (4).
+    // No attachments except Weapon.
+    // Action: Kneel a [thenightswatch] location to put Forest Patrol into play from shadows.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put into play',

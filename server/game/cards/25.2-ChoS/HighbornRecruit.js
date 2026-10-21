@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class HighbornRecruit extends DrawCard {
+    // Highborn Recruit (25029)
+    // Challenges Action: Kneel Highborn Recruit to choose a character with 1 or fewer challenge
+    // icons. Until the end of the phase, that character gains insight or renown.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character keyword',

@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class AlchemistApprentice extends DrawCard {
+    // Alchemist Apprentice (26105)
+    // Dominance Action: Kneel Alchemist Apprentice to choose a non-limited location with printed
+    // cost 2 or lower and return it to its owner's hand. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel to return location',

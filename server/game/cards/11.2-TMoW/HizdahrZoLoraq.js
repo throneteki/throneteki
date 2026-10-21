@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class HizdahrZoLoraq extends DrawCard {
+    // Hizdahr zo Loraq (11033)
+    // Action: Discard 1 card from your hand to reduce the cost of the next card you marshal,
+    // ambush, or bring out of shadows this phase by 3. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce next marshal/ambush/out of shadows cost',

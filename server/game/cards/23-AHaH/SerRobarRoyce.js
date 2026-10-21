@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerRobarRoyce extends DrawCard {
+    // Ser Robar Royce (23015)
+    // Ser Robar Royce cannot be declared as an attacker or defender in the first challenge each
+    // player initiates each round.
+    // -1 Initiative.
     setupCardAbilities(ability) {
         this.plotModifiers({
             initiative: -1

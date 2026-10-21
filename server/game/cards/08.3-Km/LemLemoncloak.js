@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class LemLemoncloak extends DrawCard {
+    // Lem Lemoncloak (08058)
+    // While you control no loyal characters, Lem Lemoncloak gets +2 STR and gains a [power] icon.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheValyrian extends DrawCard {
+    // The Valyrian (04108)
+    // Ambush (2).
+    // Action: Kneel The Valyrian to give an attacking character +X STR until the end of the
+    // challenge. X is the number of gold in the defending player's gold pool.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give attacking character +STR',

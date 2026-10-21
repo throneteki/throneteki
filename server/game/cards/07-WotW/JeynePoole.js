@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class JeynePoole extends DrawCard {
+    // Jeyne Poole (07033)
+    // Marshaling Action: Sacrifice Jeyne Poole to return a Lady character from your discard pile to
+    // your hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Sacrifice Jeyne Poole',

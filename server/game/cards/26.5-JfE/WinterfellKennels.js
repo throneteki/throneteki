@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class WinterfellKennels extends DrawCard {
+    // Winterfell Kennels (26092)
+    // Each Direwolf character you control gets +1 STR.
+    // Challenges Action: Kneel Winterfell Kennels to put a Direwolf card into play from your hand.
+    // At the end of the phase, if that card is still in play, place it on the bottom of your deck.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',

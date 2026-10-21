@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class Rebuilding extends PlotCard {
+    // Rebuilding (01019)
+    // When Revealed: Choose up to 3 cards in your discard pile, and shuffle them into your deck.
     setupCardAbilities() {
         this.whenRevealed({
             target: {

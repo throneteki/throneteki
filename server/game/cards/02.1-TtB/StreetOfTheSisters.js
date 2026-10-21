@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class StreetOfTheSisters extends DrawCard {
+    // Street of the Sisters (02018)
+    // Reaction: After you win a [power] challenge by 5 or more STR, kneel your faction card to gain
+    // 1 power for your faction.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

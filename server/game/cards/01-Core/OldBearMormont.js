@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class OldBearMormont extends DrawCard {
+    // Old Bear Mormont (01126)
+    // While you control The Wall, Old Bear Mormont does not kneel when declared as a defender.
+    // Interrupt: When the challenges phase ends, if you have not lost a challenge as the defending
+    // player this phase, put a [thenightswatch] card into play from your hand.
     setupCardAbilities(ability) {
         this.tracker = ChallengeTracker.forPhase(this.game);
 

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class LordsportShipright extends DrawCard {
+    // Lordsport Shipwright (01075)
+    // Marshaling Action: Kneel Lordsport Shipwright to choose and kneel a location with printed
+    // cost 2 or lower. (Printed cost 3 or lower instead if you are the first player.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel a location',

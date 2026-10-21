@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class HeCallsItThinking extends DrawCard {
+    // He Calls It Thinking (11096)
+    // Interrupt: When the effects of an opponent's non-agenda, non-plot triggered ability would
+    // initiate, cancel those effects unless that player pays 1 gold.
     setupCardAbilities() {
         this.interrupt({
             canCancel: true,

@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheKingsroad extends DrawCard {
+    // The Kingsroad (01039)
+    // Limited.
+    // Marshaling Action: Kneel and sacrifice The Kingsroad to reduce the cost of the next character
+    // you marshal this phase by 3.
+    // +1 Initiative.
     setupCardAbilities(ability) {
         this.plotModifiers({
             initiative: 1

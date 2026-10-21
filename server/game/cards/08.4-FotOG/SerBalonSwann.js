@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerBalonSwann extends DrawCard {
+    // Ser Balon Swann (08069)
+    // Renown.
+    // Reaction: After a non-[lannister] Knight character enters play under your control, gain 2
+    // gold. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

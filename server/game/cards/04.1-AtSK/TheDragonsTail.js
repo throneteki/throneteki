@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class TheDragonsTail extends DrawCard {
+    // The Dragon's Tail (04001)
+    // Action: Choose an opponent. You and that player each draw 2 cards.
     setupCardAbilities() {
         this.action({
             title: 'Both you and opponent draw 2 cards',

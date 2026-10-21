@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class AlannysGreyjoy extends DrawCard {
+    // Alannys Greyjoy (13031)
+    // Reaction: After a [greyjoy] location enters play under your control, draw 1 card. (Limit once
+    // per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

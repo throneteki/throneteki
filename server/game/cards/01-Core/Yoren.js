@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Yoren extends DrawCard {
+    // Yoren (01129)
+    // Reaction: After you marshal Yoren, choose a character with printed cost 3 or lower in an
+    // opponent's discard pile, and put it into play under your control.
     setupCardAbilities() {
         this.reaction({
             when: {

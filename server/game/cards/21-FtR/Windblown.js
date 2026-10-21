@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Windblown extends DrawCard {
+    // Windblown (21011)
+    // Assault. Shadow (3).
+    // Reaction: After you win a challenge in which Windblown is participating, return it to shadows
+    // to choose and stand an Army or Mercenary character.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

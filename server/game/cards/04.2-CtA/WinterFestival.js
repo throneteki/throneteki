@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class WinterFestival extends PlotCard {
+    // Winter Festival (04040)
+    // Interrupt: When the challenges phase ends, if there are no Summer plot cards revealed, gain 2
+    // power for your faction.
     setupCardAbilities() {
         this.interrupt({
             when: {

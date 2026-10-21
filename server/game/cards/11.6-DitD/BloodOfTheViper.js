@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class BloodOfTheViper extends DrawCard {
+    // Blood of the Viper (11116)
+    // Sand Snake character only. Ambush (2).
+    // Reaction: After you lose a challenge in which attached character is participating, stand it.
     setupCardAbilities() {
         this.attachmentRestriction({ trait: 'Sand Snake' });
 

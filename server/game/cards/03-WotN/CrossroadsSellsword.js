@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class CrossroadsSellsword extends DrawCard {
+    // Crossroads Sellsword (03029)
+    // Interrupt: When Crossroads Sellsword is killed during the challenges phase, gain 2 gold.
     setupCardAbilities() {
         this.interrupt({
             when: {

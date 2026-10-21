@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class BendTheKnee extends DrawCard {
+    // Bend the Knee (09026)
+    // Play only if you control a standing King character.
+    // Action: Choose and kneel a Lord or Lady character.
     setupCardAbilities() {
         this.action({
             title: 'Kneel Lord or Lady',

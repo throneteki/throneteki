@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class AzorAhaiReborn extends DrawCard {
+    // Azor Ahai Reborn (14020)
+    // Unique character you control only. Terminal.
+    // Attached character is considered to be participating in each challenge in which you control
+    // an attacking R'hllor character.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ unique: true, controller: 'current' });
 

@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class Melisandre extends DrawCard {
+    // Melisandre (06027)
+    // Insight.
+    // Reaction: After you win dominance, choose an opponent and look at his or her hand. Then,
+    // choose and discard 1 card from that hand. If that card is a character, place it in its
+    // owner's dead pile.
     setupCardAbilities() {
         this.reaction({
             when: {

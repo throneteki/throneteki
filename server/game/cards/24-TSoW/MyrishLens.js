@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MyrishLens extends DrawCard {
+    // The Myrish Eye (24006)
+    // While there are no cards in shadows, attached character gains insight.
+    // Reaction: After you win a challenge in which attached character is participating, kneel The
+    // Myrish Eye to choose and reveal a card in shadows. If it is an event, discard it.
     setupCardAbilities(ability) {
         this.whileAttached({
             condition: () => this.game.getPlayers().every((player) => player.shadows.length === 0),

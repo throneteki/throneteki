@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class EdricDayne extends DrawCard {
+    // Edric Dayne (01106)
+    // Stealth.
+    // Action: Pay 1 gold to give Edric Dayne a challenge icon of your choice until the end of the
+    // phase.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give icon',

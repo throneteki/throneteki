@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheTrident extends DrawCard {
+    // The Trident (24028)
+    // Forced Reaction: After you win a challenge as the attacking player, give control of The
+    // Trident to the losing opponent unless you sacrifice another neutral location. (Cannot be
+    // canceled.)
+    // +1 Claim
     setupCardAbilities() {
         this.plotModifiers({
             claim: 1

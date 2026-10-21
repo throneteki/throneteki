@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import EventPlayedTracker from '../../EventTrackers/EventPlayedTracker.js';
 
 class WhiteSwordTower extends DrawCard {
+    // White Sword Tower (13018)
+    // Each Kingsguard character you control gets +1 STR.
+    // Each player that does not control a Kingsguard character cannot play more than 1 event each
+    // phase.
     setupCardAbilities(ability) {
         this.tracker = EventPlayedTracker.forPhase(this.game);
 

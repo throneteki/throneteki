@@ -1,6 +1,10 @@
 import PlotCard from '../../plotcard.js';
 
 class Duel extends PlotCard {
+    // Duel (06060)
+    // When Revealed: Choose an opponent. That player chooses 2 non-Army characters, each with
+    // printed cost 6 or higher. Then, that player chooses and kneels 1 of those characters. Kill
+    // the other (cannot be saved).
     setupCardAbilities() {
         this.whenRevealed({
             chooseOpponent: true,

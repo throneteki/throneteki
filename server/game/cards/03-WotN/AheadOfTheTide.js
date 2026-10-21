@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class AheadOfTheTide extends DrawCard {
+    // Ahead of the Tide (03028)
+    // Interrupt: When you compare initiative, your revealed plot card gets +3 initiative until the
+    // end of the phase. If you win initiative this phase, draw 1 card.
     setupCardAbilities() {
         this.interrupt({
             when: {

@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class HandMaiden extends DrawCard {
+    // Handmaiden (01169)
+    // Action: Sacrifice Handmaiden to choose and stand a Lady character.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand a Lady',

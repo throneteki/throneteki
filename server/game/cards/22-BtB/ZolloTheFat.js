@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ZolloTheFat extends DrawCard {
+    // Zollo the Fat (22025)
+    // Reaction: After an opponent gains gold, if it is not the marshaling phase, sacrifice Zollo
+    // the Fat to move all gold from that player's gold pool to your own.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

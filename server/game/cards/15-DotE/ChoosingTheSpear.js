@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class ChoosingTheSpear extends DrawCard {
+    // Choosing the Spear (15032)
+    // Reaction: After a [martell] character you control is declared as an attacker in a [military]
+    // challenge, raise the claim value on your revealed plot card by 1 until the end of the
+    // challenge. If you lose the challenge, choose and kill a character you control. (Max 1 per
+    // challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             max: ability.limit.perChallenge(1),

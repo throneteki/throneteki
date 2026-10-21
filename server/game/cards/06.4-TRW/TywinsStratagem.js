@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TywinsStratagem extends DrawCard {
+    // Tywin's Stratagem (06070)
+    // Challenges Action: Choose a character with printed cost 2 or lower controlled by each player.
+    // Return each of those characters to its owner's hand.
+    // Reaction: After a character is discarded from an opponent's hand or deck, pay 1 gold to
+    // return Tywin's Stratagem from your discard pile to your hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Return characters to hand',

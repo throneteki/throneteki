@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TyrionLannister extends DrawCard {
+    // Tyrion Lannister (01089)
+    // Stealth.
+    // Reaction: After an [intrigue] challenge is initiated, gain 2 gold. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class MaidenOfPoisons extends DrawCard {
+    // Maiden of Poisons (11035)
+    // Shadow (2).
+    // Reaction: After you lose a challenge in which Maiden of Poisons is participating, sacrifice
+    // it to choose a participating character with fewer than 2 challenge icons and return it to its
+    // owner’s hand.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

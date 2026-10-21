@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class Godswood extends DrawCard {
+    // Godswood (08102)
+    // Reaction: After you win a challenge as the attacking player, if there are more Winter plot
+    // cards than Summer plot cards revealed, kneel Godswood to draw X cards. X is the claim value
+    // on your revealed plot card.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

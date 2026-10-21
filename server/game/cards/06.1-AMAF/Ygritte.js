@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Ygritte extends DrawCard {
+    // Ygritte (06017)
+    // Ygritte cannot be knelt by card effects.
+    // While you control another Wildling character, Ygritte gains stealth.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

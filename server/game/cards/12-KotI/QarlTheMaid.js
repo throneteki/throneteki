@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class QarlTheMaid extends DrawCard {
+    // Qarl the Maid (12009)
+    // Reaction: After you win a challenge in which Qarl the Maid is participating, either: stand a
+    // Warship location, or stand Asha Greyjoy.
     setupCardAbilities() {
         this.reaction({
             when: {

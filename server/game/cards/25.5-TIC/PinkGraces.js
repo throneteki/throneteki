@@ -3,6 +3,9 @@ import DrawCard from '../../drawcard.js';
 import GenericTracker from '../../EventTrackers/GenericTracker.js';
 
 class PinkGraces extends DrawCard {
+    // Pink Graces (25093)
+    // Interrupt: When the challenges phase ends, each player who did not apply [military] claim
+    // this phase may draw 1 card.
     setupCardAbilities() {
         this.tracker = GenericTracker.forPhase(this.game, 'onClaimApplied');
 

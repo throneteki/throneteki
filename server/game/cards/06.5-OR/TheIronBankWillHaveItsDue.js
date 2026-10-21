@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheIronBankWillHaveItsDue extends DrawCard {
+    // The Iron Bank Will Have Its Due (06099)
+    // Action: If it is not the taxation phase, kneel your faction card and return a character to
+    // your hand to gain gold equal to that character's printed cost. Until the end of the round,
+    // you cannot marshal or put into play any card with the same title as that character.
     setupCardAbilities(ability) {
         this.action({
             title: 'Return character to gain gold',

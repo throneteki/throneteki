@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SerLancelLannister extends DrawCard {
+    // Ser Lancel Lannister (05014)
+    // While you control exactly 1 other [lannister] Lord or Lady character, Ser Lancel Lannister
+    // gets +X STR. X is that character's STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.getSingleOtherLannisterLordOrLady(),

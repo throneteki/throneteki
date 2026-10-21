@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class BrienneOfTarth extends DrawCard {
+    // Brienne of Tarth (09002)
+    // Reaction: After you win a challenge in which Brienne of Tarth is participating, if her STR
+    // is:
+    // - 6 or higher, she gains 1 power.
+    // - 10 or higher, choose another character. It gets +3 STR until the end of the phase.
+    // - 15 or higher, stand her and draw 1 card.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class WinterReserves extends PlotCard {
+    // Winter Reserves (11080)
+    // While Winter Reserves is in your used pile, increase the gold value and reserve value on your
+    // revealed Winter plot card by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',

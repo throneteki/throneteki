@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class WarlockOfQarth extends DrawCard {
+    // Warlock of Qarth (22020)
+    // Reaction: After a character enters an opponent's dead pile, sacrifice Warlock of Qarth to put
+    // that character into play under your control. Until the end of the phase, that character gains
+    // insight. At the end of the phase, if that card is still in play, place it in its owner's dead
+    // pile (cannot be saved).
     setupCardAbilities(ability) {
         this.reaction({
             when: {

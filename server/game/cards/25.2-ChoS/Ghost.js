@@ -2,6 +2,11 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Ghost extends DrawCard {
+    // Ghost (25031)
+    // No attachments.
+    // Reaction: After you win a challenge in which you control an attacking Direwolf character,
+    // draw 1 card.
+    // Interrupt: When Jon Snow would be killed, sacrifice Ghost to save him.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

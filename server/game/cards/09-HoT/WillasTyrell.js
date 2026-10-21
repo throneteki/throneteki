@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class WillasTyrell extends DrawCard {
+    // Willas Tyrell (09008)
+    // Action: Kneel Willas Tyrell. Then, if you control:
+    // - Margaery Tyrell, stand her.
+    // - The Knight of Flowers, he gains insight until the end of the phase.
+    // - Ser Garlan Tyrell, he gains renown until the end of the phase.
     setupCardAbilities() {
         this.action({
             title: 'Kneel Willas and stand/give keywords',

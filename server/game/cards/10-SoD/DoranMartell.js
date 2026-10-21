@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class DoranMartell extends DrawCard {
+    // Doran Martell (10001)
+    // Action: Kneel your faction card to choose a participating character with fewer than 2
+    // challenge icons and remove it from the challenge.
+    // Reaction: After you lose a challenge, choose a character. Until the end of the phase, that
+    // character gains or loses a challenge icon of your choice.
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove character from challenge',

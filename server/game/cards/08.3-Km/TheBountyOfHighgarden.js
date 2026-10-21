@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheBountyOfHighgarden extends DrawCard {
+    // The Bounty of Highgarden (08044)
+    // Limited.
+    // Action: Gain 5 gold. (Cannot be canceled.)
     setupCardAbilities() {
         this.action({
             title: 'Gain 5 gold',

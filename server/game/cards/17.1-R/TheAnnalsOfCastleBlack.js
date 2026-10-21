@@ -2,6 +2,10 @@ import PlotCard from '../../plotcard.js';
 import EventPlayedTracker from '../../EventTrackers/EventPlayedTracker.js';
 
 class TheAnnalsOfCastleBlack extends PlotCard {
+    // The Annals of Castle Black (17158)
+    // Twice per phase, each player may play an event in their discard pile as if it were in their
+    // hand.
+    // Forced Reaction: After an event is placed in a discard pile, remove it from the game.
     setupCardAbilities(ability) {
         this.tracker = EventPlayedTracker.forPhase(this.game);
 

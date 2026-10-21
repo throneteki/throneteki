@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class NestorRoyce extends DrawCard {
+    // Nestor Royce (23023)
+    // Reaction: After you win a challenge in which Nestor Royce is participating, kneel a neutral
+    // location with printed cost 1 or higher to have him gain intimidate or renown until the end of
+    // the challenge.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

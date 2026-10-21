@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class OrtonMerryweather extends DrawCard {
+    // Orton Merryweather (18015)
+    // Reaction: After a player marshals or plays a Small Council card, return an event from your
+    // discard pile to your hand. (Limit once per phase.)
+    // Interrupt: When Orton Merryweather leaves play, put a non-unique Spy character into play from
+    // your hand.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

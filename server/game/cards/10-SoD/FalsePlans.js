@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class FalsePlans extends DrawCard {
+    // False Plans (10023)
+    // Challenges Action: Choose an opponent. That player discards 1 card at random from his or her
+    // hand.
+    // Reaction: After False Plans is discarded for [intrigue] claim, the winning opponent discards
+    // 2 cards at random from his or her hand.
     setupCardAbilities() {
         this.action({
             phase: 'challenge',

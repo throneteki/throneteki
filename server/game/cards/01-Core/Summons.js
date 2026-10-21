@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Summons extends PlotCard {
+    // Summons (01022)
+    // When Revealed: Search the top 10 cards of your deck for a character, reveal it, and add it to
+    // your hand. Shuffle your deck.
     setupCardAbilities() {
         this.whenRevealed({
             message:

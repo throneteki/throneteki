@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Pyke extends DrawCard {
+    // Pyke (04013)
+    // Action: Kneel Pyke to choose a character. Until the end of the phase, that character gains
+    // stealth.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character stealth',

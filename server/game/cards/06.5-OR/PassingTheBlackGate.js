@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class PassingTheBlackGate extends DrawCard {
+    // Passing the Black Gate (06082)
+    // Marshaling Action: Kneel your faction card to reduce the cost of each [stark] character you
+    // marshal this phase by 1.
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce Stark characters',

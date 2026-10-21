@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SpearsOfTheMerlingKing extends DrawCard {
+    // Spears of the Merling King (06048)
+    // Interrupt: When a character you control is killed, sacrifice Spears of the Merling King to
+    // return that character to your hand instead of placing it in your dead pile.
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

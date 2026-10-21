@@ -1,6 +1,11 @@
 import PlotCard from '../../plotcard.js';
 
 class TheDornishWars extends PlotCard {
+    // The Dornish Wars (25108)
+    // Each character an opponent controls cannot gain challenge icons.
+    // Reaction: After you win a challenge, choose a character controlled by the losing opponent.
+    // Until the end of the phase, that character loses a challenge icon of your choice. (Limit
+    // twice per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'opponent',

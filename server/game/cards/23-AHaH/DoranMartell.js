@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class DoranMartell extends DrawCard {
+    // Doran Martell (23007)
+    // Insight. Shadow (5).
+    // Each card you control in shadows gains shadow (X). X is that card's printed cost.
+    // Reaction: After you lose dominance, look at the top 2 cards of your deck. Place 1 in shadows,
+    // and the other on the bottom of your deck.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetLocation: 'shadows',

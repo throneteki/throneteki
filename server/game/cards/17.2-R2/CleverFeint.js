@@ -3,6 +3,9 @@ import GameActions from '../../GameActions/index.js';
 import TextHelper from '../../TextHelper.js';
 
 class CleverFeint extends DrawCard {
+    // Clever Feint (17167)
+    // Action: Kneel your faction card and pay X gold to choose X cards you control with shadow.
+    // Return each of those cards to shadows.
     setupCardAbilities(ability) {
         this.action({
             title: 'Return cards to shadows',

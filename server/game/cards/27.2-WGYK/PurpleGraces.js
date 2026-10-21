@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class PurpleGraces extends DrawCard {
+    // Purple Graces (27033)
+    // Action: During a [military] challenge, kneel Purple Graces to choose an attacking character.
+    // Until the end of the phase, that character gets -2 STR.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give an attacker -2 STR',

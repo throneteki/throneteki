@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class AThousandEyesAndOne extends DrawCard {
+    // "A Thousand Eyes, and One" (25118)
+    // Action: Kneel your faction card to choose an opponent and, either: look at their hand, or
+    // look at each card in their shadows area. Draw 1 card.
     setupCardAbilities(ability) {
         this.action({
             title: 'Look at an opponent hand or shadows',

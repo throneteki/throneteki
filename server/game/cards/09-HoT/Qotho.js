@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class Qotho extends DrawCard {
+    // Qotho (09037)
+    // Action: Discard 2 [targaryen] cards from your hand to put Qotho into play from your hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put Qotho into play',

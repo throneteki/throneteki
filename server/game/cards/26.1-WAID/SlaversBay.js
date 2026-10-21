@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class SlaversBay extends DrawCard {
+    // Slaver's Bay (26014)
+    // Each participating character is killed if its STR is 0 during:
+    // - [military] challenges, if you control Astapor.
+    // - [intrigue] challenges, if you control Yunkai.
+    // - [power] challenges, if you control Meereen.
     setupCardAbilities(ability) {
         const killDuringChallengePersistentEffect = ({ challengeType, location }) => {
             this.persistentEffect({

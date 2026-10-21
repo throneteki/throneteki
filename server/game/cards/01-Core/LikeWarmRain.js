@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class LikeWarmRain extends DrawCard {
+    // Like Warm Rain (01158)
+    // Reaction: After you lose an [intrigue] challenge as the defending player, kneel a Direwolf
+    // character to choose and kill an attacking character. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class Astapor extends DrawCard {
+    // Astapor (06054)
+    // Bestow (4).
+    // Action: Kneel Astapor to choose a participating character. Until the end of the challenge,
+    // that character gets -X STR. X is the number of gold Astapor has.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character -STR',

@@ -1,6 +1,10 @@
 import PlotCard from '../../plotcard.js';
 
 class ThePointyEnd extends PlotCard {
+    // The Pointy End (18020)
+    // When Revealed: Choose a character. If there are 2 or more attachments attached to that
+    // character, discard each attachment from it. Otherwise, discard each duplicate and each power
+    // from it.
     setupCardAbilities() {
         this.whenRevealed({
             target: {

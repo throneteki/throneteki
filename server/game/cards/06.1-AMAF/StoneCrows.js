@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class StoneCrows extends DrawCard {
+    // Stone Crows (06009)
+    // Ambush (3). Bestow (2).
+    // Reaction: After you win a challenge in which Stone Crows is attacking, discard 1 gold from it
+    // to have the losing opponent choose and kill a defending character.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

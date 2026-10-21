@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Riverrun extends DrawCard {
+    // Riverrun (04003)
+    // Reaction: After power is gained by or moved to a House Tully character, kneel Riverrun to
+    // have that character gain 1 power.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

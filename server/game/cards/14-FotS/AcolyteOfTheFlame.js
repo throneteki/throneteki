@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class AcolyteOfTheFlame extends DrawCard {
+    // Acolyte of the Flame (14014)
+    // Reaction: After the draw phase begins, kneel Acolyte of the Flame to look at the top 2 cards
+    // of an opponent's deck. You may put those cards on the bottom of that player's deck.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

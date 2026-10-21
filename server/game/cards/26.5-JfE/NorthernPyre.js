@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class NorthernPyre extends DrawCard {
+    // Northern Pyre (26082)
+    // Challenges Action: If there is a Winter plot card revealed, kneel Northern Pyre to choose a
+    // participating character. Until the end of the challenge, set that character's STR to 3.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel to set STR to 3',

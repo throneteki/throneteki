@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class LionsOfTheRock extends PlotCard {
+    // Lions of the Rock (05046)
+    // Reaction: After the challenges phase begins, gain 3 gold.
     setupCardAbilities() {
         this.reaction({
             when: {

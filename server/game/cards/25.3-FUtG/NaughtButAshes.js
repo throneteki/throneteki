@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class NaughtButAshes extends DrawCard {
+    // Naught but Ashes (25054)
+    // Shadow (1).
+    // Challenges Action: Choose a participating character without attachments. Until the end of the
+    // phase, that character gets -1 STR for each card in shadows.
     setupCardAbilities() {
         this.action({
             title: 'Give character -X STR',

@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class BlackwaterBay extends DrawCard {
+    // Blackwater Bay (11048)
+    // Reaction: After the challenges phase begins, kneel Blackwater Bay to choose an opponent. Draw
+    // 1 card for each kneeling character that player controls.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

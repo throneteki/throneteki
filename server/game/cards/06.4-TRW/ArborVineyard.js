@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class ArborVineyard extends DrawCard {
+    // Arbor Vineyard (06064)
+    // Limited.
+    // Marshaling Action: Kneel Arbor Vineyard to gain 1 gold. (2 gold instead if there are more
+    // Summer plot cards than Winter plot cards revealed.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Gain gold',

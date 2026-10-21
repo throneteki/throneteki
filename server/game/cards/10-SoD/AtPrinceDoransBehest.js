@@ -3,6 +3,8 @@ import PlotCard from '../../plotcard.js';
 import { Flags } from '../../Constants/index.js';
 
 class AtPrinceDoransBehest extends PlotCard {
+    // At Prince Doran's Behest (10046)
+    // When Revealed: Choose and reveal a new plot card. (Cannot be canceled.)
     setupCardAbilities() {
         this.whenRevealed({
             cannotBeCanceled: true,

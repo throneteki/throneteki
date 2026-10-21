@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Sellsails extends DrawCard {
+    // Sellsails (20002)
+    // Bestow (2).
+    // Action: Discard 1 gold from Sellsails to choose and stand a Smuggler or Warship card. (Limit
+    // once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand Smuggler or Warship',

@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class JoustingPavilion extends DrawCard {
+    // Jousting Pavilion (09019)
+    // Each Knight character you control gets +1 STR while attacking or defending alone.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

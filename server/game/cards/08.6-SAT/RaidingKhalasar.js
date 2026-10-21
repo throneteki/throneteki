@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class RaidingKhalasar extends DrawCard {
+    // Raiding Khalasar (08113)
+    // No attachments. Pillage.
+    // While Raiding Khalasar is attacking, if you control an attacking Bloodrider character, raise
+    // the claim value on your revealed plot card by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking() && this.bloodriderIsAttacking(),

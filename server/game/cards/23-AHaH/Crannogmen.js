@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class Crannogmen extends DrawCard {
+    // Crannogmen (23011)
+    // Shadow (3).
+    // Interrupt: When claim is applied for an [intrigue] challenge in which Crannogmen is
+    // attacking, return it to shadows to choose a character with printed cost 3 or lower controlled
+    // by the losing opponent. Instead of the normal claim effects, kill that character.
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

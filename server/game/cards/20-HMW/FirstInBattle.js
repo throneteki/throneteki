@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class FirstInBattle extends DrawCard {
+    // First in Battle (20039)
+    // Play only if you control 3 or more The Reach locations.
+    // Challenges Action: Each Army or House Tarly character you control does not kneel when
+    // declared as an attacker in the first challenge you initiate this phase.
     setupCardAbilities() {
         this.tracker = ChallengeTracker.forPhase(this.game);
 

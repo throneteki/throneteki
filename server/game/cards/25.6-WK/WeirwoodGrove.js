@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class WeirwoodGrove extends DrawCard {
+    // Weirwood Grove (25110)
+    // Reaction: After an opponent reveals a non-Omen plot card, kneel your faction card and remove
+    // Weirwood Grove from the game to initiate the when revealed ability on that card as if you had
+    // just revealed it.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

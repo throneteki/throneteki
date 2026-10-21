@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class BuilderAtTheWall extends DrawCard {
+    // Builder at the Wall (07016)
+    // Marshaling Action: Kneel Builder at the Wall to reduce the cost of the next [thenightswatch]
+    // attachment or location you marshal this phase by 1.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel to reduce',

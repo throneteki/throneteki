@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class AshaGreyjoy extends DrawCard {
+    // Asha Greyjoy (17162)
+    // Pillage. Stealth.
+    // Reaction: After Asha Greyjoy discards a card using pillage, search the top X cards of your
+    // deck for a card, reveal it, and add it to your hand. Shuffle your deck. X is the number of
+    // cards in the losing opponent's discard pile. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

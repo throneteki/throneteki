@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class BrienneTheBlue extends DrawCard {
+    // Brienne the Blue (22024)
+    // Action: Choose a character that is attacking or defending alone. Until the end of the
+    // challenge, that character gets +5 STR. (+10 STR instead if it is a Rainbow Guard character or
+    // Brienne of Tarth.)
     setupCardAbilities() {
         this.action({
             title: 'Select a character',

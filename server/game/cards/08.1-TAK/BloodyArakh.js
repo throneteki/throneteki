@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class BloodyArakh extends DrawCard {
+    // Bloody Arakh (08015)
+    // Dothraki character only.
+    // Reaction: After you win a [military] challenge in which attached character is attacking,
+    // sacrifice Bloody Arakh. Then, you may initiate an additional [military] challenge this phase.
+    // (Max 1 per phase.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Dothraki' });
         this.reaction({

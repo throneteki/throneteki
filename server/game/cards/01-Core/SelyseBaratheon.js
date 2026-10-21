@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SelyseBaratheon extends DrawCard {
+    // Selyse Baratheon (01049)
+    // Challenges Action: Pay 1 gold to choose a [baratheon] character. Until the end of the phase,
+    // that character gains an [intrigue] icon.
     setupCardAbilities(ability) {
         this.action({
             title: 'Pay 1 gold to give an intrigue icon to a character',

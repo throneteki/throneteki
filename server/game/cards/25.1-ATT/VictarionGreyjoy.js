@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class VictarionGreyjoy extends DrawCard {
+    // Victarion Greyjoy (25003)
+    // Reaction: After a phase begins, kneel a character you control. If it has the:
+    // - R’hllor trait, Victarion Greyjoy gains insight and "immune to opponents' character
+    // abilities" until the end of the phase.
+    // - Drowned God trait, Victarion Greyjoy gains renown and cannot be killed until the end of the
+    // phase.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SkyCell extends DrawCard {
+    // Sky Cell (16022)
+    // Terminal.
+    // Forced Interrupt: When attached character's controller would draw 1 or more cards, kneel
+    // attached character. Then, that player draws 1 less card instead.
+    // Attached character gains "Action: Kill this character (cannot be saved)."
     setupCardAbilities(ability) {
         this.forcedInterrupt({
             when: {

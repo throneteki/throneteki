@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class LeviesAtTheRock extends DrawCard {
+    // Levies at the Rock (04011)
+    // Reaction: After a player initiates a challenge against you, move up to X gold from that
+    // player's gold pool to your own. X is the number of attacking characters.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class WalkOfAtonement extends DrawCard {
+    // Walk of Atonement (11090)
+    // Dominance Action: Discard any amount of power from a character you control. For each power
+    // discarded, discard 1 card at random from each opponent's hand and draw 1 card.
     setupCardAbilities(ability) {
         this.action({
             title: 'Discard cards and draw',

@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class SummerHarvest extends PlotCard {
+    // Summer Harvest (04039)
+    // When Revealed: Choose an opponent. X is 2 higher than the printed gold value on that player's
+    // revealed plot card.
     setupCardAbilities() {
         this.whenRevealed({
             chooseOpponent: true,

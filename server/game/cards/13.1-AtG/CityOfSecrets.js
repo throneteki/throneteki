@@ -3,6 +3,9 @@ import GameActions from '../../GameActions/index.js';
 import Message from '../../Message.js';
 
 class CityOfSecrets extends PlotCard {
+    // City of Secrets (13019)
+    // When Revealed: Each player draws 2 cards. Then, each player without a City plot card in his
+    // or her used pile chooses and discards 2 cards from his or her hand.
     setupCardAbilities() {
         this.whenRevealed({
             message: '{player} uses {source} to have each player draw 2 cards',

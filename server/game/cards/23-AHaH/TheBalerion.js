@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheBalerion extends DrawCard {
+    // The Balerion (23014)
+    // While you control Captain Groleo, he gains a [power] icon and stealth.
+    // Challenges Action: Kneel The Balerion and shuffle it into your deck to choose a [targaryen]
+    // character. Until the end of the phase, that character gets +2 STR and gains assault.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Captain Groleo' && card.controller === this.controller,

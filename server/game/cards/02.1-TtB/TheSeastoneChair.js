@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheSeastoneChair extends DrawCard {
+    // The Seastone Chair (02011)
+    // Interrupt: When claim is applied for an unopposed [military] challenge in which you are the
+    // attacking player, kneel your faction card to choose a character without attachments,
+    // controlled by the losing opponent. Instead of the normal claim effects, kill that character.
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

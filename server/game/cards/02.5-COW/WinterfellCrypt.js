@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class WinterfellCrypt extends DrawCard {
+    // Winterfell Crypt (02082)
+    // Reaction: After a unique [stark] character you control is killed or sacrificed during the
+    // challenges phase, sacrifice Winterfell Crypt to choose a character with equal or lower
+    // printed STR. At the end of the phase, if that character is still in play, shuffle it back
+    // into its owner's deck.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

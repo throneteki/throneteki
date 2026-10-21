@@ -4,6 +4,11 @@ import { ChallengeTracker } from '../../EventTrackers/index.js';
 import GameActions from '../../GameActions/index.js';
 
 class CornCornCorn extends DrawCard {
+    // Corn, Corn, Corn (20025)
+    // Interrupt: When the challenges phase ends, kneel a Steward or Raven card to choose an
+    // opponent who does not support you and a challenge type that has not been initiated against
+    // you this phase. That player must satisfy the claim of that challenge type as if you were the
+    // winning opponent. (Max 1 per phase.)
     setupCardAbilities(ability) {
         this.tracker = ChallengeTracker.forPhase(this.game);
 

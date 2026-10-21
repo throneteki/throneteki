@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class OwenTheOaf extends DrawCard {
+    // Owen the Oaf (13025)
+    // No attachments except Weapon.
+    // While Owen the Oaf is participating in a challenge, each character with more than 1 challenge
+    // icon does not contribute its STR to the challenge.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isParticipating(),

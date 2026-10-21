@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class Stormcrows extends DrawCard {
+    // Stormcrows (08033)
+    // Bestow (5).
+    // Challenges Action: Discard X gold from Stormcrows to choose X characters. Until the end of
+    // the phase, each of those characters gets -1 STR. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character(s) -1 STR',

@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class SerHorasRedwyne extends DrawCard {
+    // Ser Horas Redwyne (02063)
+    // Reaction: After Ser Horas Redwyne is knelt, choose and stand a Lady character.
     setupCardAbilities() {
         this.reaction({
             when: {

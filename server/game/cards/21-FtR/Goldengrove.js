@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Goldengrove extends DrawCard {
+    // Goldengrove (21024)
+    // Action: Kneel Goldengrove or a Small Council character to choose another card you own with
+    // equal or lower printed cost. Stand that card and take control of it. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand and take control',

@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class SerHarysSwyft extends DrawCard {
+    // Ser Harys Swyft (18006)
+    // Action: Move 1 gold from your gold pool to a card without gold. (Limit twice per round.)
+    // +1 Income.
     setupCardAbilities(ability) {
         this.action({
             title: 'Move gold',

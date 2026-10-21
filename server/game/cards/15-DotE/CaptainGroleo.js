@@ -2,6 +2,8 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class CaptainGroleo extends DrawCard {
+    // Captain Groleo (15012)
+    // Reaction: After an attachment enters play, gain 1 gold. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

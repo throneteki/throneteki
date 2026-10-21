@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Irri extends DrawCard {
+    // Irri (06093)
+    // Bestow (2).
+    // Action: Discard 1 gold from Irri to choose and stand a Lord or Lady character. (Limit once
+    // per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand Lord or Lady',

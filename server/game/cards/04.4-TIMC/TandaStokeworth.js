@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class TandaStokeworth extends DrawCard {
+    // Tanda Stokeworth (04069)
+    // Reaction: After you marshal Tanda Stokeworth, each player gains 3 gold.
     setupCardAbilities() {
         this.reaction({
             when: {

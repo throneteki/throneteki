@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class RedPriest extends DrawCard {
+    // Red Priest (14012)
+    // Reaction: After Red Priest enters play, look at an opponent's hand. Then, choose 1 card in
+    // that hand and remove it from the game until Red Priest leaves play.
     setupCardAbilities() {
         this.reaction({
             when: {

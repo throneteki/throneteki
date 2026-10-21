@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class Summer extends DrawCard {
+    // Summer (07034)
+    // Unique [stark] character only.
+    // Action: Kneel attached character to have it participate in a [military] challenge on your
+    // side. (Limit once per challenge.)
+    // Action: Pay 1 gold to attach Summer to a different character. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'stark', unique: true });
         this.action({

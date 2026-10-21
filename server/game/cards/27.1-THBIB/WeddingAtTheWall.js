@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class WeddingAtTheWall extends DrawCard {
+    // Wedding at the Wall (27002)
+    // Shadow (0).
+    // Reaction: After you win a [power] challenge as the attacking player, choose and stand 2
+    // characters you control with the R'hllor or Wildling trait.
     setupCardAbilities() {
         this.reaction({
             when: {

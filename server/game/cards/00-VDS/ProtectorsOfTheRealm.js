@@ -1,6 +1,11 @@
 import AgendaCard from '../../agendacard.js';
 
 class ProtectorsOfTheRealm extends AgendaCard {
+    // Protectors of the Realm (00002)
+    // You may include Knight and Army characters from any faction in your deck.
+    // Action: Kneel your faction card to choose a Knight or Army character. Until the end of the
+    // phase, that character gains renown.
+    // Draft format only.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give Knight or Army renown',

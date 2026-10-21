@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class UnexpectedDelay extends PlotCard {
+    // Unexpected Delay (05047)
+    // Forced Reaction: After the challenges phase begins, each player chooses a character without
+    // attachments or power. Return each of those characters to its owner's hand.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

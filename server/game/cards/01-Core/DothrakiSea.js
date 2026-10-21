@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class DothrakiSea extends DrawCard {
+    // Dothraki Sea (01174)
+    // Reaction: After you win a [power] challenge, sacrifice Dothraki Sea to put a Dothraki
+    // character into play from your hand. At the end of the phase, if that card is still in play,
+    // return it to your hand (cannot be saved).
     setupCardAbilities(ability) {
         this.reaction({
             when: {

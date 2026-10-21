@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class VindictiveRanger extends DrawCard {
+    // Vindictive Ranger (12031)
+    // Reaction: After you lose a challenge as the defending player, Vindictive Ranger gains stealth
+    // and a challenge icon of your choice until the end of the phase.
     setupCardAbilities() {
         this.reaction({
             when: {

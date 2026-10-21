@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class NightfortBuilder extends DrawCard {
+    // Nightfort Builder (11105)
+    // Reaction: After Nightfort Builder is knelt, reveal the top card of your deck. If it is a
+    // [thenightswatch] location or attachment, draw it.
     setupCardAbilities() {
         this.reaction({
             when: {

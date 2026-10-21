@@ -3,6 +3,10 @@ import Conditions from '../../Conditions.js';
 import GameActions from '../../GameActions/index.js';
 
 class FavorOfTheOldGods extends DrawCard {
+    // Favor of the Old Gods (08062)
+    // Attached character gains the Old Gods trait.
+    // Action: If each character, location, and attachment you control has the [stark] affiliation,
+    // kneel Favor of the Old Gods to stand attached character.
     setupCardAbilities(ability) {
         this.whileAttached({
             effect: ability.effects.addTrait('Old Gods')

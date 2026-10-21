@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheStoneDrum extends DrawCard {
+    // The Stone Drum (04028)
+    // While there is a Kingdom plot card revealed, increase the gold value on your revealed plot
+    // card by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.anyPlotHasTrait('Kingdom'),

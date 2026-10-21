@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class LastHearth extends DrawCard {
+    // Last Hearth (09036)
+    // Action: Kneel Last Hearth to give a participating [stark] character +2 STR until the end of
+    // the challenge. (+3 STR instead if there are fewer than 3 plot cards in your used pile.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Increase character STR',

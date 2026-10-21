@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class CrastersKeepMutineer extends DrawCard {
+    // Craster's Keep Mutineer (23009)
+    // Reaction: After Craster's Keep Mutineer enters play, choose a duplicate on a character and
+    // discard it from play.
     setupCardAbilities() {
         this.reaction({
             when: {

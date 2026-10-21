@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class LordCommander extends DrawCard {
+    // Lord Commander (11066)
+    // [thenightswatch] character with printed cost 5 or higher only.
+    // Reaction: After you win a challenge in which you control a participating [thenightswatch]
+    // character, attached character gains 1 power.
     setupCardAbilities() {
         this.attachmentRestriction({ faction: 'thenightswatch', printedCostOrHigher: 5 });
         this.reaction({

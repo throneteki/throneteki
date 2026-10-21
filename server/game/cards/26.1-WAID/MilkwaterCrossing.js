@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MilkwaterCrossing extends DrawCard {
+    // Milkwater Crossing (26018)
+    // Reaction: After a phase begins, kneel and sacrifice Milkwater Crossing to have each character
+    // lose all keywords and immunities until the end of the phase.
+    // +1 Initiative.
     setupCardAbilities(ability) {
         this.plotModifiers({
             initiative: 1

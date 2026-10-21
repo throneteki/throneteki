@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class Shae extends DrawCard {
+    // Shae (04029)
+    // Challenges Action: Pay 1 gold to stand Shae. (Limit twice per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand Shae',

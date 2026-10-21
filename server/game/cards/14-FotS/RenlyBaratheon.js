@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class RenlyBaratheon extends DrawCard {
+    // Renly Baratheon (14004)
+    // Renown.
+    // Action: Kneel your faction card to put a non-[baratheon] character with printed cost X or
+    // lower into play from your hand. X is Renly Baratheon's STR.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put character into play',

@@ -3,6 +3,10 @@ import Message from '../../Message.js';
 import GameActions from '../../GameActions/index.js';
 
 class DefendingTheWall extends DrawCard {
+    // Defending the Wall (24015)
+    // Play only if you control Castle Black or The Wall.
+    // Challenges Action: Choose an attacking character with more than 1 challenge icon, and remove
+    // it from the challenge. If that character does not have the Army or Wildling trait, stand it.
     setupCardAbilities() {
         this.action({
             title: 'Remove character from challenge',

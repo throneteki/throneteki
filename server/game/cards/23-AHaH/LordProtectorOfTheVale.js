@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class LordProtectorOfTheVale extends DrawCard {
+    // Lord Protector of the Vale (23035)
+    // Lord character you control only.
+    // If attached character is Littlefinger, he gets +2 STR.
+    // Challenges Action: During a [power] challenge in which you control a participating House
+    // Arryn character, kneel Lord Protector of the Vale to have attached character contribute its
+    // STR to your side this challenge.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Lord', controller: 'current' });
 

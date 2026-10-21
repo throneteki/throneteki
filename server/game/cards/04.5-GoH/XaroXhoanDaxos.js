@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class XaroXhoanDaxos extends DrawCard {
+    // Xaro Xhoan Daxos (04093)
+    // Reaction: After you marshal a unique attachment, gain 2 gold. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

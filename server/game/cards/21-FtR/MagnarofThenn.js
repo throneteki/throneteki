@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class MagnarofThenn extends DrawCard {
+    // Magnar of Thenn (21028)
+    // Unique Wildling character only.
+    // Attached character gains the Lord trait and pillage.
+    // Interrupt: When attached character would be killed, sacrifice another Wildling character to
+    // save it.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Wildling', unique: true });
         this.whileAttached({

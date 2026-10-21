@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ToGoForwardYouMustGoBack extends DrawCard {
+    // To Go Forward You Must Go Back (08114)
+    // Dominance Action: Each player may shuffle his or her hand (of at least 1 card) into his or
+    // her deck. Each player that does draws 5 cards.
     setupCardAbilities() {
         this.action({
             title: 'Shuffle hand',

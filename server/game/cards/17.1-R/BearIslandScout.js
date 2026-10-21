@@ -3,6 +3,10 @@ import Conditions from '../../Conditions.js';
 import GameActions from '../../GameActions/index.js';
 
 class BearIslandScout extends DrawCard {
+    // Bear Island Scout (17124)
+    // Reaction: After you marshal Bear Island Scout, if each character you control has the [stark]
+    // affiliation, search the top 10 cards of your deck for a House Mormont card, reveal it, and
+    // add it to your hand. Shuffle your deck.
     setupCardAbilities() {
         this.reaction({
             when: {

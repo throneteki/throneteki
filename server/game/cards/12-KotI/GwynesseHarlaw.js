@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class GwynesseHarlaw extends DrawCard {
+    // Gwynesse Harlaw (12007)
+    // Action: Choose 3 cards in an opponent's discard pile and place them on the bottom of his or
+    // her deck in any order. Then, gain 1 gold and draw 1 card. (Limit once per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Place cards on bottom',

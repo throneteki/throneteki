@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class OceanRoad extends DrawCard {
+    // Ocean Road (05042)
+    // Limited.
+    // Marshaling Action: Kneel Ocean Road to reduce the cost of the next neutral or out-of-faction
+    // card you marshal this phase by 1.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel to reduce',

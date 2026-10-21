@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class OldCaptain extends DrawCard {
+    // Old Captain (25024)
+    // While Old Captain is standing, it gains pillage and renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => !this.kneeled,

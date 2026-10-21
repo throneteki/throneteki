@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class LordTywinsHost extends DrawCard {
+    // Lord Tywin's Host (21007)
+    // Assault. No attachments. Pillage.
+    // While you control Tywin Lannister, he gains a [military] icon.
+    // Reaction: After a [lannister] character you control discards a card using pillage, the losing
+    // opponent must choose and discard a card with the same cardtype from their hand unless they
+    // reveal a hand containing no cards with that cardtype. (Limit 3 times per round.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Tywin Lannister',

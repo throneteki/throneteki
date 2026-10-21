@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class BoltonFlayer extends DrawCard {
+    // Bolton Flayer (11002)
+    // Shadow (2).
+    // Forced Interrupt: When the challenges phase ends, choose and kill a character with the lowest
+    // printed cost (cannot be saved).
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {

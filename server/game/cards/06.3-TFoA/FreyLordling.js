@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class FreyLordling extends DrawCard {
+    // Frey Lordling (06057)
+    // Reaction: After you initiate a challenge, Frey Lordling gets +1 STR until the end of the
+    // phase.
     setupCardAbilities() {
         this.reaction({
             when: {

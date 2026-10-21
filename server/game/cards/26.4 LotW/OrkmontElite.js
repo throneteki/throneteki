@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class OrkmontElite extends DrawCard {
+    // Orkmont Elite (26063)
+    // Assault. Pillage.
+    // While Orkmont Elite has an attachment, it gains renown.
+    // Reaction: After Orkmont Elite discards a card using pillage, put an attachment from the
+    // losing opponent's discard pile into play under your control, attached to a character you
+    // control.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.attachments.length >= 1,

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class StormsEnd extends DrawCard {
+    // Storm's End (06008)
+    // Reaction: After you win dominance, discard 1 power from your faction card to choose 2
+    // characters. Each of those characters gains 1 power.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

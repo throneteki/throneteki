@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SnowCastle extends DrawCard {
+    // Snow Castle (16012)
+    // Action: Kneel Snow Castle to choose a [stark] character. Until the end of the phase, that
+    // character gets +1 STR for each [stark] character you control.
     setupCardAbilities(ability) {
         const strength = (context) =>
             context.player.getNumberOfCardsInPlay({ faction: 'stark', type: 'character' });

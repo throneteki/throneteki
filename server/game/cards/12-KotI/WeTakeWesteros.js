@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class WeTakeWesteros extends PlotCard {
+    // We Take Westeros! (12046)
+    // When Revealed: Choose a location in a discard pile and put it into play under your control.
     setupCardAbilities() {
         this.whenRevealed({
             target: {

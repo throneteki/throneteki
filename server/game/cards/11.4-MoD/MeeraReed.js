@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class MeeraReed extends DrawCard {
+    // Meera Reed (11061)
+    // Shadow (1). Stealth.
+    // Reaction: After a [stark] character you control is sacrificed, return Meera Reed to shadows.
+    // Reaction: After Meera Reed comes out of shadows, choose a character. Until the end of the
+    // phase, treat it as if its printed text box were blank (except for Traits).
     setupCardAbilities() {
         this.reaction({
             when: {

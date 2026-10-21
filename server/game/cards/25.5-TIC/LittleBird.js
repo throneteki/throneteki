@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class LittleBird extends DrawCard {
+    // Little Bird (25097)
+    // Shadow (1).
+    // Reaction: After Little Bird comes out of shadows, choose an opponent and look at the top card
+    // of their deck. Then, you and that player may draw 1 card.
     setupCardAbilities() {
         this.reaction({
             when: {

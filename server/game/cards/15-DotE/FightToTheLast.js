@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class FightToTheLast extends DrawCard {
+    // Fight to the Last (15036)
+    // Interrupt: When a character you control would be killed, save it, stand it, and set its STR
+    // to 1 until the end of the phase. At the end of the phase, if that character is still in play,
+    // kill it (cannot be saved).
     setupCardAbilities() {
         this.interrupt({
             canCancel: true,

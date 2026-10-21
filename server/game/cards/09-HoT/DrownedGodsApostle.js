@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class DrownedGodsApostle extends DrawCard {
+    // Drowned God's Apostle (09027)
+    // Reaction: After you win dominance, kill Drowned God's Apostle to put a non-unique [greyjoy]
+    // character with printed cost 3 or lower into play from your dead pile.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

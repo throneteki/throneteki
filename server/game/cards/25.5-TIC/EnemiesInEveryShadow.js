@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class EnemiesInEveryShadow extends PlotCard {
+    // Enemies in Every Shadow (25099)
+    // While there are no cards in shadows, each character you control gets +1 STR.
+    // Reaction: After you win a challenge, choose a card in shadows controlled by the losing
+    // opponent, and discard it. If that card is a character, place it in its owner's dead pile.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.allCards.every((card) => card.location !== 'shadows'),

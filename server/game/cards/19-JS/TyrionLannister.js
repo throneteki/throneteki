@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class TyrionLannister extends DrawCard {
+    // Tyrion Lannister (19014)
+    // Bestow (3). Stealth.
+    // Action: Discard 1 gold from Tyrion Lannister to put a Mercenary character into play under
+    // your control from any player’s discard pile. At the end of the phase, if that card is still
+    // in play, place it on the bottom of its owner's deck. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Put Mercenary into play',

@@ -3,6 +3,9 @@ import PlotCard from '../../plotcard.js';
 import { ChallengeTracker } from '../../EventTrackers/ChallengeTracker.js';
 
 class RobertsRebellion extends PlotCard {
+    // Robert's Rebellion (25082)
+    // Forced Interrupt: When the challenges phase ends, if you have lost a [power] challenge this
+    // phase, discard 3 power from your faction card.
     setupCardAbilities() {
         this.tracker = ChallengeTracker.forRound(this.game);
 

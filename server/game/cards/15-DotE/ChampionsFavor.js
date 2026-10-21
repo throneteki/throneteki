@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class ChampionsFavor extends DrawCard {
+    // Champion's Favor (15038)
+    // Lady character only.
+    // Action: Kneel attached character to choose a participating non-Lady character and give it +X
+    // STR until the end of the challenge. X is 2 higher than attached character's STR.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Lady' });
         this.action({

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheHandsJudgment extends DrawCard {
+    // The Hand's Judgment (01045)
+    // Interrupt: When the effects of an opponent's event would initiate, cancel those effects. X is
+    // that event's printed cost.
     setupCardAbilities() {
         this.interrupt({
             canCancel: true,

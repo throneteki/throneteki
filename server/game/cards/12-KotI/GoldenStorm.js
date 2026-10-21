@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class GoldenStorm extends DrawCard {
+    // Golden Storm (12018)
+    // Reaction: After you win a [military] challenge as the attacking player, kneel Golden Storm to
+    // choose and kill a participating character. Then, if you control a participating Raider
+    // character, stand Golden Storm.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

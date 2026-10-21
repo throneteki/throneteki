@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MaesterCressen extends DrawCard {
+    // Maester Cressen (01046)
+    // Marshaling Action: Kneel Maester Cressen to choose a Condition attachment, and discard it
+    // from play.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel to discard condition',

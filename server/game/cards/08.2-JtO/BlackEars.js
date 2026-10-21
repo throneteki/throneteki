@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class BlackEars extends DrawCard {
+    // Black Ears (08029)
+    // Reaction: After a character is killed, pay 2 gold to put Black Ears into play from your hand.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class NaggasRibs extends DrawCard {
+    // Nagga's Ribs (08013)
+    // For each character in your dead pile, Nagga's Ribs contributes 2 STR to your total for
+    // dominance.
+    // Reaction: After a character is placed in your discard pile, move it to your dead pile.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

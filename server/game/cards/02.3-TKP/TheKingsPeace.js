@@ -1,6 +1,10 @@
 import PlotCard from '../../plotcard.js';
 
 class TheKingsPeace extends PlotCard {
+    // The King's Peace (02048)
+    // Reaction: After a [military] or [power] challenge is initiated against you, the attacking
+    // player may either: kneel his or her faction card, or move 1 power from that faction card to
+    // yours. If that player does not, the challenge immediately ends with no winner or loser.
     setupCardAbilities() {
         this.reaction({
             when: {

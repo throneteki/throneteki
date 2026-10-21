@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class JonArryn extends DrawCard {
+    // Jon Arryn (23001)
+    // Insight. Renown.
+    // Jon Arryn cannot be saved.
+    // Forced Interrupt: When Jon Arryn is killed, each player may either: draw 2 cards, or gain 1
+    // power for their faction.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Sparrows extends DrawCard {
+    // Sparrows (13097)
+    // Shadow (2).
+    // Reaction: After Sparrows comes out of shadows, move 1 power from an opponent's faction card
+    // to another The Seven card you control.
     setupCardAbilities() {
         this.reaction({
             when: {

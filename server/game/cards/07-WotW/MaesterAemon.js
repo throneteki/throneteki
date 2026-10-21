@@ -4,6 +4,11 @@ import { ChallengeTracker } from '../../EventTrackers/index.js';
 import GameActions from '../../GameActions/index.js';
 
 class MaesterAemon extends DrawCard {
+    // Maester Aemon (07005)
+    // No attachments except Item.
+    // Interrupt: When the challenges phase ends, choose an opponent and a challenge type that has
+    // not been initiated against you this phase. That player must satisfy the claim of that
+    // challenge type as if you were the winning opponent.
     setupCardAbilities() {
         this.tracker = ChallengeTracker.forPhase(this.game);
 

@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheStallionWhoMountsTheWorld extends DrawCard {
+    // The Stallion Who Mounts the World (26114)
+    // Reaction: After you win a [power] challenge as the attacking player, kneel your faction card
+    // to search your deck for a Dothraki character and put it into play. Shuffle your deck. The
+    // defending player may kill 2 characters to cancel this effect.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

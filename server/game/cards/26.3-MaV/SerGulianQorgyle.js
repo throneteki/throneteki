@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SerGulianQorgyle extends DrawCard {
+    // Ser Gulian Qorgyle (26047)
+    // Reaction: After a character an opponent controls is declared as an attacker or defender, it
+    // loses a challenge icon of your choice until the end of the phase. (Limit twice per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

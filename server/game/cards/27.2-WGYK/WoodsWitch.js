@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class WoodsWitch extends DrawCard {
+    // Woods Witch (27031)
+    // Reaction: After a character is discarded from an opponent's hand, sacrifice Woods Witch to
+    // name a cardtype. That player must sacrifice a card with that cardtype and the same printed
+    // cost as the discarded card.
     setupCardAbilities(ability) {
         const discardingPlayer = (context) => context.event.cardStateWhenDiscarded.controller;
 

@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class OldWyk extends DrawCard {
+    // Old Wyk (05028)
+    // Reaction: After you initiate a [power] challenge, kneel Old Wyk to put the top Drowned God
+    // character in your dead pile into play knelt, participating as an attacker. Then, if you win
+    // the challenge by 5 or more STR, return that character to your hand. Otherwise, place it on
+    // the bottom of your deck.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

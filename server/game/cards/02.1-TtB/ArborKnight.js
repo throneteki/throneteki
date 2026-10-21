@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ArborKnight extends DrawCard {
+    // Arbor Knight (02005)
+    // Challenges Action: Pay 1 gold to choose a participating House Redwyne character. Until the
+    // end of the challenge, that character gets +1 STR. (Limit 3 times per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Give a character +1 STR',

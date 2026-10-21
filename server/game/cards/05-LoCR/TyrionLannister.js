@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TyrionLannister extends DrawCard {
+    // Tyrion Lannister (05002)
+    // Reaction: After you win a challenge, return an attacking Clansman character to your hand to
+    // (choose one): draw 2 cards, gain 3 gold, or raise the claim value on your revealed plot card
+    // by 1 until the end of the challenge. (Limit twice per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

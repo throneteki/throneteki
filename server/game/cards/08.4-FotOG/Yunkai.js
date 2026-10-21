@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class Yunkai extends DrawCard {
+    // Yunkai (08074)
+    // Bestow (4).
+    // Action: During a challenge in which you are the attacking player, kneel Yunkai and discard X
+    // gold from it to remove each character with STR X or lower from the challenge (X cannot be 0).
+    // Then, if you win the challenge, place 2 gold from the treasury on Yunkai.
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove characters from challenge',

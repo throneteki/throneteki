@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class GrowingStrong extends DrawCard {
+    // Growing Strong (01195)
+    // Challenges Action: Choose up to three [tyrell] characters. Until the end of the phase, each
+    // of the chosen characters gets +2 STR.
     setupCardAbilities() {
         this.action({
             title: 'Give +2 STR to up to 3 characters',

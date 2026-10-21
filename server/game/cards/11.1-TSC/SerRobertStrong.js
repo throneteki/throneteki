@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerRobertStrong extends DrawCard {
+    // Ser Robert Strong (11010)
+    // Shadow (5).
+    // Reaction: After Ser Robert Strong comes out of shadows, choose and kill a kneeling character
+    // with printed cost 5 or lower.
     setupCardAbilities() {
         this.reaction({
             when: {

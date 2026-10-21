@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Qotho extends DrawCard {
+    // Qotho (17131)
+    // Action: If there is a Summer plot card revealed, discard 2 [targaryen] cards from your hand
+    // to put Qotho into play from your hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put Qotho into play',

@@ -3,6 +3,12 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class LadyStoneheart extends DrawCard {
+    // Lady Stoneheart (20041)
+    // Intimidate.
+    // Forced Interrupt: When the challenges phase ends, each player must choose and kill a loyal or
+    // House Frey character they control, if able.
+    // Dominance Action: Discard 1 kiss token from a character or 1 power from a Brotherhood
+    // character to put Lady Stoneheart into play from your dead pile.
     setupCardAbilities(ability) {
         this.forcedInterrupt({
             when: {

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class CerseiLannister extends DrawCard {
+    // Cersei Lannister (11109)
+    // Shadow (5).
+    // Reaction: After a card you control comes out of shadows during the challenges phase, each
+    // opponent discards 1 card at random from his or her hand. (Limit 3 times per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SomeoneAlwaysTells extends DrawCard {
+    // Someone Always Tells (17168)
+    // Interrupt: When the effects of an opponent's event or when revealed ability would initiate,
+    // cancel those effects.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

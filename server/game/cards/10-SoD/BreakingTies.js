@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class BreakingTies extends PlotCard {
+    // Breaking Ties (10050)
+    // Action: Sacrifice a loyal character to choose a non-loyal character or location and return it
+    // to its owner's hand. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Return character/location to hand',

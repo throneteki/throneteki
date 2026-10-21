@@ -4,6 +4,9 @@ import Message from '../../Message.js';
 import { flatten } from '../../../Array.js';
 
 class RuleByDegree extends PlotCard {
+    // Rule By Decree (16033)
+    // When Revealed: Each player with the most cards in hand chooses and discards cards from his or
+    // her hand until he or she has 4 cards in hand.
     setupCardAbilities() {
         this.whenRevealed({
             target: {

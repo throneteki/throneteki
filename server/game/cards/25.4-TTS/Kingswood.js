@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Kingswood extends DrawCard {
+    // Kingswood (25066)
+    // Reaction: After a character you control enters play using ambush, kneel and return Kingswood
+    // to your hand to draw 1 card.
+    // +1 Initiative.
     setupCardAbilities(ability) {
         this.plotModifiers({
             initiative: 1

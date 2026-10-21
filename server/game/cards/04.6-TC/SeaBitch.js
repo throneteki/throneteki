@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SeaBitch extends DrawCard {
+    // Sea Bitch (04112)
+    // Action: Sacrifice Sea Bitch to choose a non-limited location. Take control of that location
+    // until the end of the phase.
     setupCardAbilities(ability) {
         this.action({
             title: 'Take control of location',

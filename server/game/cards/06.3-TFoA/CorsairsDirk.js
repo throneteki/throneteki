@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class CorsairsDirk extends DrawCard {
+    // Corsair's Dirk (06052)
+    // Ironborn character only.
+    // Attached character gets +2 STR.
+    // Reaction: After you win a challenge in which attached character is attacking, move 1 gold
+    // from the losing opponent's gold pool to your own.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Ironborn' });
 

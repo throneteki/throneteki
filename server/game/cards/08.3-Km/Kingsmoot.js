@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Kingsmoot extends DrawCard {
+    // Kingsmoot (08052)
+    // Reaction: After you win dominance, choose a unique [greyjoy] character you control. That
+    // character gains 1 power for each unique [greyjoy] character you control. (Max 1 per round.)
     setupCardAbilities(ability) {
         this.reaction({
             max: ability.limit.perRound(1),

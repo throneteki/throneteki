@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SeasonedWoodsman extends DrawCard {
+    // Seasoned Woodsman (07015)
+    // Reaction: After you attach an attachment to Seasoned Woodsman, either: gain 1 gold, or draw 1
+    // card. (Limit twice per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

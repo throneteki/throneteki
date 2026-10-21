@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SpidersWhisperer extends DrawCard {
+    // Spider's Whisperer (16005)
+    // Forced Reaction: After Spider's Whisperer enters play, choose an Ally character and discard
+    // it from play.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

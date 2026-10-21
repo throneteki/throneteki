@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Reinstatement extends DrawCard {
+    // Reinstatement (26038)
+    // Standing Action: Kneel your faction card to put a Small Council character into play from your
+    // discard pile.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put a character into play',

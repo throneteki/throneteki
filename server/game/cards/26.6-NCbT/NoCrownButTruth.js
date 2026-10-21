@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class NoCrownButTruth extends DrawCard {
+    // No Crown but Truth (26102)
+    // Interrupt: When the effects of an opponent's triggered character ability would initiate, kill
+    // a Maester character to cancel those effects and draw 1 card.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

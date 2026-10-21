@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerLancelLannister extends DrawCard {
+    // Ser Lancel Lannister (20011)
+    // Power on Lord or Lady characters does not count towards their controllers' power total.
+    // Action: Kneel Ser Lancel Lannister to put Warrior's Sons into play from your hand or discard
+    // pile.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'any',

@@ -3,6 +3,10 @@ import GameActions from '../../GameActions/index.js';
 import Message from '../../Message.js';
 
 class FriendsAtCourt extends DrawCard {
+    // Friends at Court (13115)
+    // Shadow (2).
+    // Reaction: After Friends at Court comes out of shadows, look at up to 3 cards in shadows.
+    // Then, you may pay 2 gold to choose 1 of those cards and return it to its owner's hand.
     setupCardAbilities() {
         this.reaction({
             when: {

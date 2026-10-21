@@ -2,6 +2,11 @@ import AgendaCard from '../../agendacard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheSmallCouncil extends AgendaCard {
+    // The Small Council (26040)
+    // You may include non-loyal Small Council characters from any faction in your deck. You must
+    // include at least 7 different Small Council characters in your deck.
+    // Reaction: After you win dominance, choose a standing Small Council character you control and
+    // have it gain 1 power. Then, if you control a King or Queen character, draw 1 card.
     setupCardAbilities() {
         this.reaction({
             when: {

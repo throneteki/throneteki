@@ -1,6 +1,10 @@
 import PlotCard from '../../plotcard.js';
 
 class FeastOrFamine extends PlotCard {
+    // Feast or Famine (00006)
+    // When Revealed: You may increase the gold value on Feast or Famine by 5. If you do, reduce the
+    // claim value on Feast of Famine by 2.
+    // Draft format only.
     setupCardAbilities() {
         this.whenRevealed({
             handler: (context) => {

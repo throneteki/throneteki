@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class UnexpectedReturn extends DrawCard {
+    // Unexpected Return (11015)
+    // Challenges Action: Choose a character in your discard pile and put it into play.
     setupCardAbilities() {
         this.action({
             phase: 'challenge',

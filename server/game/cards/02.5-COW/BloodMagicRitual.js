@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class BloodMagicRitual extends DrawCard {
+    // Blood Magic Ritual (02094)
+    // Interrupt: When a non-Army character would be killed, save it. Then, attach Blood Magic
+    // Ritual to that character as a Condition attachment with the text: "Terminal. Treat attached
+    // character's printed text box as if it were blank (except for Traits)."
     setupCardAbilities() {
         this.interrupt({
             canCancel: true,

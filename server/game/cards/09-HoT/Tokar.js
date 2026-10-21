@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class Tokar extends DrawCard {
+    // Tokar (09038)
+    // [targaryen] character only.
+    // Attached character gets +1 STR for each attachment it has.
+    // While attached character is participating in a challenge, each character without attachments
+    // cannot gain power.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'targaryen' });
 

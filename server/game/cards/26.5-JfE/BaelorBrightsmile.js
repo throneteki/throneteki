@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class BaelorBrightsmile extends DrawCard {
+    // Baelor Brightsmile (26095)
+    // Renown.
+    // Reaction: After you win a challenge by 5 or more STR in which Baelor Brightsmile is
+    // participating, reveal the top card of your deck. You may place that card on Baelor
+    // Brightsmile facedown as a duplicate.
     setupCardAbilities() {
         this.reaction({
             when: {

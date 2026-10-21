@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class StannissWrath extends DrawCard {
+    // Stannis's Wrath (08028)
+    // Action: Choose and kneel a character without a [power] icon.
     setupCardAbilities() {
         this.action({
             title: 'Kneel character',

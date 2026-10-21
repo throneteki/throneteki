@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class Clydas extends DrawCard {
+    // Clydas (15033)
+    // Action: Move 1 gold from an opponent's gold pool to your own. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Move 1 gold to your gold pool',

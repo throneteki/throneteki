@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class JoustingKnight extends DrawCard {
+    // Jousting Knight (09016)
+    // Jousting Knight does not contribute its STR to a challenge unless it is attacking or
+    // defending alone.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

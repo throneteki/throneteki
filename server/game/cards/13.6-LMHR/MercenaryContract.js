@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MercenaryContract extends DrawCard {
+    // Mercenary Contract (13114)
+    // Attached character gains the Mercenary trait.
+    // Reaction: After you win a challenge in which attached character is attacking, pay 1 gold and
+    // kneel Mercenary Contract to stand attached character.
     setupCardAbilities(ability) {
         this.whileAttached({
             effect: ability.effects.addTrait('Mercenary')

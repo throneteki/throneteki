@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class ALannisterAlwaysPaysHisDebts extends DrawCard {
+    // A Lannister Always Pays His Debts (05022)
+    // Challenges Action: Choose an opponent who has won a challenge against you this phase. You may
+    // initiate an additional [military] and [intrigue] challenge against that player this phase.
+    // (Max 1 per phase.)
     setupCardAbilities(ability) {
         this.tracker = ChallengeTracker.forPhase(this.game);
 

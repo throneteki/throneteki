@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Left extends DrawCard {
+    // Left (01179)
+    // No attachments except Weapon.
+    // While you control Right, Left gets +1 STR, gains a [power] icon, and does not kneel when
+    // declared as a defender.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.controller.anyCardsInPlay((card) => card.name === 'Right'),

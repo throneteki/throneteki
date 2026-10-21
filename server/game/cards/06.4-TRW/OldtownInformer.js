@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class OldtownInformer extends DrawCard {
+    // Oldtown Informer (06063)
+    // Ambush (2). Bestow (3).
+    // Reaction: After a card enters play during the challenges phase, draw X cards. Then, discard X
+    // cards. X is the number of gold Oldtown Informer has.
     setupCardAbilities() {
         this.reaction({
             when: {

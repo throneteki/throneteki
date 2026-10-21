@@ -3,6 +3,10 @@ import GameActions from '../../GameActions/index.js';
 import Message from '../../Message.js';
 
 class TheBloodyGate extends DrawCard {
+    // The Bloody Gate (23033)
+    // Reaction: After you lose a [military] challenge in which you control a defending character,
+    // the winning opponent must choose and discard 1 card from their hand. (Discard 1 card at
+    // random from their hand instead if The Bloody Gate is kneeling.)
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -3,6 +3,10 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class Meadowlark extends DrawCard {
+    // Meadowlark (13076)
+    // Reaction: After you reveal a plot card, place 1 journey token on Meadowlark.
+    // Action: Sacrifice Meadowlark to search your deck for a character with printed cost X or lower
+    // and put it into play. Shuffle your deck. X is the number of journey tokens on Meadowlark.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

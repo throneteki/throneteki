@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerRichardHorpe extends DrawCard {
+    // Ser Richard Horpe (20001)
+    // Renown.
+    // Ser Richard Horpe gets +1 STR for each power he has.
+    // Action: Move 1 power from a card you control to another card in play. (Limit once per round.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

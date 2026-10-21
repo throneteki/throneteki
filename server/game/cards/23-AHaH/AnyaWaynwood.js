@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class AnyaWaynwood extends DrawCard {
+    // Anya Waynwood (23018)
+    // While you control Harry the Heir, he gains renown.
+    // Challenges Action: Kneel a neutral location to choose a non-participating character with
+    // equal or lower printed cost. That character contributes its STR to your side this challenge.
+    // (Limit once per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Harry the Heir' && card.controller === this.controller,

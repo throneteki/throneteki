@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class SupportOfSaltcliffe extends DrawCard {
+    // Support of Saltcliffe (00010)
+    // [greyjoy] character only.
+    // Attached character gains stealth.
+    // Reaction: After you win an unopposed challenge in which attached character is attacking,
+    // stand attached character.
+    // Draft format only.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'greyjoy' });
 

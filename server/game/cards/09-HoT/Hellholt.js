@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class Hellholt extends DrawCard {
+    // Hellholt (09032)
+    // Reaction: After you lose a challenge by 5 or more STR, Hellholt gains 1 power.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class MarshsConspirator extends DrawCard {
+    // Marsh's Conspirator (25049)
+    // Shadow (2).
+    // Reaction: After Marsh's Conspirator comes out of shadows, choose a character. Until the end
+    // of the phase, treat that character as if its printed text box were blank (except for Traits).
     setupCardAbilities() {
         this.reaction({
             when: {

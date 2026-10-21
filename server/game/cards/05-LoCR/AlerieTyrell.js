@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class AlerieTyrell extends DrawCard {
+    // Alerie Tyrell (05037)
+    // Reaction: After Alerie Tyrell enters play, search the top 10 cards of your deck for a
+    // [tyrell] character with printed cost 3 or lower, reveal it, and add it to your hand. Shuffle
+    // your deck.
     setupCardAbilities() {
         this.reaction({
             when: {

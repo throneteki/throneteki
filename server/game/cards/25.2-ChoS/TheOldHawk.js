@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheOldHawk extends DrawCard {
+    // The Old Hawk (25027)
+    // Insight.
+    // While there is a Summer plot card revealed, each [martell] character you control with STR 6
+    // or higher gains renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.anyPlotHasTrait('Summer'),

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ScorpionKnight extends DrawCard {
+    // Scorpion Knight (22011)
+    // Reaction: After a character loses a challenge icon, Scorpion Knight gets +1 STR until the end
+    // of the phase. (Limit 3 times per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

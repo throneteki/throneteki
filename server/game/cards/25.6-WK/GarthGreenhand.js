@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class GarthGreenhand extends DrawCard {
+    // Garth Greenhand (25116)
+    // Unique [tyrell] location you control only.
+    // During a challenge, each unique participating [tyrell] character you control gets +1 STR.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.attachmentRestriction({
             type: 'location',

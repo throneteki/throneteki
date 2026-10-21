@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class Reinforcements extends PlotCard {
+    // Reinforcements (01020)
+    // When Revealed: Choose a character with printed cost 5 or lower in your hand or discard pile,
+    // and put it into play.
     setupCardAbilities() {
         this.whenRevealed({
             target: {

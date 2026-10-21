@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class Littlefinger extends DrawCard {
+    // Littlefinger (13017)
+    // Shadow (6). Stealth.
+    // Reaction: After a character you control comes out of shadows, place up to 3 cards from your
+    // hand on the bottom of your deck in any order. Then, draw that many cards. (Limit once per
+    // round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

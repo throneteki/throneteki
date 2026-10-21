@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Darkstar extends DrawCard {
+    // Darkstar (08055)
+    // Stealth.
+    // Reaction: After Darkstar bypasses a character using stealth, that character loses a challenge
+    // icon of your choice until the end of the phase.
     setupCardAbilities() {
         this.reaction({
             when: {

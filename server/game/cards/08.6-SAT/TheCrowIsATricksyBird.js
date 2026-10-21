@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheCrowIsATricksyBird extends DrawCard {
+    // The Crow is a Tricksy Bird (08106)
+    // Plot Action: Kneel your faction card to choose an opponent and look at his or her plot deck.
+    // Choose 1 plot in that deck. That player must reveal that plot as his or her next plot card,
+    // if able.
     setupCardAbilities(ability) {
         this.action({
             title: 'Look at plot deck',

@@ -3,6 +3,11 @@ import GenericTracker from '../../EventTrackers/GenericTracker.js';
 import GameActions from '../../GameActions/index.js';
 
 class ArchmaesterMarwyn extends DrawCard {
+    // Archmaester Marwyn (15041)
+    // Once per phase, you may marshal or play a facedown card under your agenda as if it were in
+    // your hand.
+    // Reaction: After Archmaester Marwyn enters play, place the top 2 cards of your deck facedown
+    // under your agenda.
     setupCardAbilities(ability) {
         this.enterPlayTracker = GenericTracker.forPhase(this.game, 'onCardMarshalled');
         this.playedTracker = GenericTracker.forPhase(this.game, 'onCardPlayed');

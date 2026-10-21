@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class EliaSand extends DrawCard {
+    // Elia Sand (04075)
+    // Reaction: After you lose a challenge, choose a character. Until the end of the phase, that
+    // character gains stealth. (Limit twice per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

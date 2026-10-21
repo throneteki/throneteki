@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class BlackhavenRider extends DrawCard {
+    // Blackhaven Rider (25081)
+    // Reaction: After Blackhaven Rider enters play, each player must choose and kneel a loyal
+    // character they control, if able.
     setupCardAbilities() {
         this.reaction({
             when: {

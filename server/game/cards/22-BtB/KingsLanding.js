@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class KingsLanding extends DrawCard {
+    // King's Landing (22026)
+    // Reaction: After a King's Landing location enters play, kneel it to draw 1 card. (Limit twice
+    // per round.)
+    // Marshaling Action: Kneel a King's Landing location to gain 1 gold. (Limit twice per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Gain 1 gold',

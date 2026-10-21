@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class KingBalonsSolar extends DrawCard {
+    // King Balon's Solar (04072)
+    // Reaction: After you win initiative, gain 1 gold.
     setupCardAbilities() {
         this.reaction({
             when: {

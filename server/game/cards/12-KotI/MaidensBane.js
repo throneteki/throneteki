@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MaidensBane extends DrawCard {
+    // Maiden's Bane (12019)
+    // Reaction: After you win an unopposed challenge, kneel Maiden's Bane to choose and stand an
+    // attacking character. Then, if that character is a Captain, stand Maiden's Bane.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

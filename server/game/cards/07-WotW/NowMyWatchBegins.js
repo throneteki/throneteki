@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class NowMyWatchBegins extends DrawCard {
+    // Now My Watch Begins (07023)
+    // Reaction: After a character with printed cost 5 or lower is placed in an opponent's discard
+    // pile, put that character into play under your control.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheHightower extends DrawCard {
+    // The Hightower (09017)
+    // Reaction: After a [tyrell] character enters play under your control, gain 1 gold and draw 1
+    // card. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

@@ -62,6 +62,11 @@ against the rules, which is what lets a game run with manual mode off
 fails if any file uses more of them than it did before. When a change removes some, run
 `npm run card-rules -- --update` to lock the lower count in.
 
+Each card class starts with the card's text as a comment, generated from the card data. Run
+`npm run card-text -- --write` after adding a card file or updating the `throneteki-json-data`
+submodule; [cardText.spec.js](../../../test/server/tools/cardText.spec.js) fails when a comment is
+missing or out of date. Don't edit the comment by hand.
+
 ## File layout
 
 - One file per card in `server/game/cards/<cycle>-<pack>/<CardName>.js`, exporting a default class

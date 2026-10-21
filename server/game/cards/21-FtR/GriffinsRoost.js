@@ -3,6 +3,12 @@ import GenericTracker from '../../EventTrackers/GenericTracker.js';
 import { Tokens } from '../../Constants/index.js';
 
 class GriffinsRoost extends DrawCard {
+    // Griffin's Roost (21021)
+    // While you control Jon Connington, he gains a [power] icon.
+    // Reaction: After you win a [power] challenge, kneel your faction card to choose 1 card in your
+    // hand and place it facedown in shadows with a shadow token on it. While that card is in
+    // shadows, if it does not have the printed shadow keyword, it gains shadow (X). X is its
+    // printed cost.
     setupCardAbilities(ability) {
         this.tracker = GenericTracker.forPhase(this.game, 'onCardOutOfShadows');
 

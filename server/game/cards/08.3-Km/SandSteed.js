@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SandSteed extends DrawCard {
+    // Sand Steed (08056)
+    // Limit 1 copy per character.
+    // Reaction: After a Summer plot card enters your used pile, attached character gains 1 power.
     setupCardAbilities() {
         this.attachmentRestriction(
             (card) =>

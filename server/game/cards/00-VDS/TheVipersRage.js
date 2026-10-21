@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class TheVipersRage extends DrawCard {
+    // The Viper's Rage (00012)
+    // Reaction: After you lose a challenge by 5 or more STR as the defending player, each character
+    // controlled by the attacking player loses a [military], an [intrigue], and a [power] icon
+    // until the end of the phase.
+    // Draft format only.
     setupCardAbilities() {
         this.reaction({
             when: {

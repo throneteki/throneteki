@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class OldBearMormont extends DrawCard {
+    // Old Bear Mormont (16010)
+    // Action: Kneel Old Bear Mormont to choose and stand another [thenightswatch] or Lord
+    // character.
+    // Reaction: After a character you control is killed, stand Old Bear Mormont.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand character',

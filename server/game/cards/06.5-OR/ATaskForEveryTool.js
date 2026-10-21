@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ATaskForEveryTool extends DrawCard {
+    // A Task For Every Tool (06090)
+    // Challenges Action: Put a [lannister] character with printed STR 2 or lower into play from
+    // your hand.
     setupCardAbilities() {
         this.action({
             title: 'Put character into play',

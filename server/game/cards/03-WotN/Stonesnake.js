@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Stonesnake extends DrawCard {
+    // Stonesnake (03033)
+    // Stealth.
+    // Reaction: After Stonesnake bypasses a character using stealth, choose one of that character's
+    // keywords. Stonesnake gains that keyword until the end of the phase.
     setupCardAbilities() {
         this.reaction({
             when: {

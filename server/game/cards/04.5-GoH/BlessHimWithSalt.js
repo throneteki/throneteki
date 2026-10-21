@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class BlessHimWithSalt extends DrawCard {
+    // Bless Him With Salt (04092)
+    // Play only during a [power] challenge.
+    // Action: Choose a participating Drowned God or Ironborn character. Until the end of the
+    // challenge, that character gets +3 STR. If you win the challenge, draw 1 card.
     setupCardAbilities() {
         this.action({
             title: 'Give +3 STR to character',

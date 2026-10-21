@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ScorchingDeserts extends DrawCard {
+    // Scorching Deserts (06036)
+    // Reaction: After a character with fewer than 2 challenge icons is declared as an attacker or
+    // defender, kneel and sacrifice Scorching Deserts to remove that character from the challenge.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

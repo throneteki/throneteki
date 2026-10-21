@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class PullingTheStrings extends PlotCard {
+    // Pulling the Strings (02084)
+    // When Revealed: Choose an Edict, Kingdom, or Scheme plot card in an opponent's used pile.
+    // Initiate the when revealed ability on that card as if you had just revealed it.
     setupCardAbilities() {
         this.whenRevealed({
             target: {

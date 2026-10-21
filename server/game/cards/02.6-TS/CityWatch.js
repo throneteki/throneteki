@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class CityWatch extends DrawCard {
+    // City Watch (02108)
+    // Ambush (6). No attachments except Weapon.
+    // While you have more power on your faction card than an opponent, reduce the cost to ambush
+    // City Watch by 2.
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',

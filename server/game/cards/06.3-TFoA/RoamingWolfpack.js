@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class RoamingWolfpack extends DrawCard {
+    // Roaming Wolfpack (06041)
+    // Intimidate. No attachments.
+    // While Roaming Wolfpack is attacking, each attacking Direwolf character gets +2 STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),

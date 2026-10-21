@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class AClashOfKings extends PlotCard {
+    // A Clash of Kings (01001)
+    // Reaction: After you win a [power] challenge, move 1 power from the losing opponent's faction
+    // card to your own.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Jhiqui extends DrawCard {
+    // Jhiqui (08053)
+    // Reaction: After you win a challenge, discard 1 card from your hand to have a participating
+    // Lord or Lady character gain 1 power.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

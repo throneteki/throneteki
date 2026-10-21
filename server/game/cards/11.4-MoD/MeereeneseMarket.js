@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MeereeneseMarket extends DrawCard {
+    // Meereenese Market (11074)
+    // Action: Kneel Meereenese Market to choose a card in a discard pile and place it on the bottom
+    // of its owner's deck.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.plotModifiers({
             gold: 1

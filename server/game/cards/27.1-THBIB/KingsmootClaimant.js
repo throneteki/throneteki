@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class KingsmootClaimant extends DrawCard {
+    // Kingsmoot Claimant (27003)
+    // While Kingsmoot Claimant is attacking an opponent who does not control a King character, it
+    // gains the King trait and renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

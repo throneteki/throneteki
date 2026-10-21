@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SchemingSepton extends DrawCard {
+    // Scheming Septon (11004)
+    // Shadow (2).
+    // Challenges Action: Draw 1 card and gain 2 gold. Then, place Scheming Septon on top of your
+    // deck. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Draw 1 card and gain 2 gold',

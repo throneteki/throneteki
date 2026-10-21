@@ -2,6 +2,8 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class TheHourOfTheWolf extends PlotCard {
+    // The Hour of the Wolf (25072)
+    // When Revealed: Each player sacrifices a non-loyal character, if able.
     setupCardAbilities() {
         this.whenRevealed({
             target: {

@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TywinsWhisperer extends DrawCard {
+    // Tywin's Whisperer (25105)
+    // Reaction: After a character with printed cost 2 or lower is returned to an opponent's hand,
+    // put Tywin's Whisperer into play from your hand. Until the end of the phase, it gains a
+    // [power] icon and stealth.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class DornishSloop extends DrawCard {
+    // Dornish Sloop (26068)
+    // Shadow (0).
+    // Reaction: After Dornish Sloop comes out of shadows, choose a character with printed cost 5 or
+    // lower. Until the end of the phase, that character loses a challenge icon of your choice.
+    // +1 Reserve.
     setupCardAbilities() {
         this.plotModifiers({
             reserve: 1

@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheWhisperingSound extends DrawCard {
+    // The Whispering Sound (26056)
+    // Shadow (1).
+    // Reaction: After a location enters play during the challenges phase, kneel The Whispering
+    // Sound to draw 2 cards. Then, choose a card in your hand and place it on top of your deck.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

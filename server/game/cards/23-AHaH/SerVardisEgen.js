@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class SerVardisEgen extends DrawCard {
+    // Ser Vardis Egen (23026)
+    // Reaction: After you lose a challenge in which Ser Vardis Egen is defending, sacrifice him to
+    // choose an attacking character. Place it in shadows with a shadow token on it (cannot be
+    // saved). While that card is in shadows, it gains shadow (X). X is its printed cost.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

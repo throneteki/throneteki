@@ -3,6 +3,9 @@ import GameActions from '../../GameActions/index.js';
 import Messages from '../../Messages/index.js';
 
 class RavagesOfWar extends PlotCard {
+    // Ravages of War (11120)
+    // When Revealed: Each player sacrifices a character or location, chooses and discards 1 card
+    // from his or her hand, and chooses and discards 1 card from his or her shadows area, if able.
     setupCardAbilities() {
         this.whenRevealed({
             targets: {

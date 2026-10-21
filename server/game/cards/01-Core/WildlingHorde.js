@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class WildlingHorde extends DrawCard {
+    // Wildling Horde (01031)
+    // No attachments. Pillage.
+    // Challenges Action: Kneel your faction card to choose a participating Wildling character you
+    // control. Until the end of the challenge, that character gets +2 STR.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel your faction card',

@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class PoisonedDagger extends DrawCard {
+    // Poisoned Dagger (13116)
+    // Character you control only. Shadow (2).
+    // Attached character gets +2 STR.
+    // Reaction: After you win an [intrigue] challenge in which attached character is participating,
+    // sacrifice Poisoned Dagger to have the losing opponent choose and kill a participating
+    // character he or she controls.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ controller: 'current' });
         this.whileAttached({

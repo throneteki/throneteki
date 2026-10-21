@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SerEdmureTully extends DrawCard {
+    // Ser Edmure Tully (04041)
+    // Reaction: After a character gains power, move 1 power from that character to a House Tully
+    // character. (Limit once per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

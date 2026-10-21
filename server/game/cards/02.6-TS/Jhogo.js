@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Jhogo extends DrawCard {
+    // Jhogo (02113)
+    // While you control another Bloodrider character, Jhogo gains stealth.
+    // While Jhogo is attacking, he gets +X STR, where X is the number of characters in the
+    // defending player's dead pile.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.getNumberOfBloodriders() >= 1,

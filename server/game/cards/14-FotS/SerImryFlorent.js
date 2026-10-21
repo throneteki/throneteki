@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SerImryFlorent extends DrawCard {
+    // Ser Imry Florent (14011)
+    // Action: Kill Ser Imry Florent to choose an opponent. You may sacrifice any number of
+    // locations. For each location sacrificed this way, that opponent must choose and kneel a
+    // standing character he or she controls.
     setupCardAbilities(ability) {
         this.action({
             title: 'Force kneel',

@@ -3,6 +3,10 @@ import ChallengeTypes from '../../ChallengeTypes.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class LysasLetter extends DrawCard {
+    // Lysa's Letter (23036)
+    // Reaction: After the challenges phase begins, choose a player and a challenge type. Until the
+    // end of the phase, if that player has not initiated a challenge of that type this phase, set
+    // the claim value on their revealed plot card to 0.
     setupCardAbilities() {
         this.tracker = ChallengeTracker.forPhase(this.game);
 

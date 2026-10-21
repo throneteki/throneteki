@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheWaterGardens extends DrawCard {
+    // The Water Gardens (08017)
+    // Action: Kneel The Water Gardens to reduce the cost of the next non-character card you
+    // marshal, play, or ambush this phase by X. X is the number of plot cards in your used pile.
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce non-character',

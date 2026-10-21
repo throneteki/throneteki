@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MaceTyrell extends DrawCard {
+    // Mace Tyrell (08103)
+    // Reaction: After Mace Tyrell is knelt, draw 2 cards. Then, choose a card in your hand and
+    // place it on top of your deck.
+    // +1 Income.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -3,6 +3,9 @@ import DrawCard from '../../drawcard.js';
 const Icons = ['Military', 'Intrigue', 'Power'];
 
 class Patchface extends DrawCard {
+    // Patchface (06107)
+    // While another Fool character has a keyword, Patchface gains that keyword.
+    // While another Fool character has a challenge icon, Patchface gains that challenge icon.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

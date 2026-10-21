@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Sweetsleep extends DrawCard {
+    // Sweetsleep (20047)
+    // Terminal.
+    // Treat the printed text box of each other attachment attached to the attached card as if it
+    // were blank (except for Traits).
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => !!this.parent,

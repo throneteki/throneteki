@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ArianneMartell extends DrawCard {
+    // Arianne Martell (01104)
+    // Action: Put a character with printed cost 5 or lower into play from your hand. Then, return
+    // Arianne Martell to your hand (cannot be saved). (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Put character into play',

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Freedmen extends DrawCard {
+    // Freedmen (06113)
+    // Reaction: After you win a challenge by 5 or more STR as the attacking player, put Freedmen
+    // into play from your discard pile.
     setupCardAbilities() {
         this.reaction({
             when: {

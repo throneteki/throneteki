@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Pyp extends DrawCard {
+    // Pyp (07011)
+    // No attachments except Weapon.
+    // Reaction: After you win a challenge in which Pyp is attacking, choose another attacking
+    // [thenightswatch] character. That character gains insight until the end of the phase.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheTumblestone extends DrawCard {
+    // The Tumblestone (06002)
+    // Bestow (3).
+    // Reaction: After a House Tully character gains power, discard 1 gold from The Tumblestone to
+    // stand that character.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

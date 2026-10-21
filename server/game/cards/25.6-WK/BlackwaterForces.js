@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class BlackwaterForces extends DrawCard {
+    // Blackwater Forces (25115)
+    // No attachments except Weapon.
+    // Reaction: After Blackwater Forces stands during a challenge, choose a participating
+    // character. Until the end of the challenge, that character gets +2 STR. (Limit 3 times per
+    // phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

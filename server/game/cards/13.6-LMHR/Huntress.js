@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class Huntress extends DrawCard {
+    // Huntress (13104)
+    // While Huntress is standing, each [tyrell] character you control with printed cost 3 or lower
+    // gets +1 STR.
+    // Action: Kneel Huntress to choose a [tyrell] character with printed cost 3 or lower. It gets
+    // +3 STR until the end of the phase.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => !this.kneeled,

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class InDoransName extends DrawCard {
+    // In Doran's Name (02036)
+    // Action: Kneel your faction card to gain X gold. X is the number of plot cards in your used
+    // pile.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel faction card to gain gold',

@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MaceTyrell extends DrawCard {
+    // Mace Tyrell (24022)
+    // Renown.
+    // Action: Stand a participating Army character and remove it from the challenge to choose
+    // another participating character with equal or lower printed cost. Stand that character and
+    // remove it from the challenge. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand and remove Army',

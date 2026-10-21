@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class EdricStorm extends DrawCard {
+    // Edric Storm (05025)
+    // Reaction: After the dominance phase begins, choose a character. That character does not
+    // contribute its STR to its controller's total for dominance this phase.
     setupCardAbilities() {
         this.reaction({
             when: {

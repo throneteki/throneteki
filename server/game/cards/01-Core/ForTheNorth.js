@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class ForTheNorth extends DrawCard {
+    // For the North! (01157)
+    // Play only during a [military] challenge.
+    // Action: Choose a participating [stark] character. Until the end of the challenge, that
+    // character gets +2 STR. If you win the challenge, draw 1 card.
     setupCardAbilities() {
         this.action({
             title: 'Give +2 STR to character',

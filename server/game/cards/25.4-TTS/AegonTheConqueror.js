@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class AegonTheConqueror extends DrawCard {
+    // Aegon the Conqueror (25074)
+    // Unique [targaryen] location you control only.
+    // During a challenge in which you control an attacking Dragon character with printed cost 7 or
+    // higher, raise the claim value on your revealed plot card by 1.
     setupCardAbilities(ability) {
         this.attachmentRestriction({
             type: 'location',

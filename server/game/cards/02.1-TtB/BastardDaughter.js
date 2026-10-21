@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class BastardDaughter extends DrawCard {
+    // Bastard Daughter (02015)
+    // Interrupt: When Bastard Daughter or The Red Viper is killed, discard 1 card at random from
+    // each opponent's hand.
     setupCardAbilities() {
         this.interrupt({
             when: {

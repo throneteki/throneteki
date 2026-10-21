@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class HighgardenCourtier extends DrawCard {
+    // Highgarden Courtier (09015)
+    // Reaction: After another character’s STR is increased by a card effect, kneel Highgarden
+    // Courtier to stand that character. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

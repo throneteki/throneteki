@@ -1,6 +1,13 @@
 import DrawCard from '../../drawcard.js';
 
 class TheHornOfWinter extends DrawCard {
+    // The Horn of Winter (22027)
+    // Unique character only.
+    // Attached character gains assault.
+    // Reaction: After you win a challenge, sacrifice The Horn of Winter to choose a location that
+    // was targeted by assault this challenge. Until the end of the round, treat that location as if
+    // its printed text box were blank (except for Traits). If it is a Stronghold location or The
+    // Wall, you may discard it from play instead.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ unique: true });
         this.whileAttached({

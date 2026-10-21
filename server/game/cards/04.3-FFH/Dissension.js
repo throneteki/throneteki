@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class Dissension extends DrawCard {
+    // Dissension (04059)
+    // Marshaling Action: Choose an Ally character, and discard it from play.
     setupCardAbilities() {
         this.action({
             title: 'Discard Ally from play',

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class EvenHandedJustice extends DrawCard {
+    // Even Handed Justice (03026)
+    // Action: Choose a standing character controlled by each player. Kneel each of those
+    // characters.
     setupCardAbilities() {
         this.action({
             title: 'Kneel a character for each player',

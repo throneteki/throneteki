@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class KnightOfTheReach extends DrawCard {
+    // Knight of the Reach (06023)
+    // Reaction: After you win a challenge in which Knight of the Reach is attacking or defending
+    // alone, choose a Lady character. That character gains 1 power.
     setupCardAbilities() {
         this.reaction({
             when: {

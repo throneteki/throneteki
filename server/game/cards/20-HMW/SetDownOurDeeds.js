@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SetDownOurDeeds extends DrawCard {
+    // Set Down Our Deeds (20005)
+    // Action: Kneel your faction card to discard up to 3 power from a card you own. Draw 2 cards
+    // for each power discarded this way.
     setupCardAbilities(ability) {
         this.action({
             title: 'Discard power to draw',

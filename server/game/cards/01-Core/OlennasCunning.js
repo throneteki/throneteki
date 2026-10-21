@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class OlennasCunning extends DrawCard {
+    // Olenna's Cunning (01196)
+    // Reaction: After you win an [intrigue] or [power] challenge, the losing opponent names a
+    // cardtype (character, location, attachment, or event). Search your deck for a card with a
+    // different cardtype, reveal it, and add it to your hand. Shuffle your deck.
     setupCardAbilities() {
         this.reaction({
             when: {

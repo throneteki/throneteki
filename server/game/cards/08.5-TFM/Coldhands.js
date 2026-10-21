@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Coldhands extends DrawCard {
+    // Coldhands (08085)
+    // Coldhands cannot be saved.
+    // Reaction: After you marshal Coldhands, choose 1 other non-Army character controlled by each
+    // player. Remove each of those characters from the game until Coldhands leaves play.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

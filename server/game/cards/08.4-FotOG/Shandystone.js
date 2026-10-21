@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Shandystone extends DrawCard {
+    // Shandystone (08076)
+    // Reaction: After you lose a challenge as the defending player, kneel Shandystone to choose and
+    // stand a character you control.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

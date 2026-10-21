@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class RedKeepGaoler extends DrawCard {
+    // Red Keep Gaoler (13027)
+    // Shadow (4).
+    // Action: Move 2 power from your faction card to a [baratheon] character to put Red Keep Gaoler
+    // into play from shadows.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put into play',

@@ -3,6 +3,11 @@ import Conditions from '../../Conditions.js';
 import GameActions from '../../GameActions/index.js';
 
 class OldGate extends DrawCard {
+    // Old Gate (13002)
+    // Limited.
+    // Challenges Action: If each character you control has the [stark] affiliation, sacrifice Old
+    // Gate to draw 2 cards.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.plotModifiers({
             gold: 1

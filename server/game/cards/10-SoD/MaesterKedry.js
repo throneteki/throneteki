@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MaesterKedry extends DrawCard {
+    // Maester Kedry (10014)
+    // Action: Kneel Maester Kedry to reduce the gold cost of the next event you play this phase by
+    // 2.
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce next event by 2',

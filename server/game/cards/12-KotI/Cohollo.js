@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Cohollo extends DrawCard {
+    // Cohollo (12035)
+    // Intimidate.
+    // Action: Kneel Cohollo and discard 1 card from your hand to have him participate in a
+    // challenge on your side.
     setupCardAbilities(ability) {
         this.action({
             title: 'Discard a card',

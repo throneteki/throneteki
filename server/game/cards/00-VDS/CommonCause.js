@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class CommonCause extends PlotCard {
+    // Common Cause (00021)
+    // X is the number of different faction affiliations among characters you control.
+    // Draft format only.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

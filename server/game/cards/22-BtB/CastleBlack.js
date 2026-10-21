@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class CastleBlack extends DrawCard {
+    // Castle Black (22014)
+    // Reaction: After a challenge is initiated against you, choose and stand a [thenightswatch]
+    // character or Castle Black. (Limit once per phase.)
+    // Interrupt: When the effects of an opponent's triggered location ability would initiate, kneel
+    // Castle Black to cancel those effects.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

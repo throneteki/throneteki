@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class SparringInSecret extends DrawCard {
+    // Sparring in Secret (08050)
+    // Action: Kneel a Knight character to choose and stand another Knight character.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand Knight character',

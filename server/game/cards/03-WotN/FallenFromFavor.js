@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class FallenFromFavor extends PlotCard {
+    // Fallen from Favor (03047)
+    // When Revealed: Sacrifice a character you control.
     setupCardAbilities() {
         this.whenRevealed({
             target: {

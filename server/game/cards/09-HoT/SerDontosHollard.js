@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerDontosHollard extends DrawCard {
+    // Ser Dontos Hollard (09035)
+    // No attachments except Weapon.
+    // Interrupt: When a Lady character would be killed or discarded from play, stand Ser Dontos
+    // Hollard to save that character.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

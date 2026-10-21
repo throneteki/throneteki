@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Haggo extends DrawCard {
+    // Haggo (14035)
+    // Reaction: After you win a challenge in which Haggo is participating, discard a card from your
+    // hand to choose a Dothraki card in your discard pile and return it to your hand.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

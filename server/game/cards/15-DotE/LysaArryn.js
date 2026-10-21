@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class LysaArryn extends DrawCard {
+    // Lysa Arryn (15039)
+    // Interrupt: When Lysa Arryn is killed, choose another character, location, or attachment and
+    // remove it from the game.
     setupCardAbilities() {
         this.interrupt({
             when: {

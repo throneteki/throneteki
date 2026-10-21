@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class MareInHeat extends DrawCard {
+    // Mare in Heat (02044)
+    // Knight character only.
+    // While attached character is attacking or defending alone, Mare in Heat gains: "Action: Kneel
+    // Mare in Heat to choose a participating character with STR higher than that of attached
+    // character, and remove that character from the challenge."
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Knight' });
         this.action({

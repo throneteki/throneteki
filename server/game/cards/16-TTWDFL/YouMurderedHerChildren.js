@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class YouMurderedHerChildren extends DrawCard {
+    // You Murdered Her Children (16008)
+    // Reaction: After you lose a challenge as the defending player, choose an attacking character
+    // and discard it from play (cannot be saved). Then, search its controller's hand and deck for
+    // any number of copies of that character and discard them. Shuffle that player's deck.
     setupCardAbilities() {
         this.reaction({
             when: {

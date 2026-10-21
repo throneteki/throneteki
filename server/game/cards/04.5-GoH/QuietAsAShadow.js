@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class QuietAsAShadow extends DrawCard {
+    // Quiet as a Shadow (04099)
+    // Action: Choose a unique character with printed cost 3 or lower. Until the end of the phase,
+    // that character gains stealth.
     setupCardAbilities() {
         this.action({
             title: 'Give character stealth',

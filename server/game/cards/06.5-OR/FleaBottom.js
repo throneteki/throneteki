@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class FleaBottom extends DrawCard {
+    // Flea Bottom (06098)
+    // Challenges Action: Pay 1 gold and kneel Flea Bottom to put a character with printed cost 3 or
+    // lower into play from your discard pile. At the end of the phase, if that card is still in
+    // play, place it on the bottom of your deck.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put character into play',

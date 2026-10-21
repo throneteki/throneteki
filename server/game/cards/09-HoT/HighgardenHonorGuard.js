@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class HighgardenHonorGuard extends DrawCard {
+    // Highgarden Honor Guard (09005)
+    // Ambush (6). No attachments.
+    // Reduce the cost to ambush Highgarden Honor Guard by 1 for each The Reach location you
+    // control.
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',

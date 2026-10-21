@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Rioting extends PlotCard {
+    // Rioting (16032)
+    // Forced Reaction: After the standing phase begins, discard each kneeling character from play
+    // (cannot be saved).
     setupCardAbilities() {
         this.forcedReaction({
             when: {

@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class ShadowOfTheNorth extends DrawCard {
+    // Shadow of the North (13082)
+    // Shadow (1). Play only during a challenge.
+    // Action: Raise the claim value on your revealed plot card by 1 until the end of the challenge.
+    // If there is a Winter plot card revealed, return Shadow of the North to your hand instead of
+    // placing it in your discard pile. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Raise claim by 1',

@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class RobbStark extends DrawCard {
+    // Robb Stark (04002)
+    // Renown.
+    // During [military] challenges, Robb Stark gets +1 STR for each loyal character you control.
+    // Action: While Robb Stark is participating in a [military] challenge, choose a participating
+    // non-King character. Stand and remove that character from the challenge. (Limit once per
+    // challenge.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),

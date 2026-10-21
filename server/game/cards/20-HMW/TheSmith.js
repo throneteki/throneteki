@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class TheSmith extends PlotCard {
+    // The Smith (20058)
+    // Marshaling Action: Kneel an attachment to choose and kneel a location.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel a location',

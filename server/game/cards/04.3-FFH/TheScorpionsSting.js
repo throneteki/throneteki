@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheScorpionsSting extends DrawCard {
+    // The Scorpion's Sting (04056)
+    // Reaction: After you lose a challenge, choose up to X [martell] characters. Each of those
+    // characters gains renown until the end of the phase. X is the number of plot cards in your
+    // used pile.
     setupCardAbilities() {
         this.reaction({
             when: {

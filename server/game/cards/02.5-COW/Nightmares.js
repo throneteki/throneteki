@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Nightmares extends DrawCard {
+    // Nightmares (02099)
+    // Action: Choose a character or location. Until the end of the phase, treat that card's printed
+    // text box as if it were blank (except for Traits).
     setupCardAbilities(ability) {
         this.action({
             title: 'Blank a character or location',

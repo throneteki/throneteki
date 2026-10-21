@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class PrincesAttendant extends DrawCard {
+    // Prince's Attendant (14029)
+    // Marshaling Action: Kneel Prince's Attendant to reduce the cost of the next [martell] Lord or
+    // Lady character you marshal this phase by 2.
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce next marshalled character',

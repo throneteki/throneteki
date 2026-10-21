@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class ShaggaSonOfDolf extends DrawCard {
+    // Shagga Son of Dolf (05009)
+    // While Shagga Son of Dolf is in your hand, he gains ambush (0) if you control a Clansman
+    // character or Tyrion Lannister.
+    // Forced Reaction: After Shagga Son of Dolf enters play using ambush, choose and kill a
+    // [lannister] character you control.
     setupCardAbilities() {
         this.action({
             title: 'Ambush(0)',

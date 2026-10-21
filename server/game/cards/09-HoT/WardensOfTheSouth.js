@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class WardensOfTheSouth extends PlotCard {
+    // Wardens of the South (09046)
+    // Reaction: After a [tyrell] character you control is declared as an attacker or defender, that
+    // character gets +2 STR until the end of the challenge.
     setupCardAbilities() {
         this.reaction({
             when: {

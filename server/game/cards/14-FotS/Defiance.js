@@ -3,6 +3,9 @@ import GameActions from '../../GameActions/index.js';
 import ParticipationTracker from '../../EventTrackers/ParticipationTracker.js';
 
 class Defiance extends DrawCard {
+    // Defiance (14044)
+    // Challenges Action: Choose and stand a character that has not participated in a challenge this
+    // phase. (Max 1 per phase.)
     setupCardAbilities(ability) {
         this.tracker = ParticipationTracker.forPhase(this.game);
 

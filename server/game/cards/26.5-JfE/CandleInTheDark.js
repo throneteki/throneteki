@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class CandleInTheDark extends DrawCard {
+    // Candle in the Dark (26098)
+    // Attached character cannot be bypassed by stealth.
+    // Interrupt: When the effects of a triggered card ability would initiate, if that card has
+    // shadow, kneel attached character to cancel those effects.
     setupCardAbilities(ability) {
         this.whileAttached({
             effect: ability.effects.cannotBeBypassedByStealth()

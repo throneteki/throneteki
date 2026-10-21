@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class GhastonGrey extends DrawCard {
+    // Ghaston Grey (01116)
+    // Reaction: After you lose a challenge as the defending player, kneel and sacrifice Ghaston
+    // Grey to return an attacking character to its owner's hand (cannot be saved).
     setupCardAbilities(ability) {
         this.reaction({
             when: {

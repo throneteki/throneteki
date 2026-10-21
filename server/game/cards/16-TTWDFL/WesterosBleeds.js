@@ -2,6 +2,8 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class WesterosBleeds extends DrawCard {
+    // Westeros Bleeds (16026)
+    // Dominance Action: Discard each character from play.
     setupCardAbilities() {
         this.action({
             title: 'Discard characters',

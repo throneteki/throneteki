@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class GalazzaGalare extends DrawCard {
+    // Galazza Galare (15006)
+    // Reaction: After you marshal Galazza Galare, search the top 10 cards of your deck for, either:
+    // a [targaryen] character with printed cost 6 or higher, or up to 3 [targaryen] characters with
+    // printed cost 2 or lower. Reveal each searched-for card and add it to your hand. Shuffle your
+    // deck.
     setupCardAbilities() {
         this.reaction({
             when: {

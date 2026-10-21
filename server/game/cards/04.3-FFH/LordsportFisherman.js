@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class LordsportFisherman extends DrawCard {
+    // Lordsport Fisherman (04051)
+    // Reaction: After you marshal Lordsport Fisherman, add the bottom card of your deck to your
+    // hand.
     setupCardAbilities() {
         this.reaction({
             when: {

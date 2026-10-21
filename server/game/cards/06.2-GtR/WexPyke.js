@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class WexPyke extends DrawCard {
+    // Wex Pyke (06031)
+    // Bestow (8).
+    // While Wex Pyke is attacking, each character with printed cost X cannot be declared as a
+    // defender. X is the number of gold Wex Pyke has.
+    // Dominance Action: Move 1 gold from your gold pool to Wex Pyke. (Limit twice per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),

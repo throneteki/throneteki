@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class DreadfortMaester extends DrawCard {
+    // Dreadfort Maester (08002)
+    // Reaction: After you initiate a [military] or [intrigue] challenge, sacrifice Dreadfort
+    // Maester to raise the claim value on your revealed plot card by 1 until the end of the
+    // challenge.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class ReaversGreataxe extends DrawCard {
+    // Reaver's Greataxe (26064)
+    // Non-unique [greyjoy] character only.
+    // Attached character gains the Raider trait.
+    // During the first challenge you initiate each phase, attached character does not kneel when
+    // declared as an attacker against an opponent who controls fewer attachments than you.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ unique: false, faction: 'greyjoy' });
         this.whileAttached({

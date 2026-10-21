@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MaesterColemon extends DrawCard {
+    // Maester Colemon (23024)
+    // Dominance Action: Kneel Maester Colemon to choose a Condition or Item attachment and move it
+    // to another eligible character.
     setupCardAbilities(ability) {
         this.action({
             title: 'Move attachment',

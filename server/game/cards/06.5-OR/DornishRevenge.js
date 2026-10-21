@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class DornishRevenge extends DrawCard {
+    // Dornish Revenge (06096)
+    // Reaction: After you initiate a challenge, choose a character controlled by the defending
+    // player. That character must be declared as a defender for this challenge, if able. If you win
+    // this challenge by 5 or more STR, the losing opponent must choose and kill a defending
+    // character.
     setupCardAbilities() {
         this.reaction({
             when: {

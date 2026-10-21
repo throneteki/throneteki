@@ -1,6 +1,12 @@
 import TitleCard from '../../TitleCard.js';
 
 class CrownRegent extends TitleCard {
+    // Crown Regent (01211)
+    // Supported by None
+    // Supports: None
+    // Rivals: None
+    // You may redirect 1 challenge this round.
+    // +2 STR for Dominance
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetLocation: 'title',

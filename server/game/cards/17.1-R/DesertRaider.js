@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import ChallengeTypes from '../../ChallengeTypes.js';
 
 class DesertRaider extends DrawCard {
+    // Desert Raider (17112)
+    // Prized 1.
+    // Reaction: After you lose a challenge, put Desert Raider into play from your dead pile to
+    // choose a character controlled by the winning opponent. Until the end of the phase, that
+    // character loses an [intrigue] or [power] icon and Desert Raider gains that icon.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

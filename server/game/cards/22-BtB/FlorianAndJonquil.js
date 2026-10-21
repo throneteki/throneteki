@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class FlorianAndJonquil extends DrawCard {
+    // "Florian and Jonquil" (22028)
+    // Action: Choose a unique character with printed cost 3 or lower. Until the end of the phase,
+    // that character gains renown. Then, attach "Florian and Jonquil" to that character as an
+    // attachment with the text: "Terminal. Attached character gains the Fool and Knight traits."
     setupCardAbilities() {
         this.action({
             title: 'Select a character',

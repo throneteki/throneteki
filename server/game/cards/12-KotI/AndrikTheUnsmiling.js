@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class AndrikTheUnsmiling extends DrawCard {
+    // Andrik the Unsmiling (12008)
+    // Pillage.
+    // Reaction: After Andrik the Unsmiling discards a card using pillage, choose a non-limited
+    // location or attachment in the losing opponent's discard pile. Discard 1 copy of that card
+    // from play.
     setupCardAbilities() {
         this.reaction({
             when: {

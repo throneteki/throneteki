@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class StreetOfSilk extends DrawCard {
+    // Street of Silk (02118)
+    // Reaction: After you win a challenge in which you control a participating Lord or Lady
+    // character, kneel your faction card to search the top 5 cards of your deck for an Ally or
+    // Companion card, reveal it, and add it to your hand. Shuffle your deck.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

@@ -3,6 +3,11 @@ import { ChallengeTracker } from '../../EventTrackers/index.js';
 import TextHelper from '../../TextHelper.js';
 
 class RiverGate extends DrawCard {
+    // River Gate (13016)
+    // Limited.
+    // Challenges Action: If you have lost 2 or more challenges this phase, sacrifice River Gate to
+    // draw 2 cards.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.tracker = ChallengeTracker.forPhase(this.game);
 

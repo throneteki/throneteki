@@ -2,6 +2,10 @@ import AgendaCard from '../../agendacard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class FreeCompanies extends AgendaCard {
+    // Free Companies (18019)
+    // Each neutral character you control gets -1 STR if it has no gold.
+    // Action: Kneel your faction card to place 1 gold from the treasury on, either: a card without
+    // gold, or a Mercenary character.
     setupCardAbilities(ability) {
         this.action({
             title: 'Place gold',

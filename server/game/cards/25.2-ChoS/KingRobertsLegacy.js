@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class KingRobertsLegacy extends DrawCard {
+    // King Robert's Legacy (25022)
+    // Reaction: After you win a challenge in which you control an attacking King character, choose
+    // a kneeling defending character and take control of it. (Max 1 per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

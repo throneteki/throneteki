@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class ShadowOfTheSouth extends DrawCard {
+    // Shadow of the South (13036)
+    // Shadow (1).
+    // Action: Choose a character. Until the end of the phase, that character loses a challenge icon
+    // of your choice. If there is a Scheme plot card revealed, return Shadow of the South to your
+    // hand instead of placing it in your discard pile.
     setupCardAbilities() {
         this.action({
             title: 'Select a character',

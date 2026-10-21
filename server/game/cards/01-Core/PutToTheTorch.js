@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class PutToTheTorch extends DrawCard {
+    // Put to the Torch (01042)
+    // Reaction: After you win a [military] challenge by 5 or more STR as the attacking player,
+    // choose a location controlled by the losing opponent, and discard it from play. (Max 1 per
+    // challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             max: ability.limit.perChallenge(1),

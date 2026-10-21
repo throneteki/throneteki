@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class VultureKing extends DrawCard {
+    // Vulture King (25048)
+    // Attached character gains pillage.
+    // Reaction: After you win a challenge in which attached character is participating, discard the
+    // top card of your deck to choose a character controlled by the losing opponent. Until the end
+    // of the phase, that character loses a challenge icon of your choice.
     setupCardAbilities(ability) {
         this.whileAttached({
             effect: ability.effects.addKeyword('pillage')

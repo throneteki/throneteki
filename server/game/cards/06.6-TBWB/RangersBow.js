@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class RangersBow extends DrawCard {
+    // Ranger's Bow (06106)
+    // [thenightswatch] character only.
+    // Attached character gets +1 STR.
+    // Challenges Action: Kneel Ranger's Bow to choose a defending [thenightswatch] character. Until
+    // the end of the challenge, that character gets +2 STR.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'thenightswatch' });
 

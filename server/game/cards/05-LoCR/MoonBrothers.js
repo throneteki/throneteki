@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class MoonBrothers extends DrawCard {
+    // Moon Brothers (05011)
+    // Action: During a challenge in which you control an attacking Clansman character, kneel your
+    // faction card to put Moon Brothers into play from your hand (standing), participating as an
+    // attacker.
     setupCardAbilities(ability) {
         this.action({
             title: 'Add as an attacker',

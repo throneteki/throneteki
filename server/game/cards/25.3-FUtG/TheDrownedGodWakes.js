@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheDrownedGodWakes extends DrawCard {
+    // The Drowned God Wakes (25044)
+    // Reaction: After you win dominance by 10 or more STR, each player chooses a character they
+    // control, if able. Kill each character not chosen.
     setupCardAbilities() {
         this.reaction({
             when: {

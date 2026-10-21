@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class GilbertOfTheVines extends DrawCard {
+    // Gilbert of the Vines (25096)
+    // Challenges Action: Reveal the top X cards of your deck. Choose up to 2 cards revealed this
+    // way and add them to your hand. Shuffle the other cards back into your deck.
     setupCardAbilities() {
         this.xValue({ min: () => 1, max: () => this.controller.drawDeck.length });
         this.action({

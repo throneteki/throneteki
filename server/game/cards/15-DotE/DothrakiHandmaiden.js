@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class DothrakiHandmaiden extends DrawCard {
+    // Dothraki Handmaiden (15014)
+    // While you control Daenerys Targaryen, you may marshal facedown cards attached to Dothraki
+    // Handmaiden as if they were in your hand.
+    // Marshaling Action: Reveal an attachment from your hand. Attach it to Dothraki Handmaiden
+    // facedown as an attachment.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

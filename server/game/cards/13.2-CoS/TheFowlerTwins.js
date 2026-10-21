@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class TheFowlerTwins extends DrawCard {
+    // The Fowler Twins (13035)
+    // Action: Choose a character. That character must be declared as an attacker or defender in the
+    // next challenge initiated this phase, if able. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.tracker = ChallengeTracker.forPhase(this.game);
 

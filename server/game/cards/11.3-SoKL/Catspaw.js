@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Catspaw extends DrawCard {
+    // Catspaw (11049)
+    // Shadow (2).
+    // Reaction: After Catspaw comes out of shadows, pay X gold to choose another character with
+    // printed cost X or lower and return it to its owner's hand.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

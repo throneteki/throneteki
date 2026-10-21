@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TyeneSand extends DrawCard {
+    // Tyene Sand (25107)
+    // Stealth.
+    // Reaction: After you lose dominance, move 1 power from the winning opponent's faction card to
+    // a character you control.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class AttackFromTheMountains extends DrawCard {
+    // Attack From the Mountains (06010)
+    // Reaction: After you win a challenge in which you control an attacking Clansman character, put
+    // a Clansman character into play from your hand.
     setupCardAbilities() {
         this.reaction({
             when: {

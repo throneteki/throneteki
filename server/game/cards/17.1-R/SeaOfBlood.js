@@ -3,6 +3,13 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class SeaOfBlood extends AgendaCard {
+    // Sea of Blood (17149)
+    // You cannot include neutral events in your deck.
+    // Action: Discard 1 blood token from Sea of Blood to reduce the cost of the next event you play
+    // this phase by 2.
+    // Reaction: After you win a [military] challenge by 5 or more STR, kneel your faction card to
+    // place a blood token on Sea of Blood and search the top 10 cards of your deck for an event,
+    // reveal it, and add it to your hand. Shuffle your deck.
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce next event by 2',

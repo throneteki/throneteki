@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MaesterJoseran extends DrawCard {
+    // Maester Joseran (25103)
+    // Reaction: After you become the first player, each player places the top card of their deck
+    // facedown under their agenda.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class MaesterMurenmure extends DrawCard {
+    // Maester Murenmure (12010)
+    // Interrupt: When the effects of a triggered location ability would initiate, kneel Maester
+    // Murenmure to cancel those effects.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

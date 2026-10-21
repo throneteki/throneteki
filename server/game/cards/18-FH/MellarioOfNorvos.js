@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class MellarioOfNorvos extends DrawCard {
+    // Mellario of Norvos (18007)
+    // While you have Arianne Martell in your hand, reduce the cost to marshal her by 1.
+    // While you control:
+    // - Doran Martell, he gains: "immune to opponents' plot effects."
+    // - Quentyn Martell, he gets +2 STR.
+    // - Trystane Martell, he gains insight.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Doran Martell',

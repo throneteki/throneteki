@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class VanquishTheUnbelievers extends PlotCard {
+    // Vanquish the Unbelievers (12052)
+    // Forced Reaction: After the challenges phase begins, choose a Trait. Kill each character you
+    // control that does not have that Trait (cannot be saved).
     setupCardAbilities() {
         this.forcedReaction({
             when: {

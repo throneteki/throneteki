@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class RedCloaks extends DrawCard {
+    // Red Cloaks (02070)
+    // During [intrigue] challenges, Red Cloaks gets +1 STR for each gold on it.
+    // Action: Move 1 gold from your gold pool to Red Cloaks. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Move 1 gold from your gold pool to this card',

@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class Lannisport extends DrawCard {
+    // Lannisport (01098)
+    // Reaction: After you win an [intrigue] challenge, draw 1 card.
     setupCardAbilities() {
         this.reaction({
             when: {

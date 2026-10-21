@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class HealingExpertise extends DrawCard {
+    // Healing Expertise (03044)
+    // Interrupt: When a non-Army character you control would be killed, kneel a Maester character
+    // to save it.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class LynCorbray extends DrawCard {
+    // Lyn Corbray (14039)
+    // Stealth.
+    // Reaction: After an opponent initiates a [power] challenge against you, stand Lyn Corbray.
     setupCardAbilities() {
         this.reaction({
             when: {

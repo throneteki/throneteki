@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class RedLamb extends DrawCard {
+    // Red Lamb (26013)
+    // While you control Ser Barristan Selmy, Red Lamb gains a [power] icon and the Knight trait.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.controller.anyCardsInPlay({ name: 'Ser Barristan Selmy' }),

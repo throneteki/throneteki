@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class DanceOfTheDragons extends PlotCard {
+    // Dance of the Dragons (25014)
+    // Interrupt: When claim is applied for a [military] or [intrigue] challenge in which you are
+    // the attacking player, instead of the normal claim effects, kneel a Dragon character to move 2
+    // power from the losing opponent's faction card to your own.
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import SatisfyClaim from '../../gamesteps/challenge/SatisfyClaim.js';
 
 class TempleOfTheGraces extends DrawCard {
+    // Temple of the Graces (25094)
+    // Interrupt: When claim is applied for a [military] challenge in which you are the attacking
+    // player, kneel a Grace card to apply [intrigue] claim instead.
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

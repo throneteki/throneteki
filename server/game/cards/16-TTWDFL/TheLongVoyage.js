@@ -2,6 +2,9 @@ import AgendaCard from '../../agendacard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheLongVoyage extends AgendaCard {
+    // The Long Voyage (16030)
+    // Your minimum deck size is 100 cards.
+    // Reaction: After you draw cards in the draw phase, kneel your faction card to draw 1 card.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

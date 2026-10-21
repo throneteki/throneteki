@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerDavosSeaworth extends DrawCard {
+    // Ser Davos Seaworth (04087)
+    // Stealth.
+    // Reaction: After Ser Davos Seaworth bypasses a non-loyal character using stealth, either: draw
+    // 1 card, or gain 1 gold.
     setupCardAbilities() {
         this.reaction({
             when: {

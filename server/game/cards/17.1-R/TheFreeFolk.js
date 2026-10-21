@@ -1,6 +1,12 @@
 import AgendaCard from '../../agendacard.js';
 
 class TheFreeFolk extends AgendaCard {
+    // The Free Folk (17150)
+    // Your plot deck and draw deck can only include neutral cards and non-loyal Wildling characters
+    // from any faction.
+    // Reaction: After you win a challenge in which you control an attacking Wildling character,
+    // kneel your faction card to raise the claim value on your revealed plot card by 1 until the
+    // end of the challenge.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

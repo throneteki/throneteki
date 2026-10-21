@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Incinerate extends DrawCard {
+    // Incinerate (15024)
+    // Action: Choose a participating character and discard 1 or more cards from your hand. Until
+    // the end of the challenge, that character gets -2 STR for each card discarded this way.
     setupCardAbilities() {
         this.action({
             title: 'Reduce STR',

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Plunder extends DrawCard {
+    // Plunder (06072)
+    // Action: Kneel your faction card to choose an opponent. Gain 1 gold for each location and
+    // attachment in that player's discard pile.
     setupCardAbilities(ability) {
         this.action({
             title: 'Gain gold',

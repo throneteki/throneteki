@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class DothrakiSteed extends DrawCard {
+    // Dothraki Steed (14036)
+    // Limit 1 copy per character.
+    // While attached character is attacking, it gets +1 STR (+3 STR instead if it has the Dothraki
+    // trait).
     setupCardAbilities(ability) {
         this.attachmentRestriction(
             (card) =>

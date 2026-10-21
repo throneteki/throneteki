@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class IsleOfRavens extends DrawCard {
+    // Isle of Ravens (04078)
+    // Action: Kneel Isle of Ravens to choose a card in any player's discard pile, and shuffle it
+    // into its owner's deck.
     setupCardAbilities(ability) {
         this.action({
             title: "Shuffle discarded card back into owner's deck",

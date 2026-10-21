@@ -3,6 +3,11 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class SweetCersei extends DrawCard {
+    // Sweet Cersei (08070)
+    // During the challenges phase, you may spend gold on Sweet Cersei as if it were in your gold
+    // pool.
+    // Reaction: After you win an [intrigue] challenge, move 1 gold from the treasury to Sweet
+    // Cersei.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.currentPhase === 'challenge',

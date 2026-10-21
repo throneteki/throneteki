@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheSeedIsStrong extends DrawCard {
+    // The Seed is Strong (23037)
+    // Reaction: After you lose initiative, the winning opponent must choose and discard a Lord or
+    // Lady character from their hand or shadows area unless they reveal a hand and shadows area
+    // containing no Lord or Lady characters.
     setupCardAbilities() {
         this.reaction({
             when: {

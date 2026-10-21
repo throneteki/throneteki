@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class SilencesCrew extends DrawCard {
+    // Silence's Crew (06071)
+    // Bestow (3). No attachments. Pillage.
+    // Silence's Crew gets +2 STR for each gold it has.
+    // Reaction: After Silence's Crew discards a location or attachment using pillage, place 1 gold
+    // from the treasury on Silence's Crew.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

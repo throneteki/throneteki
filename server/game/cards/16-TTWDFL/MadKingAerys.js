@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class MadKingAerys extends DrawCard {
+    // Mad King Aerys (16013)
+    // Prized 1. Renown.
+    // Mad King Aerys cannot be killed unless an opponent controls a Lord or Lady character, or Ser
+    // Jaime Lannister.
+    // Dominance Action: Kneel Mad King Aerys to choose and kill a Lord or Lady character. (Limit
+    // once per round.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => !this.opponentControlsKingslayer(),

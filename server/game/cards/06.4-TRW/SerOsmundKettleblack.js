@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class SerOsmundKettleblack extends DrawCard {
+    // Ser Osmund Kettleblack (06069)
+    // Bestow (3).
+    // Challenges Action: Discard 1 gold from Ser Osmund Kettleblack to put a Knight character into
+    // play from your hand. At the end of the phase, if that card is still in play, discard it from
+    // play (cannot be saved). (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Put Knight into play',

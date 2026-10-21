@@ -2,6 +2,10 @@ import PlotCard from '../../plotcard.js';
 import ChallengeTypes from '../../ChallengeTypes.js';
 
 class CoordinatedAttack extends PlotCard {
+    // Coordinated Attack (12049)
+    // Reaction: After you win a challenge as the attacking player, choose a different challenge
+    // type. You may initiate an additional challenge of the chosen type this phase. (Limit once per
+    // phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

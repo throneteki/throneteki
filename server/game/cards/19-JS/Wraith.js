@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Wraith extends DrawCard {
+    // Wraith (19001)
+    // While you control Dale Seaworth, he gains stealth.
+    // Action: Kneel and sacrifice Wraith to choose and kneel a location.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Dale Seaworth',

@@ -3,6 +3,12 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class BericDondarrion extends DrawCard {
+    // Beric Dondarrion (06117)
+    // Renown.
+    // X is the number of kiss tokens Beric Dondarrion has.
+    // Forced Reaction: After you marshal Beric Dondarrion, place 6 kiss tokens on him. (Cannot be
+    // canceled.)
+    // Interrupt: When Beric Dondarrion would be killed, discard a kiss token from him to save him.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

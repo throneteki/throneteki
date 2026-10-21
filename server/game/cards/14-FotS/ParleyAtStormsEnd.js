@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import ChallengeTypes from '../../ChallengeTypes.js';
 
 class ParleyAtStormsEnd extends PlotCard {
+    // Parley at Storm's End (14046)
+    // When Revealed: Name a challenge type. Until you reveal a new plot card, challenges of that
+    // type cannot be initiated.
     setupCardAbilities() {
         this.whenRevealed({
             handler: (context) => {

@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class RenlyBaratheon extends DrawCard {
+    // Renly Baratheon (04043)
+    // Insight. Renown.
+    // While an opponent controls a King character, Renly Baratheon cannot be saved.
+    // Reaction: After you draw a loyal card using insight, reveal it to draw 1 card.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.anyOpponentControlsKing(),

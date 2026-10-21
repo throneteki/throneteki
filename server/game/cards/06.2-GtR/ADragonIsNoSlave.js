@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class ADragonIsNoSlave extends DrawCard {
+    // A Dragon Is No Slave (06034)
+    // Challenges Action: Choose a character without attachments. That character gets -2 STR until
+    // the end of the phase.
+    // Reaction: After you win a challenge in which you control a participating Dragon character or
+    // Daenerys Targaryen, pay 1 gold to return A Dragon Is No Slave from your discard pile to your
+    // hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give -2 STR',

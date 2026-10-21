@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerHyleHunt extends DrawCard {
+    // Ser Hyle Hunt (08043)
+    // Action: During a challenge in which Ser Hyle Hunt is participating, pay 1 gold to choose a
+    // participating character with a lower STR than his. Stand that character and remove it from
+    // the challenge. (Limit once per challenge.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove character from challenge',

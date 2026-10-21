@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Confinement extends DrawCard {
+    // Confinement (01121)
+    // Action: Choose a character with STR 4 or lower. Until the end of the phase, that character
+    // loses a [military], an [intrigue], and a [power] icon.
     setupCardAbilities() {
         this.action({
             title: 'Remove icons from character',

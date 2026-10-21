@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class WheelsWithinWheels extends PlotCard {
+    // Wheels Within Wheels (06100)
+    // When Revealed: Search the top 10 cards of your deck for any number of events and reveal them.
+    // Add 1 to your hand, and place the others in your discard pile. Shuffle your deck.
     setupCardAbilities() {
         this.whenRevealed({
             message:

@@ -3,6 +3,12 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class SeaOfBlood extends AgendaCard {
+    // Sea of Blood (12045)
+    // During [military] challenges, reduce the cost of each event you play by 1 for each blood
+    // token on Sea of Blood. You cannot play events during [intrigue] or [power] challenges.
+    // Reaction: After you win a [military] challenge by 5 or more STR, kneel your faction card to
+    // place a blood token on Sea of Blood. Then, search your deck for an event, reveal it, and add
+    // it to your hand. Shuffle your deck.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),

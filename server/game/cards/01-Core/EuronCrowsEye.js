@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class EuronCrowsEye extends DrawCard {
+    // Euron Crow's Eye (01069)
+    // Pillage. Renown.
+    // Reaction: After Euron Crow's Eye discards a card using pillage, put a location from the
+    // losing opponent's discard pile into play under your control.
     setupCardAbilities() {
         this.reaction({
             when: {

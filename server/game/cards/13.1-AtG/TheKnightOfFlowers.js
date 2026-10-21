@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheKnightOfFlowers extends DrawCard {
+    // The Knight of Flowers (13003)
+    // Shadow (5). Renown.
+    // Reaction: After a card you control comes out of shadows, choose and stand a Kingsguard
+    // character. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

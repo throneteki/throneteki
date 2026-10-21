@@ -4,6 +4,12 @@ import GameActions from '../../GameActions/index.js';
 import TextHelper from '../../TextHelper.js';
 
 class SentinelsOfTheRealm extends AgendaCard {
+    // Sentinels of the Realm (27040)
+    // You may include non-loyal Guard characters from any faction in your deck. You must include at
+    // least 12 Guard characters in your deck.
+    // While you control no Guard characters, you cannot play events.
+    // Interrupt: When the challenges phase ends, draw 1 card for each challenge type that has not
+    // been initiated against you this phase.
     setupCardAbilities(ability) {
         this.tracker = ChallengeTracker.forPhase(this.game);
 

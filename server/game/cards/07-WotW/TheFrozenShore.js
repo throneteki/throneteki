@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheFrozenShore extends DrawCard {
+    // The Frozen Shore (07042)
+    // Reaction: After you win a challenge, kneel The Frozen Shore to choose and stand 1 attacking
+    // Wildling character for each Winter plot card revealed.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

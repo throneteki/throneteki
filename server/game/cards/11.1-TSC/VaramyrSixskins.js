@@ -1,6 +1,13 @@
 import DrawCard from '../../drawcard.js';
 
 class VaramyrSixskins extends DrawCard {
+    // Varamyr Sixskins (11001)
+    // Reaction: After the challenges phase begins, until the end of the phase, Varamyr Sixskins
+    // gains (choose one):
+    // - the Bear trait and gets +5 STR.
+    // - the Eagle trait, an [intrigue] icon, and insight.
+    // - the Cat trait, a [power] icon, and stealth.
+    // - the Wolf trait and intimidate, and gets +2 STR.
     setupCardAbilities() {
         this.reaction({
             when: {

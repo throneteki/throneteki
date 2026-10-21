@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class CotterPyke extends DrawCard {
+    // Cotter Pyke (07004)
+    // Stealth.
+    // Reaction: After Cotter Pyke bypasses a character using stealth, if there is a Winter plot
+    // card revealed, choose a [thenightswatch] character and have it gain stealth until the end of
+    // the phase.
     setupCardAbilities() {
         this.reaction({
             when: {

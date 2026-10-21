@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheBastardOfDriftmark extends DrawCard {
+    // The Bastard of Driftmark (26077)
+    // Shadow (4). Stealth.
+    // Reaction: After a Warship location enters play under your control, stand The Bastard of
+    // Driftmark. (Limit twice per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

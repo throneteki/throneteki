@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class TheSackOfKingsLanding extends PlotCard {
+    // The Sack of King's Landing (25046)
+    // During [intrigue] challenges, each [lannister] character you control gains pillage.
+    // Reaction: After a location enters an opponent's discard pile, that player must choose and
+    // kill a character they control with the same printed cost.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge({ challengeType: 'intrigue' }),

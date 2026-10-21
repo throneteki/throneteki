@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class MutinyAtCrastersKeep extends DrawCard {
+    // Mutiny At Craster's Keep (06086)
+    // Dominance Action: Choose a character with the highest printed cost among characters you
+    // control. Sacrifice that character to choose a character an opponent controls and discard it
+    // from play.
     setupCardAbilities(ability) {
         this.action({
             title: 'Discard character from play',

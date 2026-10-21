@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class BattleOfOxcross extends PlotCard {
+    // Battle of Oxcross (04060)
+    // Each character with printed cost 4 or higher cannot be declared as a defender during the
+    // first challenge you initiate this round.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

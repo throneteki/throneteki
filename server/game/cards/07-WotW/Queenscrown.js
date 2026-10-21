@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Queenscrown extends DrawCard {
+    // Queenscrown (07019)
+    // Action: Kneel Queenscrown to reveal the top 3 cards of an opponent's deck. Choose up to 1
+    // character revealed this way and place it in that player's discard pile. Place the other cards
+    // on the bottom of that player's deck in any order.
     setupCardAbilities(ability) {
         this.action({
             title: "Reveal top 3 cards of opponent's deck",

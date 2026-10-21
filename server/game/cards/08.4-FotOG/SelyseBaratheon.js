@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SelyseBaratheon extends DrawCard {
+    // Selyse Baratheon (08067)
+    // Forced Reaction: After you marshal Selyse Baratheon, kneel your faction card. Then, kneel
+    // each non-Lady character.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

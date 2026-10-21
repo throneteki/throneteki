@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class WarElephants extends DrawCard {
+    // War Elephants (26113)
+    // Ambush (8). Intimidate. No attachments.
+    // Reduce the cost to ambush War Elephants by 1 for each Commander character you control.
+    // War Elephants cannot be marshaled or placed during setup.
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',

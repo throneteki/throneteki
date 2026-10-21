@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class BrokenMen extends DrawCard {
+    // Broken Men (24029)
+    // Reaction: After you lose a [military] challenge, sacrifice a location to choose a
+    // participating character with the Army trait or printed cost 4 or lower, and discard it from
+    // play.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

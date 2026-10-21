@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheKnightOfFlowers extends DrawCard {
+    // The Knight of Flowers (09007)
+    // Renown.
+    // Reaction: After you play an event, The Knight of Flowers gets +2 STR until the end of the
+    // phase.
     setupCardAbilities() {
         this.reaction({
             when: {

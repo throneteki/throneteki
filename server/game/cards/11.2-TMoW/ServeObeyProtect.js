@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
 
 class ServeObeyProtect extends DrawCard {
+    // Serve. Obey. Protect. (11036)
+    // Play only if you have lost a challenge as the defending player this phase.
+    // Reaction: After an opponent initiates a challenge against you, return a [martell] character
+    // to your hand to put a different [martell] character with printed cost 5 or lower into play
+    // from your hand.
     setupCardAbilities(ability) {
         this.tracker = ChallengeTracker.forPhase(this.game);
 

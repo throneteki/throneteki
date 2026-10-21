@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class LeftHandLew extends DrawCard {
+    // Left Hand Lew (19009)
+    // No attachments except Weapon.
+    // Action: Kneel Left Hand Lew to choose and stand a character owned by an opponent.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand character',

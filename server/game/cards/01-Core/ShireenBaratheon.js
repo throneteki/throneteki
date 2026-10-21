@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class ShireenBaratheon extends DrawCard {
+    // Shireen Baratheon (01051)
+    // Interrupt: When Shireen Baratheon is killed, choose and kneel a character.
     setupCardAbilities() {
         this.interrupt({
             when: {

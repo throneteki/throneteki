@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class FairIsle extends DrawCard {
+    // Fair Isle (21009)
+    // Challenges Action: Kneel Fair Isle to choose an opponent. That player chooses 2 cards in
+    // their hand, if able, and places them on top of their deck in any order. At the end of the
+    // phase, that player draws 2 cards.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.plotModifiers({
             gold: 1

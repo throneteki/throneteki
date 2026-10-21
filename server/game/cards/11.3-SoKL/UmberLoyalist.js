@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class UmberLoyalist extends DrawCard {
+    // Umber Loyalist (11041)
+    // Reaction: After Umber Loyalist enters play, draw 2 cards.
+    // Forced Interrupt: When Umber Loyalist leaves play, choose and discard 2 cards from your hand.
     setupCardAbilities() {
         this.reaction({
             when: {

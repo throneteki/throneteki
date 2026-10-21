@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class AcolyteOfTheWaves extends DrawCard {
+    // Acolyte of the Waves (08012)
+    // Interrupt: When Acolyte of the Waves is killed, gain 1 power for your faction.
     setupCardAbilities() {
         this.interrupt({
             when: {

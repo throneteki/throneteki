@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheGoldroad extends DrawCard {
+    // The Goldroad (06110)
+    // Limited.
+    // Challenges Action: Kneel The Goldroad to gain 1 gold.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.plotModifiers({
             gold: 1

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class WeDoNotSow extends DrawCard {
+    // We Do Not Sow (01083)
+    // Reaction: After you win an unopposed challenge, choose an attachment or location controlled
+    // by the losing opponent, and discard it from play. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             max: ability.limit.perChallenge(1),

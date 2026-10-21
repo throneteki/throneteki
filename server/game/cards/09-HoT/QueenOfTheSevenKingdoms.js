@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class QueenOfTheSevenKingdoms extends DrawCard {
+    // Queen of the Seven Kingdoms (09020)
+    // Lady character only.
+    // Attached character gains the Queen trait.
+    // Action Stand attached character and remove it from the challenge to choose a participating
+    // character. Stand that character and remove it from the challenge. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Lady' });
 

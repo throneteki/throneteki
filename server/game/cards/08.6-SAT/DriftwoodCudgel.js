@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class DriftwoodCudgel extends DrawCard {
+    // Driftwood Cudgel (08112)
+    // Drowned God character only.
+    // Attached character gets +1 STR for each character in your dead pile.
+    // Interrupt: When attached character is killed, move Driftwood Cudgel to another eligible
+    // character. That character gains 1 power. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Drowned God' });
 

@@ -2,6 +2,10 @@ import PlotCard from '../../plotcard.js';
 import ChallengeTypes from '../../ChallengeTypes.js';
 
 class CalmOverWesteros extends PlotCard {
+    // Calm Over Westeros (01008)
+    // When Revealed: Name a challenge type. Until you reveal a new plot card, reduce the claim
+    // value on the attacking player's revealed plot card by 1 during challenges of that type in
+    // which you are the defending player.
     setupCardAbilities() {
         this.whenRevealed({
             handler: (context) => {

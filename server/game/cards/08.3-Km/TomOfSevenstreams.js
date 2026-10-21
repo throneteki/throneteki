@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TomOfSevenstreams extends DrawCard {
+    // Tom of Sevenstreams (08057)
+    // Reaction: After you play a Song event, choose and stand a non-loyal character you control.
+    // (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

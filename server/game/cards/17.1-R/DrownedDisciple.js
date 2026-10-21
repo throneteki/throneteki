@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class DrownedDisciple extends DrawCard {
+    // Drowned Disciple (17105)
+    // Reaction: After a character enters play from your dead pile, choose a Drowned God character
+    // and have it gain 1 power. (Max twice per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

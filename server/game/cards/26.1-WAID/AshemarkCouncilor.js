@@ -3,6 +3,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class AshemarkCouncilor extends DrawCard {
+    // Ashemark Councilor (26005)
+    // X is the number of cards with 1 or more gold.
+    // Reaction: After Ashemark Councilor enters play, choose up to 3 cards without gold. Each of
+    // those cards gains 1 gold.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

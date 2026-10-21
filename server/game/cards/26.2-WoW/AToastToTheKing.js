@@ -4,6 +4,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class AToastToTheKing extends DrawCard {
+    // A Toast to the King (26028)
+    // Play only if you control a [martell] Lord or Lady character.
+    // Interrupt: When the challenges phase ends, choose an opponent and a challenge type. If that
+    // player does not control a character with a challenge icon of that type, they must satisfy the
+    // claim of that challenge type as if you were the winning opponent. (Max 1 per phase.)
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

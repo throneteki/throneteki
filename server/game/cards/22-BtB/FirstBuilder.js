@@ -2,6 +2,13 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class FirstBuilder extends DrawCard {
+    // First Builder (22015)
+    // Unique character you control only.
+    // Attached character gains a [power] icon and the Builder trait.
+    // Reaction: After you win a [power] challenge in which you control a participating Builder
+    // character, search the top 10 cards of your deck for an attachment or location with printed
+    // cost X or lower, reveal it, and add it to your hand. X is the number of Builder characters
+    // you control. Shuffle your deck. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ unique: true, controller: 'current' });
         this.whileAttached({

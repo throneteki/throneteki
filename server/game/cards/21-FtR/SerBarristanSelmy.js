@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SerBarristanSelmy extends DrawCard {
+    // Ser Barristan Selmy (21019)
+    // Renown.
+    // Reaction: After you win a challenge in which Ser Barristan Selmy is participating, discard 1
+    // card from your hand to, either: stand each defending Knight character, or raise the claim
+    // value on your revealed plot card by 1 until the end of the challenge. (Limit twice per
+    // phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

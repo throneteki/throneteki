@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class WymanManderly extends DrawCard {
+    // Wyman Manderly (17122)
+    // Action: Kill a standing character you control.
+    // Reaction: After a character you control is sacrificed or killed, stand Wyman Manderly and
+    // draw 1 card. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Kill a character',

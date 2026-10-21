@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class StormsEnd extends DrawCard {
+    // Storm's End (22003)
+    // During the challenges phase, characters without a [power] icon cannot stand.
+    // Reaction: After a [military] or [intrigue] challenge is initiated by or against you, kneel
+    // Storm's End to change the challenge type to [power].
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.currentPhase === 'challenge',

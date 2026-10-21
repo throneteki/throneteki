@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SalladhorSaan extends DrawCard {
+    // Salladhor Saan (14005)
+    // Reaction: After you marshal a Smuggler character, choose and kneel a location. Then, gain
+    // gold equal to that location's printed cost. (Limit once per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

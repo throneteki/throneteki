@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class WinterfellArcheryRange extends DrawCard {
+    // Winterfell Archery Range (06062)
+    // Action: During a [military] challenge, kneel Winterfell Archery Range to choose a
+    // participating character with STR 3 or lower, and remove it from the challenge.
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove character from challenge',

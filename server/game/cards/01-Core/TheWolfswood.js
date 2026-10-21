@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class TheWolfswood extends DrawCard {
+    // The Wolfswood (01155)
+    // Each Direwolf card in your hand gains ambush (X). X is that card's printed cost.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetLocation: 'hand',

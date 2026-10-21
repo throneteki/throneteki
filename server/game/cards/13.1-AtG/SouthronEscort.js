@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class SouthronEscort extends DrawCard {
+    // Southron Escort (13015)
+    // Shadow (4).
+    // Action: Discard another card from shadows to put Southron Escort into play from shadows.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put into play',

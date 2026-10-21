@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Rhaegal extends DrawCard {
+    // Rhaegal (01164)
+    // No attachments.
+    // Reaction: After you win a challenge in which a Stormborn character you control is
+    // participating, choose and stand a Stormborn character. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

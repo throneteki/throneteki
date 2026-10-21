@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class JourneyToOldtown extends DrawCard {
+    // Journey to Oldtown (08026)
+    // Reaction: After the plot phase begins, choose a character you control. Remove it from the
+    // game until the beginning of the next plot phase.
     setupCardAbilities() {
         this.reaction({
             when: {

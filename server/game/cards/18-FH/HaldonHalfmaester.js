@@ -3,6 +3,12 @@ import { Tokens } from '../../Constants/index.js';
 import GameActions from '../../GameActions/index.js';
 
 class HaldonHalfmaester extends DrawCard {
+    // Haldon Halfmaester (18014)
+    // Reaction: After you win a challenge in which Haldon Halfmaester is participating, reveal the
+    // top card of your deck:
+    // - Place 1 gold from the treasury on a card with the same cardtype.
+    // - If it is an event, draw it.
+    // - If it is Aegon Targaryen, put him into play.
     setupCardAbilities() {
         this.reaction({
             when: {

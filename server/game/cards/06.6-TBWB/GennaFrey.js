@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class GennaFrey extends DrawCard {
+    // Genna Frey (06109)
+    // Reaction: After you win a challenge in which Genna Frey is attacking, if it was the third
+    // challenge you initiated this phase, the losing opponent discards 1 card at random from his or
+    // her hand. (2 cards instead if you control another attacking House Frey character.)
     setupCardAbilities() {
         this.reaction({
             when: {

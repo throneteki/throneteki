@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SeenInFlames extends DrawCard {
+    // Seen In Flames (01064)
+    // Play only if you control a R'hllor character.
+    // Challenges Action: Choose an opponent, and look at his or her hand. Then, choose and discard
+    // 1 card from that hand.
     setupCardAbilities() {
         this.action({
             title: "Look at opponent's hand",

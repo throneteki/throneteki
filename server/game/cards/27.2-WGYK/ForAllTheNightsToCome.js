@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ForAllTheNightsToCome extends DrawCard {
+    // For All the Nights to Come (27030)
+    // Reaction: After you win a challenge by 5 or more STR, choose a Builder character, a Ranger
+    // character, and a Steward character. Each of those characters gains 1 power. (Max 1 per
+    // phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

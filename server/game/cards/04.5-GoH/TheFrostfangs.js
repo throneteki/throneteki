@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheFrostfangs extends DrawCard {
+    // The Frostfangs (04098)
+    // Reaction: After The Frostfangs enters play, give control of it to an opponent.
+    // -1 Reserve.
     setupCardAbilities() {
         this.reaction({
             when: {

@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Insubordination extends DrawCard {
+    // Insubordination (25030)
+    // Terminal.
+    // Reaction: After a challenge is initiated against you in which attached character is attacking
+    // alone, kneel Insubordination to kill attached character.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

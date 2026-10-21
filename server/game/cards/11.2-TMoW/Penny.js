@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Penny extends DrawCard {
+    // Penny (11029)
+    // Shadow (1).
+    // While you control more cards in shadows than each opponent, Penny gains an [intrigue] icon
+    // and stealth.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

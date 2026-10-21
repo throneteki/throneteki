@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class JanosSlynt extends DrawCard {
+    // Janos Slynt (04010)
+    // Intimidate.
+    // Action: Pay 1 gold to give Janos Slynt +2 STR until the end of the phase.
     setupCardAbilities(ability) {
         this.action({
             title: 'Pay 1 gold to give Janos Slynt +2 strength',

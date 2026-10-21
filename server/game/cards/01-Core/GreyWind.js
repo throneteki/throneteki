@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class GreyWind extends DrawCard {
+    // Grey Wind (01145)
+    // Intimidate. No attachments.
+    // Challenges Action: Kneel Grey Wind to choose and kill a character with STR 1 or lower. (STR 2
+    // or lower instead if you control Robb Stark).
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel Grey Wind to kill a character',

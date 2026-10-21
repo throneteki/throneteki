@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class LannisportGuard extends DrawCard {
+    // Lannisport Guard (05016)
+    // Reaction: After you marshal Lannisport Guard, each player draws 1 card.
     setupCardAbilities() {
         this.reaction({
             when: {

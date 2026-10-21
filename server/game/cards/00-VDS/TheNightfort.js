@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TheNightfort extends DrawCard {
+    // The Nightfort (00013)
+    // Challenges Action: Kneel The Nightfort to choose a defending [thenightswatch] character.
+    // Until the end of the challenge, that character gets +1 STR for each attacking character.
+    // Draft format only.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character +STR',

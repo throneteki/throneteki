@@ -2,6 +2,8 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class LateSummerFeast extends PlotCard {
+    // Late Summer Feast (06020)
+    // Forced Reaction: After you win a challenge, the losing opponent may draw 1 card.
     setupCardAbilities() {
         const loser = (context) => context.event.challenge.loser;
 

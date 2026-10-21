@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TakingTheShieldIslands extends DrawCard {
+    // Taking the Shield Islands (26044)
+    // Shadow (1).
+    // Reaction: After you win a challenge in which you control an attacking Raider character, look
+    // at the losing opponent's hand. Then, choose 1 card in that hand and place it on top of its
+    // owner's deck. (Choose up to 2 cards and place them in any order instead if you played this
+    // event from shadows.) (Max 1 per challenge.)
     setupCardAbilities() {
         this.reaction({
             when: {

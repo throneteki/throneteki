@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SerJaimeLannister extends DrawCard {
+    // Ser Jaime Lannister (22007)
+    // Renown.
+    // Forced Reaction: After a character enters play during the challenges phase, stand Ser Jaime
+    // Lannister. Then, discard that character from play.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

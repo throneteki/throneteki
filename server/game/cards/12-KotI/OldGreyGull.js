@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class OldGreyGull extends DrawCard {
+    // Old Grey Gull (12011)
+    // Action: Kneel Old Grey Gull to kill another [greyjoy] character you control. Then, you may
+    // return that character from your dead pile to your hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kill and return character',

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class LostRanger extends DrawCard {
+    // Lost Ranger (07014)
+    // No attachments except Weapon.
+    // Forced Interrupt: When the challenges phase ends, if you control no other Ranger characters,
+    // sacrifice Lost Ranger.
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {

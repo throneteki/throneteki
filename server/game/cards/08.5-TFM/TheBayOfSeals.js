@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class TheBayOfSeals extends DrawCard {
+    // The Bay of Seals (08086)
+    // Action: Kneel The Bay of Seals to choose and stand a character owned by an opponent.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand character',

@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class SilverHairNet extends DrawCard {
+    // Silver Hair Net (06044)
+    // Lady character only.
+    // Attached character gains stealth.
+    // While attached character is participating in a challenge, reduce the cost of each event you
+    // play by 1.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Lady' });
 

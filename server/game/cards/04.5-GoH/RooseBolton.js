@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class RooseBolton extends DrawCard {
+    // Roose Bolton (04081)
+    // Reaction: After you win a challenge in which Roose Bolton is attacking, choose up to X total
+    // STR worth of characters controlled by the losing opponent. X is Roose Bolton's STR. Sacrifice
+    // Roose Bolton to kill each of those characters.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

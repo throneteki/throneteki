@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerArysOakheart extends DrawCard {
+    // Ser Arys Oakheart (04115)
+    // No attachments except Weapon.
+    // Reaction: After Ser Arys Oakheart enters play, pay 2 gold to choose an Ally character, and
+    // discard it from play.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

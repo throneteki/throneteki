@@ -2,6 +2,11 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class HarrenTheBlack extends DrawCard {
+    // Harren the Black (25084)
+    // Unique [greyjoy] location you control only.
+    // Each opponent cannot marshal copies of locations that are in their discard pile.
+    // Forced Reaction: After a character you control discards a card using pillage, discard the top
+    // card of each player's deck.
     setupCardAbilities(ability) {
         this.attachmentRestriction({
             type: 'location',

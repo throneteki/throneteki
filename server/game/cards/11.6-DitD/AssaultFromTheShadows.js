@@ -2,6 +2,11 @@ import AgendaCard from '../../agendacard.js';
 import { Tokens } from '../../Constants/index.js';
 
 class AssaultFromTheShadows extends AgendaCard {
+    // Assault from the Shadows (11118)
+    // Reduce the gold value on your revealed plot card by 1.
+    // Marshaling Action: Kneel your faction card to choose 1 card in your hand and place it
+    // facedown in shadows with a shadow token on it. While that card is in shadows, if it does not
+    // have the printed shadow keyword, it gains shadow (X). X is its printed cost.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class NymeriasGuard extends DrawCard {
+    // Nymeria's Guard (10009)
+    // No attachments.
+    // Challenges Action: Pay 4 gold and stand a Sand Snake character to put Nymeria's Guard into
+    // play from your hand.
     setupCardAbilities(ability) {
         this.action({
             title: "Put Nymeria's Guard into play",

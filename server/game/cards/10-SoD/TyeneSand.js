@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TyeneSand extends DrawCard {
+    // Tyene Sand (10008)
+    // Stealth.
+    // Reaction: After you lose a challenge as the defending player, kneel a Sand Snake character to
+    // put Tyene Sand into play from your hand.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

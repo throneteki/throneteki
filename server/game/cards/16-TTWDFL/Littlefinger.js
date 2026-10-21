@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class Littlefinger extends DrawCard {
+    // Littlefinger (16017)
+    // Stealth.
+    // Littlefinger does not kneel when declared as an attacker.
+    // Interrupt: When the effects of an event would initiate, kneel Littlefinger to cancel those
+    // effects.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,

@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class Lady extends DrawCard {
+    // Lady (02004)
+    // [stark] character only. Terminal.
+    // Attached character gets +2 STR.
+    // Action: Pay 1 gold to attach Lady to a different character. Then, if attached character is
+    // Sansa Stark, stand her. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'stark' });
         this.whileAttached({

@@ -3,6 +3,12 @@ import GameActions from '../../GameActions/index.js';
 import TextHelper from '../../TextHelper.js';
 
 class JeweledTiara extends DrawCard {
+    // Jeweled Tiara (27006)
+    // Lady character only.
+    // Attached character gains the Queen trait.
+    // Reaction: After you win an [intrigue] challenge in which attached character is participating,
+    // kneel Jeweled Tiara to discard 1 card at random from the losing opponent's hand. (3 cards
+    // instead if you won by 10 or more STR.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Lady' });
 

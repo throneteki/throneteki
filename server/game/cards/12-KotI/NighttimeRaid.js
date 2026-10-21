@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class RedRain extends DrawCard {
+    // Nighttime Raid (12024)
+    // Action: Choose up to 3 characters with pillage and/or the Raider trait. Until the end of the
+    // phase, each of those characters gains stealth.
     setupCardAbilities() {
         this.action({
             title: 'Give stealth',

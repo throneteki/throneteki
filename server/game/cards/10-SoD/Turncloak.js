@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Turncloak extends DrawCard {
+    // Turncloak (10032)
+    // Non-loyal character only. Terminal.
+    // Reaction: After you win a challenge in which attached character is participating, take
+    // control of attached character. (Any player may initiate this ability.)
     setupCardAbilities() {
         this.attachmentRestriction({ loyal: false });
         this.reaction({

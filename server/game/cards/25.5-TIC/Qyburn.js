@@ -2,6 +2,11 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Qyburn extends DrawCard {
+    // Qyburn (25085)
+    // Shadow (3).
+    // Reaction: After Qyburn comes out of shadows, choose a non-Army character in an opponent's
+    // dead pile and put it into play under your control. At the end of the phase, if that card is
+    // still in play, remove it from the game (cannot be saved).
     setupCardAbilities() {
         this.reaction({
             when: {

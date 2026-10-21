@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class WhiteCloak extends DrawCard {
+    // White Cloak (13098)
+    // Knight character you control only.
+    // Attached character gains the Kingsguard trait.
+    // Interrupt: When a King or Queen character would be killed, kneel attached character to save
+    // it.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ controller: 'current', trait: ['Knight'] });
         this.whileAttached({

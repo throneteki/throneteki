@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerJaimeLannister extends DrawCard {
+    // Ser Jaime Lannister (05005)
+    // Each Knight character you control gains renown while attacking alone.
+    // Challenges Action: Choose a Kingsguard character. Until the end of the phase, that character
+    // gains an [intrigue] icon. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>

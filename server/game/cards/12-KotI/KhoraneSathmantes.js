@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class KhoraneSathmantes extends DrawCard {
+    // Khorane Sathmantes (12025)
+    // Action: Kneel Khorane Sathmantes and a Warship location to choose and kneel 1 character and 1
+    // location.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel character and location',

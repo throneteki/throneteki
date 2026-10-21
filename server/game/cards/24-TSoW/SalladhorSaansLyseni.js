@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SalladhorSaansLyseni extends DrawCard {
+    // Salladhor Saan's Lyseni (24001)
+    // Assault. No attachments.
+    // Reaction: After you win a challenge in which Salladhor Saan's Lyseni is attacking, it gains 1
+    // power for every 2 kneeling locations the defending player controls. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

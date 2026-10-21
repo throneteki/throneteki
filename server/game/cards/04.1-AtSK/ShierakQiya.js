@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class ShierakQiya extends DrawCard {
+    // Shierak Qiya (04015)
+    // Reaction: After you win a [power] challenge by 5 or more STR, kneel your faction card to
+    // choose and stand a participating character.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

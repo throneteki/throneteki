@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheWatcherOnTheWalls extends DrawCard {
+    // The Watcher on the Walls (02066)
+    // Play only during a [military] challenge.
+    // Challenges Action: Kneel 2 Ranger characters to kill each attacking character.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel 2 Rangers to kill attackers',

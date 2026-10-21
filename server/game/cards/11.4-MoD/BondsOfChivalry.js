@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class BondsOfChivalry extends DrawCard {
+    // Bonds of Chivalry (11064)
+    // Action: Choose a participating Knight character you control. Stand it and remove it from the
+    // challenge. Then, you may kneel another Knight character you control to have it participate in
+    // the challenge on your side.
     setupCardAbilities() {
         const standAndRemoveAction = GameActions.simultaneously([
             GameActions.standCard((context) => ({ card: context.target })),

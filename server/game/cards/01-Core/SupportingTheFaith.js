@@ -1,6 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
 class SupportingTheFaith extends PlotCard {
+    // Supporting the Faith (01023)
+    // Forced Reaction: After the challenges phase begins, each player returns all gold in his or
+    // her gold pool to the treasury.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

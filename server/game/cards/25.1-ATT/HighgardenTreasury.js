@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class HighgardenTreasury extends DrawCard {
+    // Highgarden Treasury (25016)
+    // Reaction: After a character is removed from a challenge, gain 1 gold. (Limit 3 times per
+    // round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

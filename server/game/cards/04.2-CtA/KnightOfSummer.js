@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class KnightOfSummer extends DrawCard {
+    // Knight of Summer (04023)
+    // While there are more Summer plot cards than Winter plot cards revealed, Knight of Summer gets
+    // +2 STR and gains renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.moreSummerThanWinterPlots(),

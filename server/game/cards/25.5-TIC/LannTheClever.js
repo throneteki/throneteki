@@ -2,6 +2,11 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class LannTheClever extends DrawCard {
+    // Lann the Clever (25086)
+    // Unique [lannister] location you control only.
+    // Reaction: After you win an [intrigue] challenge, kneel Lann the Clever and return a
+    // participating [lannister] character to your hand to, either: gain 3 gold, or gain 1 power for
+    // your faction.
     setupCardAbilities(ability) {
         this.attachmentRestriction({
             type: 'location',

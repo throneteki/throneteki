@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Lannisport extends DrawCard {
+    // Lannisport (26006)
+    // Reaction: After a [power] challenge is initiated against you, kneel Lannisport to end the
+    // challenge with no winner or loser unless the attacking player chooses and discards 1 card
+    // from their hand.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.plotModifiers({
             gold: 1

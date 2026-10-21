@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class OldBillBone extends DrawCard {
+    // Old Bill Bone (11097)
+    // Shadow (1).
+    // Reaction: After Old Bill Bone comes out of shadows, kneel each opponent's faction card.
     setupCardAbilities() {
         this.reaction({
             when: {

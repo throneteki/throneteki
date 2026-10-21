@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class PutToTheSword extends DrawCard {
+    // Put to the Sword (01041)
+    // Reaction: After you win a [military] challenge by 5 or more STR as the attacking player,
+    // choose and kill a character controlled by the losing opponent. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             max: ability.limit.perChallenge(1),

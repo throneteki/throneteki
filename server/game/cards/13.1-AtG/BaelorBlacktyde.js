@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class BaelorBlacktyde extends DrawCard {
+    // Baelor Blacktyde (13011)
+    // Each opponent cannot play copies of events that are in his or her discard pile.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'opponent',

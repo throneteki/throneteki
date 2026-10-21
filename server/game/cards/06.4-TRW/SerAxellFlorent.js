@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerAxellFlorent extends DrawCard {
+    // Ser Axell Florent (06067)
+    // Bestow (3).
+    // Reaction: After you win a challenge in which Ser Axell Florent is participating, discard 1
+    // gold from him to choose and kneel a character without attachments.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

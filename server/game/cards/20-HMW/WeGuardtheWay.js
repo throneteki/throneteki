@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
 
 class WeGuardtheWay extends DrawCard {
+    // We Guard the Way (20020)
+    // Action: Choose X characters with the Guard or House Yronwood trait. Until the end of the
+    // phase, each chosen character gains renown and does not kneel when declared as a defender.
     setupCardAbilities() {
         this.xValue({
             min: () => 1,

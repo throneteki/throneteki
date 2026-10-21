@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class BeneathThePetals extends DrawCard {
+    // Beneath the Petals (26036)
+    // Shadow (0).
+    // Action: Choose a character with shadow. Until the end of the phase, that character gains
+    // insight and a challenge icon of your choice.
+    // Interrupt: When Beneath the Petals is revealed from your deck, place it in shadows and gain 1
+    // gold.
     setupCardAbilities() {
         this.action({
             title: 'Give icon and insight',

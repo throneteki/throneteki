@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SerRollyDuckfield extends DrawCard {
+    // Ser Rolly Duckfield (22019)
+    // While you control Aegon Targaryen, he gains a [military] icon.
+    // Interrupt: When a King or Lord character would be killed, discard 1 card from your hand to
+    // save it. (Limit once per round.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Aegon Targaryen',

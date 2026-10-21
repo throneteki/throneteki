@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class AboveTheRest extends DrawCard {
+    // Above the Rest (26072)
+    // Reaction: After a character you control gains exactly 1 power, have it gain 1 power. Then, if
+    // that character has the House Tully trait, stand it. (Max 1 per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

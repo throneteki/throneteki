@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class Sandstone extends DrawCard {
+    // Sandstone (21012)
+    // Reaction: After you win a challenge as the attacking player, kneel Sandstone to have an
+    // attacking character gain 1 power for each defending character with fewer than 2 challenge
+    // icons (to a maximum of 3 power).
     setupCardAbilities(ability) {
         this.reaction({
             when: {

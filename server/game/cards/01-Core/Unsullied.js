@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Unsullied extends DrawCard {
+    // Unsullied (01171)
+    // No attachments except Weapon.
+    // While Unsullied is attacking, each defending character gets -1 STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),
