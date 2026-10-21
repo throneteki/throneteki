@@ -16,12 +16,7 @@ class WaterDancersSword extends DrawCard {
                 onPhaseEnded: (event) => event.phase === 'challenge'
             },
             message: '{player} is forced to return {source} to their hand',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.returnCardToHand((context) => ({ card: context.source })),
-                    context
-                );
-            }
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.source }))
         });
     }
 }

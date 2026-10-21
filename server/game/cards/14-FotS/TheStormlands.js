@@ -14,8 +14,11 @@ class TheStormlands extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.isMatch({ winner: this.controller, challengeType: 'power' })
+                afterChallenge: (event, context) =>
+                    event.challenge.isMatch({
+                        winner: context.source.controller,
+                        challengeType: 'power'
+                    })
             },
             cost: ability.costs.kneelSelf(),
             target: {
@@ -26,12 +29,7 @@ class TheStormlands extends DrawCard {
                 gameAction: 'stand'
             },
             message: '{player} kneels {source} to stand {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.standCard((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

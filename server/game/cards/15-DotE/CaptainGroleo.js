@@ -7,19 +7,14 @@ class CaptainGroleo extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    event.card.getType() === 'attachment' && this.controller.canGainGold()
+                onCardEntersPlay: (event, context) =>
+                    event.card.getType() === 'attachment' && context.source.controller.canGainGold()
             },
             message: '{player} uses {source} to gain 1 gold',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.gainGold((context) => ({
-                        player: context.player,
-                        amount: 1
-                    })),
-                    context
-                );
-            },
+            gameAction: GameActions.gainGold((context) => ({
+                player: context.player,
+                amount: 1
+            })),
             limit: ability.limit.perPhase(1)
         });
     }

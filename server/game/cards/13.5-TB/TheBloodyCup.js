@@ -8,8 +8,8 @@ class TheBloodyCup extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.isMatch({ winner: this.controller, unopposed: true })
+                afterChallenge: (event, context) =>
+                    event.challenge.isMatch({ winner: context.source.controller, unopposed: true })
             },
             target: {
                 cardCondition: (card, context) =>
@@ -22,14 +22,9 @@ class TheBloodyCup extends DrawCard {
                 format: "{player} plays {source} to place {target} on top of {loser}'s deck",
                 args: { loser: (context) => context.event.challenge.loser }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.returnCardToDeck((context) => ({
-                        card: context.target
-                    })),
-                    context
-                );
-            },
+            gameAction: GameActions.returnCardToDeck((context) => ({
+                card: context.target
+            })),
             max: ability.limit.perChallenge(1)
         });
     }

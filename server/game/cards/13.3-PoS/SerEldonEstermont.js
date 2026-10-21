@@ -16,12 +16,7 @@ class SerEldonEstermont extends DrawCard {
                 gameAction: 'stand'
             },
             message: '{player} uses {source} to stand {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.standCard((context) => ({ card: context.target })),
-                    context
-                );
-            },
+            gameAction: GameActions.standCard((context) => ({ card: context.target })),
             limit: ability.limit.perRound(1)
         });
     }

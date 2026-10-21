@@ -8,20 +8,15 @@ class SpidersWhisperer extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             target: {
                 cardCondition: { location: 'play area', trait: 'Ally' }
             },
             message: '{player} is forced by {source} to discard {target} from play',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.discardCard((context) => ({
-                        card: context.target
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.discardCard((context) => ({
+                card: context.target
+            }))
         });
     }
 }

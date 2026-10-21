@@ -14,15 +14,10 @@ class SearchAndDetain extends PlotCard {
                     card.controller.firstPlayer
             },
             message: '{player} uses {source} to return {target} to hand',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.returnCardToHand((context) => ({
-                        card: context.target,
-                        allowSave: false
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.returnCardToHand((context) => ({
+                card: context.target,
+                allowSave: false
+            }))
         });
     }
 }

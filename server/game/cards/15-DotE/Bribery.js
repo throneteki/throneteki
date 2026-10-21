@@ -7,7 +7,7 @@ class Bribery extends DrawCard {
     // Ally or Mercenary trait, you may take control of it instead.
     setupCardAbilities() {
         this.xValue({
-            min: () => this.getMinXValue(),
+            min: (context) => context.source.getMinXValue(),
             max: () => 99
         });
 
@@ -20,39 +20,33 @@ class Bribery extends DrawCard {
                         (card.isMatch({ trait: ['Ally', 'Mercenary'] }) &&
                             card.allowGameAction('takeControl')))
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.ifCondition({
-                        condition: (context) =>
-                            !context.target.isMatch({ trait: ['Ally', 'Mercenary'] }),
-                        thenAction: {
+            gameAction: GameActions.ifCondition({
+                condition: (context) => !context.target.isMatch({ trait: ['Ally', 'Mercenary'] }),
+                thenAction: {
+                    message: '{player} plays {source} to kneel {target}',
+                    gameAction: GameActions.kneelCard((context) => ({
+                        card: context.target
+                    }))
+                },
+                elseAction: GameActions.choose({
+                    title: (context) => `Take control of ${context.target.name} instead?`,
+                    choices: {
+                        'Take control': {
+                            message: '{player} plays {source} to take control of {target}',
+                            gameAction: GameActions.takeControl((context) => ({
+                                player: context.player,
+                                card: context.target
+                            }))
+                        },
+                        Kneel: {
                             message: '{player} plays {source} to kneel {target}',
                             gameAction: GameActions.kneelCard((context) => ({
                                 card: context.target
                             }))
-                        },
-                        elseAction: GameActions.choose({
-                            title: (context) => `Take control of ${context.target.name} instead?`,
-                            choices: {
-                                'Take control': {
-                                    message: '{player} plays {source} to take control of {target}',
-                                    gameAction: GameActions.takeControl((context) => ({
-                                        player: context.player,
-                                        card: context.target
-                                    }))
-                                },
-                                Kneel: {
-                                    message: '{player} plays {source} to kneel {target}',
-                                    gameAction: GameActions.kneelCard((context) => ({
-                                        card: context.target
-                                    }))
-                                }
-                            }
-                        })
-                    }),
-                    context
-                );
-            }
+                        }
+                    }
+                })
+            })
         });
     }
 
