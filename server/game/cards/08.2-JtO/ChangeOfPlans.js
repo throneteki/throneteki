@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ChangeOfPlans extends DrawCard {
     // Change of Plans (08036)
@@ -7,26 +8,23 @@ class ChangeOfPlans extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller &&
-                    this.controller.getNumberOfUsedPlots() < 5
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.player &&
+                    context.player.getNumberOfUsedPlots() < 5
             },
             target: {
                 type: 'select',
                 activePromptTitle: 'Select a plot',
-                cardCondition: (card) =>
-                    card.location === 'plot deck' && card.controller === this.controller,
+                cardCondition: (card, context) =>
+                    card.location === 'plot deck' && card.controller === context.player,
                 cardType: 'plot'
             },
-            handler: (context) => {
-                context.player.moveCard(context.target, 'revealed plots', { bottom: true });
-                this.game.addMessage(
-                    '{0} plays {1} to place {2} on the bottom of their used pile',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} plays {source} to place {target} on the bottom of their used pile',
+            gameAction: GameActions.placeCard((context) => ({
+                card: context.target,
+                location: 'revealed plots',
+                bottom: true
+            }))
         });
     }
 }

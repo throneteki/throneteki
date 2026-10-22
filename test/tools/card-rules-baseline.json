@@ -22,11 +22,6 @@
         "add-message": 3,
         "prompt-for-select": 1
     },
-    "server/game/cards/01-Core/BenjenStark.js": {
-        "this-in-ability": 11,
-        "add-message": 1,
-        "legacy-helper": 3
-    },
     "server/game/cards/01-Core/ChamberOfThePaintedTable.js": {
         "this-in-ability": 8,
         "prompt-for-select": 1,
@@ -257,11 +252,6 @@
     "server/game/cards/03-WotN/ThePackSurvives.js": {
         "this-in-ability": 7,
         "add-message": 2
-    },
-    "server/game/cards/03-WotN/ToTheRoseBanner.js": {
-        "this-in-ability": 5,
-        "legacy-helper": 2,
-        "add-message": 1
     },
     "server/game/cards/04.1-AtSK/BitterbridgeEncampment.js": {
         "this-in-ability": 9,
@@ -605,11 +595,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/08.2-JtO/ChangeOfPlans.js": {
-        "this-in-ability": 5,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/08.2-JtO/JourneyToOldtown.js": {
         "this-in-ability": 4,
         "add-message": 1
@@ -825,11 +810,6 @@
     "server/game/cards/10-SoD/HouseDayneEscort.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/10-SoD/LeytonHightower.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/10-SoD/ObellaSand.js": {
         "this-in-ability": 11,
         "add-message": 2,
@@ -880,19 +860,10 @@
         "legacy-helper": 1,
         "add-message": 2
     },
-    "server/game/cards/11.1-TSC/SchemingSepton.js": {
-        "legacy-helper": 3,
-        "this-in-ability": 11,
-        "add-message": 2
-    },
     "server/game/cards/11.2-TMoW/HagensDaughter.js": {
         "this-in-ability": 5,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/11.2-TMoW/MarchOnWinterfell.js": {
-        "this-in-ability": 7,
-        "add-message": 2
     },
     "server/game/cards/11.2-TMoW/Meereen.js": {
         "legacy-helper": 1
@@ -940,11 +911,6 @@
         "this-in-ability": 8,
         "add-message": 3,
         "legacy-helper": 2
-    },
-    "server/game/cards/11.3-SoKL/UneasyTruce.js": {
-        "this-in-ability": 4,
-        "add-message": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/11.3-SoKL/ValyriansCrew.js": {
         "this-in-ability": 9,

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ToTheRoseBanner extends DrawCard {
     // To the Rose Banner! (03038)
@@ -9,25 +10,23 @@ class ToTheRoseBanner extends DrawCard {
             title: 'Gain gold then sacrifice character',
             phase: 'marshal',
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
+                    card.controller === context.player &&
                     card.isFaction('tyrell') &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                let gold = context.target.getStrength();
-                gold = this.game.addGold(this.controller, gold);
-
-                context.player.sacrificeCard(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to gain {2} gold then sacrifice {3}',
-                    context.player,
-                    this,
-                    gold,
-                    context.target
-                );
-            }
+            message: {
+                format: '{player} plays {source} to gain {amount} gold',
+                args: { amount: (context) => context.target.getStrength() }
+            },
+            gameAction: GameActions.gainGold((context) => ({
+                player: context.player,
+                amount: context.target.getStrength()
+            })).then({
+                message: 'Then {player} sacrifices {target}',
+                gameAction: GameActions.sacrificeCard((context) => ({ card: context.target }))
+            })
         });
     }
 }

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LeytonHightower extends DrawCard {
     // Leyton Hightower (10037)
@@ -10,23 +11,19 @@ class LeytonHightower extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'hand' &&
-                    card.controller === this.controller &&
+                    card.controller === context.player &&
                     !card.isLimited() &&
                     card.isFaction('tyrell') &&
-                    card.getPrintedCost() <= 4 &&
-                    this.controller.canPutIntoPlay(card)
+                    card.getPrintedCost() <= 4
             },
-            handler: (context) => {
-                context.player.putIntoPlay(context.target, 'play', { kneeled: true });
-                this.game.addMessage(
-                    '{0} kneels {1} to put {2} into play from their hand knelt',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} kneels {source} to put {target} into play from their hand knelt',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target,
+                kneeled: true
+            }))
         });
     }
 }
