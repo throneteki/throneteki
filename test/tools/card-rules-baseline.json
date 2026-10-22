@@ -2413,9 +2413,6 @@
         "this-in-ability": 11,
         "legacy-helper": 1
     },
-    "server/game/cards/20-HMW/LordSteward.js": {
-        "this-in-ability": 5
-    },
     "server/game/cards/20-HMW/NoGodlessMan.js": {
         "this-in-ability": 7,
         "add-message": 1,
@@ -2455,9 +2452,6 @@
         "this-in-ability": 5,
         "add-message": 1,
         "legacy-helper": 2
-    },
-    "server/game/cards/20-HMW/SwordoftheMorning.js": {
-        "this-in-ability": 5
     },
     "server/game/cards/20-HMW/TheDragonHasThreeHeads.js": {
         "this-in-ability": 5,
@@ -2608,9 +2602,6 @@
     "server/game/cards/23-AHaH/DoranMartell.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/23-AHaH/KnightsOfTheVale.js": {
-        "this-in-ability": 4
-    },
     "server/game/cards/23-AHaH/Littlefinger.js": {
         "this-in-ability": 7
     },
@@ -2720,9 +2711,6 @@
         "prompt-for-select": 1,
         "add-message": 1
     },
-    "server/game/cards/25.3-FUtG/NaughtButAshes.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/25.3-FUtG/TheDrownedGodWakes.js": {
         "this-in-ability": 3,
         "legacy-helper": 1
@@ -2784,9 +2772,6 @@
     "server/game/cards/25.6-WK/AThousandEyesAndOne.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/25.6-WK/BranTheBreaker.js": {
-        "this-in-ability": 4
-    },
     "server/game/cards/25.6-WK/BurningTheBooks.js": {
         "this-in-ability": 4
     },
@@ -2807,9 +2792,6 @@
         "this-in-ability": 7,
         "prompt-for-select": 1,
         "add-message": 2
-    },
-    "server/game/cards/26.1-WAID/NavalBombardment.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/26.1-WAID/SerClaytonSuggs.js": {
         "this-in-ability": 8,

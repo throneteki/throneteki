@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LordSteward extends DrawCard {
     // Lord Steward (20023)
@@ -16,26 +17,25 @@ class LordSteward extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.challengeType === 'intrigue' &&
-                    this.isStewardParticipatingInChallenge()
+                    context.source.isStewardParticipatingInChallenge()
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.controller === this.game.currentChallenge.loser &&
-                    card.getPrintedCost() <= this.getNumberOfStewards()
+                    card.controller === context.game.currentChallenge.loser &&
+                    card.getPrintedCost() <= context.source.getNumberOfStewards()
             },
             limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to take control of {target}',
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.takeControl(context.player)
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.takeControl(context.player)
+            }))
         });
     }
 

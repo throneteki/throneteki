@@ -114,7 +114,7 @@ function contextPosition(arrow) {
             ) {
                 return [2, ['aggregate', 'events']];
             }
-            if (owner.key.name === 'match' && parent.key.name === 'condition') {
+            if (['match', 'cardCondition'].includes(owner.key.name) && parent.key.name === 'condition') {
                 return [1, ['card']];
             }
         }
