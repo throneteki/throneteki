@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SlaversBayPort extends DrawCard {
     // Slaver's Bay Port (06014)
@@ -9,21 +10,25 @@ class SlaversBayPort extends DrawCard {
         this.action({
             title: 'Gain gold',
             phase: 'marshal',
-            condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
-            handler: (context) => {
-                let gold = this.opponentDeadPileHas4() ? 2 : 1;
-                gold = this.game.addGold(context.player, gold);
-
-                this.game.addMessage('{0} kneels {1} to gain {2} gold', context.player, this, gold);
-            }
+            message: {
+                format: '{player} kneels {source} to gain {amount} gold',
+                args: { amount: (context) => goldAmount(context) }
+            },
+            gameAction: GameActions.gainGold((context) => ({
+                player: context.player,
+                amount: goldAmount(context)
+            }))
         });
     }
+}
 
-    opponentDeadPileHas4() {
-        let opponents = this.game.getOpponents(this.controller);
-        return opponents.some((opponent) => opponent.deadPile.length >= 4);
-    }
+function goldAmount(context) {
+    return context.game
+        .getOpponents(context.player)
+        .some((opponent) => opponent.deadPile.length >= 4)
+        ? 2
+        : 1;
 }
 
 SlaversBayPort.code = '06014';

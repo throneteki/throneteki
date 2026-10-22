@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheQueensRetinue extends DrawCard {
     // The Queen's Retinue (13103)
@@ -8,20 +9,19 @@ class TheQueensRetinue extends DrawCard {
         this.action({
             title: 'Put into play',
             location: 'shadows',
-            condition: (context) => context.player.canPutIntoPlay(this, 'outOfShadows'),
-            handler: (context) => {
-                context.player.putIntoPlay(this);
-                for (let opponent of this.game.getOpponents(this.controller)) {
-                    if (opponent.canDraw()) {
-                        opponent.drawCardsToHand(2);
-                    }
-                }
-                this.game.addMessage(
-                    '{0} uses {1} to put {1} into play from shadows and have each opponent draw 2 cards',
-                    this.controller,
-                    this
-                );
-            }
+            condition: (context) => context.player.canPutIntoPlay(context.source, 'outOfShadows'),
+            message: '{player} uses {source} to put {source} into play from shadows',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                card: context.source,
+                playingType: 'outOfShadows'
+            })).then({
+                message: 'Then {player} has each opponent draw 2 cards',
+                gameAction: GameActions.simultaneously((context) =>
+                    context.game
+                        .getOpponents(context.player)
+                        .map((player) => GameActions.drawCards({ player, amount: 2 }))
+                )
+            })
         });
     }
 }

@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class SecretSchemes extends DrawCard {
     // Secret Schemes (06076)
@@ -8,20 +9,18 @@ class SecretSchemes extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Draw cards',
-            condition: () =>
-                this.controller.getNumberOfUsedPlots() >= 1 && this.controller.canDraw(),
             cost: ability.costs.kneelFactionCard(),
-            handler: () => {
-                let cards = this.controller.getNumberOfUsedPlots();
-                cards = this.controller.drawCardsToHand(cards).length;
-
-                this.game.addMessage(
-                    '{0} plays {1} and kneels their faction card to draw {2}',
-                    this.controller,
-                    this,
-                    TextHelper.count(cards, 'card')
-                );
-            }
+            message: {
+                format: '{player} plays {source} and kneels their faction card to draw {amount}',
+                args: {
+                    amount: (context) =>
+                        TextHelper.count(context.player.getNumberOfUsedPlots(), 'card')
+                }
+            },
+            gameAction: GameActions.drawCards((context) => ({
+                player: context.player,
+                amount: context.player.getNumberOfUsedPlots()
+            }))
         });
     }
 }
