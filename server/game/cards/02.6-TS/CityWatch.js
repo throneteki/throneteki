@@ -1,5 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
+function hasMorePowerThanAnOpponent(source) {
+    let opponents = source.game.getOpponents(source.controller);
+    return opponents.some((opponent) => source.controller.faction.power > opponent.faction.power);
+}
+
 class CityWatch extends DrawCard {
     // City Watch (02108)
     // Ambush (6). No attachments except Weapon.
@@ -8,15 +13,10 @@ class CityWatch extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',
-            condition: (context) => context.source.hasMorePowerThanAnOpponent(),
+            condition: (context) => hasMorePowerThanAnOpponent(context.source),
             targetController: 'current',
             effect: ability.effects.reduceSelfCost('ambush', 2)
         });
-    }
-
-    hasMorePowerThanAnOpponent() {
-        let opponents = this.game.getOpponents(this.controller);
-        return opponents.some((opponent) => this.controller.faction.power > opponent.faction.power);
     }
 }
 

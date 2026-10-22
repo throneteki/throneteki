@@ -1,5 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
+function noOtherBigNonArmy(source) {
+    return !source.controller.anyCardsInPlay(
+        (card) => card !== source.parent && !card.hasTrait('Army') && card.getPrintedCost() >= 6
+    );
+}
+
 class ValyrianSteelArmor extends DrawCard {
     // Valyrian Steel Armor (21006)
     // If attached character is Euron Crow's Eye, he gains insight.
@@ -7,19 +13,13 @@ class ValyrianSteelArmor extends DrawCard {
     // character, attached character cannot be killed or discarded from play.
     setupCardAbilities(ability) {
         this.whileAttached({
-            condition: (context) => context.source.noOtherBigNonArmy(),
+            condition: (context) => noOtherBigNonArmy(context.source),
             effect: [ability.effects.cannotBeKilled(), ability.effects.cannotBeDiscarded()]
         });
         this.whileAttached({
             match: (card) => card.name === "Euron Crow's Eye",
             effect: ability.effects.addKeyword('insight')
         });
-    }
-
-    noOtherBigNonArmy() {
-        return !this.controller.anyCardsInPlay(
-            (card) => card !== this.parent && !card.hasTrait('Army') && card.getPrintedCost() >= 6
-        );
     }
 }
 

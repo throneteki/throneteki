@@ -1,5 +1,20 @@
 import DrawCard from '../../drawcard.js';
 
+function calculateStrength(source) {
+    return source.game.allCards.reduce((counter, card) => {
+        if (
+            card === source ||
+            card.location !== 'play area' ||
+            card.getType() !== 'character' ||
+            !card.kneeled
+        ) {
+            return counter;
+        }
+
+        return counter + 1;
+    }, 0);
+}
+
 class RobertBaratheon extends DrawCard {
     // Robert Baratheon (01048)
     // Intimidate. Renown.
@@ -8,24 +23,9 @@ class RobertBaratheon extends DrawCard {
         this.persistentEffect({
             match: this,
             effect: ability.effects.dynamicStrength((card, context) =>
-                context.source.calculateStrength()
+                calculateStrength(context.source)
             )
         });
-    }
-
-    calculateStrength() {
-        return this.game.allCards.reduce((counter, card) => {
-            if (
-                card === this ||
-                card.location !== 'play area' ||
-                card.getType() !== 'character' ||
-                !card.kneeled
-            ) {
-                return counter;
-            }
-
-            return counter + 1;
-        }, 0);
     }
 }
 

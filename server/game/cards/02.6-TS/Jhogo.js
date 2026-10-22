@@ -1,5 +1,19 @@
 import DrawCard from '../../drawcard.js';
 
+function getNumberOfBloodriders(source) {
+    return source.controller.getNumberOfCardsInPlay(
+        (card) => card.hasTrait('Bloodrider') && card.getType() === 'character' && card !== source
+    );
+}
+
+function getNumberOfDeadDefendingCharacters(source) {
+    if (!source.game.isDuringChallenge()) {
+        return 0;
+    }
+
+    return source.game.currentChallenge.defendingPlayer.deadPile.length;
+}
+
 class Jhogo extends DrawCard {
     // Jhogo (02113)
     // While you control another Bloodrider character, Jhogo gains stealth.
@@ -7,7 +21,7 @@ class Jhogo extends DrawCard {
     // defending player's dead pile.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: (context) => context.source.getNumberOfBloodriders() >= 1,
+            condition: (context) => getNumberOfBloodriders(context.source) >= 1,
             match: this,
             effect: ability.effects.addKeyword('stealth')
         });
@@ -15,23 +29,9 @@ class Jhogo extends DrawCard {
             condition: (context) => context.source.isAttacking(),
             match: this,
             effect: ability.effects.dynamicStrength((card, context) =>
-                context.source.getNumberOfDeadDefendingCharacters()
+                getNumberOfDeadDefendingCharacters(context.source)
             )
         });
-    }
-
-    getNumberOfBloodriders() {
-        return this.controller.getNumberOfCardsInPlay(
-            (card) => card.hasTrait('Bloodrider') && card.getType() === 'character' && card !== this
-        );
-    }
-
-    getNumberOfDeadDefendingCharacters() {
-        if (!this.game.isDuringChallenge()) {
-            return 0;
-        }
-
-        return this.game.currentChallenge.defendingPlayer.deadPile.length;
     }
 }
 

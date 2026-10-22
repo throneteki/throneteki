@@ -1,6 +1,17 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
+function getNumberToDiscard(source, player) {
+    return player.getNumberOfCardsInPlay(
+        (card) =>
+            card !== source &&
+            card.isUnique() &&
+            card.isAttacking() &&
+            card.hasTrait('Clansman') &&
+            card.getType() === 'character'
+    );
+}
+
 class TheHalfmansHorde extends DrawCard {
     // The Halfman's Horde (23005)
     // Assault. Intimidate. No attachments.
@@ -17,26 +28,15 @@ class TheHalfmansHorde extends DrawCard {
                 format: "{player} uses {source} to discard {number} cards at random from {loser}'s hand",
                 args: {
                     number: (context) =>
-                        context.source.getNumberToDiscard(context.event.challenge.winner),
+                        getNumberToDiscard(context.source, context.event.challenge.winner),
                     loser: (context) => context.event.challenge.loser
                 }
             },
             gameAction: GameActions.discardAtRandom((context) => ({
                 player: context.event.challenge.loser,
-                amount: context.source.getNumberToDiscard(context.event.challenge.winner)
+                amount: getNumberToDiscard(context.source, context.event.challenge.winner)
             }))
         });
-    }
-
-    getNumberToDiscard(player) {
-        return player.getNumberOfCardsInPlay(
-            (card) =>
-                card !== this &&
-                card.isUnique() &&
-                card.isAttacking() &&
-                card.hasTrait('Clansman') &&
-                card.getType() === 'character'
-        );
     }
 }
 

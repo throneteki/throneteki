@@ -1,6 +1,14 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
+function gainKeyword(source, keyword) {
+    source.untilEndOfChallenge((ability) => ({
+        match: source,
+        effect: ability.effects.addKeyword(keyword)
+    }));
+    return true;
+}
+
 class NestorRoyce extends DrawCard {
     // Nestor Royce (23023)
     // Reaction: After you win a challenge in which Nestor Royce is participating, kneel a neutral
@@ -28,22 +36,14 @@ class NestorRoyce extends DrawCard {
                 },
                 choices: {
                     Renown: GameActions.genericHandler((context) =>
-                        context.source.gainKeyword(context.selectedChoice.text.toLowerCase())
+                        gainKeyword(context.source, context.selectedChoice.text.toLowerCase())
                     ),
                     Intimidate: GameActions.genericHandler((context) =>
-                        context.source.gainKeyword(context.selectedChoice.text.toLowerCase())
+                        gainKeyword(context.source, context.selectedChoice.text.toLowerCase())
                     )
                 }
             })
         });
-    }
-
-    gainKeyword(keyword) {
-        this.untilEndOfChallenge((ability) => ({
-            match: this,
-            effect: ability.effects.addKeyword(keyword)
-        }));
-        return true;
     }
 }
 

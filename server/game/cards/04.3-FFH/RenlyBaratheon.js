@@ -1,6 +1,18 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
+function anyOpponentControlsKing(source) {
+    return source.game.getPlayers().some((player) => {
+        if (player === source.controller) {
+            return false;
+        }
+
+        return player.anyCardsInPlay(
+            (card) => card.getType() === 'character' && card.hasTrait('King')
+        );
+    });
+}
+
 class RenlyBaratheon extends DrawCard {
     // Renly Baratheon (04043)
     // Insight. Renown.
@@ -8,7 +20,7 @@ class RenlyBaratheon extends DrawCard {
     // Reaction: After you draw a loyal card using insight, reveal it to draw 1 card.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: (context) => context.source.anyOpponentControlsKing(),
+            condition: (context) => anyOpponentControlsKing(context.source),
             match: this,
             effect: ability.effects.cannotBeSaved()
         });
@@ -27,18 +39,6 @@ class RenlyBaratheon extends DrawCard {
                 player: context.player,
                 amount: 1
             }))
-        });
-    }
-
-    anyOpponentControlsKing() {
-        return this.game.getPlayers().some((player) => {
-            if (player === this.controller) {
-                return false;
-            }
-
-            return player.anyCardsInPlay(
-                (card) => card.getType() === 'character' && card.hasTrait('King')
-            );
         });
     }
 }

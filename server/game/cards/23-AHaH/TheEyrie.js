@@ -1,6 +1,14 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
+function calculateAmount(source) {
+    return (
+        source.game.currentChallenge.getNumberOfParticipants(
+            (card) => card.controller === source.controller
+        ) * 2
+    );
+}
+
 class TheEyrie extends DrawCard {
     // The Eyrie (23031)
     // While your initiative value is 0, The Eyrie is immune to opponents' non-plot card effects.
@@ -36,26 +44,18 @@ class TheEyrie extends DrawCard {
                 ),
             message: {
                 format: "{player} kneels {source} to have it contribute {amount} STR to {player}'s side of the challenge",
-                args: { amount: (context) => context.source.calculateAmount() }
+                args: { amount: (context) => calculateAmount(context.source) }
             },
             gameAction: GameActions.genericHandler((context) => {
                 context.source.untilEndOfChallenge((ability) => ({
                     targetController: 'current',
                     effect: ability.effects.contributeStrength(
                         context.source,
-                        context.source.calculateAmount()
+                        calculateAmount(context.source)
                     )
                 }));
             })
         });
-    }
-
-    calculateAmount() {
-        return (
-            this.game.currentChallenge.getNumberOfParticipants(
-                (card) => card.controller === this.controller
-            ) * 2
-        );
     }
 }
 
