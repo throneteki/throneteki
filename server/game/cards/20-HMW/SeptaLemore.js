@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SeptaLemore extends DrawCard {
     // Septa Lemore (20032)
@@ -13,7 +14,7 @@ class SeptaLemore extends DrawCard {
 
         this.interrupt({
             when: {
-                onCardLeftPlay: (event) => event.card === this
+                onCardLeftPlay: (event, context) => event.card === context.source
             },
             target: {
                 cardCondition: (card, context) =>
@@ -24,9 +25,7 @@ class SeptaLemore extends DrawCard {
                     card.isFaction('targaryen')
             },
             message: '{player} uses {source} to return {target} to shadows',
-            handler: (context) => {
-                context.player.moveCard(context.target, 'shadows');
-            }
+            gameAction: GameActions.putIntoShadows((context) => ({ card: context.target }))
         });
     }
 }

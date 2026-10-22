@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheTitansBastard extends DrawCard {
     // The Titan's Bastard (15010)
@@ -15,15 +16,9 @@ class TheTitansBastard extends DrawCard {
                     card.hasTrait('Mercenary') &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                context.player.moveCard(context.target, 'hand');
-                this.game.addMessage(
-                    '{0} kneels {1} to move {2} from their discard pile to their hand',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} kneels {source} to move {target} from their discard pile to their hand',
+            gameAction: GameActions.addToHand((context) => ({ card: context.target }))
         });
     }
 }

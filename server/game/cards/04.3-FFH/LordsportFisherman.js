@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LordsportFisherman extends DrawCard {
     // Lordsport Fisherman (04051)
@@ -7,18 +8,15 @@ class LordsportFisherman extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this && event.playingType === 'marshal'
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source &&
+                    event.playingType === 'marshal' &&
+                    context.player.drawDeck.length > 0
             },
-            handler: () => {
-                let bottomCard = this.controller.drawDeck.slice(-1)[0];
-                this.controller.moveCard(bottomCard, 'hand');
-
-                this.game.addMessage(
-                    '{0} uses {1} to draw the bottom card of their deck',
-                    this.controller,
-                    this
-                );
-            }
+            message: '{player} uses {source} to draw the bottom card of their deck',
+            gameAction: GameActions.addToHand((context) => ({
+                card: context.player.drawDeck.slice(-1)[0]
+            }))
         });
     }
 }

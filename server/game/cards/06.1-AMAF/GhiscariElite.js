@@ -1,4 +1,13 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+
+function eventOrAttachmentInDiscard(source, card) {
+    return (
+        card.controller === source.controller &&
+        card.location === 'discard pile' &&
+        ['event', 'attachment'].includes(card.getType())
+    );
+}
 
 class GhiscariElite extends DrawCard {
     // Ghiscari Elite (06013)
@@ -7,32 +16,22 @@ class GhiscariElite extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardKneeled: (event) =>
-                    event.card === this &&
-                    this.controller.discardPile.some((c) => this.eventOrAttachmentInDiscard(c))
+                onCardKneeled: (event, context) =>
+                    event.card === context.source &&
+                    context.source.controller.discardPile.some((c) =>
+                        eventOrAttachmentInDiscard(context.source, c)
+                    )
             },
             target: {
                 activePromptTitle: 'Select attachment or event',
-                cardCondition: (card) => this.eventOrAttachmentInDiscard(card)
+                cardCondition: (card, context) => eventOrAttachmentInDiscard(context.source, card)
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to place {2} on the bottom of their deck',
-                    this.controller,
-                    this,
-                    context.target
-                );
-                this.controller.moveCard(context.target, 'draw deck', { bottom: true });
-            }
+            message: '{player} uses {source} to place {target} on the bottom of their deck',
+            gameAction: GameActions.returnCardToDeck((context) => ({
+                card: context.target,
+                bottom: true
+            }))
         });
-    }
-
-    eventOrAttachmentInDiscard(card) {
-        return (
-            card.controller === this.controller &&
-            card.location === 'discard pile' &&
-            ['event', 'attachment'].includes(card.getType())
-        );
     }
 }
 

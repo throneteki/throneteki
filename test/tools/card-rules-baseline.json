@@ -267,11 +267,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/02.5-COW/Chett.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/02.5-COW/MirriMazDuur.js": {
         "this-in-ability": 6,
         "add-message": 1,
@@ -398,11 +393,6 @@
     },
     "server/game/cards/04.3-FFH/BloodOfMyBlood.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/04.3-FFH/LordsportFisherman.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/04.3-FFH/NightGathers.js": {
         "this-in-ability": 1
@@ -589,11 +579,6 @@
         "this-in-ability": 9,
         "legacy-helper": 2,
         "add-message": 2
-    },
-    "server/game/cards/06.1-AMAF/GhiscariElite.js": {
-        "this-in-ability": 8,
-        "add-message": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/06.1-AMAF/SlaversBayPort.js": {
         "this-in-ability": 5,
@@ -789,11 +774,6 @@
     "server/game/cards/07-WotW/IShallWinNoGlory.js": {
         "this-in-ability": 5,
         "add-message": 1
-    },
-    "server/game/cards/07-WotW/JeynePoole.js": {
-        "legacy-helper": 1,
-        "add-message": 1,
-        "this-in-ability": 2
     },
     "server/game/cards/07-WotW/JonSnow.js": {
         "this-in-ability": 9,
@@ -1690,11 +1670,6 @@
         "this-in-ability": 6,
         "add-message": 1
     },
-    "server/game/cards/15-DotE/TheTitansBastard.js": {
-        "legacy-helper": 1,
-        "add-message": 1,
-        "this-in-ability": 2
-    },
     "server/game/cards/15-DotE/TormundGiantsbane.js": {
         "this-in-ability": 8,
         "add-message": 1
@@ -1823,11 +1798,6 @@
     },
     "server/game/cards/17.1-R/ThreeFingerHobb.js": {
         "this-in-ability": 5,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/17.1-R/UnexpectedGuile.js": {
-        "this-in-ability": 7,
         "legacy-helper": 1,
         "add-message": 1
     },
@@ -1999,10 +1969,6 @@
         "legacy-helper": 2,
         "add-message": 2,
         "prompt-for-select": 1
-    },
-    "server/game/cards/20-HMW/SeptaLemore.js": {
-        "this-in-ability": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/20-HMW/SerGuyardMorrigen.js": {
         "this-in-ability": 7,

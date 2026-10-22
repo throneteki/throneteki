@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class JeynePoole extends DrawCard {
     // Jeyne Poole (07033)
@@ -16,15 +17,9 @@ class JeynePoole extends DrawCard {
                     card.hasTrait('Lady') &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                context.player.moveCard(context.target, 'hand');
-                this.game.addMessage(
-                    '{0} sacrifices {1} to move {2} from their discard pile to their hand',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} sacrifices {source} to move {target} from their discard pile to their hand',
+            gameAction: GameActions.addToHand((context) => ({ card: context.target }))
         });
     }
 }
