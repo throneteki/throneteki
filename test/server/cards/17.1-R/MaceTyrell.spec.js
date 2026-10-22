@@ -1,101 +1,65 @@
-describe('Mace Tyrell', function () {
-    integration(function () {
+describe('Mace Tyrell (R)', function () {
+    function setup(context, opponentPlot) {
+        context.setupTest({
+            phase: 'plot',
+            player1: { inPlay: ['Mace Tyrell (R)'], hand: ['Left'] },
+            player2: { plotDeck: [opponentPlot] }
+        });
+        context.player1.selectPlot('Filler Plot');
+        context.player2.selectPlot(opponentPlot);
+        context.selectFirstPlayer(context.player1);
+        context.player1.clickCard(context.left);
+    }
+
+    describe('after a tyrell character enters play under your control', function () {
         beforeEach(function () {
-            const deck1 = this.buildDeck('tyrell', [
-                'A Noble Cause',
-                'Mace Tyrell (R)',
-                'Left',
-                'Left'
-            ]);
-            const deck2 = this.buildDeck('stark', ['A Noble Cause', 'Barring the Gates']);
-
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck2);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.mace = this.player1.findCardByName('Mace Tyrell', 'hand');
-            [this.character, this.characterCopy] = this.player1.filterCardsByName('Left', 'hand');
-
-            this.player1.clickCard(this.mace);
-
-            this.completeSetup();
+            setup(this, 'Filler Plot');
+            this.goldBefore = this.player1Object.gold;
         });
 
-        describe('when removing a character from the game', function () {
-            beforeEach(function () {
-                this.player2.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player1);
+        it('pays 1 gold to have a unique tyrell character gain 1 power', function () {
+            this.player1.triggerAbility(this.maceTyrell);
 
-                this.player1.clickCard(this.character);
+            expect(this.left.power).toBe(1);
+            expect(this.player1Object.gold).toBe(this.goldBefore - 1);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 
-                expect(this.character.location).toBe('play area');
-
-                this.player1.triggerAbility('Mace Tyrell');
-
-                this.player1.clickMenu(this.mace, 'Remove character from game');
-                this.player1.clickCard(this.character);
-
-                expect(this.character.location).toBe('out of game');
-
-                this.completeMarshalPhase();
-            });
-
-            it('should return to play the following phase', function () {
-                expect(this.character.location).toBe('play area');
-            });
+    describe('when removing a character from the game', function () {
+        beforeEach(function () {
+            setup(this, 'Filler Plot');
+            this.player1.clickPrompt('Pass');
+            this.player1.clickMenu(this.maceTyrell, 'Remove character from game');
+            this.player1.clickCard(this.left);
         });
 
-        describe('when a removed character is placed in the dead pile', function () {
-            beforeEach(function () {
-                this.player2.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player1);
+        it('kneels your faction card to remove it until the beginning of the next phase', function () {
+            expect(this.left.location).toBe('out of game');
+            expect(this.player1Object.faction.kneeled).toBe(true);
 
-                this.player1.clickCard(this.character);
+            this.completeMarshalPhase();
+            this.player1.clickPrompt('Pass');
 
-                expect(this.character.location).toBe('play area');
+            expect(this.left.location).toBe('play area');
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 
-                this.player1.triggerAbility('Mace Tyrell');
-
-                this.player1.clickMenu(this.mace, 'Remove character from game');
-                this.player1.clickCard(this.character);
-
-                expect(this.character.location).toBe('out of game');
-
-                this.player1.dragCard(this.characterCopy, 'dead pile');
-
-                this.completeMarshalPhase();
-            });
-
-            it('should not return to play the following phase', function () {
-                expect(this.character.location).toBe('out of game');
-            });
+    // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/36886-mace-tyrell/
+    describe('vs Barring the Gates', function () {
+        beforeEach(function () {
+            setup(this, 'Barring the Gates');
+            this.player1.clickPrompt('Pass');
+            this.player1.clickMenu(this.maceTyrell, 'Remove character from game');
+            this.player1.clickCard(this.left);
+            this.completeMarshalPhase();
+            this.player1.clickPrompt('Pass');
         });
 
-        describe('vs Barring the Gates', function () {
-            // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/36886-mace-tyrell/
-
-            beforeEach(function () {
-                this.player2.selectPlot('Barring the Gates');
-                this.selectFirstPlayer(this.player1);
-
-                this.player1.clickCard(this.character);
-
-                expect(this.character.location).toBe('play area');
-
-                this.player1.triggerAbility('Mace Tyrell');
-
-                this.player1.clickMenu(this.mace, 'Remove character from game');
-                this.player1.clickCard(this.character);
-
-                expect(this.character.location).toBe('out of game');
-
-                this.completeMarshalPhase();
-            });
-
-            it('should return to play the following phase', function () {
-                expect(this.character.location).toBe('play area');
-            });
+        it('still returns the character the following phase', function () {
+            expect(this.left.location).toBe('play area');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });
