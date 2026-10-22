@@ -1318,9 +1318,6 @@
         "this-in-ability": 7,
         "add-message": 1
     },
-    "server/game/cards/15-DotE/HothoHumpback.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/15-DotE/Incinerate.js": {
         "prompt-for-select": 1,
         "this-in-ability": 4,

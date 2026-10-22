@@ -10,17 +10,12 @@ class HothoHumpback extends DrawCard {
             title: 'Draw card and check reserve',
             phase: 'challenge',
             message: '{player} uses {source} to have each player draw a card and check for reserve',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(() => [
-                        ...this.game
-                            .getPlayersInFirstPlayerOrder()
-                            .map((player) => GameActions.drawCards({ player, amount: 1 }))
-                    ]),
-                    context
-                );
-                this.game.resolveGameAction(GameActions.checkReserve(), context);
-            },
+            gameAction: GameActions.simultaneously((context) => [
+                ...context.game
+                    .getPlayersInFirstPlayerOrder()
+                    .map((player) => GameActions.drawCards({ player, amount: 1 })),
+                GameActions.checkReserve()
+            ]),
             limit: ability.limit.perRound(1)
         });
     }
