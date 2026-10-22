@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MagisterIllyrio extends DrawCard {
     // Magister Illyrio (01163)
@@ -12,16 +13,8 @@ class MagisterIllyrio extends DrawCard {
                 cardCondition: (card) =>
                     card.location === 'play area' && card.getType() === 'character'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to pay 2 gold and stand {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-
-                this.controller.standCard(context.target);
-            }
+            message: '{player} uses {source} to pay 2 gold and stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

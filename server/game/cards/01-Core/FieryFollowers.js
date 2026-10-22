@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class FieryFollowers extends DrawCard {
     // Fiery Followers (01054)
@@ -6,12 +7,11 @@ class FieryFollowers extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPhaseStarted: (event) => event.phase === 'dominance' && this.kneeled
+                onPhaseStarted: (event, context) =>
+                    event.phase === 'dominance' && context.source.kneeled
             },
-            handler: () => {
-                this.controller.standCard(this);
-                this.game.addMessage('{0} uses {1} to stand {1}', this.controller, this);
-            }
+            message: '{player} uses {source} to stand {source}',
+            gameAction: GameActions.standCard((context) => ({ card: context.source }))
         });
     }
 }

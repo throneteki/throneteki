@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RattleshirtsRaiders extends DrawCard {
     // Rattleshirt's Raiders (01030)
@@ -8,28 +9,20 @@ class RattleshirtsRaiders extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.attackingPlayer === this.controller &&
-                    event.challenge.winner === this.controller &&
-                    this.isAttacking()
+                afterChallenge: (event, context) =>
+                    event.challenge.attackingPlayer === context.source.controller &&
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isAttacking()
             },
             target: {
                 activePromptTitle: 'Select an attachment',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.game.currentChallenge.loser &&
+                    card.controller === context.game.currentChallenge.loser &&
                     card.getType() === 'attachment'
             },
-            handler: (context) => {
-                context.target.owner.discardCard(context.target);
-
-                this.game.addMessage(
-                    '{0} uses {1} to discard {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to discard {target}',
+            gameAction: GameActions.discardCard((context) => ({ card: context.target }))
         });
     }
 }

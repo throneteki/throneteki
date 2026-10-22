@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class AshaGreyjoy extends DrawCard {
     // Asha Greyjoy (01067)
@@ -8,15 +9,13 @@ class AshaGreyjoy extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    this.controller === event.challenge.winner &&
-                    this.isParticipating() &&
+                afterChallenge: (event, context) =>
+                    context.source.controller === event.challenge.winner &&
+                    context.source.isParticipating() &&
                     event.challenge.isUnopposed()
             },
-            handler: () => {
-                this.controller.standCard(this);
-                this.game.addMessage('{0} uses {1} to stand {1}', this.controller, this, this);
-            }
+            message: '{player} uses {source} to stand {source}',
+            gameAction: GameActions.standCard((context) => ({ card: context.source }))
         });
     }
 }

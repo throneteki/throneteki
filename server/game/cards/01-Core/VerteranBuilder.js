@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class VerteranBuilder extends DrawCard {
     // Veteran Builder (01134)
@@ -13,16 +14,8 @@ class VerteranBuilder extends DrawCard {
                 cardCondition: (card) =>
                     card.location === 'play area' && card.getType() === 'location'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} sacrifices {1} to stand {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-
-                context.player.standCard(context.target);
-            }
+            message: '{player} sacrifices {source} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

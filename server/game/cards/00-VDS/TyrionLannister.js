@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TyrionLannister extends DrawCard {
     // Tyrion Lannister (00011)
@@ -9,20 +10,15 @@ class TyrionLannister extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    (event.challenge.challengeType === 'intrigue' || this.isParticipating()) &&
-                    this.controller.canDraw()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    (event.challenge.challengeType === 'intrigue' ||
+                        context.source.isParticipating()) &&
+                    context.source.controller.canDraw()
             },
             cost: ability.costs.payGold(1),
-            handler: () => {
-                this.controller.drawCardsToHand(1);
-                this.game.addMessage(
-                    '{0} uses {1} and pays 1 gold to draw 1 card',
-                    this.controller,
-                    this
-                );
-            }
+            message: '{player} uses {source} and pays 1 gold to draw 1 card',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });
     }
 }

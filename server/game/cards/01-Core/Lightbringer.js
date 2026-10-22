@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Lightbringer extends DrawCard {
     // Lightbringer (01058)
@@ -13,19 +14,15 @@ class Lightbringer extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardPowerGained: (event) => event.card === this.parent && event.card.kneeled
+                onCardPowerGained: (event, context) =>
+                    event.card === context.source.parent && event.card.kneeled
             },
             limit: ability.limit.perPhase(1),
-            handler: () => {
-                this.parent.controller.standCard(this.parent);
-
-                this.game.addMessage(
-                    '{0} uses {1} to stand {2}',
-                    this.controller,
-                    this,
-                    this.parent
-                );
-            }
+            message: {
+                format: '{player} uses {source} to stand {parent}',
+                args: { parent: (context) => context.source.parent }
+            },
+            gameAction: GameActions.standCard((context) => ({ card: context.source.parent }))
         });
     }
 }

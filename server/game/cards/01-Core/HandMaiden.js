@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class HandMaiden extends DrawCard {
     // Handmaiden (01169)
@@ -13,15 +14,8 @@ class HandMaiden extends DrawCard {
                     card.getType() === 'character' &&
                     card.hasTrait('Lady')
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.addMessage(
-                    '{0} sacrifices {1} to stand {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} sacrifices {source} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class JoffreyBaratheon extends DrawCard {
     // Joffrey Baratheon (01086)
@@ -7,21 +8,15 @@ class JoffreyBaratheon extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCharacterKilled: (event) =>
+                onCharacterKilled: (event, context) =>
                     event.card.getType() === 'character' &&
                     (event.cardStateWhenKilled.hasTrait('Lord') ||
                         event.cardStateWhenKilled.hasTrait('Lady')) &&
-                    this.allowGameAction('gainPower')
+                    context.source.allowGameAction('gainPower')
             },
             limit: ability.limit.perRound(3),
-            handler: () => {
-                this.game.addMessage(
-                    '{0} gains 1 power from a Lord or Lady being killed',
-                    this.controller
-                );
-
-                this.modifyPower(1);
-            }
+            message: '{player} gains 1 power from a Lord or Lady being killed',
+            gameAction: GameActions.gainPower((context) => ({ card: context.source, amount: 1 }))
         });
     }
 }

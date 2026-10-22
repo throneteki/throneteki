@@ -1,37 +1,35 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class HearMeRoar extends DrawCard {
     // Hear Me Roar! (01100)
     // Action: Put a [lannister] character into play from your hand. At the end of the phase, if
     // that card is still in play, discard it from play (cannot be saved).
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Put character into play',
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'hand' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.getType() === 'character' &&
                     card.isFaction('lannister') &&
-                    this.controller.canPutIntoPlay(card)
+                    context.source.controller.canPutIntoPlay(card)
             },
-            handler: (context) => {
-                context.player.putIntoPlay(context.target);
-
-                this.atEndOfPhase((ability) => ({
+            message: '{player} plays {source} to put {target} into play from their hand',
+            gameAction: GameActions.simultaneously([
+                GameActions.putIntoPlay((context) => ({
+                    player: context.player,
+                    card: context.target
+                })),
+                GameActions.lastingEffect((context) => ({
+                    duration: 'atEndOfPhase',
                     match: context.target,
                     condition: () => ['play area', 'duplicate'].includes(context.target.location),
                     targetLocation: 'any',
                     effect: ability.effects.discardIfStillInPlay(false)
-                }));
-
-                this.game.addMessage(
-                    '{0} plays {1} to put {2} into play from their hand',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+                }))
+            ])
         });
     }
 }

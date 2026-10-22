@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class PutToTheTorch extends DrawCard {
     // Put to the Torch (01042)
@@ -9,29 +10,22 @@ class PutToTheTorch extends DrawCard {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'military' &&
-                    event.challenge.winner === this.controller &&
-                    event.challenge.attackingPlayer === this.controller &&
+                    event.challenge.winner === context.source.controller &&
+                    event.challenge.attackingPlayer === context.source.controller &&
                     event.challenge.strengthDifference >= 5
             },
             target: {
                 activePromptTitle: 'Select a location',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.game.currentChallenge.loser &&
+                    card.controller === context.game.currentChallenge.loser &&
                     card.getType() === 'location',
                 gameAction: 'discard'
             },
-            handler: (context) => {
-                context.target.controller.discardCard(context.target);
-                this.game.addMessage(
-                    '{0} plays {1} to discard {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} plays {source} to discard {target}',
+            gameAction: GameActions.discardCard((context) => ({ card: context.target }))
         });
     }
 }
