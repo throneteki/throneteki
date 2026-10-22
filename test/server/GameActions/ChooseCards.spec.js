@@ -130,3 +130,38 @@ describe('chooseCards game action', function () {
         expect(action.allow(candidate)).toBe(true);
     });
 });
+
+describe('chooseCards game action with revealTargets', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { inPlay: ['Tumblestone Knight'] },
+            player2: { hand: ['Hot Pie (FFH)', 'Burned Men'] }
+        });
+
+        const context = new AbilityContext({
+            game: this.game,
+            player: this.player1Object,
+            source: this.tumblestoneKnight
+        });
+        this.game.resolveGameAction(
+            GameActions.chooseCards({
+                revealTargets: true,
+                cardCondition: (card) => card.location === 'hand',
+                gameAction: (card) => GameActions.discardCard({ card })
+            }),
+            context
+        );
+        this.game.continue();
+    });
+
+    it('shows the choosable cards to the choosing player only while they choose', function () {
+        expect(this.game.cardVisibility.isVisible(this.burnedMen, this.player1Object)).toBe(true);
+        expect(this.game.cardVisibility.isVisible(this.burnedMen, this.player2Object)).toBe(true);
+
+        this.player1.clickCard(this.hotPie);
+
+        expect(this.hotPie.location).toBe('discard pile');
+        expect(this.game.cardVisibility.isVisible(this.burnedMen, this.player1Object)).toBe(false);
+    });
+});

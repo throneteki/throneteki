@@ -27,6 +27,7 @@ class ChooseCards extends GameAction {
         mode = 'single',
         numCards = 1,
         title = 'Select a card',
+        revealTargets = false,
         gameAction
     }) {
         super('chooseCards');
@@ -39,6 +40,7 @@ class ChooseCards extends GameAction {
         this.mode = mode;
         this.numCardsFunc = typeof numCards === 'function' ? numCards : () => numCards;
         this.titleFunc = typeof title === 'function' ? title : () => title;
+        this.revealTargets = revealTargets;
         this.gameActionFactory = gameAction;
     }
 
@@ -100,6 +102,7 @@ class ChooseCards extends GameAction {
             multiSelect: true,
             cardType: AllCardTypes,
             cardCondition: (card) => choosable.includes(card),
+            revealTargets: this.revealTargets,
             canCancel: context.game.manualMode.enabled,
             onSelect: (selectingPlayer, cards) => {
                 chosen.set(player, Array.isArray(cards) ? cards : [cards]);

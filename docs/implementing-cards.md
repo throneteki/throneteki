@@ -419,6 +419,8 @@ choosing. Once everyone has chosen, every chosen card's game action resolves tog
 player's result is logged. `numCards` and `title` can be functions of the context, for a number
 that comes from an earlier part of the effect (Forced March). With `mode: 'exactly'`, a player
 who can't choose that many chooses as many as they can, and a number of 0 skips the choice.
+With `revealTargets: true`, the choosing player sees the cards they can choose while choosing, for
+"look at an opponent's hand, then choose a card in it" (Seen In Flames).
 
 ```javascript
 // "Each player chooses a character they control and kills it."

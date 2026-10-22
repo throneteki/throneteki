@@ -155,12 +155,6 @@
     "server/game/cards/01-Core/RobertBaratheon.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/01-Core/SeenInFlames.js": {
-        "this-in-ability": 6,
-        "add-message": 2,
-        "prompt-for-select": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/01-Core/SerDavosSeaworth.js": {
         "this-in-ability": 8,
         "add-message": 1,
@@ -501,12 +495,6 @@
     "server/game/cards/03-WotN/GreenDreams.js": {
         "this-in-ability": 14,
         "add-message": 3,
-        "legacy-helper": 1
-    },
-    "server/game/cards/03-WotN/HisViperEyes.js": {
-        "this-in-ability": 7,
-        "add-message": 2,
-        "prompt-for-select": 1,
         "legacy-helper": 1
     },
     "server/game/cards/03-WotN/JoryCassel.js": {
