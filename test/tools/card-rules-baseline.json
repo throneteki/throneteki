@@ -205,10 +205,6 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/02.5-COW/TrialByCombat.js": {
-        "this-in-ability": 7,
-        "add-message": 1
-    },
     "server/game/cards/02.5-COW/VengeanceForElia.js": {
         "this-in-ability": 6,
         "add-message": 1
@@ -701,10 +697,6 @@
     "server/game/cards/08.6-SAT/KingAtTheWall.js": {
         "this-in-ability": 9,
         "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/08.6-SAT/MyaStone.js": {
-        "this-in-ability": 5,
         "add-message": 1
     },
     "server/game/cards/08.6-SAT/Qyburn.js": {
@@ -1291,10 +1283,6 @@
     },
     "server/game/cards/14-FotS/SerImryFlorent.js": {
         "this-in-ability": 2
-    },
-    "server/game/cards/14-FotS/TheHandsTourney.js": {
-        "add-message": 1,
-        "this-in-ability": 4
     },
     "server/game/cards/14-FotS/TheHornThatWakesTheSleepers.js": {
         "this-in-ability": 7
@@ -1905,9 +1893,6 @@
         "this-in-ability": 10,
         "legacy-helper": 1
     },
-    "server/game/cards/25.5-TIC/TempleOfTheGraces.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/25.5-TIC/TheKnight.js": {
         "this-in-ability": 7
     },
@@ -2036,9 +2021,6 @@
         "this-in-ability": 1
     },
     "server/game/cards/27.1-THBIB/WeddingAtTheWall.js": {
-        "this-in-ability": 3
-    },
-    "server/game/cards/27.2-WGYK/BySwordOrByGuile.js": {
         "this-in-ability": 3
     },
     "server/game/cards/27.2-WGYK/Hornvale.js": {

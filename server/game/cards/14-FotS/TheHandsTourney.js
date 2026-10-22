@@ -1,5 +1,5 @@
-import SatisfyClaim from '../../gamesteps/challenge/SatisfyClaim.js';
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheHandsTourney extends PlotCard {
     // The Hand's Tourney (14051)
@@ -11,21 +11,14 @@ class TheHandsTourney extends PlotCard {
                 onClaimApplied: (event) =>
                     event.challenge && event.challenge.challengeType === 'military'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} is forced by {1} to apply {2} claim instead of {3} claim',
-                    context.event.challenge.attackingPlayer,
-                    this,
-                    'power',
-                    'military'
-                );
-
-                context.replaceHandler((event) => {
-                    event.claim.challengeType = 'power';
-
-                    this.game.queueStep(new SatisfyClaim(this.game, event.claim));
-                });
-            }
+            message: {
+                format: '{attackingPlayer} is forced by {source} to apply power claim instead of military claim',
+                args: { attackingPlayer: (context) => context.event.challenge.attackingPlayer }
+            },
+            gameAction: GameActions.changeClaimType((context) => ({
+                event: context.event,
+                challengeType: 'power'
+            }))
         });
     }
 }

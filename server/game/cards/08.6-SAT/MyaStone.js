@@ -1,5 +1,5 @@
 import DrawCard from '../../drawcard.js';
-import SatisfyClaim from '../../gamesteps/challenge/SatisfyClaim.js';
+import GameActions from '../../GameActions/index.js';
 
 class MyaStone extends DrawCard {
     // Mya Stone (08117)
@@ -8,27 +8,20 @@ class MyaStone extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onClaimApplied: (event) =>
+                onClaimApplied: (event, context) =>
                     event.challenge &&
                     ['military', 'intrigue'].includes(event.challenge.challengeType) &&
-                    event.challenge.defendingPlayer === this.controller
+                    event.challenge.defendingPlayer === context.player
             },
             cost: ability.costs.kneelSelf(),
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} kneels {1} to apply {2} claim instead of {3} claim',
-                    context.player,
-                    this,
-                    'power',
-                    context.event.challenge.challengeType
-                );
-
-                context.replaceHandler((event) => {
-                    event.claim.challengeType = 'power';
-
-                    this.game.queueStep(new SatisfyClaim(this.game, event.claim));
-                });
-            }
+            message: {
+                format: '{player} kneels {source} to apply power claim instead of {challengeType} claim',
+                args: { challengeType: (context) => context.event.challenge.challengeType }
+            },
+            gameAction: GameActions.changeClaimType((context) => ({
+                event: context.event,
+                challengeType: 'power'
+            }))
         });
     }
 }

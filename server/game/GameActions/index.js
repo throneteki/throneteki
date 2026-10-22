@@ -6,6 +6,7 @@ import AddToHand from './AddToHand.js';
 import ApplyClaim from './ApplyClaim.js';
 import ApplyLastingEffect from './ApplyLastingEffect.js';
 import CancelEffects from './CancelEffects.js';
+import ChangeClaimType from './ChangeClaimType.js';
 import ChangeEventAmount from './ChangeEventAmount.js';
 import CheckReserve from './CheckReserve.js';
 import ChooseCards from './ChooseCards.js';
@@ -70,6 +71,7 @@ const GameActions = {
     addToHand: (props) => new AbilityAdapter(AddToHand, props),
     applyClaim: (props) => new AbilityAdapter(ApplyClaim, props),
     cancelEffects: (props) => new AbilityAdapter(CancelEffects, props),
+    changeClaimType: (props) => new AbilityAdapter(ChangeClaimType, props),
     changeEventAmount: (props) => new AbilityAdapter(ChangeEventAmount, props),
     checkReserve: (props) => new AbilityAdapter(CheckReserve, props),
     choose: (props) => new ChooseGameAction(props),
