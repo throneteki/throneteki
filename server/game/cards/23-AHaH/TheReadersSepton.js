@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheReadersSepton extends DrawCard {
     // The Reader's Septon (23003)
@@ -10,14 +11,17 @@ class TheReadersSepton extends DrawCard {
             cost: ability.costs.kneelSelf(),
             choosePlayer: () => true,
             message:
-                "{player} uses {source} to swap the top and bottom card of {chosenPlayer}'s deck.",
-            handler: (context) => {
-                let chosenPlayer = context.chosenPlayer;
-                let topCard = chosenPlayer.drawDeck[0];
-                let bottomCard = chosenPlayer.drawDeck.slice(-1)[0];
-                chosenPlayer.moveCard(topCard, 'draw deck', { bottom: true });
-                chosenPlayer.moveCard(bottomCard, 'draw deck');
-            }
+                "{player} uses {source} to swap the top and bottom card of {chosenPlayer}'s deck",
+            gameAction: GameActions.simultaneously((context) => {
+                const deck = context.chosenPlayer.drawDeck;
+                if (deck.length < 2) {
+                    return [];
+                }
+                return [
+                    GameActions.placeCard({ card: deck[0], location: 'draw deck', bottom: true }),
+                    GameActions.placeCard({ card: deck.at(-1), location: 'draw deck' })
+                ];
+            })
         });
     }
 }

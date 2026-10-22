@@ -1815,9 +1815,6 @@
         "prompt-for-select": 1,
         "add-message": 1
     },
-    "server/game/cards/23-AHaH/TheReadersSepton.js": {
-        "legacy-helper": 2
-    },
     "server/game/cards/23-AHaH/TheSeedIsStrong.js": {
         "this-in-ability": 5,
         "prompt-for-select": 1,
