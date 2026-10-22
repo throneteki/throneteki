@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Jhogo extends DrawCard {
     // Jhogo (15007)
@@ -7,22 +8,20 @@ class Jhogo extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.challengeType === 'military' &&
-                    this.getNumberOfAttackingDothrakis() >= 2
+                    context.source.getNumberOfAttackingDothrakis() >= 2
             },
-            handler: (context) => {
-                let otherPlayer = context.event.challenge.loser;
-                this.game.movePower(otherPlayer.faction, this.controller.faction, 1);
-
-                this.game.addMessage(
-                    "{0} uses {1} to move 1 power from {2}'s faction to their own",
-                    this.controller,
-                    this,
-                    otherPlayer
-                );
-            }
+            message: {
+                format: "{player} uses {source} to move 1 power from {otherPlayer}'s faction to their own",
+                args: { otherPlayer: (context) => context.event.challenge.loser }
+            },
+            gameAction: GameActions.movePower((context) => ({
+                from: context.event.challenge.loser.faction,
+                to: context.player.faction,
+                amount: 1
+            }))
         });
     }
 

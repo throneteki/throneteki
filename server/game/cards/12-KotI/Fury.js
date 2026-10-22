@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Fury extends DrawCard {
     // Fury (12026)
@@ -13,8 +14,11 @@ class Fury extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.isMatch({ winner: this.controller, challengeType: 'power' })
+                afterChallenge: (event, context) =>
+                    event.challenge.isMatch({
+                        winner: context.source.controller,
+                        challengeType: 'power'
+                    })
             },
             cost: ability.costs.kneelSelf(),
             target: {
@@ -25,9 +29,11 @@ class Fury extends DrawCard {
                     card.power > 0
             },
             message: '{player} kneels {source} to move 1 power from {target} to their faction card',
-            handler: (context) => {
-                this.game.movePower(context.target, this.controller.faction, 1);
-            }
+            gameAction: GameActions.movePower((context) => ({
+                from: context.target,
+                to: context.player.faction,
+                amount: 1
+            }))
         });
     }
 }

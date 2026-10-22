@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheSongOfTheSeven extends DrawCard {
     // "The Song of the Seven" (08098)
@@ -8,32 +9,29 @@ class TheSongOfTheSeven extends DrawCard {
         this.reaction({
             max: ability.limit.perRound(1),
             when: {
-                onDominanceDetermined: (event) =>
+                onDominanceDetermined: (event, context) =>
                     event.winner &&
-                    this.controller !== event.winner &&
+                    context.source.controller !== event.winner &&
                     event.winner.faction.power >= 1
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.getType() === 'character' &&
                     card.hasTrait('The Seven')
             },
-            handler: (context) => {
-                let otherPlayer = context.event.winner;
-                let power = Math.min(otherPlayer.faction.power, 2);
-                this.game.movePower(otherPlayer.faction, context.target, power);
-
-                this.game.addMessage(
-                    "{0} plays {1} to move {2} power from {3}'s faction to {4}",
-                    this.controller,
-                    this,
-                    power,
-                    otherPlayer,
-                    context.target
-                );
-            }
+            message: {
+                format: "{player} plays {source} to move power from {otherPlayer}'s faction to {target}",
+                args: {
+                    otherPlayer: (context) => context.event.winner
+                }
+            },
+            gameAction: GameActions.movePower((context) => ({
+                from: context.event.winner.faction,
+                to: context.target,
+                amount: Math.min(context.event.winner.faction.power, 2)
+            }))
         });
     }
 }

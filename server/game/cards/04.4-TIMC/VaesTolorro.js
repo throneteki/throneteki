@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class VaesTolorro extends DrawCard {
     // Vaes Tolorro (04074)
@@ -11,19 +12,20 @@ class VaesTolorro extends DrawCard {
                 onCharacterKilled: (event) => event.card.getPower() >= 1
             },
             cost: ability.costs.kneelSelf(),
-            handler: (context) => {
-                let pendingCard = context.event.card;
-                let power = pendingCard.getPower() >= 2 && pendingCard.getStrength() === 0 ? 2 : 1;
-
-                this.game.movePower(pendingCard, this, power);
-                this.game.addMessage(
-                    '{0} kneels {1} to move {2} power from {3} to {1}',
-                    this.controller,
-                    this,
-                    power,
-                    pendingCard
-                );
-            }
+            message: {
+                format: '{player} kneels {source} to move power from {pendingCard} to {source}',
+                args: {
+                    pendingCard: (context) => context.event.card
+                }
+            },
+            gameAction: GameActions.movePower((context) => ({
+                from: context.event.card,
+                to: context.source,
+                amount:
+                    context.event.card.getPower() >= 2 && context.event.card.getStrength() === 0
+                        ? 2
+                        : 1
+            }))
         });
     }
 }

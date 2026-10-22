@@ -25,11 +25,6 @@
         "add-message": 3,
         "prompt-for-select": 1
     },
-    "server/game/cards/01-Core/AClashOfKings.js": {
-        "this-in-ability": 5,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/01-Core/BenjenStark.js": {
         "this-in-ability": 11,
         "add-message": 1,
@@ -548,11 +543,6 @@
     "server/game/cards/04.3-FFH/RenlyBaratheon.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/04.3-FFH/SerEdmureTully.js": {
-        "legacy-helper": 1,
-        "this-in-ability": 4,
-        "add-message": 1
-    },
     "server/game/cards/04.3-FFH/Spearmaiden.js": {
         "this-in-ability": 5,
         "game-listener": 1,
@@ -587,11 +577,6 @@
     "server/game/cards/04.4-TIMC/TandaStokeworth.js": {
         "this-in-ability": 6,
         "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/04.4-TIMC/VaesTolorro.js": {
-        "legacy-helper": 1,
-        "this-in-ability": 5,
         "add-message": 1
     },
     "server/game/cards/04.4-TIMC/ValarMorghulis.js": {
@@ -1009,11 +994,6 @@
     "server/game/cards/07-WotW/BlackBetha.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/07-WotW/Grenn.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/07-WotW/GrizzledMiner.js": {
         "this-in-ability": 1
     },
@@ -1177,11 +1157,6 @@
     "server/game/cards/08.4-FotOG/SweetCersei.js": {
         "this-in-ability": 5
     },
-    "server/game/cards/08.4-FotOG/WarriorsSons.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/08.4-FotOG/Yunkai.js": {
         "this-in-ability": 12,
         "add-message": 2,
@@ -1211,16 +1186,6 @@
     },
     "server/game/cards/08.5-TFM/TarleTheThriceDrowned.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/08.5-TFM/TheFaithMilitant.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/08.5-TFM/TheSongOfTheSeven.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/08.6-SAT/DriftwoodCudgel.js": {
         "this-in-ability": 11,
@@ -1252,11 +1217,6 @@
         "prompt-for-select": 1,
         "legacy-helper": 1,
         "add-message": 2
-    },
-    "server/game/cards/08.6-SAT/TheBastardOfNightsong.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/08.6-SAT/TheCrowIsATricksyBird.js": {
         "this-in-ability": 8,
@@ -1501,11 +1461,6 @@
         "this-in-ability": 7,
         "add-message": 1
     },
-    "server/game/cards/11.1-TSC/StormlandsFiefdom.js": {
-        "legacy-helper": 1,
-        "this-in-ability": 4,
-        "add-message": 1
-    },
     "server/game/cards/11.2-TMoW/HagensDaughter.js": {
         "this-in-ability": 5,
         "legacy-helper": 1,
@@ -1717,10 +1672,6 @@
         "legacy-helper": 2,
         "add-message": 1
     },
-    "server/game/cards/12-KotI/Fury.js": {
-        "this-in-ability": 3,
-        "legacy-helper": 1
-    },
     "server/game/cards/12-KotI/GoldenStorm.js": {
         "this-in-ability": 14,
         "legacy-helper": 2,
@@ -1769,11 +1720,6 @@
     "server/game/cards/12-KotI/StolenMessage.js": {
         "add-message": 1,
         "this-in-ability": 3
-    },
-    "server/game/cards/12-KotI/TheStarrySept.js": {
-        "this-in-ability": 11,
-        "add-message": 2,
-        "legacy-helper": 2
     },
     "server/game/cards/12-KotI/WestwatchByTheBridge.js": {
         "this-in-ability": 1
@@ -2090,11 +2036,6 @@
     "server/game/cards/15-DotE/Incinerate.js": {
         "prompt-for-select": 1,
         "this-in-ability": 4,
-        "add-message": 1
-    },
-    "server/game/cards/15-DotE/Jhogo.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1,
         "add-message": 1
     },
     "server/game/cards/15-DotE/Khaleesi.js": {
@@ -2508,11 +2449,6 @@
     "server/game/cards/20-HMW/SerLancelLannister.js": {
         "add-message": 1,
         "this-in-ability": 2,
-        "legacy-helper": 1
-    },
-    "server/game/cards/20-HMW/SerRichardHorpe.js": {
-        "this-in-ability": 4,
-        "add-message": 1,
         "legacy-helper": 1
     },
     "server/game/cards/20-HMW/SetDownOurDeeds.js": {

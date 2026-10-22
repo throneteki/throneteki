@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WarriorsSons extends DrawCard {
     // Warrior's Sons (08077)
@@ -8,20 +9,20 @@ class WarriorsSons extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardPlayed: (event) =>
-                    event.player !== this.controller &&
-                    this.isParticipating() &&
+                onCardPlayed: (event, context) =>
+                    event.player !== context.source.controller &&
+                    context.source.isParticipating() &&
                     event.player.faction.power > 0
             },
-            handler: (context) => {
-                this.game.movePower(context.event.player.faction, this, 1);
-                this.game.addMessage(
-                    "{0} moves 1 power from {1}'s faction card to {2}",
-                    context.player,
-                    context.event.player,
-                    this
-                );
-            }
+            message: {
+                format: "{player} moves 1 power from {eventPlayer}'s faction card to {source}",
+                args: { eventPlayer: (context) => context.event.player }
+            },
+            gameAction: GameActions.movePower((context) => ({
+                from: context.event.player.faction,
+                to: context.source,
+                amount: 1
+            }))
         });
     }
 }
