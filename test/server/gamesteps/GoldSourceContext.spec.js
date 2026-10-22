@@ -17,3 +17,27 @@ describe('a gold source granted by a persistent effect', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('a power as gold source granted without a spending condition', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player2: {
+                inPlay: [
+                    {
+                        card: 'Tumblestone Knight',
+                        power: 2,
+                        attachments: [{ card: 'Slander and Lies', owner: 'player1' }]
+                    }
+                ]
+            }
+        });
+    });
+
+    it('can be spent on anything', function () {
+        expect(this.player1Object.getSpendableGold({ activePlayer: this.player1Object })).toBe(
+            this.player1Object.gold + 4
+        );
+        expect(this.player1).isReadyToTakeAction();
+    });
+});

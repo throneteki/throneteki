@@ -1203,7 +1203,7 @@ const Effects = {
             }
         };
     },
-    canSpendGold: function (allowSpendingFunc) {
+    canSpendGold: function (allowSpendingFunc = () => true) {
         return {
             apply: function (card, context) {
                 let goldSource = new GoldSource(card, (spendParams) =>
@@ -1220,7 +1220,7 @@ const Effects = {
             }
         };
     },
-    canSpendPowerAsGold: function (allowSpendingFunc) {
+    canSpendPowerAsGold: function (allowSpendingFunc = () => true) {
         return {
             apply: function (card, context) {
                 let goldSource = new PowerAsGoldSource(card, (spendParams) =>
