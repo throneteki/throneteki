@@ -16,12 +16,6 @@
         "add-message": 3,
         "prompt-for-select": 1
     },
-    "server/game/cards/01-Core/ChamberOfThePaintedTable.js": {
-        "this-in-ability": 8,
-        "prompt-for-select": 1,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/01-Core/ConsolidationOfPower.js": {
         "add-message": 2,
         "this-in-ability": 6,
@@ -202,11 +196,6 @@
     "server/game/cards/04.3-FFH/NightGathers.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/04.3-FFH/TheScorpionsSting.js": {
-        "this-in-ability": 6,
-        "prompt-for-select": 1,
-        "add-message": 1
-    },
     "server/game/cards/04.4-TIMC/CaswellsKeep.js": {
         "this-in-ability": 9,
         "legacy-helper": 2,
@@ -327,11 +316,6 @@
         "this-in-ability": 7,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/06.4-TRW/SavingTheKingdom.js": {
-        "legacy-helper": 2,
-        "this-in-ability": 11,
-        "add-message": 2
     },
     "server/game/cards/06.5-OR/DornishRevenge.js": {
         "this-in-ability": 10,
@@ -588,11 +572,6 @@
     },
     "server/game/cards/11.3-SoKL/KingsLanding.js": {
         "this-in-ability": 5
-    },
-    "server/game/cards/11.3-SoKL/PoorFellows.js": {
-        "this-in-ability": 8,
-        "add-message": 3,
-        "legacy-helper": 2
     },
     "server/game/cards/11.3-SoKL/ValyriansCrew.js": {
         "this-in-ability": 9,
@@ -876,10 +855,6 @@
         "this-in-ability": 6,
         "add-message": 1
     },
-    "server/game/cards/15-DotE/TormundGiantsbane.js": {
-        "this-in-ability": 8,
-        "add-message": 1
-    },
     "server/game/cards/15-DotE/WombOfTheWorld.js": {
         "prompt-for-select": 1,
         "this-in-ability": 4,
@@ -1084,11 +1059,6 @@
         "this-in-ability": 4,
         "add-message": 1
     },
-    "server/game/cards/20-HMW/WeGuardtheWay.js": {
-        "this-in-ability": 4,
-        "prompt-for-select": 1,
-        "add-message": 1
-    },
     "server/game/cards/20-HMW/WeLightTheWay.js": {
         "this-in-ability": 10,
         "add-message": 1,
@@ -1265,10 +1235,6 @@
     },
     "server/game/cards/25.4-TTS/NymeriaOfNySar.js": {
         "this-in-ability": 5
-    },
-    "server/game/cards/25.4-TTS/Varys.js": {
-        "this-in-ability": 2,
-        "add-message": 1
     },
     "server/game/cards/25.5-TIC/BoltonLoyalist.js": {
         "this-in-ability": 5,

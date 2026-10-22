@@ -12,44 +12,36 @@ class Varys extends DrawCard {
         this.action({
             title: 'Name a card',
             cost: ability.costs.discardGold(),
+            limit: ability.limit.perPhase(1),
             message: '{player} discards 1 gold from {source} to name a card',
-            handler: (context) => {
-                this.game.promptForCardName({
-                    player: context.player,
-                    onSelect: (player, cardName) => this.selectCardName(cardName),
-                    source: context.source
-                });
-            }
+            gameAction: GameActions.nameCard({
+                message:
+                    'Until the end of the phase, {cardName} cannot be marshaled, played or put into play',
+                gameAction: GameActions.lastingEffect((context) => {
+                    const named = (card) =>
+                        card.name.toLowerCase() === context.namedCard.toLowerCase();
+                    return {
+                        duration: 'untilEndOfPhase',
+                        targetController: 'any',
+                        effect: [
+                            ability.effects.cannotMarshal(named),
+                            ability.effects.cannotPlay(named),
+                            ability.effects.cannotPutIntoPlay(named)
+                        ]
+                    };
+                })
+            })
         });
-
         this.reaction({
             when: {
                 onPlotRevealed: (event) => event.plot.hasTrait('Scheme')
             },
             message: '{player} uses {source} to place 1 gold on {source}',
-            gameAction: GameActions.placeToken({ card: this, token: Tokens.gold })
+            gameAction: GameActions.placeToken((context) => ({
+                card: context.source,
+                token: Tokens.gold
+            }))
         });
-    }
-
-    selectCardName(cardName) {
-        this.game.addMessage(
-            'Until the end of the phase, {0} cannot be marshaled, played or put into play',
-            cardName
-        );
-        this.untilEndOfPhase((ability) => ({
-            targetController: 'any',
-            effect: [
-                ability.effects.cannotMarshal(
-                    (card) => card.name.toLowerCase() === cardName.toLowerCase()
-                ),
-                ability.effects.cannotPlay(
-                    (card) => card.name.toLowerCase() === cardName.toLowerCase()
-                ),
-                ability.effects.cannotPutIntoPlay(
-                    (card) => card.name.toLowerCase() === cardName.toLowerCase()
-                )
-            ]
-        }));
     }
 }
 

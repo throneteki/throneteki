@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class PoorFellows extends DrawCard {
     // Poor Fellows (11057)
@@ -8,48 +9,35 @@ class PoorFellows extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.isAttacking() &&
-                    this.canChangeGameState()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
+                    event.challenge.isAttacking(context.source)
             },
-            handler: (context) => {
-                let opponent = context.event.challenge.loser;
-                this.game.addMessage(
-                    '{0} uses {1} to have {2} choose between drawing 1 card or gaining 1 power',
-                    context.player,
-                    this,
-                    opponent
-                );
-
-                this.game.promptWithMenu(opponent, this, {
-                    activePrompt: {
-                        menuTitle: 'Opponent draws 1 card or Poor Fellows gains 1 power?',
-                        buttons: [
-                            { text: 'Draws card', method: 'draw' },
-                            { text: 'Gains power', method: 'gainsPower' }
-                        ]
+            message: {
+                format: '{player} uses {source} to have {loser} choose between drawing 1 card or gaining 1 power',
+                args: { loser: (context) => context.event.challenge.loser }
+            },
+            gameAction: GameActions.choose({
+                player: (context) => context.event.challenge.loser,
+                title: 'Opponent draws 1 card or Poor Fellows gains 1 power?',
+                choices: {
+                    'Draws card': {
+                        message: '{player} draws 1 card',
+                        gameAction: GameActions.drawCards((context) => ({
+                            player: context.player,
+                            amount: 1
+                        }))
                     },
-                    source: this
-                });
-            }
+                    'Gains power': {
+                        message: '{player} gains 1 power on {source}',
+                        gameAction: GameActions.gainPower((context) => ({
+                            card: context.source,
+                            amount: 1
+                        }))
+                    }
+                }
+            })
         });
-    }
-
-    draw() {
-        this.controller.drawCardsToHand(1);
-        this.game.addMessage('{0} draws 1 card', this.controller);
-        return true;
-    }
-
-    gainsPower() {
-        this.modifyPower(1);
-        this.game.addMessage('{0} gains 1 power on {1}', this.controller, this);
-        return true;
-    }
-
-    canChangeGameState() {
-        return this.canGainPower() || this.controller.canDraw();
     }
 }
 
