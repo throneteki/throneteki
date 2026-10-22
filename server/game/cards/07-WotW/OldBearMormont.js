@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class OldBearMormont extends DrawCard {
     // Old Bear Mormont (07003)
@@ -8,8 +9,9 @@ class OldBearMormont extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isParticipating()
             },
             target: {
                 cardCondition: (card, context) =>
@@ -17,20 +19,16 @@ class OldBearMormont extends DrawCard {
                     card.getType() === 'character' &&
                     card.controller === context.event.challenge.loser &&
                     card.location === 'discard pile' &&
-                    this.controller.canPutIntoPlay(card)
+                    context.source.controller.canPutIntoPlay(card)
             },
-            handler: (context) => {
-                let originalPlayer = context.target.controller;
-                this.controller.putIntoPlay(context.target);
-
-                this.game.addMessage(
-                    "{0} uses {1} to put {2} into play under their control from {3}'s discard pile",
-                    this.controller,
-                    this,
-                    context.target,
-                    originalPlayer
-                );
-            }
+            message: {
+                format: "{player} uses {source} to put {target} into play under their control from {originalPlayer}'s discard pile",
+                args: { originalPlayer: (context) => context.target.controller }
+            },
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 }

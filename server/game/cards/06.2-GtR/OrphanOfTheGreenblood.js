@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class OrphanOfTheGreenblood extends DrawCard {
     // Orphan of the Greenblood (06035)
@@ -10,21 +11,14 @@ class OrphanOfTheGreenblood extends DrawCard {
             title: 'Discard 1 gold from ' + this.name,
             cost: ability.costs.discardGold(),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
-                    card !== this &&
+                    card.controller === context.source.controller &&
+                    card !== context.source &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                context.target.owner.returnCardToHand(context.target);
-                this.game.addMessage(
-                    '{0} discards 1 gold from {1} to return {2} to their hand',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} discards 1 gold from {source} to return {target} to their hand',
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 }

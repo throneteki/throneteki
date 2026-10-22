@@ -1,4 +1,5 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheWhiteShadows extends PlotCard {
     // The White Shadows (07050)
@@ -6,22 +7,23 @@ class TheWhiteShadows extends PlotCard {
     // control. While that character is in play, treat its printed text box as if it were blank. At
     // the end of the phase, if that card is still in play, place it in its owner's dead pile
     // (cannot be saved).
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCharacterKilled: (event) =>
-                    this.controller !== event.cardStateWhenKilled.controller
+                onCharacterKilled: (event, context) =>
+                    context.source.controller !== event.cardStateWhenKilled.controller
             },
-            handler: (context) => {
-                this.controller.putIntoPlay(context.event.card);
-                this.game.addMessage(
-                    '{0} uses {1} to put {2} into play under their control, blank',
-                    this.controller,
-                    this,
-                    context.event.card
-                );
-
-                this.atEndOfPhase((ability) => ({
+            message: {
+                format: '{player} uses {source} to put {card} into play under their control, blank',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.simultaneously([
+                GameActions.putIntoPlay((context) => ({
+                    player: context.player,
+                    card: context.event.card
+                })),
+                GameActions.lastingEffect((context) => ({
+                    duration: 'atEndOfPhase',
                     match: context.event.card,
                     condition: () =>
                         ['play area', 'duplicate'].includes(context.event.card.location),
@@ -30,8 +32,8 @@ class TheWhiteShadows extends PlotCard {
                         ability.effects.fullBlank,
                         ability.effects.moveToDeadPileIfStillInPlay()
                     ]
-                }));
-            }
+                }))
+            ])
         });
     }
 }

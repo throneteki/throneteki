@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Satin extends DrawCard {
     // Satin (07013)
@@ -8,26 +9,19 @@ class Satin extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardKneeled: (event) => event.card === this
+                onCardKneeled: (event, context) => event.card === context.source
             },
             limit: ability.limit.perPhase(2),
             target: {
-                cardCondition: (card) =>
-                    card !== this &&
+                cardCondition: (card, context) =>
+                    card !== context.source &&
                     card.location === 'play area' &&
                     card.hasTrait('Steward') &&
                     card.getType() === 'character' &&
                     card.kneeled
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to stand {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

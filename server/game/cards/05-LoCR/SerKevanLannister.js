@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerKevanLannister extends DrawCard {
     // Ser Kevan Lannister (05003)
@@ -7,25 +8,22 @@ class SerKevanLannister extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this && event.playingType === 'marshal'
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source && event.playingType === 'marshal'
             },
             target: {
                 activePromptTitle: 'Select a location or attachment',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'discard pile' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     (card.isFaction('lannister') || card.isFaction('neutral')) &&
                     (card.getType() === 'location' || card.getType() === 'attachment')
             },
-            handler: (context) => {
-                this.controller.putIntoPlay(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to put {2} into play',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to put {target} into play',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 }

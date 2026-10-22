@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RedKeepSpy extends DrawCard {
     // Red Keep Spy (05012)
@@ -9,26 +10,22 @@ class RedKeepSpy extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.playingType === 'ambush' && this === event.card
+                onCardEntersPlay: (event, context) =>
+                    event.playingType === 'ambush' && context.source === event.card
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller !== this.controller &&
-                    card.controller.getHandCount() < this.controller.getHandCount() &&
+                    card.controller !== context.source.controller &&
+                    card.controller.getHandCount() < context.source.controller.getHandCount() &&
                     card.getType() === 'character' &&
                     card.getPrintedCost() <= 3
             },
-            handler: (context) => {
-                context.target.owner.returnCardToHand(context.target);
-                this.game.addMessage(
-                    "{0} uses {1} to return {2} to {3}'s hand",
-                    this.controller,
-                    this,
-                    context.target,
-                    context.target.controller
-                );
-            }
+            message: {
+                format: "{player} uses {source} to return {target} to {controller}'s hand",
+                args: { controller: (context) => context.target.controller }
+            },
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 }

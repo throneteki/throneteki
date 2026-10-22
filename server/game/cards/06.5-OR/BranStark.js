@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BranStark extends DrawCard {
     // Bran Stark (06081)
@@ -14,25 +15,19 @@ class BranStark extends DrawCard {
                     card.hasTrait('Direwolf') &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                this.game.promptForIcon(this.controller, this, (icon) => {
-                    context.target.controller.standCard(context.target);
-
-                    this.untilEndOfPhase((ability) => ({
-                        match: context.target,
-                        effect: ability.effects.addIcon(icon)
-                    }));
-
-                    this.game.addMessage(
-                        '{0} kneels {1} to stand and give {2} {3} icon to {4} until the end of the phase',
-                        this.controller,
-                        this,
-                        icon === 'intrigue' ? 'an' : 'a',
-                        icon,
-                        context.target
-                    );
-                });
-            }
+            gameAction: GameActions.chooseIcon({
+                message:
+                    '{player} kneels {source} to stand and give {icon} icon to {target} until the end of the phase',
+                gameAction: (icon) =>
+                    GameActions.simultaneously([
+                        GameActions.standCard((context) => ({ card: context.target })),
+                        GameActions.lastingEffect((context) => ({
+                            duration: 'untilEndOfPhase',
+                            match: context.target,
+                            effect: ability.effects.addIcon(icon)
+                        }))
+                    ])
+            })
         });
     }
 }

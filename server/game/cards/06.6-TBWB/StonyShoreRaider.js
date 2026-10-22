@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class StonyShoreRaider extends DrawCard {
     // Stony Shore Raider (06111)
@@ -18,15 +19,8 @@ class StonyShoreRaider extends DrawCard {
                     !card.kneeled
             },
             limit: ability.limit.perRound(1),
-            handler: (context) => {
-                context.target.controller.kneelCard(context.target);
-                this.game.addMessage(
-                    '{0} discards 1 gold from {1} to kneel {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} discards 1 gold from {source} to kneel {target}',
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target }))
         });
     }
 }

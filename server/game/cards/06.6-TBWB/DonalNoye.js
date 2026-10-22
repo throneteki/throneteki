@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class DonalNoye extends DrawCard {
     // Donal Noye (06105)
@@ -10,21 +11,17 @@ class DonalNoye extends DrawCard {
             cost: ability.costs.discardGold(),
             target: {
                 activePromptTitle: 'Select an attachment',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'hand' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.hasTrait('weapon') &&
                     card.getType() === 'attachment'
             },
-            handler: (context) => {
-                context.player.putIntoPlay(context.target);
-                this.game.addMessage(
-                    '{0} discards 1 gold from {1} to put {2} into play',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} discards 1 gold from {source} to put {target} into play',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 }

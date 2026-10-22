@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Freedmen extends DrawCard {
     // Freedmen (06113)
@@ -7,21 +8,18 @@ class Freedmen extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    event.challenge.attackingPlayer === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    event.challenge.attackingPlayer === context.source.controller &&
                     event.challenge.strengthDifference >= 5 &&
-                    this.controller.canPutIntoPlay(this)
+                    context.source.controller.canPutIntoPlay(context.source)
             },
             location: 'discard pile',
-            handler: (context) => {
-                this.controller.putIntoPlay(this);
-                this.game.addMessage(
-                    '{0} puts {1} into play from their discard pile',
-                    context.player,
-                    this
-                );
-            }
+            message: '{player} puts {source} into play from their discard pile',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.source
+            }))
         });
     }
 }

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerAxellFlorent extends DrawCard {
     // Ser Axell Florent (06067)
@@ -8,8 +9,9 @@ class SerAxellFlorent extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isParticipating()
             },
             cost: ability.costs.discardGold(),
             target: {
@@ -18,15 +20,8 @@ class SerAxellFlorent extends DrawCard {
                     card.getType() === 'character' &&
                     card.attachments.length === 0
             },
-            handler: (context) => {
-                context.target.controller.kneelCard(context.target);
-                this.game.addMessage(
-                    '{0} discards 1 gold from {1} to kneel {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} discards 1 gold from {source} to kneel {target}',
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target }))
         });
     }
 }
