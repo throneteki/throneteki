@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class WalkOfAtonement extends DrawCard {
     // Walk of Atonement (11090)
@@ -9,30 +10,23 @@ class WalkOfAtonement extends DrawCard {
         this.action({
             title: 'Discard cards and draw',
             phase: 'dominance',
-            condition: () => this.controller.canDraw() || this.anyOpponentHasCards(this.controller),
             cost: ability.costs.discardAnyPower((card) => card.getType() === 'character'),
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} plays {1} and discards {2} power from {3} to discard {4} from each opponent and draw {4}',
-                    context.player,
-                    this,
-                    context.xValue,
-                    context.costs.discardPower,
-                    TextHelper.count(context.xValue, 'card')
-                );
-
-                for (let opponent of this.game.getOpponents(context.player)) {
-                    opponent.discardAtRandom(context.xValue);
+            message: {
+                format: '{player} plays {source} and discards {xValue} power from {costs.discardPower} to discard {cards} from each opponent and draw {cards}',
+                args: {
+                    xValue: (context) => context.xValue,
+                    cards: (context) => TextHelper.count(context.xValue, 'card')
                 }
-
-                context.player.drawCardsToHand(context.xValue);
-            }
+            },
+            gameAction: GameActions.simultaneously((context) => [
+                ...context.game
+                    .getOpponents(context.player)
+                    .map((opponent) =>
+                        GameActions.discardAtRandom({ player: opponent, amount: context.xValue })
+                    ),
+                GameActions.drawCards({ player: context.player, amount: context.xValue })
+            ])
         });
-    }
-
-    anyOpponentHasCards(player) {
-        let opponents = this.game.getOpponents(player);
-        return opponents.some((opponent) => opponent.hand.length > 0);
     }
 }
 

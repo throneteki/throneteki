@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheSeastoneChair extends DrawCard {
     // The Seastone Chair (02011)
@@ -8,32 +9,26 @@ class TheSeastoneChair extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onClaimApplied: (event) =>
+                onClaimApplied: (event, context) =>
                     event.challenge &&
                     event.challenge.isUnopposed() &&
                     event.challenge.challengeType === 'military' &&
-                    event.challenge.attackingPlayer === this.controller
+                    event.challenge.attackingPlayer === context.player
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.controller === this.game.currentChallenge.loser &&
-                    card.attachments.length === 0,
-                gameAction: 'kill'
+                    card.controller === context.event.challenge.loser &&
+                    card.attachments.length === 0
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} and kneels their faction card to kill {2} instead of normal claim effects',
-                    this.controller,
-                    this,
-                    context.target
-                );
-                context.replaceHandler(() => {
-                    context.target.controller.killCharacter(context.target);
-                });
-            }
+            message:
+                '{player} uses {source} and kneels their faction card to kill {target} instead of normal claim effects',
+            gameAction: GameActions.replaceEvent((context) => ({
+                event: context.event,
+                replacement: GameActions.kill({ card: context.target })
+            }))
         });
     }
 }

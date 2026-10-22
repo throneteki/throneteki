@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class DagmerCleftjaw extends DrawCard {
     // Dagmer Cleftjaw (02111)
@@ -9,31 +10,31 @@ class DagmerCleftjaw extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onClaimApplied: (event) =>
+                onClaimApplied: (event, context) =>
                     event.challenge &&
-                    event.challenge.isMatch({ winner: this.controller, attackingAlone: this })
+                    event.challenge.isMatch({
+                        winner: context.player,
+                        attackingAlone: context.source
+                    })
             },
             target: {
                 activePromptTitle: 'Select a location',
-                source: this,
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'location' &&
                     card.getPrintedCost() <= 3 &&
                     !card.isLimited() &&
-                    card.controller === this.game.currentChallenge.loser
+                    card.controller === context.event.challenge.loser
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to take control of {2} instead of normal claim effects',
-                    context.player,
-                    this,
-                    context.target
-                );
-                context.replaceHandler(() => {
-                    this.game.takeControl(context.player, context.target);
-                });
-            }
+            message:
+                '{player} uses {source} to take control of {target} instead of normal claim effects',
+            gameAction: GameActions.replaceEvent((context) => ({
+                event: context.event,
+                replacement: GameActions.takeControl({
+                    player: context.player,
+                    card: context.target
+                })
+            }))
         });
     }
 }

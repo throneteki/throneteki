@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Crannogmen extends DrawCard {
     // Crannogmen (23011)
@@ -9,31 +10,29 @@ class Crannogmen extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onClaimApplied: (event) =>
+                onClaimApplied: (event, context) =>
                     event.challenge &&
                     event.challenge.isMatch({
-                        winner: this.controller,
+                        winner: context.player,
                         challengeType: 'intrigue'
                     }) &&
-                    this.isAttacking()
+                    context.source.isAttacking()
             },
             target: {
                 cardCondition: {
                     type: 'character',
                     location: 'play area',
                     printedCostOrLower: 3,
-                    conditon: (card, context) => card.controller === context.event.challenge.loser
-                },
-                gameAction: 'kill'
+                    condition: (card, context) => card.controller === context.event.challenge.loser
+                }
             },
             cost: ability.costs.putSelfIntoShadows(),
             message:
                 '{player} returns {source} to shadows to kill {target} instead of the normal claim effects',
-            handler: (context) => {
-                context.replaceHandler(() => {
-                    this.game.killCharacter(context.target);
-                });
-            }
+            gameAction: GameActions.replaceEvent((context) => ({
+                event: context.event,
+                replacement: GameActions.kill({ card: context.target })
+            }))
         });
     }
 }

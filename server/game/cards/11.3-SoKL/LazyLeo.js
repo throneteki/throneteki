@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LazyLeo extends DrawCard {
     // Lazy Leo (11043)
@@ -8,7 +9,7 @@ class LazyLeo extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             target: {
                 type: 'select',
@@ -18,21 +19,11 @@ class LazyLeo extends DrawCard {
                 mode: 'unlimited',
                 singleController: true
             },
-            handler: (context) => {
-                for (let card of context.target) {
-                    card.owner.moveCard(card, 'draw deck', {}, () => {
-                        card.owner.shuffleDrawDeck();
-                    });
-                }
-
-                this.game.addMessage(
-                    "{0} uses {1} to shuffle {2} into {3}'s deck",
-                    context.player,
-                    this,
-                    context.target,
-                    context.target[0].owner
-                );
-            }
+            message: {
+                format: "{player} uses {source} to shuffle {target} into {owner}'s deck",
+                args: { owner: (context) => context.target[0].owner }
+            },
+            gameAction: GameActions.shuffleIntoDeck((context) => ({ cards: context.target }))
         });
     }
 }

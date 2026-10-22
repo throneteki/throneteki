@@ -111,11 +111,6 @@
         "add-message": 2,
         "legacy-helper": 2
     },
-    "server/game/cards/02.1-TtB/TheSeastoneChair.js": {
-        "this-in-ability": 5,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/02.2-TRtW/BrothelMadame.js": {
         "event-registration": 1,
         "this-in-ability": 15,
@@ -180,11 +175,6 @@
         "add-message": 2,
         "prompt-for-select": 1
     },
-    "server/game/cards/02.4-NMG/Loot.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/02.4-NMG/PaidOff.js": {
         "this-in-ability": 14,
         "legacy-helper": 3,
@@ -203,11 +193,6 @@
         "this-in-ability": 5,
         "prompt-for-select": 1,
         "add-message": 1
-    },
-    "server/game/cards/02.6-TS/DagmerCleftjaw.js": {
-        "this-in-ability": 6,
-        "add-message": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/03-WotN/AryasGift.js": {
         "this-in-ability": 3,
@@ -301,11 +286,6 @@
         "game-listener": 1,
         "add-message": 2,
         "legacy-helper": 1
-    },
-    "server/game/cards/04.5-GoH/Craster.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/04.5-GoH/RitualOfRhllor.js": {
         "this-in-ability": 7,
@@ -626,11 +606,6 @@
         "legacy-helper": 2,
         "add-message": 1
     },
-    "server/game/cards/08.6-SAT/Godswood.js": {
-        "this-in-ability": 9,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/08.6-SAT/KingAtTheWall.js": {
         "this-in-ability": 9,
         "legacy-helper": 1,
@@ -790,11 +765,6 @@
         "this-in-ability": 9,
         "prompt-for-select": 1
     },
-    "server/game/cards/11.1-TSC/NighttimeMarauders.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 1,
-        "add-message": 2
-    },
     "server/game/cards/11.2-TMoW/HagensDaughter.js": {
         "this-in-ability": 5,
         "legacy-helper": 1,
@@ -836,11 +806,6 @@
     },
     "server/game/cards/11.3-SoKL/KingsLanding.js": {
         "this-in-ability": 5
-    },
-    "server/game/cards/11.3-SoKL/LazyLeo.js": {
-        "this-in-ability": 3,
-        "legacy-helper": 2,
-        "add-message": 1
     },
     "server/game/cards/11.3-SoKL/PoorFellows.js": {
         "this-in-ability": 8,
@@ -899,11 +864,6 @@
     "server/game/cards/11.5-IDP/HeCallsItThinking.js": {
         "this-in-ability": 6,
         "add-message": 2
-    },
-    "server/game/cards/11.5-IDP/WalkOfAtonement.js": {
-        "this-in-ability": 6,
-        "add-message": 1,
-        "legacy-helper": 2
     },
     "server/game/cards/11.6-DitD/AssaultFromTheShadows.js": {
         "this-in-ability": 4,
@@ -973,10 +933,6 @@
         "legacy-helper": 3,
         "add-message": 1
     },
-    "server/game/cards/12-KotI/StolenMessage.js": {
-        "add-message": 1,
-        "this-in-ability": 3
-    },
     "server/game/cards/13.1-AtG/BaelorBlacktyde.js": {
         "this-in-ability": 1
     },
@@ -1027,9 +983,6 @@
     "server/game/cards/13.2-CoS/ShadowPolitics.js": {
         "this-in-ability": 4
     },
-    "server/game/cards/13.2-CoS/TheFowlerTwins.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/13.3-PoS/MelleonsTome.js": {
         "this-in-ability": 13,
         "legacy-helper": 1,
@@ -1043,9 +996,6 @@
     "server/game/cards/13.3-PoS/TheFaithsDecree.js": {
         "this-in-ability": 3,
         "add-message": 1
-    },
-    "server/game/cards/13.3-PoS/TheMostDevout.js": {
-        "this-in-ability": 5
     },
     "server/game/cards/13.4-BtRK/ShadowOfTheIsles.js": {
         "this-in-ability": 5,
@@ -1612,10 +1562,6 @@
     "server/game/cards/23-AHaH/ATraitorsWhisper.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/23-AHaH/Crannogmen.js": {
-        "this-in-ability": 3,
-        "legacy-helper": 1
-    },
     "server/game/cards/23-AHaH/DoranMartell.js": {
         "this-in-ability": 2
     },
@@ -1845,10 +1791,6 @@
     "server/game/cards/26.5-JfE/TheDoomOfValyria.js": {
         "this-in-ability": 8,
         "add-message": 1
-    },
-    "server/game/cards/26.5-JfE/WhiteGraces.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 2
     },
     "server/game/cards/26.6-NCbT/ArmedToTheTeeth.js": {
         "event-registration": 1,

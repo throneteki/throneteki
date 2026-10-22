@@ -9,32 +9,23 @@ class TheMostDevout extends DrawCard {
     // entered play under that player's control this phase, The Most Devout gains 1 power. (Limit
     // once per phase.)
     setupCardAbilities(ability) {
-        this.tracker = CardEntersPlayTracker.forPhase(this.game);
+        const tracker = CardEntersPlayTracker.forPhase(this.game);
 
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    this.canGainPower() &&
-                    event.card.controller !== this.controller &&
+                onCardEntersPlay: (event, context) =>
+                    event.card.controller !== context.player &&
                     event.card.getType() === 'character' &&
-                    this.getNumOfCharactersEnteringPlay(event.card.controller) > 1
+                    tracker.events.filter(
+                        (entered) =>
+                            entered.card.controller === event.card.controller &&
+                            entered.card.getType() === 'character'
+                    ).length > 1
             },
             message: '{player} uses {source} to gain 1 power',
-            handler: () => {
-                this.game.resolveGameAction(GameActions.gainPower({ card: this, amount: 1 }));
-            },
+            gameAction: GameActions.gainPower((context) => ({ card: context.source, amount: 1 })),
             limit: ability.limit.perPhase(1)
         });
-    }
-
-    getNumOfCharactersEnteringPlay(opponent) {
-        return this.tracker.events.reduce((count, event) => {
-            if (event.card.controller === opponent && event.card.getType() === 'character') {
-                return count + 1;
-            }
-
-            return count;
-        }, 0);
     }
 }
 

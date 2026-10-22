@@ -6,6 +6,7 @@ import ChooseGameAction from './GameActions/ChooseGameAction.js';
 import ForEachSelection from './GameActions/ForEachSelection.js';
 import HandlerGameActionWrapper from './GameActions/HandlerGameActionWrapper.js';
 import SimultaneousActions from './GameActions/SimultaneousActions.js';
+import AnyNumberCost from './costs/AnyNumberCost.js';
 import SelectCardCost from './costs/SelectCardCost.js';
 import StackProperty from './PropertyTypes/StackProperty.js';
 import { Requirements } from './Constants/index.js';
@@ -361,12 +362,27 @@ class BaseAbility {
      * @returns {Boolean}
      */
     isGameActionAllowed(context) {
-        if (this.gameActionDependsOnChoices) {
+        if (this.gameActionDependsOnChoices || BaseAbility.choosesXWhilePaying(this, context)) {
             return true;
         }
 
         return this.executeWithTemporaryContext(context, 'effect', () =>
             this.gameAction.allow(context)
+        );
+    }
+
+    /**
+     * Whether X is chosen while the costs are paid, so the game action can't be checked before.
+     */
+    static choosesXWhilePaying(ability, context) {
+        if (context.xValue !== undefined) {
+            return false;
+        }
+
+        const xValueDefinition = context.source && context.source.xValueDefinition;
+        return (
+            ability.cost.some((cost) => cost instanceof AnyNumberCost) ||
+            (!!xValueDefinition && xValueDefinition.needsChoice())
         );
     }
 
