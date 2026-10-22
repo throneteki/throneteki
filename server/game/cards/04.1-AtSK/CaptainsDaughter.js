@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class CaptainsDaughter extends DrawCard {
     // Captain's Daughter (04012)
@@ -8,21 +9,17 @@ class CaptainsDaughter extends DrawCard {
         this.reaction({
             when: {
                 onCardEntersPlay: (event) =>
-                    !event.card.isLoyal() &&
-                    event.card.getType() === 'character' &&
-                    event.card.controller !== this.controller
+                    !event.card.isLoyal() && event.card.getType() === 'character'
             },
             cost: [ability.costs.sacrificeSelf(), ability.costs.kneelFactionCard()],
-            handler: (context) => {
-                context.event.card.owner.moveCard(context.event.card, 'draw deck');
-                this.game.addMessage(
-                    "{0} sacrifices {1} and kneels their faction card to place {2} on top of {3}'s deck",
-                    context.player,
-                    this,
-                    context.event.card,
-                    context.event.card.owner
-                );
-            }
+            message: {
+                format: "{player} sacrifices {source} and kneels their faction card to place {card} on top of {owner}'s deck",
+                args: {
+                    card: (context) => context.event.card,
+                    owner: (context) => context.event.card.owner
+                }
+            },
+            gameAction: GameActions.returnCardToDeck((context) => ({ card: context.event.card }))
         });
     }
 }

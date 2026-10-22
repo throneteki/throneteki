@@ -9,7 +9,7 @@ describe('Marched to the Wall', function () {
                 },
                 player2: {
                     plotDeck: ['A Song of Summer'],
-                    inPlay: [{ card: 'Hedge Knight', dupes: 1 }, 'House Dayne Knight']
+                    inPlay: [{ card: 'Robb Stark (Core)', dupes: 1 }, 'House Dayne Knight']
                 }
             });
 
@@ -20,20 +20,20 @@ describe('Marched to the Wall', function () {
 
         it('has each player choose a character they control', function () {
             expect(this.player1).toBeAbleToSelect(this.tumblestoneKnight);
-            expect(this.player1).not.toBeAbleToSelect(this.hedgeKnight);
+            expect(this.player1).not.toBeAbleToSelect(this.robbStark);
 
             this.player1.clickCard(this.tumblestoneKnight);
-            this.player2.clickCard(this.hedgeKnight);
+            this.player2.clickCard(this.robbStark);
 
             expect(this.player1).isReadyToTakeAction();
         });
 
         it('discards the chosen characters, which cannot be saved', function () {
             this.player1.clickCard(this.winterfellSteward);
-            this.player2.clickCard(this.hedgeKnight);
+            this.player2.clickCard(this.robbStark);
 
             expect(this.winterfellSteward.location).toBe('discard pile');
-            expect(this.hedgeKnight.location).toBe('discard pile');
+            expect(this.robbStark.location).toBe('discard pile');
             expect(this.tumblestoneKnight.location).toBe('play area');
             expect(this.houseDayneKnight.location).toBe('play area');
             expect(this.player1).isReadyToTakeAction();

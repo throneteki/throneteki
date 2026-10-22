@@ -69,11 +69,6 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/01-Core/Rebuilding.js": {
-        "legacy-helper": 2,
-        "add-message": 1,
-        "this-in-ability": 2
-    },
     "server/game/cards/01-Core/RisenFromTheSea.js": {
         "this-in-ability": 15,
         "legacy-helper": 1,
@@ -317,20 +312,10 @@
         "add-message": 2,
         "prompt-for-select": 1
     },
-    "server/game/cards/04.1-AtSK/CaptainsDaughter.js": {
-        "this-in-ability": 3,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/04.1-AtSK/RubyOfRhllor.js": {
         "this-in-ability": 4,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/04.1-AtSK/TheDragonsTail.js": {
-        "this-in-ability": 5,
-        "legacy-helper": 2,
-        "add-message": 1
     },
     "server/game/cards/04.1-AtSK/VaryssRiddle.js": {
         "this-in-ability": 13,
@@ -368,11 +353,6 @@
         "legacy-helper": 2,
         "add-message": 1
     },
-    "server/game/cards/04.4-TIMC/IsleOfRavens.js": {
-        "legacy-helper": 2,
-        "add-message": 1,
-        "this-in-ability": 3
-    },
     "server/game/cards/04.4-TIMC/JaqenHGhar.js": {
         "event-registration": 1,
         "this-in-ability": 9,
@@ -387,11 +367,6 @@
     },
     "server/game/cards/04.5-GoH/Craster.js": {
         "this-in-ability": 4,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/04.5-GoH/GhostsOfHarrenhal.js": {
-        "this-in-ability": 3,
         "legacy-helper": 1,
         "add-message": 1
     },
@@ -419,11 +394,6 @@
         "this-in-ability": 20,
         "add-message": 3,
         "legacy-helper": 2
-    },
-    "server/game/cards/04.6-TC/BattleOfTheBlackwater.js": {
-        "this-in-ability": 4,
-        "add-message": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/04.6-TC/HouseOfTheUndying.js": {
         "this-in-ability": 1,
@@ -540,10 +510,6 @@
         "prompt-for-select": 1,
         "legacy-helper": 2
     },
-    "server/game/cards/06.2-GtR/Polliver.js": {
-        "this-in-ability": 5,
-        "add-message": 1
-    },
     "server/game/cards/06.2-GtR/SecondSons.js": {
         "this-in-ability": 7,
         "legacy-helper": 2,
@@ -646,11 +612,6 @@
     "server/game/cards/06.6-TBWB/LockedAway.js": {
         "legacy-helper": 1,
         "this-in-ability": 7,
-        "add-message": 1
-    },
-    "server/game/cards/06.6-TBWB/NorthernKeep.js": {
-        "this-in-ability": 5,
-        "legacy-helper": 1,
         "add-message": 1
     },
     "server/game/cards/06.6-TBWB/PayTheIronPrice.js": {
@@ -984,11 +945,6 @@
         "this-in-ability": 11,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/11.1-TSC/BurningTheDead.js": {
-        "this-in-ability": 5,
-        "legacy-helper": 2,
-        "add-message": 1
     },
     "server/game/cards/11.1-TSC/ExchangeOfInformation.js": {
         "this-in-ability": 9,
@@ -1428,9 +1384,6 @@
         "game-listener": 1,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/15-DotE/BlueGraces.js": {
-        "legacy-helper": 2
     },
     "server/game/cards/15-DotE/CageOfRavens.js": {
         "this-in-ability": 6,

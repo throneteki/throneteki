@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Polliver extends DrawCard {
     // Polliver (06029)
@@ -8,22 +9,19 @@ class Polliver extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardDiscarded: (event) =>
+                onCardDiscarded: (event, context) =>
                     event.isPillage &&
-                    event.source === this &&
-                    event.card.getType() === 'character' &&
-                    event.card.owner.gold >= 1
+                    event.source === context.source &&
+                    event.card.getType() === 'character'
             },
-            handler: (context) => {
-                let otherPlayer = context.event.card.owner;
-                this.game.returnGoldToTreasury({ player: otherPlayer, amount: 2 });
-                this.game.addMessage(
-                    '{0} uses {1} to have {2} return 2 gold to the treasury',
-                    this.controller,
-                    this,
-                    otherPlayer
-                );
-            }
+            message: {
+                format: '{player} uses {source} to have {opponent} return 2 gold to the treasury',
+                args: { opponent: (context) => context.event.card.owner }
+            },
+            gameAction: GameActions.returnGoldToTreasury((context) => ({
+                player: context.event.card.owner,
+                amount: 2
+            }))
         });
     }
 }

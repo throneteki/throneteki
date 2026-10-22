@@ -154,3 +154,14 @@ describe('setupTest', function () {
         });
     });
 });
+
+describe('setupTest with duplicates of a non-unique card', function () {
+    it('throws, as only unique cards can have duplicates', function () {
+        expect(() =>
+            this.setupTest({
+                phase: 'marshal',
+                player1: { inPlay: [{ card: 'Hedge Knight', dupes: 1 }] }
+            })
+        ).toThrow('Hedge Knight is not unique, so it cannot have duplicates');
+    });
+});

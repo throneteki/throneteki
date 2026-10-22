@@ -148,6 +148,9 @@ function placeInPlay(game, claims, specsByPlayer) {
             let card;
             for (let i = 0; i < copies; ++i) {
                 const copy = claims[key].claim(spec.card);
+                if (spec.dupes && !copy.isUnique()) {
+                    throw new Error(`${spec.card} is not unique, so it cannot have duplicates`);
+                }
                 playerWrapper.player.putIntoPlay(copy, 'setup', { force: true });
                 card = card || copy;
             }

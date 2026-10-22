@@ -1,4 +1,5 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Rebuilding extends PlotCard {
     // Rebuilding (01019)
@@ -11,19 +12,8 @@ class Rebuilding extends PlotCard {
                 cardCondition: (card, context) =>
                     context.player === card.controller && card.location === 'discard pile'
             },
-            handler: (context) => {
-                for (let card of context.target) {
-                    context.player.moveCard(card, 'draw deck');
-                }
-
-                context.player.shuffleDrawDeck();
-                this.game.addMessage(
-                    '{0} uses {1} to shuffle {2} into their deck',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to shuffle {target} into their deck',
+            gameAction: GameActions.shuffleIntoDeck((context) => ({ cards: context.target }))
         });
     }
 }

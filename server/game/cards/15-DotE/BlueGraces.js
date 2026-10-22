@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BlueGraces extends DrawCard {
     // Blue Graces (15013)
@@ -19,10 +20,7 @@ class BlueGraces extends DrawCard {
             },
             message:
                 '{player} removes {source} from the game to shuffle {target} back into their deck',
-            handler: (context) => {
-                context.target.owner.moveCard(context.target, 'draw deck');
-                context.target.owner.shuffleDrawDeck();
-            }
+            gameAction: GameActions.shuffleIntoDeck((context) => ({ cards: [context.target] }))
         });
     }
 }
