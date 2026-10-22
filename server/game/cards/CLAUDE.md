@@ -59,7 +59,8 @@ against the rules, which is what lets a game run with manual mode off
    or `this.game`. Control of a card can change, and the context always has the current controller.
    `when` handlers take `(event, context)`; persistent effect conditions and matches get a context
    with `game` and `source`, and so do the callbacks passed to effects such as `canMarshal`,
-   `canPlay`, `dynamicStrength`, `dynamicKeywordSources`, `immuneTo` and `canSelectAsFirstPlayer`.
+   `canPlay`, `canSpendGold`, `dynamicStrength`, `dynamicKeywordSources`, `immuneTo` and
+   `canSelectAsFirstPlayer`.
    Keep trackers in a `const` inside `setupCardAbilities` rather than on the card, and put helpers
    in plain functions outside the class. `npm run card-rules` reports any `this` inside an arrow
    function (`this-in-ability`).
