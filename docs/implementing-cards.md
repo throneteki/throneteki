@@ -751,10 +751,14 @@ checked for immunity, and doesn't filter or resolve anything.
 
 When more than one player chooses (`choosingPlayer: 'each'`, `'eachOpponent'` or a function), put
 the `gameAction` on the target. It resolves once for each player's selection, with
-`context.target` set to that player's cards and `context.choosingPlayer` to that player. A
-top-level `gameAction` can't see the separate selections, so it would filter each candidate
-against the wrong player. See [KarstarkLancer.js](../server/game/cards/25.1-ATT/KarstarkLancer.js)
-and [RuleByDecree.js](../server/game/cards/16-TTWDFL/RuleByDecree.js).
+`context.target` set to that player's cards and `context.choosingPlayer` to that player. See
+[KarstarkLancer.js](../server/game/cards/25.1-ATT/KarstarkLancer.js) and
+[RuleByDecree.js](../server/game/cards/16-TTWDFL/RuleByDecree.js).
+
+When the effect depends on every player's choice together ("kill each character not chosen"), use
+a top-level `gameAction` that reads `context.targets.selections` or `context.targets.getTargets()`.
+It resolves once after everyone has chosen, and it doesn't filter the candidates, since no single
+choice decides what it does. See [TheStranger.js](../server/game/cards/20-HMW/TheStranger.js).
 
 With `chooseOpponent` or `choosePlayer` and no card targets, only players the `gameAction` could
 affect can be chosen. An ability with several targets and a single top-level `gameAction` still
