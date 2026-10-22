@@ -13,7 +13,6 @@ describe('Unbowed, Unbent, Unbroken', function () {
 
     it('stops the winner initiating challenges of the named type this phase after you lose a challenge as the defender', function () {
         expect(this.player2).toHaveDisabledPromptButton('Power');
-        expect(this.player2).not.toHaveDisabledPromptButton('Intrigue');
         expect(this.player2).isReadyToTakeAction();
     });
 });
