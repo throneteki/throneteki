@@ -1,53 +1,34 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Stonesnake extends DrawCard {
     // Stonesnake (03033)
     // Stealth.
     // Reaction: After Stonesnake bypasses a character using stealth, choose one of that character's
     // keywords. Stonesnake gains that keyword until the end of the phase.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onBypassedByStealth: (event) =>
-                    event.source === this && this.hasCopyableKeyword(event.target)
+                onBypassedByStealth: (event, context) =>
+                    event.source === context.source && event.target.getKeywords().length > 0
             },
-            handler: (context) => {
-                const keywords = context.event.target.getKeywords();
-                let buttons = keywords.map((keyword) => ({
-                    text: keyword,
-                    method: 'keywordSelected',
-                    arg: keyword.toLowerCase()
-                }));
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Select a keyword',
-                        buttons: buttons
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.choose({
+                title: 'Select a keyword',
+                message:
+                    '{player} uses {source} to have {source} gain {choice} until the end of the phase',
+                choices: (context) =>
+                    Object.fromEntries(
+                        context.event.target.getKeywords().map((keyword) => [
+                            keyword,
+                            GameActions.lastingEffect((context) => ({
+                                duration: 'untilEndOfPhase',
+                                match: context.source,
+                                effect: ability.effects.addKeyword(keyword.toLowerCase())
+                            }))
+                        ])
+                    )
+            })
         });
-    }
-
-    keywordSelected(player, keyword) {
-        this.untilEndOfPhase((ability) => ({
-            match: this,
-            effect: ability.effects.addKeyword(keyword)
-        }));
-
-        this.game.addMessage(
-            '{0} uses {1} to have {1} gain {2} until the end of the phase',
-            this.controller,
-            this,
-            keyword
-        );
-
-        return true;
-    }
-
-    hasCopyableKeyword(card) {
-        return card.getKeywords().length > 0;
     }
 }
 

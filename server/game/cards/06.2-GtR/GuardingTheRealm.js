@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class GuardingTheRealm extends DrawCard {
     // Guarding the Realm (06026)
@@ -11,42 +12,33 @@ class GuardingTheRealm extends DrawCard {
             title: 'Take control of character in discard pile',
             phase: 'marshal',
             target: {
-                cardCondition: (card) =>
-                    card.controller !== this.controller &&
+                cardCondition: (card, context) =>
+                    card.controller !== context.player &&
                     card.location === 'discard pile' &&
                     card.getType() === 'character' &&
                     card.getPrintedCost() <= 3 &&
-                    this.controller.canPutIntoPlay(card)
+                    context.player.canPutIntoPlay(card)
             },
-            handler: (context) => {
-                this.controller.putIntoPlay(context.target);
-                this.game.addMessage(
-                    "{0} uses {1} to put {2} into play from {3}'s discard pile under their control",
-                    this.controller,
-                    this,
-                    context.target,
-                    context.target.owner
-                );
-            }
+            message: {
+                format: "{player} uses {source} to put {target} into play from {owner}'s discard pile under their control",
+                args: { owner: (context) => context.target.owner }
+            },
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
-
         this.reaction({
             location: 'discard pile',
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
                     !event.challenge.isAttackerTheWinner()
             },
             ignoreEventCosts: true,
             cost: ability.costs.payGold(1),
-            handler: () => {
-                this.game.addMessage(
-                    '{0} pays 1 gold to move {1} back to their hand',
-                    this.controller,
-                    this
-                );
-                this.controller.moveCard(this, 'hand');
-            }
+            message: '{player} pays 1 gold to return {source} to their hand',
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.source }))
         });
     }
 }

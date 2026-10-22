@@ -1,4 +1,5 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheDornishWars extends PlotCard {
     // The Dornish Wars (25108)
@@ -21,31 +22,23 @@ class TheDornishWars extends PlotCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event) => event.challenge.winner === this.controller
+                afterChallenge: (event, context) => event.challenge.winner === context.player
             },
             target: {
                 cardCondition: { type: 'character', location: 'play area' },
                 gameAction: 'loseIcon'
             },
             limit: ability.limit.perPhase(2),
-            handler: (context) => {
-                this.game.promptForIcon(context.player, this, (icon) => {
-                    this.untilEndOfPhase((ability) => ({
+            gameAction: GameActions.chooseIcon({
+                message:
+                    '{player} uses {source} to have {target} lose {icon} icon until the end of the phase',
+                gameAction: (icon) =>
+                    GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
                         match: context.target,
                         effect: ability.effects.removeIcon(icon)
-                    }));
-
-                    this.game.addMessage(
-                        '{0} uses {1} to have {2} lose {4} {5} icon until the end of the phase',
-                        context.player,
-                        this,
-                        context.target,
-                        icon === 'intrigue' ? 'an' : 'a',
-                        icon
-                    );
-                });
-                return true;
-            }
+                    }))
+            })
         });
     }
 }

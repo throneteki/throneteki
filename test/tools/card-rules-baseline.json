@@ -174,10 +174,6 @@
         "this-in-ability": 4,
         "add-message": 1
     },
-    "server/game/cards/03-WotN/Stonesnake.js": {
-        "this-in-ability": 7,
-        "add-message": 1
-    },
     "server/game/cards/03-WotN/TheLongWinter.js": {
         "this-in-ability": 6,
         "add-message": 3,
@@ -310,11 +306,6 @@
         "this-in-ability": 11,
         "add-message": 2,
         "legacy-helper": 1
-    },
-    "server/game/cards/06.2-GtR/GuardingTheRealm.js": {
-        "this-in-ability": 12,
-        "legacy-helper": 2,
-        "add-message": 2
     },
     "server/game/cards/06.2-GtR/Melisandre.js": {
         "this-in-ability": 8,
@@ -675,12 +666,6 @@
     "server/game/cards/11.6-DitD/RavagesOfWar.js": {
         "this-in-ability": 4,
         "add-message": 1
-    },
-    "server/game/cards/11.6-DitD/TheBastardsLetter.js": {
-        "this-in-ability": 6,
-        "add-message": 2,
-        "legacy-helper": 2,
-        "game-listener": 1
     },
     "server/game/cards/11.6-DitD/Varys.js": {
         "this-in-ability": 2
@@ -1128,11 +1113,6 @@
         "add-message": 1,
         "legacy-helper": 2
     },
-    "server/game/cards/20-HMW/WeStandTogether.js": {
-        "this-in-ability": 5,
-        "legacy-helper": 2,
-        "add-message": 2
-    },
     "server/game/cards/21-FtR/BattleoftheTrident.js": {
         "this-in-ability": 12,
         "add-message": 2
@@ -1349,10 +1329,6 @@
     },
     "server/game/cards/25.6-WK/BurningTheBooks.js": {
         "this-in-ability": 4
-    },
-    "server/game/cards/25.6-WK/TheDornishWars.js": {
-        "this-in-ability": 6,
-        "add-message": 1
     },
     "server/game/cards/26.1-WAID/CityOfShadows.js": {
         "this-in-ability": 4
