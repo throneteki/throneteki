@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class NymeriaSand extends DrawCard {
     // Nymeria Sand (02035)
@@ -11,36 +12,31 @@ class NymeriaSand extends DrawCard {
             limit: ability.limit.perPhase(1),
             phase: 'challenge',
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller !== this.controller &&
+                    card.controller !== context.source.controller &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                this.game.promptForIcon(this.controller, this, (icon) => {
-                    let sandSnakes = this.controller.filterCardsInPlay(
-                        (card) => card.getType() === 'character' && card.hasTrait('Sand Snake')
-                    );
-                    this.untilEndOfPhase((ability) => ({
-                        match: context.target,
-                        effect: ability.effects.removeIcon(icon)
-                    }));
-
-                    this.untilEndOfPhase((ability) => ({
-                        match: sandSnakes,
-                        effect: ability.effects.addIcon(icon)
-                    }));
-
-                    this.game.addMessage(
-                        '{0} uses {1} to remove {2} {3} icon from {4} and have each Sand Snake character they control gain it',
-                        this.controller,
-                        this,
-                        icon === 'intrigue' ? 'an' : 'a',
-                        icon,
-                        context.target
-                    );
-                });
-            }
+            gameAction: GameActions.chooseIcon({
+                message:
+                    '{player} uses {source} to remove {icon} icon from {target} and have each Sand Snake character they control gain it',
+                gameAction: (icon) =>
+                    GameActions.simultaneously([
+                        GameActions.lastingEffect((context) => ({
+                            duration: 'untilEndOfPhase',
+                            match: context.target,
+                            effect: ability.effects.removeIcon(icon)
+                        })),
+                        GameActions.lastingEffect((context) => ({
+                            duration: 'untilEndOfPhase',
+                            match: context.player.filterCardsInPlay(
+                                (card) =>
+                                    card.getType() === 'character' && card.hasTrait('Sand Snake')
+                            ),
+                            effect: ability.effects.addIcon(icon)
+                        }))
+                    ])
+            })
         });
     }
 }

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheVipersRage extends DrawCard {
     // The Viper's Rage (00012)
@@ -6,38 +7,32 @@ class TheVipersRage extends DrawCard {
     // controlled by the attacking player loses a [military], an [intrigue], and a [power] icon
     // until the end of the phase.
     // Draft format only.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller &&
-                    event.challenge.defendingPlayer === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.source.controller &&
+                    event.challenge.defendingPlayer === context.source.controller &&
                     event.challenge.strengthDifference >= 5
             },
-            handler: () => {
-                let challenge = this.game.currentChallenge;
-                let cards = challenge.attackingPlayer.filterCardsInPlay(
+            message: {
+                format: '{player} plays {source} to have each character controlled by {attackingPlayer} lose a military, an intrigue and a power icon until the end of the phase',
+                args: {
+                    attackingPlayer: (context) => context.game.currentChallenge.attackingPlayer
+                }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.game.currentChallenge.attackingPlayer.filterCardsInPlay(
                     (card) => card.getType() === 'character'
-                );
-                this.untilEndOfPhase((ability) => ({
-                    match: cards,
-                    targetController: 'any',
-                    effect: [
-                        ability.effects.removeIcon('military'),
-                        ability.effects.removeIcon('intrigue'),
-                        ability.effects.removeIcon('power')
-                    ]
-                }));
-                this.game.addMessage(
-                    '{0} plays {1} to have each character controlled by {2} lose a {3}, an {4} and a {5} icon until the end of the phase',
-                    this.controller,
-                    this,
-                    challenge.attackingPlayer,
-                    'military',
-                    'intrigue',
-                    'power'
-                );
-            }
+                ),
+                targetController: 'any',
+                effect: [
+                    ability.effects.removeIcon('military'),
+                    ability.effects.removeIcon('intrigue'),
+                    ability.effects.removeIcon('power')
+                ]
+            }))
         });
     }
 }

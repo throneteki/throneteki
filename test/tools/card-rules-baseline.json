@@ -31,10 +31,6 @@
         "this-in-ability": 2,
         "add-message": 1
     },
-    "server/game/cards/00-VDS/TheVipersRage.js": {
-        "this-in-ability": 7,
-        "add-message": 1
-    },
     "server/game/cards/00-VDS/Treaty.js": {
         "event-registration": 1,
         "legacy-helper": 2,
@@ -394,10 +390,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/02.2-TRtW/NymeriaSand.js": {
-        "this-in-ability": 10,
-        "add-message": 1
-    },
     "server/game/cards/02.2-TRtW/PoliticalDisaster.js": {
         "add-message": 1,
         "this-in-ability": 3,
@@ -600,10 +592,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/03-WotN/DragonSight.js": {
-        "this-in-ability": 5,
-        "add-message": 1
-    },
     "server/game/cards/03-WotN/EddardStark.js": {
         "this-in-ability": 5,
         "legacy-helper": 1,
@@ -753,10 +741,6 @@
     "server/game/cards/04.1-AtSK/WhiteTree.js": {
         "this-in-ability": 6,
         "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/04.2-CtA/BalonGreyjoy.js": {
-        "this-in-ability": 8,
         "add-message": 1
     },
     "server/game/cards/04.2-CtA/BeggarKing.js": {
@@ -1123,10 +1107,6 @@
         "add-message": 2,
         "legacy-helper": 1
     },
-    "server/game/cards/06.2-GtR/GreatHall.js": {
-        "add-message": 1,
-        "this-in-ability": 3
-    },
     "server/game/cards/06.2-GtR/GuardingTheRealm.js": {
         "this-in-ability": 12,
         "legacy-helper": 2,
@@ -1360,10 +1340,6 @@
     "server/game/cards/06.6-TBWB/HighgardenMinstrel.js": {
         "this-in-ability": 7,
         "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/06.6-TBWB/HornHill.js": {
-        "this-in-ability": 9,
         "add-message": 1
     },
     "server/game/cards/06.6-TBWB/KingsBlood.js": {
@@ -2525,10 +2501,6 @@
         "this-in-ability": 6,
         "add-message": 1
     },
-    "server/game/cards/13.4-BtRK/KnightsOfTheMind.js": {
-        "add-message": 1,
-        "this-in-ability": 5
-    },
     "server/game/cards/13.4-BtRK/ShadowOfTheIsles.js": {
         "this-in-ability": 5,
         "add-message": 1,
@@ -2930,10 +2902,6 @@
         "this-in-ability": 8,
         "prompt-for-select": 1,
         "add-message": 1
-    },
-    "server/game/cards/17.1-R/GreatHall.js": {
-        "add-message": 1,
-        "this-in-ability": 3
     },
     "server/game/cards/17.1-R/Meereen.js": {
         "legacy-helper": 1
@@ -3354,10 +3322,6 @@
     },
     "server/game/cards/21-FtR/SerJacelynBywater.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/21-FtR/Squire.js": {
-        "add-message": 1,
-        "this-in-ability": 3
     },
     "server/game/cards/21-FtR/TheIronFleet.js": {
         "this-in-ability": 3,

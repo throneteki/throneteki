@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
+import GameActions from '../../GameActions/index.js';
 
 class HornHill extends DrawCard {
     // Horn Hill (06104)
@@ -10,29 +11,31 @@ class HornHill extends DrawCard {
         this.action({
             title: 'Give participating characters +STR',
             phase: 'challenge',
-            condition: () => this.game.currentChallenge && this.hasToken(Tokens.gold),
+            condition: (context) =>
+                context.game.currentChallenge && context.source.hasToken(Tokens.gold),
             cost: ability.costs.kneelSelf(),
-            handler: (context) => {
-                let challenge = this.game.currentChallenge;
-                let cards = challenge.attackers
-                    .concat(challenge.defenders)
+            message: {
+                format: '{player} kneels {source} to give {cards} +{gold} STR until the end of the challenge',
+                args: {
+                    cards: (context) =>
+                        context.game.currentChallenge.attackers
+                            .concat(context.game.currentChallenge.defenders)
+                            .filter(
+                                (card) =>
+                                    card.controller === context.player && card.isFaction('tyrell')
+                            ),
+                    gold: (context) => context.source.tokens[Tokens.gold]
+                }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.game.currentChallenge.attackers
+                    .concat(context.game.currentChallenge.defenders)
                     .filter(
-                        (card) => card.controller === this.controller && card.isFaction('tyrell')
-                    );
-
-                this.untilEndOfChallenge((ability) => ({
-                    match: cards,
-                    effect: ability.effects.modifyStrength(this.tokens[Tokens.gold])
-                }));
-
-                this.game.addMessage(
-                    '{0} kneels {1} to give {2} +{3} STR until the end of the challenge',
-                    context.player,
-                    this,
-                    cards,
-                    this.tokens[Tokens.gold]
-                );
-            }
+                        (card) => card.controller === context.player && card.isFaction('tyrell')
+                    ),
+                effect: ability.effects.modifyStrength(context.source.tokens[Tokens.gold])
+            }))
         });
     }
 }
