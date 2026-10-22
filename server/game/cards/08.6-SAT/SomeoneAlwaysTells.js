@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SomeoneAlwaysTells extends DrawCard {
     // Someone Always Tells (08116)
@@ -8,20 +9,16 @@ class SomeoneAlwaysTells extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: (event) =>
-                    event.source.controller !== this.controller &&
+                onCardAbilityInitiated: (event, context) =>
+                    event.source.controller !== context.source.controller &&
                     (event.source.getType() === 'event' ||
                         (event.source.getType() === 'plot' && event.ability.isTriggeredAbility()))
             },
-            handler: (context) => {
-                context.event.cancel();
-                this.game.addMessage(
-                    '{0} plays {1} to cancel {2}',
-                    context.player,
-                    this,
-                    context.event.source
-                );
-            }
+            message: {
+                format: '{player} plays {source} to cancel {eventSource}',
+                args: { eventSource: (context) => context.event.source }
+            },
+            gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
         });
     }
 }

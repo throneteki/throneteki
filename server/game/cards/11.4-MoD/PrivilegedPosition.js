@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
+import GameActions from '../../GameActions/index.js';
 
 class PrivilegedPosition extends DrawCard {
     // Privileged Position (11068)
@@ -12,21 +13,17 @@ class PrivilegedPosition extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: (event) =>
-                    !this.hasLostPowerChallenge() &&
+                onCardAbilityInitiated: (event, context) =>
+                    !context.source.hasLostPowerChallenge() &&
                     event.ability.isTriggeredAbility() &&
                     ['event', 'location'].includes(event.source.getType()) &&
-                    event.source.controller !== this.controller
+                    event.source.controller !== context.source.controller
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} plays {1} to cancel {2}',
-                    this.controller,
-                    this,
-                    context.event.source
-                );
-                context.event.cancel();
-            }
+            message: {
+                format: '{player} plays {source} to cancel {eventSource}',
+                args: { eventSource: (context) => context.event.source }
+            },
+            gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
         });
     }
 
