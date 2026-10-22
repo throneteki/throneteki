@@ -54,19 +54,26 @@ function percentage(covered, total) {
     return total === 0 ? '-' : `${((covered / total) * 100).toFixed(1)}%`;
 }
 
+// A change to comments alone, such as regenerating a card's text comment, does not need a spec.
+const ignoreComments = '--ignore-matching-lines=^\\s*//';
+
 function changedCardFiles(base) {
     const committed = execFileSync(
         'git',
-        ['diff', '--name-only', '--diff-filter=AMR', `${base}...HEAD`],
+        ['diff', '--name-only', '--diff-filter=AMR', ignoreComments, `${base}...HEAD`],
         {
             cwd: repoRoot,
             encoding: 'utf8'
         }
     );
-    const working = execFileSync('git', ['diff', '--name-only', '--diff-filter=AMR', 'HEAD'], {
-        cwd: repoRoot,
-        encoding: 'utf8'
-    });
+    const working = execFileSync(
+        'git',
+        ['diff', '--name-only', '--diff-filter=AMR', ignoreComments, 'HEAD'],
+        {
+            cwd: repoRoot,
+            encoding: 'utf8'
+        }
+    );
     const untracked = execFileSync('git', ['ls-files', '--others', '--exclude-standard'], {
         cwd: repoRoot,
         encoding: 'utf8'
