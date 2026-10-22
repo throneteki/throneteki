@@ -68,10 +68,6 @@
         "legacy-helper": 3,
         "add-message": 2
     },
-    "server/game/cards/01-Core/GrowingStrong.js": {
-        "add-message": 1,
-        "this-in-ability": 2
-    },
     "server/game/cards/01-Core/HeadsOnSpikes.js": {
         "add-message": 1
     },
@@ -128,17 +124,8 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/01-Core/SerWaymarRoyce.js": {
-        "this-in-ability": 6,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/01-Core/Sunspear.js": {
         "this-in-ability": 9,
-        "add-message": 1
-    },
-    "server/game/cards/01-Core/SupportingTheFaith.js": {
-        "this-in-ability": 5,
         "add-message": 1
     },
     "server/game/cards/01-Core/TakeTheBlack.js": {
@@ -182,11 +169,6 @@
     "server/game/cards/01-Core/WildfireAssault.js": {
         "add-message": 2,
         "this-in-ability": 5,
-        "legacy-helper": 1
-    },
-    "server/game/cards/02.1-TtB/BastardDaughter.js": {
-        "this-in-ability": 6,
-        "add-message": 1,
         "legacy-helper": 1
     },
     "server/game/cards/02.1-TtB/KingRobertsWarhammer.js": {
@@ -409,11 +391,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/03-WotN/EvenHandedJustice.js": {
-        "legacy-helper": 1,
-        "add-message": 1,
-        "this-in-ability": 3
-    },
     "server/game/cards/03-WotN/FallenFromFavor.js": {
         "legacy-helper": 1,
         "add-message": 1,
@@ -574,11 +551,6 @@
         "legacy-helper": 2,
         "add-message": 1
     },
-    "server/game/cards/04.4-TIMC/TandaStokeworth.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/04.4-TIMC/ValarMorghulis.js": {
         "this-in-ability": 2,
         "legacy-helper": 1
@@ -696,11 +668,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/05-LoCR/LannisportGuard.js": {
-        "this-in-ability": 5,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/05-LoCR/LannisportTreasury.js": {
         "this-in-ability": 12,
         "legacy-helper": 2,
@@ -772,11 +739,6 @@
     },
     "server/game/cards/06.1-AMAF/SlaversBayPort.js": {
         "this-in-ability": 5,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/06.1-AMAF/StormsEnd.js": {
-        "this-in-ability": 4,
         "legacy-helper": 1,
         "add-message": 1
     },
@@ -980,11 +942,6 @@
         "this-in-ability": 7,
         "add-message": 1
     },
-    "server/game/cards/06.6-TBWB/UnbridledGenerosity.js": {
-        "legacy-helper": 1,
-        "add-message": 1,
-        "this-in-ability": 3
-    },
     "server/game/cards/06.6-TBWB/WarriorsBraid.js": {
         "this-in-ability": 5
     },
@@ -1042,11 +999,6 @@
         "this-in-ability": 7,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/08.1-TAK/AtNightTheyHowl.js": {
-        "legacy-helper": 1,
-        "add-message": 1,
-        "this-in-ability": 2
     },
     "server/game/cards/08.1-TAK/BloodyArakh.js": {
         "this-in-ability": 6,
@@ -1168,11 +1120,6 @@
         "legacy-helper": 2,
         "add-message": 2,
         "prompt-for-select": 1
-    },
-    "server/game/cards/08.5-TFM/CompelledByTheFaith.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/08.5-TFM/GivenToTheDrownedGod.js": {
         "legacy-helper": 1,
@@ -1610,11 +1557,6 @@
         "this-in-ability": 6,
         "add-message": 1
     },
-    "server/game/cards/11.5-IDP/OldBillBone.js": {
-        "this-in-ability": 4,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/11.5-IDP/TheInnAtTheCrossroads.js": {
         "legacy-helper": 2,
         "this-in-ability": 4,
@@ -1639,11 +1581,6 @@
         "add-message": 1,
         "this-in-ability": 3,
         "legacy-helper": 1
-    },
-    "server/game/cards/11.6-DitD/CerseiLannister.js": {
-        "this-in-ability": 5,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/11.6-DitD/DaggersInTheDark.js": {
         "this-in-ability": 9,

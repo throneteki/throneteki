@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class EvenHandedJustice extends DrawCard {
     // Even Handed Justice (03026)
@@ -15,17 +16,10 @@ class EvenHandedJustice extends DrawCard {
                 mode: 'eachPlayer',
                 gameAction: 'kneel'
             },
-            handler: (context) => {
-                for (let card of context.target) {
-                    card.controller.kneelCard(card);
-                }
-                this.game.addMessage(
-                    '{0} plays {1} to kneel {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} plays {source} to kneel {target}',
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) => GameActions.kneelCard({ card }))
+            )
         });
     }
 }

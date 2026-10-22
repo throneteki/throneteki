@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class UnbridledGenerosity extends DrawCard {
@@ -13,18 +14,10 @@ class UnbridledGenerosity extends DrawCard {
                 numCards: '3',
                 multiSelect: true
             },
-            handler: (context) => {
-                for (let card of context.target) {
-                    card.modifyToken(Tokens.gold, 1);
-                }
-
-                this.game.addMessage(
-                    '{0} plays {1} to move 1 gold from the treasury to {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} plays {source} to move 1 gold from the treasury to {target}',
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) => GameActions.placeToken({ card, token: Tokens.gold }))
+            )
         });
     }
 }

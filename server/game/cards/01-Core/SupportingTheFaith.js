@@ -1,4 +1,5 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SupportingTheFaith extends PlotCard {
     // Supporting the Faith (01023)
@@ -9,16 +10,14 @@ class SupportingTheFaith extends PlotCard {
             when: {
                 onPhaseStarted: (event) => event.phase === 'challenge'
             },
-            handler: () => {
-                for (let player of this.game.getPlayers()) {
-                    this.game.returnGoldToTreasury({ player: player, amount: player.gold });
-                }
-                this.game.addMessage(
-                    '{0} uses {1} to make each player return their gold to the treasury',
-                    this.controller,
-                    this
-                );
-            }
+            message: '{player} uses {source} to make each player return their gold to the treasury',
+            gameAction: GameActions.simultaneously((context) =>
+                context.game
+                    .getPlayers()
+                    .map((player) =>
+                        GameActions.returnGoldToTreasury({ player, amount: player.gold })
+                    )
+            )
         });
     }
 }

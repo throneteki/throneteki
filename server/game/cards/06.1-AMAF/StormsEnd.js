@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class StormsEnd extends DrawCard {
     // Storm's End (06008)
@@ -7,7 +8,8 @@ class StormsEnd extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onDominanceDetermined: (event) => this.controller === event.winner
+                onDominanceDetermined: (event, context) =>
+                    context.source.controller === event.winner
             },
             cost: ability.costs.discardFactionPower(1),
             target: {
@@ -18,17 +20,11 @@ class StormsEnd extends DrawCard {
                 multiSelect: true,
                 gameAction: 'gainPower'
             },
-            handler: (context) => {
-                for (let card of context.target) {
-                    card.modifyPower(1);
-                }
-                this.game.addMessage(
-                    '{0} uses {1} and discards 1 power from their faction card to have {2} gain 1 power',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} uses {source} and discards 1 power from their faction card to have {target} gain 1 power',
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) => GameActions.gainPower({ card, amount: 1 }))
+            )
         });
     }
 }
