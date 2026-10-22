@@ -347,6 +347,14 @@ gameAction: GameActions.chooseIcon({
 });
 ```
 
+#### Moving gold
+
+To move gold between gold pools and cards ("move 1 gold from an opponent's gold pool to your
+own", "move 1 gold from X to a character"), use `GameActions.transferGold({ from, to, amount })`.
+`from` and `to` are each a player or a card. It moves as much gold as `from` has, up to `amount`,
+and can't change the game state when `from` has none. When gold comes from a gold pool, the player
+chooses which gold sources to spend it from, as when paying a cost.
+
 #### Naming a challenge type
 
 For "name a challenge type" or "choose a challenge type", use `GameActions.chooseChallengeType`.

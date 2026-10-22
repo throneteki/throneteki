@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class StannissCavalry extends DrawCard {
@@ -10,27 +11,23 @@ class StannissCavalry extends DrawCard {
     // phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentPhase === 'standing',
+            condition: (context) => context.game.currentPhase === 'standing',
             targetController: 'opponent',
-            match: (card) =>
+            match: (card, context) =>
                 card.getType() === 'character' &&
-                card.getPrintedCost() === this.tokens[Tokens.gold],
+                card.getPrintedCost() === context.source.tokens[Tokens.gold],
             effect: ability.effects.cannotBeStood()
         });
-
         this.action({
-            title: 'Move gold to ' + this.name,
-            condition: () => this.controller.getSpendableGold() >= 1,
+            title: "Move gold to Stannis's Cavalry",
             phase: 'standing',
             limit: ability.limit.perPhase(2),
-            handler: (context) => {
-                this.game.transferGold({ from: this.controller, to: this, amount: 1 });
-                this.game.addMessage(
-                    '{0} moves 1 gold from their gold pool to {1}',
-                    context.player,
-                    this
-                );
-            }
+            message: '{player} moves 1 gold from their gold pool to {source}',
+            gameAction: GameActions.transferGold((context) => ({
+                from: context.player,
+                to: context.source,
+                amount: 1
+            }))
         });
     }
 }

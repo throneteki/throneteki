@@ -57,6 +57,7 @@ import SimultaneousAction from './SimultaneousAction.js';
 import StandCard from './StandCard.js';
 import SwitchCards from './SwitchCards.js';
 import TakeControl from './TakeControl.js';
+import TransferGold from './TransferGold.js';
 
 const GameActions = {
     addToChallenge: (props) => new AbilityAdapter(AddToChallenge, props),
@@ -118,7 +119,8 @@ const GameActions = {
     },
     standCard: (props) => new AbilityAdapter(StandCard, props),
     switch: (props) => new AbilityAdapter(SwitchCards, props),
-    takeControl: (props) => new AbilityAdapter(TakeControl, props)
+    takeControl: (props) => new AbilityAdapter(TakeControl, props),
+    transferGold: (props) => new AbilityAdapter(TransferGold, props)
 };
 
 export default GameActions;

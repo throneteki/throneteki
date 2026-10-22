@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class AMeagerContribution extends DrawCard {
     // A Meager Contribution (01138)
@@ -8,18 +9,17 @@ class AMeagerContribution extends DrawCard {
         this.reaction({
             max: ability.limit.perRound(1),
             when: {
-                onIncomeCollected: (event) => event.player !== this.controller
+                onIncomeCollected: (event, context) => event.player !== context.player
             },
-            handler: (context) => {
-                let opponent = context.event.player;
-                this.game.transferGold({ from: opponent, to: this.controller, amount: 1 });
-                this.game.addMessage(
-                    "{0} plays {1} to move 1 gold from {2}'s gold pool to their own",
-                    this.controller,
-                    this,
-                    opponent
-                );
-            }
+            message: {
+                format: "{player} plays {source} to move 1 gold from {opponent}'s gold pool to their own",
+                args: { opponent: (context) => context.event.player }
+            },
+            gameAction: GameActions.transferGold((context) => ({
+                from: context.event.player,
+                to: context.player,
+                amount: 1
+            }))
         });
     }
 }

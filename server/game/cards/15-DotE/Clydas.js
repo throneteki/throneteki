@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Clydas extends DrawCard {
     // Clydas (15033)
@@ -6,13 +7,17 @@ class Clydas extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Move 1 gold to your gold pool',
-            chooseOpponent: (opponent) => opponent.gold > 0,
-            message:
-                "{player} uses {source} to move 1 gold from {opponent}'s gold pool to their own",
-            handler: (context) => {
-                this.game.transferGold({ from: context.opponent, to: context.player, amount: 1 });
+            chooseOpponent: true,
+            limit: ability.limit.perPhase(1),
+            message: {
+                format: "{player} uses {source} to move 1 gold from {opponent}'s gold pool to their own",
+                args: { opponent: (context) => context.opponent }
             },
-            limit: ability.limit.perPhase(1)
+            gameAction: GameActions.transferGold((context) => ({
+                from: context.opponent,
+                to: context.player,
+                amount: 1
+            }))
         });
     }
 }

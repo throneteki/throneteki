@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ZolloTheFat extends DrawCard {
     // Zollo the Fat (22025)
@@ -7,26 +8,19 @@ class ZolloTheFat extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onGoldGained: (event) =>
-                    event.player !== this.controller &&
-                    this.game.currentPhase !== 'marshal' &&
-                    this.controller.canGainGold()
+                onGoldGained: (event, context) =>
+                    event.player !== context.player && context.game.currentPhase !== 'marshal'
             },
             cost: ability.costs.sacrificeSelf(),
-            handler: (context) => {
-                this.game.transferGold({
-                    from: context.event.player,
-                    to: this.controller,
-                    amount: context.event.player.gold
-                });
-                this.game.addMessage(
-                    "{0} sacrifices {1} to move {2} gold from {3}'s gold pool to their own",
-                    context.player,
-                    this,
-                    context.event.player.gold,
-                    context.event.player
-                );
-            }
+            message: {
+                format: "{player} sacrifices {source} to move all gold from {opponent}'s gold pool to their own",
+                args: { opponent: (context) => context.event.player }
+            },
+            gameAction: GameActions.transferGold((context) => ({
+                from: context.event.player,
+                to: context.player,
+                amount: context.event.player.gold
+            }))
         });
     }
 }

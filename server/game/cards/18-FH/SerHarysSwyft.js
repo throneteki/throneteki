@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class SerHarysSwyft extends DrawCard {
@@ -9,21 +10,17 @@ class SerHarysSwyft extends DrawCard {
         this.action({
             title: 'Move gold',
             limit: ability.limit.perRound(2),
-            condition: () => this.controller.getSpendableGold() >= 1,
             target: {
                 type: 'select',
                 cardCondition: (card) =>
                     card.location === 'play area' && !card.hasToken(Tokens.gold)
             },
-            handler: (context) => {
-                this.game.transferGold({ from: this.controller, to: context.target, amount: 1 });
-                this.game.addMessage(
-                    '{0} uses {1} to move 1 gold from their gold pool to {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to move 1 gold from their gold pool to {target}',
+            gameAction: GameActions.transferGold((context) => ({
+                from: context.player,
+                to: context.target,
+                amount: 1
+            }))
         });
         this.plotModifiers({
             gold: 1

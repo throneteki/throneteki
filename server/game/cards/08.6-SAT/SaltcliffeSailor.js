@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class SaltcliffeSailor extends DrawCard {
@@ -13,24 +14,20 @@ class SaltcliffeSailor extends DrawCard {
         });
         this.action({
             title: 'Move 1 gold to character',
-            condition: () => this.hasToken(Tokens.gold),
             target: {
                 type: 'select',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.controller === this.controller &&
+                    card.controller === context.player &&
                     !card.isFaction('greyjoy')
             },
-            handler: (context) => {
-                this.game.transferGold({ from: this, to: context.target, amount: 1 });
-                this.game.addMessage(
-                    '{0} moves 1 gold from {1} to {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} moves 1 gold from {source} to {target}',
+            gameAction: GameActions.transferGold((context) => ({
+                from: context.source,
+                to: context.target,
+                amount: 1
+            }))
         });
     }
 }

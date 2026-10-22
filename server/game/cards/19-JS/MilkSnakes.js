@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class MilkSnakes extends DrawCard {
@@ -16,7 +17,6 @@ class MilkSnakes extends DrawCard {
         });
         this.action({
             title: 'Move 1 gold to character',
-            condition: () => this.hasToken(Tokens.gold),
             target: {
                 type: 'select',
                 cardCondition: (card, context) =>
@@ -25,15 +25,12 @@ class MilkSnakes extends DrawCard {
                     card.controller === context.player &&
                     card.hasTrait('Clansman')
             },
-            handler: (context) => {
-                this.game.transferGold({ from: this, to: context.target, amount: 1 });
-                this.game.addMessage(
-                    '{0} moves 1 gold from {1} to {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} moves 1 gold from {source} to {target}',
+            gameAction: GameActions.transferGold((context) => ({
+                from: context.source,
+                to: context.target,
+                amount: 1
+            }))
         });
     }
 }
