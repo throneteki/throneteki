@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BrightwaterHost extends DrawCard {
     // Brightwater Host (11083)
@@ -9,41 +10,35 @@ class BrightwaterHost extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isAttacking()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
+                    event.challenge.isAttacking(context.source)
             },
             target: {
                 activePromptTitle: 'Select a card',
                 cardCondition: (card) => card.location === 'shadows'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    "{0} uses {1} to move one of {2}'s cards in shadow to their hand",
-                    context.player,
-                    this,
-                    context.target.owner
-                );
-                context.target.owner.returnCardToHand(context.target);
-
-                this.game.promptForSelect(context.player, {
-                    cardCondition: (card) =>
+            message: {
+                format: "{player} uses {source} to return one of {owner}'s cards in shadows to their hand",
+                args: { owner: (context) => context.target.owner }
+            },
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target })).then({
+                target: {
+                    cardCondition: (card, context) =>
                         card.controller === context.player &&
                         card.getType() === 'character' &&
                         card.location === 'play area' &&
                         card.isFaction('tyrell') &&
                         card.isUnique(),
-                    gameAction: 'gainPower',
-                    onSelect: (player, card) => this.cardSelected(player, card),
-                    source: this
-                });
-            }
+                    gameAction: 'gainPower'
+                },
+                message: 'Then {player} has {target} gain 2 power',
+                gameAction: GameActions.gainPower((context) => ({
+                    card: context.target,
+                    amount: 2
+                }))
+            })
         });
-    }
-
-    cardSelected(player, card) {
-        this.game.addMessage('{0} then has {1} gain 2 power', player, card);
-        card.modifyPower(2);
-        return true;
     }
 }
 

@@ -77,11 +77,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/01-Core/WildfireAssault.js": {
-        "add-message": 2,
-        "this-in-ability": 5,
-        "legacy-helper": 1
-    },
     "server/game/cards/02.1-TtB/KingRobertsWarhammer.js": {
         "this-in-ability": 11,
         "legacy-helper": 2,
@@ -115,11 +110,6 @@
         "this-in-ability": 7,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/02.2-TRtW/PoliticalDisaster.js": {
-        "add-message": 1,
-        "this-in-ability": 3,
-        "legacy-helper": 1
     },
     "server/game/cards/02.2-TRtW/TheReader.js": {
         "this-in-ability": 3,
@@ -231,11 +221,6 @@
     },
     "server/game/cards/04.3-FFH/NightGathers.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/04.3-FFH/Spearmaiden.js": {
-        "this-in-ability": 5,
-        "game-listener": 1,
-        "add-message": 1
     },
     "server/game/cards/04.3-FFH/TheScorpionsSting.js": {
         "this-in-ability": 6,
@@ -476,10 +461,6 @@
         "this-in-ability": 7,
         "add-message": 2,
         "prompt-for-select": 1
-    },
-    "server/game/cards/08.4-FotOG/HightowerSpy.js": {
-        "this-in-ability": 4,
-        "add-message": 1
     },
     "server/game/cards/08.4-FotOG/PlankyTownTrader.js": {
         "this-in-ability": 7,
@@ -728,12 +709,6 @@
         "prompt-for-select": 1,
         "legacy-helper": 2,
         "add-message": 3
-    },
-    "server/game/cards/11.5-IDP/BrightwaterHost.js": {
-        "this-in-ability": 7,
-        "add-message": 2,
-        "legacy-helper": 2,
-        "prompt-for-select": 1
     },
     "server/game/cards/11.5-IDP/HeCallsItThinking.js": {
         "this-in-ability": 6,
@@ -1420,10 +1395,6 @@
     "server/game/cards/25.3-FUtG/LegacyOfTheWatch.js": {
         "this-in-ability": 12,
         "prompt-for-select": 1,
-        "add-message": 1
-    },
-    "server/game/cards/25.3-FUtG/VultureKing.js": {
-        "this-in-ability": 7,
         "add-message": 1
     },
     "server/game/cards/25.4-TTS/AllardSeaworth.js": {

@@ -1,4 +1,5 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class PoliticalDisaster extends PlotCard {
     // Political Disaster (02040)
@@ -17,34 +18,24 @@ class PoliticalDisaster extends PlotCard {
                     card.getType() === 'location' &&
                     card.location === 'play area'
             },
-            handler: (context) => {
-                let toDiscard = [];
-                for (let selection of context.targets.selections) {
-                    let player = selection.choosingPlayer;
-                    let locations = player.filterCardsInPlay(
-                        (card) => card.getType() === 'location'
-                    );
-                    let selectedCards = selection.value || [];
-                    let remainingLocations = locations.filter(
-                        (location) => !selectedCards.includes(location)
-                    );
-
-                    toDiscard = toDiscard.concat(remainingLocations);
-
-                    if (remainingLocations.length !== 0) {
-                        this.game.addMessage(
-                            '{0} discards {1} for {2}',
-                            player,
-                            remainingLocations,
-                            this
-                        );
-                    }
-                }
-
-                this.game.discardFromPlay(toDiscard);
-            }
+            message: {
+                format: '{player} uses {source} to discard {locations}',
+                args: { locations: (context) => notChosen(context) }
+            },
+            gameAction: GameActions.simultaneously((context) =>
+                notChosen(context).map((card) => GameActions.discardCard({ card }))
+            )
         });
     }
+}
+
+function notChosen(context) {
+    return context.targets.selections.flatMap((selection) => {
+        const chosen = selection.value || [];
+        return selection.choosingPlayer.filterCardsInPlay(
+            (card) => card.getType() === 'location' && !chosen.includes(card)
+        );
+    });
 }
 
 PoliticalDisaster.code = '02040';

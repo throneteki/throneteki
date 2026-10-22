@@ -1,49 +1,41 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Spearmaiden extends DrawCard {
     // Spearmaiden (04055)
     // Reaction: After Spearmaiden is declared as an attacker in a [military] challenge, choose a
     // character controlled by the defending player. If you win the challenge by 5 or more STR, that
     // character must be chosen for claim during this challenge, if able.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onDeclaredAsAttacker: (event) =>
-                    this.game.isDuringChallenge({ challengeType: 'military' }) &&
-                    event.card === this
+                onDeclaredAsAttacker: (event, context) =>
+                    context.game.isDuringChallenge({ challengeType: 'military' }) &&
+                    event.card === context.source
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.game.currentChallenge.defendingPlayer &&
+                    card.controller === context.game.currentChallenge.defendingPlayer &&
                     card.getType() === 'character'
             },
             message: '{player} chooses {target} for {source}',
-            handler: (context) => {
-                this.game.once('afterChallenge', (event) =>
-                    this.resolveIfWinBy5(event.challenge, context)
-                );
-            }
+            gameAction: GameActions.delayedEffect({
+                duration: 'untilEndOfChallenge',
+                when: {
+                    afterChallenge: (event, context) =>
+                        event.challenge.winner === context.player &&
+                        event.challenge.strengthDifference >= 5
+                },
+                message: '{player} uses {source} to force {target} to be chosen for claim, if able',
+                gameAction: GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfChallenge',
+                    targetController: 'opponent',
+                    match: context.target,
+                    effect: ability.effects.mustChooseAsClaim()
+                }))
+            })
         });
-    }
-
-    resolveIfWinBy5(challenge, context) {
-        if (challenge.winner !== this.controller || challenge.strengthDifference < 5) {
-            return;
-        }
-
-        this.game.addMessage(
-            '{0} uses {1} to force {2} to be chosen for claim, if able',
-            this.controller,
-            this,
-            context.target
-        );
-
-        this.untilEndOfChallenge((ability) => ({
-            targetController: 'opponent',
-            match: context.target,
-            effect: ability.effects.mustChooseAsClaim()
-        }));
     }
 }
 
