@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Kingsmoot extends DrawCard {
     // Kingsmoot (08052)
@@ -8,33 +9,39 @@ class Kingsmoot extends DrawCard {
         this.reaction({
             max: ability.limit.perRound(1),
             when: {
-                onDominanceDetermined: (event) => this.controller === event.winner
+                onDominanceDetermined: (event, context) =>
+                    context.source.controller === event.winner
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.isUnique() &&
                     card.isFaction('greyjoy') &&
                     card.getType() === 'character',
                 gameAction: 'gainPower'
             },
-            handler: (context) => {
-                let amount = context.player.getNumberOfCardsInPlay(
+            message: {
+                format: '{player} plays {source} to have {target} gain {amount} power',
+                args: {
+                    amount: (context) =>
+                        context.player.getNumberOfCardsInPlay(
+                            (card) =>
+                                card.isUnique() &&
+                                card.isFaction('greyjoy') &&
+                                card.getType() === 'character'
+                        )
+                }
+            },
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.target,
+                amount: context.player.getNumberOfCardsInPlay(
                     (card) =>
                         card.isUnique() &&
                         card.isFaction('greyjoy') &&
                         card.getType() === 'character'
-                );
-                context.target.modifyPower(amount);
-                this.game.addMessage(
-                    '{0} plays {1} to have {2} gain {3} power',
-                    context.player,
-                    this,
-                    context.target,
-                    amount
-                );
-            }
+                )
+            }))
         });
     }
 }

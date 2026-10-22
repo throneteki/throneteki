@@ -1078,6 +1078,22 @@ this.reaction({
 });
 ```
 
+#### Abilities another player triggers
+
+By default the card's controller triggers its reactions and interrupts. When the text lets another
+player do so, give a `player` function. It receives the triggering event and a context with
+`game` and `source`, as [Turncloak](../server/game/cards/10-SoD/Turncloak.js) does:
+
+```javascript
+this.reaction({
+    when: {
+        afterChallenge: (event, context) => event.challenge.isParticipating(context.source.parent)
+    },
+    player: (event) => event.challenge.winner
+    // ...
+});
+```
+
 #### When revealed abilities
 
 When implementing plot cards that have a **When Revealed** ability, use the `whenRevealed` method. It will automatically listen to the correct event for you and all that must be provided is a `handler` method.

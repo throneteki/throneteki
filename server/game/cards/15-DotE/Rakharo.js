@@ -1,4 +1,13 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+
+function getNumberOfAttackingDothrakis(source) {
+    let cards = source.controller.filterCardsInPlay((card) => {
+        return card.isAttacking() && card.hasTrait('Dothraki') && card.getType() === 'character';
+    });
+
+    return cards.length;
+}
 
 class Rakharo extends DrawCard {
     // Rakharo (15009)
@@ -7,33 +16,20 @@ class Rakharo extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.challengeType === 'military' &&
-                    this.getNumberOfAttackingDothrakis() >= 2
+                    getNumberOfAttackingDothrakis(context.source) >= 2
             },
-            handler: () => {
-                let loser = this.game.currentChallenge.loser;
-                loser.discardAtRandom(1);
-
-                this.game.addMessage(
-                    "{0} uses {1} to discard 1 card at random from {2}'s hand",
-                    this.controller,
-                    this,
-                    loser
-                );
-            }
+            message: {
+                format: "{player} uses {source} to discard 1 card at random from {loser}'s hand",
+                args: { loser: (context) => context.game.currentChallenge.loser }
+            },
+            gameAction: GameActions.discardAtRandom((context) => ({
+                player: context.game.currentChallenge.loser,
+                amount: 1
+            }))
         });
-    }
-
-    getNumberOfAttackingDothrakis() {
-        let cards = this.controller.filterCardsInPlay((card) => {
-            return (
-                card.isAttacking() && card.hasTrait('Dothraki') && card.getType() === 'character'
-            );
-        });
-
-        return cards.length;
     }
 }
 

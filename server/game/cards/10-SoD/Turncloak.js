@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Turncloak extends DrawCard {
     // Turncloak (10032)
@@ -9,18 +10,18 @@ class Turncloak extends DrawCard {
         this.attachmentRestriction({ loyal: false });
         this.reaction({
             when: {
-                afterChallenge: (event) => event.challenge.isParticipating(this.parent)
+                afterChallenge: (event, context) =>
+                    event.challenge.isParticipating(context.source.parent)
             },
-            player: () => this.game.currentChallenge.winner,
-            handler: (context) => {
-                this.game.takeControl(context.player, this.parent);
-                this.game.addMessage(
-                    '{0} uses {1} to take control of {2}',
-                    context.player,
-                    this,
-                    this.parent
-                );
-            }
+            player: (event) => event.challenge.winner,
+            message: {
+                format: '{player} uses {source} to take control of {parent}',
+                args: { parent: (context) => context.source.parent }
+            },
+            gameAction: GameActions.takeControl((context) => ({
+                player: context.player,
+                card: context.source.parent
+            }))
         });
     }
 }

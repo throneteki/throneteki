@@ -68,7 +68,7 @@ class TriggeredAbility extends BaseAbility {
             event: event,
             game: this.game,
             source: this.card,
-            player: this.playerFunc()
+            player: this.playerFunc(event, { game: this.game, source: this.card })
         });
     }
 

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TakeTheBlack extends DrawCard {
     // Take the Black (01139)
@@ -18,9 +19,10 @@ class TakeTheBlack extends DrawCard {
                 }
             },
             message: '{player} plays {source} to take control of {target}',
-            handler: (context) => {
-                this.game.takeControl(context.player, context.target);
-            }
+            gameAction: GameActions.takeControl((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 }

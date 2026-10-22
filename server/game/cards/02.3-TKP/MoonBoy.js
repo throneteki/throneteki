@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MoonBoy extends DrawCard {
     // Moon Boy (02047)
@@ -8,17 +9,16 @@ class MoonBoy extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.source.controller &&
+                    context.source.isParticipating()
             },
-            handler: () => {
-                this.game.addMessage(
-                    '{0} is forced to discard 1 card at random after losing a challenge in which {1} was participating',
-                    this.controller,
-                    this
-                );
-                this.controller.discardAtRandom(1);
-            }
+            message:
+                '{player} is forced to discard 1 card at random after losing a challenge in which {source} was participating',
+            gameAction: GameActions.discardAtRandom((context) => ({
+                player: context.player,
+                amount: 1
+            }))
         });
     }
 }

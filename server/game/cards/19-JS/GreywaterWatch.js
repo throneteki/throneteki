@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class GreywaterWatch extends DrawCard {
     // Greywater Watch (19011)
@@ -10,7 +11,7 @@ class GreywaterWatch extends DrawCard {
             title: 'Kneel a character to have it participate',
             phase: 'challenge',
             max: ability.limit.perChallenge(1),
-            condition: () => this.game.isDuringChallenge(),
+            condition: (context) => context.game.isDuringChallenge(),
             cost: [
                 ability.costs.kneelSelf(),
                 ability.costs.putSelfIntoShadows(),
@@ -21,17 +22,11 @@ class GreywaterWatch extends DrawCard {
                         card.canParticipateInChallenge()
                 )
             ],
-            handler: (context) => {
-                let card = context.costs.kneel;
-                this.game.currentChallenge.addParticipantToSide(context.player, card);
-
-                this.game.addMessage(
-                    '{0} uses {1} to kneel {2} and add them to the challenge',
-                    context.player,
-                    this,
-                    card
-                );
-            }
+            message: '{player} uses {source} to kneel {costs.kneel} and add them to the challenge',
+            gameAction: GameActions.addToChallenge((context) => ({
+                card: context.costs.kneel,
+                player: context.player
+            }))
         });
     }
 }

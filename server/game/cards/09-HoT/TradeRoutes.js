@@ -1,4 +1,5 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TradeRoutes extends PlotCard {
     // Trade Routes (09051)
@@ -7,25 +8,24 @@ class TradeRoutes extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             chooseOpponent: () => true,
-            handler: (context) => {
-                let playerLocations = context.player.getNumberOfCardsInPlay(
-                    (card) => card.getType() === 'location'
-                );
-                let opponentLocations = context.opponent.getNumberOfCardsInPlay(
-                    (card) => card.getType() === 'location'
-                );
-
-                let gold = playerLocations + opponentLocations;
-                gold = this.game.addGold(context.player, gold);
-
-                this.game.addMessage(
-                    '{0} uses {1} to choose {2} and gain {3} gold',
-                    context.player,
-                    this,
-                    context.opponent,
-                    gold
-                );
-            }
+            message: {
+                format: '{player} uses {source} to choose {opponent} and gain {amount} gold',
+                args: {
+                    amount: (context) =>
+                        context.player.getNumberOfCardsInPlay(
+                            (card) => card.getType() === 'location'
+                        ) +
+                        context.opponent.getNumberOfCardsInPlay(
+                            (card) => card.getType() === 'location'
+                        )
+                }
+            },
+            gameAction: GameActions.gainGold((context) => ({
+                player: context.player,
+                amount:
+                    context.player.getNumberOfCardsInPlay((card) => card.getType() === 'location') +
+                    context.opponent.getNumberOfCardsInPlay((card) => card.getType() === 'location')
+            }))
         });
     }
 }

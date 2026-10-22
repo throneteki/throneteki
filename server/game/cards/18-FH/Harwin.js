@@ -1,4 +1,13 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+
+function participatingNonLoyalCharacter(source) {
+    let cards = source.controller.filterCardsInPlay((card) => {
+        return card.isParticipating() && !card.isLoyal() && card.getType() === 'character';
+    });
+
+    return cards.length >= 1;
+}
 
 class Harwin extends DrawCard {
     // Harwin (18012)
@@ -11,34 +20,24 @@ class Harwin extends DrawCard {
             title: 'Discard 1 gold',
             phase: 'challenge',
             limit: ability.limit.perPhase(1),
-            condition: () => this.game.isDuringChallenge() && this.participatingNonLoyalCharacter(),
+            condition: (context) =>
+                context.game.isDuringChallenge() && participatingNonLoyalCharacter(context.source),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.getType() === 'character' &&
                     !card.isParticipating() &&
                     card.getKeywords().length >= 2
             },
             cost: ability.costs.discardGold(1),
-            handler: (context) => {
-                this.game.currentChallenge.addParticipantToSide(context.player, context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to have {2} participate in the challenge on their side',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} uses {source} to have {target} participate in the challenge on their side',
+            gameAction: GameActions.addToChallenge((context) => ({
+                card: context.target,
+                player: context.player
+            }))
         });
-    }
-
-    participatingNonLoyalCharacter() {
-        let cards = this.controller.filterCardsInPlay((card) => {
-            return card.isParticipating() && !card.isLoyal() && card.getType() === 'character';
-        });
-
-        return cards.length >= 1;
     }
 }
 

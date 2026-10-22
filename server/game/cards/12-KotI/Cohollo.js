@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Cohollo extends DrawCard {
     // Cohollo (12035)
@@ -9,16 +10,17 @@ class Cohollo extends DrawCard {
         this.action({
             title: 'Discard a card',
             cost: [ability.costs.kneelSelf(), ability.costs.discardFromHand()],
-            condition: () => !!this.game.currentChallenge,
+            condition: (context) => !!context.game.currentChallenge,
             message: {
                 format: '{player} kneels {source} and discards {discardCost} to have {source} participate in the current challenge',
                 args: {
                     discardCost: (context) => context.costs.discardFromHand
                 }
             },
-            handler: (context) => {
-                this.game.currentChallenge.addParticipantToSide(context.player, this);
-            }
+            gameAction: GameActions.addToChallenge((context) => ({
+                card: context.source,
+                player: context.player
+            }))
         });
     }
 }

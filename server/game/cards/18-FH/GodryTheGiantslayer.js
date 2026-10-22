@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class GodryTheGiantslayer extends DrawCard {
@@ -11,28 +12,33 @@ class GodryTheGiantslayer extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.tokens[Tokens.gold])
+            effect: ability.effects.dynamicStrength(
+                (card, context) => context.source.tokens[Tokens.gold]
+            )
         });
         this.persistentEffect({
-            condition: () => this.tokens[Tokens.gold] >= 5,
+            condition: (context) => context.source.tokens[Tokens.gold] >= 5,
             match: this,
             effect: ability.effects.addKeyword('Intimidate')
         });
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
+                onCardEntersPlay: (event, context) =>
                     event.playingType === 'marshal' &&
-                    event.card !== this &&
-                    event.card.controller === this.controller &&
+                    event.card !== context.source &&
+                    event.card.controller === context.source.controller &&
                     (event.card.hasTrait("R'hllor") || event.card.hasTrait('Knight')),
-                onCardPlayed: (event) =>
-                    event.card.controller === this.controller && event.card.hasTrait("R'hllor")
+                onCardPlayed: (event, context) =>
+                    event.card.controller === context.source.controller &&
+                    event.card.hasTrait("R'hllor")
             },
             limit: ability.limit.perPhase(1),
-            handler: () => {
-                this.modifyToken(Tokens.gold, 1);
-                this.game.addMessage('{0} uses {1} to have {1} gain 1 gold', this.controller, this);
-            }
+            message: '{player} uses {source} to have {source} gain 1 gold',
+            gameAction: GameActions.placeToken((context) => ({
+                card: context.source,
+                token: Tokens.gold,
+                amount: 1
+            }))
         });
     }
 }
