@@ -5,7 +5,9 @@ services:
       - .:/workspaces/throneteki:cached
       - node_modules:/workspaces/throneteki/node_modules
     command: sleep infinity
-    network_mode: service:postgres
+    network_mode: service:mongo
 volumes:
+  mongodb:
+    name: throneteki_db
   node_modules:
     name: throneteki_node_modules
