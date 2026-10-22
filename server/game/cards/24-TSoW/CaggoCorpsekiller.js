@@ -8,12 +8,12 @@ class CaggoCorpsekiller extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onCardReturnedToHand: (event) => this.returnConditions(event),
-                onCardPutIntoShadows: (event) => this.returnConditions(event)
+                onCardReturnedToHand: (event, context) => canReplace(event, context),
+                onCardPutIntoShadows: (event, context) => canReplace(event, context)
             },
             cost: ability.costs.returnSelfToHand(),
             message: {
-                format: "{player} returns {costs.returnToHand} to place {card} in it's owners dead pile instead of their {targetLocation}",
+                format: "{player} returns {costs.returnToHand} to place {card} in its owner's dead pile instead of their {targetLocation}",
                 args: {
                     card: (context) => context.event.card,
                     targetLocation: (context) =>
@@ -22,28 +22,24 @@ class CaggoCorpsekiller extends DrawCard {
                             : context.event.location
                 }
             },
-            handler: (context) => {
-                context.event.replaceHandler(() => {
-                    this.game.resolveGameAction(
-                        GameActions.placeCard((context) => ({
-                            card: context.event.card,
-                            location: 'dead pile'
-                        })),
-                        context
-                    );
-                });
-            }
+            gameAction: GameActions.replaceEvent((context) => ({
+                event: context.event,
+                replacement: GameActions.placeCard({
+                    card: context.event.card,
+                    location: 'dead pile'
+                })
+            }))
         });
     }
+}
 
-    returnConditions(event) {
-        // Caggo can only interrupt if the card is returned/placed from a location which his controller can see (play area, discard pile, dead pile)
-        return (
-            event.card !== this &&
-            event.card.getType() === 'character' &&
-            ['play area', 'discard pile', 'dead pile'].includes(event.card.location)
-        );
-    }
+// Caggo can only interrupt if the card is returned or placed from a location his controller can see.
+function canReplace(event, context) {
+    return (
+        event.card !== context.source &&
+        event.card.getType() === 'character' &&
+        ['play area', 'discard pile', 'dead pile'].includes(event.card.location)
+    );
 }
 
 CaggoCorpsekiller.code = '24011';

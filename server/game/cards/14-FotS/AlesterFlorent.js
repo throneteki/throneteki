@@ -9,39 +9,33 @@ class AlesterFlorent extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    event.card.hasTrait('House Florent') && this.controller.canDraw()
+                onCardEntersPlay: (event) => event.card.hasTrait('House Florent')
             },
             message: '{player} uses {source} to draw 1 card',
-            handler: (context) => {
-                context.player.drawCardsToHand(1);
-            },
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 })),
             limit: ability.limit.perRound(1)
         });
 
         this.interrupt({
             when: {
-                onCardLeftPlay: (event) =>
-                    event.card === this &&
-                    this.controller.anyCardsInPlay(
+                onCardLeftPlay: (event, context) =>
+                    event.card === context.source &&
+                    context.player.anyCardsInPlay(
                         (card) =>
-                            card !== this &&
+                            card !== context.source &&
                             card.getType() === 'character' &&
                             card.hasTrait("R'hllor")
                     )
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    !card.kneeled &&
-                    card.controller !== this.controller,
+                    card.controller !== context.player,
                 gameAction: 'kneel'
             },
             message: '{player} uses {source} to kneel {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(GameActions.kneelCard({ card: context.target }));
-            }
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target }))
         });
     }
 }

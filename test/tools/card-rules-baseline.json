@@ -405,11 +405,6 @@
     "server/game/cards/06.5-OR/NorthernEncampment.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/06.5-OR/OlennasMachinations.js": {
-        "this-in-ability": 10,
-        "add-message": 2,
-        "legacy-helper": 1
-    },
     "server/game/cards/06.5-OR/WheelsWithinWheels.js": {
         "this-in-ability": 1
     },
@@ -428,11 +423,6 @@
     },
     "server/game/cards/07-WotW/GrizzledMiner.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/07-WotW/JonSnow.js": {
-        "this-in-ability": 9,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/07-WotW/MaesterAemon.js": {
         "this-in-ability": 7,
@@ -474,11 +464,6 @@
     "server/game/cards/08.2-JtO/TheHouseOfBlackAndWhite.js": {
         "this-in-ability": 9,
         "legacy-helper": 2,
-        "add-message": 2
-    },
-    "server/game/cards/08.2-JtO/TrisBotley.js": {
-        "this-in-ability": 8,
-        "legacy-helper": 1,
         "add-message": 2
     },
     "server/game/cards/08.3-Km/LyseniPirate.js": {
@@ -570,11 +555,6 @@
     },
     "server/game/cards/09-HoT/HighgardenHonorGuard.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/09-HoT/MargaeryTyrell.js": {
-        "this-in-ability": 8,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/09-HoT/MeleeAtBitterbridge.js": {
         "this-in-ability": 7,
@@ -951,10 +931,6 @@
         "this-in-ability": 5,
         "add-message": 1
     },
-    "server/game/cards/14-FotS/AlesterFlorent.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 1
-    },
     "server/game/cards/14-FotS/DothrakiSteed.js": {
         "this-in-ability": 3
     },
@@ -1146,12 +1122,6 @@
     "server/game/cards/17.2-R2/Nightflyer.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/17.2-R2/Pyke.js": {
-        "this-in-ability": 7,
-        "add-message": 2,
-        "game-listener": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/17.2-R2/RandyllTarly.js": {
         "prompt-for-select": 1,
         "this-in-ability": 4,
@@ -1259,10 +1229,6 @@
         "this-in-ability": 5,
         "add-message": 1,
         "legacy-helper": 2
-    },
-    "server/game/cards/20-HMW/TheDragonHasThreeHeads.js": {
-        "this-in-ability": 5,
-        "add-message": 1
     },
     "server/game/cards/20-HMW/TheManyFacedGod.js": {
         "this-in-ability": 4,
@@ -1399,9 +1365,6 @@
         "this-in-ability": 5,
         "prompt-for-select": 1,
         "add-message": 1
-    },
-    "server/game/cards/24-TSoW/CaggoCorpsekiller.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/24-TSoW/DagmerCleftjaw.js": {
         "this-in-ability": 2
