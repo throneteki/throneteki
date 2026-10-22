@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ShadowPriestess extends DrawCard {
     // Shadow Priestess (11008)
@@ -8,7 +9,7 @@ class ShadowPriestess extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             target: {
                 cardCondition: (card) =>
@@ -17,15 +18,8 @@ class ShadowPriestess extends DrawCard {
                     card.attachments.length === 0,
                 gameAction: 'kneel'
             },
-            handler: (context) => {
-                this.controller.kneelCard(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to kneel {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to kneel {target}',
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target }))
         });
     }
 }

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MaidenOfPoisons extends DrawCard {
     // Maiden of Poisons (11035)
@@ -9,8 +10,9 @@ class MaidenOfPoisons extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.source.controller &&
+                    context.source.isParticipating()
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
@@ -20,16 +22,11 @@ class MaidenOfPoisons extends DrawCard {
                     card.isParticipating() &&
                     card.getNumberOfIcons() < 2
             },
-            handler: (context) => {
-                context.target.owner.returnCardToHand(context.target);
-                this.game.addMessage(
-                    "{0} sacrifices {1} to return {2} to {3}'s hand",
-                    context.player,
-                    this,
-                    context.target,
-                    context.target.owner
-                );
-            }
+            message: {
+                format: "{player} sacrifices {source} to return {target} to {owner}'s hand",
+                args: { owner: (context) => context.target.owner }
+            },
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 }

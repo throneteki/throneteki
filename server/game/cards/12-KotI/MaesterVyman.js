@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MaesterVyman extends DrawCard {
     // Maester Vyman (12033)
@@ -7,30 +8,23 @@ class MaesterVyman extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.isMatch({
-                        winner: this.controller,
+                        winner: context.source.controller,
                         challengeType: ['military', 'power']
                     })
             },
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: (card) =>
-                    card !== this &&
+                cardCondition: (card, context) =>
+                    card !== context.source &&
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.getTraits().some((trait) => this.hasTrait(trait)),
+                    card.getTraits().some((trait) => context.source.hasTrait(trait)),
                 gameAction: 'gainPower'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} kneels {1} to have {2} gain 1 power',
-                    context.player,
-                    this,
-                    context.target
-                );
-                context.target.modifyPower(1);
-            }
+            message: '{player} kneels {source} to have {target} gain 1 power',
+            gameAction: GameActions.gainPower((context) => ({ card: context.target, amount: 1 }))
         });
     }
 }

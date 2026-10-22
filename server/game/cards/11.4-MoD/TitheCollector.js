@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TitheCollector extends DrawCard {
     // Tithe Collector (11069)
@@ -11,19 +12,12 @@ class TitheCollector extends DrawCard {
 
         this.reaction({
             when: {
-                onIncomeCollected: (event) =>
-                    event.player === this.controller && this.canGainPower()
+                onIncomeCollected: (event, context) =>
+                    event.player === context.source.controller && context.source.canGainPower()
             },
             cost: ability.costs.payGold(2),
-            handler: () => {
-                this.modifyPower(1);
-
-                this.game.addMessage(
-                    '{0} uses {1} to pay 2 gold and gain 1 power on {1}',
-                    this.controller,
-                    this
-                );
-            }
+            message: '{player} uses {source} to pay 2 gold and gain 1 power on {source}',
+            gameAction: GameActions.gainPower((context) => ({ card: context.source, amount: 1 }))
         });
     }
 }

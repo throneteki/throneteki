@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class KhoraneSathmantes extends DrawCard {
     // Khorane Sathmantes (12025)
@@ -30,17 +31,17 @@ class KhoraneSathmantes extends DrawCard {
                     gameAction: 'kneel'
                 }
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} kneels {1} to kneel {2} and {3}',
-                    context.player,
-                    context.costs.kneel,
-                    context.targets.character,
-                    context.targets.location
-                );
-                context.targets.character.controller.kneelCard(context.targets.character);
-                context.targets.location.controller.kneelCard(context.targets.location);
-            }
+            message: {
+                format: '{player} kneels {costs.kneel} to kneel {character} and {location}',
+                args: {
+                    character: (context) => context.targets.character,
+                    location: (context) => context.targets.location
+                }
+            },
+            gameAction: GameActions.simultaneously([
+                GameActions.kneelCard((context) => ({ card: context.targets.character })),
+                GameActions.kneelCard((context) => ({ card: context.targets.location }))
+            ])
         });
     }
 }

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Qarth extends DrawCard {
     // Qarth (10036)
@@ -10,22 +11,15 @@ class Qarth extends DrawCard {
             cost: [ability.costs.kneelSelf(), ability.costs.payGold(1)],
             target: {
                 activePromptTitle: 'Select an attachment',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'attachment' &&
                     card.parent &&
-                    card.parent.controller === this.controller,
+                    card.parent.controller === context.source.controller,
                 gameAction: 'discard'
             },
-            handler: (context) => {
-                context.target.owner.discardCard(context.target);
-                this.game.addMessage(
-                    '{0} kneels {1} and pays 1 gold to discard {2} from play',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} kneels {source} and pays 1 gold to discard {target} from play',
+            gameAction: GameActions.discardCard((context) => ({ card: context.target }))
         });
     }
 }

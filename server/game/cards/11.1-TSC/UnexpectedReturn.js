@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class UnexpectedReturn extends DrawCard {
     // Unexpected Return (11015)
@@ -8,20 +9,16 @@ class UnexpectedReturn extends DrawCard {
             phase: 'challenge',
             title: 'Put character into play',
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.getType() === 'character' &&
                     card.location === 'discard pile' &&
-                    card.controller === this.controller
+                    card.controller === context.source.controller
             },
-            handler: (context) => {
-                this.controller.putIntoPlay(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to put {2} into play',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to put {target} into play',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 }

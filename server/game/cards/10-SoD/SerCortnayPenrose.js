@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerCortnayPenrose extends DrawCard {
     // Ser Cortnay Penrose (10025)
@@ -7,15 +8,13 @@ class SerCortnayPenrose extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'power' &&
-                    event.challenge.winner === this.controller &&
-                    this.isParticipating()
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isParticipating()
             },
-            handler: (context) => {
-                context.player.standCard(this);
-                this.game.addMessage('{0} stands {1}', context.player, this);
-            }
+            message: '{player} stands {source}',
+            gameAction: GameActions.standCard((context) => ({ card: context.source }))
         });
     }
 }

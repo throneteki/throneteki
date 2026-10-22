@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class StarfallSpy extends DrawCard {
     // Starfall Spy (11115)
@@ -8,27 +9,24 @@ class StarfallSpy extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isParticipating()
             },
             cost: ability.costs.putSelfIntoShadows(),
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: (card) =>
-                    card.controller === this.controller &&
-                    card !== this &&
+                cardCondition: (card, context) =>
+                    card.controller === context.source.controller &&
+                    card !== context.source &&
                     card.location === 'shadows' &&
-                    this.controller.canPutIntoPlay(card)
+                    context.source.controller.canPutIntoPlay(card)
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} returns {1} to shadows to put {2} into play',
-                    context.player,
-                    this,
-                    context.target
-                );
-                context.player.putIntoPlay(context.target);
-            }
+            message: '{player} returns {source} to shadows to put {target} into play',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 }

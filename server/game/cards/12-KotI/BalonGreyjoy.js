@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BalonGreyjoy extends DrawCard {
     // Balon Greyjoy (12001)
@@ -11,10 +12,10 @@ class BalonGreyjoy extends DrawCard {
             title: 'Put card into play',
             cost: ability.costs.kneelFactionCard(),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'discard pile' &&
-                    card.controller !== this.controller &&
-                    this.controller.canPutIntoPlay(card)
+                    card.controller !== context.source.controller &&
+                    context.source.controller.canPutIntoPlay(card)
             },
             message: {
                 format: "{player} uses {source} and kneels their faction card to put {target} into play from {targetOwner}'s discard pile under their control",
@@ -22,16 +23,19 @@ class BalonGreyjoy extends DrawCard {
                     targetOwner: (context) => context.target.owner
                 }
             },
-            handler: (context) => {
-                context.player.putIntoPlay(context.target);
-
-                this.atEndOfPhase((ability) => ({
+            gameAction: GameActions.simultaneously([
+                GameActions.putIntoPlay((context) => ({
+                    player: context.player,
+                    card: context.target
+                })),
+                GameActions.lastingEffect((context) => ({
+                    duration: 'atEndOfPhase',
                     match: context.target,
                     condition: () => ['play area', 'duplicate'].includes(context.target.location),
                     targetLocation: 'any',
                     effect: ability.effects.shuffleIntoDeckIfStillInPlay()
-                }));
-            }
+                }))
+            ])
         });
     }
 }

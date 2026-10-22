@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BloodOfTheViper extends DrawCard {
     // Blood of the Viper (11116)
@@ -9,20 +10,16 @@ class BloodOfTheViper extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller &&
-                    this.parent.isParticipating() &&
-                    this.parent.kneeled
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.source.controller &&
+                    context.source.parent.isParticipating() &&
+                    context.source.parent.kneeled
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to stand {2}',
-                    context.player,
-                    this,
-                    this.parent
-                );
-                context.player.standCard(this.parent);
-            }
+            message: {
+                format: '{player} uses {source} to stand {parent}',
+                args: { parent: (context) => context.source.parent }
+            },
+            gameAction: GameActions.standCard((context) => ({ card: context.source.parent }))
         });
     }
 }

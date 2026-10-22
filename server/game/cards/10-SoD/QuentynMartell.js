@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class QuentynMartell extends DrawCard {
     // Quentyn Martell (10011)
@@ -8,13 +9,12 @@ class QuentynMartell extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onPhaseStarted: (event) =>
-                    event.phase === 'challenge' && this.controller.getNumberOfUsedPlots() < 3
+                onPhaseStarted: (event, context) =>
+                    event.phase === 'challenge' &&
+                    context.source.controller.getNumberOfUsedPlots() < 3
             },
-            handler: (context) => {
-                context.player.kneelCard(this);
-                this.game.addMessage('{0} is forced to kneel {1}', context.player, this);
-            }
+            message: '{player} is forced to kneel {source}',
+            gameAction: GameActions.kneelCard((context) => ({ card: context.source }))
         });
     }
 }

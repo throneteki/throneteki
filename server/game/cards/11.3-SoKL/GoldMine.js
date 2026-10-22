@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class GoldMine extends DrawCard {
     // Gold Mine (11050)
@@ -7,17 +8,11 @@ class GoldMine extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Draw 1 card',
-            condition: () => this.controller.canDraw(),
+            condition: (context) => context.source.controller.canDraw(),
             cost: [ability.costs.kneelSelf(), ability.costs.discardFromHand()],
-            handler: (context) => {
-                context.player.drawCardsToHand(1);
-                this.game.addMessage(
-                    '{0} kneels {1} and discards {2} from their hand to draw 1 card',
-                    context.player,
-                    this,
-                    context.costs.discardFromHand
-                );
-            }
+            message:
+                '{player} kneels {source} and discards {costs.discardFromHand} from their hand to draw 1 card',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });
 
         this.plotModifiers({

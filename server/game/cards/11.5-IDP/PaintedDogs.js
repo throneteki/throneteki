@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class PaintedDogs extends DrawCard {
     // Painted Dogs (11089)
@@ -17,15 +18,8 @@ class PaintedDogs extends DrawCard {
                     (card.hasTrait('Clansman') || card.name === 'Tyrion Lannister'),
                 gameAction: 'stand'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} returns {1} to hand to stand {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-                context.player.standCard(context.target);
-            }
+            message: '{player} returns {source} to hand to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

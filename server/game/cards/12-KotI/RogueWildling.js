@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RogueWildling extends DrawCard {
     // Rogue Wildling (12040)
@@ -8,25 +9,18 @@ class RogueWildling extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             target: {
-                cardCondition: (card) =>
-                    card.controller === this.controller &&
+                cardCondition: (card, context) =>
+                    card.controller === context.source.controller &&
                     card.getType() === 'character' &&
                     card.hasTrait('Wildling') &&
                     card.kneeled,
                 gameAction: 'stand'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to stand {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-                this.controller.standCard(context.target);
-            }
+            message: '{player} uses {source} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }
