@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Braavos extends DrawCard {
     // Braavos (15042)
@@ -8,17 +9,16 @@ class Braavos extends DrawCard {
         this.action({
             title: 'Gain gold',
             phase: 'marshal',
-            condition: () => this.controller.canGainGold(),
+            condition: (context) => context.source.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
-            handler: () => {
-                const goldGained = this.game.addGold(this.controller, this.getNumberOfFactions());
-                this.game.addMessage(
-                    '{0} kneels {1} to gain {2} gold',
-                    this.controller,
-                    this,
-                    goldGained
-                );
-            }
+            message: {
+                format: '{player} kneels {source} to gain {goldGained} gold',
+                args: { goldGained: (context) => context.source.getNumberOfFactions() }
+            },
+            gameAction: GameActions.gainGold((context) => ({
+                player: context.player,
+                amount: context.source.getNumberOfFactions()
+            }))
         });
     }
 

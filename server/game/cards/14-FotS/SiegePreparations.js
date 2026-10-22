@@ -1,5 +1,5 @@
 import PlotCard from '../../plotcard.js';
-import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class SiegePreparations extends PlotCard {
     // Siege Preparations (14048)
@@ -9,19 +9,15 @@ class SiegePreparations extends PlotCard {
         this.action({
             title: 'Draw cards',
             phase: 'dominance',
-            condition: () =>
-                this.controller.canDraw() &&
-                this.controller.getReserve() > this.controller.getHandCount(),
-            handler: (context) => {
-                let cardsToDraw = context.player.getReserve() - context.player.getHandCount();
-                let numDrawn = context.player.drawCardsToHand(cardsToDraw).length;
-                this.game.addMessage(
-                    '{0} uses {1} to draw {2}',
-                    context.player,
-                    this,
-                    TextHelper.count(numDrawn, 'card')
-                );
-            },
+            condition: (context) =>
+                context.source.controller.canDraw() &&
+                context.source.controller.getReserve() > context.source.controller.getHandCount(),
+            message:
+                '{player} uses {source} to draw cards until their hand size equals their reserve',
+            gameAction: GameActions.drawCards((context) => ({
+                player: context.player,
+                amount: context.player.getReserve() - context.player.getHandCount()
+            })),
             limit: ability.limit.perPhase(1)
         });
     }

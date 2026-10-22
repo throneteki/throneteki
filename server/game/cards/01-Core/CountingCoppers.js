@@ -1,20 +1,13 @@
 import PlotCard from '../../plotcard.js';
-import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class CountingCoppers extends PlotCard {
     // Counting Coppers (01010)
     // When Revealed: Draw 3 cards.
     setupCardAbilities() {
         this.whenRevealed({
-            handler: (context) => {
-                let cards = context.player.drawCardsToHand(3).length;
-                this.game.addMessage(
-                    '{0} uses {1} to draw {2} to hand',
-                    context.player,
-                    this,
-                    TextHelper.count(cards, 'card')
-                );
-            }
+            message: '{player} uses {source} to draw 3 cards to hand',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 3 }))
         });
     }
 }

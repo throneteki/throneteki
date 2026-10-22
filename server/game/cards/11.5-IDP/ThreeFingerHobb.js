@@ -1,5 +1,5 @@
 import DrawCard from '../../drawcard.js';
-import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class ThreeFingerHobb extends DrawCard {
     // Three-Finger Hobb (11085)
@@ -9,19 +9,13 @@ class ThreeFingerHobb extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onReserveChecked: () =>
-                    this.controller.getHandCount() < this.controller.getReserve() &&
-                    this.controller.canDraw()
+                onReserveChecked: (event, context) =>
+                    context.source.controller.getHandCount() <
+                        context.source.controller.getReserve() &&
+                    context.source.controller.canDraw()
             },
-            handler: (context) => {
-                let numDrawn = context.player.drawCardsToHand(2).length;
-                this.game.addMessage(
-                    '{0} uses {1} to draw {2}',
-                    context.player,
-                    this,
-                    TextHelper.count(numDrawn, 'card')
-                );
-            }
+            message: '{player} uses {source} to draw 2 cards',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 2 }))
         });
     }
 }

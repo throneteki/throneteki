@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class BlackwaterBay extends DrawCard {
     // Blackwater Bay (11048)
@@ -8,21 +9,22 @@ class BlackwaterBay extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onPhaseStarted: (event) => event.phase === 'challenge' && this.controller.canDraw()
+                onPhaseStarted: (event, context) =>
+                    event.phase === 'challenge' && context.source.controller.canDraw()
             },
             cost: ability.costs.kneelSelf(),
             chooseOpponent: true,
-            handler: (context) => {
-                let numDrawn = context.player.drawCardsToHand(
-                    this.getNumToDraw(context.opponent)
-                ).length;
-                this.game.addMessage(
-                    '{0} kneels {1} to draw {2}',
-                    context.player,
-                    this,
-                    TextHelper.count(numDrawn, 'card')
-                );
-            }
+            message: {
+                format: '{player} kneels {source} to draw {cards}',
+                args: {
+                    cards: (context) =>
+                        TextHelper.count(context.source.getNumToDraw(context.opponent), 'card')
+                }
+            },
+            gameAction: GameActions.drawCards((context) => ({
+                player: context.player,
+                amount: context.source.getNumToDraw(context.opponent)
+            }))
         });
     }
 

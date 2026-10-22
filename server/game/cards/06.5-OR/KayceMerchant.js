@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class KayceMerchant extends DrawCard {
     // Kayce Merchant (06089)
@@ -7,19 +8,13 @@ class KayceMerchant extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onIncomeCollected: (event) =>
-                    event.player === this.controller && this.controller.canGainGold()
+                onIncomeCollected: (event, context) =>
+                    event.player === context.source.controller &&
+                    context.source.controller.canGainGold()
             },
             cost: ability.costs.discardGold(),
-            handler: () => {
-                let gold = this.game.addGold(this.controller, 2);
-                this.game.addMessage(
-                    '{0} discards 1 gold from {1} to gain {2} gold',
-                    this.controller,
-                    this,
-                    gold
-                );
-            }
+            message: '{player} discards 1 gold from {source} to gain 2 gold',
+            gameAction: GameActions.gainGold((context) => ({ player: context.player, amount: 2 }))
         });
     }
 }

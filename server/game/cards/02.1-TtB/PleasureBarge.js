@@ -1,5 +1,5 @@
 import DrawCard from '../../drawcard.js';
-import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class PleasureBarge extends DrawCard {
     constructor(owner, cardData) {
@@ -22,21 +22,14 @@ class PleasureBarge extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    event.card === this &&
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source &&
                     event.playingType === 'marshal' &&
-                    this.controller.canDraw() &&
-                    !this.tracker.hasDrawnCardsThisPhase
+                    context.source.controller.canDraw() &&
+                    !context.source.tracker.hasDrawnCardsThisPhase
             },
-            handler: () => {
-                let cards = this.controller.drawCardsToHand(3).length;
-                this.game.addMessage(
-                    '{0} plays {1} to draw {2}',
-                    this.controller,
-                    this,
-                    TextHelper.count(cards, 'card')
-                );
-            }
+            message: '{player} plays {source} to draw 3 cards',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 3 }))
         });
     }
 }

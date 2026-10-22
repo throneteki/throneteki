@@ -1,5 +1,5 @@
 import DrawCard from '../../drawcard.js';
-import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class FeverDreams extends DrawCard {
     // Fever Dreams (06050)
@@ -10,18 +10,12 @@ class FeverDreams extends DrawCard {
         this.attachmentRestriction({ controller: 'opponent' });
         this.reaction({
             when: {
-                onCardKneeled: (event) => event.card === this.parent && this.controller.canDraw()
+                onCardKneeled: (event, context) =>
+                    event.card === context.source.parent && context.source.controller.canDraw()
             },
             cost: ability.costs.discardGold(),
-            handler: () => {
-                let cards = this.controller.drawCardsToHand(2).length;
-                this.game.addMessage(
-                    '{0} discards a gold from {1} to draw {2}',
-                    this.controller,
-                    this,
-                    TextHelper.count(cards, 'card')
-                );
-            }
+            message: '{player} discards a gold from {source} to draw 2 cards',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 2 }))
         });
     }
 }

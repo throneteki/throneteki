@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class StannisBaratheon extends DrawCard {
     // Stannis Baratheon (14002)
@@ -10,27 +11,32 @@ class StannisBaratheon extends DrawCard {
         this.persistentEffect({
             match: this,
             effect: ability.effects.immuneTo(
-                (card) => card.controller !== this.controller && card.getType() === 'event'
+                (card, arg, context) =>
+                    card.controller !== context.source.controller && card.getType() === 'event'
             )
         });
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    this.controller.canDraw() &&
-                    event.challenge.isMatch({ winner: this.controller, challengeType: 'power' }) &&
+                afterChallenge: (event, context) =>
+                    context.source.controller.canDraw() &&
+                    event.challenge.isMatch({
+                        winner: context.source.controller,
+                        challengeType: 'power'
+                    }) &&
                     event.challenge.attackingPlayer.getClaim() > 0
             },
-            handler: (context) => {
-                let claim = context.event.challenge.attackingPlayer.getClaim();
-                let cards = context.player.drawCardsToHand(claim).length;
-                this.game.addMessage(
-                    '{0} uses {1} to draw {2}',
-                    context.player,
-                    this,
-                    TextHelper.count(cards, 'card')
-                );
-            }
+            message: {
+                format: '{player} uses {source} to draw {cards}',
+                args: {
+                    cards: (context) =>
+                        TextHelper.count(context.event.challenge.attackingPlayer.getClaim(), 'card')
+                }
+            },
+            gameAction: GameActions.drawCards((context) => ({
+                player: context.player,
+                amount: context.event.challenge.attackingPlayer.getClaim()
+            }))
         });
     }
 }

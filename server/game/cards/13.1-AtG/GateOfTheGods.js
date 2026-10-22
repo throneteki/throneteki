@@ -1,5 +1,5 @@
 import DrawCard from '../../drawcard.js';
-import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class GateOfTheGods extends DrawCard {
     // Gate of the Gods (13004)
@@ -13,18 +13,11 @@ class GateOfTheGods extends DrawCard {
         });
         this.action({
             title: 'Sacrifice to draw 2 cards',
-            condition: (context) => this.characterWithHighestStrength(context.player),
+            condition: (context) => context.source.characterWithHighestStrength(context.player),
             phase: 'challenge',
             cost: ability.costs.sacrificeSelf(),
-            handler: (context) => {
-                let cards = context.player.drawCardsToHand(2).length;
-                this.game.addMessage(
-                    '{0} sacrifices {1} to draw {2}',
-                    context.player,
-                    this,
-                    TextHelper.count(cards, 'card')
-                );
-            }
+            message: '{player} sacrifices {source} to draw 2 cards',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 2 }))
         });
     }
 
