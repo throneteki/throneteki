@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TobhoMottsArmory extends DrawCard {
     // Tobho Mott's Armory (02069)
@@ -6,14 +7,13 @@ class TobhoMottsArmory extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onDominanceDetermined: (event) =>
-                    this.controller === event.winner && this.controller.canDraw()
+                onDominanceDetermined: (event, context) =>
+                    context.source.controller === event.winner &&
+                    context.source.controller.canDraw()
             },
             cost: ability.costs.kneelSelf(),
-            handler: () => {
-                this.controller.drawCardsToHand(1);
-                this.game.addMessage('{0} kneels {1} to draw 1 card', this.controller, this);
-            }
+            message: '{player} kneels {source} to draw 1 card',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });
     }
 }

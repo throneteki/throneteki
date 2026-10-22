@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class StinkingDrunk extends DrawCard {
     // Stinking Drunk (02088)
@@ -8,18 +9,14 @@ class StinkingDrunk extends DrawCard {
         this.attachmentRestriction({ controller: 'opponent' });
         this.reaction({
             when: {
-                onCardStood: (event) => event.card === this.parent
+                onCardStood: (event, context) => event.card === context.source.parent
             },
             cost: ability.costs.sacrificeSelf(),
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} sacrifices {1} to kneel {2}',
-                    context.player,
-                    this,
-                    context.event.card
-                );
-                context.event.card.controller.kneelCard(context.event.card);
-            }
+            message: {
+                format: '{player} sacrifices {source} to kneel {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.kneelCard((context) => ({ card: context.event.card }))
         });
     }
 }

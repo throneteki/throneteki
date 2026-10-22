@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class NewlyMadeLord extends DrawCard {
     // Newly-Made Lord (02051)
@@ -7,7 +8,8 @@ class NewlyMadeLord extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this && event.playingType === 'marshal'
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source && event.playingType === 'marshal'
             },
             target: {
                 activePromptTitle: 'Select a location',
@@ -18,15 +20,8 @@ class NewlyMadeLord extends DrawCard {
                     card.getPrintedCost() <= 3,
                 gameAction: 'discard'
             },
-            handler: (context) => {
-                context.target.owner.discardCard(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to discard {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to discard {target}',
+            gameAction: GameActions.discardCard((context) => ({ card: context.target }))
         });
     }
 }

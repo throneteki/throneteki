@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerAlliserThorne extends DrawCard {
     // Ser Alliser Thorne (02045)
@@ -8,7 +9,8 @@ class SerAlliserThorne extends DrawCard {
     // pay 4 gold to put Ser Alliser Thorne into play from your hand.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ defendingPlayer: this.controller }),
+            condition: (context) =>
+                context.game.isDuringChallenge({ defendingPlayer: context.source.controller }),
             match: (card) => card.getType() === 'character' && card.isFaction('thenightswatch'),
             effect: ability.effects.addIcon('military')
         });
@@ -16,21 +18,17 @@ class SerAlliserThorne extends DrawCard {
         this.reaction({
             location: 'hand',
             when: {
-                onChallengeInitiated: (event) =>
+                onChallengeInitiated: (event, context) =>
                     event.challenge.initiatedChallengeType === 'military' &&
-                    event.challenge.initiatedAgainstPlayer === this.controller &&
-                    this.controller.canPutIntoPlay(this)
+                    event.challenge.initiatedAgainstPlayer === context.source.controller &&
+                    context.source.controller.canPutIntoPlay(context.source)
             },
             cost: [ability.costs.kneelFactionCard(), ability.costs.payGold(4)],
-            handler: () => {
-                this.controller.putIntoPlay(this);
-
-                this.game.addMessage(
-                    '{0} uses {1} to put {1} into play from their hand',
-                    this.controller,
-                    this
-                );
-            }
+            message: '{player} uses {source} to put {source} into play from their hand',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.source
+            }))
         });
     }
 }

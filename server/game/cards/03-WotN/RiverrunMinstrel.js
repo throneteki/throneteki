@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RiverrunMinstrel extends DrawCard {
     // Riverrun Minstrel (03009)
@@ -7,7 +8,7 @@ class RiverrunMinstrel extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             target: {
                 cardCondition: (card) =>
@@ -16,15 +17,8 @@ class RiverrunMinstrel extends DrawCard {
                     card.getType() === 'character',
                 gameAction: 'gainPower'
             },
-            handler: (context) => {
-                context.target.modifyPower(1);
-                this.game.addMessage(
-                    '{0} uses {1} to have {2} gain a power',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to have {target} gain a power',
+            gameAction: GameActions.gainPower((context) => ({ card: context.target, amount: 1 }))
         });
     }
 }

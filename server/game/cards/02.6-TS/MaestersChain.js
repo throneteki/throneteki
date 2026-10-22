@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MaestersChain extends DrawCard {
     // Maester's Chain (02117)
@@ -18,15 +19,8 @@ class MaestersChain extends DrawCard {
                     card.getType() === 'attachment' &&
                     card.hasTrait('condition')
             },
-            handler: (context) => {
-                context.target.owner.discardCard(context.target);
-                this.game.addMessage(
-                    '{0} kneels {1} to discard {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} kneels {source} to discard {target}',
+            gameAction: GameActions.discardCard((context) => ({ card: context.target }))
         });
     }
 }

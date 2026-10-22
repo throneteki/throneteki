@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class JeyneWesterling extends DrawCard {
     // Jeyne Westerling (05033)
@@ -16,15 +17,8 @@ class JeyneWesterling extends DrawCard {
                     card.kneeled,
                 gameAction: 'stand'
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.addMessage(
-                    '{0} kneels {1} to stand {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} kneels {source} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

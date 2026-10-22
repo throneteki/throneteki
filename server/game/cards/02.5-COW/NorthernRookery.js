@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class NorthernRookery extends DrawCard {
     // Northern Rookery (02086)
@@ -10,15 +11,13 @@ class NorthernRookery extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    event.card === this &&
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source &&
                     event.playingType === 'marshal' &&
-                    this.controller.canDraw()
+                    context.source.controller.canDraw()
             },
-            handler: () => {
-                this.controller.drawCardsToHand(1);
-                this.game.addMessage('{0} uses {1} to draw 1 card', this.controller, this);
-            }
+            message: '{player} uses {source} to draw 1 card',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });
     }
 }

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Harrenhal extends DrawCard {
     // Harrenhal (04050)
@@ -11,29 +12,26 @@ class Harrenhal extends DrawCard {
             cost: ability.costs.kneelSelf(),
             phase: 'challenge',
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'hand' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.getType() === 'character' &&
                     (card.isFaction('lannister') || card.hasTrait('House Bolton')) &&
-                    this.controller.canPutIntoPlay(card)
+                    context.source.controller.canPutIntoPlay(card)
             },
-            handler: (context) => {
-                this.controller.putIntoPlay(context.target);
-
-                this.atEndOfPhase((ability) => ({
+            message: '{player} kneels {source} to put {target} into play from their hand',
+            gameAction: GameActions.simultaneously([
+                GameActions.putIntoPlay((context) => ({
+                    player: context.player,
+                    card: context.target
+                })),
+                GameActions.lastingEffect((context) => ({
+                    duration: 'atEndOfPhase',
                     match: context.target,
                     condition: () => 'play area' === context.target.location,
                     effect: ability.effects.killIfStillInPlay(false)
-                }));
-
-                this.game.addMessage(
-                    '{0} kneels {1} to put {2} into play from their hand',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+                }))
+            ])
         });
     }
 }

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class JonSnow extends DrawCard {
     // Jon Snow (03005)
@@ -20,16 +21,8 @@ class JonSnow extends DrawCard {
                     card.getType() === 'character',
                 gameAction: 'stand'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} and sacrifices {2} to stand {3}',
-                    this.controller,
-                    this,
-                    context.costs.sacrifice,
-                    context.target
-                );
-                context.target.controller.standCard(context.target);
-            }
+            message: '{player} uses {source} and sacrifices {costs.sacrifice} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

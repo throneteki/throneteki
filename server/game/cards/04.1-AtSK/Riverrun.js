@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Riverrun extends DrawCard {
     // Riverrun (04003)
@@ -7,21 +8,18 @@ class Riverrun extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPowerGained: (event) => this.isTullyCharacter(event.card),
-                onCardPowerMoved: (event) => this.isTullyCharacter(event.target)
+                onCardPowerGained: (event, context) => context.source.isTullyCharacter(event.card),
+                onCardPowerMoved: (event, context) => context.source.isTullyCharacter(event.target)
             },
             cost: ability.costs.kneelSelf(),
-            handler: (context) => {
-                let tullyCharacter = context.event.card || context.event.target;
-                tullyCharacter.modifyPower(1);
-
-                this.game.addMessage(
-                    '{0} kneels {1} to have {2} gain 1 power',
-                    this.controller,
-                    this,
-                    tullyCharacter
-                );
-            }
+            message: {
+                format: '{player} kneels {source} to have {tullyCharacter} gain 1 power',
+                args: { tullyCharacter: (context) => context.event.card || context.event.target }
+            },
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.event.card || context.event.target,
+                amount: 1
+            }))
         });
     }
 

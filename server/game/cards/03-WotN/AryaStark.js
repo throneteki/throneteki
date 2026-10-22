@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class AryaStark extends DrawCard {
     // Arya Stark (03007)
@@ -7,8 +8,8 @@ class AryaStark extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCharacterKilled: (event) =>
-                    event.cardStateWhenKilled.controller === this.controller &&
+                onCharacterKilled: (event, context) =>
+                    event.cardStateWhenKilled.controller === context.source.controller &&
                     event.cardStateWhenKilled.isFaction('stark')
             },
             cost: ability.costs.sacrificeSelf(),
@@ -19,15 +20,8 @@ class AryaStark extends DrawCard {
                     card.getStrength() <= 3,
                 gameAction: 'kill'
             },
-            handler: (context) => {
-                this.game.killCharacter(context.target);
-                this.game.addMessage(
-                    '{0} sacrifices {1} to kill {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} sacrifices {source} to kill {target}',
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 }

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SmallCouncilChamber extends DrawCard {
     // Small Council Chamber (02110)
@@ -11,15 +12,13 @@ class SmallCouncilChamber extends DrawCard {
         });
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.challengeType === 'intrigue' &&
-                    this.allowGameAction('gainPower')
+                    context.source.allowGameAction('gainPower')
             },
-            handler: () => {
-                this.game.addMessage('{0} gains 1 power on {1}', this.controller, this);
-                this.modifyPower(1);
-            }
+            message: '{player} gains 1 power on {source}',
+            gameAction: GameActions.gainPower((context) => ({ card: context.source, amount: 1 }))
         });
     }
 }

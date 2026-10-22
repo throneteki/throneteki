@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerArysOakheart extends DrawCard {
     // Ser Arys Oakheart (04115)
@@ -8,7 +9,7 @@ class SerArysOakheart extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             cost: ability.costs.payGold(2),
             target: {
@@ -17,15 +18,8 @@ class SerArysOakheart extends DrawCard {
                     card.hasTrait('Ally') &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                context.target.controller.discardCard(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} and pays 2 gold to discard {2} from play',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} and pays 2 gold to discard {target} from play',
+            gameAction: GameActions.discardCard((context) => ({ card: context.target }))
         });
     }
 }

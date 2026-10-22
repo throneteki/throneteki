@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class QhorinHalfhand extends DrawCard {
     // Qhorin Halfhand (04105)
@@ -9,29 +10,22 @@ class QhorinHalfhand extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'military' &&
-                    event.challenge.winner === this.controller &&
-                    this.isParticipating()
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isParticipating()
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.game.currentChallenge.loser &&
+                    card.controller === context.game.currentChallenge.loser &&
                     card.getType() === 'character' &&
                     !card.isUnique() &&
-                    card.getStrength() < this.getStrength(),
+                    card.getStrength() < context.source.getStrength(),
                 gameAction: 'kill'
             },
-            handler: (context) => {
-                context.target.controller.killCharacter(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to kill {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to kill {target}',
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 }

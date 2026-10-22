@@ -424,11 +424,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/02.2-TRtW/RoyalEntourage.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/02.2-TRtW/TheReader.js": {
         "this-in-ability": 3,
         "add-message": 1
@@ -464,16 +459,6 @@
         "this-in-ability": 6,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/02.3-TKP/NewlyMadeLord.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/02.3-TKP/SerAlliserThorne.js": {
-        "this-in-ability": 10,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/02.3-TKP/SerGregorClegane.js": {
         "this-in-ability": 11,
@@ -531,17 +516,7 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/02.4-NMG/SerHorasRedwyne.js": {
-        "this-in-ability": 4,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/02.4-NMG/TheWatcherOnTheWalls.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/02.4-NMG/TobhoMottsArmory.js": {
         "this-in-ability": 6,
         "legacy-helper": 1,
         "add-message": 1
@@ -571,16 +546,6 @@
     },
     "server/game/cards/02.5-COW/MirriMazDuur.js": {
         "this-in-ability": 6,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
-    "server/game/cards/02.5-COW/NorthernRookery.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/02.5-COW/StinkingDrunk.js": {
-        "this-in-ability": 3,
         "add-message": 1,
         "legacy-helper": 1
     },
@@ -624,40 +589,15 @@
     "server/game/cards/02.6-TS/Jhogo.js": {
         "this-in-ability": 4
     },
-    "server/game/cards/02.6-TS/MaestersChain.js": {
-        "legacy-helper": 1,
-        "add-message": 1,
-        "this-in-ability": 3
-    },
     "server/game/cards/02.6-TS/SerBarristanSelmy.js": {
         "this-in-ability": 4,
         "add-message": 1
-    },
-    "server/game/cards/02.6-TS/SerIlynPayne.js": {
-        "add-message": 1,
-        "this-in-ability": 4,
-        "legacy-helper": 1
-    },
-    "server/game/cards/02.6-TS/SmallCouncilChamber.js": {
-        "this-in-ability": 6,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
-    "server/game/cards/03-WotN/Aggo.js": {
-        "this-in-ability": 4,
-        "add-message": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/03-WotN/AheadOfTheTide.js": {
         "add-message": 2,
         "this-in-ability": 12,
         "game-listener": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/03-WotN/AryaStark.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/03-WotN/AryasGift.js": {
         "this-in-ability": 3,
@@ -714,11 +654,6 @@
         "prompt-for-select": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/03-WotN/JonSnow.js": {
-        "add-message": 1,
-        "this-in-ability": 3,
-        "legacy-helper": 1
-    },
     "server/game/cards/03-WotN/JoryCassel.js": {
         "this-in-ability": 4,
         "legacy-helper": 1,
@@ -762,11 +697,6 @@
     "server/game/cards/03-WotN/RickonStark.js": {
         "add-message": 1,
         "this-in-ability": 2
-    },
-    "server/game/cards/03-WotN/RiverrunMinstrel.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/03-WotN/Stonesnake.js": {
         "this-in-ability": 7,
@@ -819,25 +749,10 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/04.1-AtSK/Pyromancers.js": {
-        "legacy-helper": 1,
-        "add-message": 1,
-        "this-in-ability": 3
-    },
-    "server/game/cards/04.1-AtSK/Riverrun.js": {
-        "this-in-ability": 5,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/04.1-AtSK/RubyOfRhllor.js": {
         "this-in-ability": 4,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/04.1-AtSK/ShierakQiya.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/04.1-AtSK/TheDragonsTail.js": {
         "this-in-ability": 5,
@@ -887,28 +802,13 @@
         "this-in-ability": 4,
         "add-message": 2
     },
-    "server/game/cards/04.2-CtA/Shae.js": {
-        "legacy-helper": 1,
-        "this-in-ability": 5,
-        "add-message": 1
-    },
     "server/game/cards/04.2-CtA/StarfallCavalry.js": {
         "this-in-ability": 7,
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/04.2-CtA/TheBoyKing.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/04.2-CtA/WinterFestival.js": {
         "this-in-ability": 7,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/04.3-FFH/AsshaiPriestess.js": {
-        "this-in-ability": 5,
         "legacy-helper": 1,
         "add-message": 1
     },
@@ -919,21 +819,6 @@
     },
     "server/game/cards/04.3-FFH/BloodOfMyBlood.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/04.3-FFH/Dissension.js": {
-        "legacy-helper": 1,
-        "add-message": 1,
-        "this-in-ability": 3
-    },
-    "server/game/cards/04.3-FFH/Harrenhal.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/04.3-FFH/KingOfSaltAndRock.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/04.3-FFH/LordsportFisherman.js": {
         "this-in-ability": 6,
@@ -1096,23 +981,8 @@
         "prompt-for-select": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/04.6-TC/QhorinHalfhand.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/04.6-TC/QuaitheOfTheShadow.js": {
         "this-in-ability": 9,
-        "add-message": 1
-    },
-    "server/game/cards/04.6-TC/SalladhorSaan.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/04.6-TC/SerArysOakheart.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1,
         "add-message": 1
     },
     "server/game/cards/04.6-TC/TarredHeads.js": {
@@ -1158,11 +1028,6 @@
         "this-in-ability": 5,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/05-LoCR/JeyneWesterling.js": {
-        "legacy-helper": 1,
-        "add-message": 1,
-        "this-in-ability": 3
     },
     "server/game/cards/05-LoCR/LannisportGuard.js": {
         "this-in-ability": 5,

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerHorasRedwyne extends DrawCard {
     // Ser Horas Redwyne (02063)
@@ -6,7 +7,7 @@ class SerHorasRedwyne extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardKneeled: (event) => event.card === this
+                onCardKneeled: (event, context) => event.card === context.source
             },
             target: {
                 cardCondition: (card) =>
@@ -14,15 +15,8 @@ class SerHorasRedwyne extends DrawCard {
                     card.getType() === 'character' &&
                     card.hasTrait('Lady')
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to stand {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-                this.controller.standCard(context.target);
-            }
+            message: '{player} uses {source} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }
