@@ -11,7 +11,7 @@ class SchemingSepton extends DrawCard {
             title: 'Draw 1 card and gain 2 gold',
             phase: 'challenge',
             limit: ability.limit.perPhase(1),
-            message: '{player} uses {source} to {gameAction}',
+            message: '{player} uses {source} and {gameAction}',
             gameAction: GameActions.simultaneously([
                 GameActions.drawCards((context) => ({ player: context.player, amount: 1 })),
                 GameActions.gainGold((context) => ({ player: context.player, amount: 2 }))

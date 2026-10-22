@@ -24,8 +24,13 @@ class ToTheRoseBanner extends DrawCard {
                 player: context.player,
                 amount: context.target.getStrength()
             })).then({
-                message: 'Then {player} sacrifices {target}',
-                gameAction: GameActions.sacrificeCard((context) => ({ card: context.target }))
+                message: {
+                    format: 'Then {player} sacrifices {character}',
+                    args: { character: (context) => context.parentContext.target }
+                },
+                gameAction: GameActions.sacrificeCard((context) => ({
+                    card: context.parentContext.target
+                }))
             })
         });
     }
