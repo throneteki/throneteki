@@ -8,7 +8,7 @@ class DisputedClaim extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: ['Bastard', 'Lord', 'Lady'] });
         this.whileAttached({
-            condition: () => this.hasMostFactionPower(),
+            condition: (context) => context.source.hasMostFactionPower(),
             effect: [ability.effects.modifyStrength(2), ability.effects.addKeyword('Renown')]
         });
     }

@@ -6,7 +6,7 @@ class YoungSpearwife extends DrawCard {
     // stealth.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.hasLessFactionPower(),
+            condition: (context) => context.source.hasLessFactionPower(),
             match: this,
             effect: ability.effects.addKeyword('Stealth')
         });

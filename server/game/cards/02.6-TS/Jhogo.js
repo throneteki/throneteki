@@ -7,14 +7,16 @@ class Jhogo extends DrawCard {
     // defending player's dead pile.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.getNumberOfBloodriders() >= 1,
+            condition: (context) => context.source.getNumberOfBloodriders() >= 1,
             match: this,
             effect: ability.effects.addKeyword('stealth')
         });
         this.persistentEffect({
-            condition: () => this.isAttacking(),
+            condition: (context) => context.source.isAttacking(),
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.getNumberOfDeadDefendingCharacters())
+            effect: ability.effects.dynamicStrength((card, context) =>
+                context.source.getNumberOfDeadDefendingCharacters()
+            )
         });
     }
 

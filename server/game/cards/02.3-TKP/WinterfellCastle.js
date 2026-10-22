@@ -6,8 +6,8 @@ class WinterfellCastle extends DrawCard {
     // [stark] characters, each of those characters gets +2 STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.hasParticipatingUniqueStarks(),
-            match: (card) => this.isUniqueStark(card) && card.isParticipating(),
+            condition: (context) => context.source.hasParticipatingUniqueStarks(),
+            match: (card, context) => context.source.isUniqueStark(card) && card.isParticipating(),
             effect: ability.effects.modifyStrength(2)
         });
     }

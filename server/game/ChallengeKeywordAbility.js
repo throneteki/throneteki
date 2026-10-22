@@ -28,7 +28,7 @@ class ChallengeKeywordAbility extends BaseAbility {
             return Requirements.condition;
         }
 
-        if (!context.source.allowGameAction(this.title, context)) {
+        if (!context.source.allowGameAction(this.title.toLowerCase(), context)) {
             return Requirements.cannotTrigger;
         }
 

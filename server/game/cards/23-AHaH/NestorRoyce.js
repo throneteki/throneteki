@@ -9,8 +9,9 @@ class NestorRoyce extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    this.isAttacking() && event.challenge.isMatch({ winner: this.controller })
+                afterChallenge: (event, context) =>
+                    context.source.isAttacking() &&
+                    event.challenge.isMatch({ winner: context.source.controller })
             },
             cost: ability.costs.kneel({
                 type: 'location',
@@ -27,10 +28,10 @@ class NestorRoyce extends DrawCard {
                 },
                 choices: {
                     Renown: GameActions.genericHandler((context) =>
-                        this.gainKeyword(context.selectedChoice.text.toLowerCase())
+                        context.source.gainKeyword(context.selectedChoice.text.toLowerCase())
                     ),
                     Intimidate: GameActions.genericHandler((context) =>
-                        this.gainKeyword(context.selectedChoice.text.toLowerCase())
+                        context.source.gainKeyword(context.selectedChoice.text.toLowerCase())
                     )
                 }
             })

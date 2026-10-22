@@ -6,8 +6,9 @@ class EliaSand extends DrawCard {
     // the claim value on your revealed plot card by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isAttacking() && this.anotherSandSnakeIsAttacking(),
-            match: (card) => card === this.controller.activePlot,
+            condition: (context) =>
+                context.source.isAttacking() && context.source.anotherSandSnakeIsAttacking(),
+            match: (card, context) => card === context.source.controller.activePlot,
             effect: ability.effects.modifyClaim(1)
         });
     }

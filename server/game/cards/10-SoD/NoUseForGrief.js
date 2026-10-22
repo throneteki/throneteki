@@ -16,13 +16,14 @@ class NoUseForGrief extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Put Sand Snake into play',
-            condition: () =>
-                this.tracker.anyKilledThisRound(
-                    (card) => card.isFaction('martell') && card.controller === this.controller
+            condition: (context) =>
+                context.source.tracker.anyKilledThisRound(
+                    (card) =>
+                        card.isFaction('martell') && card.controller === context.source.controller
                 ),
             message: {
                 format: '{player} plays {source} to search their deck for a Sand Snake character with printed cost {printedCost} or lower',
-                args: { printedCost: (context) => this.getCostLimit(context.player) }
+                args: { printedCost: (context) => context.source.getCostLimit(context.player) }
             },
             gameAction: GameActions.search({
                 title: 'Select a character',
@@ -31,7 +32,7 @@ class NoUseForGrief extends DrawCard {
                     trait: 'Sand Snake',
                     condition: (card, context) =>
                         card.hasPrintedCost() &&
-                        card.getPrintedCost() <= this.getCostLimit(context.player)
+                        card.getPrintedCost() <= context.source.getCostLimit(context.player)
                 },
                 reveal: false,
                 message: '{player} {gameAction}',

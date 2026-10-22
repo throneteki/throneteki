@@ -7,7 +7,8 @@ class JonSnow extends DrawCard {
     // you control another attacking [thenightswatch] character.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !this.kneeled && this.hasOtherAttackingNightsWatch(),
+            condition: (context) =>
+                !context.source.kneeled && context.source.hasOtherAttackingNightsWatch(),
             match: this,
             effect: ability.effects.consideredToBeAttacking()
         });

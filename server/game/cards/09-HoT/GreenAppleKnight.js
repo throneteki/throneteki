@@ -8,10 +8,12 @@ class GreenAppleKnight extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.getNumberOfOtherKnights())
+            effect: ability.effects.dynamicStrength((card, context) =>
+                context.source.getNumberOfOtherKnights()
+            )
         });
         this.persistentEffect({
-            condition: () => this.getNumberOfOtherKnights() >= 2,
+            condition: (context) => context.source.getNumberOfOtherKnights() >= 2,
             match: this,
             effect: ability.effects.doesNotKneelAsAttacker()
         });

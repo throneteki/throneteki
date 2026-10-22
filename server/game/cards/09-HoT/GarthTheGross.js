@@ -8,12 +8,12 @@ class GarthTheGross extends DrawCard {
     // gets +2 STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.controlsTyrell('Lord'),
+            condition: (context) => context.source.controlsTyrell('Lord'),
             match: this,
             effect: [ability.effects.addIcon('military'), ability.effects.addKeyword('Renown')]
         });
         this.persistentEffect({
-            condition: () => this.controlsTyrell('Lady'),
+            condition: (context) => context.source.controlsTyrell('Lady'),
             match: this,
             effect: [ability.effects.addIcon('intrigue'), ability.effects.modifyStrength(2)]
         });

@@ -15,10 +15,11 @@ class TheEyrie extends DrawCard {
         });
 
         this.persistentEffect({
-            condition: () => this.controller.getInitiative() === 0,
+            condition: (context) => context.source.controller.getInitiative() === 0,
             match: this,
             effect: ability.effects.immuneTo(
-                (card) => card.controller !== this.controller && card.getType() !== 'plot'
+                (card, arg, context) =>
+                    card.controller !== context.source.controller && card.getType() !== 'plot'
             )
         });
 
@@ -26,21 +27,24 @@ class TheEyrie extends DrawCard {
             title: 'Contribute STR',
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
-            condition: () =>
-                this.game.isDuringChallenge() &&
-                this.game.currentChallenge.anyParticipants(
+            condition: (context) =>
+                context.game.isDuringChallenge() &&
+                context.game.currentChallenge.anyParticipants(
                     (card) =>
-                        card.controller === this.controller &&
+                        card.controller === context.source.controller &&
                         (card.isLoyal() || card.hasTrait('House Arryn'))
                 ),
             message: {
                 format: "{player} kneels {source} to have it contribute {amount} STR to {player}'s side of the challenge",
-                args: { amount: () => this.calculateAmount() }
+                args: { amount: (context) => context.source.calculateAmount() }
             },
-            gameAction: GameActions.genericHandler(() => {
-                this.untilEndOfChallenge((ability) => ({
+            gameAction: GameActions.genericHandler((context) => {
+                context.source.untilEndOfChallenge((ability) => ({
                     targetController: 'current',
-                    effect: ability.effects.contributeStrength(this, this.calculateAmount())
+                    effect: ability.effects.contributeStrength(
+                        context.source,
+                        context.source.calculateAmount()
+                    )
                 }));
             })
         });

@@ -9,19 +9,21 @@ class TheHalfmansHorde extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isAttacking()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isAttacking()
             },
             message: {
                 format: "{player} uses {source} to discard {number} cards at random from {loser}'s hand",
                 args: {
-                    number: (context) => this.getNumberToDiscard(context.event.challenge.winner),
+                    number: (context) =>
+                        context.source.getNumberToDiscard(context.event.challenge.winner),
                     loser: (context) => context.event.challenge.loser
                 }
             },
             gameAction: GameActions.discardAtRandom((context) => ({
                 player: context.event.challenge.loser,
-                amount: this.getNumberToDiscard(context.event.challenge.winner)
+                amount: context.source.getNumberToDiscard(context.event.challenge.winner)
             }))
         });
     }

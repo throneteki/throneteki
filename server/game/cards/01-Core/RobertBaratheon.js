@@ -7,7 +7,9 @@ class RobertBaratheon extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.calculateStrength())
+            effect: ability.effects.dynamicStrength((card, context) =>
+                context.source.calculateStrength()
+            )
         });
     }
 

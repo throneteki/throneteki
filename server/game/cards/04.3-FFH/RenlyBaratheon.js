@@ -8,16 +8,16 @@ class RenlyBaratheon extends DrawCard {
     // Reaction: After you draw a loyal card using insight, reveal it to draw 1 card.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.anyOpponentControlsKing(),
+            condition: (context) => context.source.anyOpponentControlsKing(),
             match: this,
             effect: ability.effects.cannotBeSaved()
         });
 
         this.reaction({
             when: {
-                onCardsDrawn: (event) =>
+                onCardsDrawn: (event, context) =>
                     event.reason === 'insight' &&
-                    event.source.controller === this.controller &&
+                    event.source.controller === context.source.controller &&
                     event.cards[0].isLoyal()
             },
             cost: ability.costs.revealSpecific((context) => context.event.cards[0]),

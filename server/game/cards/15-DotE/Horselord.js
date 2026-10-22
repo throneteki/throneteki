@@ -6,9 +6,9 @@ class Horselord extends DrawCard {
     // control.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isAttacking(),
+            condition: (context) => context.source.isAttacking(),
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.getSTR())
+            effect: ability.effects.dynamicStrength((card, context) => context.source.getSTR())
         });
     }
 

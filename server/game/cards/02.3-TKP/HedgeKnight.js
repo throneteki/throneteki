@@ -6,7 +6,7 @@ class HedgeKnight extends DrawCard {
     // icon.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isControlAnotherKnight(),
+            condition: (context) => context.source.isControlAnotherKnight(),
             match: this,
             effect: [ability.effects.modifyStrength(1), ability.effects.addIcon('power')]
         });

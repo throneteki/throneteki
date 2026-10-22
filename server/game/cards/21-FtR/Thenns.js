@@ -1,5 +1,13 @@
 import DrawCard from '../../drawcard.js';
 
+function hasAttackerThatIsNotArmyOrWildling(game) {
+    const challenge = game.currentChallenge;
+    return (
+        !!challenge &&
+        challenge.attackers.some((card) => !card.hasTrait('Army') && !card.hasTrait('Wildling'))
+    );
+}
+
 class Thenns extends DrawCard {
     // Thenns (21026)
     // Assault. Pillage. No attachments except Weapon.
@@ -7,16 +15,10 @@ class Thenns extends DrawCard {
     // attacker has the Army or Wildling trait.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.anyNonArmyOrWildlingInPlay() && this.game.isDuringChallenge(),
-            match: this,
+            condition: (context) => hasAttackerThatIsNotArmyOrWildling(context.game),
+            match: (card, context) => card === context.source,
             effect: ability.effects.cannotTargetUsingAssault()
         });
-    }
-
-    anyNonArmyOrWildlingInPlay() {
-        return this.game.anyCardsInPlay(
-            (card) => card.isAttacking() && !card.hasTrait('Army') && !card.hasTrait('Wildling')
-        );
     }
 }
 

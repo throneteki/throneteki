@@ -6,7 +6,7 @@ class KingsHuntingParty extends DrawCard {
     // While an opponent controls a King character, King's Hunting Party gains an [intrigue] icon .
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.anyOpponentHasKing(),
+            condition: (context) => context.source.anyOpponentHasKing(),
             match: this,
             effect: ability.effects.addIcon('intrigue')
         });

@@ -7,7 +7,7 @@ class ValyrianSteelArmor extends DrawCard {
     // character, attached character cannot be killed or discarded from play.
     setupCardAbilities(ability) {
         this.whileAttached({
-            condition: () => this.noOtherBigNonArmy(),
+            condition: (context) => context.source.noOtherBigNonArmy(),
             effect: [ability.effects.cannotBeKilled(), ability.effects.cannotBeDiscarded()]
         });
         this.whileAttached({

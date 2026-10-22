@@ -6,7 +6,7 @@ class FistOfTheFirstMen extends DrawCard {
     // +1 STR and cannot be bypassed by stealth.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.hasHigherReserveThanOpponent(),
+            condition: (context) => context.source.hasHigherReserveThanOpponent(),
             match: (card) => card.getType() === 'character' && card.hasTrait('Ranger'),
             effect: [ability.effects.modifyStrength(1), ability.effects.cannotBeBypassedByStealth()]
         });
