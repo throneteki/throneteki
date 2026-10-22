@@ -909,12 +909,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/06.1-AMAF/StoneCrows.js": {
-        "this-in-ability": 7,
-        "prompt-for-select": 1,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/06.1-AMAF/StormsEnd.js": {
         "this-in-ability": 4,
         "legacy-helper": 1,
@@ -1206,12 +1200,6 @@
         "add-message": 2,
         "legacy-helper": 1
     },
-    "server/game/cards/07-WotW/TheFrozenShore.js": {
-        "this-in-ability": 8,
-        "prompt-for-select": 1,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/07-WotW/UlfSonOfUmar.js": {
         "this-in-ability": 9,
         "add-message": 1
@@ -1282,11 +1270,6 @@
         "legacy-helper": 2,
         "this-in-ability": 10,
         "add-message": 2
-    },
-    "server/game/cards/08.2-JtO/Stormcrows.js": {
-        "this-in-ability": 5,
-        "prompt-for-select": 1,
-        "add-message": 1
     },
     "server/game/cards/08.2-JtO/TheHouseOfBlackAndWhite.js": {
         "this-in-ability": 9,
@@ -2053,12 +2036,6 @@
         "add-message": 2,
         "legacy-helper": 2
     },
-    "server/game/cards/13.2-CoS/ACityBesieged.js": {
-        "this-in-ability": 5,
-        "prompt-for-select": 1,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/13.2-CoS/ArrogantContender.js": {
         "this-in-ability": 10,
         "legacy-helper": 1
@@ -2170,11 +2147,6 @@
     "server/game/cards/13.5-TB/KingsLandingRiot.js": {
         "this-in-ability": 4
     },
-    "server/game/cards/13.5-TB/SerPrestonGreenfield.js": {
-        "this-in-ability": 7,
-        "prompt-for-select": 1,
-        "add-message": 1
-    },
     "server/game/cards/13.5-TB/ShadowOfTheNorth.js": {
         "this-in-ability": 12,
         "add-message": 2,
@@ -2224,12 +2196,6 @@
         "this-in-ability": 7,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/13.6-LMHR/PoisonedDagger.js": {
-        "this-in-ability": 9,
-        "prompt-for-select": 1,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/13.6-LMHR/RecruitFromTheDungeons.js": {
         "this-in-ability": 11,

@@ -1,4 +1,11 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+
+function numberOfWinterPlots(game) {
+    return game
+        .getPlayers()
+        .filter((player) => player.activePlot && player.activePlot.hasTrait('Winter')).length;
+}
 
 class TheFrozenShore extends DrawCard {
     // The Frozen Shore (07042)
@@ -7,42 +14,23 @@ class TheFrozenShore extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.getNumOfAttackingWildlings(event.challenge) > 0 &&
-                    this.getNumOfWinterPlots() > 0
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
+                    numberOfWinterPlots(context.game) > 0
             },
             cost: ability.costs.kneelSelf(),
-            handler: () => {
-                let numWinterPlots = this.getNumOfWinterPlots();
-                this.game.promptForSelect(this.controller, {
-                    numCards: numWinterPlots,
-                    multiSelect: true,
-                    activePromptTitle: 'Select up to ' + numWinterPlots + ' Wildlings to stand',
-                    cardCondition: (card) => card.isAttacking() && card.hasTrait('Wildling'),
-                    onSelect: (player, cards) => this.standWildlings(player, cards),
-                    source: this
-                });
-            }
+            target: {
+                mode: 'upTo',
+                numCards: (context) => numberOfWinterPlots(context.game),
+                activePromptTitle: 'Select Wildlings to stand',
+                cardCondition: (card) => card.isAttacking() && card.hasTrait('Wildling'),
+                gameAction: 'stand'
+            },
+            message: '{player} kneels {source} to stand {target}',
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) => GameActions.standCard({ card }))
+            )
         });
-    }
-
-    standWildlings(player, cards) {
-        for (let card of cards) {
-            player.standCard(card);
-        }
-        this.game.addMessage('{0} uses {1} to stand {2}', player, this, cards);
-        return true;
-    }
-
-    getNumOfAttackingWildlings(challenge) {
-        return challenge.attackers.filter((card) => card.hasTrait('Wildling')).length;
-    }
-
-    getNumOfWinterPlots() {
-        return this.game
-            .getPlayers()
-            .filter((player) => player.activePlot && player.activePlot.hasTrait('Winter')).length;
     }
 }
 

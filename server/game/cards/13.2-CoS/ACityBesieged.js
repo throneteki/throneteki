@@ -1,4 +1,9 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
+
+function maxLocations(context) {
+    return context.player.getNumberOfUsedPlotsByTrait('City') > 0 ? 2 : 1;
+}
 
 class ACityBesieged extends PlotCard {
     // A City Besieged (13040)
@@ -6,38 +11,19 @@ class ACityBesieged extends PlotCard {
     // plot card in your used pile.)
     setupCardAbilities() {
         this.whenRevealed({
-            handler: (context) => {
-                let numTargets = this.hasUsedCityPlot(context.player) ? 2 : 1;
-
-                this.game.promptForSelect(context.player, {
-                    mode: 'upTo',
-                    numCards: numTargets,
-                    activePromptTitle: this.hasUsedCityPlot(context.player)
-                        ? 'Select up to 2 locations'
-                        : 'Select a location',
-                    source: this,
-                    gameAction: 'kneel',
-                    cardCondition: (card) =>
-                        card.location === 'play area' &&
-                        card.getType() === 'location' &&
-                        !card.kneeled,
-                    onSelect: (player, cards) => this.targetsSelected(player, cards)
-                });
-            }
+            target: {
+                mode: 'upTo',
+                numCards: (context) => maxLocations(context),
+                activePromptTitle: 'Select locations',
+                cardCondition: (card) =>
+                    card.location === 'play area' && card.getType() === 'location',
+                gameAction: 'kneel'
+            },
+            message: '{player} uses {source} to kneel {target}',
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) => GameActions.kneelCard({ card }))
+            )
         });
-    }
-
-    targetsSelected(player, cards) {
-        for (let card of cards) {
-            player.kneelCard(card);
-        }
-
-        this.game.addMessage('{0} uses {1} to kneel {2}', player, this, cards);
-        return true;
-    }
-
-    hasUsedCityPlot(player) {
-        return player.getNumberOfUsedPlotsByTrait('City') > 0;
     }
 }
 
