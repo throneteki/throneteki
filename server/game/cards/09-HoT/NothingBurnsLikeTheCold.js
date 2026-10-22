@@ -1,6 +1,6 @@
 import PlotCard from '../../plotcard.js';
 import Messages from '../../Messages/index.js';
-import { flatMap } from '../../../Array.js';
+import GameActions from '../../GameActions/index.js';
 
 class NothingBurnsLikeTheCold extends PlotCard {
     // Nothing Burns Like The Cold (09052)
@@ -33,13 +33,11 @@ class NothingBurnsLikeTheCold extends PlotCard {
                 },
                 messages: Messages.eachPlayerTargeting
             },
-            handler: (context) => {
-                let cards = flatMap(
-                    context.targets.selections,
-                    (selection) => selection.value
-                ).filter((card) => !!card);
-                this.game.discardFromPlay(cards, { allowSave: false });
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                context.targets
+                    .getTargets()
+                    .map((card) => GameActions.discardCard({ card, allowSave: false }))
+            )
         });
     }
 }

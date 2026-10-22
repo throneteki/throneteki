@@ -17,28 +17,23 @@ class SearchingTheArchives extends PlotCard {
                 format: '{player} uses {source} to place {amount} cards facedown under their agenda',
                 args: { amount: (context) => context.target.length }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        context.target.map((card) =>
-                            GameActions.placeCardUnderneath({
-                                card,
-                                parentCard: context.player.agenda
-                            })
-                        )
-                    ).then({
-                        message: {
-                            format: 'Then, {player} draws {amount} cards',
-                            args: { amount: (context) => context.parentContext.target.length }
-                        },
-                        gameAction: GameActions.drawCards((context) => ({
-                            player: context.player,
-                            amount: context.parentContext.target.length
-                        }))
-                    }),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) =>
+                    GameActions.placeCardUnderneath({
+                        card,
+                        parentCard: context.player.agenda
+                    })
+                )
+            ).then({
+                message: {
+                    format: 'Then, {player} draws {amount} cards',
+                    args: { amount: (context) => context.parentContext.target.length }
+                },
+                gameAction: GameActions.drawCards((context) => ({
+                    player: context.player,
+                    amount: context.parentContext.target.length
+                }))
+            })
         });
     }
 }

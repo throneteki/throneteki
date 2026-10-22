@@ -9,10 +9,10 @@ class DanceOfTheDragons extends PlotCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onClaimApplied: (event) =>
+                onClaimApplied: (event, context) =>
                     event.challenge &&
                     event.challenge.isMatch({
-                        attackingPlayer: this.controller,
+                        attackingPlayer: context.player,
                         challengeType: ['military', 'intrigue']
                     }) &&
                     event.challenge.loser.faction.power > 0
@@ -27,18 +27,14 @@ class DanceOfTheDragons extends PlotCard {
                     loser: (context) => context.event.challenge.loser
                 }
             },
-            handler: (context) => {
-                context.replaceHandler(() => {
-                    this.game.resolveGameAction(
-                        GameActions.movePower((context) => ({
-                            from: context.event.challenge.loser.faction,
-                            to: context.player.faction,
-                            amount: 2
-                        })),
-                        context
-                    );
-                });
-            }
+            gameAction: GameActions.replaceEvent((context) => ({
+                event: context.event,
+                replacement: GameActions.movePower({
+                    from: context.event.challenge.loser.faction,
+                    to: context.player.faction,
+                    amount: 2
+                })
+            }))
         });
     }
 }

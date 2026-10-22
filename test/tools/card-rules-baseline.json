@@ -601,10 +601,6 @@
         "prompt-for-select": 1,
         "add-message": 1
     },
-    "server/game/cards/09-HoT/NothingBurnsLikeTheCold.js": {
-        "legacy-helper": 1,
-        "this-in-ability": 1
-    },
     "server/game/cards/09-HoT/NowItComesToWar.js": {
         "this-in-ability": 6,
         "add-message": 2
@@ -1271,11 +1267,6 @@
         "this-in-ability": 11,
         "legacy-helper": 1
     },
-    "server/game/cards/20-HMW/NoGodlessMan.js": {
-        "this-in-ability": 7,
-        "add-message": 1,
-        "legacy-helper": 2
-    },
     "server/game/cards/20-HMW/OurBladesAreSharp.js": {
         "this-in-ability": 4,
         "add-message": 1
@@ -1439,9 +1430,6 @@
         "prompt-for-select": 1,
         "add-message": 1
     },
-    "server/game/cards/23-AHaH/TorrhensSquare.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/24-TSoW/CaggoCorpsekiller.js": {
         "this-in-ability": 3
     },
@@ -1466,9 +1454,6 @@
     },
     "server/game/cards/25.1-ATT/CastMeForth.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/25.1-ATT/DanceOfTheDragons.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/25.1-ATT/LadyMarya.js": {
         "this-in-ability": 7,
@@ -1656,9 +1641,6 @@
     },
     "server/game/cards/27.1-THBIB/IntoTheLists.js": {
         "this-in-ability": 4
-    },
-    "server/game/cards/27.1-THBIB/SearchingTheArchives.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/27.2-WGYK/Hornvale.js": {
         "event-registration": 1,

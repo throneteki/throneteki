@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TorrhensSquare extends DrawCard {
     // Torrhen's Square (23004)
@@ -12,8 +13,8 @@ class TorrhensSquare extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) =>
-                    event.card.controller === this.controller && event.card.isFaction('greyjoy')
+                onCardOutOfShadows: (event, context) =>
+                    event.card.controller === context.player && event.card.isFaction('greyjoy')
             },
             target: {
                 mode: 'upTo',
@@ -31,14 +32,11 @@ class TorrhensSquare extends DrawCard {
             cost: ability.costs.kneelSelf(),
             message:
                 '{player} kneels {source} to have {target} discard an additional card from pillage until the end of the phase',
-            handler: (context) => {
-                for (let card of context.target) {
-                    card.untilEndOfPhase((ability) => ({
-                        match: card,
-                        effect: ability.effects.modifyKeywordTriggerAmount('pillage', 1)
-                    }));
-                }
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.modifyKeywordTriggerAmount('pillage', 1)
+            }))
         });
     }
 }
