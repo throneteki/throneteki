@@ -1,122 +1,85 @@
-describe('Randyll Tarly', function () {
-    integration(function () {
+describe('Randyll Tarly (Core)', function () {
+    describe('when his STR is increased by a character ability', function () {
         beforeEach(function () {
-            const deck1 = this.buildDeck('tyrell', [
-                'A Feast for Crows',
-                'A Song of Summer',
-                'Randyll Tarly (Core)',
-                'Margaery Tyrell (Core)'
-            ]);
-            const deck2 = this.buildDeck('stark', [
-                'A Feast for Crows',
-                'Dracarys!',
-                'Rhaegal (Core)'
-            ]);
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck2);
-            this.startGame();
-            this.keepStartingHands();
-            this.player1.clickCard('Randyll Tarly', 'hand');
-            this.player2.clickCard('Rhaegal', 'hand');
-            this.completeSetup();
-
-            this.randyll = this.player1.findCardByName('Randyll Tarly', 'play area');
+            this.setupTest({
+                phase: 'challenge',
+                player1: {
+                    inPlay: [
+                        { card: 'Randyll Tarly (Core)', kneeling: true },
+                        'Margaery Tyrell (Core)'
+                    ]
+                }
+            });
+            this.player1.clickMenu(this.margaeryTyrell, 'Give character +3 STR');
+            this.player1.clickCard(this.randyllTarly);
+            this.player1.triggerAbility(this.randyllTarly);
         });
 
-        describe('when strength is increased by a character ability', function () {
-            beforeEach(function () {
-                // Kneel Randyll manually
-                this.player1.clickCard(this.randyll);
+        it('stands him', function () {
+            expect(this.randyllTarly.kneeled).toBe(false);
+            expect(this.randyllTarly.getStrength()).toBe(8);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 
-                this.player1.selectPlot('A Feast for Crows');
-                this.selectFirstPlayer(this.player1);
-
-                let margaery = this.player1.findCardByName('Margaery Tyrell', 'hand');
-
-                this.player1.clickCard(margaery);
-
-                this.completeMarshalPhase();
-
-                // Activate Margaery's ability
-                this.player1.clickMenu(margaery, 'Give character +3 STR');
-                this.player1.clickCard(this.randyll);
-
-                this.player1.triggerAbility('Randyll Tarly');
+    describe('when his STR is increased by a plot', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'plot',
+                player1: {
+                    plotDeck: ['A Song of Summer'],
+                    inPlay: [{ card: 'Randyll Tarly (Core)', kneeling: true }]
+                }
             });
-
-            it('should stand Randyll', function () {
-                expect(this.randyll.kneeled).toBe(false);
-                expect(this.randyll.getStrength()).toBe(8);
-            });
+            this.player1.selectPlot('A Song of Summer');
+            this.player2.selectPlot('Filler Plot');
+            this.player1.triggerAbility(this.randyllTarly);
+            this.selectFirstPlayer(this.player1);
         });
 
-        describe('when strength is increased by a plot', function () {
-            beforeEach(function () {
-                // Kneel Randyll manually
-                this.player1.clickCard(this.randyll);
+        it('stands him', function () {
+            expect(this.randyllTarly.kneeled).toBe(false);
+            expect(this.randyllTarly.getStrength()).toBe(6);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 
-                this.player1.selectPlot('A Song of Summer');
-
-                // A Song of Summer takes effect immediately
-                this.player1.triggerAbility('Randyll Tarly');
+    describe('when his STR is decreased', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: { inPlay: ['Randyll Tarly (Core)'] },
+                player2: { inPlay: ['Rhaegal (Core)'], hand: ['Dracarys!'] }
             });
-
-            it('should stand Randyll', function () {
-                expect(this.randyll.kneeled).toBe(false);
-                expect(this.randyll.getStrength()).toBe(6);
-            });
+            this.player1.clickPrompt('Power');
+            this.player1.clickCard(this.randyllTarly);
+            this.player1.clickPrompt('Done');
+            this.player1.clickPrompt('Pass');
+            this.player2.clickCard(this.dracarys);
+            this.player2.clickCard(this.rhaegal);
+            this.player2.clickCard(this.randyllTarly);
+            this.player1.clickPrompt('Pass');
+            this.player2.clickPrompt('Pass');
+            this.player2.clickPrompt('Done');
+            this.skipActionWindow();
         });
 
-        describe('when strength is decreased', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('A Feast for Crows');
-                this.selectFirstPlayer(this.player1);
+        it('does not stand him', function () {
+            expect(this.player1).not.toAllowAbilityTrigger(this.randyllTarly);
+            expect(this.randyllTarly.kneeled).toBe(true);
+            expect(this.randyllTarly.getStrength()).toBe(1);
+            expect(this.player1).isReadyToTakeAction();
+        });
 
-                this.completeMarshalPhase();
+        it('does not stand him when the decrease ends', function () {
+            this.player1.togglePromptedActionWindow('dominance', true);
+            this.player1.clickPrompt('Done');
+            this.player2.clickPrompt('Done');
 
-                // Declare challenge with Randyll.
-                this.player1.clickPrompt('Power');
-                this.player1.clickCard(this.randyll);
-                this.player1.clickPrompt('Done');
-
-                // Pass action window
-                this.player1.clickPrompt('Pass');
-
-                // Activate Dracarys
-                this.player2.clickCard('Dracarys!', 'hand');
-                this.player2.clickCard('Rhaegal', 'play area');
-
-                // Target Randyll
-                this.player2.clickCard(this.randyll);
-
-                // Complete action window
-                this.player1.clickPrompt('Pass');
-                this.player2.clickPrompt('Pass');
-
-                // No defenders
-                this.player2.clickPrompt('Done');
-
-                // Skip post defense action window
-                this.skipActionWindow();
-
-                this.player1.clickPrompt('Apply Claim');
-            });
-
-            it('should not stand Randyll', function () {
-                expect(this.player1).not.toAllowAbilityTrigger('Randyll Tarly');
-                expect(this.randyll.kneeled).toBe(true);
-                expect(this.randyll.getStrength()).toBe(1);
-            });
-
-            it('should not stand Randyll when the decrease effect ends', function () {
-                // Finish challenges to end the phase.
-                this.player1.clickPrompt('Done');
-                this.player2.clickPrompt('Done');
-
-                expect(this.player1).not.toAllowAbilityTrigger('Randyll Tarly');
-                expect(this.randyll.kneeled).toBe(true);
-                expect(this.randyll.getStrength()).toBe(5);
-            });
+            expect(this.player1).not.toAllowAbilityTrigger(this.randyllTarly);
+            expect(this.randyllTarly.kneeled).toBe(true);
+            expect(this.randyllTarly.getStrength()).toBe(5);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });
