@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import GenericTracker from '../../EventTrackers/GenericTracker.js';
+import GameActions from '../../GameActions/index.js';
 
 class CastleGuard extends DrawCard {
     // Castle Guard (13067)
@@ -11,19 +12,17 @@ class CastleGuard extends DrawCard {
 
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card !== this &&
+                    card !== context.source &&
                     card.getType() === 'character' &&
-                    this.tracker.some((event) => event.card === card)
+                    context.source.tracker.some((event) => event.card === card)
             },
             message: '{player} uses {source} to return {target} to shadows',
-            handler: (context) => {
-                context.player.putIntoShadows(context.target);
-            }
+            gameAction: GameActions.putIntoShadows((context) => ({ card: context.target }))
         });
     }
 }

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WhiteRaven extends DrawCard {
     // White Raven (04008)
@@ -8,34 +9,26 @@ class WhiteRaven extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.source.controller &&
                     event.challenge.challengeType === 'power'
             },
-            handler: () => {
-                this.game.addMessage(
-                    '{0} is forced by {1} to sacrifice {1}',
-                    this.controller,
-                    this
-                );
-                this.controller.sacrificeCard(this);
-            }
+            message: '{player} is forced by {source} to sacrifice {source}',
+            gameAction: GameActions.sacrificeCard((context) => ({ card: context.source }))
         });
         this.reaction({
             when: {
-                onDominanceDetermined: (event) =>
-                    this.controller.canGainFactionPower() &&
-                    this.controller === event.winner &&
-                    (this.anyPlotHasTrait('Summer') || this.anyPlotHasTrait('Winter'))
+                onDominanceDetermined: (event, context) =>
+                    context.source.controller.canGainFactionPower() &&
+                    context.source.controller === event.winner &&
+                    (context.source.anyPlotHasTrait('Summer') ||
+                        context.source.anyPlotHasTrait('Winter'))
             },
-            handler: () => {
-                this.game.addPower(this.controller, 1);
-                this.game.addMessage(
-                    '{0} uses {1} to gain 1 power for their faction',
-                    this.controller,
-                    this
-                );
-            }
+            message: '{player} uses {source} to gain 1 power for their faction',
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.player.faction,
+                amount: 1
+            }))
         });
     }
 

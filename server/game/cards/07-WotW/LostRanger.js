@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LostRanger extends DrawCard {
     // Lost Ranger (07014)
@@ -8,16 +9,11 @@ class LostRanger extends DrawCard {
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {
-                onPhaseEnded: (event) => event.phase === 'challenge' && this.hasNoOtherRanger()
+                onPhaseEnded: (event, context) =>
+                    event.phase === 'challenge' && context.source.hasNoOtherRanger()
             },
-            handler: () => {
-                this.controller.sacrificeCard(this);
-                this.game.addMessage(
-                    '{0} is forced by {1} to sacrifice {1}',
-                    this.controller,
-                    this
-                );
-            }
+            message: '{player} is forced by {source} to sacrifice {source}',
+            gameAction: GameActions.sacrificeCard((context) => ({ card: context.source }))
         });
     }
 

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class UnexpectedGuile extends DrawCard {
     // Unexpected Guile (13044)
@@ -14,19 +15,20 @@ class UnexpectedGuile extends DrawCard {
 
         this.forcedInterrupt({
             when: {
-                onChallengeFinished: (event) => event.challenge.isParticipating(this.parent)
+                onChallengeFinished: (event, context) =>
+                    event.challenge.getParticipants().includes(context.source.parent)
             },
-            handler: (context) => {
-                context.player.putIntoShadows(this.parent, true);
-                context.player.putIntoShadows(this);
-
-                this.game.addMessage(
-                    '{0} is forced to return {1} and {2} to shadows',
-                    this.controller,
-                    this,
-                    this.parent
-                );
-            }
+            message: {
+                format: '{player} is forced to return {source} and {parent} to shadows',
+                args: { parent: (context) => context.source.parent }
+            },
+            gameAction: GameActions.simultaneously([
+                GameActions.putIntoShadows((context) => ({
+                    card: context.source.parent,
+                    allowSave: true
+                })),
+                GameActions.putIntoShadows((context) => ({ card: context.source }))
+            ])
         });
     }
 }

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Kingswood extends DrawCard {
     // Kingswood (02087)
@@ -7,10 +8,10 @@ class Kingswood extends DrawCard {
     // Forced Reaction: After you lose a [power] challenge, sacrifice Kingswood.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.game.isDuringChallenge({
+            condition: (context) =>
+                context.game.isDuringChallenge({
                     challengeType: 'power',
-                    defendingPlayer: this.controller
+                    defendingPlayer: context.source.controller
                 }),
             match: (card) => card.isAttacking(),
             targetController: 'any',
@@ -19,14 +20,12 @@ class Kingswood extends DrawCard {
 
         this.forcedReaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.source.controller &&
                     event.challenge.challengeType === 'power'
             },
-            handler: () => {
-                this.game.addMessage('{0} is forced to sacrifice {1}', this.controller, this);
-                this.controller.sacrificeCard(this);
-            }
+            message: '{player} is forced to sacrifice {source}',
+            gameAction: GameActions.sacrificeCard((context) => ({ card: context.source }))
         });
     }
 }

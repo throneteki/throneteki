@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BrazenBeast extends DrawCard {
     // Brazen Beast (11113)
@@ -13,14 +14,8 @@ class BrazenBeast extends DrawCard {
             location: 'discard pile',
             phase: 'marshal',
             cost: ability.costs.payGold(3),
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} pays 3 gold to put {1} into shadows',
-                    context.player,
-                    this
-                );
-                context.player.putIntoShadows(this);
-            }
+            message: '{player} pays 3 gold to put {source} into shadows',
+            gameAction: GameActions.putIntoShadows((context) => ({ card: context.source }))
         });
     }
 }

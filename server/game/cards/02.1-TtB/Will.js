@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Will extends DrawCard {
     // Will (02001)
@@ -8,26 +9,19 @@ class Will extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: (event) =>
-                    this.controller === event.challenge.loser && event.challenge.isUnopposed()
+                afterChallenge: (event, context) =>
+                    context.source.controller === event.challenge.loser &&
+                    event.challenge.isUnopposed()
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
                     card.hasTrait('Ranger') &&
-                    card.controller === this.controller
+                    card.controller === context.source.controller
             },
-            handler: (context) => {
-                this.controller.sacrificeCard(context.target);
-
-                this.game.addMessage(
-                    '{0} is forced to use {1} to sacrifice {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} is forced to use {source} to sacrifice {target}',
+            gameAction: GameActions.sacrificeCard((context) => ({ card: context.target }))
         });
     }
 }

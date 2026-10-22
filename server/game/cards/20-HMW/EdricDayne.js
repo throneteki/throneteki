@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class EdricDayne extends DrawCard {
     // Edric Dayne (20017)
@@ -7,21 +8,20 @@ class EdricDayne extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPlaced: (event) =>
-                    event.card.owner === this.controller &&
+                onCardPlaced: (event, context) =>
+                    event.card.owner === context.source.controller &&
                     !event.card.isLoyal() &&
                     event.card.location === 'discard pile'
             },
             limit: ability.limit.perRound(1),
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to place {2} in shadows from their discard pile',
-                    context.player,
-                    this,
-                    context.event.card
-                );
-                context.player.putIntoShadows(context.event.card, false);
-            }
+            message: {
+                format: '{player} uses {source} to place {card} in shadows from their discard pile',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.putIntoShadows((context) => ({
+                card: context.event.card,
+                allowSave: false
+            }))
         });
     }
 }
