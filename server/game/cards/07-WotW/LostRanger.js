@@ -10,19 +10,17 @@ class LostRanger extends DrawCard {
         this.forcedInterrupt({
             when: {
                 onPhaseEnded: (event, context) =>
-                    event.phase === 'challenge' && context.source.hasNoOtherRanger()
+                    event.phase === 'challenge' &&
+                    !context.player.anyCardsInPlay(
+                        (card) =>
+                            card !== context.source &&
+                            card.hasTrait('Ranger') &&
+                            card.getType() === 'character'
+                    )
             },
             message: '{player} is forced by {source} to sacrifice {source}',
             gameAction: GameActions.sacrificeCard((context) => ({ card: context.source }))
         });
-    }
-
-    hasNoOtherRanger() {
-        let rangers = this.controller.filterCardsInPlay((card) => {
-            return card !== this && card.hasTrait('Ranger') && card.getType() === 'character';
-        });
-
-        return rangers.length === 0;
     }
 }
 

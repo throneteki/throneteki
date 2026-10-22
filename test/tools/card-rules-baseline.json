@@ -942,9 +942,6 @@
         "this-in-ability": 8,
         "legacy-helper": 1
     },
-    "server/game/cards/07-WotW/LostRanger.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/07-WotW/MaesterAemon.js": {
         "this-in-ability": 7,
         "add-message": 1
