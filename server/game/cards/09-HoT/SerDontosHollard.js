@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerDontosHollard extends DrawCard {
     // Ser Dontos Hollard (09035)
@@ -9,21 +10,17 @@ class SerDontosHollard extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: (event) =>
-                    event.allowSave && event.card.canBeSaved() && this.isLady(event.card),
-                onCardDiscarded: (event) =>
-                    event.allowSave && event.card.canBeSaved() && this.isLady(event.card)
+                onCharacterKilled: (event, context) =>
+                    event.allowSave && event.card.canBeSaved() && context.source.isLady(event.card),
+                onCardDiscarded: (event, context) =>
+                    event.allowSave && event.card.canBeSaved() && context.source.isLady(event.card)
             },
             cost: ability.costs.standSelf(),
-            handler: (context) => {
-                context.event.saveCard();
-                this.game.addMessage(
-                    '{0} stands {1} to save {2}',
-                    this.controller,
-                    this,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} stands {source} to save {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 

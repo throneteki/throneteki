@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Ghost extends DrawCard {
     // Ghost (07021)
@@ -9,20 +10,18 @@ class Ghost extends DrawCard {
         this.attachmentRestriction({ faction: ['thenightswatch', 'stark'] });
         this.interrupt({
             when: {
-                onCharacterKilled: (event) =>
-                    event.card === this.parent && this.parent.canBeSaved() && event.allowSave
+                onCharacterKilled: (event, context) =>
+                    event.card === context.source.parent &&
+                    context.source.parent.canBeSaved() &&
+                    event.allowSave
             },
             cost: ability.costs.returnSelfToHand(),
             canCancel: true,
-            handler: (context) => {
-                context.event.saveCard();
-                this.game.addMessage(
-                    '{0} returns {1} to their hand to save {2}',
-                    this.controller,
-                    this,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} returns {source} to their hand to save {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 }

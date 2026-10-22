@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MaesterKerwin extends DrawCard {
     // Maester Kerwin (13091)
@@ -8,22 +9,18 @@ class MaesterKerwin extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: (event) =>
+                onCharacterKilled: (event, context) =>
                     event.allowSave &&
                     event.card.canBeSaved() &&
-                    event.card.controller === this.controller &&
-                    event.card !== this
+                    event.card.controller === context.source.controller &&
+                    event.card !== context.source
             },
             cost: ability.costs.killSelf(),
-            handler: (context) => {
-                context.event.saveCard();
-                this.game.addMessage(
-                    '{0} kills {1} to save {2}',
-                    context.player,
-                    this,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} kills {source} to save {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 }

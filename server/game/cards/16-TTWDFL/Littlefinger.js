@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Littlefinger extends DrawCard {
     // Littlefinger (16017)
@@ -15,17 +16,15 @@ class Littlefinger extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: (event) =>
-                    event.source.getType() === 'event' && event.player !== this.controller
+                onCardAbilityInitiated: (event, context) =>
+                    event.source.getType() === 'event' && event.player !== context.source.controller
             },
             cost: ability.costs.kneelSelf(),
             message: {
                 format: '{player} kneels {source} to cancel {event}',
                 args: { event: (context) => context.event.source }
             },
-            handler: (context) => {
-                context.event.cancel();
-            }
+            gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
         });
     }
 }

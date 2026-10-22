@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MagnarofThenn extends DrawCard {
     // Magnar of Thenn (21028)
@@ -15,26 +16,22 @@ class MagnarofThenn extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: (event) =>
-                    event.card === this.parent && this.parent.canBeSaved() && event.allowSave
+                onCharacterKilled: (event, context) =>
+                    event.card === context.source.parent &&
+                    context.source.parent.canBeSaved() &&
+                    event.allowSave
             },
             cost: ability.costs.sacrifice(
-                (card) =>
+                (card, context) =>
                     card.hasTrait('Wildling') &&
                     card.getType() === 'character' &&
-                    card !== this.parent
+                    card !== context.source.parent
             ),
-            handler: (context) => {
-                let parent = context.cardStateWhenInitiated.parent;
-                context.event.saveCard();
-                this.game.addMessage(
-                    '{0} uses {1} and sacrifices {2} to save {3}',
-                    context.player,
-                    this,
-                    context.costs.sacrifice,
-                    parent
-                );
-            }
+            message: {
+                format: '{player} uses {source} and sacrifices {costs.sacrifice} to save {parent}',
+                args: { parent: (context) => context.cardStateWhenInitiated.parent }
+            },
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 }

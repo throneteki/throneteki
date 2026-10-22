@@ -146,10 +146,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/01-Core/MaesterAemon.js": {
-        "this-in-ability": 4,
-        "add-message": 1
-    },
     "server/game/cards/01-Core/MaesterLomys.js": {
         "this-in-ability": 7,
         "legacy-helper": 1,
@@ -284,10 +280,6 @@
         "this-in-ability": 13,
         "add-message": 2,
         "legacy-helper": 2
-    },
-    "server/game/cards/01-Core/Treachery.js": {
-        "this-in-ability": 5,
-        "add-message": 1
     },
     "server/game/cards/01-Core/TyrionLannister.js": {
         "this-in-ability": 6,
@@ -527,10 +519,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/02.5-COW/IronMines.js": {
-        "this-in-ability": 3,
-        "add-message": 1
-    },
     "server/game/cards/02.5-COW/Kingswood.js": {
         "this-in-ability": 8,
         "add-message": 1,
@@ -635,10 +623,6 @@
         "this-in-ability": 14,
         "add-message": 3,
         "legacy-helper": 1
-    },
-    "server/game/cards/03-WotN/HealingExpertise.js": {
-        "this-in-ability": 4,
-        "add-message": 1
     },
     "server/game/cards/03-WotN/HisViperEyes.js": {
         "this-in-ability": 7,
@@ -1078,10 +1062,6 @@
     "server/game/cards/05-LoCR/UnexpectedDelay.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/05-LoCR/VictarionGreyjoy.js": {
-        "this-in-ability": 6,
-        "add-message": 1
-    },
     "server/game/cards/06.1-AMAF/AllMenAreFools.js": {
         "this-in-ability": 6,
         "legacy-helper": 1,
@@ -1272,8 +1252,7 @@
         "add-message": 1
     },
     "server/game/cards/06.4-TRW/ImprovedFortifications.js": {
-        "this-in-ability": 4,
-        "add-message": 1
+        "this-in-ability": 1
     },
     "server/game/cards/06.4-TRW/OldtownInformer.js": {
         "this-in-ability": 16,
@@ -1299,10 +1278,6 @@
     "server/game/cards/06.4-TRW/SilencesCrew.js": {
         "this-in-ability": 6,
         "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/06.4-TRW/StrongBelwas.js": {
-        "this-in-ability": 5,
         "add-message": 1
     },
     "server/game/cards/06.4-TRW/TheRedWedding.js": {
@@ -1437,10 +1412,6 @@
     },
     "server/game/cards/07-WotW/BlackBetha.js": {
         "this-in-ability": 6,
-        "add-message": 1
-    },
-    "server/game/cards/07-WotW/Ghost.js": {
-        "this-in-ability": 5,
         "add-message": 1
     },
     "server/game/cards/07-WotW/Grenn.js": {
@@ -1608,10 +1579,6 @@
         "this-in-ability": 9,
         "legacy-helper": 2,
         "add-message": 2
-    },
-    "server/game/cards/08.2-JtO/ThorosOfMyr.js": {
-        "this-in-ability": 4,
-        "add-message": 1
     },
     "server/game/cards/08.2-JtO/TrisBotley.js": {
         "this-in-ability": 8,
@@ -1855,10 +1822,6 @@
     "server/game/cards/09-HoT/QueenOfTheSevenKingdoms.js": {
         "legacy-helper": 1,
         "this-in-ability": 4,
-        "add-message": 1
-    },
-    "server/game/cards/09-HoT/SerDontosHollard.js": {
-        "this-in-ability": 5,
         "add-message": 1
     },
     "server/game/cards/09-HoT/SerGarlanTyrell.js": {
@@ -2376,10 +2339,6 @@
     "server/game/cards/12-KotI/GwynesseHarlaw.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/12-KotI/MaesterMurenmure.js": {
-        "this-in-ability": 4,
-        "add-message": 1
-    },
     "server/game/cards/12-KotI/MaidensBane.js": {
         "this-in-ability": 4,
         "legacy-helper": 2,
@@ -2608,10 +2567,6 @@
     "server/game/cards/13.5-TB/KingsLandingRiot.js": {
         "this-in-ability": 4
     },
-    "server/game/cards/13.5-TB/MaesterKerwin.js": {
-        "this-in-ability": 4,
-        "add-message": 1
-    },
     "server/game/cards/13.5-TB/SerPrestonGreenfield.js": {
         "this-in-ability": 7,
         "prompt-for-select": 1,
@@ -2635,14 +2590,6 @@
         "this-in-ability": 5,
         "add-message": 1,
         "legacy-helper": 2
-    },
-    "server/game/cards/13.5-TB/WhiteCloak.js": {
-        "this-in-ability": 4,
-        "add-message": 1
-    },
-    "server/game/cards/13.6-LMHR/AlchemistsGuildhall.js": {
-        "this-in-ability": 4,
-        "add-message": 1
     },
     "server/game/cards/13.6-LMHR/AryaStark.js": {
         "event-registration": 1,
@@ -2686,10 +2633,6 @@
         "add-message": 2,
         "game-listener": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/13.6-LMHR/Rimegate.js": {
-        "this-in-ability": 4,
-        "add-message": 1
     },
     "server/game/cards/13.6-LMHR/RobertBaratheon.js": {
         "this-in-ability": 7,
@@ -2851,9 +2794,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/15-DotE/KhalDrogo.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/15-DotE/Khaleesi.js": {
         "this-in-ability": 8,
         "add-message": 1
@@ -2883,10 +2823,6 @@
         "this-in-ability": 5,
         "add-message": 1
     },
-    "server/game/cards/15-DotE/TheRedKeep.js": {
-        "this-in-ability": 4,
-        "add-message": 1
-    },
     "server/game/cards/15-DotE/TheShavepate.js": {
         "this-in-ability": 6,
         "add-message": 1
@@ -2912,9 +2848,6 @@
     "server/game/cards/16-TTWDFL/HeadsOnPikes.js": {
         "this-in-ability": 2,
         "add-message": 1
-    },
-    "server/game/cards/16-TTWDFL/Littlefinger.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/16-TTWDFL/MadKingAerys.js": {
         "this-in-ability": 3,
@@ -3005,10 +2938,6 @@
         "add-message": 1,
         "this-in-ability": 3
     },
-    "server/game/cards/17.1-R/IronMines.js": {
-        "this-in-ability": 4,
-        "add-message": 1
-    },
     "server/game/cards/17.1-R/Meereen.js": {
         "legacy-helper": 1
     },
@@ -3055,10 +2984,6 @@
         "this-in-ability": 8,
         "legacy-helper": 1,
         "add-message": 2
-    },
-    "server/game/cards/17.1-R/TheRedKeep.js": {
-        "this-in-ability": 4,
-        "add-message": 1
     },
     "server/game/cards/17.1-R/ThreeFingerHobb.js": {
         "this-in-ability": 5,
@@ -3138,10 +3063,6 @@
     "server/game/cards/17.2-R2/SerBalonSwann.js": {
         "this-in-ability": 5,
         "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/17.2-R2/SomeoneAlwaysTells.js": {
-        "this-in-ability": 3,
         "add-message": 1
     },
     "server/game/cards/18-FH/Balerion.js": {
@@ -3300,10 +3221,6 @@
         "this-in-ability": 4,
         "legacy-helper": 1
     },
-    "server/game/cards/20-HMW/GoldenCompany.js": {
-        "this-in-ability": 5,
-        "add-message": 1
-    },
     "server/game/cards/20-HMW/KindlyMan.js": {
         "this-in-ability": 5,
         "add-message": 1
@@ -3427,10 +3344,6 @@
     "server/game/cards/21-FtR/LordTywinsHost.js": {
         "prompt-for-select": 1,
         "this-in-ability": 8,
-        "add-message": 1
-    },
-    "server/game/cards/21-FtR/MagnarofThenn.js": {
-        "this-in-ability": 5,
         "add-message": 1
     },
     "server/game/cards/21-FtR/Sandstone.js": {
@@ -3752,9 +3665,6 @@
     "server/game/cards/26.1-WAID/SlaversBay.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/26.1-WAID/Yronwood.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/26.2-WoW/AToastToTheKing.js": {
         "this-in-ability": 8,
         "add-message": 1
@@ -3830,9 +3740,6 @@
         "legacy-helper": 2,
         "direct-state-write": 1
     },
-    "server/game/cards/26.5-JfE/CandleInTheDark.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/26.5-JfE/LivingShadow.js": {
         "this-in-ability": 9,
         "legacy-helper": 1
@@ -3854,9 +3761,6 @@
     "server/game/cards/26.6-NCbT/ArmedToTheTeeth.js": {
         "event-registration": 1,
         "this-in-ability": 4
-    },
-    "server/game/cards/26.6-NCbT/GrowingInfluence.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/26.6-NCbT/NoCrownButTruth.js": {
         "this-in-ability": 2

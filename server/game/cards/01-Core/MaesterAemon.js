@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MaesterAemon extends DrawCard {
     // Maester Aemon (01125)
@@ -8,22 +9,18 @@ class MaesterAemon extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: (event) =>
+                onCharacterKilled: (event, context) =>
                     event.allowSave &&
                     event.card.canBeSaved() &&
                     event.card.isFaction('thenightswatch') &&
-                    event.card.controller === this.controller
+                    event.card.controller === context.source.controller
             },
             cost: ability.costs.kneelSelf(),
-            handler: (context) => {
-                context.event.saveCard();
-                this.game.addMessage(
-                    '{0} kneels {1} to save {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: {
+                format: '{player} kneels {source} to save {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 }

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class StrongBelwas extends DrawCard {
     // Strong Belwas (06073)
@@ -9,25 +10,21 @@ class StrongBelwas extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: (event) =>
+                onCharacterKilled: (event, context) =>
                     event.allowSave &&
-                    event.card.controller === this.controller &&
-                    event.card !== this &&
+                    event.card.controller === context.source.controller &&
+                    event.card !== context.source &&
                     event.card.isUnique() &&
                     event.card.isFaction('targaryen') &&
                     event.card.canBeSaved()
             },
             limit: ability.limit.perPhase(1),
             cost: ability.costs.discardGold(),
-            handler: (context) => {
-                context.event.saveCard();
-                this.game.addMessage(
-                    '{0} discards 1 gold from {1} to save {2}',
-                    this.controller,
-                    this,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} discards 1 gold from {source} to save {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 }

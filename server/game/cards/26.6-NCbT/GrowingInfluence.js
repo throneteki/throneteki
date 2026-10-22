@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class GrowingInfluence extends DrawCard {
     // Growing Influence (26116)
@@ -8,8 +9,8 @@ class GrowingInfluence extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: (event) =>
-                    event.source.controller !== this.controller &&
+                onCardAbilityInitiated: (event, context) =>
+                    event.source.controller !== context.source.controller &&
                     ['character', 'location'].includes(event.source.getType()) &&
                     event.ability.isTriggeredAbility()
             },
@@ -21,9 +22,7 @@ class GrowingInfluence extends DrawCard {
                     card: (context) => context.event.source
                 }
             },
-            handler: (context) => {
-                context.event.cancel();
-            }
+            gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
         });
     }
 }

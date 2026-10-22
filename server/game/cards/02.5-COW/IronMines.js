@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class IronMines extends DrawCard {
     // Iron Mines (02092)
@@ -7,21 +8,17 @@ class IronMines extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: (event) =>
+                onCharacterKilled: (event, context) =>
                     event.allowSave &&
                     event.card.canBeSaved() &&
-                    event.card.controller === this.controller
+                    event.card.controller === context.source.controller
             },
             cost: ability.costs.sacrificeSelf(),
-            handler: (context) => {
-                context.event.saveCard();
-                this.game.addMessage(
-                    '{0} sacrifices {1} to save {2}',
-                    context.player,
-                    this,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} sacrifices {source} to save {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 }

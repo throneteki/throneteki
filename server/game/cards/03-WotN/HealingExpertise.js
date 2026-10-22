@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class HealingExpertise extends DrawCard {
     // Healing Expertise (03044)
@@ -8,26 +9,21 @@ class HealingExpertise extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: (event) =>
+                onCharacterKilled: (event, context) =>
                     event.allowSave &&
                     event.card.canBeSaved() &&
                     !event.card.hasTrait('Army') &&
-                    event.card.controller === this.controller
+                    event.card.controller === context.source.controller
             },
             location: 'hand',
             cost: ability.costs.kneel(
                 (card) => card.hasTrait('Maester') && card.getType() === 'character'
             ),
-            handler: (context) => {
-                context.event.saveCard();
-                this.game.addMessage(
-                    '{0} plays {1} to kneel {2} to save {3}',
-                    this.controller,
-                    this,
-                    context.costs.kneel,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} plays {source} to kneel {costs.kneel} to save {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 }

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ImprovedFortifications extends DrawCard {
     // Improved Fortifications (06066)
@@ -20,15 +21,11 @@ class ImprovedFortifications extends DrawCard {
                 onCardPutIntoShadows: leftPlayCondition
             },
             cost: ability.costs.sacrificeSelf(),
-            handler: (context) => {
-                context.event.saveCard();
-                this.game.addMessage(
-                    '{0} sacrifices {1} to save {2}',
-                    context.player,
-                    this,
-                    this.parent
-                );
-            }
+            message: {
+                format: '{player} sacrifices {source} to save {parent}',
+                args: { parent: (context) => context.source.parent }
+            },
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 }

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MaesterMurenmure extends DrawCard {
     // Maester Murenmure (12010)
@@ -8,22 +9,18 @@ class MaesterMurenmure extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: (event) =>
+                onCardAbilityInitiated: (event, context) =>
                     event.ability.isTriggeredAbility() &&
                     event.source.getType() === 'location' &&
                     // Explicitly allow cancellation of your own forced abilities
-                    (event.ability.isForcedAbility() || event.player !== this.controller)
+                    (event.ability.isForcedAbility() || event.player !== context.source.controller)
             },
             cost: ability.costs.kneelSelf(),
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} kneels {1} to cancel {2}',
-                    this.controller,
-                    this,
-                    context.event.source
-                );
-                context.event.cancel();
-            }
+            message: {
+                format: '{player} kneels {source} to cancel {eventSource}',
+                args: { eventSource: (context) => context.event.source }
+            },
+            gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
         });
     }
 }

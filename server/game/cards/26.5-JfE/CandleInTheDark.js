@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class CandleInTheDark extends DrawCard {
     // Candle in the Dark (26098)
@@ -20,11 +21,12 @@ class CandleInTheDark extends DrawCard {
             cost: ability.costs.kneelParent(),
             message: {
                 format: '{player} uses {source} and kneels {parent} to cancel {card}',
-                args: { parent: () => this.parent, card: (context) => context.event.source }
+                args: {
+                    parent: (context) => context.source.parent,
+                    card: (context) => context.event.source
+                }
             },
-            handler: (context) => {
-                context.event.cancel();
-            }
+            gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
         });
     }
 }

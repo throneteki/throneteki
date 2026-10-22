@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Treachery extends DrawCard {
     // Treachery (01102)
@@ -10,8 +11,8 @@ class Treachery extends DrawCard {
             canCancel: true,
             when: {
                 //Restrict triggering on own triggered abilities to forced triggered abilities
-                onCardAbilityInitiated: (event) =>
-                    this.controller.anyCardsInPlay(
+                onCardAbilityInitiated: (event, context) =>
+                    context.source.controller.anyCardsInPlay(
                         (card) =>
                             card.isUnique() &&
                             card.isFaction('lannister') &&
@@ -19,17 +20,14 @@ class Treachery extends DrawCard {
                     ) &&
                     event.ability.isTriggeredAbility() &&
                     ['character', 'location', 'attachment'].includes(event.source.getType()) &&
-                    (event.ability.isForcedAbility() || event.source.controller !== this.controller)
+                    (event.ability.isForcedAbility() ||
+                        event.source.controller !== context.source.controller)
             },
-            handler: (context) => {
-                context.event.cancel();
-                this.game.addMessage(
-                    '{0} plays {1} to cancel {2}',
-                    this.controller,
-                    this,
-                    context.event.source
-                );
-            }
+            message: {
+                format: '{player} plays {source} to cancel {eventSource}',
+                args: { eventSource: (context) => context.event.source }
+            },
+            gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
         });
     }
 }
