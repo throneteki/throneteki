@@ -1,5 +1,5 @@
 import DrawCard from '../../drawcard.js';
-import ChallengeTypes from '../../ChallengeTypes.js';
+import GameActions from '../../GameActions/index.js';
 
 class BowenMarsh extends DrawCard {
     // Bowen Marsh (25069)
@@ -10,45 +10,25 @@ class BowenMarsh extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card.controller === this.controller
+                onCardOutOfShadows: (event, context) => event.card.controller === context.player
             },
             limit: ability.limit.perPhase(3),
             target: {
                 cardCondition: (card) =>
                     card.location === 'play area' && card.getType() === 'character'
             },
-            handler: (context) => {
-                this.selectedCharacter = context.target;
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Select a challenge type',
-                        buttons: ChallengeTypes.asButtons({ method: 'selectChallengeType' })
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.chooseChallengeType({
+                message:
+                    '{player} uses {source} to make {target} unable to be declared as an attacker in {challengeType} challenges this phase',
+                gameAction: (challengeType) =>
+                    GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
+                        condition: () => context.game.isDuringChallenge({ challengeType }),
+                        match: context.target,
+                        effect: ability.effects.cannotBeDeclaredAsAttacker()
+                    }))
+            })
         });
-    }
-
-    selectChallengeType(player, challengeType) {
-        this.untilEndOfPhase((ability) => ({
-            condition: () => this.game.isDuringChallenge({ challengeType }),
-            match: this.selectedCharacter,
-            effect: ability.effects.cannotBeDeclaredAsAttacker()
-        }));
-
-        this.game.addMessage(
-            '{0} uses {1} to make {2} unable to be declared as an attacker in {3} challenges this phase',
-            player,
-            this,
-            this.selectedCharacter,
-            challengeType
-        );
-
-        this.selectedCharacter = null;
-
-        return true;
     }
 }
 

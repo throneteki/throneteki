@@ -20,34 +20,22 @@ class TywinsStratagem extends DrawCard {
                 gameAction: 'returnToHand'
             },
             message: "{player} plays {source} to return {target} to its owner's hands",
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously((context) =>
-                        context.target.map((card) => GameActions.returnCardToHand({ card }))
-                    ),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) => GameActions.returnCardToHand({ card }))
+            )
         });
-
         this.reaction({
             location: 'discard pile',
             when: {
-                onCardDiscarded: (event) =>
-                    this.controller !== event.cardStateWhenDiscarded.controller &&
+                onCardDiscarded: (event, context) =>
+                    context.player !== event.cardStateWhenDiscarded.controller &&
                     ['hand', 'draw deck'].includes(event.cardStateWhenDiscarded.location) &&
                     event.card.getType() === 'character'
             },
             ignoreEventCosts: true,
             cost: ability.costs.payGold(1),
-            handler: () => {
-                this.game.addMessage(
-                    '{0} pays 1 gold to move {1} back to their hand',
-                    this.controller,
-                    this
-                );
-                this.controller.moveCard(this, 'hand');
-            }
+            message: '{player} pays 1 gold to return {source} to their hand',
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.source }))
         });
     }
 }

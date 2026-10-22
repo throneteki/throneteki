@@ -333,11 +333,6 @@
         "this-in-ability": 11,
         "add-message": 2
     },
-    "server/game/cards/06.4-TRW/TywinsStratagem.js": {
-        "this-in-ability": 7,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/06.5-OR/DornishRevenge.js": {
         "this-in-ability": 10,
         "add-message": 3,
@@ -405,11 +400,6 @@
         "legacy-helper": 2,
         "add-message": 2,
         "prompt-for-select": 1
-    },
-    "server/game/cards/08.4-FotOG/PlankyTownTrader.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1,
-        "add-message": 2
     },
     "server/game/cards/08.4-FotOG/SupportOfHarlaw.js": {
         "this-in-ability": 6,
@@ -622,20 +612,11 @@
     "server/game/cards/11.4-MoD/BondsOfChivalry.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/11.4-MoD/GreyGhost.js": {
-        "prompt-for-select": 1,
-        "this-in-ability": 9,
-        "add-message": 1
-    },
     "server/game/cards/11.4-MoD/Shaggydog.js": {
         "this-in-ability": 16,
         "add-message": 3,
         "prompt-for-select": 1,
         "legacy-helper": 2
-    },
-    "server/game/cards/11.4-MoD/TheFreeFolk.js": {
-        "this-in-ability": 5,
-        "add-message": 1
     },
     "server/game/cards/11.4-MoD/VictarionGreyjoy.js": {
         "this-in-ability": 8,
@@ -1256,10 +1237,6 @@
         "this-in-ability": 7,
         "legacy-helper": 1
     },
-    "server/game/cards/25.1-ATT/VictarionGreyjoy.js": {
-        "this-in-ability": 6,
-        "add-message": 1
-    },
     "server/game/cards/25.2-ChoS/TheGoldPrice.js": {
         "event-registration": 1,
         "this-in-ability": 4,
@@ -1285,10 +1262,6 @@
     },
     "server/game/cards/25.4-TTS/AllardSeaworth.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/25.4-TTS/BowenMarsh.js": {
-        "this-in-ability": 8,
-        "add-message": 1
     },
     "server/game/cards/25.4-TTS/NymeriaOfNySar.js": {
         "this-in-ability": 5
@@ -1320,9 +1293,6 @@
     "server/game/cards/25.5-TIC/SavedByTheWatch.js": {
         "this-in-ability": 10,
         "legacy-helper": 1
-    },
-    "server/game/cards/25.5-TIC/TheKnight.js": {
-        "this-in-ability": 7
     },
     "server/game/cards/25.5-TIC/TheLastGreenseer.js": {
         "this-in-ability": 2
@@ -1417,10 +1387,6 @@
     },
     "server/game/cards/26.6-NCbT/WarElephants.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/26.6-NCbT/WolvesInTheHills.js": {
-        "this-in-ability": 7,
-        "add-message": 1
     },
     "server/game/cards/27.1-THBIB/IntoTheLists.js": {
         "this-in-ability": 4
