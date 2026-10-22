@@ -1,5 +1,5 @@
 import DrawCard from '../../drawcard.js';
-import ChallengeTypes from '../../ChallengeTypes.js';
+import GameActions from '../../GameActions/index.js';
 
 class DesertRaider extends DrawCard {
     // Desert Raider (17112)
@@ -10,52 +10,35 @@ class DesertRaider extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) => event.challenge.loser === this.controller
+                afterChallenge: (event, context) => event.challenge.loser === context.player
             },
             location: 'dead pile',
             cost: ability.costs.putSelfIntoPlay(),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    this.game.currentChallenge.winner === card.controller
+                    card.controller === context.event.challenge.winner
             },
-            handler: (context) => {
-                this.target = context.target;
-
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: 'Select an icon',
-                        buttons: ChallengeTypes.asButtons({ method: 'selectIcon' }).filter(
-                            (button) => ['intrigue', 'power'].includes(button.arg)
-                        )
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.chooseIcon({
+                icons: ['intrigue', 'power'],
+                message:
+                    '{player} puts {source} into play from their dead pile to have {target} lose {icon} icon and have {source} gain {icon} icon until the end of the phase',
+                gameAction: (icon) =>
+                    GameActions.simultaneously([
+                        GameActions.lastingEffect((context) => ({
+                            duration: 'untilEndOfPhase',
+                            match: context.target,
+                            effect: ability.effects.removeIcon(icon)
+                        })),
+                        GameActions.lastingEffect((context) => ({
+                            duration: 'untilEndOfPhase',
+                            match: context.source,
+                            effect: ability.effects.addIcon(icon)
+                        }))
+                    ])
+            })
         });
-    }
-
-    selectIcon(player, icon) {
-        this.untilEndOfPhase((ability) => ({
-            match: this.target,
-            effect: ability.effects.removeIcon(icon)
-        }));
-        this.untilEndOfPhase((ability) => ({
-            match: this,
-            effect: ability.effects.addIcon(icon)
-        }));
-
-        this.game.addMessage(
-            '{0} puts {1} into play from their dead pile to have {2} lose {3} {4} icon and have {1} gain {3} {4} icon until the end of the phase',
-            this.controller,
-            this,
-            this.target,
-            icon === 'intrigue' ? 'an' : 'a',
-            icon
-        );
-
-        return true;
     }
 }
 

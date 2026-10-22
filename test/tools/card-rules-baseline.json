@@ -2413,10 +2413,6 @@
     "server/game/cards/17.1-R/DaenerysTargaryen.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/17.1-R/DesertRaider.js": {
-        "this-in-ability": 8,
-        "add-message": 1
-    },
     "server/game/cards/17.1-R/DoransGame.js": {
         "this-in-ability": 8,
         "legacy-helper": 1,
@@ -3124,10 +3120,6 @@
     "server/game/cards/26.2-WoW/BeneathThePetals.js": {
         "this-in-ability": 5,
         "add-message": 1
-    },
-    "server/game/cards/26.2-WoW/GhostHillElite.js": {
-        "this-in-ability": 13,
-        "add-message": 2
     },
     "server/game/cards/26.2-WoW/QueenOfMeereen.js": {
         "prompt-for-select": 1,

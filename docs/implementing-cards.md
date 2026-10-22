@@ -332,7 +332,8 @@ gameAction: GameActions.lastingEffect((context) => ({
 For text that has a player choose a challenge icon ("gains an icon of your choice", "loses a
 [military], an [intrigue] or a [power] icon"), use `GameActions.chooseIcon`. It prompts with one
 button per icon and resolves the game action that `gameAction` returns for the chosen icon. In the
-`message`, `{icon}` becomes the icon with its article ("a military", "an intrigue"):
+`message`, `{icon}` becomes the icon with its article ("a military", "an intrigue"). For a choice
+between some of the icons ("an [intrigue] or [power] icon"), list them in `icons`:
 
 ```javascript
 gameAction: GameActions.chooseIcon({

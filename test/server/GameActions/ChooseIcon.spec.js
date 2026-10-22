@@ -21,6 +21,16 @@ describe('ChooseIcon', function () {
         ]);
     });
 
+    it('only offers the icons listed in icons', function () {
+        const action = new ChooseIcon({
+            icons: ['intrigue', 'power'],
+            gameAction: this.gameAction
+        });
+        const choices = action.createChoices(action.choicesFunc({}));
+
+        expect(choices.map((choice) => choice.text)).toEqual(['Intrigue', 'Power']);
+    });
+
     it('titles the prompt "Select an icon" by default', function () {
         expect(new ChooseIcon({ gameAction: this.gameAction }).title).toBe('Select an icon');
     });

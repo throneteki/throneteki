@@ -2,18 +2,26 @@ import ChallengeTypes from '../ChallengeTypes.js';
 import ChooseGameAction from './ChooseGameAction.js';
 
 class ChooseIcon extends ChooseGameAction {
-    constructor({ player, title = 'Select an icon', message, gameAction }) {
+    constructor({
+        player,
+        title = 'Select an icon',
+        message,
+        icons = ChallengeTypes.all.map(({ value }) => value),
+        gameAction
+    }) {
         super({
             player,
             title,
             choices: Object.fromEntries(
-                ChallengeTypes.all.map(({ text, value }) => [
-                    text,
-                    {
-                        message: ChooseIcon.messageFor(message, value),
-                        gameAction: gameAction(value)
-                    }
-                ])
+                ChallengeTypes.all
+                    .filter(({ value }) => icons.includes(value))
+                    .map(({ text, value }) => [
+                        text,
+                        {
+                            message: ChooseIcon.messageFor(message, value),
+                            gameAction: gameAction(value)
+                        }
+                    ])
             )
         });
     }
