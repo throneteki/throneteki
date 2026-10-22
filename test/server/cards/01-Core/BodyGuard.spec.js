@@ -1,60 +1,43 @@
 describe('Bodyguard', function () {
-    integration(function () {
+    describe('when the attached character would be killed', function () {
         beforeEach(function () {
-            const deck = this.buildDeck('stark', [
-                'A Noble Cause',
-                'Valar Morghulis',
-                'Catelyn Stark (Core)',
-                'Varys (Core)',
-                'Bodyguard'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.character = this.player1.findCardByName('Catelyn Stark', 'hand');
-            this.player1.clickCard(this.character);
-            this.player1.clickCard('Bodyguard', 'hand');
-
-            this.player2.clickCard('Varys', 'hand');
-
-            this.completeSetup();
-
-            this.player1.clickCard('Bodyguard', 'play area');
-            this.player1.clickCard(this.character);
+            this.setupTest({
+                phase: 'plot',
+                player1: { inPlay: [{ card: 'Catelyn Stark (Core)', attachments: ['Bodyguard'] }] },
+                player2: { plotDeck: ['Valar Morghulis'] }
+            });
+            this.player1.selectPlot('Filler Plot');
+            this.player2.selectPlot('Valar Morghulis');
+            this.selectFirstPlayer(this.player1);
+            this.player1.triggerAbility(this.bodyguard);
         });
 
-        describe('when the character would be killed', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('A Noble Cause');
-                this.player2.selectPlot('Valar Morghulis');
-                this.selectFirstPlayer(this.player1);
+        it('is sacrificed to save the character', function () {
+            expect(this.catelynStark.location).toBe('play area');
+            expect(this.bodyguard.location).toBe('discard pile');
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 
-                this.player1.triggerAbility('Bodyguard');
+    describe('when the attached character would be discarded from play', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: { inPlay: [{ card: 'Catelyn Stark (Core)', attachments: ['Bodyguard'] }] },
+                player2: { inPlay: ['Varys (Core)'] }
             });
-
-            it('should save the character', function () {
-                expect(this.character.location).toBe('play area');
-            });
+            this.player1.togglePromptedActionWindow('dominance', true);
+            this.player1.togglePromptedActionWindow('standing', true);
+            this.completeChallengesPhase();
+            this.skipActionWindow();
+            this.player2.triggerAbility(this.varys);
+            this.player1.triggerAbility(this.bodyguard);
         });
 
-        describe('when the character would be discarded from play', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('A Noble Cause');
-                this.player2.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player2);
-
-                this.completeMarshalPhase();
-                this.completeChallengesPhase();
-                this.player2.triggerAbility('Varys');
-
-                this.player1.triggerAbility('Bodyguard');
-            });
-
-            it('should save the character', function () {
-                expect(this.character.location).toBe('play area');
-            });
+        it('is sacrificed to save the character', function () {
+            expect(this.catelynStark.location).toBe('play area');
+            expect(this.bodyguard.location).toBe('discard pile');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });
