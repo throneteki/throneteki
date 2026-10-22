@@ -193,12 +193,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/01-Core/TheQueensAssassin.js": {
-        "this-in-ability": 8,
-        "prompt-for-select": 1,
-        "add-message": 2,
-        "legacy-helper": 1
-    },
     "server/game/cards/01-Core/TheRedKeep.js": {
         "this-in-ability": 11,
         "legacy-helper": 1,
@@ -330,12 +324,6 @@
     "server/game/cards/02.2-TRtW/TheReader.js": {
         "this-in-ability": 3,
         "add-message": 1
-    },
-    "server/game/cards/02.2-TRtW/WardensOfTheWest.js": {
-        "this-in-ability": 11,
-        "prompt-for-select": 1,
-        "add-message": 2,
-        "legacy-helper": 1
     },
     "server/game/cards/02.2-TRtW/WinterfellKennelMaster.js": {
         "this-in-ability": 5,
@@ -1737,12 +1725,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/11.2-TMoW/TheWall.js": {
-        "this-in-ability": 7,
-        "add-message": 2,
-        "prompt-for-select": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/11.2-TMoW/TychoNestoris.js": {
         "this-in-ability": 4,
         "add-message": 1
@@ -1861,12 +1843,6 @@
         "add-message": 2,
         "legacy-helper": 2,
         "prompt-for-select": 1
-    },
-    "server/game/cards/11.5-IDP/Hardhome.js": {
-        "add-message": 2,
-        "this-in-ability": 6,
-        "prompt-for-select": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/11.5-IDP/HeCallsItThinking.js": {
         "this-in-ability": 6,
@@ -2628,11 +2604,6 @@
         "this-in-ability": 5,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/17.1-R/Yoren.js": {
-        "this-in-ability": 9,
-        "add-message": 1,
-        "prompt-for-select": 1
     },
     "server/game/cards/17.2-R2/AegonTargaryen.js": {
         "this-in-ability": 2

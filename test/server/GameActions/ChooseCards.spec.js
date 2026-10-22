@@ -116,4 +116,17 @@ describe('chooseCards game action', function () {
 
         expect(action.allow(this.context)).toBe(false);
     });
+
+    it('passes the card condition properties the context inherits', function () {
+        const action = GameActions.chooseCards({
+            player: (context) => context.opponent,
+            cardCondition: (card, context) =>
+                card.location === 'play area' && card.controller === context.player,
+            gameAction: (card) => GameActions.kneelCard({ card })
+        });
+        const candidate = Object.create(this.context);
+        candidate.opponent = this.player2Object;
+
+        expect(action.allow(candidate)).toBe(true);
+    });
 });

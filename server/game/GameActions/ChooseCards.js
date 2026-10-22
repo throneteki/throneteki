@@ -13,6 +13,12 @@ const AllCardTypes = [
     'title'
 ];
 
+// The context can inherit its properties from a prototype (see AbilityChoosePlayerDefinition), which
+// spreading it would drop.
+function withChoosingPlayer(context, player) {
+    return Object.assign(Object.create(context), { choosingPlayer: player });
+}
+
 class ChooseCards extends GameAction {
     constructor({
         player,
@@ -50,7 +56,7 @@ class ChooseCards extends GameAction {
     }
 
     getChoosableCards(player, context) {
-        const choosingContext = { ...context, choosingPlayer: player };
+        const choosingContext = withChoosingPlayer(context, player);
         return context.game.allCards.filter(
             (card) =>
                 this.cardMatcher(card, choosingContext) &&
@@ -88,7 +94,7 @@ class ChooseCards extends GameAction {
         }
 
         context.game.promptForSelect(player, {
-            activePromptTitle: this.titleFunc({ ...context, choosingPlayer: player }),
+            activePromptTitle: this.titleFunc(withChoosingPlayer(context, player)),
             mode: this.mode,
             numCards: this.mode === 'exactly' ? Math.min(numCards, choosable.length) : numCards,
             multiSelect: true,
@@ -104,7 +110,7 @@ class ChooseCards extends GameAction {
     }
 
     attachResolution(event, player, cards, context) {
-        const choosingContext = { ...context, choosingPlayer: player };
+        const choosingContext = withChoosingPlayer(context, player);
         const action = new SimultaneousActions(
             cards.map((card) => this.gameActionFactory(card, choosingContext))
         );
