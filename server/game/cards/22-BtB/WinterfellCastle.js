@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WinterfellCastle extends DrawCard {
     // Winterfell Castle (22018)
@@ -8,12 +9,12 @@ class WinterfellCastle extends DrawCard {
     // save it. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: (card) =>
-                card.controller === this.controller &&
+            match: (card, context) =>
+                card.controller === context.source.controller &&
                 card.isUnique() &&
                 card.isFaction('stark') &&
                 card.getType() === 'character' &&
-                this.noOtherHigherCostUniqueStarkCharacter(card),
+                context.source.noOtherHigherCostUniqueStarkCharacter(card),
             effect: [ability.effects.addTrait('Old Gods'), ability.effects.addKeyword('insight')]
         });
         let leftPlayCondition = (event) =>
@@ -26,15 +27,11 @@ class WinterfellCastle extends DrawCard {
             },
             limit: ability.limit.perPhase(1),
             cost: ability.costs.kneelSpecific((context) => context.event.card),
-            handler: (context) => {
-                context.event.saveCard();
-                this.game.addMessage(
-                    '{0} uses {1} and kneels {2} to save {2}',
-                    context.player,
-                    this,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} uses {source} and kneels {card} to save {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 

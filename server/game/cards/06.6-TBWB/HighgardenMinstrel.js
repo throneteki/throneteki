@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class HighgardenMinstrel extends DrawCard {
     // Highgarden Minstrel (06103)
@@ -6,16 +7,14 @@ class HighgardenMinstrel extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPlayed: (event) =>
+                onCardPlayed: (event, context) =>
                     event.card.hasTrait('Song') &&
-                    event.card.controller === this.controller &&
-                    this.controller.canGainGold()
+                    event.card.controller === context.source.controller &&
+                    context.source.controller.canGainGold()
             },
             limit: ability.limit.perRound(3),
-            handler: () => {
-                this.game.addGold(this.controller, 1);
-                this.game.addMessage('{0} uses {1} to gain 1 gold', this.controller, this);
-            }
+            message: '{player} uses {source} to gain 1 gold',
+            gameAction: GameActions.gainGold((context) => ({ player: context.player, amount: 1 }))
         });
     }
 }

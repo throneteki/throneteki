@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class FreyBastard extends DrawCard {
     // Frey Bastard (06078)
@@ -8,20 +9,17 @@ class FreyBastard extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.getNumberOfAttackingFreys() >= 2 &&
-                    this.controller.canGainFactionPower()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.getNumberOfAttackingFreys() >= 2 &&
+                    context.source.controller.canGainFactionPower()
             },
             cost: ability.costs.discardGold(),
-            handler: () => {
-                this.game.addPower(this.controller, 1);
-                this.game.addMessage(
-                    '{0} discards a gold from {1} to gain 1 power for their faction',
-                    this.controller,
-                    this
-                );
-            }
+            message: '{player} discards a gold from {source} to gain 1 power for their faction',
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.player.faction,
+                amount: 1
+            }))
         });
     }
 

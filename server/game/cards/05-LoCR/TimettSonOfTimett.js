@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TimettSonOfTimett extends DrawCard {
     // Timett Son of Timett (05004)
@@ -8,26 +9,20 @@ class TimettSonOfTimett extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isAttacking()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isAttacking()
             },
             target: {
                 activePromptTitle: 'Select character to kill',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.getPrintedCost() <= this.getNumberOfClansmen(),
+                    card.getPrintedCost() <= context.source.getNumberOfClansmen(),
                 gameAction: 'kill'
             },
-            handler: (context) => {
-                context.target.controller.killCharacter(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to kill {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to kill {target}',
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 

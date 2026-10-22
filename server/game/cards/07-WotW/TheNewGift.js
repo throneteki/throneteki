@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheNewGift extends DrawCard {
     // The New Gift (07017)
@@ -9,39 +10,25 @@ class TheNewGift extends DrawCard {
         this.action({
             title: 'Gain 1 gold',
             phase: 'marshal',
-            condition: () => this.controller.canGainGold(),
+            condition: (context) => context.source.controller.canGainGold(),
             limit: ability.limit.perPhase(2),
             cost: ability.costs.kneel(
                 (card) => card.hasTrait('Steward') && card.getType() === 'character'
             ),
-            handler: (context) => {
-                this.game.addGold(context.player, 1);
-                this.game.addMessage(
-                    '{0} uses {1} and kneels {2} to gain 1 gold',
-                    context.player,
-                    context.source,
-                    context.costs.kneel
-                );
-            }
+            message: '{player} uses {source} and kneels {costs.kneel} to gain 1 gold',
+            gameAction: GameActions.gainGold((context) => ({ player: context.player, amount: 1 }))
         });
 
         this.action({
             title: 'Draw 1 card',
             phase: 'challenge',
-            condition: () => this.controller.canDraw(),
+            condition: (context) => context.source.controller.canDraw(),
             limit: ability.limit.perPhase(2),
             cost: ability.costs.kneel(
                 (card) => card.hasTrait('Steward') && card.getType() === 'character'
             ),
-            handler: (context) => {
-                this.controller.drawCardsToHand(1);
-                this.game.addMessage(
-                    '{0} uses {1} and kneels {2} to draw 1 card',
-                    context.player,
-                    context.source,
-                    context.costs.kneel
-                );
-            }
+            message: '{player} uses {source} and kneels {costs.kneel} to draw 1 card',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });
     }
 }

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class QueenOfTheSevenKingdoms extends DrawCard {
     // Queen of the Seven Kingdoms (09020)
@@ -20,17 +21,14 @@ class QueenOfTheSevenKingdoms extends DrawCard {
                 cardCondition: (card) => card.isParticipating()
             },
             limit: ability.limit.perPhase(1),
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.currentChallenge.removeFromChallenge(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} and stands and removes {2} from the challenge to stand and remove {3} from the challenge',
-                    context.player,
-                    this,
-                    this.parent,
-                    context.target
-                );
-            }
+            message: {
+                format: '{player} uses {source} and stands and removes {parent} from the challenge to stand and remove {target} from the challenge',
+                args: { parent: (context) => context.source.parent }
+            },
+            gameAction: GameActions.simultaneously([
+                GameActions.standCard((context) => ({ card: context.target })),
+                GameActions.removeFromChallenge((context) => ({ card: context.target }))
+            ])
         });
     }
 }

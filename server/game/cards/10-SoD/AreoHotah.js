@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class AreoHotah extends DrawCard {
     // Areo Hotah (10006)
@@ -17,22 +18,18 @@ class AreoHotah extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    this.controller === event.challenge.winner && this.isDefending()
+                afterChallenge: (event, context) =>
+                    context.source.controller === event.challenge.winner &&
+                    context.source.isDefending()
             },
             cost: ability.costs.returnSelfToHand(),
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: (card) => card === context.player.activePlot,
-                    effect: ability.effects.modifyClaim(1)
-                }));
-
-                this.game.addMessage(
-                    '{0} returns {1} to their hand to raise the claim value on their revealed plot card by 1 until the end of the phase',
-                    context.player,
-                    this
-                );
-            }
+            message:
+                '{player} returns {source} to their hand to raise the claim value on their revealed plot card by 1 until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: (card) => card === context.player.activePlot,
+                effect: ability.effects.modifyClaim(1)
+            }))
         });
     }
 }

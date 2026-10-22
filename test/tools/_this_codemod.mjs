@@ -152,15 +152,19 @@ function transform(path) {
 
     for (const node of thisNodes) {
         let arrows = [];
+        let helperMethod = false;
         for (let current = node.parent; current; current = current.parent) {
             if (current.type === 'FunctionExpression' || current.type === 'FunctionDeclaration') {
+                helperMethod =
+                    current.parent?.type === 'MethodDefinition' &&
+                    current.parent.key.name !== 'setupCardAbilities';
                 break;
             }
             if (current.type === 'ArrowFunctionExpression') {
                 arrows.push(current);
             }
         }
-        if (arrows.length === 0) {
+        if (arrows.length === 0 || helperMethod) {
             continue;
         }
 

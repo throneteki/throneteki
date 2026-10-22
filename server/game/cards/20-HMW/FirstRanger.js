@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class FirstRanger extends DrawCard {
     // First Ranger (20022)
@@ -15,25 +16,23 @@ class FirstRanger extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.challengeType === 'military' &&
-                    this.isRangerParticipatingInChallenge()
+                    context.source.isRangerParticipatingInChallenge()
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.game.currentChallenge.loser &&
+                    card.controller === context.game.currentChallenge.loser &&
                     card.getType() === 'character' &&
                     !card.isUnique() &&
-                    card.getStrength() <= this.getNumberOfRangers(),
+                    card.getStrength() <= context.source.getNumberOfRangers(),
                 gameAction: 'kill'
             },
             limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to kill {target}',
-            handler: (context) => {
-                context.target.controller.killCharacter(context.target);
-            }
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BearIsland extends DrawCard {
     // Bear Island (04042)
@@ -6,18 +7,16 @@ class BearIsland extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
+                onCardEntersPlay: (event, context) =>
                     event.card.getType() !== 'plot' &&
-                    event.card.controller === this.controller &&
+                    event.card.controller === context.source.controller &&
                     event.card.isLoyal() &&
                     event.playingType === 'marshal' &&
-                    this.controller.canGainGold()
+                    context.source.controller.canGainGold()
             },
             limit: ability.limit.perPhase(2),
-            handler: () => {
-                this.game.addGold(this.controller, 1);
-                this.game.addMessage('{0} uses {1} to gain 1 gold', this.controller, this);
-            }
+            message: '{player} uses {source} to gain 1 gold',
+            gameAction: GameActions.gainGold((context) => ({ player: context.player, amount: 1 }))
         });
     }
 }

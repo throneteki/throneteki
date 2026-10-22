@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ViserysTargaryen extends DrawCard {
     // Viserys Targaryen (04014)
@@ -8,7 +9,7 @@ class ViserysTargaryen extends DrawCard {
     // Targaryen gains 1 power.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isAttacking(),
+            condition: (context) => context.source.isAttacking(),
             targetController: 'any',
             match: (card) => card.hasTrait('King') && card.getType() === 'character',
             effect: ability.effects.mustBeDeclaredAsDefender()
@@ -16,15 +17,13 @@ class ViserysTargaryen extends DrawCard {
 
         this.interrupt({
             when: {
-                onPhaseEnded: (event) =>
+                onPhaseEnded: (event, context) =>
                     event.phase === 'dominance' &&
-                    this.opponentHasNoKing() &&
-                    this.allowGameAction('gainPower')
+                    context.source.opponentHasNoKing() &&
+                    context.source.allowGameAction('gainPower')
             },
-            handler: () => {
-                this.modifyPower(1);
-                this.game.addMessage('{0} uses {1} to gain 1 power on {1}', this.controller, this);
-            }
+            message: '{player} uses {source} to gain 1 power on {source}',
+            gameAction: GameActions.gainPower((context) => ({ card: context.source, amount: 1 }))
         });
     }
 

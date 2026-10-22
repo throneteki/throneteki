@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Rakharo extends DrawCard {
     // Rakharo (02033)
@@ -7,22 +8,22 @@ class Rakharo extends DrawCard {
     // Rakharo gains 1 power.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.hasAnotherBloodrider(),
+            condition: (context) => context.source.hasAnotherBloodrider(),
             match: this,
             effect: ability.effects.addKeyword('intimidate')
         });
 
         this.reaction({
             when: {
-                onCharacterKilled: () =>
-                    this.game.isDuringChallenge({ attackingPlayer: this.controller }) &&
-                    this.game.claim.isApplying &&
-                    this.allowGameAction('gainPower')
+                onCharacterKilled: (event, context) =>
+                    context.game.isDuringChallenge({
+                        attackingPlayer: context.source.controller
+                    }) &&
+                    context.game.claim.isApplying &&
+                    context.source.allowGameAction('gainPower')
             },
-            handler: () => {
-                this.modifyPower(1);
-                this.game.addMessage('{0} gains 1 power on {1}', this.controller, this);
-            }
+            message: '{player} gains 1 power on {source}',
+            gameAction: GameActions.gainPower((context) => ({ card: context.source, amount: 1 }))
         });
     }
 

@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import KillTracker from '../../EventTrackers/KillTracker.js';
+import GameActions from '../../GameActions/index.js';
 
 class Glamor extends DrawCard {
     constructor(owner, cardData) {
@@ -27,19 +28,14 @@ class Glamor extends DrawCard {
                     card.controller === context.player &&
                     card.location === 'dead pile' &&
                     card !== context.costs.kill &&
-                    this.tracker.wasKilledThisPhase(card) &&
+                    context.source.tracker.wasKilledThisPhase(card) &&
                     context.player.canPutIntoPlay(card)
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} and kills {2} to put {3} into play',
-                    context.player,
-                    this,
-                    context.costs.kill,
-                    context.target
-                );
-                context.player.putIntoPlay(context.target);
-            }
+            message: '{player} uses {source} and kills {costs.kill} to put {target} into play',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 }

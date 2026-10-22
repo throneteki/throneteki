@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Catspaw extends DrawCard {
     // Catspaw (11049)
@@ -8,10 +9,10 @@ class Catspaw extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             cost: ability.costs.payXGold(
-                () => this.getMinimumCost(),
+                (context) => context.source.getMinimumCost(),
                 () => 99
             ),
             target: {
@@ -20,19 +21,13 @@ class Catspaw extends DrawCard {
                     card.getType() === 'character' &&
                     (context.xValue
                         ? card.getPrintedCost() <= context.xValue
-                        : card.getPrintedCost() <= this.controller.getSpendableGold())
+                        : card.getPrintedCost() <= context.source.controller.getSpendableGold())
             },
-            handler: (context) => {
-                context.target.controller.returnCardToHand(context.target);
-                this.game.addMessage(
-                    "{0} uses {1} and pays {2} gold to return {3} to {4}'s hand",
-                    context.player,
-                    this,
-                    context.costs.gold,
-                    context.target,
-                    context.target.owner
-                );
-            }
+            message: {
+                format: "{player} uses {source} and pays {costs.gold} gold to return {target} to {owner}'s hand",
+                args: { owner: (context) => context.target.owner }
+            },
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 

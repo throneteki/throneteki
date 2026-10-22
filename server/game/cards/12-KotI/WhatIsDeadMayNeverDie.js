@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WhatIsDeadMayNeverDie extends DrawCard {
     // What Is Dead May Never Die (12023)
@@ -7,20 +8,17 @@ class WhatIsDeadMayNeverDie extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onDominanceDetermined: (event) => this.controller === event.winner
+                onDominanceDetermined: (event, context) =>
+                    context.source.controller === event.winner
             },
             target: {
-                cardCondition: (card) => this.cardCondition(card)
+                cardCondition: (card, context) => context.source.cardCondition(card)
             },
-            handler: (context) => {
-                context.player.putIntoPlay(context.target);
-                this.game.addMessage(
-                    '{0} plays {1} to put {2} into play from their dead pile',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} plays {source} to put {target} into play from their dead pile',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 

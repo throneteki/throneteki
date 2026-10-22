@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ChatayasBrothel extends DrawCard {
     // Chataya's Brothel (04090)
@@ -9,17 +10,10 @@ class ChatayasBrothel extends DrawCard {
             title: 'Gain gold',
             phase: 'marshal',
             limit: ability.limit.perPhase(2),
-            condition: () => this.controller.canGainGold(),
+            condition: (context) => context.source.controller.canGainGold(),
             cost: ability.costs.kneel((card) => card.hasIcon('intrigue')),
-            handler: (context) => {
-                this.game.addGold(context.player, 1);
-                this.game.addMessage(
-                    '{0} uses {1} and kneels {2} to gain 1 gold',
-                    context.player,
-                    context.source,
-                    context.costs.kneel
-                );
-            }
+            message: '{player} uses {source} and kneels {costs.kneel} to gain 1 gold',
+            gameAction: GameActions.gainGold((context) => ({ player: context.player, amount: 1 }))
         });
     }
 }

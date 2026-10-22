@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MutinyAtCrastersKeep extends DrawCard {
     // Mutiny At Craster's Keep (06086)
@@ -10,26 +11,19 @@ class MutinyAtCrastersKeep extends DrawCard {
             title: 'Discard character from play',
             phase: 'dominance',
             cost: ability.costs.sacrifice(
-                (card) =>
+                (card, context) =>
                     card.getType() === 'character' &&
-                    card.getPrintedCost() === this.getHighestCharacterCost()
+                    card.getPrintedCost() === context.source.getHighestCharacterCost()
             ),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller !== this.controller &&
+                    card.controller !== context.source.controller &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                context.target.owner.discardCard(context.target);
-                this.game.addMessage(
-                    '{0} plays {1} and sacrifices {2} to discard {3} from play',
-                    context.player,
-                    this,
-                    context.costs.sacrifice,
-                    context.target
-                );
-            }
+            message:
+                '{player} plays {source} and sacrifices {costs.sacrifice} to discard {target} from play',
+            gameAction: GameActions.discardCard((context) => ({ card: context.target }))
         });
     }
 

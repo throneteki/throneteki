@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ScorchingDeserts extends DrawCard {
     // Scorching Deserts (06036)
@@ -7,21 +8,19 @@ class ScorchingDeserts extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onDeclaredAsAttacker: (event) =>
-                    event.card.getNumberOfIcons() < 2 && event.card.controller !== this.controller,
-                onDeclaredAsDefender: (event) =>
-                    event.card.getNumberOfIcons() < 2 && event.card.controller !== this.controller
+                onDeclaredAsAttacker: (event, context) =>
+                    event.card.getNumberOfIcons() < 2 &&
+                    event.card.controller !== context.source.controller,
+                onDeclaredAsDefender: (event, context) =>
+                    event.card.getNumberOfIcons() < 2 &&
+                    event.card.controller !== context.source.controller
             },
             cost: [ability.costs.kneelSelf(), ability.costs.sacrificeSelf()],
-            handler: (context) => {
-                this.game.currentChallenge.removeFromChallenge(context.event.card);
-                this.game.addMessage(
-                    '{0} kneels and sacrifices {1} to remove {2} from the challenge',
-                    context.player,
-                    this,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} kneels and sacrifices {source} to remove {card} from the challenge',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.removeFromChallenge((context) => ({ card: context.event.card }))
         });
     }
 }

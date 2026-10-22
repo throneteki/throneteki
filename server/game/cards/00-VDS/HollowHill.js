@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class HollowHill extends DrawCard {
     // Hollow Hill (00018)
@@ -8,17 +9,15 @@ class HollowHill extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
+                onCardEntersPlay: (event, context) =>
                     event.playingType === 'marshal' &&
                     event.card.getType() === 'character' &&
-                    event.card.controller === this.controller &&
-                    this.doesNotMatchAnotherControlledFaction(event.card) &&
-                    this.controller.canDraw()
+                    event.card.controller === context.source.controller &&
+                    context.source.doesNotMatchAnotherControlledFaction(event.card) &&
+                    context.source.controller.canDraw()
             },
-            handler: () => {
-                this.controller.drawCardsToHand(1);
-                this.game.addMessage('{0} uses {1} to draw 1 card', this.controller, this);
-            }
+            message: '{player} uses {source} to draw 1 card',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });
     }
 

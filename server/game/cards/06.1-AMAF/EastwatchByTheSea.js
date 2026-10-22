@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class EastwatchByTheSea extends DrawCard {
     // Eastwatch-by-the-Sea (06006)
@@ -12,15 +13,13 @@ class EastwatchByTheSea extends DrawCard {
 
         this.reaction({
             when: {
-                onPhaseStarted: (event) =>
+                onPhaseStarted: (event, context) =>
                     event.phase === 'dominance' &&
-                    this.hasHigherReserveThanOpponent() &&
-                    this.controller.canDraw()
+                    context.source.hasHigherReserveThanOpponent() &&
+                    context.source.controller.canDraw()
             },
-            handler: () => {
-                this.controller.drawCardsToHand(1);
-                this.game.addMessage('{0} uses {1} to draw 1 card', this.controller, this);
-            }
+            message: '{player} uses {source} to draw 1 card',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });
     }
 

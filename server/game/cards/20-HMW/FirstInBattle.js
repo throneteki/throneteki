@@ -1,34 +1,28 @@
 import DrawCard from '../../drawcard.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
+import GameActions from '../../GameActions/index.js';
 
 class FirstInBattle extends DrawCard {
     // First in Battle (20039)
     // Play only if you control 3 or more The Reach locations.
     // Challenges Action: Each Army or House Tarly character you control does not kneel when
     // declared as an attacker in the first challenge you initiate this phase.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.tracker = ChallengeTracker.forPhase(this.game);
 
         this.action({
             phase: 'challenge',
-            condition: () => this.getNumberOfReach() >= 3,
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    condition: () => this.isAttackingInFirstChallenge(),
-                    match: (card) =>
-                        card.getType() === 'character' &&
-                        (card.hasTrait('Army') || card.hasTrait('House Tarly')),
-                    effect: ability.effects.doesNotKneelAsAttacker()
-                }));
-
-                this.game.addMessage(
-                    '{0} plays {1} to have each {2} or {3} character they control not kneel during the first challenge they initiate this phase',
-                    context.player,
-                    this,
-                    'Army',
-                    'House Tarly'
-                );
-            }
+            condition: (context) => context.source.getNumberOfReach() >= 3,
+            message:
+                '{player} plays {source} to have each Army or House Tarly character they control not kneel during the first challenge they initiate this phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                condition: () => context.source.isAttackingInFirstChallenge(),
+                match: (card) =>
+                    card.getType() === 'character' &&
+                    (card.hasTrait('Army') || card.hasTrait('House Tarly')),
+                effect: ability.effects.doesNotKneelAsAttacker()
+            }))
         });
     }
 

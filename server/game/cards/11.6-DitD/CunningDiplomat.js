@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class CunningDiplomat extends DrawCard {
     // Shrewd Diplomat (11103)
@@ -8,22 +9,17 @@ class CunningDiplomat extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this && this.game.isDuringChallenge()
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source && context.game.isDuringChallenge()
             },
             target: {
                 cardCondition: (card) => card.getType() === 'character' && card.isParticipating()
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.currentChallenge.removeFromChallenge(context.target);
-
-                this.game.addMessage(
-                    '{0} uses {1} to stand and remove {2} from the challenge',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to stand and remove {target} from the challenge',
+            gameAction: GameActions.simultaneously([
+                GameActions.standCard((context) => ({ card: context.target })),
+                GameActions.removeFromChallenge((context) => ({ card: context.target }))
+            ])
         });
     }
 }

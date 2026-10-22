@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class AbandonedStronghold extends DrawCard {
     // Abandoned Stronghold (17120)
@@ -14,21 +15,15 @@ class AbandonedStronghold extends DrawCard {
                     card.getType() === 'character' &&
                     card.isDefending()
             },
-            handler: (context) => {
-                let strBoost = this.getNumberOfBuilders();
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(strBoost)
-                }));
-
-                this.game.addMessage(
-                    '{0} kneels {1} to give {2} +{3} STR until the end of the challenge',
-                    context.player,
-                    this,
-                    context.target,
-                    strBoost
-                );
-            }
+            message: {
+                format: '{player} kneels {source} to give {target} +{strBoost} STR until the end of the challenge',
+                args: { strBoost: (context) => context.source.getNumberOfBuilders() }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                effect: ability.effects.modifyStrength(context.source.getNumberOfBuilders())
+            }))
         });
     }
 

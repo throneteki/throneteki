@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class OverthrowingTheMasters extends DrawCard {
     // Overthrowing the Masters (06094)
@@ -8,23 +9,18 @@ class OverthrowingTheMasters extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Remove character from challenge',
-            condition: () => this.game.isDuringChallenge({ attackingPlayer: this.controller }),
+            condition: (context) =>
+                context.game.isDuringChallenge({ attackingPlayer: context.source.controller }),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
                     card.isDefending() &&
-                    card.getStrength() <= this.game.currentChallenge.defendingPlayer.deadPile.length
+                    card.getStrength() <=
+                        context.game.currentChallenge.defendingPlayer.deadPile.length
             },
-            handler: (context) => {
-                this.game.currentChallenge.removeFromChallenge(context.target);
-                this.game.addMessage(
-                    '{0} plays {1} to remove {2} from the challenge',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} plays {source} to remove {target} from the challenge',
+            gameAction: GameActions.removeFromChallenge((context) => ({ card: context.target }))
         });
     }
 }

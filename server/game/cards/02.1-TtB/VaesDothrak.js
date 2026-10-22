@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class VaesDothrak extends DrawCard {
     // Vaes Dothrak (02014)
@@ -7,29 +8,24 @@ class VaesDothrak extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onPlotsRevealed: (event) =>
-                    event.plots.some((plot) => plot.controller === this.controller)
+                onPlotsRevealed: (event, context) =>
+                    event.plots.some((plot) => plot.controller === context.source.controller)
             },
             cost: ability.costs.discardFromHand(
-                (card) => card.getType() === 'attachment' && this.hasPossibleLegalTarget(card)
+                (card, context) =>
+                    card.getType() === 'attachment' && context.source.hasPossibleLegalTarget(card)
             ),
             target: {
                 activePromptTitle: 'Select an attachment',
                 cardCondition: (card, context) =>
                     !context.costs.discardFromHand ||
-                    this.isValidTarget(card, context.costs.discardFromHand)
+                    context.source.isValidTarget(card, context.costs.discardFromHand)
             },
-            handler: (context) => {
-                let card = context.target;
-                card.controller.discardCard(card);
-                this.game.addMessage(
-                    '{0} uses {1} and discards {2} from their hand to discard {3} from play',
-                    this.controller,
-                    this,
-                    context.costs.discardFromHand,
-                    card
-                );
-            }
+            message: {
+                format: '{player} uses {source} and discards {costs.discardFromHand} from their hand to discard {card} from play',
+                args: { card: (context) => context.target }
+            },
+            gameAction: GameActions.discardCard((context) => ({ card: context.target }))
         });
     }
 

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class DeadlyKhalasar extends DrawCard {
     // Deadly Khalasar (00015)
@@ -6,37 +7,31 @@ class DeadlyKhalasar extends DrawCard {
     // the challenge, that character gets +1 STR for each Dothraki character you control and gains
     // intimidate.
     // Draft format only.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Give character +STR and intimidate',
-            condition: () => this.game.isDuringChallenge(),
+            condition: (context) => context.game.isDuringChallenge(),
             phase: 'challenge',
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.getType() === 'character' &&
                     card.isFaction('targaryen') &&
                     card.isAttacking()
             },
-            handler: (context) => {
-                let strBoost = this.getNumberOfDothraki();
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    effect: [
-                        ability.effects.modifyStrength(strBoost),
-                        ability.effects.addKeyword('intimidate')
-                    ]
-                }));
-
-                this.game.addMessage(
-                    '{0} plays {1} to give {2} +{3} STR and intimidate until the end of the challenge',
-                    context.player,
-                    this,
-                    context.target,
-                    strBoost
-                );
-            }
+            message: {
+                format: '{player} plays {source} to give {target} +{strBoost} STR and intimidate until the end of the challenge',
+                args: { strBoost: (context) => context.source.getNumberOfDothraki() }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                effect: [
+                    ability.effects.modifyStrength(context.source.getNumberOfDothraki()),
+                    ability.effects.addKeyword('intimidate')
+                ]
+            }))
         });
     }
 

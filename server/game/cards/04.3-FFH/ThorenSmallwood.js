@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ThorenSmallwood extends DrawCard {
     // Thoren Smallwood (04045)
@@ -7,20 +8,17 @@ class ThorenSmallwood extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
                     !event.challenge.isAttackerTheWinner() &&
-                    this.controller.canGainFactionPower()
+                    context.source.controller.canGainFactionPower()
             },
-            handler: () => {
-                this.game.addPower(this.controller, 1);
-
-                this.game.addMessage(
-                    '{0} uses {1} to gain 1 power for their faction after winning a challenge as the defending player',
-                    this.controller,
-                    this
-                );
-            }
+            message:
+                '{player} uses {source} to gain 1 power for their faction after winning a challenge as the defending player',
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.player.faction,
+                amount: 1
+            }))
         });
     }
 }

@@ -1,4 +1,5 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class NameDayTourney extends PlotCard {
     // Name Day Tourney (07051)
@@ -7,29 +8,22 @@ class NameDayTourney extends PlotCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.hasParticipatingKnight() &&
-                    this.hasSingleParticipatingChar()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.hasParticipatingKnight() &&
+                    context.source.hasSingleParticipatingChar()
             },
             target: {
                 activePromptTitle: 'Select Lord or Lady',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     (card.hasTrait('Lord') || card.hasTrait('Lady')) &&
                     card.getType() === 'character',
                 gameAction: 'gainPower'
             },
-            handler: (context) => {
-                context.target.modifyPower(1);
-                this.game.addMessage(
-                    '{0} uses {1} to have {2} gain 1 power',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to have {target} gain 1 power',
+            gameAction: GameActions.gainPower((context) => ({ card: context.target, amount: 1 }))
         });
     }
 

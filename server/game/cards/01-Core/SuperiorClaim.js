@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SuperiorClaim extends DrawCard {
     // Superior Claim (01043)
@@ -8,20 +9,17 @@ class SuperiorClaim extends DrawCard {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'power' &&
-                    event.challenge.winner === this.controller &&
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.strengthDifference >= 5 &&
-                    this.controller.canGainFactionPower()
+                    context.source.controller.canGainFactionPower()
             },
-            handler: () => {
-                this.game.addPower(this.controller, 2);
-                this.game.addMessage(
-                    '{0} plays {1} to gain 2 power for their faction',
-                    this.controller,
-                    this
-                );
-            }
+            message: '{player} plays {source} to gain 2 power for their faction',
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.player.faction,
+                amount: 2
+            }))
         });
     }
 }

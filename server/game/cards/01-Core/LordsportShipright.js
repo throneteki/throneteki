@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LordsportShipright extends DrawCard {
     // Lordsport Shipwright (01075)
@@ -11,18 +12,10 @@ class LordsportShipright extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select a location',
-                cardCondition: (card) => this.cardCondition(card)
+                cardCondition: (card, context) => context.source.cardCondition(card)
             },
-            handler: (context) => {
-                context.player.kneelCard(context.target);
-
-                this.game.addMessage(
-                    '{0} uses {1} to kneel {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to kneel {target}',
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target }))
         });
     }
 

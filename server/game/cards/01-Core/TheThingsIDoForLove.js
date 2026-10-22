@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import { flatten } from '../../../Array.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheThingsIDoForLove extends DrawCard {
     // The Things I Do For Love (01101)
@@ -14,8 +15,8 @@ class TheThingsIDoForLove extends DrawCard {
 
         this.action({
             title: "Return character to owner's hand",
-            condition: () =>
-                this.controller.anyCardsInPlay(
+            condition: (context) =>
+                context.player.anyCardsInPlay(
                     (card) =>
                         card.isFaction('lannister') &&
                         (card.hasTrait('Lord') || card.hasTrait('Lady'))
@@ -25,23 +26,17 @@ class TheThingsIDoForLove extends DrawCard {
             target: {
                 cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller !== this.controller &&
+                    card.controller !== context.player &&
                     card.getType() === 'character' &&
                     (context.xValue
                         ? card.getPrintedCost() <= context.xValue
-                        : card.getPrintedCost() <= this.controller.getSpendableGold())
+                        : card.getPrintedCost() <= context.player.getSpendableGold())
             },
-            handler: (context) => {
-                context.target.controller.returnCardToHand(context.target);
-                this.game.addMessage(
-                    "{0} plays {1}, kneels their faction card and pays {2} gold to return {3} to {4}'s hand",
-                    context.player,
-                    this,
-                    context.costs.gold,
-                    context.target,
-                    context.target.owner
-                );
-            }
+            message: {
+                format: "{player} plays {source}, kneels their faction card and pays {costs.gold} gold to return {target} to {owner}'s hand",
+                args: { owner: (context) => context.target.owner }
+            },
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 

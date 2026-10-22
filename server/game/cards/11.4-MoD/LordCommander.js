@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LordCommander extends DrawCard {
     // Lord Commander (11066)
@@ -9,18 +10,18 @@ class LordCommander extends DrawCard {
         this.attachmentRestriction({ faction: 'thenightswatch', printedCostOrHigher: 5 });
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.hasParticipatingNWCharacter()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.hasParticipatingNWCharacter()
             },
-            handler: (context) => {
-                this.parent.modifyPower(1);
-                this.game.addMessage(
-                    '{0} uses {1} to gain 1 power on {2}',
-                    context.player,
-                    this,
-                    this.parent
-                );
-            }
+            message: {
+                format: '{player} uses {source} to gain 1 power on {parent}',
+                args: { parent: (context) => context.source.parent }
+            },
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.source.parent,
+                amount: 1
+            }))
         });
     }
 

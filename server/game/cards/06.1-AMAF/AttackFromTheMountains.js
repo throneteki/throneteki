@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class AttackFromTheMountains extends DrawCard {
     // Attack From the Mountains (06010)
@@ -7,26 +8,23 @@ class AttackFromTheMountains extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.hasAttackingClansman()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.hasAttackingClansman()
             },
             target: {
-                cardCondition: (card) =>
-                    card.owner === this.controller &&
+                cardCondition: (card, context) =>
+                    card.owner === context.source.controller &&
                     card.location === 'hand' &&
                     card.hasTrait('Clansman') &&
                     card.getType() === 'character' &&
-                    this.controller.canPutIntoPlay(card)
+                    context.source.controller.canPutIntoPlay(card)
             },
-            handler: (context) => {
-                context.target.owner.putIntoPlay(context.target);
-                this.game.addMessage(
-                    '{0} plays {1} to put {2} into play from their hand',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} plays {source} to put {target} into play from their hand',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.target.owner,
+                card: context.target
+            }))
         });
     }
 

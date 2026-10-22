@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ScalingTheWall extends DrawCard {
     // Scaling the Wall (07044)
@@ -8,8 +9,9 @@ class ScalingTheWall extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.hasAttackingWildling()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.hasAttackingWildling()
             },
             target: {
                 activePromptTitle: 'Select a location',
@@ -19,16 +21,11 @@ class ScalingTheWall extends DrawCard {
                     !card.isLimited() &&
                     card.controller === context.event.challenge.loser
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    "{0} plays {1} to return {2} to {3}'s hand",
-                    context.player,
-                    this,
-                    context.target,
-                    context.target.owner
-                );
-                context.target.owner.returnCardToHand(context.target);
-            }
+            message: {
+                format: "{player} plays {source} to return {target} to {owner}'s hand",
+                args: { owner: (context) => context.target.owner }
+            },
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WestwatchByTheBridge extends DrawCard {
     // Westwatch-by-the-Bridge (12032)
@@ -11,23 +12,16 @@ class WestwatchByTheBridge extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select a location',
-                cardCondition: (card) =>
-                    card !== this &&
+                cardCondition: (card, context) =>
+                    card !== context.source &&
                     card.isFaction('thenightswatch') &&
                     card.getType() === 'location' &&
                     card.kneeled &&
-                    card.getPrintedCost() <= this.getTargetPrintedCost(),
+                    card.getPrintedCost() <= context.source.getTargetPrintedCost(),
                 gameAction: 'stand'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} kneels {1} to stand {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-                context.player.standCard(context.target);
-            }
+            message: '{player} kneels {source} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 

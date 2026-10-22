@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BlackBetha extends DrawCard {
     // Black Betha (07026)
@@ -13,27 +14,20 @@ class BlackBetha extends DrawCard {
         });
         this.action({
             title: 'Give attacking character +STR',
-            condition: () => this.calculateStrength() >= 1,
+            condition: (context) => context.source.calculateStrength() >= 1,
             cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: (card) => card.isAttacking()
             },
-            handler: (context) => {
-                let strBoost = this.calculateStrength();
-
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(strBoost)
-                }));
-
-                this.game.addMessage(
-                    '{0} kneels {1} to give {2} +{3} STR until the end of the challenge',
-                    context.player,
-                    this,
-                    context.target,
-                    strBoost
-                );
-            }
+            message: {
+                format: '{player} kneels {source} to give {target} +{strBoost} STR until the end of the challenge',
+                args: { strBoost: (context) => context.source.calculateStrength() }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                effect: ability.effects.modifyStrength(context.source.calculateStrength())
+            }))
         });
     }
 

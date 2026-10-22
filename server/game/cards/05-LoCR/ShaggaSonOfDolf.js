@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ShaggaSonOfDolf extends DrawCard {
     // Shagga Son of Dolf (05009)
@@ -11,33 +12,30 @@ class ShaggaSonOfDolf extends DrawCard {
             title: 'Ambush(0)',
             location: 'hand',
             phase: 'challenge',
-            condition: () => this.hasClansmanOrTyrion(),
-            handler: () => {
-                this.controller.putIntoPlay(this, 'ambush');
-                this.game.addMessage('{0} ambushes {1} into play for free', this.controller, this);
-            }
+            condition: (context) => context.source.hasClansmanOrTyrion(),
+            message: '{player} ambushes {source} into play for free',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.source,
+                playingType: 'ambush'
+            }))
         });
 
         this.forcedReaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this && event.playingType === 'ambush'
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source && event.playingType === 'ambush'
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.isFaction('lannister') &&
                     card.getType() === 'character',
                 gameAction: 'kill'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} is forced by {1} to kill a character',
-                    this.controller,
-                    this
-                );
-                context.target.controller.killCharacter(context.target);
-            }
+            message: '{player} is forced by {source} to kill a character',
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 

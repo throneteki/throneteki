@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RobertBaratheon extends DrawCard {
     // Robert Baratheon (13107)
@@ -8,18 +9,15 @@ class RobertBaratheon extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPowerGained: (event) =>
-                    event.card === this && this.controller.canGainFactionPower()
+                onCardPowerGained: (event, context) =>
+                    event.card === context.source && context.source.controller.canGainFactionPower()
             },
             limit: ability.limit.perRound(2),
-            handler: () => {
-                this.game.addPower(this.controller, 1);
-                this.game.addMessage(
-                    '{0} uses {1} to gain 1 power for their faction',
-                    this.controller,
-                    this
-                );
-            }
+            message: '{player} uses {source} to gain 1 power for their faction',
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.player.faction,
+                amount: 1
+            }))
         });
     }
 }

@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
+import GameActions from '../../GameActions/index.js';
 
 class ServeObeyProtect extends DrawCard {
     // Serve. Obey. Protect. (11036)
@@ -12,9 +13,12 @@ class ServeObeyProtect extends DrawCard {
 
         this.reaction({
             when: {
-                onChallengeInitiated: (event) =>
-                    event.challenge.initiatedAgainstPlayer === this.controller &&
-                    this.tracker.some({ loser: this.controller, defendingPlayer: this.controller })
+                onChallengeInitiated: (event, context) =>
+                    event.challenge.initiatedAgainstPlayer === context.source.controller &&
+                    context.source.tracker.some({
+                        loser: context.source.controller,
+                        defendingPlayer: context.source.controller
+                    })
             },
             cost: ability.costs.returnToHand(
                 (card) => card.isFaction('martell') && card.getType() === 'character'
@@ -22,22 +26,18 @@ class ServeObeyProtect extends DrawCard {
             target: {
                 cardCondition: (card, context) =>
                     card.location === 'hand' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.isFaction('martell') &&
                     card.getType() === 'character' &&
                     card.getPrintedCost() <= 5 &&
                     (!context.costs.returnToHand || card !== context.costs.returnToHand)
             },
-            handler: (context) => {
-                context.player.putIntoPlay(context.target);
-                this.game.addMessage(
-                    '{0} plays {1} and returns {2} to their hand to put {3} into play',
-                    context.player,
-                    this,
-                    context.costs.returnToHand,
-                    context.target
-                );
-            }
+            message:
+                '{player} plays {source} and returns {costs.returnToHand} to their hand to put {target} into play',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 }

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MadKingAerys extends DrawCard {
     // Mad King Aerys (16013)
@@ -9,7 +10,7 @@ class MadKingAerys extends DrawCard {
     // once per round.)
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !this.opponentControlsKingslayer(),
+            condition: (context) => !context.source.opponentControlsKingslayer(),
             match: this,
             effect: ability.effects.cannotBeKilled()
         });
@@ -24,9 +25,7 @@ class MadKingAerys extends DrawCard {
                 gameAction: 'kill'
             },
             message: '{player} kneels {source} to kill {target}',
-            handler: (context) => {
-                this.game.killCharacter(context.target);
-            },
+            gameAction: GameActions.kill((context) => ({ card: context.target })),
             limit: ability.limit.perRound(1)
         });
     }

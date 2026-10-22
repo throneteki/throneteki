@@ -1,5 +1,6 @@
 import PlotCard from '../../plotcard.js';
 import CardEntersPlayTracker from '../../EventTrackers/CardEntersPlayTracker.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheMother extends PlotCard {
     // The Mother (20057)
@@ -10,16 +11,14 @@ class TheMother extends PlotCard {
 
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    event.card.controller !== this.controller &&
+                onCardEntersPlay: (event, context) =>
+                    event.card.controller !== context.source.controller &&
                     event.card.getType() === 'character' &&
-                    this.getNumOfCharactersEnteringPlay(event.card.controller) > 1
+                    context.source.getNumOfCharactersEnteringPlay(event.card.controller) > 1
             },
             limit: ability.limit.perRound(2),
             message: '{player} uses {source} to draw 1 card',
-            handler: (context) => {
-                context.player.drawCardsToHand(1);
-            }
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });
     }
 

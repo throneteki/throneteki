@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class StreetOfTheSisters extends DrawCard {
     // Street of the Sisters (02018)
@@ -7,21 +8,19 @@ class StreetOfTheSisters extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.challengeType === 'power' &&
                     event.challenge.strengthDifference >= 5 &&
-                    this.controller.canGainFactionPower()
+                    context.source.controller.canGainFactionPower()
             },
             cost: ability.costs.kneelFactionCard(),
-            handler: () => {
-                this.game.addPower(this.controller, 1);
-                this.game.addMessage(
-                    '{0} uses {1} and kneels their faction card to gain 1 power for their faction',
-                    this.controller,
-                    this
-                );
-            }
+            message:
+                '{player} uses {source} and kneels their faction card to gain 1 power for their faction',
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.player.faction,
+                amount: 1
+            }))
         });
     }
 }
