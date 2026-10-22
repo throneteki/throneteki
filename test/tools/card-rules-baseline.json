@@ -59,11 +59,6 @@
         "game-listener": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/01-Core/PowerBehindTheThrone.js": {
-        "this-in-ability": 4,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/01-Core/RisenFromTheSea.js": {
         "this-in-ability": 15,
         "legacy-helper": 1,
@@ -466,21 +461,11 @@
         "add-message": 2,
         "legacy-helper": 1
     },
-    "server/game/cards/06.5-OR/TheIronBankWillHaveItsDue.js": {
-        "this-in-ability": 9,
-        "legacy-helper": 1,
-        "add-message": 2
-    },
     "server/game/cards/06.5-OR/WheelsWithinWheels.js": {
         "this-in-ability": 1
     },
     "server/game/cards/06.6-TBWB/BericDondarrion.js": {
         "this-in-ability": 9,
-        "add-message": 1
-    },
-    "server/game/cards/06.6-TBWB/GennaFrey.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1,
         "add-message": 1
     },
     "server/game/cards/06.6-TBWB/LockedAway.js": {
@@ -574,11 +559,6 @@
     },
     "server/game/cards/08.4-FotOG/SeizedByTheGuard.js": {
         "this-in-ability": 6,
-        "legacy-helper": 2,
-        "add-message": 2
-    },
-    "server/game/cards/08.4-FotOG/SelyseBaratheon.js": {
-        "this-in-ability": 10,
         "legacy-helper": 2,
         "add-message": 2
     },
@@ -750,9 +730,6 @@
         "legacy-helper": 2,
         "add-message": 1
     },
-    "server/game/cards/10-SoD/ToTheSpears.js": {
-        "this-in-ability": 4
-    },
     "server/game/cards/11.1-TSC/AegonTargaryen.js": {
         "this-in-ability": 2
     },
@@ -833,10 +810,6 @@
     "server/game/cards/11.4-MoD/GreyGhost.js": {
         "prompt-for-select": 1,
         "this-in-ability": 9,
-        "add-message": 1
-    },
-    "server/game/cards/11.4-MoD/MeereeneseMarket.js": {
-        "this-in-ability": 4,
         "add-message": 1
     },
     "server/game/cards/11.4-MoD/Shaggydog.js": {
@@ -1113,11 +1086,6 @@
         "this-in-ability": 7,
         "add-message": 1
     },
-    "server/game/cards/14-FotS/SalladhorSaan.js": {
-        "this-in-ability": 5,
-        "legacy-helper": 2,
-        "add-message": 1
-    },
     "server/game/cards/14-FotS/SerDavosSeaworth.js": {
         "this-in-ability": 4
     },
@@ -1137,10 +1105,6 @@
         "game-listener": 1,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/15-DotE/CageOfRavens.js": {
-        "this-in-ability": 6,
-        "add-message": 1
     },
     "server/game/cards/15-DotE/ChoosingTheSpear.js": {
         "this-in-ability": 11,
@@ -1262,11 +1226,6 @@
     },
     "server/game/cards/17.1-R/Meereen.js": {
         "legacy-helper": 1
-    },
-    "server/game/cards/17.1-R/NighttimeMarauders.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1,
-        "add-message": 2
     },
     "server/game/cards/17.1-R/OldtownInformer.js": {
         "this-in-ability": 16,
@@ -1813,9 +1772,6 @@
     },
     "server/game/cards/27.1-THBIB/IntoTheLists.js": {
         "this-in-ability": 4
-    },
-    "server/game/cards/27.1-THBIB/Morningstar.js": {
-        "this-in-ability": 6
     },
     "server/game/cards/27.1-THBIB/SearchingTheArchives.js": {
         "this-in-ability": 1

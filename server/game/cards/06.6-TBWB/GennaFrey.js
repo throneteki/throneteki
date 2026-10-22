@@ -1,4 +1,6 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import TextHelper from '../../TextHelper.js';
 
 class GennaFrey extends DrawCard {
     // Genna Frey (06109)
@@ -8,35 +10,35 @@ class GennaFrey extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
                     event.challenge.number === 3 &&
-                    this.isAttacking()
+                    event.challenge.isAttacking(context.source)
             },
-            handler: (context) => {
-                let numCards = this.hasOtherAttackingFrey() ? 2 : 1;
-                context.event.challenge.loser.discardAtRandom(numCards, (cards) => {
-                    this.game.addMessage(
-                        "{0} uses {1} to discard {2} from {3}'s hand",
-                        this.controller,
-                        this,
-                        cards,
-                        context.event.challenge.loser
-                    );
-                });
-            }
+            message: {
+                format: "{player} uses {source} to discard {amount} at random from {loser}'s hand",
+                args: {
+                    amount: (context) => TextHelper.count(gennaDiscards(context), 'card'),
+                    loser: (context) => context.event.challenge.loser
+                }
+            },
+            gameAction: GameActions.discardAtRandom((context) => ({
+                player: context.event.challenge.loser,
+                amount: gennaDiscards(context)
+            }))
         });
     }
+}
 
-    hasOtherAttackingFrey() {
-        return this.controller.anyCardsInPlay(
-            (card) =>
-                card.isAttacking() &&
-                card.hasTrait('House Frey') &&
-                card.getType() === 'character' &&
-                card !== this
-        );
-    }
+function gennaDiscards(context) {
+    const otherFrey = context.event.challenge.attackers.some(
+        (card) =>
+            card !== context.source &&
+            card.hasTrait('House Frey') &&
+            card.getType() === 'character' &&
+            card.controller === context.player
+    );
+    return otherFrey ? 2 : 1;
 }
 
 GennaFrey.code = '06109';

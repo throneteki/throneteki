@@ -11,29 +11,23 @@ class Morningstar extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.isMatch({
                         challengeType: 'military',
-                        winner: this.controller
+                        winner: context.player
                     }) &&
-                    !!this.parent &&
-                    this.parent.isParticipating()
+                    !!context.source.parent &&
+                    event.challenge.isParticipating(context.source.parent)
             },
             cost: ability.costs.kneelSelf(),
             message: {
                 format: '{player} kneels {source} to stand {parent} and remove them from the challenge',
-                args: { parent: () => this.parent }
+                args: { parent: (context) => context.source.parent }
             },
-            handler: (context) => {
-                const parent = this.parent;
-                this.game.resolveGameAction(
-                    GameActions.simultaneously([
-                        GameActions.standCard({ card: parent }),
-                        GameActions.removeFromChallenge({ card: parent })
-                    ]),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously((context) => [
+                GameActions.standCard({ card: context.source.parent }),
+                GameActions.removeFromChallenge({ card: context.source.parent })
+            ])
         });
     }
 }
