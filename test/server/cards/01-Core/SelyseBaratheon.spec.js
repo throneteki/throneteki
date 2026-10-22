@@ -1,39 +1,29 @@
 describe('Selyse Baratheon (Core)', function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck1 = this.buildDeck('baratheon', ['Sneak Attack', 'Selyse Baratheon (Core)']);
-            const deck2 = this.buildDeck('martell', ['Sneak Attack', 'Nymeria Sand (TRtW)']);
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck2);
-            this.startGame();
-            this.keepStartingHands();
-            this.player1.clickCard('Selyse Baratheon', 'hand');
-            this.player2.clickCard('Nymeria Sand', 'hand');
-            this.completeSetup();
-            this.selectFirstPlayer(this.player1);
-
-            this.completeMarshalPhase();
-
-            this.selyse = this.player1.findCardByName('Selyse Baratheon', 'play area');
-            this.player2.clickMenu('Nymeria Sand', 'Remove and gain icon');
-            this.player2.clickCard(this.selyse);
-            this.player2.clickPrompt('Intrigue');
-
-            expect(this.selyse.hasIcon('intrigue')).toBe(false);
-
-            this.player1.clickMenu(
-                this.selyse,
-                'Pay 1 gold to give an intrigue icon to a character'
-            );
-            this.player1.clickCard(this.selyse);
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player2',
+            player1: { inPlay: ['Selyse Baratheon (Core)'] },
+            player2: { inPlay: ['Nymeria Sand (TRtW)'] }
         });
+        this.player2.clickMenu(this.nymeriaSand, 'Remove and gain icon');
+        this.player2.clickCard(this.selyseBaratheon);
+        this.player2.clickPrompt('Intrigue');
+        this.player2.clickPrompt('Done');
+        this.gold = this.player1Object.gold;
+    });
 
-        it('should allow a stolen icon to be restored', function () {
-            expect(this.selyse.hasIcon('intrigue')).toBe(true);
-        });
+    it('pays 1 gold to give a baratheon character an intrigue icon, restoring a stolen one', function () {
+        expect(this.selyseBaratheon.hasIcon('intrigue')).toBe(false);
 
-        it('should cost 1 gold', function () {
-            expect(this.player1Object.gold).toBe(4);
-        });
+        this.player1.clickMenu(
+            this.selyseBaratheon,
+            'Pay 1 gold to give an intrigue icon to a character'
+        );
+        this.player1.clickCard(this.selyseBaratheon);
+
+        expect(this.selyseBaratheon.hasIcon('intrigue')).toBe(true);
+        expect(this.player1Object.gold).toBe(this.gold - 1);
+        expect(this.player1).isReadyToTakeAction();
     });
 });
