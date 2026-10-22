@@ -199,11 +199,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/01-Core/UnbowedUnbentUnbroken.js": {
-        "this-in-ability": 9,
-        "add-message": 1,
-        "legacy-helper": 2
-    },
     "server/game/cards/01-Core/VanguardLancer.js": {
         "this-in-ability": 8,
         "add-message": 2,
@@ -2031,10 +2026,6 @@
     "server/game/cards/13.3-PoS/GuardDuty.js": {
         "this-in-ability": 7
     },
-    "server/game/cards/13.3-PoS/MaesterMullin.js": {
-        "this-in-ability": 7,
-        "add-message": 1
-    },
     "server/game/cards/13.3-PoS/MelleonsTome.js": {
         "this-in-ability": 13,
         "legacy-helper": 1,
@@ -2922,10 +2913,6 @@
     "server/game/cards/23-AHaH/Littlefinger.js": {
         "this-in-ability": 7
     },
-    "server/game/cards/23-AHaH/LysasLetter.js": {
-        "this-in-ability": 8,
-        "add-message": 1
-    },
     "server/game/cards/23-AHaH/MaesterColemon.js": {
         "this-in-ability": 2,
         "prompt-for-select": 1,
@@ -3108,10 +3095,6 @@
     },
     "server/game/cards/26.1-WAID/AshemarkCouncilor.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/26.1-WAID/BenjenStark.js": {
-        "this-in-ability": 8,
-        "add-message": 1
     },
     "server/game/cards/26.1-WAID/CityOfShadows.js": {
         "this-in-ability": 4
