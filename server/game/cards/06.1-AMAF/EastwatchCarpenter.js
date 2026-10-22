@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class EastwatchCarpenter extends DrawCard {
     // Eastwatch Carpenter (06005)
@@ -8,27 +9,25 @@ class EastwatchCarpenter extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onIncomeCollected: (event) =>
-                    event.player === this.controller &&
-                    this.getGoldBonus() >= 1 &&
-                    this.controller.canGainGold()
+                onIncomeCollected: (event, context) => event.player === context.player
             },
-            handler: () => {
-                let gold = this.getGoldBonus();
-                gold = this.game.addGold(this.controller, gold);
-
-                this.game.addMessage('{0} uses {1} to gain {2} gold', this.controller, this, gold);
-            }
+            message: {
+                format: '{player} uses {source} to gain {amount} gold',
+                args: { amount: (context) => carpenterGold(context.player) }
+            },
+            gameAction: GameActions.gainGold((context) => ({
+                player: context.player,
+                amount: carpenterGold(context.player)
+            }))
         });
     }
+}
 
-    getGoldBonus() {
-        let numCards = this.controller.getNumberOfCardsInPlay((card) => {
-            return card.isFaction('thenightswatch') && card.getType() === 'location';
-        });
-
-        return Math.floor(numCards / 2);
-    }
+function carpenterGold(player) {
+    const locations = player.getNumberOfCardsInPlay(
+        (card) => card.isFaction('thenightswatch') && card.getType() === 'location'
+    );
+    return Math.floor(locations / 2);
 }
 
 EastwatchCarpenter.code = '06005';

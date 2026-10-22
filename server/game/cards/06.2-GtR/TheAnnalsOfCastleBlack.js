@@ -1,4 +1,5 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheAnnalsOfCastleBlack extends PlotCard {
     // The Annals of Castle Black (06040)
@@ -15,18 +16,11 @@ class TheAnnalsOfCastleBlack extends PlotCard {
                 onCardPlaced: (event) =>
                     event.card.getType() === 'event' && event.location === 'discard pile'
             },
-            handler: (context) => {
-                let eventCard = context.event.card;
-                let player = eventCard.controller;
-
-                this.game.addMessage(
-                    '{0} is forced by {1} to remove {2} from the game',
-                    player,
-                    this,
-                    eventCard
-                );
-                player.moveCard(eventCard, 'out of game');
-            }
+            message: {
+                format: '{player} is forced by {source} to remove {card} from the game',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.removeFromGame((context) => ({ card: context.event.card }))
         });
     }
 }

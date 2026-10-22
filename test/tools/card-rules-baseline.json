@@ -79,10 +79,6 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/01-Core/Sunspear.js": {
-        "this-in-ability": 9,
-        "add-message": 1
-    },
     "server/game/cards/01-Core/TheBearAndTheMaidenFair.js": {
         "this-in-ability": 6,
         "legacy-helper": 1,
@@ -96,11 +92,6 @@
         "add-message": 2,
         "this-in-ability": 7,
         "prompt-for-select": 1
-    },
-    "server/game/cards/01-Core/Varys.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/01-Core/WakingTheDragon.js": {
         "this-in-ability": 5,
@@ -167,11 +158,6 @@
     },
     "server/game/cards/02.2-TRtW/TheReader.js": {
         "this-in-ability": 3,
-        "add-message": 1
-    },
-    "server/game/cards/02.3-TKP/CroneOfVaesDothrak.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1,
         "add-message": 1
     },
     "server/game/cards/02.3-TKP/INeverBetAgainstMyFamily.js": {
@@ -429,11 +415,6 @@
         "this-in-ability": 6,
         "add-message": 1
     },
-    "server/game/cards/05-LoCR/InsidiousScheme.js": {
-        "this-in-ability": 5,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/05-LoCR/LannisportTreasury.js": {
         "this-in-ability": 12,
         "legacy-helper": 2,
@@ -475,11 +456,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/06.1-AMAF/EastwatchCarpenter.js": {
-        "this-in-ability": 9,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/06.1-AMAF/FickleBannerman.js": {
         "this-in-ability": 9,
         "legacy-helper": 2,
@@ -514,11 +490,6 @@
         "this-in-ability": 7,
         "legacy-helper": 2,
         "add-message": 2
-    },
-    "server/game/cards/06.2-GtR/TheAnnalsOfCastleBlack.js": {
-        "add-message": 1,
-        "this-in-ability": 2,
-        "legacy-helper": 1
     },
     "server/game/cards/06.2-GtR/TheDornishmansWife.js": {
         "this-in-ability": 8,
@@ -1549,11 +1520,6 @@
         "this-in-ability": 3,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/17.1-R/TheDragonsTail.js": {
-        "this-in-ability": 5,
-        "legacy-helper": 2,
-        "add-message": 1
     },
     "server/game/cards/17.1-R/TheIronBank.js": {
         "this-in-ability": 9,

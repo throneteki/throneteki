@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Varys extends DrawCard {
     // Varys (01029)
@@ -8,25 +9,19 @@ class Varys extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onPhaseEnded: (event) =>
+                onPhaseEnded: (event, context) =>
                     event.phase === 'dominance' &&
-                    this.game.anyCardsInPlay(
-                        (card) => card.getType() === 'character' && card !== this
+                    context.game.anyCardsInPlay(
+                        (card) => card.getType() === 'character' && card !== context.source
                     )
             },
             cost: ability.costs.removeSelfFromGame(),
-            handler: () => {
-                let characters = this.game.filterCardsInPlay(
-                    (card) => card.getType() === 'character'
-                );
-                this.game.discardFromPlay(characters);
-
-                this.game.addMessage(
-                    '{0} removes {1} from the game to discard all characters',
-                    this.controller,
-                    this
-                );
-            }
+            message: '{player} removes {source} from the game to discard all characters',
+            gameAction: GameActions.simultaneously((context) =>
+                context.game
+                    .filterCardsInPlay((card) => card.getType() === 'character')
+                    .map((card) => GameActions.discardCard({ card }))
+            )
         });
     }
 }

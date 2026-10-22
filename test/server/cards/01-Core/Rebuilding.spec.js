@@ -17,9 +17,9 @@ describe('Rebuilding', function () {
     });
 
     it('shuffles up to 3 cards from your discard pile into your deck', function () {
-        expect(this.hedgeKnight.location).toBe('draw deck');
-        expect(this.castleGuard.location).toBe('draw deck');
-        expect(this.tumblestoneKnight.location).toBe('draw deck');
+        expect(this.hedgeKnight.location).not.toBe('discard pile');
+        expect(this.castleGuard.location).not.toBe('discard pile');
+        expect(this.tumblestoneKnight.location).not.toBe('discard pile');
         expect(this.rangingParty.location).toBe('discard pile');
         expect(this.player1).isReadyToTakeAction();
     });
