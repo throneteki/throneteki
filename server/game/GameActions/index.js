@@ -1,5 +1,6 @@
 import AbilityAdapter from './AbilityAdapter.js';
 import AddDelayedEffect from './AddDelayedEffect.js';
+import AddPhase from './AddPhase.js';
 import AddToChallenge from './AddToChallenge.js';
 import AddToHand from './AddToHand.js';
 import ApplyClaim from './ApplyClaim.js';
@@ -49,6 +50,7 @@ import ReturnCardToDeck from './ReturnCardToDeck.js';
 import ReturnCardToHand from './ReturnCardToHand.js';
 import ReturnGoldToTreasury from './ReturnGoldToTreasury.js';
 import RevealCards from './RevealCards.js';
+import RevealNewPlot from './RevealNewPlot.js';
 import RevealTopCards from './RevealTopCards.js';
 import SacrificeCard from './SacrificeCard.js';
 import SaveCard from './SaveCard.js';
@@ -63,6 +65,7 @@ import TakeControl from './TakeControl.js';
 import TransferGold from './TransferGold.js';
 
 const GameActions = {
+    addPhase: (props) => new AbilityAdapter(AddPhase, props),
     addToChallenge: (props) => new AbilityAdapter(AddToChallenge, props),
     addToHand: (props) => new AbilityAdapter(AddToHand, props),
     applyClaim: (props) => new AbilityAdapter(ApplyClaim, props),
@@ -113,6 +116,7 @@ const GameActions = {
     returnCardToHand: (props) => new AbilityAdapter(ReturnCardToHand, props),
     returnGoldToTreasury: (props) => new AbilityAdapter(ReturnGoldToTreasury, props),
     revealCards: (props) => new AbilityAdapter(RevealCards, props),
+    revealNewPlot: (props) => new AbilityAdapter(RevealNewPlot, props),
     revealTopCards: (props) => new AbilityAdapter(RevealTopCards, props),
     sacrificeCard: (props) => new AbilityAdapter(SacrificeCard, props),
     saveCard: (props) => new AbilityAdapter(SaveCard, props),

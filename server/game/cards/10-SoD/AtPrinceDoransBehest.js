@@ -1,6 +1,6 @@
-import RevealPlots from '../../gamesteps/revealplots.js';
 import PlotCard from '../../plotcard.js';
 import { Flags } from '../../Constants/index.js';
+import GameActions from '../../GameActions/index.js';
 
 class AtPrinceDoransBehest extends PlotCard {
     // At Prince Doran's Behest (10046)
@@ -16,17 +16,12 @@ class AtPrinceDoransBehest extends PlotCard {
                     !card.hasFlag(Flags.card.notConsideredToBeInPlotDeck),
                 cardType: 'plot'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to reveal {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-
-                context.player.selectedPlot = context.target;
-                this.game.queueStep(new RevealPlots(this.game, [context.target], context.event));
-            }
+            message: '{player} uses {source} to reveal {target}',
+            gameAction: GameActions.revealNewPlot((context) => ({
+                card: context.target,
+                player: context.player,
+                parentEvent: context.event
+            }))
         });
     }
 }

@@ -820,10 +820,6 @@
     "server/game/cards/10-SoD/AreoHotah.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/10-SoD/AtPrinceDoransBehest.js": {
-        "add-message": 1,
-        "this-in-ability": 4
-    },
     "server/game/cards/10-SoD/BeyondReproach.js": {
         "this-in-ability": 4,
         "add-message": 1
@@ -1036,11 +1032,6 @@
     "server/game/cards/11.5-IDP/HeCallsItThinking.js": {
         "this-in-ability": 6,
         "add-message": 2
-    },
-    "server/game/cards/11.5-IDP/InDaznaksPit.js": {
-        "add-message": 1,
-        "this-in-ability": 4,
-        "legacy-helper": 1
     },
     "server/game/cards/11.5-IDP/WalkOfAtonement.js": {
         "this-in-ability": 6,
@@ -1448,9 +1439,6 @@
     "server/game/cards/16-TTWDFL/ValeRefugee.js": {
         "this-in-ability": 3,
         "add-message": 2
-    },
-    "server/game/cards/16-TTWDFL/WheelsWithinWheels.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/17.1-R/AllMenAreFools.js": {
         "this-in-ability": 3

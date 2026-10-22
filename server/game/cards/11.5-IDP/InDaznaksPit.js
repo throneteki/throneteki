@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class InDaznaksPit extends DrawCard {
     // In Daznak's Pit (11094)
@@ -10,22 +11,14 @@ class InDaznaksPit extends DrawCard {
             when: {
                 onPhaseEnded: (event) => event.phase === 'challenge'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} plays {1} to stand each character and start a new challenges phase',
-                    context.player,
-                    this
-                );
-
-                let characters = this.game.filterCardsInPlay(
-                    (card) => card.getType() === 'character' && card.kneeled
-                );
-                for (let character of characters) {
-                    character.controller.standCard(character);
-                }
-
-                this.game.addPhase('challenge');
-            },
+            message:
+                '{player} plays {source} to stand each character and start a new challenges phase',
+            gameAction: GameActions.simultaneously((context) => [
+                ...context.game
+                    .filterCardsInPlay((card) => card.getType() === 'character' && card.kneeled)
+                    .map((card) => GameActions.standCard({ card })),
+                GameActions.addPhase({ phase: 'challenge' })
+            ]),
             max: ability.limit.perRound(1)
         });
     }
