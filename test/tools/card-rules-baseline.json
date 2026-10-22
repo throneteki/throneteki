@@ -1251,9 +1251,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/06.4-TRW/ImprovedFortifications.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/06.4-TRW/OldtownInformer.js": {
         "this-in-ability": 16,
         "legacy-helper": 2,

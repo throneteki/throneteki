@@ -9,8 +9,8 @@ class ImprovedFortifications extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ type: 'location' });
 
-        let leftPlayCondition = (event) =>
-            event.allowSave && event.card.canBeSaved() && event.card === this.parent;
+        const leftPlayCondition = (event, context) =>
+            event.allowSave && event.card.canBeSaved() && event.card === context.source.parent;
         this.interrupt({
             canCancel: true,
             when: {
