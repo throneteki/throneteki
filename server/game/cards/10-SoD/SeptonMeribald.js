@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SeptonMeribald extends DrawCard {
     // Septon Meribald (10040)
@@ -19,11 +20,9 @@ class SeptonMeribald extends DrawCard {
                 gameAction: 'stand'
             },
             message: '{player} kneels {source} to stand {target}',
-            handler: (context) => {
-                for (let card of context.target) {
-                    card.controller.standCard(card);
-                }
-            },
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) => GameActions.standCard({ card }))
+            ),
             limit: ability.limit.perRound(1)
         });
     }

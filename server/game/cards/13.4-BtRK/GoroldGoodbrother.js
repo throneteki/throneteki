@@ -9,21 +9,17 @@ class GoroldGoodbrother extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPlaced: (event) =>
+                onCardPlaced: (event, context) =>
                     event.card.getType() === 'location' &&
-                    event.card.controller !== this.controller &&
+                    event.card.controller !== context.source.controller &&
                     event.location === 'discard pile'
             },
             limit: ability.limit.perPhase(2),
-            handler: (context) => {
-                this.game.resolveGameAction(GameActions.standCard({ card: this }));
-                this.game.addMessage(
-                    '{0} stands {1} due to {2} entering the discard pile',
-                    this.controller,
-                    this,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} stands {source} due to {card} entering the discard pile',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.standCard((context) => ({ card: context.source }))
         });
     }
 }

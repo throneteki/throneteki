@@ -1,5 +1,5 @@
 import DrawCard from '../../drawcard.js';
-import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class OldtownScholar extends DrawCard {
     // Oldtown Scholar (10041)
@@ -8,22 +8,20 @@ class OldtownScholar extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardsDrawn: (event) =>
-                    event.player !== this.controller &&
-                    this.controller.canDraw() &&
-                    this.game.currentPhase !== 'draw'
+                onCardsDrawn: (event, context) =>
+                    event.player !== context.source.controller &&
+                    context.source.controller.canDraw() &&
+                    context.game.currentPhase !== 'draw'
             },
             cost: ability.costs.kneelSelf(),
-            handler: (context) => {
-                let numToDraw = context.event.cards.length;
-                let drawn = context.player.drawCardsToHand(numToDraw);
-                this.game.addMessage(
-                    '{0} kneels {1} to draw {2}',
-                    context.player,
-                    this,
-                    TextHelper.count(drawn.length, 'card')
-                );
-            }
+            message: {
+                format: '{player} kneels {source} to draw {amount} cards',
+                args: { amount: (context) => context.event.cards.length }
+            },
+            gameAction: GameActions.drawCards((context) => ({
+                player: context.player,
+                amount: context.event.cards.length
+            }))
         });
     }
 }

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class KingsBlood extends DrawCard {
@@ -10,24 +11,24 @@ class KingsBlood extends DrawCard {
         this.attachmentRestriction({ trait: ['Bastard', 'King'], controller: 'current' });
         this.action({
             title: "Discard power from opponent's faction",
-            condition: () => this.hasToken(Tokens.gold),
+            condition: (context) => context.source.hasToken(Tokens.gold),
             phase: 'plot',
             cost: [ability.costs.kneelParent(), ability.costs.sacrificeSelf()],
-            handler: (context) => {
-                let gold = context.cardStateWhenInitiated.tokens.gold;
-
-                for (let player of this.game.getOpponents(context.player)) {
-                    this.game.addPower(player, -gold);
+            message: {
+                format: "{player} kneels {parent} and sacrifices {source} to discard {gold} power from each opponent's faction card",
+                args: {
+                    parent: (context) => context.cardStateWhenInitiated.parent,
+                    gold: (context) => context.cardStateWhenInitiated.tokens.gold
                 }
-
-                this.game.addMessage(
-                    "{0} kneels {1} and sacrifices {2} to discard {3} power from each opponent's faction card",
-                    context.player,
-                    context.cardStateWhenInitiated.parent,
-                    this,
-                    gold
-                );
-            }
+            },
+            gameAction: GameActions.simultaneously((context) =>
+                context.game.getOpponents(context.player).map((player) =>
+                    GameActions.discardPower({
+                        card: player.faction,
+                        amount: context.cardStateWhenInitiated.tokens.gold
+                    })
+                )
+            )
         });
     }
 }

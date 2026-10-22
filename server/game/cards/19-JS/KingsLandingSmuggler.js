@@ -9,25 +9,18 @@ class KingsLandingSmuggler extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCardLeftPlay: (event) => event.card === this
+                onCardLeftPlay: (event, context) => event.card === context.source
             },
             target: {
                 activePromptTitle: 'Select a card without gold',
                 cardCondition: (card) =>
                     card.location === 'play area' && !card.hasToken(Tokens.gold)
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to place a gold from the treasury on {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-                this.game.resolveGameAction(
-                    GameActions.placeToken(() => ({ card: context.target, token: Tokens.gold })),
-                    context
-                );
-            }
+            message: '{player} uses {source} to place a gold from the treasury on {target}',
+            gameAction: GameActions.placeToken((context) => ({
+                card: context.target,
+                token: Tokens.gold
+            }))
         });
     }
 }

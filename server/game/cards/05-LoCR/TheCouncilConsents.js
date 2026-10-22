@@ -1,4 +1,11 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+
+function anySmallCouncilCharacterInPlay(source) {
+    return source.game.anyCardsInPlay(
+        (card) => card.hasTrait('Small Council') && card.getType() === 'character'
+    );
+}
 
 class TheCouncilConsents extends DrawCard {
     // The Council Consents (05044)
@@ -7,34 +14,29 @@ class TheCouncilConsents extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'intrigue' &&
                     event.challenge.strengthDifference >= 5 &&
-                    this.anySmallCouncilCharacterInPlay()
+                    anySmallCouncilCharacterInPlay(context.source)
             },
-            handler: () => {
-                let smallCouncilChars = this.game.filterCardsInPlay(
-                    (card) => card.hasTrait('Small Council') && card.getType() === 'character'
-                );
-
-                for (let card of smallCouncilChars) {
-                    card.controller.standCard(card);
+            message: {
+                format: '{player} plays {source} to stand {cards}',
+                args: {
+                    cards: (context) =>
+                        context.game.filterCardsInPlay(
+                            (card) =>
+                                card.hasTrait('Small Council') && card.getType() === 'character'
+                        )
                 }
-
-                this.game.addMessage(
-                    '{0} plays {1} to stand {2}',
-                    this.controller,
-                    this,
-                    smallCouncilChars
-                );
-            }
+            },
+            gameAction: GameActions.simultaneously((context) =>
+                context.game
+                    .filterCardsInPlay(
+                        (card) => card.hasTrait('Small Council') && card.getType() === 'character'
+                    )
+                    .map((card) => GameActions.standCard({ card }))
+            )
         });
-    }
-
-    anySmallCouncilCharacterInPlay() {
-        return this.game.anyCardsInPlay(
-            (card) => card.hasTrait('Small Council') && card.getType() === 'character'
-        );
     }
 }
 

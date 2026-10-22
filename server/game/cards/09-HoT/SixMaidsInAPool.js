@@ -1,5 +1,5 @@
 import DrawCard from '../../drawcard.js';
-import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class SixMaidsInAPool extends DrawCard {
     // "Six Maids in a Pool" (09023)
@@ -7,20 +7,22 @@ class SixMaidsInAPool extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Draw cards',
-            condition: () => this.controller.canDraw(),
-            handler: () => {
-                let cards = this.controller.getNumberOfCardsInPlay(
+            condition: (context) => context.source.controller.canDraw(),
+            message: {
+                format: '{player} plays {source} to draw {amount} cards',
+                args: {
+                    amount: (context) =>
+                        context.player.getNumberOfCardsInPlay(
+                            (card) => card.hasTrait('Lady') && card.getType() === 'character'
+                        )
+                }
+            },
+            gameAction: GameActions.drawCards((context) => ({
+                player: context.player,
+                amount: context.player.getNumberOfCardsInPlay(
                     (card) => card.hasTrait('Lady') && card.getType() === 'character'
-                );
-                cards = this.controller.drawCardsToHand(cards).length;
-
-                this.game.addMessage(
-                    '{0} plays {1} to draw {2}',
-                    this.controller,
-                    this,
-                    TextHelper.count(cards, 'card')
-                );
-            }
+                )
+            }))
         });
     }
 }

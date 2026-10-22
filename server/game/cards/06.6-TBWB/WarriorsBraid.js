@@ -13,23 +13,23 @@ class WarriorsBraid extends DrawCard {
         this.whileAttached({
             effect: [
                 ability.effects.addKeyword('renown'),
-                ability.effects.dynamicStrength(() => this.tokens[Tokens.bell])
+                ability.effects.dynamicStrength(
+                    (card, context) => context.source.tokens[Tokens.bell]
+                )
             ]
         });
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'military' &&
-                    event.challenge.winner === this.controller &&
-                    event.challenge.isAttacking(this.parent)
+                    event.challenge.winner === context.source.controller &&
+                    event.challenge.isAttacking(context.source.parent)
             },
             message: '{player} uses {source} to place 1 bell token on {source}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.placeToken(() => ({ card: this, token: Tokens.bell })),
-                    context
-                );
-            }
+            gameAction: GameActions.placeToken((context) => ({
+                card: context.source,
+                token: Tokens.bell
+            }))
         });
     }
 }

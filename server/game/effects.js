@@ -1206,7 +1206,9 @@ const Effects = {
     canSpendGold: function (allowSpendingFunc) {
         return {
             apply: function (card, context) {
-                let goldSource = new GoldSource(card, allowSpendingFunc);
+                let goldSource = new GoldSource(card, (spendParams) =>
+                    allowSpendingFunc(spendParams, context)
+                );
                 context.canSpendGold = context.canSpendGold || {};
                 context.canSpendGold[card.uuid] = goldSource;
                 card.controller.addGoldSource(goldSource);
@@ -1221,7 +1223,9 @@ const Effects = {
     canSpendPowerAsGold: function (allowSpendingFunc) {
         return {
             apply: function (card, context) {
-                let goldSource = new PowerAsGoldSource(card, allowSpendingFunc);
+                let goldSource = new PowerAsGoldSource(card, (spendParams) =>
+                    allowSpendingFunc(spendParams, context)
+                );
                 context.canSpendPowerAsGold = context.canSpendPowerAsGold || {};
                 context.canSpendPowerAsGold[card.uuid] = goldSource;
                 context.source.controller.addGoldSource(goldSource);

@@ -10,13 +10,13 @@ class CasterlyRock extends DrawCard {
     // gold.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !this.kneeled,
-            match: (card) =>
-                card.controller === this.controller &&
+            condition: (context) => !context.source.kneeled,
+            match: (card, context) =>
+                card.controller === context.source.controller &&
                 card.location === 'play area' &&
                 card.isFaction('lannister'),
             effect: ability.effects.canSpendGold(
-                (spendParams) => spendParams.activePlayer === this.controller
+                (spendParams, context) => spendParams.activePlayer === context.source.controller
             )
         });
         this.action({
@@ -30,15 +30,11 @@ class CasterlyRock extends DrawCard {
                 cardCondition: (card) => card.location === 'play area'
             },
             message: '{player} kneels {source} to have {target} each gain 1 gold',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        context.target.map((card) =>
-                            GameActions.placeToken({ card, token: Tokens.gold, amount: 1 })
-                        )
-                    )
-                );
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) =>
+                    GameActions.placeToken({ card, token: Tokens.gold, amount: 1 })
+                )
+            )
         });
     }
 }

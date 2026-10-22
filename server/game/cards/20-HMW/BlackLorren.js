@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BlackLorren extends DrawCard {
     // Black Lorren (20006)
@@ -8,33 +9,24 @@ class BlackLorren extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.isAttacking() &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isAttacking() &&
                     event.challenge.defenders.length >= 1
             },
             cost: ability.costs.discardGoldFromCard(
                 1,
-                (card) =>
+                (card, context) =>
                     card.getType() === 'character' &&
                     card.hasTrait('Raider') &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.isAttacking()
             ),
             target: {
                 cardCondition: (card) => card.isDefending()
             },
-            handler: (context) => {
-                this.game.killCharacter(context.target);
-                this.game.addMessage(
-                    '{0} discards 1 gold from {1} to kill {2}',
-                    context.player,
-                    context.costs.discardToken,
-                    context.target
-                );
-
-                return true;
-            }
+            message: '{player} discards 1 gold from {costs.discardToken} to kill {target}',
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 }

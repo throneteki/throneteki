@@ -11,15 +11,16 @@ class GriffinsRoostKnight extends DrawCard {
 
         this.interrupt({
             when: {
-                onPhaseEnded: (event) =>
+                onPhaseEnded: (event, context) =>
                     event.phase === 'challenge' &&
-                    !this.tracker.some({ loser: this.controller, challengeType: 'power' }) &&
-                    this.allowGameAction('stand')
+                    !context.source.tracker.some({
+                        loser: context.source.controller,
+                        challengeType: 'power'
+                    }) &&
+                    context.source.allowGameAction('stand')
             },
             message: '{player} uses {source} to stand {source}',
-            handler: () => {
-                this.game.resolveGameAction(GameActions.standCard({ card: this }));
-            }
+            gameAction: GameActions.standCard((context) => ({ card: context.source }))
         });
     }
 }

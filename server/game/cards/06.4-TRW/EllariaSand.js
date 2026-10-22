@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class EllariaSand extends DrawCard {
     // Ellaria Sand (06075)
@@ -8,26 +9,27 @@ class EllariaSand extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    this.controller === event.challenge.loser && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    context.source.controller === event.challenge.loser &&
+                    context.source.isParticipating()
             },
             cost: ability.costs.discardGold(),
-            handler: () => {
-                let bastards = this.controller.filterCardsInPlay(
-                    (card) => card.hasTrait('Bastard') && card.getType() === 'character'
-                );
-
-                for (let card of bastards) {
-                    card.controller.standCard(card);
+            message: {
+                format: '{player} discards 1 gold from {source} to stand {cards}',
+                args: {
+                    cards: (context) =>
+                        context.player.filterCardsInPlay(
+                            (card) => card.hasTrait('Bastard') && card.getType() === 'character'
+                        )
                 }
-
-                this.game.addMessage(
-                    '{0} discards 1 gold from {1} to stand {2}',
-                    this.controller,
-                    this,
-                    bastards
-                );
-            }
+            },
+            gameAction: GameActions.simultaneously((context) =>
+                context.player
+                    .filterCardsInPlay(
+                        (card) => card.hasTrait('Bastard') && card.getType() === 'character'
+                    )
+                    .map((card) => GameActions.standCard({ card }))
+            )
         });
     }
 }

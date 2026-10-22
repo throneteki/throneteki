@@ -10,23 +10,18 @@ class GuardDuty extends DrawCard {
         this.attachmentRestriction({ faction: 'thenightswatch' });
         this.reaction({
             when: {
-                onDeclaredAsDefender: (event) =>
-                    this.parent &&
-                    event.card === this.parent &&
-                    this.parent.kneeled &&
-                    this.parent.allowGameAction('stand')
+                onDeclaredAsDefender: (event, context) =>
+                    context.source.parent &&
+                    event.card === context.source.parent &&
+                    context.source.parent.kneeled &&
+                    context.source.parent.allowGameAction('stand')
             },
             cost: ability.costs.kneelSelf(),
             message: {
                 format: '{player} uses {source} to stand {parent}',
-                args: { parent: () => this.parent }
+                args: { parent: (context) => context.source.parent }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.standCard(() => ({ card: this.parent })),
-                    context
-                );
-            }
+            gameAction: GameActions.standCard((context) => ({ card: context.source.parent }))
         });
     }
 }

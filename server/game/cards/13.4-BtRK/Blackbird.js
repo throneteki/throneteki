@@ -13,21 +13,19 @@ class Blackbird extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             target: {
                 activePromptTitle: 'Select a location',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card !== this &&
+                    card !== context.source &&
                     card.getType() === 'location' &&
                     card.isFaction('thenightswatch'),
                 gameAction: 'stand'
             },
             message: '{player} uses {source} to stand {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(GameActions.standCard({ card: context.target }));
-            }
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }
