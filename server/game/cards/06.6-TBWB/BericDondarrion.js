@@ -11,39 +11,31 @@ class BericDondarrion extends DrawCard {
     // Interrupt: When Beric Dondarrion would be killed, discard a kiss token from him to save him.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: this,
-            effect: ability.effects.dynamicStrength(() => this.tokens[Tokens.kiss])
+            match: (card, context) => card === context.source,
+            effect: ability.effects.dynamicStrength((card) => card.tokens[Tokens.kiss])
         });
-
         this.forcedReaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this && event.playingType === 'marshal'
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source && event.playingType === 'marshal'
             },
             cannotBeCanceled: true,
             message: '{player} is forced to place 6 kiss tokens on {source}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.placeToken(() => ({ card: this, token: Tokens.kiss, amount: 6 })),
-                    context
-                );
-            }
+            gameAction: GameActions.placeToken((context) => ({
+                card: context.source,
+                token: Tokens.kiss,
+                amount: 6
+            }))
         });
-
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: (event) =>
-                    event.allowSave && event.card === this && this.canBeSaved()
+                onCharacterKilled: (event, context) =>
+                    event.allowSave && event.card === context.source && event.card.canBeSaved()
             },
             cost: ability.costs.discardTokenFromSelf(Tokens.kiss),
-            handler: (context) => {
-                context.event.saveCard();
-                this.game.addMessage(
-                    '{0} discards a kiss token to save {1}',
-                    this.controller,
-                    this
-                );
-            }
+            message: '{player} discards a kiss token to save {source}',
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 }

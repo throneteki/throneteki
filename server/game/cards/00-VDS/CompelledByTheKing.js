@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class CompelledByTheKing extends DrawCard {
     // Compelled by the King (00009)
@@ -11,40 +12,28 @@ class CompelledByTheKing extends DrawCard {
                 onPhaseStarted: (event) => event.phase === 'dominance'
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.controller === this.controller &&
-                    card.kneeled,
+                    card.controller === context.player,
                 gameAction: 'stand'
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.addMessage(
-                    '{0} plays {1} to stand {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-                this.game.once('onDominanceDetermined', (event) =>
-                    this.resolveOnDominanceDetermined(event.winner, context.target)
-                );
-            }
+            message: '{player} plays {source} to stand {target}',
+            gameAction: GameActions.simultaneously([
+                GameActions.standCard((context) => ({ card: context.target })),
+                GameActions.delayedEffect({
+                    duration: 'untilEndOfPhase',
+                    when: {
+                        onDominanceDetermined: (event, context) => event.winner === context.player
+                    },
+                    message: '{player} wins dominance and has {target} gain 1 power for {source}',
+                    gameAction: GameActions.gainPower((context) => ({
+                        card: context.target,
+                        amount: 1
+                    }))
+                })
+            ])
         });
-    }
-
-    resolveOnDominanceDetermined(winner, target) {
-        if (winner !== this.controller) {
-            return false;
-        }
-
-        target.modifyPower(1);
-        this.game.addMessage(
-            '{0} gains 1 power on {1} because of {2}',
-            this.controller,
-            target,
-            this
-        );
     }
 }
 

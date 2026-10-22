@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheHound extends DrawCard {
     // The Hound (02009)
@@ -8,44 +9,37 @@ class TheHound extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
+                    event.challenge.isParticipating(context.source)
             },
-            handler: () => {
-                if (this.controller.hand.length < 1) {
-                    this.returnToHand(this.controller);
-                    return;
-                }
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Discard 1 card at random for ' + this.name + '?',
-                        buttons: [
-                            { text: 'Yes', method: 'discardCard' },
-                            { text: 'No', method: 'returnToHand' }
-                        ]
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.ifCondition({
+                condition: (context) => context.player.hand.length > 0,
+                thenAction: GameActions.choose({
+                    title: (context) => `Discard 1 card at random for ${context.source.name}?`,
+                    choices: {
+                        Yes: {
+                            message:
+                                '{player} is forced to discard a card to keep {source} in play',
+                            gameAction: GameActions.discardAtRandom((context) => ({
+                                player: context.player,
+                                amount: 1
+                            }))
+                        },
+                        No: returnToHand()
+                    }
+                }),
+                elseAction: returnToHand()
+            })
         });
     }
+}
 
-    discardCard(player) {
-        this.game.addMessage('{0} is forced to discard a card to keep {1} in play', player, this);
-
-        player.discardAtRandom(1);
-
-        return true;
-    }
-
-    returnToHand(player) {
-        this.game.addMessage('{0} is forced to return {1} to their hand', player, this);
-
-        player.returnCardToHand(this);
-
-        return true;
-    }
+function returnToHand() {
+    return {
+        message: '{player} is forced to return {source} to their hand',
+        gameAction: GameActions.returnCardToHand((context) => ({ card: context.source }))
+    };
 }
 
 TheHound.code = '02009';
