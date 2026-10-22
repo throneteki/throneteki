@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class ArianneMartell extends DrawCard {
@@ -10,27 +11,22 @@ class ArianneMartell extends DrawCard {
             title: 'Return character to hand',
             phase: 'challenge',
             //TODO: This should ideally use the snapshot functionality instead
-            condition: () => {
-                this.strengthWhenInitiated = this.getStrength();
+            condition: (context) => {
+                context.source.strengthWhenInitiated = context.source.getStrength();
                 return true;
             },
             cost: ability.costs.returnSelfToHand(),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.getStrength() < this.strengthWhenInitiated
+                    card.getStrength() < context.source.strengthWhenInitiated
             },
-            handler: (context) => {
-                context.target.owner.returnCardToHand(context.target);
-                this.game.addMessage(
-                    "{0} returns {1} to their hand to return {2} to {3}'s hand",
-                    context.player,
-                    this,
-                    context.target,
-                    context.target.owner
-                );
-            }
+            message: {
+                format: "{player} returns {source} to their hand to return {target} to {owner}'s hand",
+                args: { owner: (context) => context.target.owner }
+            },
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 }

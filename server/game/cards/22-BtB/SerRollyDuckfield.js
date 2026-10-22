@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SerRollyDuckfield extends DrawCard {
@@ -20,16 +21,11 @@ class SerRollyDuckfield extends DrawCard {
             },
             cost: ability.costs.discardFromHand(),
             limit: ability.limit.perRound(1),
-            handler: (context) => {
-                context.event.saveCard();
-                this.game.addMessage(
-                    '{0} uses {1} and discards {2} from their hand to save {3}',
-                    context.player,
-                    this,
-                    context.costs.discardFromHand,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} uses {source} and discards {costs.discardFromHand} from their hand to save {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 }

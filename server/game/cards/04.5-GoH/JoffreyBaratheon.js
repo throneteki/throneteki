@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class JoffreyBaratheon extends DrawCard {
@@ -7,8 +8,8 @@ class JoffreyBaratheon extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    this.controller === event.card.controller &&
+                onCardEntersPlay: (event, context) =>
+                    context.source.controller === event.card.controller &&
                     event.playingType === 'marshal' &&
                     event.card.getType() === 'character' &&
                     event.card.isLoyal()
@@ -25,16 +26,11 @@ class JoffreyBaratheon extends DrawCard {
                     card.getPrintedCost() < context.event.card.getPrintedCost(),
                 gameAction: 'kill'
             },
-            handler: (context) => {
-                this.game.killCharacter(context.target);
-                this.game.addMessage(
-                    '{0} uses {1}, kneels their faction card and kneels {2} to kill {3}',
-                    this.controller,
-                    this,
-                    context.event.card,
-                    context.target
-                );
-            }
+            message: {
+                format: '{player} uses {source}, kneels their faction card and kneels {card} to kill {target}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 }

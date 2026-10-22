@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class DrownedDisciple extends DrawCard {
@@ -7,9 +8,9 @@ class DrownedDisciple extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
+                onCardEntersPlay: (event, context) =>
                     event.card.getType() === 'character' &&
-                    event.card.controller === this.controller &&
+                    event.card.controller === context.source.controller &&
                     event.originalLocation === 'dead pile'
             },
             max: ability.limit.perPhase(2),
@@ -20,15 +21,8 @@ class DrownedDisciple extends DrawCard {
                     card.getType() === 'character',
                 gameAction: 'gainPower'
             },
-            handler: (context) => {
-                context.target.modifyPower(1);
-                this.game.addMessage(
-                    '{0} uses {1} to have {2} gain 1 power',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to have {target} gain 1 power',
+            gameAction: GameActions.gainPower((context) => ({ card: context.target, amount: 1 }))
         });
     }
 }

@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class CastleBlack extends DrawCard {
@@ -9,8 +10,8 @@ class CastleBlack extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onChallengeInitiated: (event) =>
-                    event.challenge.initiatedAgainstPlayer === this.controller
+                onChallengeInitiated: (event, context) =>
+                    event.challenge.initiatedAgainstPlayer === context.source.controller
             },
             target: {
                 activePromptTitle: 'Select a card',
@@ -22,34 +23,23 @@ class CastleBlack extends DrawCard {
                 gameAction: 'stand'
             },
             limit: ability.limit.perPhase(1),
-            handler: (context) => {
-                context.player.standCard(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to stand {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: (event) =>
+                onCardAbilityInitiated: (event, context) =>
                     event.ability.isTriggeredAbility() &&
                     event.source.getType() === 'location' &&
-                    event.source.controller !== this.controller
+                    event.source.controller !== context.source.controller
             },
             cost: ability.costs.kneelSelf(),
-            handler: (context) => {
-                context.event.cancel();
-                this.game.addMessage(
-                    '{0} kneels {1} to cancel {2}',
-                    this.controller,
-                    this,
-                    context.event.source
-                );
-            }
+            message: {
+                format: '{player} kneels {source} to cancel {eventSource}',
+                args: { eventSource: (context) => context.event.source }
+            },
+            gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
         });
     }
 }

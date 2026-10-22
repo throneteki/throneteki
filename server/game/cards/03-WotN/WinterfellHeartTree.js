@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class WinterfellHeartTree extends DrawCard {
@@ -15,14 +16,13 @@ class WinterfellHeartTree extends DrawCard {
             },
             message:
                 "{player} sacrifices {source} to grant {target} from opponents' plot effects until the end of the phase",
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.immuneTo(
-                        (card) => card.controller !== context.player && card.getType() === 'plot'
-                    )
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.immuneTo(
+                    (card) => card.controller !== context.player && card.getType() === 'plot'
+                )
+            }))
         });
     }
 }

@@ -378,11 +378,6 @@
         "this-in-ability": 4,
         "add-message": 1
     },
-    "server/game/cards/03-WotN/QuentynMartell.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/03-WotN/Stonesnake.js": {
         "this-in-ability": 7,
         "add-message": 1
@@ -401,14 +396,6 @@
         "this-in-ability": 5,
         "legacy-helper": 2,
         "add-message": 1
-    },
-    "server/game/cards/03-WotN/TowerOfTheHand.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/03-WotN/WinterfellHeartTree.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/04.1-AtSK/BitterbridgeEncampment.js": {
         "this-in-ability": 9,
@@ -510,11 +497,6 @@
     },
     "server/game/cards/04.5-GoH/GhostsOfHarrenhal.js": {
         "this-in-ability": 3,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/04.5-GoH/JoffreyBaratheon.js": {
-        "this-in-ability": 5,
         "legacy-helper": 1,
         "add-message": 1
     },
@@ -647,11 +629,6 @@
     },
     "server/game/cards/06.1-AMAF/AllMenAreFools.js": {
         "this-in-ability": 6,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/06.1-AMAF/DrownedDisciple.js": {
-        "this-in-ability": 4,
         "legacy-helper": 1,
         "add-message": 1
     },
@@ -908,15 +885,6 @@
         "add-message": 2,
         "legacy-helper": 1
     },
-    "server/game/cards/07-WotW/UlfSonOfUmar.js": {
-        "this-in-ability": 9,
-        "add-message": 1
-    },
-    "server/game/cards/07-WotW/WhisperCampaign.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/08.1-TAK/MaesterAtTheRock.js": {
         "this-in-ability": 5,
         "legacy-helper": 1,
@@ -943,11 +911,6 @@
     },
     "server/game/cards/08.1-TAK/TheWaterGardens.js": {
         "this-in-ability": 4,
-        "add-message": 1
-    },
-    "server/game/cards/08.2-JtO/ArianneMartell.js": {
-        "this-in-ability": 5,
-        "legacy-helper": 1,
         "add-message": 1
     },
     "server/game/cards/08.2-JtO/ChangeOfPlans.js": {
@@ -1033,11 +996,6 @@
         "add-message": 2,
         "prompt-for-select": 1
     },
-    "server/game/cards/08.5-TFM/GivenToTheDrownedGod.js": {
-        "legacy-helper": 1,
-        "this-in-ability": 4,
-        "add-message": 1
-    },
     "server/game/cards/08.5-TFM/HouseYronwoodKnight.js": {
         "this-in-ability": 6,
         "legacy-helper": 1,
@@ -1100,11 +1058,6 @@
     "server/game/cards/09-HoT/DesmeraRedwyne.js": {
         "this-in-ability": 8,
         "add-message": 2
-    },
-    "server/game/cards/09-HoT/DrownedGodsApostle.js": {
-        "this-in-ability": 5,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/09-HoT/FacelessMan.js": {
         "this-in-ability": 4,
@@ -1323,15 +1276,6 @@
         "legacy-helper": 3,
         "add-message": 1
     },
-    "server/game/cards/11.2-TMoW/SerJustinMassey.js": {
-        "this-in-ability": 3,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/11.2-TMoW/TychoNestoris.js": {
-        "this-in-ability": 4,
-        "add-message": 1
-    },
     "server/game/cards/11.3-SoKL/Dragonbinder.js": {
         "this-in-ability": 8,
         "prompt-for-select": 1,
@@ -1423,11 +1367,6 @@
         "this-in-ability": 5,
         "add-message": 1
     },
-    "server/game/cards/11.5-IDP/APinchOfPowder.js": {
-        "this-in-ability": 8,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/11.5-IDP/BrightwaterHost.js": {
         "this-in-ability": 7,
         "add-message": 2,
@@ -1517,11 +1456,6 @@
         "this-in-ability": 5,
         "legacy-helper": 2,
         "add-message": 1
-    },
-    "server/game/cards/12-KotI/RedRain.js": {
-        "this-in-ability": 7,
-        "add-message": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/12-KotI/ReturnToTheFields.js": {
         "this-in-ability": 4,
@@ -1943,11 +1877,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/17.1-R/DrownedDisciple.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/17.1-R/DrownedGodFanatic.js": {
         "this-in-ability": 10,
         "legacy-helper": 1,
@@ -2222,11 +2151,6 @@
         "prompt-for-select": 1,
         "add-message": 2
     },
-    "server/game/cards/20-HMW/SerLancelLannister.js": {
-        "add-message": 1,
-        "this-in-ability": 2,
-        "legacy-helper": 1
-    },
     "server/game/cards/20-HMW/SetDownOurDeeds.js": {
         "this-in-ability": 5,
         "add-message": 1,
@@ -2318,11 +2242,6 @@
     "server/game/cards/22-BtB/CasterlyRock.js": {
         "this-in-ability": 4
     },
-    "server/game/cards/22-BtB/CastleBlack.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1,
-        "add-message": 2
-    },
     "server/game/cards/22-BtB/FlorianAndJonquil.js": {
         "this-in-ability": 14,
         "add-message": 1,
@@ -2343,10 +2262,6 @@
         "this-in-ability": 13,
         "prompt-for-select": 1,
         "add-message": 1
-    },
-    "server/game/cards/22-BtB/SerRollyDuckfield.js": {
-        "add-message": 1,
-        "this-in-ability": 2
     },
     "server/game/cards/22-BtB/StormsEnd.js": {
         "this-in-ability": 5,

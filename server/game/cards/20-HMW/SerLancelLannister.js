@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SerLancelLannister extends DrawCard {
@@ -24,16 +25,14 @@ class SerLancelLannister extends DrawCard {
                     ['hand', 'discard pile'].includes(card.location) &&
                     context.player.canPutIntoPlay(card)
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to put {2} into play from their {3}',
-                    context.player,
-                    this,
-                    context.target,
-                    context.target.location
-                );
-                context.player.putIntoPlay(context.target);
-            }
+            message: {
+                format: '{player} uses {source} to put {target} into play from their {location}',
+                args: { location: (context) => context.target.location }
+            },
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 }

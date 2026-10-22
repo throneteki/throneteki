@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class UlfSonOfUmar extends DrawCard {
@@ -7,35 +8,31 @@ class UlfSonOfUmar extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => {
+                onCardEntersPlay: (event, context) => {
                     let card = event.card;
                     if (
                         !card.hasTrait('Clansman') ||
                         card.getType() !== 'character' ||
-                        card.controller !== this.controller ||
+                        card.controller !== context.source.controller ||
                         card.getPrintedStrength() === 0
                     ) {
                         return false;
                     }
 
-                    this.strBoost = card.getPrintedStrength();
+                    context.source.strBoost = card.getPrintedStrength();
                     return true;
                 }
             },
             limit: ability.limit.perPhase(3),
-            handler: () => {
-                this.untilEndOfPhase((ability) => ({
-                    match: this,
-                    effect: ability.effects.modifyStrength(this.strBoost)
-                }));
-
-                this.game.addMessage(
-                    '{0} uses {1} to give {1} +{2} STR until the end of the phase',
-                    this.controller,
-                    this,
-                    this.strBoost
-                );
-            }
+            message: {
+                format: '{player} uses {source} to give {source} +{strBoost} STR until the end of the phase',
+                args: { strBoost: (context) => context.source.strBoost }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.source,
+                effect: ability.effects.modifyStrength(context.source.strBoost)
+            }))
         });
     }
 }

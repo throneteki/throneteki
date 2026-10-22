@@ -1,3 +1,4 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SerJustinMassey extends DrawCard {
@@ -6,8 +7,8 @@ class SerJustinMassey extends DrawCard {
     // Reaction: After a [baratheon] character gains power, stand it. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.controller.anyCardsInPlay(
+            condition: (context) =>
+                context.source.controller.anyCardsInPlay(
                     (card) => card.hasTrait('King') && card.getType() === 'character'
                 ),
             match: this,
@@ -21,15 +22,11 @@ class SerJustinMassey extends DrawCard {
                     event.card.kneeled
             },
             limit: ability.limit.perPhase(1),
-            handler: (context) => {
-                context.player.standCard(context.event.card);
-                this.game.addMessage(
-                    '{0} uses {1} to stand {2}',
-                    context.player,
-                    this,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} uses {source} to stand {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.standCard((context) => ({ card: context.event.card }))
         });
     }
 }
