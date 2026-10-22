@@ -1,5 +1,9 @@
 import PlotCard from '../../plotcard.js';
 
+function numOfCityPlots(source) {
+    return source.controller.getNumberOfUsedPlotsByTrait('City');
+}
+
 class CityOfWealth extends PlotCard {
     // City of Wealth (13119)
     // Increase the gold, initiative, and reserve values on this plot card by 1 for each City plot
@@ -8,15 +12,11 @@ class CityOfWealth extends PlotCard {
         this.persistentEffect({
             match: this,
             effect: [
-                ability.effects.modifyGold(() => this.numOfCityPlots()),
-                ability.effects.modifyInitiative(() => this.numOfCityPlots()),
-                ability.effects.modifyReserve(() => this.numOfCityPlots())
+                ability.effects.modifyGold((card, context) => numOfCityPlots(context.source)),
+                ability.effects.modifyInitiative((card, context) => numOfCityPlots(context.source)),
+                ability.effects.modifyReserve((card, context) => numOfCityPlots(context.source))
             ]
         });
-    }
-
-    numOfCityPlots() {
-        return this.controller.getNumberOfUsedPlotsByTrait('City');
     }
 }
 

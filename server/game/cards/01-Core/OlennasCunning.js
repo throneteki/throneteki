@@ -9,14 +9,14 @@ class OlennasCunning extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     ['intrigue', 'power'].includes(event.challenge.challengeType) &&
-                    event.challenge.winner === this.controller
+                    event.challenge.winner === context.source.controller
             },
             message:
                 '{player} plays {source} to have the losing opponent name a cardtype and search their deck',
             gameAction: GameActions.choose({
-                player: () => this.game.currentChallenge.loser,
+                player: (context) => context.event.challenge.loser,
                 title: 'Select a card type',
                 message: '{choosingPlayer} names the {choice} cardtype',
                 choices: {

@@ -80,6 +80,7 @@ function deckCardNames(playerKey, options) {
     const names = [
         own.plot || DefaultPlot,
         ...asArray(plotDeck),
+        ...asArray(own.usedPlots),
         ...asArray(own.agenda),
         ...asArray(own.deck)
     ];
@@ -190,6 +191,12 @@ function arrangeSetupZones(claims, options) {
                 return card;
             });
         }
+
+        assigned[key].usedPlots = asArray(own.usedPlots).map((name) => {
+            const card = claims[key].claim(name, ['plot deck']);
+            player.moveCard(card, 'revealed plots');
+            return card;
+        });
 
         assigned[key].hand = asArray(own.hand).map((name) => {
             const card = claims[key].claim(name);
@@ -421,6 +428,7 @@ export function applySetupTest(options, ctx) {
                     .map((spec) => spec.instance)
             ),
             ...ZoneKeys.flatMap((zone) => assigned[key][zone] || []),
+            ...(assigned[key].usedPlots || []),
             ...(player.agendas || []),
             ...[options[key].plot, ...asArray(options[key].plotDeck)]
                 .filter(Boolean)

@@ -11,7 +11,7 @@ class TheRedWedding extends PlotCard {
                 afterChallenge: (event) =>
                     event.challenge.attackingPlayer === event.challenge.winner
             },
-            player: () => this.game.currentChallenge.winner,
+            player: (event) => event.challenge.winner,
             target: {
                 activePromptTitle: 'Choose a Lord or Lady',
                 cardCondition: (card, context) =>

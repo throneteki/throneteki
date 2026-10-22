@@ -9,13 +9,13 @@ class TheWatchHasNeed extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Search for a character',
-            condition: () => this.controller.getReserve() > 0,
+            condition: (context) => context.player.getReserve() > 0,
             message: {
                 format: '{player} plays {source} to name a trait and search the top {reserve} cards of their deck',
                 args: { reserve: (context) => context.player.getReserve() }
             },
             gameAction: GameActions.choose({
-                player: () => this.controller,
+                player: (context) => context.player,
                 title: 'Select a trait',
                 message: '{choosingPlayer} names the {choice} trait',
                 choices: {

@@ -1,7 +1,4 @@
 {
-    "server/game/cards/00-VDS/CommonCause.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/00-VDS/CompelledByTheKing.js": {
         "this-in-ability": 6,
         "legacy-helper": 2,
@@ -65,9 +62,6 @@
     },
     "server/game/cards/01-Core/HeadsOnSpikes.js": {
         "add-message": 1
-    },
-    "server/game/cards/01-Core/OlennasCunning.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/01-Core/OursIsTheFury.js": {
         "this-in-ability": 11,
@@ -160,9 +154,6 @@
         "this-in-ability": 5,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/02.1-TtB/TheWatchHasNeed.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/02.2-TRtW/BrothelMadame.js": {
         "event-registration": 1,
@@ -678,9 +669,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/06.4-TRW/TheRedWedding.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/06.4-TRW/TywinsStratagem.js": {
         "this-in-ability": 7,
         "add-message": 1,
@@ -1057,9 +1045,6 @@
         "this-in-ability": 11,
         "legacy-helper": 3,
         "add-message": 2
-    },
-    "server/game/cards/10-SoD/SerCletusYronwood.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/10-SoD/SpareBoot.js": {
         "this-in-ability": 6,
@@ -1443,9 +1428,6 @@
         "this-in-ability": 10,
         "add-message": 2,
         "legacy-helper": 1
-    },
-    "server/game/cards/13.6-LMHR/CityOfWealth.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/13.6-LMHR/ExposeDuplicity.js": {
         "this-in-ability": 2
@@ -2248,9 +2230,6 @@
     "server/game/cards/26.3-MaV/CrawnSonOfCalor.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/26.3-MaV/DubiousLoyalties.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/26.3-MaV/NorthernEnvoy.js": {
         "this-in-ability": 6,
         "prompt-for-select": 1,
@@ -2275,9 +2254,6 @@
         "this-in-ability": 8,
         "add-message": 1
     },
-    "server/game/cards/26.4 LotW/TheWarOfTheFiveKings.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/26.5-JfE/BaelorBrightsmile.js": {
         "this-in-ability": 4,
         "legacy-helper": 2,
@@ -2286,9 +2262,6 @@
     "server/game/cards/26.5-JfE/LivingShadow.js": {
         "this-in-ability": 9,
         "legacy-helper": 1
-    },
-    "server/game/cards/26.5-JfE/PoisonedLocusts.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/26.5-JfE/Smiler.js": {
         "this-in-ability": 8

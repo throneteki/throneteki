@@ -22,16 +22,16 @@ class DubiousLoyalties extends DrawCard {
                 afterChallenge: (event) =>
                     !!event.challenge.winner && event.challenge.strengthDifference >= 5
             },
-            player: () => this.game.currentChallenge.winner,
+            player: (event) => event.challenge.winner,
             cost: ability.costs.discardFromDeck(),
             message: {
                 format: '{player} uses {source} and discards {costs.discardFromDeck} from the top of their deck to take control of {parent}',
                 args: {
-                    parent: () => this.parent
+                    parent: (context) => context.source.parent
                 }
             },
             gameAction: GameActions.takeControl((context) => ({
-                card: this.parent,
+                card: context.source.parent,
                 player: context.player
             }))
         });

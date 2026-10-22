@@ -133,4 +133,24 @@ describe('setupTest', function () {
             expect(this.countingCoppers.location).toBe('plot deck');
         });
     });
+
+    describe('with used plots', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'plot',
+                player1: { usedPlots: ['A Noble Cause', 'Trading with the Pentoshi'] }
+            });
+        });
+
+        it('places them in the used pile, leaving the rest of the plot deck to choose from', function () {
+            expect(this.aNobleCause.location).toBe('revealed plots');
+            expect(this.tradingWithThePentoshi.location).toBe('revealed plots');
+            expect(this.player1Object.getNumberOfUsedPlots()).toBe(2);
+            expect(this.player1Object.plotDeck.map((card) => card.name)).toEqual([
+                'Filler Plot',
+                'Filler Plot',
+                'Filler Plot'
+            ]);
+        });
+    });
 });

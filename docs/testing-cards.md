@@ -69,6 +69,7 @@ this.setupTest({
         agenda: 'Fealty', // or an array for Alliance and its banners
         plot: 'Filler Plot', // revealed in round 1 (default 'Filler Plot': income 5, initiative 0, claim 1, reserve 6, no text)
         plotDeck: ['Sneak Attack'], // the rest of the plot deck (default: two more 'Filler Plot')
+        usedPlots: ['A Noble Cause'], // already in the used pile when the game starts
         inPlay: [
             'Winterfell Steward',
             {
