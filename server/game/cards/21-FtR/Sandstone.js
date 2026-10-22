@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Sandstone extends DrawCard {
     // Sandstone (21012)
@@ -11,29 +12,26 @@ class Sandstone extends DrawCard {
                 afterChallenge: (event, context) =>
                     event.challenge.winner === context.player &&
                     event.challenge.attackingPlayer === context.player &&
-                    this.game.currentChallenge.defenders.some((d) => d.getNumberOfIcons() < 2)
+                    sandstonePower(event.challenge) > 0
             },
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: (card) => card.isAttacking() && card.canGainPower()
+                cardCondition: (card) => card.isAttacking()
             },
-            handler: (context) => {
-                let power = Math.min(
-                    3,
-                    this.game.currentChallenge.defenders.filter((d) => d.getNumberOfIcons() < 2)
-                        .length
-                );
-                context.target.modifyPower(power);
-                this.game.addMessage(
-                    '{0} uses {1} to have {2} gain {3} power.',
-                    context.player,
-                    this,
-                    context.target,
-                    power
-                );
-            }
+            message: {
+                format: '{player} uses {source} to have {target} gain {power} power',
+                args: { power: (context) => sandstonePower(context.event.challenge) }
+            },
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.target,
+                amount: sandstonePower(context.event.challenge)
+            }))
         });
     }
+}
+
+function sandstonePower(challenge) {
+    return Math.min(3, challenge.defenders.filter((card) => card.getNumberOfIcons() < 2).length);
 }
 
 Sandstone.code = '21012';

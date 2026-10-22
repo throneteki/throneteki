@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheHightower extends DrawCard {
     // The Hightower (09017)
@@ -7,30 +8,17 @@ class TheHightower extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    (this.controller.canDraw() || this.controller.canGainGold()) &&
+                onCardEntersPlay: (event, context) =>
                     event.card.isFaction('tyrell') &&
                     event.card.getType() === 'character' &&
-                    event.card.controller === this.controller
+                    event.card.controller === context.player
             },
             limit: ability.limit.perPhase(1),
-            handler: () => {
-                let bonusMessages = [];
-
-                if (this.controller.canGainGold()) {
-                    this.game.addGold(this.controller, 1);
-                    bonusMessages.push('gain 1 gold');
-                }
-                if (this.controller.canDraw()) {
-                    this.controller.drawCardsToHand(1);
-                    bonusMessages.push('draw 1 card');
-                }
-                this.game.addMessage(
-                    '{0} uses {1} to ' + bonusMessages.join(', '),
-                    this.controller,
-                    this
-                );
-            }
+            message: '{player} uses {source} and {gameAction}',
+            gameAction: GameActions.simultaneously([
+                GameActions.gainGold((context) => ({ player: context.player, amount: 1 })),
+                GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
+            ])
         });
     }
 }

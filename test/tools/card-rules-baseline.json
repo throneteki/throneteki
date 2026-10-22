@@ -481,11 +481,6 @@
     "server/game/cards/06.5-OR/NorthernEncampment.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/06.5-OR/NuteTheBarber.js": {
-        "this-in-ability": 9,
-        "legacy-helper": 2,
-        "add-message": 2
-    },
     "server/game/cards/06.5-OR/OlennasMachinations.js": {
         "this-in-ability": 10,
         "add-message": 2,
@@ -657,10 +652,6 @@
         "this-in-ability": 8,
         "add-message": 2
     },
-    "server/game/cards/08.6-SAT/TheSevenPointedStar.js": {
-        "add-message": 1,
-        "this-in-ability": 3
-    },
     "server/game/cards/09-HoT/BrienneOfTarth.js": {
         "this-in-ability": 12,
         "prompt-for-select": 1,
@@ -716,11 +707,6 @@
         "this-in-ability": 5,
         "add-message": 1
     },
-    "server/game/cards/09-HoT/TheHightower.js": {
-        "this-in-ability": 11,
-        "legacy-helper": 2,
-        "add-message": 1
-    },
     "server/game/cards/09-HoT/WillasTyrell.js": {
         "this-in-ability": 13,
         "legacy-helper": 2,
@@ -733,10 +719,6 @@
     },
     "server/game/cards/10-SoD/AreoHotah.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/10-SoD/BeyondReproach.js": {
-        "this-in-ability": 4,
-        "add-message": 1
     },
     "server/game/cards/10-SoD/DoranMartell.js": {
         "this-in-ability": 12,
@@ -1125,11 +1107,6 @@
         "add-message": 2,
         "legacy-helper": 1
     },
-    "server/game/cards/13.6-LMHR/FishmongersSquare.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 2,
-        "add-message": 1
-    },
     "server/game/cards/13.6-LMHR/FriendsAtCourt.js": {
         "this-in-ability": 6,
         "add-message": 2,
@@ -1358,11 +1335,6 @@
     "server/game/cards/17.1-R/SeaOfBlood.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/17.1-R/TheAnnalsOfCastleBlack.js": {
-        "this-in-ability": 3,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/17.1-R/TheIronBank.js": {
         "this-in-ability": 9,
         "legacy-helper": 1,
@@ -1584,11 +1556,6 @@
     "server/game/cards/21-FtR/LordTywinsHost.js": {
         "prompt-for-select": 1,
         "this-in-ability": 8,
-        "add-message": 1
-    },
-    "server/game/cards/21-FtR/Sandstone.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1,
         "add-message": 1
     },
     "server/game/cards/21-FtR/SerBarristanSelmy.js": {

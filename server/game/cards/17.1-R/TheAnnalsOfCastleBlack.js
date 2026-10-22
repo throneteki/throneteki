@@ -1,5 +1,6 @@
 import PlotCard from '../../plotcard.js';
 import EventPlayedTracker from '../../EventTrackers/EventPlayedTracker.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheAnnalsOfCastleBlack extends PlotCard {
     // The Annals of Castle Black (17158)
@@ -7,11 +8,11 @@ class TheAnnalsOfCastleBlack extends PlotCard {
     // hand.
     // Forced Reaction: After an event is placed in a discard pile, remove it from the game.
     setupCardAbilities(ability) {
-        this.tracker = EventPlayedTracker.forPhase(this.game);
+        const tracker = EventPlayedTracker.forPhase(this.game);
 
         this.persistentEffect({
             targetController: 'any',
-            match: (player) => this.tracker.getNumberOfPlayedEvents(player, 'discard pile') < 2,
+            match: (player) => tracker.getNumberOfPlayedEvents(player, 'discard pile') < 2,
             effect: ability.effects.canPlayFromOwn('discard pile')
         });
 
@@ -20,18 +21,11 @@ class TheAnnalsOfCastleBlack extends PlotCard {
                 onCardPlaced: (event) =>
                     event.card.getType() === 'event' && event.location === 'discard pile'
             },
-            handler: (context) => {
-                let eventCard = context.event.card;
-                let player = eventCard.controller;
-
-                this.game.addMessage(
-                    '{0} is forced by {1} to remove {2} from the game',
-                    player,
-                    this,
-                    eventCard
-                );
-                player.moveCard(eventCard, 'out of game');
-            }
+            message: {
+                format: '{player} is forced by {source} to remove {card} from the game',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.removeFromGame((context) => ({ card: context.event.card }))
         });
     }
 }
