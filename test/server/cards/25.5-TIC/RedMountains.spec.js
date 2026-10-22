@@ -1,146 +1,106 @@
 describe('Red Mountains', function () {
-    integration(function () {
+    function setup(context, { plot = 'Filler Plot', inPlay = [], hand = [] } = {}) {
+        context.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player2',
+            player1: { plot, inPlay: ['Red Mountains'] },
+            player2: {
+                plot: 'Trading with the Pentoshi',
+                inPlay: ['Obara Sand (SoD)', 'Arianne Martell (Core)', ...inPlay],
+                hand
+            }
+        });
+    }
+
+    describe('when triggered before challenges', function () {
         beforeEach(function () {
-            const deck = this.buildDeck('martell', [
-                'Trading with the Pentoshi',
-                'A Game of Thrones',
-                'Arianne Martell (Core)',
-                'Obara Sand (SoD)',
-                'Edric Dayne (Core)',
-                'Red Mountains'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.redMountains = this.player1.findCardByName('Red Mountains', 'hand');
-            this.obara = this.player2.findCardByName('Obara Sand', 'hand');
-            this.arianne = this.player2.findCardByName('Arianne Martell', 'hand');
-            this.edric = this.player2.findCardByName('Edric Dayne', 'hand');
-            this.player1.clickCard(this.redMountains);
-            this.player2.clickCard(this.obara);
-
-            this.completeSetup();
+            setup(this, { hand: ['Edric Dayne (Core)'] });
+            this.player1.clickMenu(this.redMountains, 'Force military challenge');
         });
 
-        describe('when triggered before challenges', function () {
+        it('stops the opponent initiating intrigue or power challenges, or passing', function () {
+            expect(this.redMountains.location).toBe('discard pile');
+            expect(this.player2).toHaveDisabledPromptButton('Intrigue');
+            expect(this.player2).toHaveDisabledPromptButton('Power');
+            expect(this.player2).toHaveDisabledPromptButton('Done');
+            expect(this.player2).isReadyToTakeAction();
+        });
+
+        describe('and the opponent no longer has characters to declare for military', function () {
             beforeEach(function () {
-                this.player1.selectPlot('Trading with the Pentoshi');
-                this.player2.selectPlot('Trading with the Pentoshi');
-                this.selectFirstPlayer(this.player2);
-                this.selectPlotOrder(this.player1);
-                this.player2.clickCard(this.arianne);
-                this.completeMarshalPhase();
-                this.player1.clickMenu(this.redMountains, 'Force military challenge');
+                this.player2.clickMenu(this.obaraSand, 'Put character into play');
+                this.player2.clickCard(this.obaraSand);
+                this.player2.clickCard(this.edricDayne);
             });
 
-            it('should prevent the opponent from initiating intrigue or power', function () {
+            it('lets them initiate intrigue or power challenges, or pass', function () {
+                expect(this.player2).not.toHaveDisabledPromptButton('Intrigue');
+                expect(this.player2).not.toHaveDisabledPromptButton('Power');
+                expect(this.player2).not.toHaveDisabledPromptButton('Done');
+                expect(this.player2).isReadyToTakeAction();
+            });
+
+            it('lets them initiate military or power, but not intrigue, after an intrigue challenge', function () {
+                this.unopposedChallenge(this.player2, 'Intrigue', this.arianneMartell);
+                this.player2.clickMenu(this.arianneMartell, 'Put character into play');
+                this.player2.clickCard(this.obaraSand);
+
+                expect(this.player2).not.toHaveDisabledPromptButton('Military');
                 expect(this.player2).toHaveDisabledPromptButton('Intrigue');
-                expect(this.player2).toHaveDisabledPromptButton('Power');
-            });
-
-            it('should prevent the opponent from passing challenges', function () {
-                expect(this.player2).toHaveDisabledPromptButton('Done');
-            });
-
-            describe('and opponent no longer has characters to declare for military', function () {
-                beforeEach(function () {
-                    this.player2.clickMenu(this.obara, 'Put character into play');
-                    this.player2.clickCard(this.obara);
-                    this.player2.clickCard(this.edric);
-                });
-
-                it('should allow them to initiate intrigue or power', function () {
-                    expect(this.player2).not.toHaveDisabledPromptButton('Intrigue');
-                    expect(this.player2).not.toHaveDisabledPromptButton('Power');
-                });
-
-                it('should allow them to pass challenges', function () {
-                    expect(this.player2).not.toHaveDisabledPromptButton('Done');
-                });
-
-                describe('and opponent initiates an intrigue challenge', function () {
-                    beforeEach(function () {
-                        this.unopposedChallenge(this.player2, 'intrigue', this.arianne);
-                        this.player2.clickPrompt('Continue');
-                        this.player2.clickMenu(this.arianne, 'Put character into play');
-                        this.player2.clickCard(this.obara);
-                    });
-
-                    it('should allow them to initiate a military or power, but not intrigue', function () {
-                        expect(this.player2).not.toHaveDisabledPromptButton('Military');
-                        expect(this.player2).toHaveDisabledPromptButton('Intrigue');
-                        expect(this.player2).not.toHaveDisabledPromptButton('Power');
-                    });
-
-                    it('should allow them to pass challenges', function () {
-                        expect(this.player2).not.toHaveDisabledPromptButton('Done');
-                    });
-                });
+                expect(this.player2).not.toHaveDisabledPromptButton('Power');
+                expect(this.player2).not.toHaveDisabledPromptButton('Done');
+                expect(this.player2).isReadyToTakeAction();
             });
         });
+    });
 
-        describe('when triggered after a military challenge', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('Trading with the Pentoshi');
-                this.player2.selectPlot('Trading with the Pentoshi');
-                this.selectFirstPlayer(this.player2);
-                this.selectPlotOrder(this.player1);
-                this.player2.clickCard(this.arianne);
-                this.player2.clickCard(this.edric);
-                this.completeMarshalPhase();
-
-                this.unopposedChallenge(this.player2, 'military', this.obara);
-                this.player2.clickPrompt('Continue');
-                this.player1.clickMenu(this.redMountains, 'Force military challenge');
-                this.player2.clickMenu(this.edric, 'Give icon');
-                this.player2.clickPrompt('Military');
-            });
-
-            it('should allow the opponent to initiate intrigue or power', function () {
-                expect(this.player2).not.toHaveDisabledPromptButton('Intrigue');
-                expect(this.player2).not.toHaveDisabledPromptButton('Power');
-            });
-
-            it('should allow the opponent to pass challenges', function () {
-                expect(this.player2).not.toHaveDisabledPromptButton('Done');
-            });
+    describe('when triggered after a military challenge', function () {
+        beforeEach(function () {
+            setup(this, { inPlay: ['Edric Dayne (Core)'] });
+            this.unopposedChallenge(this.player2, 'Military', this.obaraSand);
+            this.player1.clickMenu(this.redMountains, 'Force military challenge');
+            this.player2.clickMenu(this.edricDayne, 'Give icon');
+            this.player2.clickPrompt('Military');
         });
 
-        describe('when military challenges are prevented by a plot', function () {
-            beforeEach(function () {
-                this.player2.selectPlot('Trading with the Pentoshi');
-                this.player1.selectPlot('A Game of Thrones');
-                this.selectFirstPlayer(this.player2);
-                this.player2.clickCard(this.arianne);
-                this.completeMarshalPhase();
-            });
+        it('lets the opponent initiate intrigue or power challenges, or pass', function () {
+            expect(this.player2).not.toHaveDisabledPromptButton('Intrigue');
+            expect(this.player2).not.toHaveDisabledPromptButton('Power');
+            expect(this.player2).not.toHaveDisabledPromptButton('Done');
+            expect(this.player2).isReadyToTakeAction();
+        });
+    });
 
-            it('should allow the opponent to initiate intrigue or skip challenges', function () {
-                this.player1.clickMenu(this.redMountains, 'Force military challenge');
+    describe('when military challenges are prevented by a plot', function () {
+        beforeEach(function () {
+            setup(this, { plot: 'A Game of Thrones' });
+        });
 
-                expect(this.player2).not.toHaveDisabledPromptButton('Intrigue');
-                expect(this.player2).not.toHaveDisabledPromptButton('Done');
-                expect(this.player2).toHaveDisabledPromptButton('Military');
-                expect(this.player2).toHaveDisabledPromptButton('Power');
-            });
+        it('lets the opponent initiate intrigue or skip challenges', function () {
+            this.player1.clickMenu(this.redMountains, 'Force military challenge');
 
-            it('should only affect the next challenge', function () {
-                this.player1.clickMenu(this.redMountains, 'Force military challenge');
+            expect(this.player2).not.toHaveDisabledPromptButton('Intrigue');
+            expect(this.player2).not.toHaveDisabledPromptButton('Done');
+            expect(this.player2).toHaveDisabledPromptButton('Military');
+            expect(this.player2).toHaveDisabledPromptButton('Power');
+            expect(this.player2).isReadyToTakeAction();
+        });
 
-                this.unopposedChallenge(this.player2, 'intrigue', this.arianne);
-                this.player2.clickPrompt('Continue');
-                expect(this.player2).not.toHaveDisabledPromptButton('Power');
-            });
+        it('only affects the next challenge', function () {
+            this.player1.clickMenu(this.redMountains, 'Force military challenge');
+            this.unopposedChallenge(this.player2, 'Intrigue', this.arianneMartell);
 
-            it('should still have effect if triggered after the plot condition has been fulfilled', function () {
-                this.unopposedChallenge(this.player2, 'intrigue', this.arianne);
-                this.player2.clickPrompt('Continue');
-                this.player1.clickMenu(this.redMountains, 'Force military challenge');
-                expect(this.player2).toHaveDisabledPromptButton('Power');
-                expect(this.player2).toHaveDisabledPromptButton('Done');
-            });
+            expect(this.player2).not.toHaveDisabledPromptButton('Power');
+            expect(this.player2).isReadyToTakeAction();
+        });
+
+        it('still has an effect if triggered after the plot condition has been fulfilled', function () {
+            this.unopposedChallenge(this.player2, 'Intrigue', this.arianneMartell);
+            this.player1.clickMenu(this.redMountains, 'Force military challenge');
+
+            expect(this.player2).toHaveDisabledPromptButton('Power');
+            expect(this.player2).toHaveDisabledPromptButton('Done');
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });
