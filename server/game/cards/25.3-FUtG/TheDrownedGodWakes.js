@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheDrownedGodWakes extends DrawCard {
     // The Drowned God Wakes (25044)
@@ -7,8 +8,8 @@ class TheDrownedGodWakes extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onDominanceDetermined: (event) =>
-                    this.controller === event.winner && event.difference >= 10
+                onDominanceDetermined: (event, context) =>
+                    context.player === event.winner && event.difference >= 10
             },
             message:
                 '{player} plays {source} to have each player choose a character they control, and kill the others',
@@ -20,13 +21,15 @@ class TheDrownedGodWakes extends DrawCard {
                     card.getType() === 'character' &&
                     card.controller === context.choosingPlayer
             },
-            handler: (context) => {
-                const targets = context.targets.getTargets();
-                let characters = this.game.filterCardsInPlay(
-                    (card) => !targets.includes(card) && card.getType() === 'character'
-                );
-                this.game.killCharacters(characters);
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                context.game
+                    .filterCardsInPlay(
+                        (card) =>
+                            !context.targets.getTargets().includes(card) &&
+                            card.getType() === 'character'
+                    )
+                    .map((card) => GameActions.kill({ card }))
+            )
         });
     }
 }

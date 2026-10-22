@@ -1505,10 +1505,6 @@
         "this-in-ability": 4,
         "add-message": 1
     },
-    "server/game/cards/20-HMW/TheStranger.js": {
-        "this-in-ability": 3,
-        "legacy-helper": 1
-    },
     "server/game/cards/20-HMW/WeGuardtheWay.js": {
         "this-in-ability": 4,
         "prompt-for-select": 1,
@@ -1712,10 +1708,6 @@
         "this-in-ability": 12,
         "prompt-for-select": 1,
         "add-message": 1
-    },
-    "server/game/cards/25.3-FUtG/TheDrownedGodWakes.js": {
-        "this-in-ability": 3,
-        "legacy-helper": 1
     },
     "server/game/cards/25.3-FUtG/VultureKing.js": {
         "this-in-ability": 7,

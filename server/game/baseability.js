@@ -82,7 +82,12 @@ class BaseAbility {
 
         return definitions.map(([name, targetProperties]) => {
             let { gameAction, ...rest } = targetProperties;
-            let filterAction = singleTarget ? properties.gameAction : undefined;
+            // When each player chooses, the ability's game action depends on every choice, so
+            // one player's choice alone cannot rule a card out.
+            let filterAction =
+                singleTarget && !BaseAbility.choosesPerPlayer(targetProperties)
+                    ? properties.gameAction
+                    : undefined;
 
             // A target's own game action is what the ability does to that target. A string
             // only names the action checked for immunity.
