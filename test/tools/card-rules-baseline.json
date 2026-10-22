@@ -219,12 +219,6 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/03-WotN/AheadOfTheTide.js": {
-        "add-message": 2,
-        "this-in-ability": 12,
-        "game-listener": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/03-WotN/AryasGift.js": {
         "this-in-ability": 3,
         "prompt-for-select": 1,
