@@ -211,10 +211,6 @@
         "legacy-helper": 1,
         "prompt-for-select": 1
     },
-    "server/game/cards/03-WotN/ThePackSurvives.js": {
-        "this-in-ability": 7,
-        "add-message": 2
-    },
     "server/game/cards/04.1-AtSK/BitterbridgeEncampment.js": {
         "this-in-ability": 9,
         "legacy-helper": 2,
@@ -353,11 +349,6 @@
         "this-in-ability": 5,
         "add-message": 1
     },
-    "server/game/cards/06.1-AMAF/AllMenAreFools.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/06.1-AMAF/FickleBannerman.js": {
         "this-in-ability": 9,
         "legacy-helper": 2,
@@ -409,12 +400,6 @@
         "prompt-for-select": 1,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/06.4-TRW/OldtownInformer.js": {
-        "this-in-ability": 16,
-        "legacy-helper": 2,
-        "add-message": 2,
-        "prompt-for-select": 1
     },
     "server/game/cards/06.4-TRW/SavingTheKingdom.js": {
         "legacy-helper": 2,
@@ -559,11 +544,6 @@
     "server/game/cards/08.6-SAT/DriftwoodCudgel.js": {
         "this-in-ability": 11,
         "legacy-helper": 2,
-        "add-message": 1
-    },
-    "server/game/cards/08.6-SAT/KingAtTheWall.js": {
-        "this-in-ability": 9,
-        "legacy-helper": 1,
         "add-message": 1
     },
     "server/game/cards/08.6-SAT/Qyburn.js": {
@@ -842,12 +822,6 @@
         "legacy-helper": 2,
         "add-message": 2
     },
-    "server/game/cards/12-KotI/GreatWyk.js": {
-        "this-in-ability": 7,
-        "prompt-for-select": 1,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/12-KotI/MaidensBane.js": {
         "this-in-ability": 4,
         "legacy-helper": 2,
@@ -880,10 +854,6 @@
         "prompt-for-select": 2,
         "add-message": 2,
         "legacy-helper": 2
-    },
-    "server/game/cards/13.2-CoS/ArrogantContender.js": {
-        "this-in-ability": 10,
-        "legacy-helper": 1
     },
     "server/game/cards/13.2-CoS/GhostOfHighHeart.js": {
         "this-in-ability": 4,
@@ -1091,10 +1061,6 @@
         "legacy-helper": 2,
         "add-message": 1
     },
-    "server/game/cards/15-DotE/Rhaegal.js": {
-        "this-in-ability": 9,
-        "add-message": 1
-    },
     "server/game/cards/15-DotE/SpottedSylva.js": {
         "this-in-ability": 5,
         "add-message": 1
@@ -1146,9 +1112,6 @@
         "this-in-ability": 3,
         "add-message": 2
     },
-    "server/game/cards/17.1-R/AllMenAreFools.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/17.1-R/BoundForTheWall.js": {
         "this-in-ability": 8,
         "legacy-helper": 2,
@@ -1175,12 +1138,6 @@
     },
     "server/game/cards/17.1-R/Meereen.js": {
         "legacy-helper": 1
-    },
-    "server/game/cards/17.1-R/OldtownInformer.js": {
-        "this-in-ability": 16,
-        "legacy-helper": 2,
-        "add-message": 2,
-        "prompt-for-select": 1
     },
     "server/game/cards/17.1-R/Qotho.js": {
         "this-in-ability": 1
@@ -1214,9 +1171,6 @@
         "add-message": 1
     },
     "server/game/cards/17.2-R2/AegonTargaryen.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/17.2-R2/Goldengrove.js": {
         "this-in-ability": 2
     },
     "server/game/cards/17.2-R2/Nightflyer.js": {
@@ -1378,9 +1332,6 @@
         "add-message": 3,
         "game-listener": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/21-FtR/Goldengrove.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/21-FtR/GreyWind.js": {
         "add-message": 2,

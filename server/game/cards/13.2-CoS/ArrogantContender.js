@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ArrogantContender extends DrawCard {
     // Arrogant Contender (13023)
@@ -8,38 +9,45 @@ class ArrogantContender extends DrawCard {
     // 1 power for each defending character (to a maximum of 3 power).
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge() && this.isParticipating(),
-            match: this,
-            effect: ability.effects.dynamicStrength(() => this.numOfOpponentParticipants())
+            condition: (context) =>
+                context.game.isDuringChallenge() && context.source.isParticipating(),
+            match: (card, context) => card === context.source,
+            effect: ability.effects.dynamicStrength((card) => opponentParticipants(card))
         });
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.isMatch({ winner: this.controller, attackingAlone: this }) &&
-                    this.canGainPower()
+                afterChallenge: (event, context) =>
+                    event.challenge.isMatch({
+                        winner: context.player,
+                        attackingAlone: context.source
+                    })
             },
             message: {
-                format: '{player} uses {source} to have it gain {gainedPower}',
-                args: { gainedPower: () => this.gainedPowerAmount() }
+                format: '{player} uses {source} to have it gain {gainedPower} power',
+                args: { gainedPower: (context) => gainedPower(context) }
             },
-            handler: () => {
-                this.modifyPower(this.gainedPowerAmount());
-            }
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.source,
+                amount: gainedPower(context)
+            }))
         });
     }
+}
 
-    gainedPowerAmount() {
-        return Math.min(this.numOfOpponentParticipants(), 3);
-    }
+function opponentParticipants(card) {
+    return card.game.currentChallenge
+        .getParticipants()
+        .filter((participant) => participant.controller !== card.controller).length;
+}
 
-    numOfOpponentParticipants() {
-        let participants = this.game.currentChallenge.getParticipants();
-        let opponentParticipants = participants.filter(
-            (card) => card.controller !== this.controller
-        );
-        return opponentParticipants.length;
-    }
+function gainedPower(context) {
+    return Math.min(
+        context.event.challenge
+            .getParticipants()
+            .filter((card) => card.controller !== context.player).length,
+        3
+    );
 }
 
 ArrogantContender.code = '13023';

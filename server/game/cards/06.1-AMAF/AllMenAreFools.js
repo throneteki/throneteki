@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class AllMenAreFools extends DrawCard {
     // All Men Are Fools (06004)
@@ -8,38 +9,25 @@ class AllMenAreFools extends DrawCard {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    event.challenge.strengthDifference >= 5 &&
-                    this.hasLady()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
+                    event.challenge.strengthDifference >= 5
             },
-            handler: () => {
-                let ladies = this.controller.filterCardsInPlay(
-                    (card) => card.hasTrait('Lady') && card.getType() === 'character'
-                );
-
-                for (let card of ladies) {
-                    card.modifyPower(1);
-                }
-
-                this.game.addMessage(
-                    '{0} plays {1} to have {2} gain 1 power',
-                    this.controller,
-                    this,
-                    ladies
-                );
-            }
+            message: {
+                format: '{player} plays {source} to have {ladies} gain 1 power',
+                args: { ladies: (context) => ladies(context) }
+            },
+            gameAction: GameActions.simultaneously((context) =>
+                ladies(context).map((card) => GameActions.gainPower({ card, amount: 1 }))
+            )
         });
     }
+}
 
-    hasLady() {
-        return this.controller.anyCardsInPlay(
-            (card) =>
-                card.hasTrait('Lady') &&
-                card.getType() === 'character' &&
-                card.allowGameAction('gainPower')
-        );
-    }
+function ladies(context) {
+    return context.player.filterCardsInPlay(
+        (card) => card.hasTrait('Lady') && card.getType() === 'character'
+    );
 }
 
 AllMenAreFools.code = '06004';

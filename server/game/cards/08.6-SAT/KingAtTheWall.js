@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class KingAtTheWall extends DrawCard {
     // King at the Wall (08108)
@@ -15,32 +16,31 @@ class KingAtTheWall extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
                     event.challenge.challengeType === 'power' &&
-                    event.challenge.isParticipating(this.parent) &&
-                    this.numberOfOutOfFactionLocations() > 0 &&
-                    this.controller.canDraw()
+                    !!context.source.parent &&
+                    event.challenge.isParticipating(context.source.parent) &&
+                    outOfFactionLocations(context) > 0
             },
-            handler: () => {
-                let cards = this.numberOfOutOfFactionLocations();
-                cards = this.controller.drawCardsToHand(cards).length;
-
-                this.game.addMessage(
-                    '{0} uses {1} to draw {2}',
-                    this.controller,
-                    this,
-                    TextHelper.count(cards, 'card')
-                );
-            }
+            message: {
+                format: '{player} uses {source} to draw {amount}',
+                args: {
+                    amount: (context) => TextHelper.count(outOfFactionLocations(context), 'card')
+                }
+            },
+            gameAction: GameActions.drawCards((context) => ({
+                player: context.player,
+                amount: outOfFactionLocations(context)
+            }))
         });
     }
+}
 
-    numberOfOutOfFactionLocations() {
-        return this.controller.getNumberOfCardsInPlay(
-            (card) => card.getType() === 'location' && card.isOutOfFaction()
-        );
-    }
+function outOfFactionLocations(context) {
+    return context.player.getNumberOfCardsInPlay(
+        (card) => card.getType() === 'location' && card.isOutOfFaction()
+    );
 }
 
 KingAtTheWall.code = '08108';
