@@ -151,11 +151,6 @@
         "add-message": 4,
         "legacy-helper": 1
     },
-    "server/game/cards/02.2-TRtW/InDoransName.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/02.2-TRtW/InTheNameOfYourKing.js": {
         "this-in-ability": 7,
         "add-message": 1
@@ -549,11 +544,6 @@
         "this-in-ability": 12,
         "legacy-helper": 2,
         "add-message": 2
-    },
-    "server/game/cards/06.2-GtR/IronIslandsMarket.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/06.2-GtR/LordRenlysRide.js": {
         "this-in-ability": 5,
@@ -1258,10 +1248,6 @@
         "prompt-for-select": 1,
         "legacy-helper": 2
     },
-    "server/game/cards/13.1-AtG/RhllorInfiltrator.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 2
-    },
     "server/game/cards/13.1-AtG/RiverGate.js": {
         "this-in-ability": 3,
         "legacy-helper": 1,
@@ -1382,9 +1368,6 @@
         "this-in-ability": 10,
         "add-message": 2,
         "legacy-helper": 1
-    },
-    "server/game/cards/13.6-LMHR/ExposeDuplicity.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/13.6-LMHR/FishmongersSquare.js": {
         "this-in-ability": 4,
@@ -1579,9 +1562,6 @@
     "server/game/cards/16-TTWDFL/SkyCell.js": {
         "this-in-ability": 7,
         "legacy-helper": 1
-    },
-    "server/game/cards/16-TTWDFL/TheArtOfSeduction.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/16-TTWDFL/TheGatheringStorm.js": {
         "add-message": 2,

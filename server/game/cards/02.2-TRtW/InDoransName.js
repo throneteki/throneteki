@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class InDoransName extends DrawCard {
     // In Doran's Name (02036)
@@ -7,20 +8,15 @@ class InDoransName extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel faction card to gain gold',
-            condition: () =>
-                this.controller.getNumberOfUsedPlots() >= 1 && this.controller.canGainGold(),
             cost: ability.costs.kneelFactionCard(),
-            handler: (context) => {
-                let gold = this.controller.getNumberOfUsedPlots();
-                gold = this.game.addGold(this.controller, gold);
-
-                this.game.addMessage(
-                    '{0} plays {1} and kneels their faction card to gain {2} gold',
-                    context.player,
-                    this,
-                    gold
-                );
-            }
+            message: {
+                format: '{player} plays {source} and kneels their faction card to gain {amount} gold',
+                args: { amount: (context) => context.player.getNumberOfUsedPlots() }
+            },
+            gameAction: GameActions.gainGold((context) => ({
+                player: context.player,
+                amount: context.player.getNumberOfUsedPlots()
+            }))
         });
     }
 }
