@@ -931,10 +931,6 @@
         "this-in-ability": 11,
         "add-message": 2
     },
-    "server/game/cards/11.1-TSC/SeizeTheInitiative.js": {
-        "this-in-ability": 7,
-        "add-message": 1
-    },
     "server/game/cards/11.2-TMoW/HagensDaughter.js": {
         "this-in-ability": 5,
         "legacy-helper": 1,
@@ -2036,9 +2032,6 @@
         "this-in-ability": 7,
         "prompt-for-select": 1,
         "add-message": 1
-    },
-    "server/game/cards/26.3-MaV/TheRegentsCouncil.js": {
-        "this-in-ability": 4
     },
     "server/game/cards/26.3-MaV/WanderingDisciple.js": {
         "this-in-ability": 3

@@ -1,5 +1,5 @@
 import DrawCard from '../../drawcard.js';
-import DetermineDominance from '../../gamesteps/DetermineDominance.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheRegentsCouncil extends DrawCard {
     // The Regent's Council (26046)
@@ -8,19 +8,20 @@ class TheRegentsCouncil extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'intrigue' &&
-                    this.controller.anyCardsInPlay(
-                        (card) =>
-                            card.isParticipating() &&
-                            (card.hasTrait('Small Council') || card.name === 'Cersei Lannister')
-                    )
+                    event.challenge.winner === context.player &&
+                    event.challenge
+                        .getParticipants()
+                        .some(
+                            (card) =>
+                                card.controller === context.player &&
+                                (card.hasTrait('Small Council') || card.name === 'Cersei Lannister')
+                        )
             },
             max: ability.limit.perPhase(1),
             message: '{player} plays {source} to determine dominance',
-            handler: () => {
-                this.game.queueStep(new DetermineDominance(this.game, this));
-            }
+            gameAction: GameActions.determineDominance()
         });
     }
 }

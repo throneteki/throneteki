@@ -217,6 +217,7 @@ export const Events = Object.freeze({
         }
     },
     onDelayedEffectAdded: { params: { source: 'BaseCard' } },
+    onDetermineDominance: { params: {} },
     onDominanceDetermined: { params: {} },
     onDupeEntersPlay: { params: { card: 'DrawCard', target: 'DrawCard' } },
     onEffectsCanceled: { params: { canceledEvent: 'Event' } },

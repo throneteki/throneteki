@@ -11,6 +11,7 @@ import ChooseCards from './ChooseCards.js';
 import ChooseGameAction from './ChooseGameAction.js';
 import ChooseChallengeType from './ChooseChallengeType.js';
 import ChooseIcon from './ChooseIcon.js';
+import DetermineDominance from './DetermineDominance.js';
 import DiscardAtRandom from './DiscardAtRandom.js';
 import DiscardCard from './DiscardCard.js';
 import DiscardToken from './DiscardToken.js';
@@ -51,6 +52,7 @@ import RevealTopCards from './RevealTopCards.js';
 import SacrificeCard from './SacrificeCard.js';
 import SaveCard from './SaveCard.js';
 import Search from './Search.js';
+import SetFirstPlayer from './SetFirstPlayer.js';
 import Shuffle from './Shuffle.js';
 import ShuffleIntoDeck from './ShuffleIntoDeck.js';
 import SimultaneousAction from './SimultaneousAction.js';
@@ -71,6 +73,7 @@ const GameActions = {
     chooseIcon: (props) => new ChooseIcon(props),
     chooseCards: (props) => new AbilityAdapter(new ChooseCards(props), (context) => ({ context })),
     delayedEffect: (props) => new AddDelayedEffect(props),
+    determineDominance: (props) => new AbilityAdapter(DetermineDominance, props),
     discardAtRandom: (props) => new AbilityAdapter(DiscardAtRandom, props),
     discardCard: (props) => new AbilityAdapter(DiscardCard, props),
     discardToken: (props) => new AbilityAdapter(DiscardToken, props),
@@ -112,6 +115,7 @@ const GameActions = {
     sacrificeCard: (props) => new AbilityAdapter(SacrificeCard, props),
     saveCard: (props) => new AbilityAdapter(SaveCard, props),
     search: (props) => new AbilityAdapter(new Search(props), (context) => ({ context })),
+    setFirstPlayer: (props) => new AbilityAdapter(SetFirstPlayer, props),
     shuffle: (props) => new AbilityAdapter(Shuffle, props),
     shuffleIntoDeck: (props) => new AbilityAdapter(ShuffleIntoDeck, props),
     simultaneously: function (actions) {
