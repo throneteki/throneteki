@@ -19,6 +19,7 @@ import DiscardTopCards from './DiscardTopCards.js';
 import DiscardPower from './DiscardPower.js';
 import DrawCards from './DrawCards.js';
 import DrawSpecific from './DrawSpecific.js';
+import EndChallenge from './EndChallenge.js';
 import GainGold from './GainGold.js';
 import GainIcon from './GainIcon.js';
 import GainPower from './GainPower.js';
@@ -81,6 +82,7 @@ const GameActions = {
     discardPower: (props) => new AbilityAdapter(DiscardPower, props),
     drawCards: (props) => new AbilityAdapter(DrawCards, props),
     drawSpecific: (props) => new AbilityAdapter(DrawSpecific, props),
+    endChallenge: (props) => new AbilityAdapter(EndChallenge, props),
     gainGold: (props) => new AbilityAdapter(GainGold, props),
     gainIcon: (props) => new AbilityAdapter(GainIcon, props),
     gainPower: (props) => new AbilityAdapter(GainPower, props),

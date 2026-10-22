@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class InTheNameOfYourKing extends DrawCard {
     // In the Name of Your King! (02028)
@@ -8,25 +9,23 @@ class InTheNameOfYourKing extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'End challenge',
-            condition: () =>
-                this.game.isDuringChallenge({
+            condition: (context) =>
+                context.game.isDuringChallenge({
                     challengeType: 'military',
-                    defendingPlayer: this.controller
+                    defendingPlayer: context.player
                 }),
             cost: ability.costs.kneelFactionCard(),
-            handler: () => {
-                this.game.currentChallenge.cancelChallenge();
-                this.untilEndOfPhase((ability) => ({
+            message: '{player} plays {source} to end this challenge with no winner or loser',
+            gameAction: GameActions.simultaneously([
+                GameActions.endChallenge((context) => ({
+                    challenge: context.game.currentChallenge
+                })),
+                GameActions.lastingEffect(() => ({
+                    duration: 'untilEndOfPhase',
                     targetController: 'current',
                     effect: ability.effects.cannotInitiateChallengeType('military')
-                }));
-
-                this.game.addMessage(
-                    '{0} uses {1} to end this challenge with no winner or loser',
-                    this.controller,
-                    this
-                );
-            }
+                }))
+            ])
         });
     }
 }

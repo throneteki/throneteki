@@ -179,6 +179,7 @@ export const Events = Object.freeze({
     },
     onCardsShuffledIntoDeck: { params: { cards: 'DrawCard[]' } },
     onCardsSwitched: { params: { cards: 'BaseCard[]' } },
+    onChallengeEnded: { params: { challenge: 'Challenge' } },
     onChallengeFinished: { params: { challenge: 'Challenge' } },
     onChallengeInitiated: { params: { challenge: 'Challenge' } },
     onChallengeRedirectable: { params: { challenge: 'Challenge' } },

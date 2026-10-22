@@ -137,10 +137,6 @@
         "add-message": 4,
         "legacy-helper": 1
     },
-    "server/game/cards/02.2-TRtW/InTheNameOfYourKing.js": {
-        "this-in-ability": 7,
-        "add-message": 1
-    },
     "server/game/cards/02.2-TRtW/LadyInWaiting.js": {
         "this-in-ability": 4,
         "legacy-helper": 2,
@@ -596,10 +592,6 @@
     },
     "server/game/cards/07-WotW/GrizzledMiner.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/07-WotW/IShallWinNoGlory.js": {
-        "this-in-ability": 5,
-        "add-message": 1
     },
     "server/game/cards/07-WotW/JonSnow.js": {
         "this-in-ability": 9,
