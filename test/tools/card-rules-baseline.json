@@ -1993,9 +1993,6 @@
         "event-registration": 1,
         "this-in-ability": 4
     },
-    "server/game/cards/26.6-NCbT/NoCrownButTruth.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/26.6-NCbT/TheStallionWhoMountsTheWorld.js": {
         "this-in-ability": 5,
         "prompt-for-select": 1,
