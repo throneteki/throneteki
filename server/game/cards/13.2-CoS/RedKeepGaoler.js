@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RedKeepGaoler extends DrawCard {
     // Red Keep Gaoler (13027)
@@ -8,7 +9,7 @@ class RedKeepGaoler extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Put into play',
-            condition: (context) => context.player.canPutIntoPlay(this, 'outOfShadows'),
+            condition: (context) => context.player.canPutIntoPlay(context.source, 'outOfShadows'),
             location: 'shadows',
             cost: ability.costs.movePowerFromFaction({
                 amount: 2,
@@ -21,9 +22,10 @@ class RedKeepGaoler extends DrawCard {
                 format: '{player} moves 2 power to {powerRecipient} to put {source} into play from shadows',
                 args: { powerRecipient: (context) => context.costs.movePowerFromFaction }
             },
-            handler: (context) => {
-                context.player.putIntoPlay(this);
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.source
+            }))
         });
     }
 }

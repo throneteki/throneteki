@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RenlyBaratheon extends DrawCard {
     // Renly Baratheon (14004)
@@ -10,19 +11,20 @@ class RenlyBaratheon extends DrawCard {
             title: 'Put character into play',
             cost: ability.costs.kneelFactionCard(),
             target: {
-                cardCondition: (card) =>
-                    card.controller === this.controller &&
+                cardCondition: (card, context) =>
+                    card.controller === context.source.controller &&
                     card.location === 'hand' &&
                     card.getType() === 'character' &&
                     !card.isFaction('baratheon') &&
-                    card.getPrintedCost() <= this.getStrength() &&
-                    this.controller.canPutIntoPlay(card)
+                    card.getPrintedCost() <= context.source.getStrength() &&
+                    context.source.controller.canPutIntoPlay(card)
             },
             message:
                 '{player} uses {source} and kneels their faction card to put {target} into play',
-            handler: (context) => {
-                context.player.putIntoPlay(context.target);
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 }

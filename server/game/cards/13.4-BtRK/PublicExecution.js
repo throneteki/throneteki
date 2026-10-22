@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class PublicExecution extends DrawCard {
     // Public Execution (13068)
@@ -12,9 +13,7 @@ class PublicExecution extends DrawCard {
                 gameAction: 'kill'
             },
             message: '{player} plays {source} to kill {target}',
-            handler: (context) => {
-                this.game.killCharacter(context.target);
-            }
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 }

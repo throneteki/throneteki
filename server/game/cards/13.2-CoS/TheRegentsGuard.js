@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheRegentsGuard extends DrawCard {
     // The Regent's Guard (13029)
@@ -16,14 +17,15 @@ class TheRegentsGuard extends DrawCard {
                     !card.hasTrait('Ally') &&
                     card.getPrintedCost() >= 4
             ),
-            condition: (context) => context.player.canPutIntoPlay(this, 'outOfShadows'),
+            condition: (context) => context.player.canPutIntoPlay(context.source, 'outOfShadows'),
             message: {
                 format: '{player} returns {returnedCard} to hand to put {source} into play from shadows',
                 args: { returnedCard: (context) => context.costs.returnToHand }
             },
-            handler: (context) => {
-                context.player.putIntoPlay(this);
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.source
+            }))
         });
     }
 }

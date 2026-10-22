@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ForestPatrol extends DrawCard {
     // Forest Patrol (13065)
@@ -12,14 +13,15 @@ class ForestPatrol extends DrawCard {
             cost: ability.costs.kneel(
                 (card) => card.isFaction('thenightswatch') && card.getType() === 'location'
             ),
-            condition: (context) => context.player.canPutIntoPlay(this, 'outOfShadows'),
+            condition: (context) => context.player.canPutIntoPlay(context.source, 'outOfShadows'),
             message: {
                 format: '{player} uses {source} and kneels {location} to put {source} into play from shadows',
                 args: { location: (context) => context.costs.kneel }
             },
-            handler: (context) => {
-                context.player.putIntoPlay(this);
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.source
+            }))
         });
     }
 }

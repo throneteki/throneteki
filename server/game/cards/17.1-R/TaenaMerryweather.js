@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TaenaMerryweather extends DrawCard {
     // Taena Merryweather (17110)
@@ -7,22 +8,16 @@ class TaenaMerryweather extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPlayed: (event) =>
+                onCardPlayed: (event, context) =>
                     event.card.getType() === 'event' &&
-                    event.card.controller === this.controller &&
-                    this.controller.canDraw()
+                    event.card.controller === context.source.controller &&
+                    context.source.controller.canDraw()
             },
             limit: ability.limit.perPhase(1),
             cost: ability.costs.discardFromHand(),
-            handler: (context) => {
-                this.controller.drawCardsToHand(1);
-                this.game.addMessage(
-                    '{0} uses {1} and discards {2} from their hand to draw 1 card',
-                    this.controller,
-                    this,
-                    context.costs.discardFromHand
-                );
-            }
+            message:
+                '{player} uses {source} and discards {costs.discardFromHand} from their hand to draw 1 card',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });
     }
 }

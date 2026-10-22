@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class KingsLandingProselyte extends DrawCard {
     // King's Landing Proselyte (13051)
@@ -10,14 +11,15 @@ class KingsLandingProselyte extends DrawCard {
             title: 'Put into play',
             location: 'shadows',
             cost: ability.costs.kill((card) => !card.kneeled && card.isFaction('greyjoy')),
-            condition: (context) => context.player.canPutIntoPlay(this, 'outOfShadows'),
+            condition: (context) => context.player.canPutIntoPlay(context.source, 'outOfShadows'),
             message: {
                 format: '{player} uses {source} and kills {killed} to put {source} into play from shadows',
                 args: { killed: (context) => context.costs.kill }
             },
-            handler: (context) => {
-                context.player.putIntoPlay(this);
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.source
+            }))
         });
     }
 }

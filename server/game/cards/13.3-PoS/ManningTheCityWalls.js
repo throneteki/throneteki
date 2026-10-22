@@ -1,4 +1,5 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ManningTheCityWalls extends PlotCard {
     // Manning the City Walls (13060)
@@ -12,13 +13,14 @@ class ManningTheCityWalls extends PlotCard {
                     card.location === 'hand' &&
                     card.getType() === 'character' &&
                     !card.isUnique() &&
-                    card.getPrintedCost() <= this.maxPrintedCost(context) &&
+                    card.getPrintedCost() <= context.source.maxPrintedCost(context) &&
                     context.player.canPutIntoPlay(card)
             },
             message: '{player} uses {source} to put {target} into play',
-            handler: (context) => {
-                context.player.putIntoPlay(context.target);
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 

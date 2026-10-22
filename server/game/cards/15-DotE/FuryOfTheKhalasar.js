@@ -1,10 +1,11 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class FuryOfTheKhalasr extends PlotCard {
     // Fury of the Khalasar (15046)
     // Reaction: After the challenges phase begins, put a Dothraki character into play from your
     // hand. At the end of the phase, if that card is still in play, return it to your hand.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 onPhaseStarted: (event) => event.phase === 'challenge'
@@ -19,21 +20,20 @@ class FuryOfTheKhalasr extends PlotCard {
                         type: 'character'
                     }) && context.player.canPutIntoPlay(card)
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to put {2} into play',
-                    context.player,
-                    context.source,
-                    context.target
-                );
-                context.player.putIntoPlay(context.target);
-                this.atEndOfPhase((ability) => ({
+            message: '{player} uses {source} to put {target} into play',
+            gameAction: GameActions.simultaneously([
+                GameActions.putIntoPlay((context) => ({
+                    player: context.player,
+                    card: context.target
+                })),
+                GameActions.lastingEffect((context) => ({
+                    duration: 'atEndOfPhase',
                     match: context.target,
                     condition: () => ['play area', 'duplicate'].includes(context.target.location),
                     targetLocation: 'any',
                     effect: ability.effects.returnToHandIfStillInPlay(true)
-                }));
-            }
+                }))
+            ])
         });
     }
 }

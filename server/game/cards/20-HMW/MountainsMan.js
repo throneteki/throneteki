@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MountainsMan extends DrawCard {
     // Mountain's Man (20013)
@@ -13,7 +14,8 @@ class MountainsMan extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardDiscarded: (event) => event.isPillage && event.source === this.parent
+                onCardDiscarded: (event, context) =>
+                    event.isPillage && event.source === context.source.parent
             },
             target: {
                 cardCondition: (card, context) =>
@@ -23,9 +25,7 @@ class MountainsMan extends DrawCard {
                 gameAction: 'kneel'
             },
             message: '{player} uses {source} to kneel {target}',
-            handler: (context) => {
-                context.target.controller.kneelCard(context.target);
-            }
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target }))
         });
     }
 }

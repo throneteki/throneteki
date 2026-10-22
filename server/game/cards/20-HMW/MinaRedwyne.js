@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MinaRedwyne extends DrawCard {
     // Mina Redwyne (20036)
@@ -7,24 +8,22 @@ class MinaRedwyne extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    event.card.controller === this.controller &&
+                onCardEntersPlay: (event, context) =>
+                    event.card.controller === context.source.controller &&
                     (event.card.hasTrait('House Redwyne') ||
                         event.card.name === 'The Queen of Thorns') &&
-                    this.controller.canDraw(),
-                onCardPlaced: (event) =>
+                    context.source.controller.canDraw(),
+                onCardPlaced: (event, context) =>
                     event.card.location === 'discard pile' &&
-                    event.player === this.controller &&
-                    event.card.owner === this.controller &&
+                    event.player === context.source.controller &&
+                    event.card.owner === context.source.controller &&
                     (event.card.hasTrait('House Redwyne') ||
                         event.card.name === 'The Queen of Thorns') &&
-                    this.controller.canDraw()
+                    context.source.controller.canDraw()
             },
             limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to draw 1 card',
-            handler: (context) => {
-                context.player.drawCardsToHand(1);
-            }
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });
     }
 }

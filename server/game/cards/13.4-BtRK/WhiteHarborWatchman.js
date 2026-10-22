@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WhiteHarborWatchman extends DrawCard {
     // White Harbor Watchman (13061)
@@ -10,15 +11,11 @@ class WhiteHarborWatchman extends DrawCard {
                 onCardOutOfShadows: (event) => event.card.getType() === 'character'
             },
             cost: ability.costs.sacrificeSelf(),
-            handler: (context) => {
-                this.game.killCharacter(context.event.card);
-                this.game.addMessage(
-                    '{0} sacrifices {1} to kill {2}',
-                    this.controller,
-                    this,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} sacrifices {source} to kill {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.kill((context) => ({ card: context.event.card }))
         });
     }
 }

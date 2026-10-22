@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Wraith extends DrawCard {
     // Wraith (19001)
@@ -6,7 +7,8 @@ class Wraith extends DrawCard {
     // Action: Kneel and sacrifice Wraith to choose and kneel a location.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: (card) => card.name === 'Dale Seaworth',
+            match: (card, context) =>
+                card.name === 'Dale Seaworth' && card.controller === context.source.controller,
             effect: ability.effects.addKeyword('stealth')
         });
 
@@ -19,15 +21,8 @@ class Wraith extends DrawCard {
                     card.location === 'play area' && card.getType() === 'location' && !card.kneeled,
                 gameAction: 'kneel'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} kneels and sacrifices {1} to kneel {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-                context.target.controller.kneelCard(context.target);
-            }
+            message: '{player} kneels and sacrifices {source} to kneel {target}',
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target }))
         });
     }
 }

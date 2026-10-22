@@ -1,4 +1,5 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheSmith extends PlotCard {
     // The Smith (20058)
@@ -13,17 +14,8 @@ class TheSmith extends PlotCard {
                     card.getType() === 'location' && card.location === 'play area' && !card.kneeled,
                 gameAction: 'kneel'
             },
-            handler: (context) => {
-                context.target.controller.kneelCard(context.target);
-
-                this.game.addMessage(
-                    '{0} uses {1} and kneels {2} to kneel {3}',
-                    context.player,
-                    this,
-                    context.costs.kneel,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} and kneels {costs.kneel} to kneel {target}',
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target }))
         });
     }
 }

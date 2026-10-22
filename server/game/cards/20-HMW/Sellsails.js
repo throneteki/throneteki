@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Sellsails extends DrawCard {
     // Sellsails (20002)
@@ -18,9 +19,7 @@ class Sellsails extends DrawCard {
                 gameAction: 'stand'
             },
             message: '{player} discards 1 gold from {source} to stand {target}',
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-            }
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

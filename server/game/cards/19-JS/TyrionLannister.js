@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TyrionLannister extends DrawCard {
     // Tyrion Lannister (19014)
@@ -18,24 +19,23 @@ class TyrionLannister extends DrawCard {
                     card.hasTrait('Mercenary') &&
                     context.player.canPutIntoPlay(card)
             },
-            handler: (context) => {
-                context.player.putIntoPlay(context.target);
-
-                this.atEndOfPhase((ability) => ({
+            message: {
+                format: "{player} discards 1 gold from {source} to put {target} into play from {owner}'s discard pile under their control",
+                args: { owner: (context) => context.target.owner }
+            },
+            gameAction: GameActions.simultaneously([
+                GameActions.putIntoPlay((context) => ({
+                    player: context.player,
+                    card: context.target
+                })),
+                GameActions.lastingEffect((context) => ({
+                    duration: 'atEndOfPhase',
                     match: context.target,
                     condition: () => ['play area', 'duplicate'].includes(context.target.location),
                     targetLocation: 'any',
                     effect: ability.effects.moveToBottomOfDeckIfStillInPlay(true)
-                }));
-
-                this.game.addMessage(
-                    "{0} discards 1 gold from {1} to put {2} into play from {3}'s discard pile under their control",
-                    context.player,
-                    this,
-                    context.target,
-                    context.target.owner
-                );
-            }
+                }))
+            ])
         });
     }
 }

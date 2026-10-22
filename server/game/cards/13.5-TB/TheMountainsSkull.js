@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheMountainsSkull extends DrawCard {
     // The Mountain's Skull (13096)
@@ -12,15 +13,16 @@ class TheMountainsSkull extends DrawCard {
         this.reaction({
             location: ['hand', 'discard pile'],
             when: {
-                onCharacterKilled: (event) =>
-                    event.card.controller !== this.controller &&
+                onCharacterKilled: (event, context) =>
+                    event.card.controller !== context.source.controller &&
                     event.card.getPrintedStrength() >= 6 &&
-                    this.controller.canPutIntoPlay(this)
+                    context.source.controller.canPutIntoPlay(context.source)
             },
-            handler: (context) => {
-                context.player.putIntoPlay(this);
-                this.game.addMessage('{0} uses {1} to put {1} into play.', context.player, this);
-            }
+            message: '{player} uses {source} to put {source} into play.',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.source
+            }))
         });
     }
 }

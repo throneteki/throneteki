@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TowerOfTheHand extends DrawCard {
     // Tower of the Hand (13062)
@@ -7,8 +8,9 @@ class TowerOfTheHand extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) =>
-                    event.card.controller === this.controller && this.game.anyPlotHasTrait('Winter')
+                onCardOutOfShadows: (event, context) =>
+                    event.card.controller === context.source.controller &&
+                    context.game.anyPlotHasTrait('Winter')
             },
             limit: ability.limit.perPhase(1),
             target: {
@@ -20,9 +22,7 @@ class TowerOfTheHand extends DrawCard {
                 gameAction: 'stand'
             },
             message: '{player} kneels {source} to stand {target}',
-            handler: (context) => {
-                context.player.standCard(context.target);
-            }
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

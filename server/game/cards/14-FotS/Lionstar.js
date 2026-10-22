@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Lionstar extends DrawCard {
     // Lionstar (14028)
@@ -9,24 +10,28 @@ class Lionstar extends DrawCard {
             title: 'Put a character into play',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'hand' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.getType() === 'character' &&
                     card.isFaction('lannister') &&
-                    this.controller.canPutIntoPlay(card) &&
+                    context.source.controller.canPutIntoPlay(card) &&
                     card.getPrintedCost() <= 4
             },
             message: '{player} kneels {source} to put {target} into play',
-            handler: (context) => {
-                context.player.putIntoPlay(context.target);
-                this.atEndOfPhase((ability) => ({
+            gameAction: GameActions.simultaneously([
+                GameActions.putIntoPlay((context) => ({
+                    player: context.player,
+                    card: context.target
+                })),
+                GameActions.lastingEffect((context) => ({
+                    duration: 'atEndOfPhase',
                     match: context.target,
                     condition: () => ['play area', 'duplicate'].includes(context.target.location),
                     targetLocation: 'any',
                     effect: ability.effects.discardIfStillInPlay()
-                }));
-            }
+                }))
+            ])
         });
     }
 }
