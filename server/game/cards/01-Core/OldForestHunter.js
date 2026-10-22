@@ -1,5 +1,4 @@
 import DrawCard from '../../drawcard.js';
-import GameActions from '../../GameActions/index.js';
 
 class OldForestHunter extends DrawCard {
     // Old Forest Hunter (01131)
@@ -8,12 +7,18 @@ class OldForestHunter extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Discard a card to gain 1 gold',
-            condition: (context) => context.source.controller.canGainGold(),
+            condition: () => this.controller.canGainGold(),
             cost: ability.costs.discardFromHand(),
             limit: ability.limit.perPhase(1),
-            message:
-                '{player} uses {source} and discards {costs.discardFromHand} from their hand to gain 1 gold',
-            gameAction: GameActions.gainGold((context) => ({ player: context.player, amount: 1 }))
+            handler: (context) => {
+                this.game.addGold(this.controller, 1);
+                this.game.addMessage(
+                    '{0} uses {1} and discards {2} from their hand to gain 1 gold',
+                    this.controller,
+                    this,
+                    context.costs.discardFromHand
+                );
+            }
         });
     }
 }
