@@ -1,4 +1,5 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Outwit extends PlotCard {
     // Outwit (14047)
@@ -26,9 +27,7 @@ class Outwit extends PlotCard {
                     plot: (context) => context.event.source
                 }
             },
-            handler: (context) => {
-                context.event.cancel();
-            }
+            gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
         });
     }
 }

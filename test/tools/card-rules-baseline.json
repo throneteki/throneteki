@@ -389,10 +389,6 @@
         "legacy-helper": 2,
         "add-message": 2
     },
-    "server/game/cards/06.2-GtR/LordRenlysRide.js": {
-        "this-in-ability": 5,
-        "add-message": 1
-    },
     "server/game/cards/06.2-GtR/Melisandre.js": {
         "this-in-ability": 8,
         "add-message": 2,
@@ -431,11 +427,6 @@
         "add-message": 2,
         "prompt-for-select": 1
     },
-    "server/game/cards/06.4-TRW/Plunder.js": {
-        "this-in-ability": 8,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/06.4-TRW/SavingTheKingdom.js": {
         "legacy-helper": 2,
         "this-in-ability": 11,
@@ -466,11 +457,6 @@
     },
     "server/game/cards/06.6-TBWB/BericDondarrion.js": {
         "this-in-ability": 9,
-        "add-message": 1
-    },
-    "server/game/cards/06.6-TBWB/LockedAway.js": {
-        "legacy-helper": 1,
-        "this-in-ability": 7,
         "add-message": 1
     },
     "server/game/cards/06.6-TBWB/PayTheIronPrice.js": {
@@ -715,11 +701,6 @@
         "add-message": 2,
         "legacy-helper": 1
     },
-    "server/game/cards/10-SoD/Patience.js": {
-        "legacy-helper": 1,
-        "this-in-ability": 6,
-        "add-message": 1
-    },
     "server/game/cards/10-SoD/Plundered.js": {
         "this-in-ability": 11,
         "legacy-helper": 3,
@@ -893,11 +874,6 @@
         "legacy-helper": 2,
         "add-message": 1
     },
-    "server/game/cards/12-KotI/ReturnToTheFields.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 2,
-        "add-message": 1
-    },
     "server/game/cards/12-KotI/SeaOfBlood.js": {
         "this-in-ability": 5
     },
@@ -914,11 +890,6 @@
         "add-message": 2,
         "prompt-for-select": 1,
         "legacy-helper": 2
-    },
-    "server/game/cards/13.1-AtG/RiverGate.js": {
-        "this-in-ability": 3,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/13.1-AtG/SerMandonMoore.js": {
         "this-in-ability": 10,
@@ -1001,9 +972,6 @@
         "prompt-for-select": 1,
         "add-message": 2,
         "legacy-helper": 2
-    },
-    "server/game/cards/13.5-TB/KingsLandingRiot.js": {
-        "this-in-ability": 4
     },
     "server/game/cards/13.5-TB/ShadowOfTheNorth.js": {
         "this-in-ability": 12,
@@ -1236,11 +1204,6 @@
     "server/game/cards/17.1-R/Qotho.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/17.1-R/ReturnToTheFields.js": {
-        "this-in-ability": 3,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/17.1-R/SeaOfBlood.js": {
         "this-in-ability": 3
     },
@@ -1316,11 +1279,6 @@
         "this-in-ability": 9,
         "legacy-helper": 2,
         "add-message": 2
-    },
-    "server/game/cards/18-FH/ThePointyEnd.js": {
-        "add-message": 2,
-        "this-in-ability": 6,
-        "legacy-helper": 3
     },
     "server/game/cards/18-FH/VargoHoat.js": {
         "this-in-ability": 13,
@@ -1632,9 +1590,6 @@
         "this-in-ability": 2,
         "add-message": 1
     },
-    "server/game/cards/25.5-TIC/BlackhavenRider.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/25.5-TIC/BoltonLoyalist.js": {
         "this-in-ability": 5,
         "prompt-for-select": 1,
@@ -1761,9 +1716,6 @@
         "add-message": 1
     },
     "server/game/cards/26.6-NCbT/WarElephants.js": {
-        "this-in-ability": 3
-    },
-    "server/game/cards/26.6-NCbT/WickWhittlestick.js": {
         "this-in-ability": 3
     },
     "server/game/cards/26.6-NCbT/WolvesInTheHills.js": {

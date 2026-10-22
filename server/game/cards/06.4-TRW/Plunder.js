@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Plunder extends DrawCard {
     // Plunder (06072)
@@ -7,36 +8,24 @@ class Plunder extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Gain gold',
-            condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelFactionCard(),
-            chooseOpponent: (opponent) => this.getGold(opponent) >= 1,
-            handler: (context) => {
-                let gold = this.getGold(context.opponent);
-                gold = this.game.addGold(this.controller, gold);
-
-                this.game.addMessage(
-                    '{0} uses {1} and kneels their faction card to choose {2} and gain {3} gold',
-                    this.controller,
-                    this,
-                    context.opponent,
-                    gold
-                );
-            }
+            chooseOpponent: (opponent) => plunderedGold(opponent) >= 1,
+            message: {
+                format: '{player} plays {source} and kneels their faction card to choose {opponent} and gain {gold} gold',
+                args: { gold: (context) => plunderedGold(context.opponent) }
+            },
+            gameAction: GameActions.gainGold((context) => ({
+                player: context.player,
+                amount: plunderedGold(context.opponent)
+            }))
         });
     }
+}
 
-    getGold(opponent) {
-        return opponent.discardPile.reduce((num, card) => {
-            if (
-                card.location === 'discard pile' &&
-                (card.getType() === 'location' || card.getType() === 'attachment')
-            ) {
-                return num + 1;
-            }
-
-            return num;
-        }, 0);
-    }
+function plunderedGold(opponent) {
+    return opponent.discardPile.filter((card) =>
+        ['location', 'attachment'].includes(card.getType())
+    ).length;
 }
 
 Plunder.code = '06072';

@@ -18,24 +18,29 @@ class ReturnToTheFields extends PlotCard {
                     card.controller === context.player,
                 gameAction: 'sacrifice'
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        context.target.map((card) => GameActions.sacrificeCard({ card }))
-                    )
-                );
-
-                let cardsDrawn = context.player.drawCardsToHand(context.target.length).length;
-                let goldGained = this.game.addGold(context.player, context.target.length);
-                this.game.addMessage(
-                    '{0} uses {1} to sacrifice {2}, draw {3}, and gain {4} gold',
-                    context.player,
-                    this,
-                    context.target,
-                    TextHelper.count(cardsDrawn, 'card'),
-                    goldGained
-                );
-            }
+            message: '{player} uses {source} to sacrifice {target}',
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) => GameActions.sacrificeCard({ card }))
+            ).then({
+                message: {
+                    format: 'Then {player} draws {cards} and gains {gold} gold',
+                    args: {
+                        cards: (context) =>
+                            TextHelper.count(context.parentContext.target.length, 'card'),
+                        gold: (context) => context.parentContext.target.length
+                    }
+                },
+                gameAction: GameActions.simultaneously((context) => [
+                    GameActions.drawCards({
+                        player: context.player,
+                        amount: context.parentContext.target.length
+                    }),
+                    GameActions.gainGold({
+                        player: context.player,
+                        amount: context.parentContext.target.length
+                    })
+                ])
+            })
         });
     }
 }

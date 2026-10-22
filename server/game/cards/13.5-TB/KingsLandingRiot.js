@@ -8,28 +8,23 @@ class KingsLandingRiot extends PlotCard {
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {
-                onPhaseEnded: (event) =>
+                onPhaseEnded: (event, context) =>
                     event.phase === 'challenge' &&
-                    this.controller.getNumberOfUsedPlotsByTrait('City') >= 3
+                    context.player.getNumberOfUsedPlotsByTrait('City') >= 3
             },
             message: {
                 format: '{player} is forced by {source} to discard {charactersInPlay}',
-                args: { charactersInPlay: () => this.charactersInPlay() }
+                args: { charactersInPlay: (context) => charactersInPlay(context) }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        this.charactersInPlay().map((card) => GameActions.discardCard({ card }))
-                    ),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                charactersInPlay(context).map((card) => GameActions.discardCard({ card }))
+            )
         });
     }
+}
 
-    charactersInPlay() {
-        return this.game.filterCardsInPlay((card) => card.getType() === 'character');
-    }
+function charactersInPlay(context) {
+    return context.game.filterCardsInPlay((card) => card.getType() === 'character');
 }
 
 KingsLandingRiot.code = '13100';

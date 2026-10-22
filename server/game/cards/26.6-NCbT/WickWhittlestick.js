@@ -10,9 +10,9 @@ class WickWhittlestick extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) =>
-                    event.card === this &&
-                    this.controller.anyCardsInPlay({ type: 'character', participating: true })
+                onCardOutOfShadows: (event, context) =>
+                    event.card === context.source &&
+                    context.player.anyCardsInPlay({ type: 'character', participating: true })
             },
             target: {
                 choosingPlayer: 'each',
@@ -21,20 +21,13 @@ class WickWhittlestick extends DrawCard {
                     card.location === 'play area' &&
                     card.controller === context.choosingPlayer &&
                     card.getType() === 'character' &&
-                    card.isParticipating() &&
-                    GameActions.discardCard({ card }).allow()
+                    card.isParticipating(),
+                gameAction: 'discard'
             },
             message: '{player} uses {source} to discard {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        context.targets
-                            .getTargets()
-                            .map((card) => GameActions.discardCard({ card }))
-                    ),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                context.targets.getTargets().map((card) => GameActions.discardCard({ card }))
+            )
         });
     }
 }
