@@ -10,9 +10,12 @@ class WhiteHarborGalley extends DrawCard {
     // the challenge on your side.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.game.isDuringChallenge({
-                    or: [{ attackingPlayer: this.controller }, { defendingPlayer: this.controller }]
+            condition: (context) =>
+                context.game.isDuringChallenge({
+                    or: [
+                        { attackingPlayer: context.source.controller },
+                        { defendingPlayer: context.source.controller }
+                    ]
                 }),
             match: (card) => card.isParticipating(),
             targetController: 'any',
@@ -20,21 +23,19 @@ class WhiteHarborGalley extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) =>
-                    event.card === this &&
-                    this.controller.anyCardsInPlay({ type: 'character', participating: true })
+                onCardOutOfShadows: (event, context) =>
+                    event.card === context.source &&
+                    context.source.controller.anyCardsInPlay({
+                        type: 'character',
+                        participating: true
+                    })
             },
             cost: ability.costs.kneel(
                 (card) => card.getType() === 'character' && card.canParticipateInChallenge()
             ),
             message:
                 '{player} uses {source} and kneels {costs.kneel} to have it participate in the challenge on their side',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.addToChallenge((context) => ({ card: context.costs.kneel })),
-                    context
-                );
-            }
+            gameAction: GameActions.addToChallenge((context) => ({ card: context.costs.kneel }))
         });
     }
 }

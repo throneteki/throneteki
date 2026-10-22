@@ -10,7 +10,7 @@ class MaceTyrell extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand and remove Army',
-            condition: () => this.game.isDuringChallenge(),
+            condition: (context) => context.game.isDuringChallenge(),
             cost: [
                 ability.costs.stand((card) => card.hasTrait('Army') && card.isParticipating()),
                 ability.costs.removeFromChallenge(
@@ -27,15 +27,10 @@ class MaceTyrell extends DrawCard {
             limit: ability.limit.perPhase(1),
             message:
                 '{player} uses {source}, stands and removes {cost.stand} from the challenge to stand and remove {target} from the challenge',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously([
-                        GameActions.standCard({ card: context.target }),
-                        GameActions.removeFromChallenge({ card: context.target })
-                    ]),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously((context) => [
+                GameActions.standCard({ card: context.target }),
+                GameActions.removeFromChallenge({ card: context.target })
+            ])
         });
     }
 }

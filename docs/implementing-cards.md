@@ -609,6 +609,19 @@ this.action({
 });
 ```
 
+A cost that selects a card (`ability.costs.kneel(condition)`, `discardPower(amount, condition)`
+and so on) puts the chosen card on `context.costs`, and the `gameAction` can act on it. Like a
+target, the card isn't chosen until the cost is paid, so the game action isn't checked before then.
+See [Statue of Baelor](../server/game/cards/13.3-PoS/StatueOfBaelor.js).
+
+```javascript
+this.action({
+    title: 'Stand card',
+    cost: [ability.costs.kneelSelf(), ability.costs.discardPower(1, (card) => card.kneeled)],
+    gameAction: GameActions.standCard((context) => ({ card: context.costs.discardPower }))
+});
+```
+
 #### Choosing / targeting cards
 
 Cards that specify to 'choose' or otherwise target a specific card can be implemented by passing a `target` property, At minimum, the target property must have an `activePromptTitle` to be used as the prompt text, and a `cardCondition` function that returns `true` for valid targets. Any other properties that apply to `Game.promptForSelect` are valid.

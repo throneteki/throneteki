@@ -12,8 +12,8 @@ class StatueOfBaelor extends DrawCard {
                 ability.costs.kneelSelf(),
                 ability.costs.discardPower(
                     1,
-                    (card) =>
-                        card !== this &&
+                    (card, context) =>
+                        card !== context.source &&
                         ['character', 'location'].includes(card.getType()) &&
                         card.kneeled &&
                         card.allowGameAction('stand')
@@ -23,12 +23,7 @@ class StatueOfBaelor extends DrawCard {
                 format: '{player} kneels {source} and discards 1 power from {discardPower} to stand {discardPower}',
                 args: { discardPower: (context) => context.costs.discardPower }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.standCard((context) => ({ card: context.costs.discardPower })),
-                    context
-                );
-            }
+            gameAction: GameActions.standCard((context) => ({ card: context.costs.discardPower }))
         });
     }
 }

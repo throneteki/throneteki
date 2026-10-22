@@ -6,6 +6,7 @@ import ChooseGameAction from './GameActions/ChooseGameAction.js';
 import ForEachSelection from './GameActions/ForEachSelection.js';
 import HandlerGameActionWrapper from './GameActions/HandlerGameActionWrapper.js';
 import SimultaneousActions from './GameActions/SimultaneousActions.js';
+import SelectCardCost from './costs/SelectCardCost.js';
 import StackProperty from './PropertyTypes/StackProperty.js';
 import { Requirements } from './Constants/index.js';
 import Message from './Message.js';
@@ -142,12 +143,13 @@ class BaseAbility {
             // Choices are made after the ability is checked, so whether the game action can change
             // the game state depends on what is chosen. A single target, or the chosen player, is
             // filtered by the action instead; several targets are only filtered by their own
-            // game actions.
+            // game actions. A cost that selects a card is chosen when it is paid.
             this.gameActionDependsOnChoices = !!(
                 properties.target ||
                 properties.targets ||
                 properties.chooseOpponent ||
-                properties.choosePlayer
+                properties.choosePlayer ||
+                this.cost.some((cost) => cost instanceof SelectCardCost)
             );
 
             return properties.gameAction;
