@@ -1,65 +1,45 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class OursIsTheOldWay extends DrawCard {
     // Ours is the Old Way (04032)
     // Challenges Action: Until the end of the phase, either: each [greyjoy] character you control
     // gains stealth, or each non-[greyjoy] character loses stealth.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Characters gain or lose stealth',
             phase: 'challenge',
-            handler: () => {
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Characters gain or lose stealth?',
-                        buttons: [
-                            { text: 'Gain stealth', method: 'gainStealth' },
-                            { text: 'Lose stealth', method: 'loseStealth' }
-                        ]
+            gameAction: GameActions.choose({
+                title: 'Characters gain or lose stealth?',
+                choices: {
+                    'Gain stealth': {
+                        message:
+                            '{player} plays {source} to have each greyjoy character they control gain stealth until the end of the phase',
+                        gameAction: GameActions.lastingEffect((context) => ({
+                            duration: 'untilEndOfPhase',
+                            match: context.player.filterCardsInPlay(
+                                (card) =>
+                                    card.isFaction('greyjoy') && card.getType() === 'character'
+                            ),
+                            effect: ability.effects.addKeyword('stealth')
+                        }))
                     },
-                    source: this
-                });
-            }
+                    'Lose stealth': {
+                        message:
+                            '{player} plays {source} to have each non-greyjoy character lose stealth until the end of the phase',
+                        gameAction: GameActions.lastingEffect((context) => ({
+                            duration: 'untilEndOfPhase',
+                            match: context.game.filterCardsInPlay(
+                                (card) =>
+                                    !card.isFaction('greyjoy') && card.getType() === 'character'
+                            ),
+                            targetController: 'any',
+                            effect: ability.effects.removeKeyword('stealth')
+                        }))
+                    }
+                }
+            })
         });
-    }
-
-    gainStealth() {
-        let cards = this.controller.filterCardsInPlay(
-            (card) => card.isFaction('greyjoy') && card.getType() === 'character'
-        );
-        this.untilEndOfPhase((ability) => ({
-            match: cards,
-            effect: ability.effects.addKeyword('stealth')
-        }));
-
-        this.game.addMessage(
-            '{0} plays {1} to have each {2} character they control gain stealth until the end of the phase',
-            this.controller,
-            this,
-            'greyjoy'
-        );
-
-        return true;
-    }
-
-    loseStealth() {
-        let cards = this.game.filterCardsInPlay(
-            (card) => !card.isFaction('greyjoy') && card.getType() === 'character'
-        );
-        this.untilEndOfPhase((ability) => ({
-            match: cards,
-            targetController: 'any',
-            effect: ability.effects.removeKeyword('stealth')
-        }));
-
-        this.game.addMessage(
-            '{0} plays {1} to have each non-{2} character lose stealth until the end of the phase',
-            this.controller,
-            this,
-            'greyjoy'
-        );
-
-        return true;
     }
 }
 

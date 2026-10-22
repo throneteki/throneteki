@@ -8,10 +8,6 @@
         "add-message": 2,
         "game-listener": 1
     },
-    "server/game/cards/00-VDS/FeastOrFamine.js": {
-        "this-in-ability": 5,
-        "add-message": 2
-    },
     "server/game/cards/00-VDS/ThePaleMare.js": {
         "add-message": 2,
         "this-in-ability": 5,
@@ -603,10 +599,6 @@
         "add-message": 3,
         "legacy-helper": 2,
         "game-listener": 1
-    },
-    "server/game/cards/04.2-CtA/OursIsTheOldWay.js": {
-        "this-in-ability": 4,
-        "add-message": 2
     },
     "server/game/cards/04.2-CtA/StarfallCavalry.js": {
         "this-in-ability": 7,
@@ -1662,10 +1654,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/11.1-TSC/VaramyrSixskins.js": {
-        "this-in-ability": 8,
-        "add-message": 4
-    },
     "server/game/cards/11.2-TMoW/HagensDaughter.js": {
         "this-in-ability": 5,
         "legacy-helper": 1,
@@ -1954,11 +1942,6 @@
         "this-in-ability": 11,
         "add-message": 2,
         "legacy-helper": 2
-    },
-    "server/game/cards/12-KotI/VanquishTheUnbelievers.js": {
-        "this-in-ability": 4,
-        "add-message": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/12-KotI/WestwatchByTheBridge.js": {
         "this-in-ability": 1
