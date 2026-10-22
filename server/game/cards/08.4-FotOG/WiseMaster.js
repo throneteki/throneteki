@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WiseMaster extends DrawCard {
     // Wise Master (08073)
@@ -13,21 +14,15 @@ class WiseMaster extends DrawCard {
             target: {
                 type: 'select',
                 activePromptTitle: 'Select an attachment or event',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'discard pile' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     ['attachment', 'event'].includes(card.getType()) &&
                     card.isOutOfFaction()
             },
-            handler: (context) => {
-                context.target.owner.returnCardToHand(context.target);
-                this.game.addMessage(
-                    '{0} discards 1 gold from {1} to return {2} to their hand from their discard pile',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} discards 1 gold from {source} to return {target} to their hand from their discard pile',
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 }

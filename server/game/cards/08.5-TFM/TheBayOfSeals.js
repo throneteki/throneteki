@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheBayOfSeals extends DrawCard {
     // The Bay of Seals (08086)
@@ -8,21 +9,14 @@ class TheBayOfSeals extends DrawCard {
             title: 'Stand character',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
                     card.kneeled &&
-                    card.owner !== this.controller
+                    card.owner !== context.source.controller
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.addMessage(
-                    '{0} kneels {1} to stand {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} kneels {source} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

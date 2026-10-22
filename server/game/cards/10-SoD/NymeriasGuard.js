@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class NymeriasGuard extends DrawCard {
     // Nymeria's Guard (10009)
@@ -10,22 +11,18 @@ class NymeriasGuard extends DrawCard {
             title: "Put Nymeria's Guard into play",
             location: 'hand',
             phase: 'challenge',
-            condition: () => this.controller.canPutIntoPlay(this),
+            condition: (context) => context.source.controller.canPutIntoPlay(context.source),
             cost: [
                 ability.costs.payGold(4),
                 ability.costs.stand(
                     (card) => card.hasTrait('Sand Snake') && card.getType() === 'character'
                 )
             ],
-            handler: (context) => {
-                context.player.putIntoPlay(this);
-                this.game.addMessage(
-                    '{0} pays 4 gold and stands {1} to put {2} into play',
-                    context.player,
-                    context.costs.stand,
-                    this
-                );
-            }
+            message: '{player} pays 4 gold and stands {costs.stand} to put {source} into play',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.source
+            }))
         });
     }
 }

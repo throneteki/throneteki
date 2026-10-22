@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Hellholt extends DrawCard {
     // Hellholt (09032)
@@ -6,15 +7,13 @@ class Hellholt extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.source.controller &&
                     event.challenge.strengthDifference >= 5 &&
-                    this.allowGameAction('gainPower')
+                    context.source.allowGameAction('gainPower')
             },
-            handler: () => {
-                this.modifyPower(1);
-                this.game.addMessage('{0} gains 1 power on {1}', this.controller, this);
-            }
+            message: '{player} gains 1 power on {source}',
+            gameAction: GameActions.gainPower((context) => ({ card: context.source, amount: 1 }))
         });
     }
 }

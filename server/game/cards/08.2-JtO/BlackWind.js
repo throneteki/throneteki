@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BlackWind extends DrawCard {
     // Black Wind (08032)
@@ -7,23 +8,22 @@ class BlackWind extends DrawCard {
     // 1 card. (Limit twice per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: (card) => card.name === 'Asha Greyjoy',
+            match: (card, context) =>
+                card.name === 'Asha Greyjoy' && card.controller === context.source.controller,
             effect: ability.effects.addKeyword('renown')
         });
 
         this.reaction({
             when: {
-                onCardDiscarded: (event) =>
+                onCardDiscarded: (event, context) =>
                     event.isPillage &&
-                    event.source.controller === this.controller &&
+                    event.source.controller === context.source.controller &&
                     ['attachment', 'location'].includes(event.card.getType()) &&
-                    this.controller.canDraw()
+                    context.source.controller.canDraw()
             },
             limit: ability.limit.perPhase(2),
-            handler: (context) => {
-                context.player.drawCardsToHand(1);
-                this.game.addMessage('{0} uses {1} to draw 1 card', context.player, this);
-            }
+            message: '{player} uses {source} to draw 1 card',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });
     }
 }

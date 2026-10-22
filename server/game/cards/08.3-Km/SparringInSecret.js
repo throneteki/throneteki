@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SparringInSecret extends DrawCard {
     // Sparring in Secret (08050)
@@ -16,16 +17,8 @@ class SparringInSecret extends DrawCard {
                     card.getType() === 'character' &&
                     card.kneeled
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.addMessage(
-                    '{0} plays {1} and kneels {2} to stand {3}',
-                    context.player,
-                    this,
-                    context.costs.kneel,
-                    context.target
-                );
-            }
+            message: '{player} plays {source} and kneels {costs.kneel} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

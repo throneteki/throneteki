@@ -1,4 +1,5 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BreakingTies extends PlotCard {
     // Breaking Ties (10050)
@@ -19,17 +20,11 @@ class BreakingTies extends PlotCard {
                     ['character', 'location'].includes(card.getType()),
                 gameAction: 'returnToHand'
             },
-            handler: (context) => {
-                context.target.owner.returnCardToHand(context.target);
-                this.game.addMessage(
-                    "{0} uses {1} and sacrifices {2} to return {3} to {4}'s hand",
-                    context.player,
-                    this,
-                    context.costs.sacrifice,
-                    context.target,
-                    context.target.owner
-                );
-            }
+            message: {
+                format: "{player} uses {source} and sacrifices {costs.sacrifice} to return {target} to {owner}'s hand",
+                args: { owner: (context) => context.target.owner }
+            },
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 }

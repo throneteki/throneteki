@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LionsTooth extends DrawCard {
     // Lion's Tooth (09030)
@@ -14,7 +15,8 @@ class LionsTooth extends DrawCard {
         });
         this.action({
             title: "Return character to owner's hand",
-            condition: () => this.parent && this.parent.isParticipating(),
+            condition: (context) =>
+                context.source.parent && context.source.parent.isParticipating(),
             cost: ability.costs.sacrificeSelf(),
             target: {
                 cardCondition: (card) =>
@@ -22,15 +24,8 @@ class LionsTooth extends DrawCard {
                     card.getPrintedCost() <= 3 &&
                     card.isParticipating()
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    "{0} sacrifices {1} to return {2} to its owner's hand",
-                    context.player,
-                    this,
-                    context.target
-                );
-                context.target.owner.returnCardToHand(context.target);
-            }
+            message: "{player} sacrifices {source} to return {target} to its owner's hand",
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 }

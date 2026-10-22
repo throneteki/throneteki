@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class APlotAgainstTheQueen extends DrawCard {
     // A Plot Against The Queen (08110)
@@ -8,8 +9,8 @@ class APlotAgainstTheQueen extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.source.controller &&
                     event.challenge.challengeType === 'power'
             },
             cost: ability.costs.returnToHand(
@@ -18,17 +19,11 @@ class APlotAgainstTheQueen extends DrawCard {
             target: {
                 cardCondition: (card) => card.isParticipating() && card.power > 0
             },
-            handler: (context) => {
-                context.target.owner.returnCardToHand(context.target);
-                this.game.addMessage(
-                    "{0} plays {1} and returns {2} to their hand to return {3} to {4}'s hand",
-                    context.player,
-                    this,
-                    context.costs.returnToHand,
-                    context.target,
-                    context.target.owner
-                );
-            }
+            message: {
+                format: "{player} plays {source} and returns {costs.returnToHand} to their hand to return {target} to {owner}'s hand",
+                args: { owner: (context) => context.target.owner }
+            },
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 }

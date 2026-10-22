@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class StannissWrath extends DrawCard {
     // Stannis's Wrath (08028)
@@ -13,15 +14,8 @@ class StannissWrath extends DrawCard {
                     !card.hasIcon('power'),
                 gameAction: 'kneel'
             },
-            handler: (context) => {
-                context.target.controller.kneelCard(context.target);
-                this.game.addMessage(
-                    '{0} plays {1} to kneel {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} plays {source} to kneel {target}',
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target }))
         });
     }
 }
