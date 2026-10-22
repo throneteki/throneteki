@@ -10,7 +10,7 @@ describe('Selyse Baratheon (Core)', function () {
         this.player2.clickCard(this.selyseBaratheon);
         this.player2.clickPrompt('Intrigue');
         this.player2.clickPrompt('Done');
-        this.gold = this.player1Object.gold;
+        this.startingGold = this.player1Object.gold;
     });
 
     it('pays 1 gold to give a baratheon character an intrigue icon, restoring a stolen one', function () {
@@ -23,7 +23,7 @@ describe('Selyse Baratheon (Core)', function () {
         this.player1.clickCard(this.selyseBaratheon);
 
         expect(this.selyseBaratheon.hasIcon('intrigue')).toBe(true);
-        expect(this.player1Object.gold).toBe(this.gold - 1);
+        expect(this.player1Object.gold).toBe(this.startingGold - 1);
         expect(this.player1).isReadyToTakeAction();
     });
 });
