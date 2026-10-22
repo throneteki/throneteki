@@ -9,8 +9,9 @@ class SpottedSylva extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller && this.isAttacking()
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.player &&
+                    event.challenge.isAttacking(context.source)
             },
             target: {
                 choosingPlayer: 'each',
@@ -19,31 +20,13 @@ class SpottedSylva extends DrawCard {
                     card.location === 'play area' &&
                     card.controller === context.choosingPlayer &&
                     card.getType() === 'character' &&
-                    card.isParticipating()
+                    card.isParticipating(),
+                gameAction: 'returnToHand'
             },
-            handler: (context) => {
-                let selections = context.targets.selections.filter(
-                    (selection) => !!selection.value
-                );
-                for (const selection of selections) {
-                    this.game.addMessage(
-                        '{0} returns {1} to their hand for {2}',
-                        selection.choosingPlayer,
-                        selection.value,
-                        this
-                    );
-                }
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        selections.map((selection) =>
-                            GameActions.returnCardToHand({
-                                player: selection.choosingPlayer,
-                                card: selection.value
-                            })
-                        )
-                    )
-                );
-            }
+            message: '{player} is forced by {source} to have each player return {target} to hand',
+            gameAction: GameActions.simultaneously((context) =>
+                context.targets.getTargets().map((card) => GameActions.returnCardToHand({ card }))
+            )
         });
     }
 }

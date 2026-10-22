@@ -12,38 +12,39 @@ class MalleonsTome extends DrawCard {
         this.whileAttached({
             effect: ability.effects.addIcon('intrigue')
         });
-
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.attackingPlayer === this.controller &&
-                    event.challenge.winner === this.controller &&
-                    this.parent &&
-                    this.parent.isAttacking()
+                afterChallenge: (event, context) =>
+                    event.challenge.attackingPlayer === context.player &&
+                    event.challenge.winner === context.player &&
+                    !!context.source.parent &&
+                    event.challenge.isAttacking(context.source.parent)
             },
-            handler: (context) => {
-                let message = "{0} plays {1} to look at {2}'s hand";
-                let messageArgs = [context.player, this, context.event.challenge.loser];
-
-                this.game.resolveGameAction(
-                    GameActions.lookAtHand({
-                        player: context.player,
-                        opponent: context.event.challenge.loser,
-                        context
-                    })
-                );
-
-                if (
-                    (this.parent && this.parent.name === 'Eddard Stark') ||
-                    this.parent.hasTrait('Maester')
-                ) {
-                    this.parent.controller.standCard(this.parent);
-                    message += ' and stand {3}';
-                    messageArgs.push(this.parent);
-                }
-
-                this.game.addMessage(message, ...messageArgs);
+            message: {
+                format: "{player} plays {source} to look at {loser}'s hand",
+                args: { loser: (context) => context.event.challenge.loser }
             },
+            gameAction: GameActions.simultaneously([
+                GameActions.lookAtHand((context) => ({
+                    player: context.player,
+                    opponent: context.event.challenge.loser,
+                    context
+                })),
+                GameActions.ifCondition({
+                    condition: (context) =>
+                        context.source.parent.name === 'Eddard Stark' ||
+                        context.source.parent.hasTrait('Maester'),
+                    thenAction: {
+                        message: {
+                            format: '{player} uses {source} to stand {parent}',
+                            args: { parent: (context) => context.source.parent }
+                        },
+                        gameAction: GameActions.standCard((context) => ({
+                            card: context.source.parent
+                        }))
+                    }
+                })
+            ]),
             limit: ability.limit.perPhase(1)
         });
     }

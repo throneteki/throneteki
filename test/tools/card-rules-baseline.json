@@ -370,11 +370,6 @@
     "server/game/cards/06.5-OR/WheelsWithinWheels.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/06.6-TBWB/PayTheIronPrice.js": {
-        "this-in-ability": 11,
-        "legacy-helper": 2,
-        "add-message": 2
-    },
     "server/game/cards/06.6-TBWB/TheBrotherhoodWithoutBanners.js": {
         "this-in-ability": 7,
         "add-message": 1
@@ -438,11 +433,6 @@
     "server/game/cards/08.4-FotOG/PlankyTownTrader.js": {
         "this-in-ability": 7,
         "legacy-helper": 1,
-        "add-message": 2
-    },
-    "server/game/cards/08.4-FotOG/SeizedByTheGuard.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 2,
         "add-message": 2
     },
     "server/game/cards/08.4-FotOG/SupportOfHarlaw.js": {
@@ -758,9 +748,6 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/13.2-CoS/Nightflyer.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/13.2-CoS/ShadowOfTheWall.js": {
         "legacy-helper": 2,
         "this-in-ability": 10,
@@ -779,11 +766,6 @@
     "server/game/cards/13.2-CoS/ShadowPolitics.js": {
         "this-in-ability": 4
     },
-    "server/game/cards/13.3-PoS/MelleonsTome.js": {
-        "this-in-ability": 13,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/13.3-PoS/ShadowOfTheThrone.js": {
         "this-in-ability": 5,
         "add-message": 1,
@@ -796,11 +778,6 @@
     "server/game/cards/13.4-BtRK/ShadowOfTheIsles.js": {
         "this-in-ability": 5,
         "add-message": 1,
-        "legacy-helper": 1
-    },
-    "server/game/cards/13.4-BtRK/TheMaidenvault.js": {
-        "this-in-ability": 8,
-        "add-message": 2,
         "legacy-helper": 1
     },
     "server/game/cards/13.4-BtRK/TunnelsOfTheRedKeep.js": {
@@ -949,10 +926,6 @@
         "legacy-helper": 2,
         "add-message": 1
     },
-    "server/game/cards/15-DotE/SpottedSylva.js": {
-        "this-in-ability": 5,
-        "add-message": 1
-    },
     "server/game/cards/15-DotE/TheShavepate.js": {
         "this-in-ability": 6,
         "add-message": 1
@@ -995,10 +968,6 @@
         "this-in-ability": 4,
         "prompt-for-select": 1,
         "add-message": 1
-    },
-    "server/game/cards/16-TTWDFL/ValeRefugee.js": {
-        "this-in-ability": 3,
-        "add-message": 2
     },
     "server/game/cards/17.1-R/BoundForTheWall.js": {
         "this-in-ability": 8,
@@ -1060,9 +1029,6 @@
     },
     "server/game/cards/17.2-R2/AegonTargaryen.js": {
         "this-in-ability": 2
-    },
-    "server/game/cards/17.2-R2/Nightflyer.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/17.2-R2/RandyllTarly.js": {
         "prompt-for-select": 1,

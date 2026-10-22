@@ -11,12 +11,18 @@ class Nightflyer extends DrawCard {
         this.plotModifiers({
             initiative: 1
         });
-
-        this.xValue({ min: () => 0, max: () => this.maxLocationCost() });
-
+        this.xValue({
+            min: () => 0,
+            max: (context) =>
+                Math.max(
+                    ...context.game
+                        .filterCardsInPlay((card) => card.getType() === 'location')
+                        .map((location) => location.getPrintedCost())
+                )
+        });
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             target: {
                 activePromptTitle: 'Select a location',
@@ -32,19 +38,8 @@ class Nightflyer extends DrawCard {
                     xValue: (context) => context.event.xValue
                 }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(GameActions.discardCard({ card: context.target }));
-            }
+            gameAction: GameActions.discardCard((context) => ({ card: context.target }))
         });
-    }
-
-    maxLocationCost() {
-        return Math.max(...this.getLocationCosts());
-    }
-
-    getLocationCosts() {
-        let locations = this.game.filterCardsInPlay((card) => card.getType() === 'location');
-        return locations.map((location) => location.getPrintedCost());
     }
 }
 

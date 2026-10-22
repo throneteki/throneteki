@@ -10,7 +10,7 @@ class TheMaidenvault extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             target: {
                 cardCondition: (card) =>
@@ -18,33 +18,19 @@ class TheMaidenvault extends DrawCard {
                     card.hasTrait('Lady') &&
                     card.isParticipating()
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.standCard(() => ({ card: context.target })),
-                    context
-                );
-                this.game.currentChallenge.removeFromChallenge(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to stand and remove {2} from the challenge',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to stand and remove {target} from the challenge',
+            gameAction: GameActions.simultaneously([
+                GameActions.standCard((context) => ({ card: context.target })),
+                GameActions.removeFromChallenge((context) => ({ card: context.target }))
+            ])
         });
         this.interrupt({
             when: {
                 onPhaseEnded: (event) => event.phase === 'challenge'
             },
             cost: ability.costs.kneelSelf(),
-            handler: (context) => {
-                context.player.putIntoShadows(this, false);
-                this.game.addMessage(
-                    '{0} kneels {1} to return it to shadows.',
-                    context.player,
-                    this
-                );
-            }
+            message: '{player} kneels {source} to return it to shadows',
+            gameAction: GameActions.putIntoShadows((context) => ({ card: context.source }))
         });
     }
 }
