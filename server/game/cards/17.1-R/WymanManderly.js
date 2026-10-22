@@ -44,7 +44,7 @@ class WymanManderly extends DrawCard {
                 }
             },
             limit: ability.limit.perPhase(1),
-            message: '{player} uses {source} to {gameAction}',
+            message: '{player} uses {source} and {gameAction}',
             gameAction: GameActions.simultaneously([
                 GameActions.standCard({ card: this }),
                 GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))

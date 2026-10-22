@@ -93,11 +93,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/01-Core/TheRedViper.js": {
-        "this-in-ability": 8,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/01-Core/TheThingsIDoForLove.js": {
         "this-in-ability": 1
     },
@@ -383,11 +378,6 @@
         "prompt-for-select": 1,
         "add-message": 1
     },
-    "server/game/cards/04.4-TIMC/AeronDamphair.js": {
-        "legacy-helper": 2,
-        "add-message": 2,
-        "this-in-ability": 6
-    },
     "server/game/cards/04.4-TIMC/CaswellsKeep.js": {
         "this-in-ability": 9,
         "legacy-helper": 2,
@@ -403,10 +393,6 @@
         "this-in-ability": 9,
         "legacy-helper": 2,
         "add-message": 1
-    },
-    "server/game/cards/04.4-TIMC/ValarMorghulis.js": {
-        "this-in-ability": 2,
-        "legacy-helper": 1
     },
     "server/game/cards/04.5-GoH/BlessHimWithSalt.js": {
         "this-in-ability": 8,
@@ -567,11 +553,6 @@
     "server/game/cards/06.2-GtR/IronIslandsMarket.js": {
         "this-in-ability": 4,
         "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/06.2-GtR/LightOfTheLord.js": {
-        "legacy-helper": 2,
-        "this-in-ability": 9,
         "add-message": 1
     },
     "server/game/cards/06.2-GtR/LordRenlysRide.js": {
@@ -1001,11 +982,6 @@
     "server/game/cards/10-SoD/LeytonHightower.js": {
         "this-in-ability": 4,
         "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/10-SoD/NymeriaSand.js": {
-        "this-in-ability": 3,
-        "legacy-helper": 2,
         "add-message": 1
     },
     "server/game/cards/10-SoD/ObellaSand.js": {
@@ -1783,11 +1759,6 @@
         "this-in-ability": 13,
         "add-message": 2,
         "legacy-helper": 1
-    },
-    "server/game/cards/19-JS/CityFestival.js": {
-        "legacy-helper": 1,
-        "this-in-ability": 3,
-        "add-message": 1
     },
     "server/game/cards/19-JS/GulltownCityGuard.js": {
         "this-in-ability": 1

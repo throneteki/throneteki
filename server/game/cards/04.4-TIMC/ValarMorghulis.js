@@ -1,18 +1,20 @@
 import PlotCard from '../../plotcard.js';
-import { flatMap } from '../../../Array.js';
+import GameActions from '../../GameActions/index.js';
 
 class ValarMorghulis extends PlotCard {
     // Valar Morghulis (04080)
     // When Revealed: Kill each character.
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                let players = this.game.getPlayersInFirstPlayerOrder();
-                let characters = flatMap(players, (player) =>
-                    player.filterCardsInPlay((card) => card.getType() === 'character')
-                );
-                this.game.killCharacters(characters);
-            }
+            message: '{player} uses {source} to kill each character',
+            gameAction: GameActions.simultaneously((context) =>
+                context.game
+                    .getPlayersInFirstPlayerOrder()
+                    .flatMap((player) =>
+                        player.filterCardsInPlay((card) => card.getType() === 'character')
+                    )
+                    .map((card) => GameActions.kill({ card }))
+            )
         });
     }
 }

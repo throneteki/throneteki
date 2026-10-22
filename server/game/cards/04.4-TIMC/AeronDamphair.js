@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class AeronDamphair extends DrawCard {
     // Aeron Damphair (04071)
@@ -8,16 +9,28 @@ class AeronDamphair extends DrawCard {
             when: {
                 onCardSaved: (event) => event.card.getType() === 'character'
             },
-            handler: (context) => {
-                let card = context.event.card;
-                if (card.kneeled) {
-                    card.controller.standCard(card);
-                    this.game.addMessage('{0} uses {1} to stand {2}', this.controller, this, card);
-                } else {
-                    card.controller.kneelCard(card);
-                    this.game.addMessage('{0} uses {1} to kneel {2}', this.controller, this, card);
+            gameAction: GameActions.choose({
+                choices: {
+                    Stand: {
+                        message: {
+                            format: '{player} uses {source} to stand {card}',
+                            args: { card: (context) => context.event.card }
+                        },
+                        gameAction: GameActions.standCard((context) => ({
+                            card: context.event.card
+                        }))
+                    },
+                    Kneel: {
+                        message: {
+                            format: '{player} uses {source} to kneel {card}',
+                            args: { card: (context) => context.event.card }
+                        },
+                        gameAction: GameActions.kneelCard((context) => ({
+                            card: context.event.card
+                        }))
+                    }
                 }
-            }
+            })
         });
     }
 }

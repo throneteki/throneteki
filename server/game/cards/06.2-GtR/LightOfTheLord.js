@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LightOfTheLord extends DrawCard {
     // Light of the Lord (06028)
@@ -10,15 +11,11 @@ class LightOfTheLord extends DrawCard {
             when: {
                 onPhaseStarted: (event) => event.phase === 'dominance'
             },
-            handler: () => {
-                this.controller.standCard(this.parent);
-                let msg = '{0} uses {1} to stand {2}';
-                if (this.controller.canGainGold()) {
-                    this.game.addGold(this.controller, 1);
-                    msg += 'and gain 1 gold';
-                }
-                this.game.addMessage(msg, this.controller, this, this.parent);
-            }
+            message: '{player} uses {source} and {gameAction}',
+            gameAction: GameActions.simultaneously([
+                GameActions.standCard((context) => ({ card: context.source.parent })),
+                GameActions.gainGold((context) => ({ player: context.player, amount: 1 }))
+            ])
         });
     }
 }

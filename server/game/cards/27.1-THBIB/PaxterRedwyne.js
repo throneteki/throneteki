@@ -25,14 +25,14 @@ class PaxterRedwyne extends DrawCard {
             gameAction: GameActions.ifCondition({
                 condition: (context) => !context.target.hasTrait('Warship'),
                 thenAction: {
-                    message: '{player} uses {source} to {gameAction}',
+                    message: '{player} uses {source} and {gameAction}',
                     gameAction: GameActions.returnCardToHand((context) => ({
                         card: context.target
                     }))
                 },
                 elseAction: GameActions.choose({
                     title: 'Place location in shadows?',
-                    message: '{player} uses {source} to {gameAction}',
+                    message: '{player} uses {source} and {gameAction}',
                     choices: {
                         'Return to hand': GameActions.returnCardToHand((context) => ({
                             card: context.target
