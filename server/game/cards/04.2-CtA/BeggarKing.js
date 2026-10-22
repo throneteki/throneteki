@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BeggarKing extends DrawCard {
     // Beggar King (04034)
@@ -13,41 +14,34 @@ class BeggarKing extends DrawCard {
         });
         this.reaction({
             when: {
-                onPlotsRevealed: (event) =>
-                    this.opponentRevealedLowerIncome(event.plots) && this.controller.canGainGold()
+                onPlotsRevealed: (event, context) =>
+                    event.plots.some(
+                        (plot) =>
+                            plot.controller !== context.player &&
+                            context.player.activePlot.income.printedValue < plot.income.printedValue
+                    )
             },
             cost: ability.costs.kneelSelf(),
-            handler: () => {
-                let gold = !this.opponentHasKing() ? 2 : 1;
-                gold = this.game.addGold(this.controller, gold);
-
-                this.game.addMessage(
-                    '{0} kneels {1} to gain {2} gold',
-                    this.controller,
-                    this,
-                    gold
-                );
-            }
+            message: {
+                format: '{player} kneels {source} to gain {gold} gold',
+                args: { gold: (context) => beggarGold(context) }
+            },
+            gameAction: GameActions.gainGold((context) => ({
+                player: context.player,
+                amount: beggarGold(context)
+            }))
         });
     }
+}
 
-    opponentRevealedLowerIncome(plots) {
-        let opponentPlots = plots.filter((plot) => plot.controller !== this.controller);
-
-        return opponentPlots.some(
-            (opponentPlot) =>
-                this.controller.activePlot.income.printedValue < opponentPlot.income.printedValue
-        );
-    }
-
-    opponentHasKing() {
-        return this.game.anyCardsInPlay(
-            (card) =>
-                card.controller !== this.controller &&
-                card.getType() === 'character' &&
-                card.hasTrait('King')
-        );
-    }
+function beggarGold(context) {
+    const opponentHasKing = context.game.anyCardsInPlay(
+        (card) =>
+            card.controller !== context.player &&
+            card.getType() === 'character' &&
+            card.hasTrait('King')
+    );
+    return opponentHasKing ? 1 : 2;
 }
 
 BeggarKing.code = '04034';

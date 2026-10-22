@@ -194,11 +194,6 @@
         "this-in-ability": 13,
         "add-message": 1
     },
-    "server/game/cards/04.2-CtA/BeggarKing.js": {
-        "this-in-ability": 11,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/04.2-CtA/DolorousEdd.js": {
         "this-in-ability": 13,
         "add-message": 3,
@@ -305,11 +300,6 @@
     "server/game/cards/05-LoCR/TywinLannister.js": {
         "this-in-ability": 5,
         "add-message": 1
-    },
-    "server/game/cards/06.1-AMAF/FickleBannerman.js": {
-        "this-in-ability": 9,
-        "legacy-helper": 2,
-        "add-message": 2
     },
     "server/game/cards/06.1-AMAF/ThePrincesPlan.js": {
         "this-in-ability": 14,
@@ -422,11 +412,6 @@
     "server/game/cards/08.3-Km/LyseniPirate.js": {
         "this-in-ability": 17,
         "legacy-helper": 2,
-        "add-message": 2,
-        "prompt-for-select": 1
-    },
-    "server/game/cards/08.4-FotOG/CoastalReaver.js": {
-        "this-in-ability": 7,
         "add-message": 2,
         "prompt-for-select": 1
     },
@@ -858,11 +843,6 @@
         "add-message": 2,
         "legacy-helper": 1
     },
-    "server/game/cards/14-FotS/Melisandre.js": {
-        "this-in-ability": 7,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/14-FotS/NightfireVision.js": {
         "this-in-ability": 7,
         "add-message": 2,
@@ -1115,10 +1095,6 @@
         "this-in-ability": 11,
         "legacy-helper": 1
     },
-    "server/game/cards/20-HMW/OurBladesAreSharp.js": {
-        "this-in-ability": 4,
-        "add-message": 1
-    },
     "server/game/cards/20-HMW/OurWordIsGoodAsGold.js": {
         "this-in-ability": 1
     },
@@ -1303,9 +1279,6 @@
     "server/game/cards/25.1-ATT/VictarionGreyjoy.js": {
         "this-in-ability": 6,
         "add-message": 1
-    },
-    "server/game/cards/25.2-ChoS/HighbornRecruit.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/25.2-ChoS/TheGoldPrice.js": {
         "event-registration": 1,

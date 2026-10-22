@@ -10,9 +10,9 @@ class Melisandre extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    this.isAttacking() &&
-                    event.challenge.isMatch({ winner: this.controller, challengeType: 'intrigue' })
+                afterChallenge: (event, context) =>
+                    event.challenge.isAttacking(context.source) &&
+                    event.challenge.isMatch({ winner: context.player, challengeType: 'intrigue' })
             },
             target: {
                 cardCondition: (card, context) =>
@@ -22,30 +22,25 @@ class Melisandre extends DrawCard {
                     card.controller === context.event.challenge.loser,
                 gameAction: 'movePower'
             },
-            message: '{source} uses {source} to move 1 power from {target} to {source}',
-            handler: (context) => {
-                this.game
-                    .resolveGameAction(
-                        GameActions.movePower({
-                            from: context.target,
-                            to: this,
-                            amount: 1
-                        })
-                    )
-                    .thenExecute(() => {
-                        if (!context.target.canBeKilled() || context.target.power > 0) {
-                            return;
-                        }
-
-                        this.game.addMessage(
-                            'Then {0} uses {1} to kill {2}',
-                            context.player,
-                            this,
-                            context.target
-                        );
-                        this.game.killCharacter(context.target);
-                    });
-            }
+            message: '{player} uses {source} to move 1 power from {target} to {source}',
+            gameAction: GameActions.movePower((context) => ({
+                from: context.target,
+                to: context.source,
+                amount: 1
+            })).then({
+                gameAction: GameActions.ifCondition({
+                    condition: (context) => context.parentContext.target.power === 0,
+                    thenAction: {
+                        message: {
+                            format: 'Then {player} uses {source} to kill {character}',
+                            args: { character: (context) => context.parentContext.target }
+                        },
+                        gameAction: GameActions.kill((context) => ({
+                            card: context.parentContext.target
+                        }))
+                    }
+                })
+            })
         });
     }
 }

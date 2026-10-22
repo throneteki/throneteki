@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
+import GameActions from '../../GameActions/index.js';
 
 class FickleBannerman extends DrawCard {
     // Fickle Bannerman (06007)
@@ -9,45 +10,42 @@ class FickleBannerman extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.player &&
                     event.challenge.challengeType === 'power'
             },
-            handler: (context) => {
-                this.challengeWinner = context.event.challenge.winner;
-
-                if (!this.hasToken(Tokens.gold)) {
-                    this.loseControl();
-                    return;
-                }
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Discard a gold from ' + this.name + '?',
-                        buttons: [
-                            { text: 'Yes', method: 'discardGold' },
-                            { text: 'No', method: 'loseControl' }
-                        ]
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.ifCondition({
+                condition: (context) => context.source.hasToken(Tokens.gold),
+                thenAction: GameActions.choose({
+                    title: (context) => `Discard a gold from ${context.source.name}?`,
+                    choices: {
+                        Yes: {
+                            message: '{player} is forced to discard a gold from {source}',
+                            gameAction: GameActions.discardToken((context) => ({
+                                card: context.source,
+                                token: Tokens.gold
+                            }))
+                        },
+                        No: loseControl()
+                    }
+                }),
+                elseAction: loseControl()
+            })
         });
     }
+}
 
-    discardGold() {
-        this.modifyToken(Tokens.gold, -1);
-        this.game.addMessage('{0} is forced to discard a gold from {1}', this.controller, this);
-
-        return true;
-    }
-
-    loseControl() {
-        this.game.takeControl(this.challengeWinner, this);
-        this.game.addMessage('{0} takes control of {1}', this.challengeWinner, this);
-
-        return true;
-    }
+function loseControl() {
+    return {
+        message: {
+            format: '{winner} takes control of {source}',
+            args: { winner: (context) => context.event.challenge.winner }
+        },
+        gameAction: GameActions.takeControl((context) => ({
+            player: context.event.challenge.winner,
+            card: context.source
+        }))
+    };
 }
 
 FickleBannerman.code = '06007';
