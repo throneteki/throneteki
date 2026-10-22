@@ -82,11 +82,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/01-Core/OldForestHunter.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/01-Core/OlennasCunning.js": {
         "this-in-ability": 2
     },

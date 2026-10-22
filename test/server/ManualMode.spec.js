@@ -107,7 +107,7 @@ describe('manual mode', function () {
 
     describe('when a card in the game is not verified', function () {
         beforeEach(function () {
-            setup(this, { hand: ['Old Forest Hunter'] });
+            setup(this, { hand: ['Coastal Reaver'] });
         });
 
         it('starts on', function () {
