@@ -39,12 +39,6 @@
         "legacy-helper": 3,
         "add-message": 2
     },
-    "server/game/cards/01-Core/ForTheNorth.js": {
-        "this-in-ability": 8,
-        "game-listener": 1,
-        "add-message": 2,
-        "legacy-helper": 1
-    },
     "server/game/cards/01-Core/GreenbloodTrader.js": {
         "this-in-ability": 9,
         "legacy-helper": 3,
@@ -217,11 +211,6 @@
         "add-message": 2,
         "prompt-for-select": 1
     },
-    "server/game/cards/04.1-AtSK/RubyOfRhllor.js": {
-        "this-in-ability": 4,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/04.1-AtSK/VaryssRiddle.js": {
         "this-in-ability": 13,
         "add-message": 1
@@ -374,11 +363,6 @@
         "add-message": 2,
         "prompt-for-select": 1,
         "legacy-helper": 2
-    },
-    "server/game/cards/06.2-GtR/SecondSons.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 2,
-        "add-message": 2
     },
     "server/game/cards/06.2-GtR/TheDornishmansWife.js": {
         "this-in-ability": 8,
@@ -577,10 +561,6 @@
     "server/game/cards/09-HoT/DesmeraRedwyne.js": {
         "this-in-ability": 8,
         "add-message": 2
-    },
-    "server/game/cards/09-HoT/FacelessMan.js": {
-        "this-in-ability": 4,
-        "add-message": 1
     },
     "server/game/cards/09-HoT/HiddenThorns.js": {
         "this-in-ability": 6,
@@ -1015,12 +995,6 @@
         "this-in-ability": 9,
         "add-message": 1
     },
-    "server/game/cards/14-FotS/WilySmuggler.js": {
-        "this-in-ability": 5,
-        "game-listener": 1,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/15-DotE/ChoosingTheSpear.js": {
         "this-in-ability": 11,
         "add-message": 2,
@@ -1239,10 +1213,6 @@
     "server/game/cards/20-HMW/AMummersFarce.js": {
         "this-in-ability": 9,
         "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/20-HMW/BeneaththeGoldtheBitterSteel.js": {
-        "this-in-ability": 4,
         "add-message": 1
     },
     "server/game/cards/20-HMW/Bronn.js": {

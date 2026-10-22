@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import { flatten } from '../../../Array.js';
+import GameActions from '../../GameActions/index.js';
 
 class FacelessMan extends DrawCard {
     // Faceless Man (09040)
@@ -16,8 +17,12 @@ class FacelessMan extends DrawCard {
                 cardCondition: (card) =>
                     card.location === 'dead pile' && card.getType() === 'character'
             },
-            handler: (context) => {
-                let effectArr = flatten([
+            message:
+                "{player} uses {source} to have {source} gain each of {target}'s printed challenge icons, keywords, faction affiliations and traits until the end of the phase",
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.source,
+                effect: flatten([
                     context.target.getIcons().map((icon) => ability.effects.addIcon(icon)),
                     context.target
                         .getPrintedKeywords()
@@ -26,20 +31,8 @@ class FacelessMan extends DrawCard {
                         .getFactions()
                         .map((faction) => ability.effects.addFaction(faction)),
                     context.target.getTraits().map((trait) => ability.effects.addTrait(trait))
-                ]);
-
-                this.untilEndOfPhase(() => ({
-                    match: this,
-                    effect: effectArr
-                }));
-
-                this.game.addMessage(
-                    "{0} uses {1} to have {1} gain each of {2}'s printed challenge icons, keywords, faction affiliations and traits",
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+                ])
+            }))
         });
     }
 }
