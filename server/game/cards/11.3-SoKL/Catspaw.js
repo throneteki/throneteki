@@ -1,6 +1,13 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
+function getMinimumCost(source) {
+    return source.game
+        .filterCardsInPlay((card) => card !== source && card.getType() === 'character')
+        .map((card) => card.getPrintedCost())
+        .reduce((acc, val) => Math.min(acc, val), 0);
+}
+
 class Catspaw extends DrawCard {
     // Catspaw (11049)
     // Shadow (2).
@@ -12,7 +19,7 @@ class Catspaw extends DrawCard {
                 onCardOutOfShadows: (event, context) => event.card === context.source
             },
             cost: ability.costs.payXGold(
-                (context) => context.source.getMinimumCost(),
+                (context) => getMinimumCost(context.source),
                 () => 99
             ),
             target: {
@@ -29,13 +36,6 @@ class Catspaw extends DrawCard {
             },
             gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
-    }
-
-    getMinimumCost() {
-        return this.game
-            .filterCardsInPlay((card) => card !== this && card.getType() === 'character')
-            .map((card) => card.getPrintedCost())
-            .reduce((acc, val) => Math.min(acc, val), 0);
     }
 }
 

@@ -1,6 +1,22 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
+function getTargetPrintedCost(source) {
+    const traits = ['Ranger', 'Steward', 'Builder'];
+
+    if (traits.every((trait) => controlsCharacterWithTrait(source, trait))) {
+        return 4;
+    }
+
+    return 1;
+}
+
+function controlsCharacterWithTrait(source, trait) {
+    return source.controller.anyCardsInPlay(
+        (card) => card.getType() === 'character' && card.hasTrait(trait)
+    );
+}
+
 class WestwatchByTheBridge extends DrawCard {
     // Westwatch-by-the-Bridge (12032)
     // Action: Kneel Westwatch-by-the-Bridge to choose and stand another [thenightswatch] location
@@ -17,28 +33,12 @@ class WestwatchByTheBridge extends DrawCard {
                     card.isFaction('thenightswatch') &&
                     card.getType() === 'location' &&
                     card.kneeled &&
-                    card.getPrintedCost() <= context.source.getTargetPrintedCost(),
+                    card.getPrintedCost() <= getTargetPrintedCost(context.source),
                 gameAction: 'stand'
             },
             message: '{player} kneels {source} to stand {target}',
             gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
-    }
-
-    getTargetPrintedCost() {
-        const traits = ['Ranger', 'Steward', 'Builder'];
-
-        if (traits.every((trait) => this.controlsCharacterWithTrait(trait))) {
-            return 4;
-        }
-
-        return 1;
-    }
-
-    controlsCharacterWithTrait(trait) {
-        return this.controller.anyCardsInPlay(
-            (card) => card.getType() === 'character' && card.hasTrait(trait)
-        );
     }
 }
 

@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 import TextHelper from '../../TextHelper.js';
 
+function getShadowCardCount(source) {
+    return source.game.filterCardsInPlay(
+        (card) => card.controller === source.controller && card.isShadow()
+    ).length;
+}
+
 class CleverFeint extends DrawCard {
     // Clever Feint (17167)
     // Action: Kneel your faction card and pay X gold to choose X cards you control with shadow.
@@ -14,7 +20,7 @@ class CleverFeint extends DrawCard {
                 ability.costs.kneelFactionCard(),
                 ability.costs.payXGold(
                     () => 1,
-                    (context) => context.source.getShadowCardCount()
+                    (context) => getShadowCardCount(context.source)
                 )
             ],
             target: {
@@ -35,12 +41,6 @@ class CleverFeint extends DrawCard {
                 context.target.map((card) => GameActions.putIntoShadows({ card }))
             )
         });
-    }
-
-    getShadowCardCount() {
-        return this.game.filterCardsInPlay(
-            (card) => card.controller === this.controller && card.isShadow()
-        ).length;
     }
 }
 

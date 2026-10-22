@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
+function hasAnotherBloodrider(source) {
+    return source.controller.anyCardsInPlay(
+        (card) => card !== source && card.getType() === 'character' && card.hasTrait('Bloodrider')
+    );
+}
+
 class Rakharo extends DrawCard {
     // Rakharo (02033)
     // While you control another Bloodrider character, Rakharo gains intimidate.
@@ -8,7 +14,7 @@ class Rakharo extends DrawCard {
     // Rakharo gains 1 power.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: (context) => context.source.hasAnotherBloodrider(),
+            condition: (context) => hasAnotherBloodrider(context.source),
             match: this,
             effect: ability.effects.addKeyword('intimidate')
         });
@@ -25,12 +31,6 @@ class Rakharo extends DrawCard {
             message: '{player} gains 1 power on {source}',
             gameAction: GameActions.gainPower((context) => ({ card: context.source, amount: 1 }))
         });
-    }
-
-    hasAnotherBloodrider() {
-        return this.controller.anyCardsInPlay(
-            (card) => card !== this && card.getType() === 'character' && card.hasTrait('Bloodrider')
-        );
     }
 }
 

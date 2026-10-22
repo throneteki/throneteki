@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
+function hasHigherReserveThanOpponent(source) {
+    let opponents = source.game.getOpponents(source.controller);
+    return opponents.some((opponent) => source.controller.getReserve() > opponent.getReserve());
+}
+
 class EastwatchByTheSea extends DrawCard {
     // Eastwatch-by-the-Sea (06006)
     // Reaction: After the dominance phase begins, if you have a higher reserve value than an
@@ -15,17 +20,12 @@ class EastwatchByTheSea extends DrawCard {
             when: {
                 onPhaseStarted: (event, context) =>
                     event.phase === 'dominance' &&
-                    context.source.hasHigherReserveThanOpponent() &&
+                    hasHigherReserveThanOpponent(context.source) &&
                     context.source.controller.canDraw()
             },
             message: '{player} uses {source} to draw 1 card',
             gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });
-    }
-
-    hasHigherReserveThanOpponent() {
-        let opponents = this.game.getOpponents(this.controller);
-        return opponents.some((opponent) => this.controller.getReserve() > opponent.getReserve());
     }
 }
 

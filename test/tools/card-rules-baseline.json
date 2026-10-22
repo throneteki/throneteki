@@ -188,9 +188,6 @@
     "server/game/cards/02.1-TtB/TheWatchHasNeed.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/02.1-TtB/VaesDothrak.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/02.2-TRtW/BrothelMadame.js": {
         "event-registration": 1,
         "this-in-ability": 15,
@@ -220,9 +217,6 @@
         "add-message": 1,
         "this-in-ability": 3,
         "legacy-helper": 1
-    },
-    "server/game/cards/02.2-TRtW/Rakharo.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/02.2-TRtW/TheReader.js": {
         "this-in-ability": 3,
@@ -661,9 +655,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/06.1-AMAF/EastwatchByTheSea.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/06.1-AMAF/EastwatchCarpenter.js": {
         "this-in-ability": 9,
         "legacy-helper": 1,
@@ -881,12 +872,6 @@
     },
     "server/game/cards/06.6-TBWB/WarriorsBraid.js": {
         "this-in-ability": 5
-    },
-    "server/game/cards/07-WotW/AbandonedStronghold.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/07-WotW/BlackBetha.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/07-WotW/GrizzledMiner.js": {
         "this-in-ability": 1
@@ -1347,9 +1332,6 @@
         "this-in-ability": 4,
         "add-message": 1
     },
-    "server/game/cards/11.3-SoKL/Catspaw.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/11.3-SoKL/Dragonbinder.js": {
         "this-in-ability": 8,
         "prompt-for-select": 1,
@@ -1560,9 +1542,6 @@
     "server/game/cards/12-KotI/StolenMessage.js": {
         "add-message": 1,
         "this-in-ability": 3
-    },
-    "server/game/cards/12-KotI/WestwatchByTheBridge.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/13.1-AtG/BaelorBlacktyde.js": {
         "this-in-ability": 1
@@ -1916,9 +1895,6 @@
         "this-in-ability": 2,
         "add-message": 1
     },
-    "server/game/cards/16-TTWDFL/MadKingAerys.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/16-TTWDFL/NarrowEscape.js": {
         "this-in-ability": 6,
         "add-message": 1
@@ -1950,9 +1926,6 @@
     },
     "server/game/cards/16-TTWDFL/WheelsWithinWheels.js": {
         "this-in-ability": 2
-    },
-    "server/game/cards/17.1-R/AbandonedStronghold.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/17.1-R/AllMenAreFools.js": {
         "this-in-ability": 3
@@ -2071,9 +2044,6 @@
     },
     "server/game/cards/17.2-R2/CasterlyRock.js": {
         "this-in-ability": 5
-    },
-    "server/game/cards/17.2-R2/CleverFeint.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/17.2-R2/Goldengrove.js": {
         "this-in-ability": 2

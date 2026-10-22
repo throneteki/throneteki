@@ -1,6 +1,19 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
+function calculateStrength(source) {
+    if (!source.game.currentChallenge) {
+        return 0;
+    }
+
+    return source.game.getNumberOfCardsInPlay(
+        (card) =>
+            card.controller === source.game.currentChallenge.defendingPlayer &&
+            card.kneeled &&
+            card.getType() === 'character'
+    );
+}
+
 class BlackBetha extends DrawCard {
     // Black Betha (07026)
     // While you control Ser Davos Seaworth, he gains renown.
@@ -14,34 +27,21 @@ class BlackBetha extends DrawCard {
         });
         this.action({
             title: 'Give attacking character +STR',
-            condition: (context) => context.source.calculateStrength() >= 1,
+            condition: (context) => calculateStrength(context.source) >= 1,
             cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: (card) => card.isAttacking()
             },
             message: {
                 format: '{player} kneels {source} to give {target} +{strBoost} STR until the end of the challenge',
-                args: { strBoost: (context) => context.source.calculateStrength() }
+                args: { strBoost: (context) => calculateStrength(context.source) }
             },
             gameAction: GameActions.lastingEffect((context) => ({
                 duration: 'untilEndOfChallenge',
                 match: context.target,
-                effect: ability.effects.modifyStrength(context.source.calculateStrength())
+                effect: ability.effects.modifyStrength(calculateStrength(context.source))
             }))
         });
-    }
-
-    calculateStrength() {
-        if (!this.game.currentChallenge) {
-            return 0;
-        }
-
-        return this.game.getNumberOfCardsInPlay(
-            (card) =>
-                card.controller === this.game.currentChallenge.defendingPlayer &&
-                card.kneeled &&
-                card.getType() === 'character'
-        );
     }
 }
 

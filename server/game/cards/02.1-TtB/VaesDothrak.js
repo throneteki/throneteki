@@ -1,6 +1,18 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
+function hasPossibleLegalTarget(source, inHandAttachment) {
+    return source.game.anyCardsInPlay((card) => isValidTarget(source, card, inHandAttachment));
+}
+
+function isValidTarget(source, card, inHandAttachment) {
+    return (
+        card.location === 'play area' &&
+        card.getType() === 'attachment' &&
+        card.getPrintedCost() <= inHandAttachment.getPrintedCost()
+    );
+}
+
 class VaesDothrak extends DrawCard {
     // Vaes Dothrak (02014)
     // Reaction: After you reveal a plot card, discard an attachment from your hand to choose an
@@ -13,13 +25,13 @@ class VaesDothrak extends DrawCard {
             },
             cost: ability.costs.discardFromHand(
                 (card, context) =>
-                    card.getType() === 'attachment' && context.source.hasPossibleLegalTarget(card)
+                    card.getType() === 'attachment' && hasPossibleLegalTarget(context.source, card)
             ),
             target: {
                 activePromptTitle: 'Select an attachment',
                 cardCondition: (card, context) =>
                     !context.costs.discardFromHand ||
-                    context.source.isValidTarget(card, context.costs.discardFromHand)
+                    isValidTarget(context.source, card, context.costs.discardFromHand)
             },
             message: {
                 format: '{player} uses {source} and discards {costs.discardFromHand} from their hand to discard {card} from play',
@@ -27,18 +39,6 @@ class VaesDothrak extends DrawCard {
             },
             gameAction: GameActions.discardCard((context) => ({ card: context.target }))
         });
-    }
-
-    hasPossibleLegalTarget(inHandAttachment) {
-        return this.game.anyCardsInPlay((card) => this.isValidTarget(card, inHandAttachment));
-    }
-
-    isValidTarget(card, inHandAttachment) {
-        return (
-            card.location === 'play area' &&
-            card.getType() === 'attachment' &&
-            card.getPrintedCost() <= inHandAttachment.getPrintedCost()
-        );
     }
 }
 

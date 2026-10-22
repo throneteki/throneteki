@@ -1,6 +1,14 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
+function opponentControlsKingslayer(source) {
+    return source.game.anyCardsInPlay(
+        (card) =>
+            card.controller !== source.controller &&
+            (card.hasTrait('Lord') || card.hasTrait('Lady') || card.name === 'Ser Jaime Lannister')
+    );
+}
+
 class MadKingAerys extends DrawCard {
     // Mad King Aerys (16013)
     // Prized 1. Renown.
@@ -10,7 +18,7 @@ class MadKingAerys extends DrawCard {
     // once per round.)
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: (context) => !context.source.opponentControlsKingslayer(),
+            condition: (context) => !opponentControlsKingslayer(context.source),
             match: this,
             effect: ability.effects.cannotBeKilled()
         });
@@ -28,16 +36,6 @@ class MadKingAerys extends DrawCard {
             gameAction: GameActions.kill((context) => ({ card: context.target })),
             limit: ability.limit.perRound(1)
         });
-    }
-
-    opponentControlsKingslayer() {
-        return this.game.anyCardsInPlay(
-            (card) =>
-                card.controller !== this.controller &&
-                (card.hasTrait('Lord') ||
-                    card.hasTrait('Lady') ||
-                    card.name === 'Ser Jaime Lannister')
-        );
     }
 }
 
