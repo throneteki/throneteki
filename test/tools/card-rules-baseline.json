@@ -39,11 +39,6 @@
         "legacy-helper": 2,
         "prompt-for-select": 1
     },
-    "server/game/cards/01-Core/DoransGame.js": {
-        "this-in-ability": 8,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/01-Core/FireAndBlood.js": {
         "this-in-ability": 7,
         "legacy-helper": 3,
@@ -288,11 +283,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/03-WotN/AsHardAsWinter.js": {
-        "this-in-ability": 10,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/03-WotN/GreenDreams.js": {
         "this-in-ability": 14,
         "add-message": 3,
@@ -481,10 +471,6 @@
     },
     "server/game/cards/04.6-TC/TarredHeads.js": {
         "this-in-ability": 2,
-        "add-message": 1
-    },
-    "server/game/cards/05-LoCR/ALannisterAlwaysPaysHisDebts.js": {
-        "this-in-ability": 5,
         "add-message": 1
     },
     "server/game/cards/05-LoCR/ARoseOfGold.js": {
@@ -782,10 +768,6 @@
     "server/game/cards/08.1-TAK/TheIronBank.js": {
         "this-in-ability": 9,
         "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/08.1-TAK/TheWaterGardens.js": {
-        "this-in-ability": 4,
         "add-message": 1
     },
     "server/game/cards/08.2-JtO/ChangeOfPlans.js": {
@@ -1208,10 +1190,6 @@
         "add-message": 1,
         "this-in-ability": 4,
         "legacy-helper": 1
-    },
-    "server/game/cards/11.5-IDP/MaesterMyles.js": {
-        "this-in-ability": 6,
-        "add-message": 1
     },
     "server/game/cards/11.5-IDP/TheInnAtTheCrossroads.js": {
         "legacy-helper": 2,
@@ -1657,11 +1635,6 @@
     },
     "server/game/cards/17.1-R/DaenerysTargaryen.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/17.1-R/DoransGame.js": {
-        "this-in-ability": 8,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/17.1-R/Dorne.js": {
         "this-in-ability": 8,

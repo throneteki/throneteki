@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MaesterMyles extends DrawCard {
     // Maester Myles (11095)
@@ -11,27 +12,21 @@ class MaesterMyles extends DrawCard {
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.getPrintedCost() <= this.controller.getNumberOfUsedPlots()
+                    card.getPrintedCost() <= context.player.getNumberOfUsedPlots()
             },
-            handler: (context) => {
-                this.game.promptForIcon(context.player, this, (icon) => {
-                    this.game.addMessage(
-                        '{0} kneels {1} to remove {2} {3} icon from {4} until the end of the phase',
-                        context.player,
-                        this,
-                        icon === 'intrigue' ? 'an' : 'a',
-                        icon,
-                        context.target
-                    );
-                    this.untilEndOfPhase((ability) => ({
+            gameAction: GameActions.chooseIcon({
+                message:
+                    '{player} kneels {source} to remove {icon} icon from {target} until the end of the phase',
+                gameAction: (icon) =>
+                    GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
                         match: context.target,
                         effect: ability.effects.removeIcon(icon)
-                    }));
-                });
-            }
+                    }))
+            })
         });
     }
 }

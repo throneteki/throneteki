@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
+import GameActions from '../../GameActions/index.js';
 
 class ALannisterAlwaysPaysHisDebts extends DrawCard {
     // A Lannister Always Pays His Debts (05022)
@@ -7,42 +8,31 @@ class ALannisterAlwaysPaysHisDebts extends DrawCard {
     // initiate an additional [military] and [intrigue] challenge against that player this phase.
     // (Max 1 per phase.)
     setupCardAbilities(ability) {
-        this.tracker = ChallengeTracker.forPhase(this.game);
+        const tracker = ChallengeTracker.forPhase(this.game);
 
         this.action({
             max: ability.limit.perPhase(1),
             title: 'Raise challenge limit',
-            chooseOpponent: (opponent) => this.hasLostChallengeAgainst(opponent),
+            chooseOpponent: (opponent, context) =>
+                tracker.some({ winner: opponent, loser: context.player }),
             phase: 'challenge',
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    targetController: 'current',
-                    effect: [
-                        ability.effects.mayInitiateAdditionalChallenge(
-                            'military',
-                            (opponent) => opponent === context.opponent
-                        ),
-                        ability.effects.mayInitiateAdditionalChallenge(
-                            'intrigue',
-                            (opponent) => opponent === context.opponent
-                        )
-                    ]
-                }));
-
-                this.game.addMessage(
-                    '{0} plays {1} to be able to initiate an additional {2} and {3} challenge against {4} this phase',
-                    this.controller,
-                    this,
-                    'military',
-                    'intrigue',
-                    context.opponent
-                );
-            }
+            message:
+                '{player} plays {source} to be able to initiate an additional military and intrigue challenge against {opponent} this phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                targetController: 'current',
+                effect: [
+                    ability.effects.mayInitiateAdditionalChallenge(
+                        'military',
+                        (opponent) => opponent === context.opponent
+                    ),
+                    ability.effects.mayInitiateAdditionalChallenge(
+                        'intrigue',
+                        (opponent) => opponent === context.opponent
+                    )
+                ]
+            }))
         });
-    }
-
-    hasLostChallengeAgainst(opponent) {
-        return this.tracker.some({ winner: opponent, loser: this.controller });
     }
 }
 

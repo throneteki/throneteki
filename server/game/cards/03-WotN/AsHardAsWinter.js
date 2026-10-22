@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class AsHardAsWinter extends DrawCard {
     // As Hard as Winter (03022)
@@ -8,51 +9,33 @@ class AsHardAsWinter extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onSacrificed: (event) =>
-                    this.hasUsedWinterPlot() &&
-                    this.starkCharacterSacrificedOrKilled(event.cardStateWhenSacrificed),
-                onCharacterKilled: (event) =>
-                    this.hasUsedWinterPlot() &&
-                    this.starkCharacterSacrificedOrKilled(event.cardStateWhenKilled)
+                onSacrificed: (event, context) =>
+                    hasUsedWinterPlot(context.player) &&
+                    isOwnStarkCharacter(event.cardStateWhenSacrificed, context.player),
+                onCharacterKilled: (event, context) =>
+                    hasUsedWinterPlot(context.player) &&
+                    isOwnStarkCharacter(event.cardStateWhenKilled, context.player)
             },
             target: {
                 cardCondition: (card, context) =>
                     card.location === 'hand' &&
+                    card.controller === context.player &&
                     card.getType() === 'character' &&
                     card.isFaction('stark') &&
-                    card.getPrintedCost() <= context.event.card.getPrintedCost() &&
-                    this.controller.canPutIntoPlay(card)
+                    card.getPrintedCost() <= context.event.card.getPrintedCost()
             },
-
-            handler: (context) => {
-                this.controller.putIntoPlay(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to put into play {2} for free in reaction to a {3} character being sacrificed or killed',
-                    this.controller,
-                    this,
-                    context.target,
-                    'stark'
-                );
-            }
+            message: '{player} plays {source} to put {target} into play',
+            gameAction: GameActions.putIntoPlay((context) => ({ card: context.target }))
         });
     }
+}
 
-    hasUsedWinterPlot() {
-        return this.game.allCards.some(
-            (card) =>
-                card.controller === this.controller &&
-                card.location === 'revealed plots' &&
-                card.hasTrait('Winter')
-        );
-    }
+function hasUsedWinterPlot(player) {
+    return player.plotDiscard.some((card) => card.hasTrait('Winter'));
+}
 
-    starkCharacterSacrificedOrKilled(card) {
-        return (
-            this.controller === card.controller &&
-            card.isFaction('stark') &&
-            card.getType() === 'character'
-        );
-    }
+function isOwnStarkCharacter(card, player) {
+    return card.controller === player && card.isFaction('stark') && card.getType() === 'character';
 }
 
 AsHardAsWinter.code = '03022';
