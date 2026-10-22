@@ -27,12 +27,15 @@ class SerGregorClegane extends DrawCard {
                 card: context.event.card,
                 location: 'dead pile'
             })).then({
+                condition: (context) =>
+                    context.game.anyCardsInPlay((card) =>
+                        sameCost(card, context.parentContext.event.card)
+                    ),
                 target: {
                     optional: true,
                     cardCondition: (card, context) =>
                         card.location === 'play area' &&
-                        card.getType() === 'character' &&
-                        card.getPrintedCost() === context.parentContext.event.card.getPrintedCost(),
+                        sameCost(card, context.parentContext.event.card),
                     gameAction: 'kill'
                 },
                 message: 'Then {player} uses {source} to kill {target}',
@@ -40,6 +43,10 @@ class SerGregorClegane extends DrawCard {
             })
         });
     }
+}
+
+function sameCost(card, discarded) {
+    return card.getType() === 'character' && card.getPrintedCost() === discarded.getPrintedCost();
 }
 
 SerGregorClegane.code = '02049';
