@@ -153,9 +153,6 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/02.3-TKP/TheSilverSteed.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/02.4-NMG/DothrakiOutriders.js": {
         "this-in-ability": 1
     },

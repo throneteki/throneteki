@@ -10,9 +10,9 @@ class TheSilverSteed extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Dothraki' }, { name: 'Daenerys Targaryen' });
         this.whileAttached({
-            condition: () =>
-                this.game.isDuringChallenge({ challengeType: 'power' }) &&
-                this.parent.isParticipating(),
+            condition: (context) =>
+                context.game.isDuringChallenge({ challengeType: 'power' }) &&
+                context.source.parent.isParticipating(),
             effect: ability.effects.addKeyword('Renown')
         });
         this.reaction({
