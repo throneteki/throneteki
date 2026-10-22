@@ -366,10 +366,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/02.4-NMG/MaesterOfStarfall.js": {
-        "this-in-ability": 6,
-        "add-message": 1
-    },
     "server/game/cards/02.4-NMG/PaidOff.js": {
         "this-in-ability": 14,
         "legacy-helper": 3,
@@ -663,11 +659,6 @@
     "server/game/cards/04.4-TIMC/ValarMorghulis.js": {
         "this-in-ability": 2,
         "legacy-helper": 1
-    },
-    "server/game/cards/04.4-TIMC/WithoutHisBeard.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 2,
-        "add-message": 1
     },
     "server/game/cards/04.5-GoH/BlessHimWithSalt.js": {
         "this-in-ability": 8,
