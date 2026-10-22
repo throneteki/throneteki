@@ -142,11 +142,6 @@
         "add-message": 2,
         "prompt-for-select": 1
     },
-    "server/game/cards/02.3-TKP/TheBoneway.js": {
-        "this-in-ability": 9,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/02.3-TKP/TheKingsPeace.js": {
         "this-in-ability": 9,
         "add-message": 4,
@@ -159,7 +154,7 @@
         "legacy-helper": 1
     },
     "server/game/cards/02.3-TKP/TheSilverSteed.js": {
-        "this-in-ability": 6
+        "this-in-ability": 2
     },
     "server/game/cards/02.4-NMG/DothrakiOutriders.js": {
         "this-in-ability": 1
@@ -360,9 +355,6 @@
     "server/game/cards/05-LoCR/TywinLannister.js": {
         "this-in-ability": 5,
         "add-message": 1
-    },
-    "server/game/cards/05-LoCR/UnexpectedDelay.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/06.1-AMAF/AllMenAreFools.js": {
         "this-in-ability": 6,
@@ -696,11 +688,6 @@
         "add-message": 2,
         "legacy-helper": 3
     },
-    "server/game/cards/10-SoD/OffToGulltown.js": {
-        "this-in-ability": 5,
-        "add-message": 2,
-        "legacy-helper": 1
-    },
     "server/game/cards/10-SoD/Plundered.js": {
         "this-in-ability": 11,
         "legacy-helper": 3,
@@ -1032,9 +1019,6 @@
         "this-in-ability": 6,
         "add-message": 2,
         "legacy-helper": 1
-    },
-    "server/game/cards/14-FotS/LyseniGalley.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/14-FotS/Melisandre.js": {
         "this-in-ability": 7,
@@ -1727,9 +1711,6 @@
     },
     "server/game/cards/27.1-THBIB/SearchingTheArchives.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/27.1-THBIB/WeddingAtTheWall.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/27.2-WGYK/Hornvale.js": {
         "event-registration": 1,

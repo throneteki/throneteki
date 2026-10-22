@@ -17,26 +17,19 @@ class TheSilverSteed extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardPowerGained: (event) =>
-                    event.card === this.parent && event.reason === 'renown'
+                onCardPowerGained: (event, context) =>
+                    event.card === context.source.parent && event.reason === 'renown'
             },
             message: '{player} sacrifices {source}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.sacrificeCard({ card: this }).then(() => ({
-                        message: {
-                            format: 'Then {player} is able to initiate an additional power challenge this phase'
-                        },
-                        handler: () => {
-                            this.untilEndOfPhase((ability) => ({
-                                targetController: 'current',
-                                effect: ability.effects.mayInitiateAdditionalChallenge('power')
-                            }));
-                        }
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.sacrificeCard((context) => ({ card: context.source })).then({
+                message:
+                    'Then {player} is able to initiate an additional power challenge this phase',
+                gameAction: GameActions.lastingEffect(() => ({
+                    duration: 'untilEndOfPhase',
+                    targetController: 'current',
+                    effect: ability.effects.mayInitiateAdditionalChallenge('power')
+                }))
+            })
         });
     }
 }
