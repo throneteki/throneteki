@@ -1,4 +1,5 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ThePaleMare extends PlotCard {
     // The Pale Mare (00008)
@@ -19,40 +20,24 @@ class ThePaleMare extends PlotCard {
                     card.controller === context.choosingPlayer &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                let toKill = [];
-
-                for (let selection of context.targets.selections) {
-                    let player = selection.choosingPlayer;
-                    let charactersInPlay = player.filterCardsInPlay(
-                        (card) => card.getType() === 'character'
-                    );
-                    let selectedCards = selection.value || [];
-                    let playerSpecificToKill = charactersInPlay.filter(
-                        (card) => !selectedCards.includes(card)
-                    );
-                    toKill = toKill.concat(playerSpecificToKill);
-
-                    if (playerSpecificToKill.length === 0) {
-                        this.game.addMessage(
-                            '{0} does not kill any characters for {1}',
-                            player,
-                            this
-                        );
-                    } else {
-                        this.game.addMessage(
-                            '{0} kills {1} for {2}',
-                            player,
-                            playerSpecificToKill,
-                            this
-                        );
-                    }
-                }
-
-                this.game.killCharacters(toKill, { allowSave: false });
-            }
+            message: {
+                format: '{player} uses {source} to kill {characters}',
+                args: { characters: (context) => notChosen(context) }
+            },
+            gameAction: GameActions.simultaneously((context) =>
+                notChosen(context).map((card) => GameActions.kill({ card, allowSave: false }))
+            )
         });
     }
+}
+
+function notChosen(context) {
+    return context.targets.selections.flatMap((selection) => {
+        const chosen = selection.value || [];
+        return selection.choosingPlayer.filterCardsInPlay(
+            (card) => card.getType() === 'character' && !chosen.includes(card)
+        );
+    });
 }
 
 ThePaleMare.code = '00008';

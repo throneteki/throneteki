@@ -1,9 +1,4 @@
 {
-    "server/game/cards/00-VDS/ThePaleMare.js": {
-        "add-message": 2,
-        "this-in-ability": 5,
-        "legacy-helper": 1
-    },
     "server/game/cards/00-VDS/ThePowerOfWealth.js": {
         "event-registration": 1,
         "this-in-ability": 2,
@@ -34,12 +29,6 @@
     },
     "server/game/cards/01-Core/HeadsOnSpikes.js": {
         "add-message": 1
-    },
-    "server/game/cards/01-Core/OursIsTheFury.js": {
-        "this-in-ability": 11,
-        "add-message": 2,
-        "game-listener": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/01-Core/RisenFromTheSea.js": {
         "this-in-ability": 15,
@@ -102,12 +91,6 @@
         "prompt-for-select": 1,
         "this-in-ability": 5,
         "add-message": 2
-    },
-    "server/game/cards/02.3-TKP/SerGregorClegane.js": {
-        "this-in-ability": 11,
-        "legacy-helper": 2,
-        "add-message": 2,
-        "prompt-for-select": 1
     },
     "server/game/cards/02.3-TKP/TheKingsPeace.js": {
         "this-in-ability": 9,
@@ -351,9 +334,6 @@
         "add-message": 2,
         "legacy-helper": 1
     },
-    "server/game/cards/08.1-TAK/MagTheMighty.js": {
-        "this-in-ability": 5
-    },
     "server/game/cards/08.1-TAK/QueensMen.js": {
         "this-in-ability": 8,
         "add-message": 2,
@@ -368,11 +348,6 @@
     "server/game/cards/08.2-JtO/JourneyToOldtown.js": {
         "this-in-ability": 4,
         "add-message": 1
-    },
-    "server/game/cards/08.2-JtO/Kingslayer.js": {
-        "legacy-helper": 2,
-        "this-in-ability": 10,
-        "add-message": 2
     },
     "server/game/cards/08.2-JtO/TheHouseOfBlackAndWhite.js": {
         "this-in-ability": 9,
@@ -742,9 +717,6 @@
         "prompt-for-select": 1,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/13.5-TB/TheWhiteBook.js": {
-        "this-in-ability": 6
     },
     "server/game/cards/13.5-TB/TyrionLannister.js": {
         "this-in-ability": 5,
@@ -1288,19 +1260,12 @@
         "this-in-ability": 8,
         "add-message": 1
     },
-    "server/game/cards/26.2-WoW/BeneathThePetals.js": {
-        "this-in-ability": 5,
-        "add-message": 1
-    },
     "server/game/cards/26.2-WoW/QueenOfMeereen.js": {
         "prompt-for-select": 1,
         "this-in-ability": 5
     },
     "server/game/cards/26.2-WoW/SorrowfulMan.js": {
         "this-in-ability": 5
-    },
-    "server/game/cards/26.2-WoW/TheImpsAgent.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/26.3-MaV/CrawnSonOfCalor.js": {
         "this-in-ability": 1

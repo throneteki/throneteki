@@ -10,8 +10,9 @@ class TheImpsAgent extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
+                    event.challenge.isParticipating(context.source)
             },
             cost: ability.costs.putSelfIntoShadows(),
             message: {
@@ -23,33 +24,28 @@ class TheImpsAgent extends DrawCard {
                 activePromptTitle: 'Select a card',
                 cardCondition: { location: 'hand', controller: 'choosingPlayer' }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.choose({
-                        player: (context) => context.choosingPlayer,
-                        title: `Place ${context.target.name} on top of bottom of deck?`,
-                        choices: {
-                            Top: {
-                                message:
-                                    '{player} places a card from their hand on top of their deck',
-                                gameAction: GameActions.returnCardToDeck({
-                                    card: context.target,
-                                    bottom: false
-                                })
-                            },
-                            Bottom: {
-                                message:
-                                    '{player} places a card from their hand on the bottom of their deck',
-                                gameAction: GameActions.returnCardToDeck({
-                                    card: context.target,
-                                    bottom: true
-                                })
-                            }
-                        }
-                    }),
-                    context
-                );
-            }
+            gameAction: GameActions.choose({
+                player: (context) => context.event.challenge.loser,
+                title: (context) => `Place ${context.target.name} on top or bottom of deck?`,
+                choices: {
+                    Top: {
+                        message:
+                            '{choosingPlayer} places a card from their hand on top of their deck',
+                        gameAction: GameActions.returnCardToDeck((context) => ({
+                            card: context.target,
+                            bottom: false
+                        }))
+                    },
+                    Bottom: {
+                        message:
+                            '{choosingPlayer} places a card from their hand on the bottom of their deck',
+                        gameAction: GameActions.returnCardToDeck((context) => ({
+                            card: context.target,
+                            bottom: true
+                        }))
+                    }
+                }
+            })
         });
     }
 }

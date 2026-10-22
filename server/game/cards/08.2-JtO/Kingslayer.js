@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Kingslayer extends DrawCard {
     // Kingslayer (08030)
@@ -9,7 +10,6 @@ class Kingslayer extends DrawCard {
     // her faction.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Kingsguard' });
-
         this.action({
             title: 'Kill character',
             limit: ability.limit.perGame(1),
@@ -21,35 +21,23 @@ class Kingslayer extends DrawCard {
                     card.getPower() >= 2,
                 gameAction: 'kill'
             },
-            handler: (context) => {
-                this.game.killCharacter(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} and kneels {2} to kill {3}',
-                    context.player,
-                    this,
-                    this.parent,
-                    context.target
-                );
-            }
+            message: {
+                format: '{player} uses {source} and kneels {parent} to kill {target}',
+                args: { parent: (context) => context.source.parent }
+            },
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
-
         this.forcedInterrupt({
             when: {
-                onCardLeftPlay: (event) => event.card === this.parent
+                onCardLeftPlay: (event, context) => event.card === context.source.parent
             },
-            handler: (context) => {
-                for (let player of this.game.getPlayers()) {
-                    if (player !== this.controller && player.canGainFactionPower()) {
-                        this.game.addPower(player, 2);
-                    }
-                }
-
-                this.game.addMessage(
-                    '{0} is forced by {1} to have each opponent gain 2 power for their faction',
-                    context.player,
-                    this
-                );
-            }
+            message:
+                '{player} is forced by {source} to have each opponent gain 2 power for their faction',
+            gameAction: GameActions.simultaneously((context) =>
+                context.game
+                    .getOpponents(context.player)
+                    .map((opponent) => GameActions.gainPower({ card: opponent.faction, amount: 2 }))
+            )
         });
     }
 }

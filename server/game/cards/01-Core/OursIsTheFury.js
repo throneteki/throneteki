@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class OursIsTheFury extends DrawCard {
     // Ours is the Fury (01063)
@@ -8,50 +9,30 @@ class OursIsTheFury extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Add knelt Baratheon as defender',
-            condition: () => this.game.isDuringChallenge({ defendingPlayer: this.controller }),
+            condition: (context) =>
+                context.game.isDuringChallenge({ defendingPlayer: context.player }),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.kneeled &&
-                    card.controller === this.controller &&
+                    card.controller === context.player &&
                     card.isFaction('baratheon') &&
                     card.canParticipateInChallenge()
             },
-            handler: (context) => {
-                this.selectedCard = context.target;
-
-                if (!this.selectedCard.isDefending()) {
-                    this.game.currentChallenge.addDefender(context.target);
-                }
-
-                this.game.addMessage(
-                    '{0} plays {1} to add {2} to the challenge as a defender',
-                    context.player,
-                    this,
-                    context.target
-                );
-
-                this.game.once('afterChallenge', this.afterChallenge.bind(this));
-            }
+            message: '{player} plays {source} to add {target} to the challenge as a defender',
+            gameAction: GameActions.simultaneously([
+                GameActions.addToChallenge((context) => ({ card: context.target })),
+                GameActions.delayedEffect({
+                    duration: 'untilEndOfChallenge',
+                    when: {
+                        afterChallenge: (event, context) =>
+                            event.challenge.winner === context.player
+                    },
+                    message: '{player} stands {target} because of {source}',
+                    gameAction: GameActions.standCard((context) => ({ card: context.target }))
+                })
+            ])
         });
-    }
-
-    afterChallenge(event) {
-        if (!this.selectedCard) {
-            return;
-        }
-
-        if (event.challenge.winner === this.controller) {
-            this.controller.standCard(this.selectedCard);
-            this.game.addMessage(
-                '{0} stands {1} because of {2}',
-                this.controller,
-                this.selectedCard,
-                this
-            );
-        }
-
-        this.selectedCard = undefined;
     }
 }
 
