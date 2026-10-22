@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Extortion extends DrawCard {
     // Extortion (10030)
@@ -7,28 +8,22 @@ class Extortion extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.attackingPlayer === this.controller &&
-                    event.challenge.winner === this.controller &&
-                    event.challenge.challengeType === 'intrigue' &&
-                    (this.controller.canGainGold() || event.challenge.loser.gold > 1)
+                afterChallenge: (event, context) =>
+                    event.challenge.attackingPlayer === context.player &&
+                    event.challenge.winner === context.player &&
+                    event.challenge.challengeType === 'intrigue'
             },
-            handler: (context) => {
-                let gainGold = this.game.addGold(context.player, 3);
-
-                let loser = context.event.challenge.loser;
-                let returnGold = Math.min(loser.gold, 3);
-                this.game.returnGoldToTreasury({ player: loser, amount: returnGold });
-
-                this.game.addMessage(
-                    "{0} plays {1} to gain {2} gold and return {3} gold from {4}'s gold pool to the treasury",
-                    context.player,
-                    this,
-                    gainGold,
-                    returnGold,
-                    loser
-                );
-            }
+            message: {
+                format: "{player} plays {source} to gain 3 gold and return up to 3 gold from {loser}'s gold pool to the treasury",
+                args: { loser: (context) => context.event.challenge.loser }
+            },
+            gameAction: GameActions.simultaneously([
+                GameActions.gainGold((context) => ({ player: context.player, amount: 3 })),
+                GameActions.returnGoldToTreasury((context) => ({
+                    player: context.event.challenge.loser,
+                    amount: Math.min(context.event.challenge.loser.gold, 3)
+                }))
+            ])
         });
     }
 }

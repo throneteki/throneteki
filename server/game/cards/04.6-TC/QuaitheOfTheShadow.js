@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class QuaitheOfTheShadow extends DrawCard {
     // Quaithe of the Shadow (04113)
@@ -8,29 +9,19 @@ class QuaitheOfTheShadow extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    event.card === this &&
-                    this.game.isDuringChallenge() &&
-                    this.game.currentPhase === 'challenge'
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source &&
+                    context.game.isDuringChallenge() &&
+                    context.game.currentPhase === 'challenge'
             },
-            handler: () => {
-                let attackers = this.game.currentChallenge.attackers.filter(
-                    (card) => card.getStrength() <= 2
-                );
-                let defenders = this.game.currentChallenge.defenders.filter(
-                    (card) => card.getStrength() <= 2
-                );
-                let participants = attackers.concat(defenders);
-                for (let card of participants) {
-                    this.game.currentChallenge.removeFromChallenge(card);
-                }
-
-                this.game.addMessage(
-                    '{0} uses {1} to remove all characters with STR 2 or lower from the challenge',
-                    this.controller,
-                    this
-                );
-            }
+            message:
+                '{player} uses {source} to remove all characters with STR 2 or lower from the challenge',
+            gameAction: GameActions.simultaneously((context) =>
+                context.game.currentChallenge
+                    .getParticipants()
+                    .filter((card) => card.getStrength() <= 2)
+                    .map((card) => GameActions.removeFromChallenge({ card }))
+            )
         });
     }
 }

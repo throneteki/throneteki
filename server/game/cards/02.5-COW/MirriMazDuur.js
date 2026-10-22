@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MirriMazDuur extends DrawCard {
     // Mirri Maz Duur (02093)
@@ -8,29 +9,24 @@ class MirriMazDuur extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onClaimApplied: (event) =>
+                onClaimApplied: (event, context) =>
                     event.challenge &&
-                    event.challenge.isMatch({ winner: this.controller, attackingAlone: this })
+                    event.challenge.isMatch({
+                        winner: context.player,
+                        attackingAlone: context.source
+                    })
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.controller === this.game.currentChallenge.loser,
-                gameAction: 'kill'
+                    card.controller === context.event.challenge.loser
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to kill {2} instead of normal claim effects',
-                    context.player,
-                    this,
-                    context.target
-                );
-
-                context.replaceHandler(() => {
-                    this.game.killCharacter(context.target);
-                });
-            }
+            message: '{player} uses {source} to kill {target} instead of normal claim effects',
+            gameAction: GameActions.replaceEvent((context) => ({
+                event: context.event,
+                replacement: GameActions.kill({ card: context.target })
+            }))
         });
     }
 }

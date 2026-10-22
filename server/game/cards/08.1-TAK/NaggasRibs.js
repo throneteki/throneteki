@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class NaggasRibs extends DrawCard {
     // Nagga's Ribs (08013)
@@ -7,29 +8,27 @@ class NaggasRibs extends DrawCard {
     // Reaction: After a character is placed in your discard pile, move it to your dead pile.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: this,
+            match: (card, context) => card === context.source,
             effect: ability.effects.dynamicDominanceStrength(
-                () => 2 * this.controller.deadPile.length
+                (card) => 2 * card.controller.deadPile.length
             )
         });
 
         this.reaction({
             when: {
-                onCardPlaced: (event) =>
+                onCardPlaced: (event, context) =>
                     event.card.getType() === 'character' &&
                     event.card.location === 'discard pile' &&
-                    event.card.owner === this.controller
+                    event.card.owner === context.player
             },
-            handler: (context) => {
-                let card = context.event.card;
-                context.player.moveCard(card, 'dead pile');
-                this.game.addMessage(
-                    '{0} uses {1} to move {2} to their dead pile',
-                    context.player,
-                    this,
-                    card
-                );
-            }
+            message: {
+                format: '{player} uses {source} to move {card} to their dead pile',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.placeCard((context) => ({
+                card: context.event.card,
+                location: 'dead pile'
+            }))
         });
     }
 }

@@ -195,11 +195,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/02.5-COW/MirriMazDuur.js": {
-        "this-in-ability": 6,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/02.5-COW/VengeanceForElia.js": {
         "this-in-ability": 6,
         "add-message": 1
@@ -224,11 +219,6 @@
         "this-in-ability": 14,
         "add-message": 3,
         "legacy-helper": 1
-    },
-    "server/game/cards/03-WotN/JoryCassel.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/03-WotN/Nymeria.js": {
         "this-in-ability": 9,
@@ -317,10 +307,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/04.5-GoH/MotherOfDragons.js": {
-        "this-in-ability": 10,
-        "add-message": 1
-    },
     "server/game/cards/04.5-GoH/RitualOfRhllor.js": {
         "this-in-ability": 7,
         "prompt-for-select": 1,
@@ -353,10 +339,6 @@
         "prompt-for-select": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/04.6-TC/QuaitheOfTheShadow.js": {
-        "this-in-ability": 9,
-        "add-message": 1
-    },
     "server/game/cards/04.6-TC/TarredHeads.js": {
         "this-in-ability": 2,
         "add-message": 1
@@ -380,11 +362,6 @@
         "this-in-ability": 12,
         "legacy-helper": 2,
         "add-message": 2
-    },
-    "server/game/cards/05-LoCR/MoonBrothers.js": {
-        "this-in-ability": 10,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/05-LoCR/OldWyk.js": {
         "this-in-ability": 11,
@@ -461,11 +438,6 @@
         "add-message": 3,
         "prompt-for-select": 2,
         "legacy-helper": 2
-    },
-    "server/game/cards/06.3-TFoA/LaySiege.js": {
-        "legacy-helper": 2,
-        "this-in-ability": 4,
-        "add-message": 1
     },
     "server/game/cards/06.3-TFoA/TheNorthRemembers.js": {
         "this-in-ability": 7,
@@ -558,10 +530,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/07-WotW/LingeringVenom.js": {
-        "this-in-ability": 8,
-        "legacy-helper": 1
-    },
     "server/game/cards/07-WotW/MaesterAemon.js": {
         "this-in-ability": 7,
         "add-message": 1
@@ -578,11 +546,6 @@
     },
     "server/game/cards/08.1-TAK/MagTheMighty.js": {
         "this-in-ability": 5
-    },
-    "server/game/cards/08.1-TAK/NaggasRibs.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/08.1-TAK/QueensMen.js": {
         "this-in-ability": 8,
@@ -784,11 +747,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/10-SoD/Extortion.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/10-SoD/FalsePlans.js": {
         "add-message": 2,
         "this-in-ability": 7,
@@ -837,11 +795,6 @@
     },
     "server/game/cards/10-SoD/ToTheSpears.js": {
         "this-in-ability": 4
-    },
-    "server/game/cards/10-SoD/Val.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/11.1-TSC/AegonTargaryen.js": {
         "this-in-ability": 2
@@ -1262,9 +1215,6 @@
         "this-in-ability": 6,
         "add-message": 1
     },
-    "server/game/cards/15-DotE/ChampionsChallenge.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/15-DotE/ChoosingTheSpear.js": {
         "this-in-ability": 11,
         "add-message": 2,
@@ -1485,11 +1435,6 @@
         "this-in-ability": 9,
         "legacy-helper": 2,
         "add-message": 2
-    },
-    "server/game/cards/18-FH/SerEmmonCuy.js": {
-        "this-in-ability": 13,
-        "add-message": 2,
-        "legacy-helper": 1
     },
     "server/game/cards/18-FH/ThePointyEnd.js": {
         "add-message": 2,
