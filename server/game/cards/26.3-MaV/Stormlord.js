@@ -14,22 +14,14 @@ class Stormlord extends DrawCard {
                     !context.player.anyCardsInPlay({ type: 'character', trait: 'king' })
             },
             message: '{player} is forced by {source} to sacrifice a character',
-            handler: (context) => {
-                this.game.promptForSelect(context.player, {
-                    activePromptTitle: 'Select a character to sacrifice',
-                    source: this,
-                    gameAction: 'sacrifice',
-                    cardCondition: (card) =>
-                        card.location === 'play area' &&
-                        card.getType() === 'character' &&
-                        card.controller === context.player,
-                    onSelect: (p, card) => {
-                        this.game.resolveGameAction(GameActions.sacrificeCard({ card }));
-                        this.game.addMessage('{0} chooses to sacrifice {1}', context.player, card);
-                        return true;
-                    }
-                });
-            }
+            gameAction: GameActions.chooseCards({
+                title: 'Select a character to sacrifice',
+                cardCondition: (card, context) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.controller === context.choosingPlayer,
+                gameAction: (card) => GameActions.sacrificeCard({ card })
+            })
         });
     }
 }

@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class AndrikTheUnsmiling extends DrawCard {
     // Andrik the Unsmiling (12008)
@@ -9,42 +10,27 @@ class AndrikTheUnsmiling extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardDiscarded: (event) =>
+                onCardDiscarded: (event, context) =>
                     event.isPillage &&
-                    this.game.currentChallenge.winner === this.controller &&
-                    event.source === this
+                    context.game.currentChallenge.winner === context.player &&
+                    event.source === context.source
             },
             target: {
-                activePromptTitle: 'Select location',
-                cardCondition: (card) => this.cardCondition(card)
+                activePromptTitle: 'Select a location or attachment',
+                cardCondition: (card, context) =>
+                    card.controller === context.game.currentChallenge.loser &&
+                    !card.isLimited() &&
+                    ['location', 'attachment'].includes(card.getType()) &&
+                    card.location === 'discard pile'
             },
-            handler: (context) => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a copy of ' + context.target.name,
-                    source: this,
-                    cardCondition: (card) =>
-                        card.location === 'play area' && card.isCopyOf(context.target),
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
-            }
+            message: '{player} uses {source} to discard a copy of {target} from play',
+            gameAction: GameActions.chooseCards({
+                title: (context) => `Select a copy of ${context.target.name}`,
+                cardCondition: (card, context) =>
+                    card.location === 'play area' && card.isCopyOf(context.target),
+                gameAction: (card) => GameActions.discardCard({ card })
+            })
         });
-    }
-
-    cardCondition(card) {
-        return (
-            card.controller === this.game.currentChallenge.loser &&
-            !card.isLimited() &&
-            ['location', 'attachment'].includes(card.getType()) &&
-            card.location === 'discard pile'
-        );
-    }
-
-    onCardSelected(player, card) {
-        card.controller.discardCard(card);
-
-        this.game.addMessage('{0} uses {1} to discard a copy of {2} from play', player, this, card);
-
-        return true;
     }
 }
 

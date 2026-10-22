@@ -1,4 +1,9 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+
+function powerToMove(context) {
+    return context.game.anyPlotHasTrait('War') ? 2 : 1;
+}
 
 class KingRobbsHost extends DrawCard {
     // King Robb's Host (03001)
@@ -9,48 +14,32 @@ class KingRobbsHost extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'military' &&
-                    event.challenge.winner === this.controller &&
-                    this.isParticipating() &&
+                    event.challenge.winner === context.player &&
+                    context.source.isParticipating() &&
                     event.challenge.loser.faction.power >= 1
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Choose an attacking character',
-                    source: this,
-                    cardCondition: (card) =>
-                        card.location === 'play area' &&
-                        card.getType() === 'character' &&
-                        card.isAttacking(),
-                    onSelect: (p, card) => this.onCardSelected(p, card)
-                });
-            }
+            target: {
+                activePromptTitle: 'Select an attacking character',
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.isAttacking()
+            },
+            message: {
+                format: "{player} uses {source} to move {amount} power from {loser}'s faction card to {target}",
+                args: {
+                    amount: (context) => powerToMove(context),
+                    loser: (context) => context.event.challenge.loser
+                }
+            },
+            gameAction: GameActions.movePower((context) => ({
+                from: context.event.challenge.loser.faction,
+                to: context.target,
+                amount: powerToMove(context)
+            }))
         });
-    }
-
-    onCardSelected(p, card) {
-        let loser = this.game.currentChallenge.loser;
-        let power = 0;
-
-        if (loser.faction.power >= 2) {
-            power = this.game.anyPlotHasTrait('War') ? 2 : 1;
-        } else {
-            power = 1;
-        }
-
-        this.game.movePower(loser.faction, card, power);
-
-        this.game.addMessage(
-            "{0} uses {1} to move {2} power from {3}'s faction card to {4}",
-            this.controller,
-            this,
-            power,
-            loser,
-            card
-        );
-
-        return true;
     }
 }
 
