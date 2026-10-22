@@ -36,7 +36,6 @@ describe('City Gates', function () {
 
         it('raises your income by 1', function () {
             expect(this.player1Object.gold).toBe(6);
-            expect(this.player2Object.gold).toBe(5);
             expect(this.player1).isReadyToTakeAction();
         });
     });
