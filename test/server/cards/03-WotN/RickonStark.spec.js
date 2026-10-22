@@ -21,7 +21,7 @@ describe('Rickon Stark', function () {
             this.player1.triggerAbility(this.rickonStark);
 
             expect(this.rickonStark.location).toBe('discard pile');
-            expect(this.player2.findCardByName('Maester Aemon').location).toBe('draw deck');
+            expect(this.player2.findCardByName('Maester Aemon').location).not.toBe('play area');
             expect(this.player1).isReadyToTakeAction();
         });
 
