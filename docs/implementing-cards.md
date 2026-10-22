@@ -346,6 +346,28 @@ gameAction: GameActions.chooseIcon({
 });
 ```
 
+#### Naming a challenge type
+
+For "name a challenge type" or "choose a challenge type", use `GameActions.chooseChallengeType`.
+It works like `chooseIcon`, with `{challengeType}` in the `message` becoming the chosen type
+("military"). `exclude` returns a challenge type to leave out, for "a different challenge type":
+
+```javascript
+// Coordinated Attack: choose a different challenge type. You may initiate an additional
+// challenge of the chosen type this phase.
+gameAction: GameActions.chooseChallengeType({
+    exclude: (context) => context.event.challenge.challengeType,
+    message:
+        '{player} uses {source} to be able to initiate an additional {challengeType} challenge this phase',
+    gameAction: (challengeType) =>
+        GameActions.lastingEffect(() => ({
+            duration: 'untilEndOfPhase',
+            targetController: 'current',
+            effect: ability.effects.mayInitiateAdditionalChallenge(challengeType)
+        }))
+});
+```
+
 ### Delayed effects
 
 Text that sets up an effect for a later condition ("if you win that challenge", "if an opponent

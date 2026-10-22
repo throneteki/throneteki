@@ -49,10 +49,6 @@
         "this-in-ability": 3,
         "add-message": 1
     },
-    "server/game/cards/01-Core/CalmOverWesteros.js": {
-        "this-in-ability": 6,
-        "add-message": 1
-    },
     "server/game/cards/01-Core/ChamberOfThePaintedTable.js": {
         "this-in-ability": 8,
         "prompt-for-select": 1,
@@ -121,10 +117,6 @@
     },
     "server/game/cards/01-Core/OlennasCunning.js": {
         "this-in-ability": 2
-    },
-    "server/game/cards/01-Core/OlennasInformant.js": {
-        "this-in-ability": 6,
-        "add-message": 1
     },
     "server/game/cards/01-Core/OursIsTheFury.js": {
         "this-in-ability": 11,
@@ -1900,10 +1892,6 @@
     "server/game/cards/12-KotI/Cohollo.js": {
         "this-in-ability": 3
     },
-    "server/game/cards/12-KotI/CoordinatedAttack.js": {
-        "this-in-ability": 5,
-        "add-message": 1
-    },
     "server/game/cards/12-KotI/DesertRaider.js": {
         "this-in-ability": 12,
         "legacy-helper": 2,
@@ -2241,10 +2229,6 @@
         "add-message": 2,
         "game-listener": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/14-FotS/ParleyAtStormsEnd.js": {
-        "this-in-ability": 3,
-        "add-message": 1
     },
     "server/game/cards/14-FotS/RedPriest.js": {
         "this-in-ability": 4
@@ -3191,10 +3175,6 @@
     },
     "server/game/cards/26.2-WoW/WhiteHarborGalley.js": {
         "this-in-ability": 6
-    },
-    "server/game/cards/26.3-MaV/BattleBeneathTheWall.js": {
-        "this-in-ability": 4,
-        "add-message": 1
     },
     "server/game/cards/26.3-MaV/CrawnSonOfCalor.js": {
         "this-in-ability": 1

@@ -1,5 +1,5 @@
 import PlotCard from '../../plotcard.js';
-import ChallengeTypes from '../../ChallengeTypes.js';
+import GameActions from '../../GameActions/index.js';
 
 class CoordinatedAttack extends PlotCard {
     // Coordinated Attack (12049)
@@ -9,38 +9,23 @@ class CoordinatedAttack extends PlotCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    event.challenge.attackingPlayer === this.controller
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
+                    event.challenge.attackingPlayer === context.player
             },
             limit: ability.limit.perPhase(1),
-            handler: (context) => {
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: 'Select a challenge type',
-                        buttons: ChallengeTypes.asButtons({ method: 'selectChallengeType' }).filter(
-                            (button) => button.arg !== context.event.challenge.challengeType
-                        )
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.chooseChallengeType({
+                exclude: (context) => context.event.challenge.challengeType,
+                message:
+                    '{player} uses {source} to be able to initiate an additional {challengeType} challenge this phase',
+                gameAction: (challengeType) =>
+                    GameActions.lastingEffect(() => ({
+                        duration: 'untilEndOfPhase',
+                        targetController: 'current',
+                        effect: ability.effects.mayInitiateAdditionalChallenge(challengeType)
+                    }))
+            })
         });
-    }
-
-    selectChallengeType(player, selectedType) {
-        this.untilEndOfPhase((ability) => ({
-            targetController: 'current',
-            effect: ability.effects.mayInitiateAdditionalChallenge(selectedType)
-        }));
-        this.game.addMessage(
-            '{0} uses {1} to be able to initate an additional {2} challenge this phase',
-            player,
-            this,
-            selectedType
-        );
-
-        return true;
     }
 }
 

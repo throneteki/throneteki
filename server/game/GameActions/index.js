@@ -9,6 +9,7 @@ import ChangeEventAmount from './ChangeEventAmount.js';
 import CheckReserve from './CheckReserve.js';
 import ChooseCards from './ChooseCards.js';
 import ChooseGameAction from './ChooseGameAction.js';
+import ChooseChallengeType from './ChooseChallengeType.js';
 import ChooseIcon from './ChooseIcon.js';
 import DiscardAtRandom from './DiscardAtRandom.js';
 import DiscardCard from './DiscardCard.js';
@@ -65,6 +66,7 @@ const GameActions = {
     changeEventAmount: (props) => new AbilityAdapter(ChangeEventAmount, props),
     checkReserve: (props) => new AbilityAdapter(CheckReserve, props),
     choose: (props) => new ChooseGameAction(props),
+    chooseChallengeType: (props) => new ChooseChallengeType(props),
     chooseIcon: (props) => new ChooseIcon(props),
     chooseCards: (props) => new AbilityAdapter(new ChooseCards(props), (context) => ({ context })),
     delayedEffect: (props) => new AddDelayedEffect(props),
