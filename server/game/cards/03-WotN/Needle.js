@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Needle extends DrawCard {
     // Needle (03020)
@@ -14,21 +15,17 @@ class Needle extends DrawCard {
 
         this.interrupt({
             when: {
-                onSacrificed: (event) => event.card === this.parent
+                onSacrificed: (event, context) => event.card === context.source.parent
             },
             cost: ability.costs.sacrificeSelf(),
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} sacrifices {1} to return {2} to their hand',
-                    context.player,
-                    this,
-                    context.event.card
-                );
-                context.replaceHandler(() => {
-                    context.event.cardStateWhenSacrificed = context.event.card.createSnapshot();
-                    this.controller.returnCardToHand(context.event.card, false);
-                });
-            }
+            message: {
+                format: '{player} sacrifices {source} to return {card} to their hand',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.replaceEvent((context) => ({
+                event: context.event,
+                replacement: GameActions.placeCard({ card: context.event.card, location: 'hand' })
+            }))
         });
     }
 }

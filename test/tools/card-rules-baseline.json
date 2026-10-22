@@ -74,11 +74,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/01-Core/SerDavosSeaworth.js": {
-        "this-in-ability": 8,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/01-Core/TheBearAndTheMaidenFair.js": {
         "this-in-ability": 6,
         "legacy-helper": 1,
@@ -115,11 +110,6 @@
     },
     "server/game/cards/02.1-TtB/PleasureBarge.js": {
         "this-in-ability": 2
-    },
-    "server/game/cards/02.1-TtB/RiseOfTheKraken.js": {
-        "this-in-ability": 7,
-        "add-message": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/02.1-TtB/TheHound.js": {
         "this-in-ability": 10,
@@ -254,11 +244,6 @@
         "this-in-ability": 4,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/03-WotN/Needle.js": {
-        "this-in-ability": 4,
-        "add-message": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/03-WotN/Nymeria.js": {
         "this-in-ability": 9,
@@ -501,11 +486,6 @@
         "legacy-helper": 2,
         "this-in-ability": 4,
         "add-message": 1
-    },
-    "server/game/cards/06.3-TFoA/SpearsOfTheMerlingKing.js": {
-        "this-in-ability": 4,
-        "add-message": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/06.3-TFoA/TheNorthRemembers.js": {
         "this-in-ability": 7,
@@ -1256,11 +1236,6 @@
         "game-listener": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/13.6-LMHR/SerJorahMormont.js": {
-        "this-in-ability": 6,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/13.6-LMHR/ValyrianSteel.js": {
         "this-in-ability": 5
     },
@@ -1384,10 +1359,6 @@
     "server/game/cards/15-DotE/Rhaegal.js": {
         "this-in-ability": 9,
         "add-message": 1
-    },
-    "server/game/cards/15-DotE/SerMerynTrant.js": {
-        "this-in-ability": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/15-DotE/SpottedSylva.js": {
         "this-in-ability": 5,
@@ -1821,10 +1792,6 @@
         "add-message": 1
     },
     "server/game/cards/23-AHaH/TorrhensSquare.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/23-AHaH/WingedKnight.js": {
-        "legacy-helper": 1,
         "this-in-ability": 1
     },
     "server/game/cards/24-TSoW/CaggoCorpsekiller.js": {
