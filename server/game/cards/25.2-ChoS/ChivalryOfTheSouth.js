@@ -6,7 +6,7 @@ class ChivalryOfTheSouth extends PlotCard {
     // Interrupt: When a challenge ends in which there are no participating characters, gain 2 power
     // for your faction. (Limit 3 times per round.)
     setupCardAbilities(ability) {
-        this.reaction({
+        this.interrupt({
             when: {
                 onChallengeFinished: (event) => event.challenge.getParticipants().length === 0
             },
