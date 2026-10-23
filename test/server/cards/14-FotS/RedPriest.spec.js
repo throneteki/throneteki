@@ -1,41 +1,29 @@
-describe('Red Priest', function () {
-    integration(function () {
-        describe('when enters play', function () {
-            beforeEach(function () {
-                const deck1 = this.buildDeck('baratheon', ['Marching Orders', 'Red Priest (FotS)']);
-                const deck2 = this.buildDeck('lannister', [
-                    'Marching Orders',
-                    'Ser Jaime Lannister (Core)',
-                    'Burned Men'
-                ]);
-                this.player1.selectDeck(deck1);
-                this.player2.selectDeck(deck2);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.completeSetup();
-
-                this.selectFirstPlayer(this.player1);
-
-                this.priest = this.player1.findCardByName('Red Priest', 'hand');
-                this.player1.clickCard(this.priest);
-                this.player1.triggerAbility(this.priest);
-
-                this.card = this.player2.findCardByName('Burned Men');
-
-                this.player1.clickPrompt('Done');
-                this.player1.clickCard(this.card);
-            });
-
-            it('removes the selected card from the game', function () {
-                expect(this.card.location).toBe('out of game');
-            });
-
-            it('returns the card if Red Priest leaves play', function () {
-                this.player1.dragCard(this.priest, 'discard pile');
-
-                expect(this.card.location).toBe('hand');
-            });
+describe('Red Priest (FotS)', function () {
+    beforeEach(function () {
+        this.setupTest({
+            player1: { faction: 'baratheon', hand: ['Red Priest (FotS)'] },
+            player2: {
+                inPlay: ['Hedge Knight'],
+                hand: ['Ser Jaime Lannister (Core)', 'Burned Men']
+            }
         });
+        this.player1.clickCard(this.redPriest);
+        this.player1.triggerAbility('Red Priest');
+        this.player1.clickPrompt('Done');
+        this.player1.clickCard(this.burnedMen);
+    });
+
+    it("looks at an opponent's hand and removes a card in it from the game", function () {
+        expect(this.burnedMen.location).toBe('out of game');
+        expect(this.serJaimeLannister.location).toBe('hand');
+    });
+
+    it('returns the card to hand when Red Priest leaves play', function () {
+        this.completeMarshalPhase();
+        this.player1.clickPrompt('Done');
+        this.unopposedChallenge(this.player2, 'Military', this.hedgeKnight);
+        this.player1.clickCard(this.redPriest);
+        expect(this.redPriest.location).toBe('dead pile');
+        expect(this.burnedMen.location).toBe('hand');
     });
 });

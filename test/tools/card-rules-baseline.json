@@ -103,9 +103,6 @@
         "add-message": 3,
         "game-listener": 1
     },
-    "server/game/cards/05-LoCR/SummonedToCourt.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/05-LoCR/TheRainsOfCastamere.js": {
         "event-registration": 1,
         "this-in-ability": 8,
@@ -264,9 +261,6 @@
         "game-listener": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/14-FotS/RedPriest.js": {
-        "this-in-ability": 4
-    },
     "server/game/cards/14-FotS/SerDavosSeaworth.js": {
         "this-in-ability": 4
     },
@@ -297,10 +291,6 @@
         "this-in-ability": 6,
         "add-message": 1
     },
-    "server/game/cards/16-TTWDFL/SkyCell.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1
-    },
     "server/game/cards/16-TTWDFL/TheGatheringStorm.js": {
         "add-message": 2,
         "this-in-ability": 6,
@@ -322,16 +312,10 @@
         "legacy-helper": 1,
         "add-message": 2
     },
-    "server/game/cards/17.1-R/SeaOfBlood.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/17.1-R/TheIronBank.js": {
         "this-in-ability": 9,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/17.2-R2/RedPriest.js": {
-        "this-in-ability": 4
     },
     "server/game/cards/18-FH/SerAddamMarbrand.js": {
         "this-in-ability": 9,

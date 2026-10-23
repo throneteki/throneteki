@@ -16,29 +16,28 @@ class SeaOfBlood extends AgendaCard {
             cost: ability.costs.discardTokenFromSelf(Tokens.blood),
             message:
                 '{player} discards 1 blood token from {source} to reduce the cost of the next event they play this phase by 2',
-            handler: () => {
-                this.untilEndOfPhase((ability) => ({
-                    targetController: 'current',
-                    effect: ability.effects.reduceNextPlayedCardCost(
-                        2,
-                        (card) => card.getType() === 'event'
-                    )
-                }));
-            }
+            gameAction: GameActions.lastingEffect(() => ({
+                duration: 'untilEndOfPhase',
+                targetController: 'current',
+                effect: ability.effects.reduceNextPlayedCardCost(
+                    2,
+                    (card) => card.getType() === 'event'
+                )
+            }))
         });
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'military' &&
-                    event.challenge.winner === this.controller &&
+                    event.challenge.winner === context.player &&
                     event.challenge.strengthDifference >= 5
             },
             cost: ability.costs.kneelFactionCard(),
             message:
                 '{player} uses {source} and kneels their faction card to place 1 blood token on {source}, and search the top 10 cards of their deck for an event',
             gameAction: GameActions.simultaneously([
-                GameActions.placeToken(() => ({
-                    card: this,
+                GameActions.placeToken((context) => ({
+                    card: context.source,
                     token: Tokens.blood
                 })),
                 GameActions.search({
