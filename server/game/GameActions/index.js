@@ -61,6 +61,7 @@ import RevealNewPlot from './RevealNewPlot.js';
 import RevealTopCards from './RevealTopCards.js';
 import SacrificeCard from './SacrificeCard.js';
 import SaveCard from './SaveCard.js';
+import SatisfyClaimAction from './SatisfyClaimAction.js';
 import Search from './Search.js';
 import SetFirstPlayer from './SetFirstPlayer.js';
 import Shuffle from './Shuffle.js';
@@ -133,6 +134,7 @@ const GameActions = {
     revealNewPlot: (props) => new AbilityAdapter(RevealNewPlot, props),
     revealTopCards: (props) => new AbilityAdapter(RevealTopCards, props),
     sacrificeCard: (props) => new AbilityAdapter(SacrificeCard, props),
+    satisfyClaim: (props) => new AbilityAdapter(SatisfyClaimAction, props),
     saveCard: (props) => new AbilityAdapter(SaveCard, props),
     search: (props) => new AbilityAdapter(new Search(props), (context) => ({ context })),
     setFirstPlayer: (props) => new AbilityAdapter(SetFirstPlayer, props),

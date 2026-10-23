@@ -1,5 +1,5 @@
 import DrawCard from '../../drawcard.js';
-import SatisfyClaim from '../../gamesteps/challenge/SatisfyClaim.js';
+import GameActions from '../../GameActions/index.js';
 
 class VengeanceForElia extends DrawCard {
     // Vengeance for Elia (02096)
@@ -9,26 +9,19 @@ class VengeanceForElia extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onClaimApplied: (event) =>
-                    event.challenge && event.challenge.defendingPlayer === this.controller
+                onClaimApplied: (event, context) =>
+                    !!event.challenge && event.challenge.defendingPlayer === context.player
             },
             chooseOpponent: true,
-            handler: (context) => {
-                let opponent = context.opponent;
-
-                this.game.addMessage(
-                    '{0} uses {1} to apply claim to {2} instead',
-                    context.player,
-                    this,
-                    opponent
-                );
-
-                context.replaceHandler((event) => {
-                    event.claim.replaceRecipient(this.controller, opponent);
-
-                    this.game.queueStep(new SatisfyClaim(this.game, event.claim));
-                });
-            }
+            message: '{player} plays {source} to have {opponent} satisfy claim instead',
+            gameAction: GameActions.replaceEvent((context) => {
+                const claim = context.event.claim.clone();
+                claim.replaceRecipient(context.player, context.opponent);
+                return {
+                    event: context.event,
+                    replacement: GameActions.satisfyClaim({ claim, game: context.game })
+                };
+            })
         });
     }
 }

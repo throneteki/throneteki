@@ -20,10 +20,6 @@
         "this-in-ability": 5,
         "add-message": 2
     },
-    "server/game/cards/02.5-COW/VengeanceForElia.js": {
-        "this-in-ability": 6,
-        "add-message": 1
-    },
     "server/game/cards/04.1-AtSK/VaryssRiddle.js": {
         "this-in-ability": 13,
         "add-message": 1
@@ -123,11 +119,6 @@
         "this-in-ability": 9,
         "add-message": 2,
         "prompt-for-select": 1,
-        "legacy-helper": 1
-    },
-    "server/game/cards/22-BtB/Highgarden.js": {
-        "this-in-ability": 15,
-        "add-message": 2,
         "legacy-helper": 1
     },
     "server/game/cards/22-BtB/StormsEnd.js": {
