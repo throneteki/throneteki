@@ -14,9 +14,9 @@ class TheTrident extends DrawCard {
         this.forcedReaction({
             cannotBeCanceled: true,
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    event.challenge.attackingPlayer === this.controller
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
+                    event.challenge.attackingPlayer === context.player
             },
             message: {
                 format: '{player} is forced to give control of {source} to {loser}, or sacrifice another neutral location',
@@ -36,39 +36,16 @@ class TheTrident extends DrawCard {
                         }))
                     },
                     'Sacrifice Location': {
-                        gameAction: GameActions.genericHandler((context) => {
-                            this.game.promptForSelect(context.player, {
-                                activePromptTitle: 'Select a location',
-                                cardCondition: (card) =>
-                                    card.getType() === 'location' &&
-                                    card.location === 'play area' &&
-                                    card.isFaction('neutral') &&
-                                    card !== context.source &&
-                                    card.controller === context.player,
-                                gameAction: 'sacrifice',
-                                onSelect: (player, card) => {
-                                    this.game.addMessage(
-                                        '{0} chooses to sacrifice {1}',
-                                        player,
-                                        card
-                                    );
-                                    this.game.resolveGameAction(
-                                        GameActions.sacrificeCard(() => ({ card })),
-                                        context
-                                    );
-                                    return true;
-                                },
-                                onCancel: (player) => {
-                                    this.game.addAlert(
-                                        'danger',
-                                        '{0} cancels resolution of {1}',
-                                        player,
-                                        context.source
-                                    );
-                                    return true;
-                                },
-                                source: context.source
-                            });
+                        message: '{player} chooses to sacrifice another neutral location',
+                        gameAction: GameActions.chooseCards({
+                            title: 'Select a location',
+                            cardCondition: (card, context) =>
+                                card.getType() === 'location' &&
+                                card.location === 'play area' &&
+                                card.isFaction('neutral') &&
+                                card !== context.source &&
+                                card.controller === context.player,
+                            gameAction: (card) => GameActions.sacrificeCard({ card })
                         })
                     }
                 }

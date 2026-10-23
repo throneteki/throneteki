@@ -207,11 +207,6 @@
         "this-in-ability": 7,
         "legacy-helper": 2
     },
-    "server/game/cards/10-SoD/FalseSpring.js": {
-        "this-in-ability": 7,
-        "prompt-for-select": 2,
-        "add-message": 1
-    },
     "server/game/cards/10-SoD/ForcedMarch.js": {
         "this-in-ability": 7
     },
@@ -412,12 +407,6 @@
         "this-in-ability": 6,
         "add-message": 1
     },
-    "server/game/cards/15-DotE/WombOfTheWorld.js": {
-        "prompt-for-select": 1,
-        "this-in-ability": 4,
-        "legacy-helper": 1,
-        "add-message": 2
-    },
     "server/game/cards/16-TTWDFL/SkyCell.js": {
         "this-in-ability": 7,
         "legacy-helper": 1
@@ -549,11 +538,6 @@
     },
     "server/game/cards/24-TSoW/Dragonstone.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/24-TSoW/TheTrident.js": {
-        "this-in-ability": 6,
-        "prompt-for-select": 1,
-        "add-message": 1
     },
     "server/game/cards/25.1-ATT/Bloodraven.js": {
         "this-in-ability": 1
