@@ -762,7 +762,12 @@ choice decides what it does. See [TheStranger.js](../server/game/cards/20-HMW/Th
 
 With `chooseOpponent` or `choosePlayer` and no card targets, only players the `gameAction` could
 affect can be chosen. An ability with several targets and a single top-level `gameAction` still
-resolves it, but doesn't filter the targets by it.
+resolves it, but doesn't filter the targets by it. With a player to choose and a single target,
+the player is chosen first, so the target is filtered by the `gameAction` with `context.opponent`
+already set ([MathisRowan.js](../server/game/cards/15-DotE/MathisRowan.js)).
+
+A `type: 'select'` target is not counted by `context.targets.getTargets()`, which only returns
+targets that were chosen; read `context.targets.selections` instead.
 
 #### Non-targeting card choices
 

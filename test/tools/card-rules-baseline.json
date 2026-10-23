@@ -353,12 +353,6 @@
         "legacy-helper": 3,
         "add-message": 1
     },
-    "server/game/cards/09-HoT/BrokenVows.js": {
-        "this-in-ability": 8,
-        "legacy-helper": 2,
-        "prompt-for-select": 1,
-        "add-message": 2
-    },
     "server/game/cards/09-HoT/DesmeraRedwyne.js": {
         "this-in-ability": 8,
         "add-message": 2
@@ -741,9 +735,6 @@
     "server/game/cards/15-DotE/Khaleesi.js": {
         "this-in-ability": 8,
         "add-message": 1
-    },
-    "server/game/cards/15-DotE/MathisRowan.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/15-DotE/OverwhelmingNumbers.js": {
         "this-in-ability": 6,

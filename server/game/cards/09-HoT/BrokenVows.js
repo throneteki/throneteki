@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BrokenVows extends DrawCard {
     // Broken Vows (09034)
@@ -11,52 +12,34 @@ class BrokenVows extends DrawCard {
             chooseOpponent: () => true,
             target: {
                 type: 'select',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.controller === this.controller &&
+                    card.controller === context.player &&
                     card.isFaction('thenightswatch')
             },
-            handler: (context) => {
-                this.game.takeControl(context.opponent, context.target);
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: (card) =>
+            message: '{player} plays {source} to give control of {target} to {opponent}',
+            gameAction: GameActions.takeControl((context) => ({
+                player: context.opponent,
+                card: context.target
+            })).then({
+                target: {
+                    type: 'select',
+                    cardCondition: (card, context) =>
                         card.location === 'play area' &&
                         card.getType() === 'character' &&
-                        card.controller === context.opponent &&
-                        card.getPrintedCost() < context.target.getPrintedCost() &&
+                        card.controller === context.parentContext.opponent &&
+                        card.getPrintedCost() < context.parentContext.target.getPrintedCost() &&
                         !card.isLoyal() &&
-                        this.controller.canControl(card),
-                    onSelect: (player, card) => this.resolveAbility(context, card),
-                    onCancel: () => this.resolveAbility(context, null),
-                    source: this
-                });
-            }
+                        context.player.canControl(card)
+                },
+                message: 'Then {player} takes control of {target}',
+                gameAction: GameActions.takeControl((context) => ({
+                    player: context.player,
+                    card: context.target
+                }))
+            })
         });
-    }
-
-    resolveAbility(context, opponentCard) {
-        if (opponentCard) {
-            this.game.addMessage(
-                '{0} uses {1} to give control of {2} to {3} and take control of {4}',
-                this.controller,
-                this,
-                context.target,
-                context.opponent,
-                opponentCard
-            );
-            this.game.takeControl(this.controller, opponentCard);
-        } else {
-            this.game.addMessage(
-                '{0} uses {1} to give control of {2} to {3}',
-                this.controller,
-                this,
-                context.target,
-                context.opponent
-            );
-        }
-
-        return true;
     }
 }
 

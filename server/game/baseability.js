@@ -102,8 +102,11 @@ class BaseAbility {
                 gameAction = undefined;
             }
 
+            // The player is chosen before the targets, so when the ability is checked before it
+            // resolves, an action that acts on that player cannot rule a target out yet.
             const gameActionFilter = filterAction
                 ? (selection, context) =>
+                      this.awaitsChosenPlayer(context) ||
                       BaseAbility.allowsTarget(filterAction, selection, context, name)
                 : undefined;
 
@@ -304,6 +307,14 @@ class BaseAbility {
         for (let cost of this.cost) {
             cost.unpay(context);
         }
+    }
+
+    awaitsChosenPlayer(context) {
+        return (
+            this.needsChoosePlayer() &&
+            context.opponent === undefined &&
+            context.chosenPlayer === undefined
+        );
     }
 
     /**
