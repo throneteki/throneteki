@@ -18,11 +18,13 @@ class Attach extends GameAction {
         }
 
         player = player || attachment.controller;
+        const candidate = this.asAttached(attachment, asAttachment);
         return (
             !!target &&
             target.location === 'play area' &&
             attachment.parent !== target &&
-            (facedown || player.canAttach(this.asAttached(attachment, asAttachment), target))
+            // A facedown attachment has no restrictions of its own, but the target's still apply.
+            (facedown ? target.allowAttachment(candidate) : player.canAttach(candidate, target))
         );
     }
 
@@ -84,6 +86,7 @@ class Attach extends GameAction {
                 this.applyAttachmentText(
                     (context && context.source) || event.attachment,
                     event.attachment,
+                    facedown,
                     asAttachment
                 );
             }
@@ -118,19 +121,27 @@ class Attach extends GameAction {
 
     // A card attached "as an attachment with the text: ..." gets that text from the effect that
     // attached it, so blanking the attachment doesn't remove it.
-    applyAttachmentText(source, card, { keywords = [], traits = [], effect }) {
+    // Text given to a facedown attachment ends when it is turned faceup.
+    applyAttachmentText(
+        source,
+        card,
+        facedown,
+        { keywords = [], traits = [], attachmentEffect = [], effect }
+    ) {
         const until = { onCardLeftPlay: (event) => event.card === card };
+        const stillFacedown = () => !facedown || card.facedown;
         card.game.addEffect(source, {
             duration: 'custom',
             until,
             location: 'any',
             targetLocation: 'any',
-            condition: () => !!card.parent,
+            condition: () => !!card.parent && stillFacedown(),
             match: card,
             effect: [
                 Effects.setCardType('attachment'),
                 ...keywords.map((keyword) => Effects.addKeyword(keyword)),
-                ...traits.map((trait) => Effects.addTrait(trait))
+                ...traits.map((trait) => Effects.addTrait(trait)),
+                ...[].concat(attachmentEffect)
             ]
         });
 
@@ -141,7 +152,7 @@ class Attach extends GameAction {
                 location: 'any',
                 targetLocation: 'any',
                 targetController: 'any',
-                condition: () => card.location === 'play area',
+                condition: () => card.location === 'play area' && stillFacedown(),
                 match: (parent) => parent === card.parent,
                 effect
             });

@@ -201,12 +201,6 @@
         "direct-state-write": 1,
         "add-message": 1
     },
-    "server/game/cards/11.4-MoD/Shaggydog.js": {
-        "this-in-ability": 16,
-        "add-message": 3,
-        "prompt-for-select": 1,
-        "legacy-helper": 2
-    },
     "server/game/cards/11.6-DitD/AssaultFromTheShadows.js": {
         "this-in-ability": 4,
         "add-message": 1,
@@ -379,11 +373,6 @@
         "add-message": 2,
         "legacy-helper": 1
     },
-    "server/game/cards/20-HMW/AMummersFarce.js": {
-        "this-in-ability": 9,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/20-HMW/DarkandFullofTerrors.js": {
         "this-in-ability": 2,
         "legacy-helper": 2
@@ -443,10 +432,6 @@
     },
     "server/game/cards/25.1-ATT/Bloodraven.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/25.1-ATT/LadyMarya.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1
     },
     "server/game/cards/25.3-FUtG/Greyscale.js": {
         "this-in-ability": 12,

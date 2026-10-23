@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LadyMarya extends DrawCard {
     // Lady Marya (25002)
@@ -10,60 +11,56 @@ class LadyMarya extends DrawCard {
         this.persistentEffect({
             effect: [
                 ability.effects.canMarshal(
-                    (card) => this.isFacedownAttachment(card) && card.getPrintedType() !== 'event'
+                    (card, context) =>
+                        isFacedownAttachment(card, context) && card.getPrintedType() !== 'event'
                 ),
-                ability.effects.canMarshalIntoShadows((card) => this.isFacedownAttachment(card)),
+                ability.effects.canMarshalIntoShadows((card, context) =>
+                    isFacedownAttachment(card, context)
+                ),
                 ability.effects.canPlay(
-                    (card) => this.isFacedownAttachment(card) && card.getPrintedType() === 'event'
+                    (card, context) =>
+                        isFacedownAttachment(card, context) && card.getPrintedType() === 'event'
                 )
             ]
         });
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.isMatch({
-                        winner: this.controller,
-                        attackingPlayer: this.controller
+                        winner: context.player,
+                        attackingPlayer: context.player
                     }) &&
                     event.challenge
                         .getWinnerCards()
-                        .some((card) => card.hasTrait('Captain') || card.hasTrait('Smuggler')) &&
-                    event.challenge.loser.drawDeck.length > 0
+                        .some((card) => card.hasTrait('Captain') || card.hasTrait('Smuggler'))
             },
             cost: ability.costs.kneelSelf(),
             message: {
                 format: "{player} kneels {costs.kneel} to attach the top card of {loser}'s deck facedown under {source}",
                 args: { loser: (context) => context.event.challenge.loser }
             },
-            handler: (context) => {
-                let opponent = context.event.challenge.loser;
-                let topCard = opponent.drawDeck[0];
-
-                // TODO: Add attach to GameActions
-                context.player.attach(context.player, topCard, this, 'play', true);
-                this.lastingEffect(() => ({
-                    condition: () => !!topCard.parent,
-                    targetLocation: 'any',
-                    match: topCard,
-                    effect: [
-                        ability.effects.setCardType('attachment'),
-                        ability.effects.addKeyword('Terminal'),
-                        ability.effects.addAttachmentRestriction({ type: 'location' })
-                    ]
-                }));
-            }
+            gameAction: GameActions.attach((context) => ({
+                player: context.player,
+                attachment: context.event.challenge.loser.drawDeck[0],
+                target: context.source,
+                facedown: true,
+                asAttachment: {
+                    keywords: ['Terminal'],
+                    attachmentEffect: ability.effects.addAttachmentRestriction({ type: 'location' })
+                }
+            }))
         });
     }
+}
 
-    isFacedownAttachment(card) {
-        return (
-            card.facedown &&
-            card.controller === this.controller &&
-            card.getType() === 'attachment' &&
-            this.attachments.includes(card)
-        );
-    }
+function isFacedownAttachment(card, context) {
+    return (
+        card.facedown &&
+        card.controller === context.source.controller &&
+        card.getType() === 'attachment' &&
+        context.source.attachments.includes(card)
+    );
 }
 
 LadyMarya.code = '25002';
