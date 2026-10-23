@@ -530,7 +530,7 @@ gameAction: GameActions.saveCard((context) => ({ event: context.event })).then({
             effect: ability.effects.blankExcludingTraits
         }
     }))
-})
+});
 ```
 
 ### Redirecting challenges
@@ -556,9 +556,9 @@ logs its `message` (`{trait}` is the named trait) and then resolves its `gameAct
 [SuperstitiousSteward.js](../server/game/cards/27.2-WGYK/SuperstitiousSteward.js).
 
 `GameActions.nameCard` works the same way for a card name. It only accepts the name of a real
-  card, stores it as `context.namedCard`, and its `message` uses `{cardName}`. Use
-  `match: (cardData, context) => ...` to restrict which cards can be named, for example
-  `match: (cardData) => cardData.type === 'event'` for "name an event". See
+card, stores it as `context.namedCard`, and its `message` uses `{cardName}`. Use
+`match: (cardData, context) => ...` to restrict which cards can be named, for example
+`match: (cardData) => cardData.type === 'event'` for "name an event". See
 [TheIronThrone.js](../server/game/cards/13.6-LMHR/TheIronThrone.js).
 
 ### Initiating another plot's When Revealed ability
