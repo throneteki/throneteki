@@ -12,10 +12,6 @@
     "server/game/cards/01-Core/HeadsOnSpikes.js": {
         "add-message": 1
     },
-    "server/game/cards/01-Core/RisenFromTheSea.js": {
-        "this-in-ability": 15,
-        "add-message": 1
-    },
     "server/game/cards/01-Core/TheBearAndTheMaidenFair.js": {
         "this-in-ability": 6,
         "legacy-helper": 1,
@@ -30,11 +26,6 @@
         "this-in-ability": 11,
         "legacy-helper": 2,
         "add-message": 2
-    },
-    "server/game/cards/02.1-TtB/Lady.js": {
-        "this-in-ability": 9,
-        "legacy-helper": 2,
-        "add-message": 1
     },
     "server/game/cards/02.2-TRtW/BrothelMadame.js": {
         "event-registration": 1,
@@ -57,11 +48,6 @@
         "this-in-ability": 2,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/02.5-COW/BloodMagicRitual.js": {
-        "this-in-ability": 14,
-        "legacy-helper": 1,
-        "add-message": 1
     },
     "server/game/cards/02.5-COW/VengeanceForElia.js": {
         "this-in-ability": 6,
@@ -155,11 +141,6 @@
         "this-in-ability": 4,
         "add-message": 1
     },
-    "server/game/cards/08.6-SAT/DriftwoodCudgel.js": {
-        "this-in-ability": 11,
-        "legacy-helper": 2,
-        "add-message": 1
-    },
     "server/game/cards/08.6-SAT/Qyburn.js": {
         "this-in-ability": 10,
         "legacy-helper": 2,
@@ -188,20 +169,10 @@
     "server/game/cards/10-SoD/ForcedMarch.js": {
         "this-in-ability": 7
     },
-    "server/game/cards/10-SoD/HotahsAxe.js": {
-        "this-in-ability": 8,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/10-SoD/ObellaSand.js": {
         "this-in-ability": 11,
         "add-message": 2,
         "legacy-helper": 3
-    },
-    "server/game/cards/10-SoD/SpareBoot.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 2,
-        "add-message": 1
     },
     "server/game/cards/11.1-TSC/BeneathTheBridgeOfDream.js": {
         "this-in-ability": 11,

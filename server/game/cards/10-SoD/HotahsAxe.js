@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class HotahsAxe extends DrawCard {
     // Hotah's Axe (10019)
@@ -13,24 +14,24 @@ class HotahsAxe extends DrawCard {
         this.reaction({
             when: {
                 //Not seeing any value in being able to attach this to opponent's characters
-                onCardEntersPlay: (event) =>
-                    event.card.controller === this.controller &&
+                onCardEntersPlay: (event, context) =>
+                    event.card.controller === context.player &&
                     event.card.isFaction('martell') &&
                     event.card.getType() === 'character' &&
-                    this.controller.canAttach(this, event.card) &&
                     event.card.location === 'play area' &&
-                    this.game.currentPhase === 'challenge'
+                    context.game.currentPhase === 'challenge'
             },
             location: 'hand',
-            handler: (context) => {
-                this.controller.attach(context.player, this, context.event.card, 'play');
-                this.game.addMessage(
-                    '{0} puts {1} into play and attaches it to {2}',
-                    context.player,
-                    this,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} puts {source} into play and attaches it to {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.attach((context) => ({
+                player: context.player,
+                attachment: context.source,
+                target: context.event.card,
+                playingType: 'play'
+            }))
         });
     }
 }

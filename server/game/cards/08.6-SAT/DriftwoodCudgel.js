@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class DriftwoodCudgel extends DrawCard {
     // Driftwood Cudgel (08112)
@@ -10,32 +11,31 @@ class DriftwoodCudgel extends DrawCard {
         this.attachmentRestriction({ trait: 'Drowned God' });
 
         this.whileAttached({
-            effect: ability.effects.dynamicStrength(() => this.controller.deadPile.length)
+            effect: ability.effects.dynamicStrength(
+                (card, context) => context.source.controller.deadPile.length
+            )
         });
 
         this.interrupt({
             when: {
-                onCharacterKilled: (event) => event.card === this.parent
+                onCharacterKilled: (event, context) => event.card === context.source.parent
             },
             target: {
                 type: 'select',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card !== this.parent &&
-                    this.controller.canAttach(this, card)
+                    card !== context.source.parent
             },
-            handler: (context) => {
-                this.controller.attach(this.controller, this, context.target);
-                context.target.modifyPower(1);
-
-                this.game.addMessage(
-                    '{0} uses {1} to attach {1} to {2} and have it gain 1 power',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            },
+            message:
+                '{player} uses {source} to attach {source} to {target} and have it gain 1 power',
+            gameAction: GameActions.simultaneously([
+                GameActions.attach((context) => ({
+                    attachment: context.source,
+                    target: context.target
+                })),
+                GameActions.gainPower((context) => ({ card: context.target, amount: 1 }))
+            ]),
             limit: ability.limit.perPhase(1)
         });
     }

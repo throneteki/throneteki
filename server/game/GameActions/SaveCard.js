@@ -10,11 +10,12 @@ class SaveCard extends GameAction {
         return Message.fragment('saves {card}', { card: event.card });
     }
 
-    canChangeGameState({ event }) {
+    // A burn kill can only be saved from by a save that takes the character above 0 STR (FAQ 3.1).
+    canChangeGameState({ event, remediesBurn = false }) {
         return (
             !!event &&
             !event.cancelled &&
-            event.allowSave !== false &&
+            (event.allowSave !== false || (remediesBurn && !!event.isBurn)) &&
             !!event.card &&
             event.card.canBeSaved()
         );

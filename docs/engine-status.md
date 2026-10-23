@@ -86,7 +86,9 @@ the ongoing work, and it was not part of this batch.
 - A burn kill cannot be saved (FAQ 3.1: a save that would not remedy the 0 STR cannot be
   initiated), so Bodyguard and duplicates are not offered.
   [Burn.spec.js](../test/server/gamesteps/Burn.spec.js). Risen from the Sea is the exception: it
-  is offered when its +1 STR would take the character above 0.
+  is offered when its +1 STR would take the character above 0: it saves with
+  `GameActions.saveCard({ event, remediesBurn: true })` and attaches in the same window, so the
+  burn isn't checked again before its +1 STR applies.
   A two-kill version (saveable kill, then an unsaveable one) was tried and removed: it offered
   saves that cost the player a card and then killed the character anyway.
 - "If X, Y" text with no trigger is a state check (`this.stateCheck`, `server/game/StateChecks.js`).

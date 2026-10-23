@@ -6,77 +6,50 @@ class RisenFromTheSea extends DrawCard {
     // Interrupt: When a [greyjoy] character would be killed, save it. Then, attach Risen from the
     // Sea to that character as a Condition attachment with the text: "Terminal. Attached character
     // gets +1 STR."
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: (event) => this.canSaveVsEvent(event)
+                onCharacterKilled: (event, context) => canSaveVsEvent(event, context)
             },
             location: 'hand',
-            handler: (context) => {
-                context.event.saveCard();
-
-                if (this.controller.canAttach(this, context.event.card)) {
-                    this.game.resolveGameAction(
-                        GameActions.attach({
-                            player: this.controller,
-                            attachment: this,
-                            target: context.event.card,
-                            playingType: 'play'
-                        }).thenExecute(() => {
-                            this.lastingEffect((ability) => ({
-                                condition: () => !!this.parent,
-                                targetLocation: 'any',
-                                match: this,
-                                effect: [
-                                    ability.effects.setCardType('attachment'),
-                                    ability.effects.addKeyword('Terminal'),
-                                    ability.effects.addTrait('Condition')
-                                ]
-                            }));
-
-                            this.lastingEffect((ability) => ({
-                                condition: () => this.location === 'play area',
-                                targetLocation: 'any',
-                                targetController: 'any',
-                                match: (card) => card === this.parent,
-                                effect: ability.effects.modifyStrength(1)
-                            }));
-                        }),
-                        context
-                    );
-                }
-
-                this.game.addMessage(
-                    '{0} plays {1} to save {2}',
-                    this.controller,
-                    this,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} plays {source} to save {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.simultaneously([
+                GameActions.saveCard((context) => ({ event: context.event, remediesBurn: true })),
+                GameActions.attach((context) => ({
+                    player: context.player,
+                    attachment: context.source,
+                    target: context.event.card,
+                    playingType: 'play',
+                    asCondition: ability.effects.modifyStrength(1)
+                }))
+            ])
         });
-    }
-
-    canSaveVsEvent(event) {
-        let card = event.card;
-
-        if (!card.canBeSaved()) {
-            return false;
-        }
-
-        const allowSave = event.isBurn ? this.canSurviveBurn(card) : event.allowSave;
-
-        return allowSave && card.isFaction('greyjoy') && card.controller === this.controller;
-    }
-
-    canSurviveBurn(card) {
-        return card.controller.canAttach(this, card) && card.getBoostedStrength(1) > 0;
     }
 
     // Explicitly override since it has printed type 'event'.
     canAttach(player, card) {
         return card.getType() === 'character';
     }
+}
+
+function canSaveVsEvent(event, context) {
+    const card = event.card;
+
+    if (!card.canBeSaved()) {
+        return false;
+    }
+
+    const allowSave = event.isBurn ? canSurviveBurn(card, context) : event.allowSave;
+
+    return allowSave && card.isFaction('greyjoy') && card.controller === context.player;
+}
+
+function canSurviveBurn(card, context) {
+    return card.controller.canAttach(context.source, card) && card.getBoostedStrength(1) > 0;
 }
 
 RisenFromTheSea.code = '01081';

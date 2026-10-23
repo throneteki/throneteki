@@ -1,6 +1,7 @@
 import GameAction from './GameAction.js';
 import Message from '../Message.js';
 import BestowPrompt from '../gamesteps/bestowprompt.js';
+import Effects from '../effects.js';
 
 class Attach extends GameAction {
     constructor() {
@@ -21,7 +22,14 @@ class Attach extends GameAction {
         );
     }
 
-    createEvent({ player, attachment, target, playingType = 'play', facedown = false }) {
+    createEvent({
+        player,
+        attachment,
+        target,
+        playingType = 'play',
+        facedown = false,
+        asCondition
+    }) {
         player = player || attachment.controller;
         const originalLocation = attachment.location;
         const dupeCard = facedown ? null : player.getDuplicateInPlay(attachment);
@@ -49,6 +57,10 @@ class Attach extends GameAction {
             event.attachment.takeControl(player);
             event.target.attachments.push(event.attachment);
 
+            if (asCondition) {
+                this.applyConditionText(event.attachment, asCondition);
+            }
+
             game.queueSimpleStep(() => {
                 event.attachment.applyPersistentEffects();
             });
@@ -75,6 +87,32 @@ class Attach extends GameAction {
         );
 
         return this.atomic(...events);
+    }
+
+    // A card attached "as a Condition attachment with the text: ..." gets that text from the effect
+    // that attached it, so blanking the attachment doesn't remove it.
+    applyConditionText(card, effect) {
+        card.game.addEffect(card, {
+            duration: 'custom',
+            location: 'any',
+            targetLocation: 'any',
+            condition: () => !!card.parent,
+            match: card,
+            effect: [
+                Effects.setCardType('attachment'),
+                Effects.addKeyword('Terminal'),
+                Effects.addTrait('Condition')
+            ]
+        });
+        card.game.addEffect(card, {
+            duration: 'custom',
+            location: 'any',
+            targetLocation: 'any',
+            targetController: 'any',
+            condition: () => card.location === 'play area',
+            match: (parent) => parent === card.parent,
+            effect
+        });
     }
 
     outOfShadowsEvents({ player, card, originalLocation, type }) {
