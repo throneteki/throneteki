@@ -78,11 +78,6 @@
         "legacy-helper": 2,
         "add-message": 1
     },
-    "server/game/cards/02.2-TRtW/LadySansasRose.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/02.2-TRtW/TheReader.js": {
         "this-in-ability": 3,
         "add-message": 1
@@ -152,12 +147,6 @@
         "legacy-helper": 1,
         "prompt-for-select": 1
     },
-    "server/game/cards/04.1-AtSK/BitterbridgeEncampment.js": {
-        "this-in-ability": 9,
-        "legacy-helper": 2,
-        "add-message": 2,
-        "prompt-for-select": 1
-    },
     "server/game/cards/04.1-AtSK/VaryssRiddle.js": {
         "this-in-ability": 13,
         "add-message": 1
@@ -183,12 +172,6 @@
         "event-registration": 1,
         "this-in-ability": 9,
         "legacy-helper": 2,
-        "add-message": 1
-    },
-    "server/game/cards/04.5-GoH/RitualOfRhllor.js": {
-        "this-in-ability": 7,
-        "prompt-for-select": 1,
-        "legacy-helper": 1,
         "add-message": 1
     },
     "server/game/cards/04.5-GoH/RooseBolton.js": {
@@ -229,11 +212,6 @@
     "server/game/cards/05-LoCR/HighSepton.js": {
         "this-in-ability": 6,
         "add-message": 1
-    },
-    "server/game/cards/05-LoCR/LannisportTreasury.js": {
-        "this-in-ability": 12,
-        "legacy-helper": 2,
-        "add-message": 2
     },
     "server/game/cards/05-LoCR/OldWyk.js": {
         "this-in-ability": 11,
@@ -622,9 +600,6 @@
         "this-in-ability": 13,
         "add-message": 2,
         "legacy-helper": 1
-    },
-    "server/game/cards/13.2-CoS/ShadowPolitics.js": {
-        "this-in-ability": 4
     },
     "server/game/cards/13.3-PoS/ShadowOfTheThrone.js": {
         "this-in-ability": 5,
@@ -1173,9 +1148,6 @@
         "this-in-ability": 2
     },
     "server/game/cards/25.6-WK/BurningTheBooks.js": {
-        "this-in-ability": 4
-    },
-    "server/game/cards/26.1-WAID/CityOfShadows.js": {
         "this-in-ability": 4
     },
     "server/game/cards/26.1-WAID/HighgardenDestrier.js": {

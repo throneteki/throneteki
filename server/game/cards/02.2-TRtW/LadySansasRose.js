@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LadySansasRose extends DrawCard {
     // Lady Sansa's Rose (02024)
@@ -8,55 +9,44 @@ class LadySansasRose extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.hasSingleParticipatingChar() &&
-                    this.hasParticipatingKnight()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
+                    !!loneKnight(event.challenge, context)
             },
             max: ability.limit.perChallenge(1),
-            handler: (context) => {
-                let power = this.hasLadyCharacter() ? 3 : 1;
-                let participatingCard = this.controller.filterCardsInPlay((card) => {
-                    return (
-                        card.isParticipating() &&
-                        card.hasTrait('Knight') &&
-                        card.getType() === 'character'
-                    );
-                });
-                participatingCard[0].modifyPower(power);
-                this.game.addMessage(
-                    '{0} plays {1} to have {2} gain {3} power',
-                    context.player,
-                    this,
-                    participatingCard[0],
-                    power
-                );
-            }
+            message: {
+                format: '{player} plays {source} to have {knight} gain {power} power',
+                args: {
+                    knight: (context) => loneKnight(context.event.challenge, context),
+                    power: (context) => rosePower(context)
+                }
+            },
+            gameAction: GameActions.gainPower((context) => ({
+                card: loneKnight(context.event.challenge, context),
+                amount: rosePower(context)
+            }))
         });
     }
+}
 
-    hasSingleParticipatingChar() {
-        if (this.game.currentChallenge.attackingPlayer === this.controller) {
-            return this.game.currentChallenge.attackers.length === 1;
-        }
-        return this.game.currentChallenge.defenders.length === 1;
+function loneKnight(challenge, context) {
+    const participants =
+        challenge.attackingPlayer === context.player ? challenge.attackers : challenge.defenders;
+    if (participants.length !== 1) {
+        return undefined;
     }
+    const [character] = participants;
+    return character.hasTrait('Knight') && character.getType() === 'character'
+        ? character
+        : undefined;
+}
 
-    hasParticipatingKnight() {
-        let cards = this.controller.filterCardsInPlay((card) => {
-            return (
-                card.isParticipating() && card.hasTrait('Knight') && card.getType() === 'character'
-            );
-        });
-
-        return !!cards.length;
-    }
-
-    hasLadyCharacter() {
-        return this.controller.anyCardsInPlay(
-            (card) => card.hasTrait('Lady') && card.getType() === 'character'
-        );
-    }
+function rosePower(context) {
+    return context.player.anyCardsInPlay(
+        (card) => card.hasTrait('Lady') && card.getType() === 'character'
+    )
+        ? 3
+        : 1;
 }
 
 LadySansasRose.code = '02024';
