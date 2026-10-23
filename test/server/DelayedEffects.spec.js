@@ -111,6 +111,21 @@ describe('delayed effects', function () {
         expect(this.game.effectEngine.delayedEffects).toEqual([]);
     });
 
+    it('expires when an event in its until occurs', function () {
+        this.addDelayedEffect({
+            duration: 'custom',
+            when: { onCardKneeled: (event) => event.card === this.houseDayneKnight },
+            until: { onCardKneeled: (event) => event.card === this.tumblestoneKnight },
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
+        });
+
+        this.player1.clickPrompt('Military');
+        this.player1.clickCard(this.tumblestoneKnight);
+        this.player1.clickPrompt('Done');
+
+        expect(this.game.effectEngine.delayedEffects).toEqual([]);
+    });
+
     it('rejects durations it does not support', function () {
         expect(() =>
             this.addDelayedEffect({

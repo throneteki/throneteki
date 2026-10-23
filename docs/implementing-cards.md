@@ -402,6 +402,10 @@ An `untilEndOfPhase` effect has expired by the time `onAtEndOfPhase` is raised, 
 of the phase" use `untilEndOfRound` with `when: { onAtEndOfPhase: () => true }`: the first end of
 phase after the effect is created is the end of the current phase.
 
+A delayed effect limited to some other window ("during the next plot phase", Nightfire Visions)
+uses `duration: 'custom'` with an `until` map of event conditions; it expires as soon as one of
+them occurs.
+
 Text of the form "If <card> leaves play, <effect>" that follows an ability (Jaqen H'ghar, Hornvale,
 The Great Pyramid) is a delayed effect that the ability creates, with `duration: 'untilTriggered'`
 and `when: { onCardLeftPlay: (event, context) => event.card === context.source }`. It has no

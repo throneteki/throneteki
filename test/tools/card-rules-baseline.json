@@ -20,12 +20,6 @@
         "this-in-ability": 5,
         "add-message": 1
     },
-    "server/game/cards/14-FotS/NightfireVision.js": {
-        "this-in-ability": 7,
-        "add-message": 2,
-        "game-listener": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/14-FotS/ThePrinceThatWasPromised.js": {
         "event-registration": 1,
         "this-in-ability": 9,

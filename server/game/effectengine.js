@@ -202,6 +202,12 @@ class EffectEngine {
         }));
     }
 
+    expireDelayedEffectsBy(events) {
+        this.delayedEffects = this.delayedEffects.filter(
+            (delayedEffect) => !events.some((event) => delayedEffect.isExpiredBy(event))
+        );
+    }
+
     expireDelayedEffects(duration) {
         this.delayedEffects = this.delayedEffects.filter(
             (delayedEffect) => delayedEffect.duration !== duration

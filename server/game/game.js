@@ -472,6 +472,7 @@ class Game extends EventEmitter {
             .getConcurrentEvents()
             .filter((concurrentEvent) => !concurrentEvent.cancelled);
         const triggered = this.effectEngine.takeDelayedEffectsTriggeredBy(events);
+        this.effectEngine.expireDelayedEffectsBy(events);
         const eventChecks = this.allCards
             .flatMap((card) => card.abilities.eventChecks || [])
             .flatMap((ability) =>
