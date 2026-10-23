@@ -19,10 +19,6 @@
         "this-in-ability": 6,
         "add-message": 1
     },
-    "server/game/cards/08.6-SAT/TheCrowIsATricksyBird.js": {
-        "this-in-ability": 8,
-        "add-message": 2
-    },
     "server/game/cards/09-HoT/TheConclave.js": {
         "event-registration": 1,
         "this-in-ability": 5,
@@ -40,11 +36,6 @@
         "this-in-ability": 5,
         "add-message": 1,
         "legacy-helper": 2
-    },
-    "server/game/cards/13.6-LMHR/FriendsAtCourt.js": {
-        "this-in-ability": 6,
-        "add-message": 2,
-        "prompt-for-select": 1
     },
     "server/game/cards/14-FotS/NightfireVision.js": {
         "this-in-ability": 7,

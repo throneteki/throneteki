@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheCrowIsATricksyBird extends DrawCard {
     // The Crow is a Tricksy Bird (08106)
@@ -9,55 +10,28 @@ class TheCrowIsATricksyBird extends DrawCard {
         this.action({
             title: 'Look at plot deck',
             phase: 'plot',
-            chooseOpponent: () => true,
+            chooseOpponent: true,
             cost: ability.costs.kneelFactionCard(),
-            handler: (context) => {
-                this.context = context;
-                this.game.addMessage(
-                    "{0} plays {1} and kneels their faction card to look at {2}'s plot deck",
-                    context.player,
-                    this,
-                    context.opponent
-                );
-
-                let validPlots = context.opponent.getPlots();
-                let buttons = validPlots.map((card) => {
-                    return { method: 'cardSelected', card: card, mapCard: true };
-                });
-
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: 'Select a plot',
-                        buttons: buttons
-                    },
-                    source: this
-                });
-            }
+            message:
+                "{player} plays {source} and kneels their faction card to look at {opponent}'s plot deck",
+            gameAction: GameActions.chooseCards({
+                title: 'Select a plot',
+                revealTargets: true,
+                cardCondition: (card, context) => context.opponent.getPlots().includes(card),
+                gameAction: (card, context) =>
+                    GameActions.lastingEffect(() => ({
+                        duration: 'custom',
+                        until: {
+                            onCardEntersPlay: (event) =>
+                                event.card.getType() === 'plot' &&
+                                event.card.controller === context.opponent
+                        },
+                        targetController: 'any',
+                        match: (player) => player === context.opponent,
+                        effect: ability.effects.mustRevealPlot(card)
+                    }))
+            })
         });
-    }
-
-    cardSelected(player, card) {
-        this.lastingEffect((ability) => ({
-            until: {
-                onCardEntersPlay: (event) =>
-                    event.card.getType() === 'plot' &&
-                    event.card.controller === this.context.opponent
-            },
-            match: this.context.opponent,
-            effect: ability.effects.mustRevealPlot(card)
-        }));
-
-        //TODO Melee: The choice should not be revealed to anyone other than the chosen opponent,
-        //so this message, as well as the announcement message in the plot phase will have to be whispered.
-        this.game.addMessage(
-            '{0} uses {1} to force {2} to reveal {3} the next time they reveal a plot, if able',
-            player,
-            this,
-            this.context.opponent,
-            card
-        );
-
-        return true;
     }
 }
 
