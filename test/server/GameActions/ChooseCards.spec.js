@@ -106,6 +106,29 @@ describe('chooseCards game action', function () {
         });
     });
 
+    it('lets a player choose no cards when the choice is optional', function () {
+        this.game.resolveGameAction(
+            GameActions.chooseCards({
+                mode: 'upTo',
+                numCards: 1,
+                optional: true,
+                title: 'Select a character to kneel',
+                cardCondition: (card, context) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.controller === context.choosingPlayer,
+                gameAction: (card) => GameActions.kneelCard({ card })
+            }),
+            this.context
+        );
+        this.game.continue();
+
+        this.player1.clickPrompt('Done');
+
+        expect(this.player1).not.toHavePrompt('Select a character to kneel');
+        expect(this.kneeled).toEqual([]);
+    });
+
     it('cannot change the game state when no player has a card it could affect', function () {
         const action = this.chooseAndKneel(() => [this.player1Object]);
         this.game.resolveGameAction(

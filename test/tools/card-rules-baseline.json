@@ -74,11 +74,6 @@
         "this-in-ability": 5,
         "add-message": 2
     },
-    "server/game/cards/02.3-TKP/TheKingsPeace.js": {
-        "this-in-ability": 9,
-        "add-message": 4,
-        "legacy-helper": 2
-    },
     "server/game/cards/02.3-TKP/TheLordOfTheCrossing.js": {
         "event-registration": 1,
         "this-in-ability": 2,
@@ -216,11 +211,6 @@
         "this-in-ability": 7,
         "add-message": 1
     },
-    "server/game/cards/07-WotW/Queenscrown.js": {
-        "this-in-ability": 5,
-        "prompt-for-select": 1,
-        "add-message": 2
-    },
     "server/game/cards/07-WotW/Summer.js": {
         "this-in-ability": 18,
         "add-message": 2,
@@ -320,10 +310,6 @@
         "this-in-ability": 11,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/11.1-TSC/ExchangeOfInformation.js": {
-        "this-in-ability": 9,
-        "prompt-for-select": 1
     },
     "server/game/cards/11.2-TMoW/HagensDaughter.js": {
         "this-in-ability": 5,
@@ -696,11 +682,6 @@
     "server/game/cards/20-HMW/OurWordIsGoodAsGold.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/20-HMW/SerGuyardMorrigen.js": {
-        "this-in-ability": 7,
-        "prompt-for-select": 1,
-        "add-message": 2
-    },
     "server/game/cards/20-HMW/WeLightTheWay.js": {
         "this-in-ability": 10,
         "add-message": 1,
@@ -908,8 +889,7 @@
         "this-in-ability": 8
     },
     "server/game/cards/26.6-NCbT/ArmedToTheTeeth.js": {
-        "event-registration": 1,
-        "this-in-ability": 4
+        "event-registration": 1
     },
     "server/game/cards/26.6-NCbT/TheStallionWhoMountsTheWorld.js": {
         "this-in-ability": 5,

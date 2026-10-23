@@ -17,13 +17,13 @@ class ArmedToTheTeeth extends AgendaCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) => event.challenge.winner === this.controller
+                afterChallenge: (event, context) => event.challenge.winner === context.player
             },
             cost: [
                 ability.costs.kneelFactionCard(),
                 ability.costs.payXGold(
-                    () => Math.min(...this.attachmentCosts()),
-                    () => Math.max(...this.attachmentCosts())
+                    (context) => Math.min(...attachmentCosts(context.player)),
+                    (context) => Math.max(...attachmentCosts(context.player))
                 )
             ],
             target: {
@@ -40,12 +40,7 @@ class ArmedToTheTeeth extends AgendaCard {
                 format: '{player} uses {source}, kneels their faction card and pays {xValue} gold to put {target} into play from underneath {source}',
                 args: { xValue: (context) => context.xValue }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoPlay((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({ card: context.target }))
         });
     }
 
@@ -80,13 +75,12 @@ class ArmedToTheTeeth extends AgendaCard {
             context
         );
     }
+}
 
-    attachmentCosts() {
-        const attachments = this.controller.agenda.underneath.filter(
-            (card) => card.getType() === 'attachment' && card.hasPrintedCost()
-        );
-        return attachments.map((card) => card.getPrintedCost());
-    }
+function attachmentCosts(player) {
+    return player.agenda.underneath
+        .filter((card) => card.getType() === 'attachment' && card.hasPrintedCost())
+        .map((card) => card.getPrintedCost());
 }
 
 ArmedToTheTeeth.code = '26120';

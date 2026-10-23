@@ -26,6 +26,7 @@ class ChooseCards extends GameAction {
         cardCondition = {},
         mode = 'single',
         numCards = 1,
+        optional = false,
         title = 'Select a card',
         revealTargets = false,
         gameAction
@@ -39,6 +40,7 @@ class ChooseCards extends GameAction {
                 : CardMatcher.createMatcher(cardCondition);
         this.mode = mode;
         this.numCardsFunc = typeof numCards === 'function' ? numCards : () => numCards;
+        this.optional = optional;
         this.titleFunc = typeof title === 'function' ? title : () => title;
         this.revealTargets = revealTargets;
         this.gameActionFactory = gameAction;
@@ -98,6 +100,7 @@ class ChooseCards extends GameAction {
         context.game.promptForSelect(player, {
             activePromptTitle: this.titleFunc(withChoosingPlayer(context, player)),
             mode: this.mode,
+            optional: this.optional,
             numCards: this.mode === 'exactly' ? Math.min(numCards, choosable.length) : numCards,
             multiSelect: true,
             cardType: AllCardTypes,
