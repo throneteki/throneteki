@@ -105,11 +105,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/04.5-GoH/SerDavosSeaworth.js": {
-        "this-in-ability": 12,
-        "legacy-helper": 2,
-        "add-message": 2
-    },
     "server/game/cards/04.5-GoH/ThePrincesPass.js": {
         "this-in-ability": 20,
         "add-message": 3,
