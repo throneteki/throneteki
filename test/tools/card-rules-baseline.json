@@ -68,11 +68,6 @@
         "this-in-ability": 6,
         "add-message": 1
     },
-    "server/game/cards/02.6-TS/AGiftOfArborRed.js": {
-        "this-in-ability": 5,
-        "prompt-for-select": 1,
-        "add-message": 1
-    },
     "server/game/cards/03-WotN/AryasGift.js": {
         "this-in-ability": 3,
         "prompt-for-select": 1,
@@ -576,23 +571,8 @@
         "this-in-ability": 3,
         "legacy-helper": 2
     },
-    "server/game/cards/23-AHaH/TheBloodyGate.js": {
-        "this-in-ability": 5,
-        "prompt-for-select": 1,
-        "add-message": 1
-    },
-    "server/game/cards/23-AHaH/TheSeedIsStrong.js": {
-        "this-in-ability": 5,
-        "prompt-for-select": 1,
-        "add-message": 1
-    },
     "server/game/cards/24-TSoW/Dragonstone.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/24-TSoW/SerDavenLannister.js": {
-        "this-in-ability": 5,
-        "prompt-for-select": 1,
-        "add-message": 1
     },
     "server/game/cards/24-TSoW/TheTrident.js": {
         "this-in-ability": 6,
@@ -633,11 +613,6 @@
     "server/game/cards/25.5-TIC/EnemiesInEveryShadow.js": {
         "this-in-ability": 4,
         "add-message": 1
-    },
-    "server/game/cards/25.5-TIC/GilbertOfTheVines.js": {
-        "this-in-ability": 6,
-        "prompt-for-select": 1,
-        "add-message": 2
     },
     "server/game/cards/25.5-TIC/Qyburn.js": {
         "this-in-ability": 2

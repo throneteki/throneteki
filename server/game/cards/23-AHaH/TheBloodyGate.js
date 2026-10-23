@@ -24,39 +24,30 @@ class TheBloodyGate extends DrawCard {
             message: {
                 format: '{player} uses {source} to {potentialAction}',
                 args: {
-                    potentialAction: (context) => {
-                        let message = this.kneeled
-                            ? "discard a card at random from {winner}'s hand"
-                            : 'have {winner} choose and discard a card from their hand';
-                        return Message.fragment(message, {
-                            winner: context.event.challenge.winner
-                        });
-                    }
+                    potentialAction: (context) =>
+                        Message.fragment(
+                            context.source.kneeled
+                                ? "discard a card at random from {winner}'s hand"
+                                : 'have {winner} choose and discard a card from their hand',
+                            { winner: context.event.challenge.winner }
+                        )
                 }
             },
             gameAction: GameActions.ifCondition({
-                condition: () => this.kneeled,
+                condition: (context) => context.source.kneeled,
                 thenAction: GameActions.discardAtRandom((context) => ({
                     player: context.event.challenge.winner
                 })),
-                elseAction: GameActions.genericHandler((context) => {
-                    this.game.promptForSelect(context.event.challenge.winner, {
-                        activePromptTitle: 'Select a card',
-                        source: this,
-                        cardCondition: (card) =>
-                            card.location === 'hand' &&
-                            card.controller === context.event.challenge.winner,
-                        onSelect: (player, card) => this.onCardSelected(context, player, card)
-                    });
+                elseAction: GameActions.chooseCards({
+                    player: (context) => context.event.challenge.winner,
+                    title: 'Select a card',
+                    cardCondition: (card, context) =>
+                        card.location === 'hand' && card.controller === context.choosingPlayer,
+                    gameAction: (card, context) =>
+                        GameActions.discardCard({ card, source: context.source })
                 })
             })
         });
-    }
-
-    onCardSelected(context, player, card) {
-        this.game.addMessage('{0} chooses to discard {1} from their hand', card.controller, card);
-        this.game.resolveGameAction(GameActions.discardCard({ card, source: this }), context);
-        return true;
     }
 }
 

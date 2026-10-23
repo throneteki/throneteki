@@ -9,7 +9,7 @@ class TheSeedIsStrong extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onInitiativeDetermined: (event) => event.winner !== this.controller
+                onInitiativeDetermined: (event, context) => event.winner !== context.player
             },
             message: {
                 format: '{player} uses {source} to have {winner} discard a Lord or Lady from their hand or shadows area, or reveal their hand and shadows area',
@@ -23,17 +23,14 @@ class TheSeedIsStrong extends DrawCard {
                     context.event.winner.shadows.some((card) =>
                         card.isMatch({ trait: ['Lord', 'Lady'] })
                     ),
-                thenAction: GameActions.genericHandler((context) => {
-                    this.game.promptForSelect(context.event.winner, {
-                        source: this,
-                        cardCondition: {
-                            location: ['hand', 'shadows'],
-                            trait: ['Lord', 'Lady'],
-                            controller: context.event.winner
-                        },
-                        onSelect: (player, card) => this.onCardSelected(context, card),
-                        onCancel: () => this.onCancel(context)
-                    });
+                thenAction: GameActions.chooseCards({
+                    player: (context) => context.event.winner,
+                    title: 'Select a Lord or Lady to discard',
+                    cardCondition: (card, context) =>
+                        ['hand', 'shadows'].includes(card.location) &&
+                        card.isMatch({ trait: ['Lord', 'Lady'] }) &&
+                        card.controller === context.choosingPlayer,
+                    gameAction: (card) => GameActions.discardCard({ card })
                 }),
                 elseAction: {
                     message: '{player} {gameAction}, containing no Lord or Lady characters',
@@ -44,23 +41,6 @@ class TheSeedIsStrong extends DrawCard {
                 }
             })
         });
-    }
-
-    onCardSelected(context, card) {
-        this.game.addMessage(
-            '{0} discards {1} from their {2}',
-            context.event.winner,
-            card,
-            card.location
-        );
-        this.game.resolveGameAction(GameActions.discardCard({ card }), context);
-        return true;
-    }
-
-    onCancel(context) {
-        this.game.addAlert('danger', '{0} did not select a card to discard', context.event.winner);
-
-        return true;
     }
 }
 
