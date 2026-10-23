@@ -119,12 +119,6 @@
         "this-in-ability": 4,
         "add-message": 1
     },
-    "server/game/cards/03-WotN/TheLongWinter.js": {
-        "this-in-ability": 6,
-        "add-message": 3,
-        "legacy-helper": 1,
-        "prompt-for-select": 1
-    },
     "server/game/cards/04.1-AtSK/VaryssRiddle.js": {
         "this-in-ability": 13,
         "add-message": 1
@@ -230,13 +224,6 @@
         "prompt-for-select": 2,
         "legacy-helper": 2
     },
-    "server/game/cards/06.5-OR/DornishRevenge.js": {
-        "this-in-ability": 10,
-        "add-message": 3,
-        "game-listener": 1,
-        "prompt-for-select": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/06.5-OR/NorthernEncampment.js": {
         "this-in-ability": 2
     },
@@ -259,12 +246,6 @@
         "this-in-ability": 18,
         "add-message": 2,
         "legacy-helper": 1
-    },
-    "server/game/cards/08.1-TAK/QueensMen.js": {
-        "this-in-ability": 8,
-        "add-message": 2,
-        "prompt-for-select": 2,
-        "legacy-helper": 2
     },
     "server/game/cards/08.1-TAK/TheIronBank.js": {
         "this-in-ability": 9,
@@ -820,13 +801,6 @@
         "this-in-ability": 12,
         "add-message": 2
     },
-    "server/game/cards/21-FtR/FairIsle.js": {
-        "prompt-for-select": 1,
-        "this-in-ability": 9,
-        "add-message": 3,
-        "game-listener": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/21-FtR/GreyWind.js": {
         "add-message": 2,
         "this-in-ability": 7,
@@ -901,9 +875,6 @@
     },
     "server/game/cards/23-AHaH/DoranMartell.js": {
         "this-in-ability": 2
-    },
-    "server/game/cards/23-AHaH/Littlefinger.js": {
-        "this-in-ability": 7
     },
     "server/game/cards/23-AHaH/MaesterColemon.js": {
         "this-in-ability": 2,
@@ -1003,11 +974,6 @@
     },
     "server/game/cards/26.1-WAID/HighgardenDestrier.js": {
         "this-in-ability": 2
-    },
-    "server/game/cards/26.1-WAID/Lannisport.js": {
-        "this-in-ability": 7,
-        "prompt-for-select": 1,
-        "add-message": 2
     },
     "server/game/cards/26.1-WAID/SerClaytonSuggs.js": {
         "this-in-ability": 8,

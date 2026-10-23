@@ -11,7 +11,6 @@ class FairIsle extends DrawCard {
         this.plotModifiers({
             gold: 1
         });
-
         this.action({
             title: 'Place cards on top of deck',
             phase: 'challenge',
@@ -21,54 +20,37 @@ class FairIsle extends DrawCard {
                 format: '{player} uses {source} to have {opponent} place 2 cards on top of their deck',
                 args: { opponent: (context) => context.opponent }
             },
-            handler: (context) => {
-                if (context.opponent.hand.length > 0) {
-                    this.game.promptForSelect(context.opponent, {
-                        activePromptTitle: 'Select 2 cards if able (last chosen ends up on top)',
-                        source: this,
-                        ordered: true,
-                        cardCondition: (card) => context.opponent.hand.includes(card),
-                        numCards: 2,
-                        multiSelect: true,
-                        onSelect: (opponent, cards) => this.onSelectCard(opponent, cards),
-                        onCancel: (opponent) => this.onCancel(opponent)
-                    });
-                } else {
-                    this.game.addMessage(
-                        '{0} can´t choose 2 cards for {1}',
-                        context.opponent,
-                        this
-                    );
-                }
-                this.game.once('onAtEndOfPhase', () => {
-                    if (!context.opponent.canDraw()) {
-                        return;
-                    }
-                    this.game.addMessage('Then {0} draws 2 card for {1}', context.opponent, this);
-                    context.opponent.drawCardsToHand(2);
-                });
-            }
+            gameAction: GameActions.simultaneously([
+                GameActions.chooseCards({
+                    player: (context) => context.opponent,
+                    mode: 'exactly',
+                    numCards: 2,
+                    title: 'Select 2 cards',
+                    cardCondition: (card, context) =>
+                        card.location === 'hand' && card.controller === context.choosingPlayer,
+                    gameAction: (card, context) =>
+                        GameActions.placeCard({
+                            card,
+                            player: context.choosingPlayer,
+                            location: 'draw deck'
+                        })
+                }),
+                GameActions.delayedEffect({
+                    duration: 'untilEndOfRound',
+                    when: {
+                        onAtEndOfPhase: () => true
+                    },
+                    message: {
+                        format: 'Then {opponent} draws 2 cards for {source}',
+                        args: { opponent: (context) => context.opponent }
+                    },
+                    gameAction: GameActions.drawCards((context) => ({
+                        player: context.opponent,
+                        amount: 2
+                    }))
+                })
+            ])
         });
-    }
-
-    onSelectCard(player, cards) {
-        let gameActions = [];
-        for (let card of cards) {
-            gameActions.push(GameActions.returnCardToDeck({ card }));
-        }
-        this.game.resolveGameAction(GameActions.simultaneously(gameActions));
-        this.game.addMessage(
-            '{0} places {1} cards on top of their deck for {2}',
-            player,
-            cards.length,
-            this
-        );
-        return true;
-    }
-
-    onCancel(player) {
-        this.game.addAlert('danger', '{0} does not choose 2 cards for {1}', player, this);
-        return true;
     }
 }
 

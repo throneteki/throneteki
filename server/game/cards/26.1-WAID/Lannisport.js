@@ -13,8 +13,8 @@ class Lannisport extends DrawCard {
         });
         this.reaction({
             when: {
-                onChallengeInitiated: (event) =>
-                    event.challenge.initiatedAgainstPlayer === this.controller &&
+                onChallengeInitiated: (event, context) =>
+                    event.challenge.initiatedAgainstPlayer === context.player &&
                     event.challenge.initiatedChallengeType === 'power'
             },
             cost: ability.costs.kneelSelf(),
@@ -22,52 +22,40 @@ class Lannisport extends DrawCard {
                 format: '{player} kneels {source} to end the challenge with no winner or loser unless {attackingPlayer} discards 1 card from their hand',
                 args: { attackingPlayer: (context) => context.event.challenge.attackingPlayer }
             },
-            handler: (context) => {
-                const opponent = context.event.challenge.initiatingPlayer;
-                if (opponent.hand.length < 1) {
-                    this.cancelChallenge();
-                    return;
-                }
-
-                this.game.promptWithMenu(opponent, this, {
-                    activePrompt: {
-                        menuTitle: `Discard a card for ${context.source.name}?`,
-                        buttons: [
-                            { text: 'Yes', method: 'promptToDiscard' },
-                            { text: 'No', method: 'cancelChallenge' }
-                        ]
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.ifCondition({
+                condition: (context) => context.event.challenge.initiatingPlayer.hand.length > 0,
+                thenAction: GameActions.choose({
+                    player: (context) => context.event.challenge.initiatingPlayer,
+                    title: (context) => `Discard a card for ${context.source.name}?`,
+                    choices: {
+                        Yes: {
+                            message: '{choosingPlayer} discards a card from their hand',
+                            gameAction: GameActions.chooseCards({
+                                player: (context) => context.event.challenge.initiatingPlayer,
+                                title: 'Select a card',
+                                cardCondition: (card, context) =>
+                                    card.controller === context.choosingPlayer &&
+                                    card.location === 'hand',
+                                gameAction: (card) => GameActions.discardCard({ card })
+                            })
+                        },
+                        No: endChallenge()
+                    }
+                }),
+                elseAction: endChallenge()
+            })
         });
     }
+}
 
-    promptToDiscard(opponent) {
-        this.game.promptForSelect(opponent, {
-            activePrompt: 'Select a card',
-            cardCondition: (card) => card.controller === opponent && card.location === 'hand',
-            onSelect: (opponent, card) => this.discardSelectedCards(opponent, card),
-            onCancel: () => this.cancelChallenge(),
-            source: this
-        });
-        return true;
-    }
-
-    discardSelectedCards(opponent, card) {
-        this.game.addMessage('{0} discards {1} from their hand', opponent, card);
-        this.game.resolveGameAction(GameActions.discardCard({ card }));
-        return true;
-    }
-
-    cancelChallenge() {
-        this.game.currentChallenge.cancelChallenge();
-        this.game.addMessage(
-            '{0} does not discard a card from their hand, cancelling the challenge',
-            this.game.currentChallenge.initiatingPlayer
-        );
-        return true;
-    }
+function endChallenge() {
+    return {
+        message: {
+            format: '{attackingPlayer} does not discard a card from their hand, cancelling the challenge',
+            args: { attackingPlayer: (context) => context.event.challenge.initiatingPlayer }
+        },
+        gameAction: GameActions.endChallenge((context) => ({ challenge: context.event.challenge }))
+    };
 }
 
 Lannisport.code = '26006';
