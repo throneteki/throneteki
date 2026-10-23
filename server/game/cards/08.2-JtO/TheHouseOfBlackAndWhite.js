@@ -1,5 +1,7 @@
 import range from 'lodash.range';
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import { Tokens } from '../../Constants/index.js';
 
 class TheHouseOfBlackAndWhite extends DrawCard {
     // The House of Black and White (08022)
@@ -14,7 +16,7 @@ class TheHouseOfBlackAndWhite extends DrawCard {
             cost: [
                 ability.costs.kneelSelf(),
                 ability.costs.discardXGold(
-                    () => this.getMinimumDiscardGoldAmount(),
+                    (context) => minimumDiscardGoldAmount(context),
                     () => 99
                 )
             ],
@@ -22,58 +24,51 @@ class TheHouseOfBlackAndWhite extends DrawCard {
                 cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    (context.xValue
-                        ? card.getPrintedStrength() <= context.xValue
-                        : card.getPrintedStrength() <= this.tokens.gold)
+                    card.getPrintedStrength() <=
+                        (context.xValue || context.source.tokens[Tokens.gold] || 0)
             },
-            handler: (context) => {
-                this.game.killCharacter(context.target);
-                this.game.addMessage(
-                    '{0} kneels and discards {1} gold from {2} to kill {3}',
-                    context.player,
-                    context.xValue,
-                    this,
-                    context.target
-                );
-
-                if (context.player.getSpendableGold() > 0) {
-                    let rangeArray = range(1, context.player.getSpendableGold() + 1).reverse();
-
-                    let buttons = rangeArray.map((gold) => {
-                        return { text: gold.toString(), method: 'moveGold', arg: gold };
-                    });
-                    buttons.push({ text: 'Done', method: 'moveGold', arg: 0 });
-
-                    this.game.promptWithMenu(context.player, this, {
-                        activePrompt: {
-                            menuTitle: 'Select gold amount to move to ' + this.name,
-                            buttons: buttons
-                        },
-                        source: this
-                    });
-                }
-            }
+            message: {
+                format: '{player} kneels and discards {amount} gold from {source} to kill {target}',
+                args: { amount: (context) => context.xValue }
+            },
+            gameAction: GameActions.simultaneously([
+                GameActions.kill((context) => ({ card: context.target })),
+                GameActions.ifCondition({
+                    condition: (context) => context.player.getSpendableGold() > 0,
+                    thenAction: GameActions.choose({
+                        title: (context) => `Select gold amount to move to ${context.source.name}`,
+                        choices: (context) =>
+                            Object.fromEntries(
+                                range(1, context.player.getSpendableGold() + 1)
+                                    .reverse()
+                                    .map((amount) => [
+                                        amount.toString(),
+                                        {
+                                            message: {
+                                                format: '{player} moves {amount} gold to {source}',
+                                                args: { amount: () => amount }
+                                            },
+                                            gameAction: GameActions.transferGold({
+                                                from: context.player,
+                                                to: context.source,
+                                                amount
+                                            })
+                                        }
+                                    ])
+                            ),
+                        cancelMessage: '{choosingPlayer} does not move gold to {source}'
+                    })
+                })
+            ])
         });
     }
+}
 
-    moveGold(player, gold) {
-        if (gold === 0) {
-            return true;
-        }
-
-        this.game.transferGold({ from: player, to: this, amount: gold });
-        this.game.addMessage('{0} moves {1} gold to {2}', player, gold, this);
-
-        return true;
-    }
-
-    getMinimumDiscardGoldAmount() {
-        let characters = this.game.filterCardsInPlay((card) => card.getType() === 'character');
-        let characterPrintedStrengths = characters.map((card) => card.getPrintedStrength());
-        let lowestStrength = Math.min(...characterPrintedStrengths);
-
-        return Math.max(lowestStrength, 1);
-    }
+function minimumDiscardGoldAmount(context) {
+    const strengths = context.game
+        .filterCardsInPlay((card) => card.getType() === 'character')
+        .map((card) => card.getPrintedStrength());
+    return Math.max(Math.min(...strengths), 1);
 }
 
 TheHouseOfBlackAndWhite.code = '08022';

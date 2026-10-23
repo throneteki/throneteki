@@ -6,10 +6,8 @@
     },
     "server/game/cards/00-VDS/Treaty.js": {
         "event-registration": 1,
-        "legacy-helper": 2,
-        "this-in-ability": 10,
-        "add-message": 3,
-        "prompt-for-select": 1
+        "this-in-ability": 1,
+        "add-message": 1
     },
     "server/game/cards/01-Core/GreenbloodTrader.js": {
         "this-in-ability": 9,
@@ -113,10 +111,6 @@
     "server/game/cards/03-WotN/Nymeria.js": {
         "this-in-ability": 9,
         "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/03-WotN/OldNan.js": {
-        "this-in-ability": 4,
         "add-message": 1
     },
     "server/game/cards/04.1-AtSK/VaryssRiddle.js": {
@@ -252,11 +246,6 @@
         "this-in-ability": 4,
         "add-message": 1
     },
-    "server/game/cards/08.2-JtO/TheHouseOfBlackAndWhite.js": {
-        "this-in-ability": 9,
-        "legacy-helper": 2,
-        "add-message": 2
-    },
     "server/game/cards/08.3-Km/LyseniPirate.js": {
         "this-in-ability": 17,
         "legacy-helper": 2,
@@ -364,11 +353,6 @@
     "server/game/cards/11.2-TMoW/Meereen.js": {
         "legacy-helper": 1
     },
-    "server/game/cards/11.2-TMoW/OldtownUndercity.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 3,
-        "add-message": 1
-    },
     "server/game/cards/11.3-SoKL/Dragonbinder.js": {
         "this-in-ability": 8,
         "prompt-for-select": 1,
@@ -429,10 +413,6 @@
         "this-in-ability": 4,
         "add-message": 1,
         "legacy-helper": 2
-    },
-    "server/game/cards/11.6-DitD/RavagesOfWar.js": {
-        "this-in-ability": 4,
-        "add-message": 1
     },
     "server/game/cards/11.6-DitD/Varys.js": {
         "this-in-ability": 2
@@ -630,11 +610,6 @@
         "add-message": 2,
         "this-in-ability": 6,
         "legacy-helper": 1
-    },
-    "server/game/cards/16-TTWDFL/TheHatchlingsFeast.js": {
-        "this-in-ability": 4,
-        "prompt-for-select": 1,
-        "add-message": 1
     },
     "server/game/cards/17.1-R/BoundForTheWall.js": {
         "this-in-ability": 8,
@@ -979,10 +954,6 @@
     },
     "server/game/cards/26.5-JfE/Smiler.js": {
         "this-in-ability": 8
-    },
-    "server/game/cards/26.5-JfE/TheDoomOfValyria.js": {
-        "this-in-ability": 8,
-        "add-message": 1
     },
     "server/game/cards/26.6-NCbT/ArmedToTheTeeth.js": {
         "event-registration": 1,

@@ -1,4 +1,5 @@
 import AgendaCard from '../../agendacard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Treaty extends AgendaCard {
     constructor(owner, cardData) {
@@ -17,29 +18,20 @@ class Treaty extends AgendaCard {
         this.action({
             title: 'Draw card then discard card',
             cost: ability.costs.kneelFactionCard(),
-            handler: () => {
-                this.controller.drawCardsToHand(1);
-                this.game.addMessage(
-                    '{0} uses {1} and kneels their faction card to draw 1 card',
-                    this.controller,
-                    this
-                );
-
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a card',
-                    source: this,
-                    cardCondition: (card) =>
-                        card.location === 'hand' && card.controller === this.controller,
-                    onSelect: (player, card) => this.cardSelected(player, card)
-                });
-            }
+            message: '{player} uses {source} and kneels their faction card to draw 1 card',
+            gameAction: GameActions.drawCards((context) => ({
+                player: context.player,
+                amount: 1
+            })).then({
+                message: 'Then {player} discards a card from their hand for {source}',
+                gameAction: GameActions.chooseCards({
+                    title: 'Select a card',
+                    cardCondition: (card, context) =>
+                        card.location === 'hand' && card.controller === context.player,
+                    gameAction: (card) => GameActions.discardCard({ card })
+                })
+            })
         });
-    }
-
-    cardSelected(player, card) {
-        player.discardCard(card);
-        this.game.addMessage('{0} then discards {1} for {2}', this.controller, card, this);
-        return true;
     }
 
     onDecksPrepared() {
