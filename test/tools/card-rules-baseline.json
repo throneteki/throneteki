@@ -24,25 +24,9 @@
         "this-in-ability": 13,
         "add-message": 1
     },
-    "server/game/cards/04.4-TIMC/CaswellsKeep.js": {
-        "this-in-ability": 9,
-        "legacy-helper": 2,
-        "add-message": 1
-    },
-    "server/game/cards/04.5-GoH/RooseBolton.js": {
-        "this-in-ability": 9,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/05-LoCR/HighSepton.js": {
         "this-in-ability": 6,
         "add-message": 1
-    },
-    "server/game/cards/06.3-TFoA/Duel.js": {
-        "this-in-ability": 10,
-        "add-message": 3,
-        "prompt-for-select": 2,
-        "legacy-helper": 2
     },
     "server/game/cards/08.6-SAT/TheCrowIsATricksyBird.js": {
         "this-in-ability": 8,

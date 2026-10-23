@@ -1,4 +1,14 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+
+const strengthWhenSacrificed = (context) => {
+    const sacrifice = (context.costEvents || []).find(
+        (event) => event.name === 'onSacrificed' && event.card === context.source
+    );
+    return sacrifice
+        ? sacrifice.cardStateWhenSacrificed.getStrength()
+        : context.source.getStrength();
+};
 
 class RooseBolton extends DrawCard {
     // Roose Bolton (04081)
@@ -8,34 +18,25 @@ class RooseBolton extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) => {
-                    if (event.challenge.winner === this.controller && this.isAttacking()) {
-                        this.strengthAtInitiation = this.getStrength();
-                        return true;
-                    }
-                    return false;
-                }
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player && context.source.isAttacking()
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
+                mode: 'maxStat',
                 activePromptTitle: 'Select character(s)',
-                maxStat: () => this.strengthAtInitiation,
+                maxStat: (context) => strengthWhenSacrificed(context),
                 cardStat: (card) => card.getStrength(),
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.controller === this.game.currentChallenge.loser,
+                    card.controller === context.event.challenge.loser,
                 gameAction: 'kill'
             },
-            handler: (context) => {
-                this.game.killCharacters(context.target);
-                this.game.addMessage(
-                    '{0} sacrifices {1} to kill {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} sacrifices {source} to kill {target}',
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) => GameActions.kill({ card }))
+            )
         });
     }
 }

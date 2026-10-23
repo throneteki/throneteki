@@ -81,7 +81,7 @@ describe("At Prince Doran's Behest", function () {
             this.selectPlotOrder(this.player1);
             this.player1.triggerAbility("Caswell's Keep");
             this.player1.clickPrompt('player2');
-            this.player1.clickPrompt('Old Nan');
+            this.player1.clickCard(this.player2Object.drawDeck[0]);
         });
 
         it('triggers a reaction for the second plot revealed', function () {
