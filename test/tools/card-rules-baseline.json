@@ -57,11 +57,6 @@
         "this-in-ability": 9,
         "add-message": 1
     },
-    "server/game/cards/15-DotE/Incinerate.js": {
-        "prompt-for-select": 1,
-        "this-in-ability": 4,
-        "add-message": 1
-    },
     "server/game/cards/15-DotE/OverwhelmingNumbers.js": {
         "this-in-ability": 6,
         "legacy-helper": 2,
@@ -72,11 +67,6 @@
         "this-in-ability": 6,
         "legacy-helper": 1
     },
-    "server/game/cards/19-JS/TheWinterMaid.js": {
-        "this-in-ability": 3,
-        "add-message": 2,
-        "legacy-helper": 1
-    },
     "server/game/cards/20-HMW/KindlyMan.js": {
         "this-in-ability": 5,
         "add-message": 1
@@ -84,12 +74,6 @@
     "server/game/cards/21-FtR/BattleoftheTrident.js": {
         "this-in-ability": 12,
         "add-message": 2
-    },
-    "server/game/cards/22-BtB/BranStark.js": {
-        "this-in-ability": 9,
-        "add-message": 2,
-        "prompt-for-select": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/22-BtB/StormsEnd.js": {
         "this-in-ability": 5,

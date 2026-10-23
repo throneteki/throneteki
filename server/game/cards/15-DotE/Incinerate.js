@@ -5,47 +5,32 @@ class Incinerate extends DrawCard {
     // Incinerate (15024)
     // Action: Choose a participating character and discard 1 or more cards from your hand. Until
     // the end of the challenge, that character gets -2 STR for each card discarded this way.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Reduce STR',
-            condition: (context) =>
-                context.player.hand.filter((card) => card !== context.source).length > 0,
+            condition: (context) => context.player.hand.some((card) => card !== context.source),
             target: {
                 cardCondition: { location: 'play area', type: 'character', participating: true }
             },
             message: '{player} plays {source} to reduce the STR of {target}',
-            handler: (context) => {
-                this.game.promptForSelect(context.player, {
-                    type: 'select',
-                    mode: 'unlimited',
-                    activePromptTitle: 'Select cards',
-                    source: context.source,
-                    context: context,
-                    cardCondition: (card, context) =>
-                        card.isMatch({ location: 'hand' }) && card.controller === context.player,
-                    onSelect: (player, toDiscard) => {
-                        const strengthReduction = -toDiscard.length * 2;
-                        this.game.addMessage(
-                            "{0} discards {1} to give {2}'s {3} STR",
-                            context.player,
-                            toDiscard,
-                            context.target,
-                            strengthReduction
-                        );
-                        this.game.resolveGameAction(
-                            GameActions.simultaneously(
-                                toDiscard.map((card) => GameActions.discardCard({ card }))
-                            ),
-                            context
-                        );
-                        this.untilEndOfChallenge((ability) => ({
-                            match: context.target,
-                            effect: ability.effects.modifyStrength(strengthReduction)
-                        }));
-                        return true;
-                    }
-                });
-            }
+            gameAction: GameActions.chooseCards({
+                mode: 'unlimited',
+                title: 'Select cards to discard',
+                cardCondition: (card, context) =>
+                    card.location === 'hand' && card.controller === context.player,
+                gameAction: (card) => GameActions.discardCard({ card })
+            }).then((preThenContext) => ({
+                gameAction: GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfChallenge',
+                    match: context.parentContext.target,
+                    effect: ability.effects.modifyStrength(
+                        -2 *
+                            (preThenContext.chosenCards || []).filter(
+                                (card) => card.location === 'discard pile'
+                            ).length
+                    )
+                }))
+            }))
         });
     }
 }
