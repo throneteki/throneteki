@@ -238,11 +238,6 @@
     "server/game/cards/11.2-TMoW/Meereen.js": {
         "legacy-helper": 1
     },
-    "server/game/cards/11.3-SoKL/Dragonbinder.js": {
-        "this-in-ability": 8,
-        "prompt-for-select": 1,
-        "add-message": 1
-    },
     "server/game/cards/11.3-SoKL/DrownedGodFanatic.js": {
         "this-in-ability": 8,
         "legacy-helper": 1,
@@ -594,11 +589,6 @@
     "server/game/cards/26.5-JfE/LivingShadow.js": {
         "this-in-ability": 9,
         "legacy-helper": 1
-    },
-    "server/game/cards/26.6-NCbT/TheStallionWhoMountsTheWorld.js": {
-        "this-in-ability": 5,
-        "prompt-for-select": 1,
-        "add-message": 1
     },
     "server/game/cards/27.2-WGYK/Hornvale.js": {
         "event-registration": 1,

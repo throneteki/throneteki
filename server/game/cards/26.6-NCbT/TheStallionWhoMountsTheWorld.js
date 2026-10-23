@@ -9,10 +9,10 @@ class TheStallionWhoMountsTheWorld extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'power' &&
-                    event.challenge.winner === this.controller &&
-                    event.challenge.attackingPlayer === this.controller
+                    event.challenge.winner === context.player &&
+                    event.challenge.attackingPlayer === context.player
             },
             cost: ability.costs.kneelFactionCard(),
             message:
@@ -24,18 +24,27 @@ class TheStallionWhoMountsTheWorld extends DrawCard {
                         type: 'character',
                         cardCondition: (card) => GameActions.kill({ card }).allow()
                     }) < 2,
-                thenAction: this.buildSearchGameAction(),
+                thenAction: searchForDothraki(),
                 elseAction: GameActions.choose({
                     player: (context) => context.event.challenge.loser,
                     choices: {
                         'Allow search': {
-                            message: '{player} chooses to allow the deck search',
-                            gameAction: this.buildSearchGameAction()
+                            message: '{choosingPlayer} chooses to allow the deck search',
+                            gameAction: searchForDothraki()
                         },
                         'Kill 2 characters': {
-                            message: '{player} chooses to kill 2 characters',
-                            gameAction: GameActions.genericHandler((context) => {
-                                this.promptToKillCharacters(context.event.challenge.loser);
+                            message:
+                                '{choosingPlayer} chooses to kill 2 characters to cancel {source}',
+                            gameAction: GameActions.chooseCards({
+                                player: (context) => context.event.challenge.loser,
+                                mode: 'exactly',
+                                numCards: 2,
+                                title: 'Select two characters',
+                                cardCondition: (card, context) =>
+                                    card.getType() === 'character' &&
+                                    card.location === 'play area' &&
+                                    card.controller === context.choosingPlayer,
+                                gameAction: (card) => GameActions.kill({ card })
                             })
                         }
                     }
@@ -43,47 +52,17 @@ class TheStallionWhoMountsTheWorld extends DrawCard {
             })
         });
     }
+}
 
-    buildSearchGameAction() {
-        return GameActions.search({
-            title: 'Select a character',
-            match: { trait: 'Dothraki', type: 'character' },
-            message: '{player} puts {searchTarget} into play',
-            gameAction: GameActions.putIntoPlay((context) => ({
-                card: context.searchTarget
-            }))
-        });
-    }
-
-    promptToKillCharacters(opponent) {
-        this.game.promptForSelect(opponent, {
-            activePromptTitle: 'Select two characters',
-            mode: 'exactly',
-            numCards: 2,
-            cardCondition: (card) =>
-                card.getType() === 'character' &&
-                card.location === 'play area' &&
-                card.controller === opponent,
-            gameAction: 'kill',
-            onSelect: (opponent, cards) => this.killSelectedCharacters(opponent, cards),
-            onCancel: (opponent) => this.cancelResolution(opponent),
-            source: this
-        });
-        return true;
-    }
-
-    killSelectedCharacters(opponent, cards) {
-        this.game.addMessage('{0} kills {1} to cancel {2}', opponent, cards, this);
-        this.game.resolveGameAction(
-            GameActions.simultaneously(cards.map((card) => GameActions.kill({ card })))
-        );
-        return true;
-    }
-
-    cancelResolution(player) {
-        this.game.addAlert('danger', '{0} cancels resolution of {1}', player, this);
-        return true;
-    }
+function searchForDothraki() {
+    return GameActions.search({
+        title: 'Select a character',
+        match: { trait: 'Dothraki', type: 'character' },
+        message: '{player} puts {searchTarget} into play',
+        gameAction: GameActions.putIntoPlay((context) => ({
+            card: context.searchTarget
+        }))
+    });
 }
 
 TheStallionWhoMountsTheWorld.code = '26114';

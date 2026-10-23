@@ -15,7 +15,7 @@ class Dragonbinder extends DrawCard {
         });
         this.reaction({
             when: {
-                onDominanceDetermined: (event) => this.controller === event.winner
+                onDominanceDetermined: (event, context) => context.player === event.winner
             },
             cost: ability.costs.killParent(),
             message:
@@ -23,41 +23,26 @@ class Dragonbinder extends DrawCard {
             gameAction: GameActions.choose({
                 choices: {
                     'Take control of Dragon': {
-                        condition: () => this.anyOpponentHasDragon(),
-                        gameAction: GameActions.genericHandler((context) => {
-                            this.game.promptForSelect(this.controller, {
-                                source: this,
-                                cardCondition: {
-                                    location: 'play area',
-                                    type: 'character',
-                                    trait: 'Dragon'
-                                },
-                                onSelect: (player, card) => {
-                                    this.game.addMessage(
-                                        "{0} chooses to take control of {1}'s {2}",
-                                        player,
-                                        card.controller,
-                                        card
-                                    );
-                                    this.game.resolveGameAction(
-                                        GameActions.takeControl({
-                                            player,
-                                            card,
-                                            context
-                                        }),
-                                        context
-                                    );
-                                    return true;
-                                },
-                                onCancel: (player) => {
-                                    this.game.addAlert(
-                                        'danger',
-                                        '{0} does not choose a Dragon character',
-                                        player
-                                    );
-                                    return true;
-                                }
-                            });
+                        condition: (context) =>
+                            context.game
+                                .getOpponents(context.player)
+                                .some((player) =>
+                                    player.anyCardsInPlay(
+                                        (card) =>
+                                            card.hasTrait('Dragon') &&
+                                            card.getType() === 'character'
+                                    )
+                                ),
+                        message: '{player} chooses to take control of a Dragon character',
+                        gameAction: GameActions.chooseCards({
+                            title: 'Select a Dragon character',
+                            cardCondition: {
+                                location: 'play area',
+                                type: 'character',
+                                trait: 'Dragon'
+                            },
+                            gameAction: (card, context) =>
+                                GameActions.takeControl({ player: context.player, card, context })
                         })
                     },
                     'Put character into play': {
@@ -75,16 +60,6 @@ class Dragonbinder extends DrawCard {
                 }
             })
         });
-    }
-
-    anyOpponentHasDragon() {
-        return this.game
-            .getOpponents(this.controller)
-            .some((player) =>
-                player.anyCardsInPlay(
-                    (card) => card.hasTrait('Dragon') && card.getType() === 'character'
-                )
-            );
     }
 }
 
