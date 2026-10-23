@@ -1,6 +1,12 @@
 import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
+const isStandingMilIcon = (card) =>
+    card.location === 'play area' &&
+    card.hasIcon('military') &&
+    !card.kneeled &&
+    card.canBeKneeled();
+
 class ForcedMarch extends PlotCard {
     // Forced March (10048)
     // When Revealed: Each opponent kneels 1 character he or she controls with a [military] icon.
@@ -11,50 +17,27 @@ class ForcedMarch extends PlotCard {
                 choosingPlayer: 'eachOpponent',
                 ifAble: true,
                 cardCondition: (card, context) =>
-                    this.isStandingMilIcon(card) && card.controller === context.choosingPlayer
+                    isStandingMilIcon(card) && card.controller === context.choosingPlayer
             },
-            handler: (context) => {
-                let cards = context.targets.selections
-                    .map((selection) => selection.value)
-                    .filter((card) => !!card);
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        cards.map((card) => GameActions.kneelCard({ card }))
-                    ).then((originalContext) => ({
-                        condition: () => this.hasValidTargets(originalContext.player),
-                        cost: ability.costs.kneel((card) => this.isStandingMilIcon(card)),
-                        message: {
-                            format: '{player} then kneels {kneeled} to initate the effect of {source} again',
-                            args: { kneeled: (context) => context.costs.kneeled }
-                        },
-                        handler: () => {
-                            let newContext = originalContext.ability.createContext(
-                                originalContext.event
-                            );
-                            this.game.resolveAbility(newContext.ability, newContext);
-                        }
-                    })),
-                    context
-                );
-            }
+            message: '{player} uses {source} to have each opponent kneel {target}',
+            gameAction: GameActions.simultaneously((context) =>
+                context.targets.getTargets().map((card) => GameActions.kneelCard({ card }))
+            ).then({
+                condition: (context) =>
+                    context.game
+                        .getOpponents(context.player)
+                        .some((opponent) => opponent.anyCardsInPlay(isStandingMilIcon)),
+                cost: ability.costs.kneel((card) => isStandingMilIcon(card)),
+                message: {
+                    format: '{player} then kneels {kneeled} to initiate the effect of {source} again',
+                    args: { kneeled: (context) => context.costs.kneel }
+                },
+                gameAction: GameActions.initiateWhenRevealed((context) => ({
+                    plot: context.source,
+                    player: context.player
+                }))
+            })
         });
-    }
-
-    hasValidTargets(player) {
-        return this.game.getOpponents(player).some((opponent) => this.hasStandingMilIcon(opponent));
-    }
-
-    hasStandingMilIcon(player) {
-        return player.anyCardsInPlay((card) => this.isStandingMilIcon(card));
-    }
-
-    isStandingMilIcon(card) {
-        return (
-            card.location === 'play area' &&
-            card.hasIcon('military') &&
-            !card.kneeled &&
-            card.canBeKneeled()
-        );
     }
 }
 

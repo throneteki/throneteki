@@ -20,9 +20,6 @@
         "this-in-ability": 5,
         "add-message": 1
     },
-    "server/game/cards/10-SoD/ForcedMarch.js": {
-        "this-in-ability": 7
-    },
     "server/game/cards/14-FotS/NightfireVision.js": {
         "this-in-ability": 7,
         "add-message": 2,
@@ -46,8 +43,5 @@
     "server/game/cards/21-FtR/BattleoftheTrident.js": {
         "this-in-ability": 12,
         "add-message": 2
-    },
-    "server/game/cards/25.6-WK/BurningTheBooks.js": {
-        "this-in-ability": 4
     }
 }
