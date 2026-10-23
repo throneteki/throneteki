@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WillasTyrell extends DrawCard {
     // Willas Tyrell (09008)
@@ -6,75 +7,56 @@ class WillasTyrell extends DrawCard {
     // - Margaery Tyrell, stand her.
     // - The Knight of Flowers, he gains insight until the end of the phase.
     // - Ser Garlan Tyrell, he gains renown until the end of the phase.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Kneel Willas and stand/give keywords',
-            condition: () => !this.kneeled,
-            handler: () => {
-                let partials = [];
-
-                this.controller.kneelCard(this);
-
-                let margaery = this.controller.cardsInPlay.find(
-                    (card) => card.name === 'Margaery Tyrell'
-                );
-                if (margaery && margaery.kneeled) {
-                    this.controller.standCard(margaery);
-                    partials.push('stands {2}');
-                }
-
-                let flowers = this.controller.cardsInPlay.find(
-                    (card) => card.name === 'The Knight of Flowers'
-                );
-                if (flowers) {
-                    this.untilEndOfPhase((ability) => ({
-                        match: flowers,
-                        effect: ability.effects.addKeyword('insight')
-                    }));
-                    partials.push('gives insight to {3}');
-                }
-
-                let garlan = this.controller.cardsInPlay.find(
-                    (card) => card.name === 'Ser Garlan Tyrell'
-                );
-                if (garlan) {
-                    this.untilEndOfPhase((ability) => ({
-                        match: garlan,
-                        effect: ability.effects.addKeyword('renown')
-                    }));
-                    partials.push('gives renown to {4}');
-                }
-
-                let formattedPartials = this.formatPartials(partials);
-                this.game.addMessage(
-                    '{0} uses {1} to kneel {1}' + formattedPartials,
-                    this.controller,
-                    this,
-                    margaery,
-                    flowers,
-                    garlan
-                );
-            }
+            message: '{player} uses {source} to kneel {source}',
+            gameAction: GameActions.kneelCard((context) => ({ card: context.source })).then({
+                gameAction: GameActions.simultaneously([
+                    GameActions.ifCondition({
+                        condition: (context) => !!findCard(context, 'Margaery Tyrell')?.kneeled,
+                        thenAction: {
+                            message: {
+                                format: 'Then {player} stands {margaery}',
+                                args: {
+                                    margaery: (context) => findCard(context, 'Margaery Tyrell')
+                                }
+                            },
+                            gameAction: GameActions.standCard((context) => ({
+                                card: findCard(context, 'Margaery Tyrell')
+                            }))
+                        }
+                    }),
+                    ...[
+                        ['The Knight of Flowers', 'insight'],
+                        ['Ser Garlan Tyrell', 'renown']
+                    ].map(([name, keyword]) =>
+                        GameActions.ifCondition({
+                            condition: (context) => !!findCard(context, name),
+                            thenAction: {
+                                message: {
+                                    format: 'Then {player} gives {keyword} to {character} until the end of the phase',
+                                    args: {
+                                        keyword: () => keyword,
+                                        character: (context) => findCard(context, name)
+                                    }
+                                },
+                                gameAction: GameActions.lastingEffect((context) => ({
+                                    duration: 'untilEndOfPhase',
+                                    match: findCard(context, name),
+                                    effect: ability.effects.addKeyword(keyword)
+                                }))
+                            }
+                        })
+                    )
+                ])
+            })
         });
     }
+}
 
-    formatPartials(partials) {
-        if (partials.length === 0) {
-            return '';
-        }
-
-        if (partials.length === 1) {
-            return ', then ' + partials[0];
-        }
-
-        if (partials.length === 2) {
-            return ', then ' + partials[0] + ' and ' + partials[1];
-        }
-
-        if (partials.length === 3) {
-            return ', then ' + partials[0] + ', ' + partials[1] + ' and ' + partials[2];
-        }
-    }
+function findCard(context, name) {
+    return context.player.cardsInPlay.find((card) => card.name === name);
 }
 
 WillasTyrell.code = '09008';

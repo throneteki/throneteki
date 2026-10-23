@@ -160,12 +160,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/04.6-TC/PodrickPayne.js": {
-        "this-in-ability": 18,
-        "add-message": 2,
-        "prompt-for-select": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/04.6-TC/TarredHeads.js": {
         "this-in-ability": 2,
         "add-message": 1
@@ -285,17 +279,8 @@
         "this-in-ability": 5,
         "add-message": 1
     },
-    "server/game/cards/09-HoT/WillasTyrell.js": {
-        "this-in-ability": 13,
-        "legacy-helper": 2,
-        "add-message": 1
-    },
     "server/game/cards/10-SoD/AreoHotah.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/10-SoD/DoranMartell.js": {
-        "this-in-ability": 12,
-        "add-message": 2
     },
     "server/game/cards/10-SoD/Dorne.js": {
         "this-in-ability": 9,
@@ -808,11 +793,6 @@
         "this-in-ability": 7,
         "add-message": 1
     },
-    "server/game/cards/22-BtB/TheHornOfWinter.js": {
-        "this-in-ability": 7,
-        "add-message": 2,
-        "legacy-helper": 1
-    },
     "server/game/cards/23-AHaH/ATraitorsWhisper.js": {
         "this-in-ability": 1
     },
@@ -924,10 +904,6 @@
     },
     "server/game/cards/26.1-WAID/SlaversBay.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/26.2-WoW/AToastToTheKing.js": {
-        "this-in-ability": 8,
-        "add-message": 1
     },
     "server/game/cards/26.2-WoW/QueenOfMeereen.js": {
         "prompt-for-select": 1,

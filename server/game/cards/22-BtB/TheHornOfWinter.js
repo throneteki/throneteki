@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheHornOfWinter extends DrawCard {
     // The Horn of Winter (22027)
@@ -15,7 +16,7 @@ class TheHornOfWinter extends DrawCard {
         });
         this.reaction({
             when: {
-                afterChallenge: (event) => event.challenge.winner === this.controller
+                afterChallenge: (event, context) => event.challenge.winner === context.player
             },
             target: {
                 activePromptTitle: 'Select a location',
@@ -25,57 +26,38 @@ class TheHornOfWinter extends DrawCard {
                     card.targetedByAssault
             },
             cost: ability.costs.sacrificeSelf(),
-            handler: (context) => {
-                this.assaulted = context.target;
-
-                if (context.target.hasTrait('Stronghold') || context.target.name === 'The Wall') {
-                    let buttons = [
-                        { text: 'Treat as blank', method: 'treatAsBlank' },
-                        { text: 'Discard from play', method: 'discardFromPlay' }
-                    ];
-
-                    this.game.promptWithMenu(context.player, this, {
-                        activePrompt: {
-                            menuTitle: 'Discard from play?',
-                            buttons: buttons
-                        },
-                        source: this
-                    });
-                } else {
-                    this.treatAsBlank(context.player);
-                }
-            }
+            gameAction: GameActions.ifCondition({
+                condition: (context) =>
+                    context.target.hasTrait('Stronghold') || context.target.name === 'The Wall',
+                thenAction: GameActions.choose({
+                    title: 'Discard from play?',
+                    choices: {
+                        'Treat as blank': treatAsBlank(ability),
+                        'Discard from play': {
+                            message: '{player} sacrifices {source} to discard {target} from play',
+                            gameAction: GameActions.discardCard((context) => ({
+                                card: context.target
+                            }))
+                        }
+                    }
+                }),
+                elseAction: treatAsBlank(ability)
+            })
         });
     }
+}
 
-    treatAsBlank(player) {
-        this.untilEndOfRound((ability) => ({
-            match: this.assaulted,
+function treatAsBlank(ability) {
+    return {
+        message:
+            '{player} sacrifices {source} to treat the text box of {target} as blank until the end of the round',
+        gameAction: GameActions.lastingEffect((context) => ({
+            duration: 'untilEndOfRound',
+            match: context.target,
+            targetController: 'any',
             effect: ability.effects.blankExcludingTraits
-        }));
-
-        this.game.addMessage(
-            '{0} sacrifices {1} to treat the text box of {2} as blank until the end of the round',
-            player,
-            this,
-            this.assaulted
-        );
-
-        return true;
-    }
-
-    discardFromPlay(player) {
-        this.assaulted.controller.discardCard(this.assaulted);
-
-        this.game.addMessage(
-            '{0} sacrifices {1} to discard {2} from play',
-            player,
-            this,
-            this.assaulted
-        );
-
-        return true;
-    }
+        }))
+    };
 }
 
 TheHornOfWinter.code = '22027';
