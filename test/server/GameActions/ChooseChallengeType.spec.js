@@ -31,6 +31,16 @@ describe('ChooseChallengeType', function () {
         expect(choices.map((choice) => choice.text)).toEqual(['Military', 'Power']);
     });
 
+    it('leaves out each challenge type in a list that exclude returns', function () {
+        const action = new ChooseChallengeType({
+            exclude: () => ['military', 'power'],
+            gameAction: this.gameAction
+        });
+        const choices = action.createChoices(action.choicesFunc({}));
+
+        expect(choices.map((choice) => choice.text)).toEqual(['Intrigue']);
+    });
+
     it('titles the prompt "Select a challenge type" by default', function () {
         expect(new ChooseChallengeType({ gameAction: this.gameAction }).title).toBe(
             'Select a challenge type'

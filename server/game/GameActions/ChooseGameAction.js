@@ -3,6 +3,12 @@ import AbilityChoicePrompt from '../gamesteps/AbilityChoicePrompt.js';
 import AbilityMessage from '../AbilityMessage.js';
 import HandlerGameActionWrapper from './HandlerGameActionWrapper.js';
 
+// The context can inherit its properties from a prototype (see BaseAbility.allowsTarget), which
+// spreading it would drop.
+function withChoosingPlayer(context, choosingPlayer) {
+    return Object.assign(Object.create(context), { choosingPlayer });
+}
+
 class ChooseGameAction extends GameAction {
     constructor({ player, title, message, choices, cancelText, cancelMessage }) {
         super('choose');
@@ -30,7 +36,7 @@ class ChooseGameAction extends GameAction {
 
     allow(context) {
         const choosingPlayer = this.playerFunc(context);
-        let tempContext = { ...context, choosingPlayer };
+        let tempContext = withChoosingPlayer(context, choosingPlayer);
         const choices = this.createChoices(this.choicesFunc(tempContext));
         const validChoices = choices.filter((choice) => choice.condition(tempContext));
         return validChoices.length > 0;
@@ -43,7 +49,7 @@ class ChooseGameAction extends GameAction {
     createEvent(context) {
         return this.event('onChoose', {}, (event) => {
             const choosingPlayer = this.playerFunc(context);
-            let tempContext = { ...context, choosingPlayer };
+            let tempContext = withChoosingPlayer(context, choosingPlayer);
             const title = this.title instanceof Function ? this.title(tempContext) : this.title;
             const choices = this.createChoices(this.choicesFunc(tempContext)); // If at least one choice is selectable (checked in 'allow'), then all should be selectable.
             const cancelText =

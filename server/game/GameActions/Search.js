@@ -98,10 +98,12 @@ class Search extends GameAction {
                                 });
                                 return true;
                             }
-                            this.abilityMessage.output(context.game, {
-                                ...context,
-                                card: context.searchTarget
-                            });
+                            this.abilityMessage.output(
+                                context.game,
+                                Object.assign(Object.create(context), {
+                                    card: context.searchTarget
+                                })
+                            );
                             event.thenAttachEvent(this.gameAction.createEvent(context));
                             return true;
                         },
@@ -175,7 +177,10 @@ class Search extends GameAction {
             return;
         }
         // TODO: change 'this.gameAction' below into SimultanousGameAction (with gameAction + revealACtion)
-        this.abilityMessage.output(context.game, { ...context, card: context.searchTarget });
+        this.abilityMessage.output(
+            context.game,
+            Object.assign(Object.create(context), { card: context.searchTarget })
+        );
         revealEvent.thenAttachEvent(this.gameAction.createEvent(context));
     }
 }

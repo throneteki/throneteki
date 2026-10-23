@@ -359,7 +359,8 @@ chooses which gold sources to spend it from, as when paying a cost.
 
 For "name a challenge type" or "choose a challenge type", use `GameActions.chooseChallengeType`.
 It works like `chooseIcon`, with `{challengeType}` in the `message` becoming the chosen type
-("military"). `exclude` returns a challenge type to leave out, for "a different challenge type":
+("military"). `exclude` returns a challenge type, or a list of them, to leave out, for "a different
+challenge type" (or "a challenge type that has not been initiated against you", Maester Aemon):
 
 ```javascript
 // Coordinated Attack: choose a different challenge type. You may initiate an additional

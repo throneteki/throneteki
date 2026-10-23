@@ -15,7 +15,7 @@ class ChooseChallengeType extends ChooseGameAction {
             choices: (context) =>
                 Object.fromEntries(
                     ChallengeTypes.all
-                        .filter(({ value }) => value !== exclude(context))
+                        .filter(({ value }) => ![].concat(exclude(context)).includes(value))
                         .map(({ text, value }) => [
                             text,
                             {
