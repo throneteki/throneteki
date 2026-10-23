@@ -1,47 +1,57 @@
 describe('Tunnels of the Red Keep', function () {
-    integration(function () {
-        describe('kneeling and returning it to shadows', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('tyrell', [
-                    'A Noble Cause',
-                    'Hedge Knight',
-                    'Tunnels of the Red Keep',
-                    'Penny'
-                ]);
-
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.character = this.player1.findCardByName('Hedge Knight');
-                this.tunnels = this.player1.findCardByName('Tunnels of the Red Keep');
-                this.shadowCard = this.player1.findCardByName('Penny');
-
-                this.player1.clickCard(this.character);
-                this.player1.clickCard(this.tunnels);
-                this.player1.clickPrompt('Setup');
-                this.player1.clickCard(this.shadowCard);
-                this.player1.clickPrompt('Setup in shadows');
-
-                this.completeSetup();
-
-                this.selectFirstPlayer(this.player1);
-                this.completeMarshalPhase();
-
-                this.player1.clickMenu(this.tunnels, 'Kneel and return to shadows');
-            });
-
-            it('grants +1 STR for each card in shadows', function () {
-                // 2 base STR + 2 cards in shadow (including Tunnels)
-                expect(this.character.getStrength()).toBe(4);
-            });
-
-            it('does not modify the STR if cards come out of shadow', function () {
-                this.player1.clickCard(this.shadowCard);
-
-                expect(this.character.getStrength()).toBe(4);
-            });
+    it('counts itself and snapshots the STR bonus and affected characters until phase end', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                inPlay: ['Tunnels of the Red Keep', 'House Maester', 'Ranging Party'],
+                shadows: ['Penny'],
+                gold: 3
+            },
+            player2: { inPlay: ['Winterfell Steward'] }
         });
+        this.player1.clickCard(this.tunnelsOfTheRedKeep);
+        expect(this.tunnelsOfTheRedKeep.location).toBe('shadows');
+        expect(this.houseMaester.getStrength()).toBe(4);
+        expect(this.rangingParty.getStrength()).toBe(7);
+        expect(this.winterfellSteward.getStrength()).toBe(1);
+        this.player1.clickCard(this.penny);
+        expect(this.penny.getStrength()).toBe(2);
+        expect(this.houseMaester.getStrength()).toBe(4);
+        this.player1.clickCard(this.tunnelsOfTheRedKeep);
+        expect(this.player1Object.shadows.length).toBe(0);
+        expect(this.houseMaester.getStrength()).toBe(4);
+        expect(this.rangingParty.getStrength()).toBe(7);
+        expect(this.player1.actionUnavailableReason(this.tunnelsOfTheRedKeep)).toBe('limit');
+        this.player1.togglePromptedActionWindow('dominance', true);
+        this.completeChallengesPhase();
+        expect(this.houseMaester.getStrength()).toBe(2);
+        expect(this.rangingParty.getStrength()).toBe(5);
+        expect(this.penny.getStrength()).toBe(2);
+        expect(this.winterfellSteward.getStrength()).toBe(1);
+        expect(this.player1).isReadyToTakeAction();
+    });
+
+    it('gives one STR when it is your only card in shadows', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { inPlay: ['Tunnels of the Red Keep', 'House Maester'] }
+        });
+        this.player1.clickCard(this.tunnelsOfTheRedKeep);
+        expect(this.houseMaester.getStrength()).toBe(3);
+        expect(this.player1).isReadyToTakeAction();
+    });
+
+    it('does not apply a bonus when the return to shadows is cancelled', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { inPlay: ['Tunnels of the Red Keep', 'House Maester'] },
+            player2: { inPlay: ['Cersei Lannister (Core)'], hand: ['Treachery'], gold: 1 }
+        });
+        this.player1.clickCard(this.tunnelsOfTheRedKeep);
+        this.player2.triggerAbility('Treachery');
+        expect(this.tunnelsOfTheRedKeep.location).toBe('play area');
+        expect(this.tunnelsOfTheRedKeep.kneeled).toBe(true);
+        expect(this.houseMaester.getStrength()).toBe(2);
+        expect(this.player1).isReadyToTakeAction();
     });
 });

@@ -53,7 +53,8 @@ class MoveCardEventGenerator {
         isPillage = false,
         isRandom = false,
         source,
-        orderable
+        orderable,
+        destination = 'discard pile'
     }) {
         let params = {
             card: card,
@@ -62,14 +63,15 @@ class MoveCardEventGenerator {
             isPillage: !!isPillage,
             isRandom: !!isRandom,
             source: source,
-            snapshotName: 'cardStateWhenDiscarded'
+            snapshotName: 'cardStateWhenDiscarded',
+            destination
         };
         const discardEvent = this.event('onCardDiscarded', params, (event) => {
             event.thenAttachEvent(
                 this.createPlaceCardEvent({
                     card: event.card,
                     player: event.card.controller,
-                    location: 'discard pile',
+                    location: event.destination,
                     orderable
                 })
             );

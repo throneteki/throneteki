@@ -1,37 +1,32 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WakingTheDragon extends DrawCard {
     // Waking the Dragon (01178)
     // Action: Choose and stand a unique [targaryen] character you control. At the end of the phase,
     // if that character is still in play, return it to your hand.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Stand a character',
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
                     card.isFaction('targaryen') &&
                     card.isUnique() &&
-                    card.controller === this.controller
+                    card.controller === context.player
             },
-            handler: (context) => {
-                let targetCharacter = context.target;
-                context.player.standCard(targetCharacter);
-
-                this.atEndOfPhase((ability) => ({
-                    match: targetCharacter,
-                    condition: () => ['play area', 'duplicate'].includes(targetCharacter.location),
+            message: '{player} plays {source} to stand {target}',
+            gameAction: GameActions.simultaneously([
+                GameActions.standCard((context) => ({ card: context.target })),
+                GameActions.lastingEffect((context) => ({
+                    duration: 'atEndOfPhase',
+                    match: context.target,
+                    targetLocation: 'any',
+                    condition: () => ['play area', 'duplicate'].includes(context.target.location),
                     effect: ability.effects.returnToHandIfStillInPlay(true)
-                }));
-
-                this.game.addMessage(
-                    '{0} plays {1} to stand {2}',
-                    this.controller,
-                    this,
-                    targetCharacter
-                );
-            }
+                }))
+            ])
         });
     }
 }

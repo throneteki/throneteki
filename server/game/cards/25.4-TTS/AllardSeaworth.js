@@ -10,11 +10,11 @@ class AllardSeaworth extends DrawCard {
             title: 'Discard facedown card',
             phase: 'dominance',
             cost: ability.costs.discardFromPlay(
-                (card) =>
+                (card, context) =>
                     card.facedown &&
                     card.getType() === 'attachment' &&
                     card.parent &&
-                    card.parent.controller === this.controller &&
+                    card.parent.controller === context.player &&
                     card.parent.isFaction('baratheon')
             ),
             limit: ability.limit.perPhase(1),

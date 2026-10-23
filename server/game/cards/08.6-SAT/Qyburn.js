@@ -1,5 +1,5 @@
 import DrawCard from '../../drawcard.js';
-import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class Qyburn extends DrawCard {
     // Qyburn (08109)
@@ -8,40 +8,21 @@ class Qyburn extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCharacterKilled: () => this.controller.canDraw()
+                onCharacterKilled: () => true
             },
             cost: ability.costs.kneelSelf(),
-            handler: () => {
-                let cards = this.controller.drawCardsToHand(2).length;
-                this.game.addMessage(
-                    '{0} kneels {1} to draw {2}',
-                    this.controller,
-                    this,
-                    TextHelper.count(cards, 'card')
-                );
-
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a card',
-                    cardCondition: (card) =>
-                        card.controller === this.controller && card.location === 'hand',
-                    onSelect: (player, card) => this.putCardBack(player, card),
-                    onCancel: (player) => this.cancelResolution(player)
-                });
-            }
+            message: '{player} kneels {source} to draw 2 cards',
+            gameAction: GameActions.drawCards((context) => ({
+                player: context.player,
+                amount: 2
+            })).then({
+                gameAction: GameActions.chooseCards({
+                    cardCondition: (card, context) =>
+                        card.controller === context.player && card.location === 'hand',
+                    gameAction: (card) => GameActions.discardCard({ card })
+                })
+            })
         });
-    }
-
-    putCardBack(player, card) {
-        player.discardCard(card);
-        this.game.addMessage('{0} then discards {1} for {2}', this.controller, card, this);
-
-        return true;
-    }
-
-    cancelResolution(player) {
-        this.game.addAlert('danger', '{0} cancels resolution of {1}', player, this);
-
-        return true;
     }
 }
 

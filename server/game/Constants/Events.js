@@ -47,6 +47,7 @@ export const Events = Object.freeze({
         params: {
             allowSave: 'boolean',
             card: 'DrawCard',
+            destination: 'string',
             isPillage: 'boolean',
             isRandom: 'boolean',
             originalLocation: 'string',
@@ -183,6 +184,9 @@ export const Events = Object.freeze({
     onChallengeFinished: { params: { challenge: 'Challenge' } },
     onChallengeInitiated: { params: { challenge: 'Challenge' } },
     onChallengeRedirectable: { params: { challenge: 'Challenge' } },
+    onChallengeRedirected: {
+        params: { challenge: 'Challenge', player: 'Player', previousDefender: 'Player' }
+    },
     onCharacterKilled: {
         params: {
             allowSave: 'boolean',

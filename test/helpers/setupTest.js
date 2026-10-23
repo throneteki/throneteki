@@ -30,7 +30,6 @@ const PhaseOrder = ['setup', 'plot', 'marshal', 'challenge'];
 const CompletePhase = {
     marshal: 'completeMarshalPhase'
 };
-const PlayerKeys = ['player1', 'player2'];
 const ZoneKeys = ['hand', 'drawDeck', 'discard', 'deadPile', 'shadows'];
 const ZoneLocations = {
     discard: 'discard pile',
@@ -75,6 +74,7 @@ function asArray(value) {
 }
 
 function deckCardNames(playerKey, options) {
+    const playerKeys = Object.keys(options).filter((key) => /^player\d+$/.test(key));
     const own = options[playerKey];
     const plotDeck = own.plotDeck ?? DefaultPlotDeck;
     const names = [
@@ -96,7 +96,7 @@ function deckCardNames(playerKey, options) {
         names.push(...asArray(own[zone]).map((spec) => normaliseCardSpec(spec).card));
     }
 
-    for (const key of PlayerKeys) {
+    for (const key of playerKeys) {
         for (const spec of asArray(options[key].inPlay).map(normaliseCardSpec)) {
             for (const attachment of asArray(spec.attachments).map(normaliseCardSpec)) {
                 const owner = attachment.owner || key;
@@ -139,9 +139,10 @@ class CardClaims {
 }
 
 function placeInPlay(game, claims, specsByPlayer) {
+    const playerKeys = Object.keys(specsByPlayer);
     const hosts = [];
 
-    for (const key of PlayerKeys) {
+    for (const key of playerKeys) {
         const playerWrapper = claims[key].playerWrapper;
         for (const spec of specsByPlayer[key]) {
             const copies = 1 + (spec.dupes || 0);
@@ -176,9 +177,10 @@ function placeInPlay(game, claims, specsByPlayer) {
 }
 
 function arrangeSetupZones(claims, options) {
+    const playerKeys = Object.keys(claims);
     const assigned = {};
 
-    for (const key of PlayerKeys) {
+    for (const key of playerKeys) {
         const own = options[key];
         const player = claims[key].playerWrapper.player;
         assigned[key] = {};
@@ -218,7 +220,8 @@ function arrangeSetupZones(claims, options) {
 }
 
 function finaliseHiddenZones(claims, assigned) {
-    for (const key of PlayerKeys) {
+    const playerKeys = Object.keys(claims);
+    for (const key of playerKeys) {
         const player = claims[key].playerWrapper.player;
         const handCards = assigned[key].hand;
 
@@ -275,9 +278,10 @@ function applyPlayerState(playerWrapper, own) {
 }
 
 function advanceToPhase(flow, phase, options, players) {
+    const playerKeys = Object.keys(players);
     const targetIndex = PhaseOrder.indexOf(phase);
 
-    for (const key of PlayerKeys) {
+    for (const key of playerKeys) {
         players[key].clickPrompt('Done');
     }
 
@@ -285,16 +289,13 @@ function advanceToPhase(flow, phase, options, players) {
         return;
     }
 
-    for (const key of PlayerKeys) {
+    for (const key of playerKeys) {
         players[key].selectPlot(options[key].plot || DefaultPlot);
     }
 
     flow.selectFirstPlayer(players[options.firstPlayer || 'player1']);
 
-    if (
-        players.player1.hasPrompt('Choose when revealed order') ||
-        players.player2.hasPrompt('Choose when revealed order')
-    ) {
+    if (Object.values(players).some((player) => player.hasPrompt('Choose when revealed order'))) {
         throw new Error(
             "setupTest cannot resolve When Revealed abilities. Use `phase: 'plot'` and reveal the plots in the test."
         );
@@ -314,12 +315,13 @@ function advanceToPhase(flow, phase, options, players) {
 }
 
 function isAtMulligan(players) {
-    return PlayerKeys.every((key) => players[key].hasPrompt('Keep Starting Hand?'));
+    return Object.values(players).every((player) => player.hasPrompt('Keep Starting Hand?'));
 }
 
 // An agenda that resolves "after all agendas are announced" prompts before the mulligan. The test
 // answers it in `beforeMulligan`, where the agendas and each player's `deck` cards are named.
 function resolveBeforeMulligan(options, players, registry) {
+    const playerKeys = Object.keys(players);
     if (isAtMulligan(players)) {
         return;
     }
@@ -330,7 +332,7 @@ function resolveBeforeMulligan(options, players, registry) {
         );
     }
 
-    for (const key of PlayerKeys) {
+    for (const key of playerKeys) {
         const player = players[key].player;
         const named = [
             ...asArray(options[key].deck).map((name) => findOwnedCard(player, name, ['draw deck'])),
@@ -353,6 +355,8 @@ function resolveBeforeMulligan(options, players, registry) {
 }
 
 export function applySetupTest(options, ctx) {
+    const players = Object.fromEntries(ctx.flow.allPlayers.map((player) => [player.key, player]));
+    const playerKeys = Object.keys(players);
     const { flow, deckBuilder, registry } = ctx;
     const phase = options.phase || 'marshal';
 
@@ -363,7 +367,7 @@ export function applySetupTest(options, ctx) {
         );
     }
 
-    for (const key of PlayerKeys) {
+    for (const key of playerKeys) {
         options[key] = { ...options[key] };
         if (phase === 'setup' && options[key].inPlay) {
             throw new Error(
@@ -373,10 +377,9 @@ export function applySetupTest(options, ctx) {
         options[key].inPlay = asArray(options[key].inPlay).map(normaliseInPlaySpec);
     }
 
-    const players = { player1: ctx.player1, player2: ctx.player2 };
     const claims = {};
 
-    for (const key of PlayerKeys) {
+    for (const key of playerKeys) {
         const deck = deckBuilder.buildDeck(
             options[key].faction || DefaultFaction,
             deckCardNames(key, options),
@@ -392,7 +395,7 @@ export function applySetupTest(options, ctx) {
     flow.keepStartingHands();
 
     const specsByPlayer = {};
-    for (const key of PlayerKeys) {
+    for (const key of playerKeys) {
         specsByPlayer[key] = asArray(options[key].inPlay).map(normaliseCardSpec);
     }
 
@@ -413,7 +416,7 @@ export function applySetupTest(options, ctx) {
         }
     }
 
-    for (const key of PlayerKeys) {
+    for (const key of playerKeys) {
         applyPlayerState(players[key], options[key]);
         for (const agendaSpec of asArray(options[key].agenda).map(normaliseCardSpec)) {
             const agenda = (players[key].player.agendas || []).find((card) =>
@@ -426,7 +429,7 @@ export function applySetupTest(options, ctx) {
     flow.game.refreshGameState();
     flow.game.continue();
 
-    for (const key of PlayerKeys) {
+    for (const key of playerKeys) {
         const player = players[key].player;
         const named = [
             ...hosts.filter((host) => host.key === key).map((host) => host.card),

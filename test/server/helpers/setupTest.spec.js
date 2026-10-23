@@ -165,3 +165,29 @@ describe('setupTest with duplicates of a non-unique card', function () {
         ).toThrow('Hedge Knight is not unique, so it cannot have duplicates');
     });
 });
+
+describe('setupTest melee games', function () {
+    it('prepares all three players and attachments owned by the third player', function () {
+        this.setupTest({
+            gameFormat: 'melee',
+            phase: 'plot',
+            player1: {
+                inPlay: [
+                    {
+                        card: 'Hedge Knight',
+                        attachments: [{ card: 'Little Bird (Core)', owner: 'player3' }]
+                    }
+                ]
+            },
+            player3: { hand: ['Milk of the Poppy'], inPlay: ['House Dayne Knight'], gold: 3 }
+        });
+        expect(this.game.gameFormat).toBe('melee');
+        expect(this.game.getPlayers()).toHaveLength(3);
+        expect(this.player3Object.hand).toEqual([this.milkOfThePoppy]);
+        expect(this.houseDayneKnight.controller).toBe(this.player3Object);
+        expect(this.littleBird.owner).toBe(this.player3Object);
+        expect(this.littleBird.parent).toBe(this.hedgeKnight);
+        expect(this.player3Object.gold).toBe(3);
+        expect(this.player3).toHavePrompt('Select a plot');
+    });
+});

@@ -1,4 +1,4 @@
-import PlotCard from '../../plotcard.js';
+﻿import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class HeadsOnSpikes extends PlotCard {
@@ -9,46 +9,25 @@ class HeadsOnSpikes extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             chooseOpponent: true,
+            message: "{player} uses {source} to discard a card at random from {opponent}'s hand",
             gameAction: GameActions.discardAtRandom((context) => ({
                 amount: 1,
                 player: context.opponent,
-                discardEvent: (card) => {
-                    const event = GameActions.discardCard({
+                discardEvent: (card) =>
+                    GameActions.discardCard({
                         card,
-                        allowSave: false
-                    }).createEvent();
-                    let powerMessage = '';
-
-                    if (card.getType() === 'character') {
-                        event.replaceHandler(() => {
-                            event.thenAttachEvent(
-                                GameActions.placeCard({
-                                    card: event.card,
-                                    location: 'dead pile'
-                                }).createEvent()
-                            );
-                        });
-                        const gainPower = GameActions.gainPower({
-                            amount: 2,
-                            card: context.player.faction
-                        });
-                        if (gainPower.allow()) {
-                            powerMessage = ' and gain 2 power for their faction';
-                            event.addChildEvent(gainPower.createEvent());
-                        }
-                    }
-
-                    context.game.addMessage(
-                        "{0} uses {1} to discard {2} from {3}'s hand{4}",
-                        context.player,
-                        context.source,
-                        card,
-                        context.opponent,
-                        powerMessage
-                    );
-
-                    return event;
-                }
+                        allowSave: false,
+                        destination: card.getType() === 'character' ? 'dead pile' : 'discard pile'
+                    })
+                        .then({
+                            condition: () => card.getType() === 'character',
+                            message: '{player} gains 2 power for their faction for {source}',
+                            gameAction: GameActions.gainPower({
+                                card: context.player.faction,
+                                amount: 2
+                            })
+                        })
+                        .createEvent(context)
             }))
         });
     }

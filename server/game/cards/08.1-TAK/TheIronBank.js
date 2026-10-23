@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheIronBank extends DrawCard {
     // The Iron Bank (08019)
@@ -10,27 +11,21 @@ class TheIronBank extends DrawCard {
     // number of gold on The Iron Bank.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentPhase === 'marshal',
+            condition: (context) => context.game.currentPhase === 'marshal',
             match: this,
             effect: ability.effects.canSpendGold(
-                (spendParams) => spendParams.activePlayer === this.controller
+                (spendParams, context) => spendParams.activePlayer === context.source.controller
             )
         });
         this.reaction({
             when: {
-                onIncomeCollected: (event) =>
-                    event.player === this.controller && this.hasToken(Tokens.gold)
+                onIncomeCollected: (event, context) => event.player === context.player
             },
-            handler: () => {
-                let interest = this.tokens[Tokens.gold];
-                this.modifyGold(interest);
-                this.game.addMessage(
-                    '{0} uses {1} to place {2} gold from the treasury on {1}',
-                    this.controller,
-                    this,
-                    interest
-                );
-            }
+            gameAction: GameActions.placeToken((context) => ({
+                card: context.source,
+                token: Tokens.gold,
+                amount: context.source.gold
+            }))
         });
     }
 }

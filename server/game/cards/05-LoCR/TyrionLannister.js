@@ -9,9 +9,14 @@ class TyrionLannister extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) => event.challenge.winner === this.controller
+                afterChallenge: (event, context) => event.challenge.winner === context.player
             },
-            cost: ability.costs.returnToHand((card) => this.isAttackingClansman(card)),
+            cost: ability.costs.returnToHand(
+                (card) =>
+                    card.getType() === 'character' &&
+                    card.hasTrait('Clansman') &&
+                    card.isAttacking()
+            ),
             limit: ability.limit.perPhase(2),
             choices: {
                 'Draw 2 cards': {
@@ -28,24 +33,17 @@ class TyrionLannister extends DrawCard {
                         amount: 3
                     }))
                 },
-                'Raise claim by 1': (context) => {
-                    this.untilEndOfChallenge((ability) => ({
-                        match: (card) => card === this.controller.activePlot,
+                'Raise claim by 1': {
+                    message:
+                        '{player} uses {source} to return {costs.returnToHand} to their hand to raise their claim by 1',
+                    gameAction: GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfChallenge',
+                        match: context.player.activePlot,
                         effect: ability.effects.modifyClaim(1)
-                    }));
-                    this.game.addMessage(
-                        '{0} uses {1} to return {2} to their hand to raise their claim by 1',
-                        this.controller,
-                        this,
-                        context.costs.returnToHand
-                    );
+                    }))
                 }
             }
         });
-    }
-
-    isAttackingClansman(card) {
-        return card.getType() === 'character' && card.hasTrait('Clansman') && card.isAttacking();
     }
 }
 

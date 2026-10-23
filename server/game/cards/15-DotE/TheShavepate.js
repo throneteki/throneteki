@@ -10,7 +10,7 @@ class TheShavepate extends DrawCard {
             title: 'Put character into play',
             phase: 'challenge',
             cost: ability.costs.payXGold(
-                () => this.getMinimumCost(),
+                () => 0,
                 () => 99
             ),
             target: {
@@ -18,38 +18,15 @@ class TheShavepate extends DrawCard {
                 cardCondition: (card, context) =>
                     card.location === 'discard pile' &&
                     card.getType() === 'character' &&
-                    card.controller === this.controller &&
+                    card.controller === context.player &&
                     context.player.canPutIntoPlay(card) &&
-                    (context.xValue
-                        ? card.getPrintedCost() <= context.xValue
-                        : card.getPrintedCost() <= this.controller.getSpendableGold())
+                    card.getPrintedCost() <= (context.xValue ?? context.player.getSpendableGold())
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoPlay((context) => ({
-                        card: context.target
-                    })),
-                    context
-                );
-                this.game.addMessage(
-                    '{0} uses {1} and pays {2} gold to put {3} into play from their discard pile',
-                    context.player,
-                    this,
-                    context.costs.gold,
-                    context.target
-                );
-            },
+            message:
+                '{player} uses {source} and pays {costs.gold} gold to put {target} into play from their discard pile',
+            gameAction: GameActions.putIntoPlay((context) => ({ card: context.target })),
             limit: ability.limit.perPhase(1)
         });
-    }
-
-    getMinimumCost() {
-        return this.game
-            .filterCardsInPlay(
-                (card) => card.getType() === 'character' && card.location === 'discard pile'
-            )
-            .map((card) => card.getPrintedCost())
-            .reduce((acc, val) => Math.min(acc, val), 0);
     }
 }
 

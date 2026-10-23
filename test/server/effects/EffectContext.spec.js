@@ -119,3 +119,61 @@ describe('effect callbacks', function () {
         });
     });
 });
+
+describe('additional challenge effect context', function () {
+    function player() {
+        return {
+            allowances: [],
+            addAllowedChallenge(allowance) {
+                this.allowances.push(allowance);
+            },
+            removeAllowedChallenge(allowance) {
+                this.allowances = this.allowances.filter((entry) => entry !== allowance);
+            }
+        };
+    }
+
+    it('passes the current effect source to the opponent predicate', function () {
+        const bearer = player();
+        const opponent = {};
+        const context = { source: { controller: bearer } };
+        const effect = Effects.mayInitiateAdditionalChallenge(
+            'power',
+            (candidate, effectContext) =>
+                candidate === opponent && effectContext.source.controller === bearer
+        );
+        effect.apply(bearer, context);
+        expect(bearer.allowances[0].isMatch('power', opponent)).toBe(true);
+        context.source.controller = {};
+        expect(bearer.allowances[0].isMatch('power', opponent)).toBe(false);
+    });
+
+    it('preserves usage when the same effect is removed and reapplied', function () {
+        const bearer = player();
+        const context = {};
+        const effect = Effects.mayInitiateAdditionalChallenge('power');
+        effect.apply(bearer, context);
+        const allowance = bearer.allowances[0];
+        allowance.markUsed({});
+        effect.unapply(bearer, context);
+        expect(bearer.allowances).toEqual([]);
+        effect.apply(bearer, context);
+        expect(bearer.allowances).toEqual([allowance]);
+        expect(allowance.isMatch('power', {})).toBe(false);
+    });
+
+    it('keeps usage independent for different players affected by the same effect', function () {
+        const first = player();
+        const second = player();
+        const context = {};
+        const effect = Effects.mayInitiateAdditionalChallenge('power');
+        effect.apply(first, context);
+        effect.apply(second, context);
+        first.allowances[0].markUsed({});
+        expect(first.allowances[0].isMatch('power', {})).toBe(false);
+        expect(second.allowances[0].isMatch('power', {})).toBe(true);
+        effect.unapply(first, context);
+        expect(first.allowances).toEqual([]);
+        expect(second.allowances).toHaveLength(1);
+    });
+});

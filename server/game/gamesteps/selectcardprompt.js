@@ -65,7 +65,7 @@ class SelectCardPrompt extends UiPrompt {
         this.mustSelect = properties.mustSelect || [];
         if (this.mustSelect.length > 0) {
             if (
-                this.selector.hasReachedLimit(this.mustSelect, this.numPlayers) &&
+                this.selector.hasReachedLimit(this.mustSelect, this.numPlayers, this.context) &&
                 this.mustSelect.length > this.selector.numCards
             ) {
                 this.onlyMustSelectMayBeChosen = true;
@@ -167,7 +167,7 @@ class SelectCardPrompt extends UiPrompt {
 
         if (
             this.selector.automaticFireOnSelect() &&
-            this.selector.hasReachedLimit(this.selectedCards, this.numPlayers)
+            this.selector.hasReachedLimit(this.selectedCards, this.numPlayers, this.context)
         ) {
             this.fireOnSelect();
         }
@@ -179,8 +179,8 @@ class SelectCardPrompt extends UiPrompt {
             !this.onlyMustSelectMayBeChosen &&
             this.selector.canTarget(card, this.context, this.selectedCards) &&
             this.selector.checkForSingleController(this.selectedCards, card) &&
-            (this.selector.wouldExceedLimit(this.selectedCards, card) ||
-                this.selector.hasReachedLimit(this.selectedCards, this.numPlayers))
+            (this.selector.wouldExceedLimit(this.selectedCards, card, this.context) ||
+                this.selector.hasReachedLimit(this.selectedCards, this.numPlayers, this.context))
         );
     }
 
@@ -196,13 +196,13 @@ class SelectCardPrompt extends UiPrompt {
         return (
             this.selector.canTarget(card, this.context, this.selectedCards) &&
             this.selector.checkForSingleController(this.selectedCards, card) &&
-            !this.selector.wouldExceedLimit(this.selectedCards, card)
+            !this.selector.wouldExceedLimit(this.selectedCards, card, this.context)
         );
     }
 
     selectCard(card) {
         if (
-            this.selector.hasReachedLimit(this.selectedCards, this.numPlayers) &&
+            this.selector.hasReachedLimit(this.selectedCards, this.numPlayers, this.context) &&
             !this.selectedCards.includes(card)
         ) {
             return false;

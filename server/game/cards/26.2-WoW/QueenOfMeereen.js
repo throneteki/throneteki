@@ -11,54 +11,31 @@ class QueenOfMeereen extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: ['Lady'] });
         this.whileAttached({
-            effect: ability.effects.addKeyword('Queen')
+            effect: ability.effects.addTrait('Queen')
         });
         this.action({
             title: 'Discard to reduce',
             cost: ability.costs.kneelSelf(),
-            message: '{player} kneels {costs.kneel} to discard 1 or more cards from their hand',
             condition: (context) => context.player.hand.length > 0,
-            handler: (context) => {
-                this.game.promptForSelect(context.player, {
-                    type: 'select',
-                    mode: 'unlimited',
-                    activePromptTitle: 'Select cards',
-                    source: context.source,
-                    context: context,
-                    cardCondition: (card, context) =>
-                        card.isMatch({ location: 'hand' }) && card.controller === context.player,
-                    onSelect: (player, cards) => {
-                        this.game.resolveGameAction(
-                            GameActions.simultaneously(
-                                cards.map((card) => GameActions.discardCard({ card, context }))
-                            ).then({
-                                message: {
-                                    format: '{player} discards {cards} to reduce the cost of the next card they marshal, ambush or bring out of shadows this phase by {amount}',
-                                    args: {
-                                        cards: () => cards,
-                                        amount: () => this.getAmount(cards)
-                                    }
-                                },
-                                handler: () => {
-                                    this.untilEndOfPhase((ability) => ({
-                                        targetController: 'current',
-                                        effect: ability.effects.reduceNextMarshalledAmbushedOrOutOfShadowsCardCost(
-                                            this.getAmount(cards)
-                                        )
-                                    }));
-                                }
-                            }),
-                            context
-                        );
-                        return true;
-                    }
-                });
-            }
+            target: {
+                type: 'select',
+                mode: 'unlimited',
+                cardCondition: (card, context) =>
+                    card.location === 'hand' && card.controller === context.player
+            },
+            message: '{player} kneels {source} to discard {target}',
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) => GameActions.discardCard({ card }))
+            ).then((context) => ({
+                gameAction: GameActions.lastingEffect(() => ({
+                    duration: 'untilEndOfPhase',
+                    targetController: 'current',
+                    effect: ability.effects.reduceNextMarshalledAmbushedOrOutOfShadowsCardCost(
+                        context.target.length * 2
+                    )
+                }))
+            }))
         });
-    }
-
-    getAmount(cards) {
-        return cards.length * 2;
     }
 }
 

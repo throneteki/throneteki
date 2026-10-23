@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ThePrincesPass extends DrawCard {
     // The Prince's Pass (04096)
@@ -9,9 +10,9 @@ class ThePrincesPass extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller &&
-                    event.challenge.defendingPlayer === this.controller
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.player &&
+                    event.challenge.defendingPlayer === context.player
             },
             cost: ability.costs.kneelSelf(),
             target: {
@@ -20,64 +21,28 @@ class ThePrincesPass extends DrawCard {
                     card.getType() === 'character' &&
                     card.isAttacking()
             },
-            handler: (context) => {
-                this.targetCharacter = context.target;
-
-                this.game.promptForIcon(this.controller, this, (icon) => {
-                    this.untilEndOfPhase((ability) => ({
-                        match: this.targetCharacter,
-                        effect: ability.effects.removeIcon(icon)
-                    }));
-
-                    this.game.addMessage(
-                        '{0} kneels {1} to remove {2} {3} icon from {4}',
-                        this.controller,
-                        this,
-                        icon === 'intrigue' ? 'an' : 'a',
-                        icon,
-                        this.targetCharacter
-                    );
-
-                    //put the then part in a simple step after the effect above is fully applied
-                    this.game.queueSimpleStep(() => {
-                        if (this.targetCharacter.getNumberOfIcons() === 0) {
-                            this.game.promptWithMenu(this.controller, this, {
-                                activePrompt: {
-                                    menuTitle:
-                                        'Sacrifice ' +
-                                        this.name +
-                                        ' to discard ' +
-                                        this.targetCharacter.name +
-                                        '?',
-                                    buttons: [
-                                        { text: 'Yes', method: 'sacrifice' },
-                                        { text: 'No', method: 'pass' }
-                                    ]
-                                },
-                                source: this
-                            });
-                        }
-                    });
-                });
-            }
+            gameAction: GameActions.chooseIcon({
+                message: '{player} kneels {source} to remove {icon} icon from {target}',
+                gameAction: (icon) =>
+                    GameActions.simultaneously([
+                        GameActions.lastingEffect((context) => ({
+                            duration: 'untilEndOfPhase',
+                            match: context.target,
+                            effect: ability.effects.removeIcon(icon)
+                        }))
+                    ]).then((context) => ({
+                        condition: () => context.target.getNumberOfIcons() === 0,
+                        gameAction: GameActions.may({
+                            title: `Sacrifice The Prince's Pass to discard ${context.target.name}?`,
+                            gameAction: GameActions.sacrificeCard((context) => ({
+                                card: context.source
+                            })).then({
+                                gameAction: GameActions.discardCard({ card: context.target })
+                            })
+                        })
+                    }))
+            })
         });
-    }
-
-    sacrifice() {
-        this.controller.sacrificeCard(this);
-        this.targetCharacter.controller.discardCard(this.targetCharacter);
-        this.game.addMessage(
-            '{0} sacrifices {1} to discard {2} from play',
-            this.controller,
-            this,
-            this.targetCharacter
-        );
-        return true;
-    }
-
-    pass() {
-        this.game.addMessage('{0} declines to sacrifice {1}', this.controller, this);
-        return true;
     }
 }
 

@@ -1172,15 +1172,28 @@ const Effects = {
             }
         };
     },
-    mayInitiateAdditionalChallenge: function (challengeType, opponentFunc) {
-        let allowedChallenge = new AllowedChallenge(challengeType, opponentFunc);
+    mayInitiateAdditionalChallenge: function (challengeType, opponentFunc = () => true) {
+        const allowances = new WeakMap();
         return {
             targetType: 'player',
-            apply: function (player) {
+            apply: function (player, context) {
+                if (!allowances.has(context)) {
+                    allowances.set(context, new Map());
+                }
+                const players = allowances.get(context);
+                if (!players.has(player)) {
+                    players.set(
+                        player,
+                        new AllowedChallenge(challengeType, (opponent) =>
+                            opponentFunc(opponent, context)
+                        )
+                    );
+                }
+                const allowedChallenge = players.get(player);
                 player.addAllowedChallenge(allowedChallenge);
             },
-            unapply: function (player) {
-                player.removeAllowedChallenge(allowedChallenge);
+            unapply: function (player, context) {
+                player.removeAllowedChallenge(allowances.get(context).get(player));
             }
         };
     },

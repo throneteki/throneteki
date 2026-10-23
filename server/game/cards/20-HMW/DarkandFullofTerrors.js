@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class DarkandFullofTerrors extends DrawCard {
@@ -6,11 +7,11 @@ class DarkandFullofTerrors extends DrawCard {
     // Play only if you control a R'hllor character.
     // Action: Choose a kneeling character with STR 3 or lower and place it in shadows with a shadow
     // token on it. While that card is in shadows, it gains shadow (X). X is its printed cost.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Place character in shadows',
-            condition: () =>
-                this.controller.anyCardsInPlay(
+            condition: (context) =>
+                context.player.anyCardsInPlay(
                     (card) => card.hasTrait("R'hllor") && card.getType() === 'character'
                 ),
             target: {
@@ -20,21 +21,28 @@ class DarkandFullofTerrors extends DrawCard {
                     card.getStrength() <= 3 &&
                     card.kneeled
             },
-            message: '{player} plays {source} to put {target} into shadow',
-            handler: (context) => {
-                context.player.putIntoShadows(context.target, true, () => {
-                    context.target.modifyToken(Tokens.shadow, 1);
-
-                    this.lastingEffect((ability) => ({
-                        condition: () => context.target.location === 'shadows',
-                        targetLocation: 'any',
-                        match: context.target,
-                        effect: ability.effects.addKeyword(
-                            `Shadow (${context.target.translateXValue(context.target.getPrintedCost())})`
-                        )
-                    }));
-                });
-            }
+            message: '{player} plays {source} to put {target} into shadows',
+            gameAction: GameActions.putIntoShadows((context) => ({ card: context.target })).then(
+                (context, event) => {
+                    const card = event.card;
+                    const shadowCost = card.translateXValue(card.getPrintedCost());
+                    return {
+                        gameAction: GameActions.simultaneously([
+                            GameActions.placeToken({ card, token: Tokens.shadow }),
+                            GameActions.lastingEffect(() => ({
+                                duration: 'custom',
+                                until: {
+                                    onCardMoved: (event) =>
+                                        event.card === card && event.originalLocation === 'shadows'
+                                },
+                                match: card,
+                                targetLocation: 'shadows',
+                                effect: ability.effects.addKeyword(`Shadow (${shadowCost})`)
+                            }))
+                        ])
+                    };
+                }
+            )
         });
     }
 }

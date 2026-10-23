@@ -2,11 +2,12 @@ import AbilityMessage from '../AbilityMessage.js';
 import GameAction from './GameAction.js';
 
 class NameCard extends GameAction {
-    constructor({ player, title = 'Name a card', message, gameAction }) {
+    constructor({ player, title = 'Name a card', match = () => true, message, gameAction }) {
         super('nameCard');
 
         this.playerFunc = player || ((context) => context.player);
         this.title = title;
+        this.match = match;
         this.abilityMessage = AbilityMessage.create(message, {
             cardName: (context) => context.namedCard
         });
@@ -29,7 +30,7 @@ class NameCard extends GameAction {
                 player,
                 {
                     selectCardName: (selectingPlayer, cardName) => {
-                        if (!isCardName(context.game, cardName)) {
+                        if (!isCardName(context.game, cardName, this.match, context)) {
                             return false;
                         }
 
@@ -56,9 +57,10 @@ class NameCard extends GameAction {
     }
 }
 
-function isCardName(game, cardName) {
+function isCardName(game, cardName, match, context) {
     return Object.values(game.cardData).some(
-        (card) => card.name && card.name.toLowerCase() === cardName.toLowerCase()
+        (card) =>
+            card.name && card.name.toLowerCase() === cardName.toLowerCase() && match(card, context)
     );
 }
 

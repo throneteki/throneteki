@@ -56,7 +56,11 @@ describe('Confiscation', function () {
 
 ## setupTest
 
-`this.setupTest(options)` builds a two-player joust game. Cards are placed during the setup phase,
+`this.setupTest(options)` builds a two-player joust game by default. Set `gameFormat: 'melee'`
+to build a three-player game, with `player3` accepting the same setup options as the other players.
+For melee title specs, start with `phase: 'plot'`, reveal each player's plot, choose the first
+player, and select each player's title before asserting draw and income effects.
+Cards are placed during the setup phase,
 where no abilities can trigger, then the game advances through the real game flow to the requested
 phase.
 

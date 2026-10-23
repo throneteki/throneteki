@@ -267,6 +267,11 @@ this.persistentEffect({
 });
 ```
 
+`mayInitiateAdditionalChallenge(type, opponentPredicate)` optionally restricts the opponent.
+The predicate receives `(opponent, context)`, where `context.source` is the card providing the
+effect. Each affected player has an independent allowance, and removing and reapplying the same
+effect preserves whether that allowance has been used.
+
 ### Lasting effects
 
 Unlike persistent effects, lasting effects are typically applied during an action, reaction or interrupt and expire after a specified period of time. Because lasting effects can be applied almost anywhere, each method takes a factory function that provides the `ability` object and should return the effect properties. The properties returned when applying these effects are identical to those of persistent effects, but additional methods are provided to apply them immediately with the correct duration.
@@ -448,6 +453,15 @@ this.afterAgendasAnnounced({
 });
 ```
 
+### Discarding a character to the dead pile
+
+For text that discards a card and places it in its owner's dead pile if it is a character, use
+`GameActions.discardCard({ card, destination: 'dead pile' })` for the character branch. The default
+destination remains the discard pile. This still raises `onCardDiscarded`, so discard interrupts
+such as Missandei's replacement work normally; it does not kill the character. The dead-pile
+destination is only allowed for characters. For random discards, pass this action's event through
+`discardAtRandom`'s `discardEvent` callback.
+
 ### Choices made while the effect resolves
 
 When the card text has a player choose cards as part of the effect (an opponent chooses, each
@@ -519,6 +533,17 @@ gameAction: GameActions.saveCard((context) => ({ event: context.event })).then({
 })
 ```
 
+### Redirecting challenges
+
+`GameActions.redirectChallenge({ challenge, player })` redirects the current challenge to another
+opponent and raises `onChallengeRedirected` with `challenge`, `player`, and `previousDefender`.
+It preserves `challenge.initiatedAgainstPlayer`, changes the resolving defender, and reopens
+initiation keywords for the new defender. Initiation restrictions, including support, do not
+prevent redirection. The original opponent cannot be selected.
+
+Crown Regent uses a non-cancelable `GameActions.choose` for the initiating player to select the
+new opponent after the interrupt resolves.
+
 ### Switching cards
 
 `GameActions.switch({ cards: [first, second] })` switches the positions of two cards. It only
@@ -531,7 +556,9 @@ logs its `message` (`{trait}` is the named trait) and then resolves its `gameAct
 [SuperstitiousSteward.js](../server/game/cards/27.2-WGYK/SuperstitiousSteward.js).
 
 `GameActions.nameCard` works the same way for a card name. It only accepts the name of a real
-card, stores it as `context.namedCard`, and its `message` uses `{cardName}`. See
+  card, stores it as `context.namedCard`, and its `message` uses `{cardName}`. Use
+  `match: (cardData, context) => ...` to restrict which cards can be named, for example
+  `match: (cardData) => cardData.type === 'event'` for "name an event". See
 [TheIronThrone.js](../server/game/cards/13.6-LMHR/TheIronThrone.js).
 
 ### Initiating another plot's When Revealed ability

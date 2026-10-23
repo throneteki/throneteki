@@ -1,4 +1,6 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+import { Tokens } from '../../Constants/index.js';
 
 class SerAddamMarbrand extends DrawCard {
     // Ser Addam Marbrand (18005)
@@ -9,35 +11,26 @@ class SerAddamMarbrand extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    event.card.controller === this.controller &&
+                onCardEntersPlay: (event, context) =>
+                    event.card.controller === context.player &&
                     (event.card.hasTrait('Knight') || event.card.hasTrait('Army'))
             },
             limit: ability.limit.perPhase(1),
-            handler: () => {
-                this.modifyGold(1);
-                this.game.addMessage('{0} uses {1} to have {1} gain 1 gold', this.controller, this);
-            }
+            gameAction: GameActions.placeToken((context) => ({
+                card: context.source,
+                token: Tokens.gold
+            }))
         });
         this.reaction({
             when: {
-                onCardPlaced: (event) =>
+                onCardPlaced: (event, context) =>
                     event.card.getType() === 'character' &&
-                    event.card.owner === this.controller &&
-                    event.card.location === 'discard pile'
+                    event.card.owner === context.player &&
+                    event.location === 'discard pile'
             },
             limit: ability.limit.perRound(2),
             cost: ability.costs.discardGold(),
-            handler: (context) => {
-                let discardedCard = context.event.card;
-                discardedCard.owner.moveCard(discardedCard, 'hand');
-                this.game.addMessage(
-                    '{0} uses {1} to move {2} from their discard pile to their hand',
-                    this.controller,
-                    this,
-                    discardedCard
-                );
-            }
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.event.card }))
         });
     }
 }

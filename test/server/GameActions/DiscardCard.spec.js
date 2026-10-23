@@ -65,4 +65,36 @@ describe('DiscardCard', function () {
             });
         });
     });
+
+    describe('discarding a character directly to the dead pile', function () {
+        beforeEach(function () {
+            this.cardSpy.location = 'hand';
+            this.cardSpy.getType = () => 'character';
+            this.cardSpy.allowGameAction.mockReturnValue(true);
+        });
+
+        it('allows a character destination while rejecting other card types and destinations', function () {
+            expect(DiscardCard.allow({ ...this.props, destination: 'dead pile' })).toBe(true);
+            this.cardSpy.getType = () => 'location';
+            expect(DiscardCard.allow({ ...this.props, destination: 'dead pile' })).toBe(false);
+            expect(DiscardCard.allow({ ...this.props, destination: 'hand' })).toBe(false);
+        });
+
+        it('remains a discard event with its original location and discard flags', function () {
+            const event = DiscardCard.createEvent({
+                ...this.props,
+                destination: 'dead pile',
+                allowSave: false,
+                isRandom: true
+            });
+            expect(event.name).toBe('onCardDiscarded');
+            expect(event.originalLocation).toBe('hand');
+            expect(event.isRandom).toBe(true);
+            expect(event.allowSave).toBe(false);
+            event.executeHandler();
+            expect(event.attachedEvents[0].name).toBe('onCardPlaced');
+            expect(event.attachedEvents[0].location).toBe('dead pile');
+            expect(event.attachedEvents[0].card).toBe(this.cardSpy);
+        });
+    });
 });

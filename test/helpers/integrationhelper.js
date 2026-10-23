@@ -45,8 +45,8 @@ export function addSetupTest(context, flowOptions = {}) {
     context.setupTest = (options = {}) => {
         const gameOptions = { ...flowOptions.gameOptions, ...options.gameOptions };
         attachFlow(context, {
-            gameFormat: 'joust',
             ...flowOptions,
+            gameFormat: options.gameFormat || flowOptions.gameFormat || 'joust',
             gameOptions: { manualMode: false, ...gameOptions }
         });
         if (gameOptions.manualMode === undefined) {
