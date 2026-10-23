@@ -2,12 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GenericTracker from '../../EventTrackers/GenericTracker.js';
 import GameActions from '../../GameActions/index.js';
 
-class TheGreatPyramid extends DrawCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
+const placedCards = (context) =>
+    context.events
+        .map((event) => event.card)
+        .filter((card) => context.source.underneath.includes(card));
 
-        this.registerEvents([{ 'onCardLeftPlay:forcedinterrupt': 'onCardLeftPlay' }]);
-    }
+class TheGreatPyramid extends DrawCard {
     // The Great Pyramid (22021)
     // Twice per round, you may marshal or play a facedown card under a Meereen location you control
     // as if it were in your hand.
@@ -43,15 +43,30 @@ class TheGreatPyramid extends DrawCard {
                 format: '{player} uses {source} to place {cards} facedown under {source}',
                 args: { cards: (context) => context.events.map((event) => event.card) }
             },
-            gameAction: GameActions.simultaneously((context) =>
-                context.events.map((event) =>
-                    GameActions.placeCardUnderneath({
-                        card: event.card,
-                        parentCard: this,
-                        facedown: true
-                    })
-                )
-            )
+            gameAction: GameActions.simultaneously([
+                GameActions.simultaneously((context) =>
+                    context.events.map((event) =>
+                        GameActions.placeCardUnderneath({
+                            card: event.card,
+                            parentCard: context.source,
+                            facedown: true
+                        })
+                    )
+                ),
+                GameActions.delayedEffect({
+                    duration: 'untilTriggered',
+                    when: {
+                        onCardLeftPlay: (event, context) => event.card === context.source
+                    },
+                    message: {
+                        format: '{player} removes {cards} from the game as {source} left play',
+                        args: { cards: (context) => placedCards(context) }
+                    },
+                    gameAction: GameActions.simultaneously((context) =>
+                        placedCards(context).map((card) => GameActions.removeFromGame({ card }))
+                    )
+                })
+            ])
         });
     }
 
@@ -76,25 +91,6 @@ class TheGreatPyramid extends DrawCard {
         let marshalledCount = this.marshalledTracker.count(predicate);
         let playedCount = this.playedTracker.count(predicate);
         return marshalledCount + playedCount >= 2;
-    }
-
-    onCardLeftPlay(event) {
-        if (event.card !== this || this.underneath.length === 0) {
-            return;
-        }
-
-        this.game.resolveGameAction(
-            GameActions.simultaneously(
-                ...this.underneath.map((card) => GameActions.removeFromGame({ card }))
-            )
-        );
-
-        this.game.addMessage(
-            '{0} removes {1} from the game due to {2} leaving play',
-            this.controller,
-            this.underneath,
-            this
-        );
     }
 }
 

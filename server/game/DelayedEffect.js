@@ -1,6 +1,6 @@
 import AbilityMessage from './AbilityMessage.js';
 
-const Durations = ['untilEndOfChallenge', 'untilEndOfPhase', 'untilEndOfRound'];
+const Durations = ['untilEndOfChallenge', 'untilEndOfPhase', 'untilEndOfRound', 'untilTriggered'];
 
 class DelayedEffect {
     constructor({ context, when, duration = 'untilEndOfPhase', message, gameAction }) {

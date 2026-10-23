@@ -402,6 +402,13 @@ An `untilEndOfPhase` effect has expired by the time `onAtEndOfPhase` is raised, 
 of the phase" use `untilEndOfRound` with `when: { onAtEndOfPhase: () => true }`: the first end of
 phase after the effect is created is the end of the current phase.
 
+Text of the form "If <card> leaves play, <effect>" that follows an ability (Jaqen H'ghar, Hornvale,
+The Great Pyramid) is a delayed effect that the ability creates, with `duration: 'untilTriggered'`
+and `when: { onCardLeftPlay: (event, context) => event.card === context.source }`. It has no
+expiry, and it resolves after the card has left play, so it acts only on what that resolution
+placed (`context.target`, or the cards in `context.events`) and checks it is still there. Cards
+underneath a card stay under it when it leaves play.
+
 ```javascript
 gameAction: GameActions.delayedEffect({
     duration: 'untilEndOfPhase',

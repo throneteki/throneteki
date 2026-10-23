@@ -69,6 +69,12 @@ the ongoing work, and it was not part of this batch.
   [MultipleTakeControl.spec.js](../test/server/gamesteps/MultipleTakeControl.spec.js). Legacy
   `atEndOfPhase` effects still resolve in a fixed order; they get
   the prompt when they move to `GameActions.delayedEffect`.
+- "If X leaves play" clauses after an ability (Jaqen H'ghar, Arya Stark (LMHR), Hornvale, The
+  Great Pyramid) are delayed effects with `duration: 'untilTriggered'`, created by each resolution
+  and acting only on what it placed (Rules Reference: Delayed Effects). They are not triggered
+  abilities, so blanking the card does not stop them. Two pending from the same card resolve in
+  the order the first player chooses.
+  [DelayedEffects.spec.js](../test/server/DelayedEffects.spec.js).
 - Every catalogued event is raised and specced:
   [CataloguedEvents.spec.js](../test/server/gamesteps/CataloguedEvents.spec.js),
   [Duplicates.spec.js](../test/server/gamesteps/Duplicates.spec.js). A duplicate marshaled or

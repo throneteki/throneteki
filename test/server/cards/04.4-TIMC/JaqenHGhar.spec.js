@@ -1,88 +1,52 @@
 import { Tokens } from '../../../../server/game/Constants/index.js';
 
 describe("Jaqen H'ghar", function () {
-    integration(function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: { hand: ["Jaqen H'ghar"], gold: 7 },
+            player2: { inPlay: ['The Tickler', 'Arya Stark (Core)', 'Burned Men'] }
+        });
+        this.player1.clickCard(this.jaqenHghar);
+        this.player1.triggerAbility("Jaqen H'ghar");
+    });
+
+    it('places a Valar Morghulis token on up to 3 different unique characters after he enters play', function () {
+        expect(this.player1).toBeAbleToSelect(this.theTickler);
+        expect(this.player1).toBeAbleToSelect(this.aryaStark);
+        expect(this.player1).not.toBeAbleToSelect(this.burnedMen);
+        this.player1.clickCard(this.theTickler);
+        this.player1.clickPrompt('Done');
+        expect(this.theTickler.hasToken(Tokens.valarmorghulis)).toBe(true);
+        expect(this.aryaStark.hasToken(Tokens.valarmorghulis)).toBe(false);
+    });
+
+    describe('after the tokens are placed', function () {
         beforeEach(function () {
-            const deck = this.buildDeck('lannister', [
-                'Trading with the Pentoshi',
-                "Jaqen H'ghar",
-                'The Tickler',
-                'Arya Stark (Core)'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.jaqen = this.player1.findCardByName("Jaqen H'ghar", 'hand');
-            this.tickler = this.player2.findCardByName('The Tickler', 'hand');
-            this.arya = this.player2.findCardByName('Arya Stark', 'hand');
-
-            this.player2.clickCard(this.tickler);
-            this.player2.clickCard(this.arya);
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player1);
-            this.selectPlotOrder(this.player1);
-
-            this.player1.clickCard(this.jaqen);
+            this.player1.clickCard(this.theTickler);
+            this.player1.clickPrompt('Done');
+            this.completeMarshalPhase();
         });
 
-        describe('when Jaqen enters play', function () {
-            it('should allow placement of Valar Morghulis tokens', function () {
-                this.player1.triggerAbility("Jaqen H'ghar");
-                this.player1.clickCard(this.tickler);
-                this.player1.clickPrompt('Done');
-
-                expect(this.tickler.hasToken(Tokens.valarmorghulis)).toBe(true);
-            });
+        it('discards those tokens when Jaqen leaves play', function () {
+            this.player1.clickPrompt('Done');
+            this.unopposedChallenge(this.player2, 'Military', this.burnedMen);
+            this.player1.clickCard(this.jaqenHghar);
+            expect(this.jaqenHghar.location).toBe('dead pile');
+            expect(this.theTickler.hasToken(Tokens.valarmorghulis)).toBe(false);
         });
 
-        describe('when Jaqen leaves play', function () {
+        describe('and Jaqen wins a challenge attacking alone', function () {
             beforeEach(function () {
+                this.unopposedChallenge(this.player1, 'Intrigue', this.jaqenHghar);
                 this.player1.triggerAbility("Jaqen H'ghar");
-                this.player1.clickCard(this.tickler);
-                this.player1.clickPrompt('Done');
-
-                this.player1.dragCard(this.jaqen, 'discard pile');
             });
 
-            it('should remove all Valar Morghulis tokens', function () {
-                expect(this.tickler.hasToken(Tokens.valarmorghulis)).toBe(false);
-            });
-        });
-
-        describe('when Jaqen wins a challenge while attacking alone', function () {
-            beforeEach(function () {
-                this.player1.triggerAbility("Jaqen H'ghar");
-                this.player1.clickCard(this.tickler);
-                this.player1.clickPrompt('Done');
-
-                this.completeMarshalPhase();
-
-                this.player1.clickPrompt('Intrigue');
-                this.player1.clickCard(this.jaqen);
-                this.player1.clickPrompt('Done');
-
-                this.skipActionWindow();
-
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
-            });
-
-            it('should allow him to kill a character with a Valar Morghulis token', function () {
-                this.player1.triggerAbility("Jaqen H'ghar");
-                this.player1.clickCard(this.tickler);
-
-                expect(this.tickler.location).toBe('dead pile');
-            });
-
-            it('should not allow him to kill a character without a Valar Morghulis token', function () {
-                this.player1.triggerAbility("Jaqen H'ghar");
-                this.player1.clickCard(this.arya);
-
-                expect(this.arya.location).toBe('play area');
+            it('kills a character with a Valar Morghulis token', function () {
+                expect(this.player1).toBeAbleToSelect(this.theTickler);
+                expect(this.player1).not.toBeAbleToSelect(this.aryaStark);
+                this.player1.clickCard(this.theTickler);
+                expect(this.theTickler.location).toBe('dead pile');
             });
         });
     });

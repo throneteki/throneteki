@@ -49,12 +49,6 @@
         "legacy-helper": 2,
         "add-message": 1
     },
-    "server/game/cards/04.4-TIMC/JaqenHGhar.js": {
-        "event-registration": 1,
-        "this-in-ability": 9,
-        "legacy-helper": 2,
-        "add-message": 1
-    },
     "server/game/cards/04.5-GoH/RooseBolton.js": {
         "this-in-ability": 9,
         "legacy-helper": 1,
@@ -135,12 +129,6 @@
         "add-message": 1,
         "legacy-helper": 2
     },
-    "server/game/cards/13.6-LMHR/AryaStark.js": {
-        "event-registration": 1,
-        "this-in-ability": 10,
-        "add-message": 2,
-        "legacy-helper": 1
-    },
     "server/game/cards/13.6-LMHR/FriendsAtCourt.js": {
         "this-in-ability": 6,
         "add-message": 2,
@@ -201,9 +189,7 @@
         "add-message": 1
     },
     "server/game/cards/22-BtB/TheGreatPyramid.js": {
-        "event-registration": 1,
-        "this-in-ability": 7,
-        "add-message": 1
+        "this-in-ability": 6
     },
     "server/game/cards/25.3-FUtG/Greyscale.js": {
         "this-in-ability": 12,
@@ -213,9 +199,5 @@
     },
     "server/game/cards/25.6-WK/BurningTheBooks.js": {
         "this-in-ability": 4
-    },
-    "server/game/cards/27.2-WGYK/Hornvale.js": {
-        "event-registration": 1,
-        "add-message": 1
     }
 }

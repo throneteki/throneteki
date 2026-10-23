@@ -97,6 +97,11 @@ Never change an existing spec unless asked. Specs describe the expected behaviou
 them can hide bugs. If a spec looks wrong against the card text or the Rules Reference, explain why
 and ask before changing it.
 
+The exception is an assertion that contradicts text you can quote from the card or the Rules
+Reference. Correct only that assertion, quote the text in the commit message, and point the change
+out to the user. A reading of the rules, a ruling you can't cite, or engine behaviour that would be
+easier to test is not enough.
+
 ## Engine changes
 
 When you change the engine (anything in `server/game` outside `cards/`), add or update specs for

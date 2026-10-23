@@ -98,6 +98,19 @@ describe('delayed effects', function () {
         expect(this.player1Object.hand).toHaveLength(0);
     });
 
+    it('waits until its condition occurs when it lasts until triggered', function () {
+        this.drawWhenKneeled(this.tumblestoneKnight, 'untilTriggered');
+        this.game.effectEngine.onPhaseEnded();
+        this.game.effectEngine.onRoundEnded();
+
+        this.player1.clickPrompt('Military');
+        this.player1.clickCard(this.tumblestoneKnight);
+        this.player1.clickPrompt('Done');
+
+        expect(this.player1Object.hand).toHaveLength(1);
+        expect(this.game.effectEngine.delayedEffects).toEqual([]);
+    });
+
     it('rejects durations it does not support', function () {
         expect(() =>
             this.addDelayedEffect({
