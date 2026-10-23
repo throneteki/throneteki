@@ -188,9 +188,6 @@
         "this-in-ability": 5,
         "add-message": 1
     },
-    "server/game/cards/22-BtB/TheGreatPyramid.js": {
-        "this-in-ability": 6
-    },
     "server/game/cards/25.3-FUtG/Greyscale.js": {
         "this-in-ability": 12,
         "prompt-for-select": 1,

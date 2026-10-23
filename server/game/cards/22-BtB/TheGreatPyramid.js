@@ -21,9 +21,13 @@ class TheGreatPyramid extends DrawCard {
         this.persistentEffect({
             targetController: 'current',
             effect: [
-                ability.effects.canMarshal((card) => this.canMarshalOrPlay(card)),
-                ability.effects.canMarshalIntoShadows((card) => this.canMarshalOrPlay(card)),
-                ability.effects.canPlay((card) => this.canMarshalOrPlay(card))
+                ability.effects.canMarshal((card, context) =>
+                    context.source.canMarshalOrPlay(card)
+                ),
+                ability.effects.canMarshalIntoShadows((card, context) =>
+                    context.source.canMarshalOrPlay(card)
+                ),
+                ability.effects.canPlay((card, context) => context.source.canMarshalOrPlay(card))
             ]
         });
 
@@ -34,8 +38,8 @@ class TheGreatPyramid extends DrawCard {
                         controller: event.cardStateWhenDiscarded.controller,
                         location: event.cardStateWhenDiscarded.location
                     }),
-                    condition: (aggregate) =>
-                        aggregate.controller === this.controller && aggregate.location === 'hand'
+                    condition: (aggregate, events, context) =>
+                        aggregate.controller === context.player && aggregate.location === 'hand'
                 }
             },
             limit: ability.limit.perRound(2),
@@ -82,11 +86,12 @@ class TheGreatPyramid extends DrawCard {
     }
 
     hasReachedMarshalOrPlayLimit() {
+        const controller = this.controller;
         let predicate = (event) =>
             event.originalLocation === 'underneath' &&
             event.originalParent.getType() === 'location' &&
             event.originalParent.hasTrait('Meereen') &&
-            (event.originalController === this.controller || event.player === this.controller);
+            (event.originalController === controller || event.player === controller);
 
         let marshalledCount = this.marshalledTracker.count(predicate);
         let playedCount = this.playedTracker.count(predicate);
