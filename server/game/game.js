@@ -468,19 +468,32 @@ class Game extends EventEmitter {
     }
 
     resolveDelayedEffects(event) {
-        const triggered = this.effectEngine.takeDelayedEffectsTriggeredBy(
-            event.getConcurrentEvents().filter((concurrentEvent) => !concurrentEvent.cancelled)
-        );
+        const events = event
+            .getConcurrentEvents()
+            .filter((concurrentEvent) => !concurrentEvent.cancelled);
+        const triggered = this.effectEngine.takeDelayedEffectsTriggeredBy(events);
+        const eventChecks = this.allCards
+            .flatMap((card) => card.abilities.eventChecks || [])
+            .flatMap((ability) =>
+                events
+                    .filter((triggeringEvent) => ability.isTriggeredBy(triggeringEvent))
+                    .map((triggeringEvent) => ability.createContext(triggeringEvent))
+            );
         this.queueStep(
-            new ChooseResolutionOrder(
-                this,
-                triggered.map(({ delayedEffect, event: triggeringEvent }) => ({
+            new ChooseResolutionOrder(this, [
+                ...triggered.map(({ delayedEffect, event: triggeringEvent }) => ({
                     player: delayedEffect.context.player,
                     source: delayedEffect.context.source,
                     canResolve: () => delayedEffect.canResolve(triggeringEvent),
                     resolve: () => delayedEffect.resolve(triggeringEvent)
+                })),
+                ...eventChecks.map((context) => ({
+                    player: context.player,
+                    source: context.source,
+                    canResolve: () => context.ability.canResolve(context),
+                    resolve: () => this.resolveAbility(context.ability, context)
                 }))
-            )
+            ])
         );
     }
 

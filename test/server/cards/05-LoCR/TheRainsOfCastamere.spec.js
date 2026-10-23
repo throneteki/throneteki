@@ -108,29 +108,27 @@ describe('The Rains of Castamere', function () {
         });
     });
 
-    it('recycles plots at once when its reaction exhausts the plot deck', function () {
+    it('recycles plots once you reveal your last non-Scheme plot outside the plot phase', function () {
         this.setupTest({
             phase: 'challenge',
             player2: {
                 faction: 'martell',
                 agenda: '"The Rains of Castamere"',
-                plot: 'A Song of Summer',
-                usedPlots: ['Trading with the Pentoshi'],
+                plot: 'Trading with the Pentoshi',
+                usedPlots: ["At Prince Doran's Behest"],
                 inPlay: [
                     { card: 'Dorne (R)', attachments: ['Nymeria of Ny Sar'] },
                     'The Red Viper (Core)'
                 ],
-                plotDeck: ["At Prince Doran's Behest", 'The Long Plan', 'Filthy Accusations']
+                plotDeck: ['A Song of Summer', 'Filthy Accusations', 'The Long Plan']
             }
         });
+        this.pentoshi = this.player2Object.activePlot;
         this.player1.clickPrompt('Done');
-        this.unopposedChallenge(this.player2, 'Intrigue', this.theRedViper);
+        this.unopposedChallenge(this.player2, 'Power', this.theRedViper);
         this.player2.triggerAbility('Nymeria of Ny Sar');
-        this.player2.clickCard(this.atPrinceDoransBehest);
-        this.player2.clickCard(this.theLongPlan);
-        this.player2.triggerAbility('"The Rains of Castamere"');
-        this.player2.clickCard(this.filthyAccusations);
-        this.player2.clickCard(this.theRedViper);
-        expect(this.player2Object.getNumberOfUsedPlots()).toBe(0);
+        this.player2.clickCard(this.aSongOfSummer);
+        expect(this.pentoshi.location).toBe('plot deck');
+        expect(this.atPrinceDoransBehest.location).toBe('plot deck');
     });
 });

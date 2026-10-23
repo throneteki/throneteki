@@ -780,7 +780,9 @@ class Player extends Spectator {
 
     recyclePlots() {
         const plots = this.plotDeck.filter(
-            (plot) => !plot.hasFlag(Flags.card.notConsideredToBeInPlotDeck)
+            (plot) =>
+                !plot.hasFlag(Flags.card.notConsideredToBeInPlotDeck) &&
+                !plot.hasFlag(Flags.card.notConsideredWhenRecyclingPlots)
         );
         if (plots.length === 0) {
             for (const plot of this.plotDiscard) {

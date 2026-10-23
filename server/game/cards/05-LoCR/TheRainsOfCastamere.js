@@ -53,6 +53,13 @@ class TheRainsOfCastamere extends AgendaCard {
             targetLocation: 'plot deck',
             effect: ability.effects.notConsideredToBeInPlotDeck()
         });
+
+        this.persistentEffect({
+            match: (card) => card.getType() === 'plot' && card.hasTrait('Scheme'),
+            targetController: 'current',
+            targetLocation: 'plot deck',
+            effect: ability.effects.notConsideredWhenRecyclingPlots()
+        });
     }
 }
 

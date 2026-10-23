@@ -228,10 +228,10 @@ describe("At Prince Doran's Behest", function () {
             expect(this.aGameOfThrones.location).toBe('active plot');
         });
 
-        it('does not recycle the plot deck while schemes remain', function () {
+        it('recycles the plot deck once the last non-Scheme plot is revealed', function () {
             setupRains.call(this);
             this.player2.clickCard(this.aNobleCause);
-            expect(this.player2Object.getNumberOfUsedPlots()).toBe(2);
+            expect(this.player2Object.getNumberOfUsedPlots()).toBe(0);
         });
 
         it("recycles the Rains player's plot deck if it reveals the last card altogether", function () {

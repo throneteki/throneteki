@@ -30,12 +30,6 @@
         "this-in-ability": 5,
         "add-message": 2
     },
-    "server/game/cards/02.3-TKP/TheLordOfTheCrossing.js": {
-        "event-registration": 1,
-        "this-in-ability": 2,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/02.5-COW/VengeanceForElia.js": {
         "this-in-ability": 6,
         "add-message": 1

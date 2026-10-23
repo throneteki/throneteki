@@ -14,6 +14,7 @@ import GameActions from './GameActions/index.js';
 import KeywordsProperty from './PropertyTypes/KeywordsProperty.js';
 import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
 import StateCheckAbility from './StateCheckAbility.js';
+import EventCheckAbility from './EventCheckAbility.js';
 import XValueDefinition from './XValueDefinition.js';
 import { Flags, Tokens } from './Constants/index.js';
 import StackProperty from './PropertyTypes/StackProperty.js';
@@ -78,6 +79,7 @@ class BaseCard {
             persistentEffects: [],
             playActions: [],
             stateChecks: [],
+            eventChecks: [],
             agendaSetup: []
         };
 
@@ -175,6 +177,10 @@ class BaseCard {
 
     stateCheck(properties) {
         this.abilities.stateChecks.push(new StateCheckAbility(this.game, this, properties));
+    }
+
+    eventCheck(properties) {
+        this.abilities.eventChecks.push(new EventCheckAbility(this.game, this, properties));
     }
 
     afterAgendasAnnounced(properties) {

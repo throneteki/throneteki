@@ -1654,6 +1654,7 @@ const Effects = {
     },
     skipPhase: modifyGameFlagEffect((name) => Flags.game.skipPhase(name)),
     notConsideredToBeInPlotDeck: modifyFlagEffect(Flags.card.notConsideredToBeInPlotDeck),
+    notConsideredWhenRecyclingPlots: modifyFlagEffect(Flags.card.notConsideredWhenRecyclingPlots),
     mustRevealPlot: function (card) {
         return {
             targetType: 'player',

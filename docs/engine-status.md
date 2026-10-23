@@ -75,6 +75,13 @@ the ongoing work, and it was not part of this batch.
   abilities, so blanking the card does not stop them. Two pending from the same card resolve in
   the order the first player chooses.
   [DelayedEffects.spec.js](../test/server/DelayedEffects.spec.js).
+- Constant text that applies an effect when an event occurs ("If you win this challenge, gain 1
+  power") is an event check (`this.eventCheck`). It resolves with delayed effects, after the event
+  and before reactions, while its card is active, faceup and not blank.
+  [EventChecks.spec.js](../test/server/EventChecks.spec.js).
+- The Rains of Castamere's Schemes are left out of the recycle check in every phase, so used plots
+  return as soon as the last non-Scheme plot is revealed (FAQ). Before, a Rains player who revealed
+  their last non-Scheme plot outside the plot phase had no plot to choose at the next plot phase.
 - Every catalogued event is raised and specced:
   [CataloguedEvents.spec.js](../test/server/gamesteps/CataloguedEvents.spec.js),
   [Duplicates.spec.js](../test/server/gamesteps/Duplicates.spec.js). A duplicate marshaled or

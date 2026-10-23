@@ -440,6 +440,27 @@ this.stateCheck({
 });
 ```
 
+### Event checks
+
+Constant text that applies an effect when something happens, with no bold trigger ("If you win
+this challenge, gain 1 power for your faction" on The Lord of the Crossing), is an event check. Use
+`this.eventCheck` with a `when` like a reaction's. It resolves automatically right after the event,
+with delayed effects and before reactions, so it can't be cancelled or declined, and it doesn't
+count towards limits. It applies only while the card is in play, the agenda, the active plot or the
+title, faceup and not blank. The context's `player` is the card's controller, `source` is the card
+and `event` is the triggering event.
+
+```javascript
+this.eventCheck({
+    when: {
+        afterChallenge: (event, context) =>
+            event.challenge.winner === context.player && event.challenge.number === 3
+    },
+    message: '{player} gains 1 power from {source}',
+    gameAction: GameActions.gainPower((context) => ({ card: context.player.faction, amount: 1 }))
+});
+```
+
 ### After all agendas are announced
 
 Agenda text that starts "After all agendas are announced" (The House With the Red Door) uses
