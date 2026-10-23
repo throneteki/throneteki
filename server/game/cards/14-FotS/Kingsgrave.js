@@ -9,9 +9,9 @@ class Kingsgrave extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.isMatch({
-                        loser: this.controller,
+                        loser: context.player,
                         challengeType: 'power',
                         by5: true
                     })
@@ -21,52 +21,30 @@ class Kingsgrave extends DrawCard {
                 cardCondition: (card) => card.getType() === 'character' && card.isParticipating(),
                 gameAction: 'returnToHand'
             },
-            handler: (context) => {
-                this.context = context;
-
-                if (context.target.hasTrait('King') && context.target.canBeKilled()) {
-                    this.game.promptWithMenu(context.player, this, {
-                        activePrompt: {
-                            menuTitle: `Kill ${context.target.name}?`,
-                            buttons: [
-                                { text: 'Yes', method: 'killCharacter' },
-                                { text: 'No', method: 'returnCharacterToHand' }
-                            ]
+            gameAction: GameActions.ifCondition({
+                condition: (context) =>
+                    context.target.hasTrait('King') && context.target.canBeKilled(),
+                thenAction: GameActions.choose({
+                    title: (context) => `Kill ${context.target.name}?`,
+                    choices: {
+                        Yes: {
+                            message: '{player} kneels and sacrifices {source} to kill {target}',
+                            gameAction: GameActions.kill((context) => ({ card: context.target }))
                         },
-                        source: this
-                    });
-                } else {
-                    this.returnCharacterToHand();
-                }
-            }
+                        No: returnToHand()
+                    }
+                }),
+                elseAction: returnToHand()
+            })
         });
     }
+}
 
-    killCharacter() {
-        this.game.addMessage(
-            '{0} kneels and sacrifices {1} to kill {2}',
-            this.context.player,
-            this,
-            this.context.target
-        );
-        this.game.killCharacter(this.context.target);
-        return true;
-    }
-
-    returnCharacterToHand() {
-        this.game.addMessage(
-            '{0} kneels and sacrifices {1} to return {2} to hand',
-            this.context.player,
-            this,
-            this.context.target
-        );
-        this.game.resolveGameAction(
-            GameActions.returnCardToHand((context) => ({ card: context.target })),
-            this.context
-        );
-
-        return true;
-    }
+function returnToHand() {
+    return {
+        message: '{player} kneels and sacrifices {source} to return {target} to hand',
+        gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
+    };
 }
 
 Kingsgrave.code = '14030';

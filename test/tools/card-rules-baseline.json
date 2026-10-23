@@ -11,11 +11,6 @@
         "add-message": 3,
         "prompt-for-select": 1
     },
-    "server/game/cards/01-Core/FireAndBlood.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 3,
-        "add-message": 2
-    },
     "server/game/cards/01-Core/GreenbloodTrader.js": {
         "this-in-ability": 9,
         "legacy-helper": 3,
@@ -310,12 +305,6 @@
         "legacy-helper": 2,
         "add-message": 2,
         "prompt-for-select": 1
-    },
-    "server/game/cards/08.6-SAT/SeptonCellador.js": {
-        "this-in-ability": 4,
-        "prompt-for-select": 1,
-        "legacy-helper": 1,
-        "add-message": 2
     },
     "server/game/cards/08.6-SAT/TheCrowIsATricksyBird.js": {
         "this-in-ability": 8,
@@ -613,17 +602,8 @@
         "prompt-for-select": 1,
         "add-message": 1
     },
-    "server/game/cards/14-FotS/AcolyteOfTheFlame.js": {
-        "this-in-ability": 5,
-        "add-message": 1
-    },
     "server/game/cards/14-FotS/DothrakiSteed.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/14-FotS/Kingsgrave.js": {
-        "this-in-ability": 6,
-        "add-message": 2,
-        "legacy-helper": 1
     },
     "server/game/cards/14-FotS/NightfireVision.js": {
         "this-in-ability": 7,
@@ -780,11 +760,6 @@
         "this-in-ability": 9,
         "legacy-helper": 2,
         "add-message": 2
-    },
-    "server/game/cards/18-FH/VargoHoat.js": {
-        "this-in-ability": 13,
-        "add-message": 2,
-        "legacy-helper": 1
     },
     "server/game/cards/19-JS/GulltownCityGuard.js": {
         "this-in-ability": 1
@@ -1052,18 +1027,8 @@
     "server/game/cards/26.3-MaV/CrawnSonOfCalor.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/26.3-MaV/NorthernEnvoy.js": {
-        "this-in-ability": 6,
-        "prompt-for-select": 1,
-        "add-message": 1
-    },
     "server/game/cards/26.3-MaV/SerGulianQorgyle.js": {
         "this-in-ability": 8,
-        "add-message": 1
-    },
-    "server/game/cards/26.3-MaV/TakingTheShieldIslands.js": {
-        "this-in-ability": 7,
-        "prompt-for-select": 1,
         "add-message": 1
     },
     "server/game/cards/26.3-MaV/WanderingDisciple.js": {

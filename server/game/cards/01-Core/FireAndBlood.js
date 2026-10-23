@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class FireAndBlood extends DrawCard {
     // Fire and Blood (01177)
@@ -9,65 +10,42 @@ class FireAndBlood extends DrawCard {
             title: 'Shuffle card from dead pile back into deck',
             phase: 'challenge',
             target: {
-                cardCondition: (card) =>
-                    card.controller === this.controller &&
+                cardCondition: (card, context) =>
+                    card.controller === context.player &&
                     card.location === 'dead pile' &&
                     card.isUnique() &&
                     card.isFaction('targaryen')
             },
-            handler: (context) => {
-                if (
+            gameAction: GameActions.ifCondition({
+                condition: (context) =>
                     context.target.hasTrait('Hatchling') &&
-                    this.controller.canPutIntoPlay(context.target)
-                ) {
-                    this.selectedCard = context.target;
-                    this.game.promptWithMenu(context.player, this, {
-                        activePrompt: {
-                            menuTitle: 'Put card into play?',
-                            buttons: [
-                                { text: 'Yes', method: 'putIntoPlay' },
-                                { text: 'No', method: 'shuffle' }
-                            ]
+                    context.player.canPutIntoPlay(context.target),
+                thenAction: GameActions.choose({
+                    title: 'Put card into play?',
+                    choices: {
+                        Yes: {
+                            message:
+                                '{player} plays {source} to remove {target} from their dead pile and put it into play',
+                            gameAction: GameActions.putIntoPlay((context) => ({
+                                player: context.player,
+                                card: context.target
+                            }))
                         },
-                        source: this
-                    });
-                } else {
-                    this.shuffleCard(context.target);
-                }
-            }
+                        No: shuffleIntoDeck()
+                    }
+                }),
+                elseAction: shuffleIntoDeck()
+            })
         });
     }
+}
 
-    putIntoPlay(player) {
-        player.putIntoPlay(this.selectedCard);
-
-        this.game.addMessage(
-            '{0} plays {1} to remove {2} from their dead pile and put it into play',
-            player,
-            this,
-            this.selectedCard
-        );
-
-        return true;
-    }
-
-    shuffle() {
-        this.shuffleCard(this.selectedCard);
-
-        return true;
-    }
-
-    shuffleCard(card) {
-        this.controller.moveCard(card, 'draw deck');
-        this.controller.shuffleDrawDeck();
-
-        this.game.addMessage(
-            '{0} plays {1} to remove {2} from their dead pile and shuffle it into their deck',
-            this.controller,
-            this,
-            card
-        );
-    }
+function shuffleIntoDeck() {
+    return {
+        message:
+            '{player} plays {source} to remove {target} from their dead pile and shuffle it into their deck',
+        gameAction: GameActions.shuffleIntoDeck((context) => ({ cards: [context.target] }))
+    };
 }
 
 FireAndBlood.code = '01177';

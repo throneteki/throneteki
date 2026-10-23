@@ -8,65 +8,40 @@ class TakingTheShieldIslands extends DrawCard {
     // at the losing opponent's hand. Then, choose 1 card in that hand and place it on top of its
     // owner's deck. (Choose up to 2 cards and place them in any order instead if you played this
     // event from shadows.) (Max 1 per challenge.)
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
+            max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.isMatch({
-                        winner: this.controller,
-                        attackingPlayer: this.controller
+                        winner: context.player,
+                        attackingPlayer: context.player
                     }) && event.challenge.getWinnerCards().some((card) => card.hasTrait('Raider'))
             },
             message: {
                 format: "{player} plays {source} to look {loser}'s hand and place {amount} card(s) on top of their deck",
                 args: {
                     loser: (context) => context.event.challenge.loser,
-                    amount: (context) => this.getAmount(context)
+                    amount: (context) => getAmount(context)
                 }
             },
-            handler: (context) => {
-                const numCards = this.getAmount(context);
-                this.game.promptForSelect(context.player, {
-                    activePromptTitle:
-                        numCards === 1 ? 'Select a card' : 'Select up to 2 cards (bottom first)',
-                    source: this,
-                    numCards,
-                    revealTargets: true,
-                    cardCondition: (card) =>
-                        card.location === 'hand' &&
-                        card.controller === context.event.challenge.loser,
-                    onSelect: (player, cards) => this.onCardsSelected(player, cards, context)
-                });
-            }
+            gameAction: GameActions.chooseCards({
+                mode: 'upTo',
+                numCards: (context) => getAmount(context),
+                title: (context) =>
+                    getAmount(context) === 1 ? 'Select a card' : 'Select up to 2 cards',
+                revealTargets: true,
+                cardCondition: (card, context) =>
+                    card.location === 'hand' && card.controller === context.event.challenge.loser,
+                gameAction: (card, context) =>
+                    GameActions.placeCard({ card, player: context.player, location: 'draw deck' })
+            })
         });
     }
+}
 
-    onCardsSelected(player, cards, context) {
-        const placeAction = (card) =>
-            GameActions.placeCard({
-                card,
-                player,
-                location: 'draw deck'
-            });
-        if (Array.isArray(cards)) {
-            this.game.resolveGameAction(GameActions.simultaneously(cards.map(placeAction)));
-        } else {
-            placeAction(cards);
-        }
-        this.game.addMessage(
-            "{0} then uses {1} to place {2} card(s) on top of {3}'s deck",
-            player,
-            this,
-            this.getAmount(context),
-            context.event.challenge.loser
-        );
-
-        return true;
-    }
-
-    getAmount(context) {
-        return context.cardStateWhenInitiated.location === 'shadows' ? 2 : 1;
-    }
+function getAmount(context) {
+    return context.cardStateWhenInitiated.location === 'shadows' ? 2 : 1;
 }
 
 TakingTheShieldIslands.code = '26044';

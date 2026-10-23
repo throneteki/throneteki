@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SeptonCellador extends DrawCard {
     // Septon Cellador (08105)
@@ -11,61 +12,31 @@ class SeptonCellador extends DrawCard {
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
             chooseOpponent: (opponent) => opponent.hand.length !== 0,
-            handler: (context) => {
-                if (context.opponent.hand.some((card) => card.getType() === 'character')) {
-                    this.promptForCharacterDiscard(context);
-                    return;
+            gameAction: GameActions.ifCondition({
+                condition: (context) =>
+                    context.opponent.hand.some((card) => card.getType() === 'character'),
+                thenAction: {
+                    message:
+                        '{player} kneels {source} to have {opponent} discard a character from their hand',
+                    gameAction: GameActions.chooseCards({
+                        player: (context) => context.opponent,
+                        title: 'Select a character to discard',
+                        cardCondition: (card, context) =>
+                            card.location === 'hand' &&
+                            card.controller === context.opponent &&
+                            card.getType() === 'character',
+                        gameAction: (card) => GameActions.discardCard({ card })
+                    })
+                },
+                elseAction: {
+                    message: '{player} kneels {source} to have {opponent} reveal their hand',
+                    gameAction: GameActions.revealCards((context) => ({
+                        cards: context.opponent.hand,
+                        player: context.opponent
+                    }))
                 }
-
-                this.revealHand(context);
-            }
+            })
         });
-    }
-
-    promptForCharacterDiscard(context) {
-        this.game.promptForSelect(context.opponent, {
-            source: this,
-            cardCondition: (card) =>
-                card.location === 'hand' &&
-                card.controller === context.opponent &&
-                card.getType() === 'character',
-            onSelect: (player, card) => this.onCardSelected(context, player, card),
-            onCancel: (player) => this.onCancel(player)
-        });
-    }
-
-    onCardSelected(context, player, card) {
-        player.discardCard(card);
-        this.game.addMessage(
-            '{0} kneels {1} to have {2} discard {3} from their hand',
-            context.player,
-            this,
-            context.opponent,
-            card
-        );
-
-        return true;
-    }
-
-    onCancel(player) {
-        this.game.addAlert(
-            'danger',
-            '{0} did not select a character to discard for {1}',
-            player,
-            this
-        );
-
-        return true;
-    }
-
-    revealHand(context) {
-        this.game.addMessage(
-            '{0} kneels {1} to have {2} reveal {3} as their hand',
-            context.player,
-            this,
-            context.opponent,
-            context.opponent.hand
-        );
     }
 }
 
