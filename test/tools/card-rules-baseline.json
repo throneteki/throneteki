@@ -130,10 +130,6 @@
         "direct-state-write": 1,
         "add-message": 1
     },
-    "server/game/cards/13.3-PoS/TheFaithsDecree.js": {
-        "this-in-ability": 3,
-        "add-message": 1
-    },
     "server/game/cards/13.5-TB/TyrionLannister.js": {
         "this-in-ability": 5,
         "add-message": 1,
@@ -189,11 +185,6 @@
         "this-in-ability": 12,
         "add-message": 2
     },
-    "server/game/cards/21-FtR/LordAndersHost.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/22-BtB/BranStark.js": {
         "this-in-ability": 9,
         "add-message": 2,
@@ -219,9 +210,6 @@
         "prompt-for-select": 1,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/25.4-TTS/NymeriaOfNySar.js": {
-        "this-in-ability": 5
     },
     "server/game/cards/25.6-WK/BurningTheBooks.js": {
         "this-in-ability": 4

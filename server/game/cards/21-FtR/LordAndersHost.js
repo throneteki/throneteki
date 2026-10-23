@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LordAndersHost extends DrawCard {
     // Lord Anders's Host (21010)
@@ -14,8 +15,8 @@ class LordAndersHost extends DrawCard {
         this.reaction({
             when: {
                 onCardEntersPlay: (event, context) =>
-                    this.game.isDuringChallenge() &&
-                    this.game.currentPhase === 'challenge' &&
+                    context.game.isDuringChallenge() &&
+                    context.game.currentPhase === 'challenge' &&
                     event.card.controller === context.player &&
                     (event.originalLocation === 'hand' || event.originalLocation === 'shadows')
             },
@@ -26,16 +27,11 @@ class LordAndersHost extends DrawCard {
                     card.isParticipating() &&
                     card.getPrintedCost() < context.event.card.getPrintedCost()
             },
-            handler: (context) => {
-                context.target.owner.returnCardToHand(context.target);
-                this.game.addMessage(
-                    "{0} uses {1} to return {2} to {3}'s hand",
-                    context.player,
-                    this,
-                    context.target,
-                    context.target.owner
-                );
-            }
+            message: {
+                format: "{player} uses {source} to return {target} to {owner}'s hand",
+                args: { owner: (context) => context.target.owner }
+            },
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 }
