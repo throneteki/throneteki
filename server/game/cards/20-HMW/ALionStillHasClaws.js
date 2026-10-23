@@ -1,6 +1,5 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
-import { flatten } from '../../../Array.js';
 
 class ALionStillHasClaws extends DrawCard {
     // "A Lion Still Has Claws" (20014)
@@ -10,73 +9,44 @@ class ALionStillHasClaws extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',
-            condition: () => this.game.anyPlotHasTrait('Scheme'),
+            condition: (context) => context.game.anyPlotHasTrait('Scheme'),
             targetController: 'current',
-            effect: ability.effects.reduceSelfCost('play', () => this.numOfSchemePlotsRevealed())
+            effect: ability.effects.reduceSelfCost('play', (card) =>
+                numOfSchemePlotsRevealed(card.game)
+            )
         });
-
         this.xValue({ min: () => 0, max: () => 99 });
-
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.isMatch({
-                        winner: this.controller,
+                        winner: context.player,
                         challengeType: 'intrigue',
                         by5: true
                     })
             },
-            handler: (context) => {
-                this.context = context;
-
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: 'Name a trait',
-                        controls: [
-                            { type: 'trait-name', command: 'menuButton', method: 'selectTraitName' }
-                        ]
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.nameTrait({
+                message:
+                    "{player} plays {source} to return each {trait} character to its owner's hand",
+                gameAction: GameActions.simultaneously((context) =>
+                    context.game
+                        .filterCardsInPlay(
+                            (card) =>
+                                card.getType() === 'character' &&
+                                card.hasTrait(context.namedTrait) &&
+                                card.getPrintedCost() <= context.xValue
+                        )
+                        .map((card) => GameActions.returnCardToHand({ card }))
+                )
+            })
         });
     }
+}
 
-    numOfSchemePlotsRevealed() {
-        let plots = this.game
-            .getPlayers()
-            .filter((player) => player.activePlot && player.activePlot.hasTrait('Scheme'));
-
-        return plots.length;
-    }
-
-    selectTraitName(player, traitName) {
-        let cardsToReturn = [];
-        for (let player of this.game.getPlayers()) {
-            cardsToReturn.push(
-                player.filterCardsInPlay(
-                    (card) =>
-                        card.getType() === 'character' &&
-                        card.hasTrait(traitName) &&
-                        card.getPrintedCost() <= this.context.xValue
-                )
-            );
-        }
-        this.game.resolveGameAction(
-            GameActions.simultaneously(
-                flatten(cardsToReturn).map((card) => GameActions.returnCardToHand({ card }))
-            )
-        );
-
-        this.game.addMessage(
-            "{0} plays {1} to return each {2} character to its owner's hand",
-            player,
-            this,
-            traitName
-        );
-
-        return true;
-    }
+function numOfSchemePlotsRevealed(game) {
+    return game
+        .getPlayers()
+        .filter((player) => player.activePlot && player.activePlot.hasTrait('Scheme')).length;
 }
 
 ALionStillHasClaws.code = '20014';

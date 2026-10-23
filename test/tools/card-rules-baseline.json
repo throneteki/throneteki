@@ -164,11 +164,6 @@
         "this-in-ability": 2,
         "add-message": 1
     },
-    "server/game/cards/05-LoCR/ARoseOfGold.js": {
-        "add-message": 3,
-        "this-in-ability": 10,
-        "legacy-helper": 2
-    },
     "server/game/cards/05-LoCR/HighSepton.js": {
         "this-in-ability": 6,
         "add-message": 1
@@ -347,11 +342,6 @@
         "this-in-ability": 8,
         "legacy-helper": 1,
         "add-message": 2
-    },
-    "server/game/cards/11.3-SoKL/GrowingAmbition.js": {
-        "prompt-for-select": 1,
-        "this-in-ability": 5,
-        "add-message": 1
     },
     "server/game/cards/11.3-SoKL/HiredAssassin.js": {
         "this-in-ability": 8,
@@ -660,11 +650,6 @@
     "server/game/cards/17.2-R2/RedPriest.js": {
         "this-in-ability": 4
     },
-    "server/game/cards/18-FH/HaldonHalfmaester.js": {
-        "this-in-ability": 7,
-        "prompt-for-select": 1,
-        "add-message": 1
-    },
     "server/game/cards/18-FH/SerAddamMarbrand.js": {
         "this-in-ability": 9,
         "legacy-helper": 2,
@@ -685,10 +670,6 @@
         "this-in-ability": 3,
         "add-message": 2,
         "legacy-helper": 1
-    },
-    "server/game/cards/20-HMW/ALionStillHasClaws.js": {
-        "this-in-ability": 8,
-        "add-message": 1
     },
     "server/game/cards/20-HMW/AMummersFarce.js": {
         "this-in-ability": 9,
@@ -775,11 +756,6 @@
         "this-in-ability": 15,
         "add-message": 2,
         "legacy-helper": 1
-    },
-    "server/game/cards/22-BtB/SamwellTarly.js": {
-        "this-in-ability": 13,
-        "prompt-for-select": 1,
-        "add-message": 1
     },
     "server/game/cards/22-BtB/StormsEnd.js": {
         "this-in-ability": 5,
