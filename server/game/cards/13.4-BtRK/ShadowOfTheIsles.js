@@ -24,23 +24,15 @@ class ShadowOfTheIsles extends DrawCard {
             },
             message:
                 '{player} plays {source} to have each player choose and discard a non-limited location',
-            handler: (context) => {
-                let cards = context.targets.selections
-                    .map((selection) => selection.value)
-                    .filter((card) => !!card);
-                let actions = cards.map((card) => GameActions.discardCard({ card }));
-
-                this.game.resolveGameAction(GameActions.simultaneously(actions), context);
-
-                if (this.game.anyPlotHasTrait('War')) {
-                    this.game.addMessage(
-                        '{0} uses {1} to return {1} to their hand instead of their discard pile',
-                        context.player,
-                        this
-                    );
-                    context.player.moveCard(this, 'hand');
-                }
-            }
+            gameAction: GameActions.simultaneously((context) => [
+                ...context.targets.getTargets().map((card) => GameActions.discardCard({ card })),
+                GameActions.ifCondition({
+                    condition: (context) => context.game.anyPlotHasTrait('War'),
+                    thenAction: GameActions.returnCardToHand((context) => ({
+                        card: context.source
+                    }))
+                })
+            ])
         });
     }
 }

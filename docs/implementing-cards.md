@@ -489,8 +489,7 @@ For "attach X to Y" or "move X to another character", use
 well as being attached (`onCardAttached`); an attachment already in play only moves. The
 attachment is attached by the time interrupts are over, so reactions see it on its new parent. It
 can't change the game state unless the attachment is allowed on the target, or when it is already
-attached to it. Pass `facedown: true` for a facedown attachment, which ignores attachment
-restrictions and doesn't enter play.
+attached to it. Pass `facedown: true` for a facedown attachment, which doesn't enter play.
 
 For a card that attaches "as an attachment with the text: ..." (Risen from the Sea, "Florian and
 Jonquil", Living Shadow, Valyrian's Crew), pass `asAttachment: { keywords, traits, effect }`.
@@ -499,6 +498,10 @@ its parent while the card is in play. They come from the effect that attached it
 printed text, so blanking the attachment doesn't remove them. Whether it can be attached is
 checked against what it will be once attached, so a printed event or character doesn't need to
 override `canAttach`.
+`attachmentEffect` adds effects to the attachment itself, such as an attachment restriction
+(Lady Marya's "Location only"). For a facedown attachment (`facedown: true`), the text lasts only
+while it stays facedown, and only the target's restrictions ("No attachments except Weapon")
+apply, since a facedown card has none of its own.
 
 ```javascript
 gameAction: GameActions.saveCard((context) => ({ event: context.event })).then({

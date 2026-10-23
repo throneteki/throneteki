@@ -17,21 +17,16 @@ class ShadowOfTheThrone extends DrawCard {
                     card.location === 'play area' && card.getType() === 'location' && !card.kneeled,
                 gameAction: 'kneel'
             },
-            message: '{player} plays {source} to kneel {target}',
-            handler: (context) => {
-                let actions = context.target.map((card) => GameActions.kneelCard({ card }));
-
-                this.game.resolveGameAction(GameActions.simultaneously(actions), context);
-
-                if (this.game.anyPlotHasTrait('Kingdom')) {
-                    this.game.addMessage(
-                        '{0} uses {1} to return {1} to their hand instead of their discard pile',
-                        context.player,
-                        this
-                    );
-                    context.player.moveCard(this, 'hand');
-                }
-            }
+            message: '{player} plays {source} to {gameAction}',
+            gameAction: GameActions.simultaneously((context) => [
+                ...context.target.map((card) => GameActions.kneelCard({ card })),
+                GameActions.ifCondition({
+                    condition: (context) => context.game.anyPlotHasTrait('Kingdom'),
+                    thenAction: GameActions.returnCardToHand((context) => ({
+                        card: context.source
+                    }))
+                })
+            ])
         });
     }
 }

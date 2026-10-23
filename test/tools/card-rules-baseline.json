@@ -216,34 +216,9 @@
         "legacy-helper": 2,
         "add-message": 1
     },
-    "server/game/cards/13.2-CoS/ShadowOfTheWall.js": {
-        "legacy-helper": 2,
-        "this-in-ability": 10,
-        "add-message": 2
-    },
-    "server/game/cards/13.2-CoS/ShadowOftheEast.js": {
-        "legacy-helper": 2,
-        "add-message": 2,
-        "this-in-ability": 9
-    },
-    "server/game/cards/13.2-CoS/ShadowOftheSouth.js": {
-        "this-in-ability": 13,
-        "add-message": 2,
-        "legacy-helper": 1
-    },
-    "server/game/cards/13.3-PoS/ShadowOfTheThrone.js": {
-        "this-in-ability": 5,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/13.3-PoS/TheFaithsDecree.js": {
         "this-in-ability": 3,
         "add-message": 1
-    },
-    "server/game/cards/13.4-BtRK/ShadowOfTheIsles.js": {
-        "this-in-ability": 5,
-        "add-message": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/13.4-BtRK/TunnelsOfTheRedKeep.js": {
         "legacy-helper": 1,
@@ -260,11 +235,6 @@
         "prompt-for-select": 1,
         "add-message": 2,
         "legacy-helper": 2
-    },
-    "server/game/cards/13.5-TB/ShadowOfTheNorth.js": {
-        "this-in-ability": 12,
-        "add-message": 2,
-        "legacy-helper": 1
     },
     "server/game/cards/13.5-TB/TyrionLannister.js": {
         "this-in-ability": 5,
