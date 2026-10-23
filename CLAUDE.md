@@ -66,7 +66,7 @@ We are working towards games that can run with manual mode off. In short:
   off, and CI checks the list is current.
 - Don't change existing tests unless asked. If a test looks wrong against the card text or the
   Rules Reference, explain why and ask first. The exception is an assertion that contradicts text
-  you can quote from the card or the Rules Reference: correct only that assertion, quote the text
+  you can quote from the card, the Rules Reference or a ThronesDB FAQ entry: correct only that assertion, quote the text
   in the commit message, and point the change out to the user.
 
 ## Existing code
