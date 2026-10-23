@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class GreenDreams extends DrawCard {
     // Green Dreams (03043)
@@ -8,52 +9,23 @@ class GreenDreams extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardKneeled: (event) => event.card === this.parent && this.controller.drawDeck[0]
+                onCardKneeled: (event, context) =>
+                    !!context.source.parent &&
+                    event.card === context.source.parent &&
+                    context.player.drawDeck.length > 0
             },
-            handler: () => {
-                this.topCard = this.controller.drawDeck[0];
-                this.game.addMessage(
-                    '{0} uses {1} to look at the top card of their deck',
-                    this.controller,
-                    this
-                );
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Put ' + this.topCard.name + ' on bottom of your deck?',
-                        buttons: [
-                            {
-                                text: 'Yes',
-                                method: 'placeOnBottom',
-                                arg: 'yes',
-                                card: this.topCard
-                            },
-                            { text: 'No', method: 'placeOnBottom', arg: 'no', card: this.topCard }
-                        ]
-                    },
-                    source: this
-                });
-            }
+            message: '{player} uses {source} to look at the top card of their deck',
+            gameAction: GameActions.may({
+                title: (context) =>
+                    `Put ${context.player.drawDeck[0].name} on bottom of your deck?`,
+                message: '{player} puts the top card of their deck on the bottom',
+                gameAction: GameActions.placeCard((context) => ({
+                    card: context.player.drawDeck[0],
+                    location: 'draw deck',
+                    bottom: true
+                }))
+            })
         });
-    }
-
-    placeOnBottom(player, arg) {
-        if (arg === 'no') {
-            this.game.addMessage(
-                '{0} does not put the top card of their deck on the bottom',
-                this.controller
-            );
-            return true;
-        }
-
-        this.controller.moveCard(this.topCard, 'draw deck', { bottom: true });
-        this.game.addMessage(
-            '{0} puts the top card of their deck on the bottom',
-            this.controller,
-            this
-        );
-
-        return true;
     }
 }
 

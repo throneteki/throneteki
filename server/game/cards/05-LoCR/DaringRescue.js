@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class DaringRescue extends DrawCard {
     // Daring Rescue (05024)
@@ -8,52 +9,36 @@ class DaringRescue extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Return character then have knight gain power',
-            condition: () => this.hasKnightCharacter(),
+            condition: (context) =>
+                context.player.anyCardsInPlay(
+                    (card) => card.hasTrait('Knight') && card.getType() === 'character'
+                ),
             phase: 'challenge',
             target: {
                 activePromptTitle: 'Select a character to return to hand',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
+                    card.controller === context.player &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                context.target.owner.returnCardToHand(context.target);
-                this.game.addMessage(
-                    "{0} plays {1} to return {2} to its owner's hand",
-                    this.controller,
-                    this,
-                    context.target
-                );
-                this.game.promptForSelect(this.controller, {
+            message: "{player} plays {source} to return {target} to its owner's hand",
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target })).then({
+                target: {
                     activePromptTitle: 'Select a character to gain power',
-                    source: this,
-                    gameAction: 'gainPower',
-                    cardCondition: (card) =>
+                    cardCondition: (card, context) =>
                         card.location === 'play area' &&
                         card.hasTrait('Knight') &&
                         card.getType() === 'character' &&
-                        card.controller === this.controller,
-                    onSelect: (p, card) => {
-                        card.modifyPower(1);
-                        this.game.addMessage(
-                            '{0} then uses {1} to have {2} gain 1 power',
-                            this.controller,
-                            this,
-                            card
-                        );
-
-                        return true;
-                    }
-                });
-            }
+                        card.controller === context.player,
+                    gameAction: 'gainPower'
+                },
+                message: 'Then {player} uses {source} to have {target} gain 1 power',
+                gameAction: GameActions.gainPower((context) => ({
+                    card: context.target,
+                    amount: 1
+                }))
+            })
         });
-    }
-
-    hasKnightCharacter() {
-        return this.controller.anyCardsInPlay(
-            (card) => card.hasTrait('Knight') && card.getType() === 'character'
-        );
     }
 }
 

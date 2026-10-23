@@ -137,11 +137,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/03-WotN/GreenDreams.js": {
-        "this-in-ability": 14,
-        "add-message": 3,
-        "legacy-helper": 1
-    },
     "server/game/cards/03-WotN/Nymeria.js": {
         "this-in-ability": 9,
         "legacy-helper": 1,
@@ -231,12 +226,6 @@
         "this-in-ability": 10,
         "legacy-helper": 2
     },
-    "server/game/cards/05-LoCR/DaringRescue.js": {
-        "this-in-ability": 12,
-        "legacy-helper": 2,
-        "add-message": 2,
-        "prompt-for-select": 1
-    },
     "server/game/cards/05-LoCR/HighSepton.js": {
         "this-in-ability": 6,
         "add-message": 1
@@ -289,11 +278,6 @@
         "add-message": 3,
         "prompt-for-select": 2,
         "legacy-helper": 2
-    },
-    "server/game/cards/06.3-TFoA/TheNorthRemembers.js": {
-        "this-in-ability": 7,
-        "add-message": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/06.5-OR/DornishRevenge.js": {
         "this-in-ability": 10,
@@ -401,12 +385,6 @@
         "this-in-ability": 8,
         "add-message": 2
     },
-    "server/game/cards/09-HoT/HiddenThorns.js": {
-        "this-in-ability": 6,
-        "prompt-for-select": 1,
-        "legacy-helper": 2,
-        "add-message": 1
-    },
     "server/game/cards/09-HoT/HighgardenHonorGuard.js": {
         "this-in-ability": 1
     },
@@ -470,11 +448,6 @@
         "this-in-ability": 11,
         "add-message": 2,
         "legacy-helper": 3
-    },
-    "server/game/cards/10-SoD/Plundered.js": {
-        "this-in-ability": 11,
-        "legacy-helper": 3,
-        "add-message": 2
     },
     "server/game/cards/10-SoD/SpareBoot.js": {
         "this-in-ability": 6,
@@ -1062,12 +1035,6 @@
     "server/game/cards/22-BtB/Highgarden.js": {
         "this-in-ability": 15,
         "add-message": 2,
-        "legacy-helper": 1
-    },
-    "server/game/cards/22-BtB/Pyke.js": {
-        "this-in-ability": 7,
-        "add-message": 2,
-        "game-listener": 1,
         "legacy-helper": 1
     },
     "server/game/cards/22-BtB/SamwellTarly.js": {

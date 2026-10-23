@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Plundered extends DrawCard {
     // Plundered (10028)
@@ -9,52 +10,26 @@ class Plundered extends DrawCard {
         this.attachmentRestriction({ type: 'location', controller: 'opponent' });
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.parent.controller &&
-                    event.challenge.defendingPlayer === this.parent.controller &&
-                    !this.parent.kneeled
+                afterChallenge: (event, context) =>
+                    !!context.source.parent &&
+                    event.challenge.loser === context.source.parent.controller &&
+                    event.challenge.defendingPlayer === context.source.parent.controller
             },
-            handler: (context) => {
-                this.parent.controller.kneelCard(this.parent);
-                this.game.addMessage(
-                    '{0} uses {1} to kneel {2}',
-                    context.player,
-                    this,
-                    this.parent
-                );
-
-                if (!context.player.canGainGold()) {
-                    return true;
-                }
-
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: 'Sacrifice Plundered to gain 3 gold?',
-                        buttons: [
-                            { text: 'Yes', method: 'sacrifice' },
-                            { text: 'No', method: 'decline' }
-                        ]
-                    },
-                    source: this
-                });
-            }
+            message: {
+                format: '{player} uses {source} to kneel {parent}',
+                args: { parent: (context) => context.source.parent }
+            },
+            gameAction: GameActions.kneelCard((context) => ({ card: context.source.parent })).then({
+                gameAction: GameActions.may({
+                    title: (context) => `Sacrifice ${context.source.name} to gain 3 gold?`,
+                    message: '{player} then sacrifices {source} to gain 3 gold',
+                    gameAction: GameActions.simultaneously([
+                        GameActions.sacrificeCard((context) => ({ card: context.source })),
+                        GameActions.gainGold((context) => ({ player: context.player, amount: 3 }))
+                    ])
+                })
+            })
         });
-    }
-
-    sacrifice() {
-        this.controller.sacrificeCard(this);
-        let gold = this.game.addGold(this.controller, 3);
-        this.game.addMessage(
-            '{0} then sacrifices {1} to gain {2} gold',
-            this.controller,
-            this,
-            gold
-        );
-        return true;
-    }
-
-    decline() {
-        return true;
     }
 }
 
