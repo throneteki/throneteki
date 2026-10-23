@@ -10,12 +10,13 @@ function withChoosingPlayer(context, choosingPlayer) {
 }
 
 class ChooseGameAction extends GameAction {
-    constructor({ player, title, message, choices, cancelText, cancelMessage }) {
+    constructor({ player, title, message, choices, cancelable = true, cancelText, cancelMessage }) {
         super('choose');
         this.playerFunc = player || ((context) => context.player);
         this.title = title || ((context) => `Choose one for ${context.source.name}`);
         this.defaultMessage = AbilityMessage.create(message, this.specialArgs());
         this.choicesFunc = choices instanceof Function ? choices : () => choices;
+        this.cancelable = cancelable;
         this.cancelText = cancelText;
         this.cancelMessage = cancelMessage;
     }
@@ -68,6 +69,7 @@ class ChooseGameAction extends GameAction {
                     choosingPlayer,
                     title,
                     choices,
+                    cancelable: this.cancelable,
                     cancelText,
                     cancelMessage,
                     gameActionResolver: (gameAction) => {

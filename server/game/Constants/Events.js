@@ -224,6 +224,7 @@ export const Events = Object.freeze({
     onEffectsCanceled: { params: { canceledEvent: 'Event' } },
     onFirstPlayerDetermined: { params: { player: 'Player' } },
     onGoldGained: { params: { amount: 'number', desiredAmount: 'number', player: 'Player' } },
+    onGoldPaid: { params: { amount: 'number', player: 'Player' } },
     onGoldReturned: { params: { amount: 'number', desiredAmount: 'number', player: 'Player' } },
     onGoldTransferred: {
         params: { amount: 'number', source: 'Player|BaseCard', target: 'Player|BaseCard' }

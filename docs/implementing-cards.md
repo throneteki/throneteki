@@ -355,6 +355,10 @@ own", "move 1 gold from X to a character"), use `GameActions.transferGold({ from
 and can't change the game state when `from` has none. When gold comes from a gold pool, the player
 chooses which gold sources to spend it from, as when paying a cost.
 
+To pay gold as part of an effect rather than as a cost ("sacrifice it unless you pay X gold", The
+Gold Price), use `GameActions.payGold({ player, amount })`. It can't change the game state unless
+the player can pay all of it, and the player chooses which gold sources to spend it from.
+
 #### Naming a challenge type
 
 For "name a challenge type" or "choose a challenge type", use `GameActions.chooseChallengeType`.
@@ -389,6 +393,9 @@ triggered ability (so it can't be cancelled as one and doesn't count towards lim
 at the end of its `duration` (`untilEndOfChallenge`, `untilEndOfPhase` or `untilEndOfRound`).
 `when` conditions get the event and the context of the ability that created the effect, and must
 have no side effects. The triggering event is `context.event` when it resolves.
+An `untilEndOfPhase` effect has expired by the time `onAtEndOfPhase` is raised, so for "at the end
+of the phase" use `untilEndOfRound` with `when: { onAtEndOfPhase: () => true }`: the first end of
+phase after the effect is created is the end of the current phase.
 
 ```javascript
 gameAction: GameActions.delayedEffect({
@@ -469,6 +476,10 @@ gameAction: GameActions.chooseCards({
     gameAction: (card) => GameActions.kill({ card })
 });
 ```
+
+`GameActions.choose({ choices })` offers a choice between game actions, with a Done button that
+cancels the rest of the effect. When the text leaves no way out ("sacrifice it unless you pay X
+gold", The Gold Price), pass `cancelable: false` so there is no Done button.
 
 ### Switching cards
 

@@ -2,23 +2,22 @@ import AgendaCard from '../../agendacard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheGoldPrice extends AgendaCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
-
-        this.registerEvents(['onCardEntersPlay']);
-    }
-
     // The Gold Price (25040)
     // Locations you control enter play knelt.
     // Reaction: After a character is discarded at random from an opponent's hand, put it into play
     // under your control. At the end of the phase, if that card is still in play, sacrifice it
     // unless you pay X gold. X is that card's printed cost. (Limit once per phase.)
     setupCardAbilities(ability) {
+        this.persistentEffect({
+            targetLocation: 'any',
+            match: (card) => card.getType() === 'location',
+            effect: ability.effects.entersPlayKneeled()
+        });
         this.reaction({
             when: {
-                onCardDiscarded: (event) =>
+                onCardDiscarded: (event, context) =>
                     event.card.getType() === 'character' &&
-                    event.card.owner !== this.controller &&
+                    event.card.owner !== context.player &&
                     event.originalLocation === 'hand' &&
                     event.isRandom
             },
@@ -30,84 +29,54 @@ class TheGoldPrice extends AgendaCard {
             gameAction: GameActions.putIntoPlay((context) => ({
                 player: context.player,
                 card: context.event.card
-            })).thenExecute((event) => {
-                let context = this.game.currentAbilityContext;
-                this.game.once('onAtEndOfPhase', () => {
-                    if (['play area', 'duplicate'].includes(event.card.location)) {
-                        const prompt = new PayOrSacrificePrompt({
-                            card: event.card,
-                            game: this.game,
-                            player: context.player,
-                            source: context.source
-                        });
-                        prompt.resolve();
-                    }
-                });
+            })).then({
+                gameAction: GameActions.delayedEffect({
+                    duration: 'untilEndOfRound',
+                    when: {
+                        onAtEndOfPhase: (event, context) =>
+                            ['play area', 'duplicate'].includes(chosenCard(context).location)
+                    },
+                    gameAction: GameActions.choose({
+                        title: (context) => `Keep ${chosenCard(context).name}?`,
+                        cancelable: false,
+                        choices: {
+                            'Pay gold': {
+                                message: {
+                                    format: '{player} pays {amount} gold to keep {card} for {source}',
+                                    args: {
+                                        amount: (context) => printedCost(context),
+                                        card: (context) => chosenCard(context)
+                                    }
+                                },
+                                gameAction: GameActions.payGold((context) => ({
+                                    player: context.player,
+                                    amount: printedCost(context)
+                                }))
+                            },
+                            Sacrifice: {
+                                message: {
+                                    format: '{player} sacrifices {card} for {source}',
+                                    args: { card: (context) => chosenCard(context) }
+                                },
+                                gameAction: GameActions.sacrificeCard((context) => ({
+                                    card: chosenCard(context)
+                                }))
+                            }
+                        }
+                    })
+                })
             })
         });
     }
-
-    onCardEntersPlay(event) {
-        if (
-            this.game.currentPhase !== 'setup' &&
-            event.card.controller === this.controller &&
-            event.card.getType() === 'location'
-        ) {
-            this.game.addMessage('{0} enters play knelt due to {1}', event.card, this);
-            event.card.kneeled = true;
-        }
-    }
 }
-class PayOrSacrificePrompt {
-    constructor({ card, player, game, source }) {
-        this.card = card;
-        this.player = player;
-        this.game = game;
-        this.source = source;
-    }
 
-    resolve() {
-        if (
-            this.player.getSpendableGold() >= this.card.translateXValue(this.card.getPrintedCost())
-        ) {
-            this.game.promptWithMenu(this.player, this, {
-                activePrompt: {
-                    menuTitle: `Keep ${this.card.name}?`,
-                    buttons: [
-                        {
-                            text: `Pay ${this.card.translateXValue(this.card.getPrintedCost())} gold`,
-                            method: 'resolvePay'
-                        },
-                        { text: 'Sacrifice', method: 'resolveSacrifice' }
-                    ]
-                },
-                source: this.source
-            });
-        } else {
-            this.resolveSacrifice();
-        }
-    }
+function chosenCard(context) {
+    return context.parentContext.event.card;
+}
 
-    resolvePay() {
-        this.game.addMessage(
-            '{0} pays {1} to keep {2} for {3}',
-            this.player,
-            this.card.translateXValue(this.card.getPrintedCost()),
-            this.card,
-            this.source
-        );
-        this.game.spendGold({
-            amount: this.card.translateXValue(this.card.getPrintedCost()),
-            player: this.player
-        });
-        return true;
-    }
-
-    resolveSacrifice() {
-        this.game.addMessage('{0} sacrifices {1} for {2}', this.player, this.card, this.source);
-        this.game.resolveGameAction(GameActions.sacrificeCard({ card: this.card }));
-        return true;
-    }
+function printedCost(context) {
+    const card = chosenCard(context);
+    return card.translateXValue(card.getPrintedCost());
 }
 
 TheGoldPrice.code = '25040';

@@ -38,6 +38,7 @@ import MayGameAction from './MayGameAction.js';
 import MovePower from './MovePower.js';
 import NameCard from './NameCard.js';
 import NameTrait from './NameTrait.js';
+import PayGold from './PayGold.js';
 import PlaceAsDuplicate from './PlaceAsDuplicate.js';
 import PlaceCard from './PlaceCard.js';
 import PlaceCardUnderneath from './PlaceCardUnderneath.js';
@@ -105,6 +106,7 @@ const GameActions = {
     movePower: (props) => new AbilityAdapter(MovePower, props),
     nameCard: (props) => new NameCard(props),
     nameTrait: (props) => new NameTrait(props),
+    payGold: (props) => new AbilityAdapter(PayGold, props),
     placeAsDuplicate: (props) => new AbilityAdapter(PlaceAsDuplicate, props),
     placeCard: (props) => new AbilityAdapter(PlaceCard, props),
     placeCardUnderneath: (props) => new AbilityAdapter(PlaceCardUnderneath, props),

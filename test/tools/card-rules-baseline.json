@@ -518,13 +518,6 @@
         "this-in-ability": 7,
         "legacy-helper": 1
     },
-    "server/game/cards/25.2-ChoS/TheGoldPrice.js": {
-        "event-registration": 1,
-        "this-in-ability": 4,
-        "game-listener": 1,
-        "add-message": 3,
-        "direct-state-write": 1
-    },
     "server/game/cards/25.3-FUtG/Greyscale.js": {
         "this-in-ability": 12,
         "prompt-for-select": 1,
