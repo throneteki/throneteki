@@ -1,6 +1,5 @@
 import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
-import TextHelper from '../../TextHelper.js';
 
 class Meereen extends DrawCard {
     // Meereen (11034)
@@ -11,23 +10,25 @@ class Meereen extends DrawCard {
         this.action({
             title: 'Place hand facedown and draw 3',
             cost: ability.costs.kneelSelf(),
-            message: {
-                format: '{player} kneels {source} to place their hand facedown under {source} and draw {textHelperPlayer}',
-                args: {
-                    textHelperPlayer: (context) =>
-                        TextHelper.count(context.player.drawCardsToHand(3).length, 'card')
-                }
-            },
-            gameAction: GameActions.lastingEffect((context) => ({
-                duration: 'custom',
-                until: {
-                    onCardLeftPlay: (event) => event.card === context.source,
-                    onPhaseEnded: () => true
-                },
-                targetController: 'any',
-                match: (player) => player === context.player,
-                effect: ability.effects.removeCardsFromHand()
-            }))
+            message: '{player} kneels {source} to place their hand facedown under {source}',
+            gameAction: GameActions.simultaneously([
+                GameActions.lastingEffect((context) => ({
+                    duration: 'custom',
+                    until: {
+                        onCardLeftPlay: (event) => event.card === context.source,
+                        onPhaseEnded: () => true
+                    },
+                    targetController: 'any',
+                    match: (player) => player === context.player,
+                    effect: ability.effects.removeCardsFromHand()
+                }))
+            ]).then({
+                message: 'Then {player} draws 3 cards',
+                gameAction: GameActions.drawCards((context) => ({
+                    player: context.player,
+                    amount: 3
+                }))
+            })
         });
     }
 }

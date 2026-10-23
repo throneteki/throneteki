@@ -1,188 +1,108 @@
-describe('Meereen', function () {
-    integration(function () {
-        describe('when used multiple time by the same player', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('targaryen', [
-                    'A Noble Cause',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)'
-                ]);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.meereen = this.player1.findCardByName('Meereen', 'hand');
-
-                this.player1.clickCard(this.meereen);
-
-                this.completeSetup();
-
-                this.selectFirstPlayer(this.player1);
-
-                this.player1.clickMenu(this.meereen, 'Place hand facedown and draw 3');
-
-                // Manually stand Meereen and trigger it again
-                this.player1.clickCard(this.meereen);
-                this.player1.clickMenu(this.meereen, 'Place hand facedown and draw 3');
-
-                this.completeMarshalPhase();
-
-                // Skip order of discarded cards (for both instances of the ability)
-                this.player1.clickPrompt('Done');
-                this.player1.clickPrompt('Done');
+describe('Meereen (TMoW)', function () {
+    describe('when used by one player', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    inPlay: ['Meereen (TMoW)', 'Veteran Builder'],
+                    hand: ['Hedge Knight', 'Castle Guard']
+                }
             });
-
-            it('should discard all of the cards placed under Meereen', function () {
-                // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/39868-ruling-meereen/
-                // 12 cards are placed under Meereen - 9 from the initial
-                // hand, another 3 from the draw from the first instance of
-                // Meereen. The second set of 3 drawn is discarded, the 12
-                // are returned to hand, then they are discarded from the
-                // second instance of the ability.
-                expect(this.player1Object.hand.length).toBe(0);
-                expect(this.player1Object.discardPile.length).toBe(15);
-                expect(this.player1).isReadyToTakeAction();
-            });
+            this.player1.clickMenu(this.meereen, 'Place hand facedown and draw 3');
         });
 
-        describe('when used multiple times by multiple players', function () {
-            beforeEach(function () {
-                const deck1 = this.buildDeck('targaryen', [
-                    'A Noble Cause',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)',
-                    'Meereen (TMoW)'
-                ]);
-                const deck2 = this.buildDeck('greyjoy', [
-                    'A Noble Cause',
-                    'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)',
-                    'Dagmer Cleftjaw (TS)'
-                ]);
-                this.player1.selectDeck(deck1);
-                this.player2.selectDeck(deck2);
-                this.startGame();
-                this.keepStartingHands();
+        it('places your hand facedown under Meereen and draws 3 cards', function () {
+            expect(this.hedgeKnight.location).toBe('underneath');
+            expect(this.castleGuard.location).toBe('underneath');
+            expect(this.player1Object.hand.length).toBe(3);
+        });
 
-                this.meereen = this.player1.findCardByName('Meereen', 'hand');
-                this.dagmer = this.player2.findCardByName('Dagmer Cleftjaw', 'hand');
+        it('at the end of the phase discards your hand and returns the cards under Meereen', function () {
+            this.completeMarshalPhase();
+            this.player1.clickPrompt('Done');
+            expect(this.hedgeKnight.location).toBe('hand');
+            expect(this.castleGuard.location).toBe('hand');
+            expect(this.player1Object.discardPile.length).toBe(3);
+        });
 
-                this.player1.clickCard(this.meereen);
-                this.player2.clickCard(this.dagmer);
+        it('discards every card placed under Meereen when used twice in a phase', function () {
+            // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/39868-ruling-meereen/
+            this.player1.clickMenu(this.veteranBuilder, 'Stand a location');
+            this.player1.clickCard(this.meereen);
+            this.player1.clickMenu(this.meereen, 'Place hand facedown and draw 3');
+            this.completeMarshalPhase();
+            this.player1.clickPrompt('Done');
+            this.player1.clickPrompt('Done');
+            expect(this.player1Object.hand.length).toBe(0);
+            expect(this.hedgeKnight.location).toBe('discard pile');
+            expect(this.castleGuard.location).toBe('discard pile');
+            expect(this.player1Object.discardPile.length).toBe(9);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 
-                this.completeSetup();
-                this.selectFirstPlayer(this.player2);
-                this.completeMarshalPhase();
-
-                // Place player 1 cards under Meereen
-                this.player1.clickMenu(this.meereen, 'Place hand facedown and draw 3');
-
-                // Take control of Meereen
-                this.unopposedChallenge(this.player2, 'Power', this.dagmer);
-                this.player2.clickPrompt('Apply Claim');
-                this.player2.triggerAbility(this.dagmer);
-                this.player2.clickCard(this.meereen);
-
-                // Stand Meereen and place player 2 cards under Meereen
-                this.player2.clickCard(this.meereen);
-                this.player2.clickMenu(this.meereen, 'Place hand facedown and draw 3');
-
-                this.completeChallengesPhase();
-
-                // Skip order of discarded cards
-                this.player1.clickPrompt('Done');
-                this.player2.clickPrompt('Done');
+    describe('when Meereen leaves play', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: {
+                    inPlay: ['Meereen (TMoW)'],
+                    hand: ['Hedge Knight', 'Castle Guard']
+                },
+                player2: { inPlay: ['Ser Gregor Clegane (TKP)'], hand: ['Put to the Torch'] }
             });
+            this.player1.clickMenu(this.meereen, 'Place hand facedown and draw 3');
+            this.player1.clickPrompt('Done');
+            this.unopposedChallenge(this.player2, 'Military', this.serGregorClegane);
+            this.player2.triggerAbility('Put to the Torch');
+            this.player2.clickCard(this.meereen);
+        });
 
-            it('should return the owners cards to hand', function () {
-                expect(this.player1Object.hand.length).toBe(9);
-                expect(this.player1Object.discardPile.length).toBe(3);
+        it('discards your hand and returns the cards under Meereen', function () {
+            this.player1.clickPrompt('Done');
+            expect(this.meereen.location).toBe('discard pile');
+            expect(this.hedgeKnight.location).toBe('hand');
+            expect(this.castleGuard.location).toBe('hand');
+            expect(this.player1Object.hand.length).toBe(2);
+        });
+    });
 
-                for (const card of this.player2Object.hand.slice(0, 3)) {
-                    this.player2.clickCard(card);
+    describe('when used by multiple players', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: {
+                    inPlay: ['Meereen (TMoW)'],
+                    hand: ['Hedge Knight', 'Castle Guard']
+                },
+                player2: {
+                    inPlay: ['Dagmer Cleftjaw (TS)', 'Veteran Builder'],
+                    hand: ['Winterfell Steward', 'The Roseroad']
                 }
-                this.player2.clickPrompt('Done');
-                for (const card of this.player1Object.hand.slice(0, 3)) {
-                    this.player1.clickCard(card);
-                }
-                this.player1.clickPrompt('Done');
-
-                expect(this.player1).isReadyToTakeAction();
-                expect(this.player2).isReadyToTakeAction();
             });
+            this.player1.clickMenu(this.meereen, 'Place hand facedown and draw 3');
+            this.player1.clickPrompt('Done');
+            this.unopposedChallenge(this.player2, 'Power', this.dagmerCleftjaw);
+            this.player2.triggerAbility('Dagmer Cleftjaw');
+            this.player2.clickCard(this.meereen);
+            this.player2.clickMenu(this.veteranBuilder, 'Stand a location');
+            this.player2.clickCard(this.meereen);
+            this.player2.clickMenu(this.meereen, 'Place hand facedown and draw 3');
+            this.player2.clickPrompt('Done');
+            this.player1.clickPrompt('Done');
+            this.player2.clickPrompt('Done');
+        });
 
-            it("should return the other player's cards to hand", function () {
-                // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/39868-ruling-meereen/
-                // Because the ability text refers to cards "you" placed under
-                // Meereen, only your own cards are returned to hand, so it
-                // won't end up in a situation where one player's cards are
-                // returned to hand before the discard effect.
-                expect(this.player2Object.hand.length).toBe(9);
-                expect(this.player2Object.discardPile.length).toBe(3);
-
-                for (const card of this.player2Object.hand.slice(0, 3)) {
-                    this.player2.clickCard(card);
-                }
-                this.player2.clickPrompt('Done');
-                for (const card of this.player1Object.hand.slice(0, 3)) {
-                    this.player1.clickCard(card);
-                }
-                this.player1.clickPrompt('Done');
-
-                expect(this.player1).isReadyToTakeAction();
-                expect(this.player2).isReadyToTakeAction();
-            });
+        it('returns only the cards each player placed under Meereen to their hand', function () {
+            // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/39868-ruling-meereen/
+            expect(this.hedgeKnight.location).toBe('hand');
+            expect(this.castleGuard.location).toBe('hand');
+            expect(this.winterfellSteward.location).toBe('hand');
+            expect(this.theRoseroad.location).toBe('hand');
+            expect(this.player1Object.hand.length).toBe(2);
+            expect(this.player2Object.hand.length).toBe(2);
+            expect(this.player1Object.discardPile.length).toBe(3);
+            expect(this.player2Object.discardPile.length).toBe(4);
         });
     });
 });

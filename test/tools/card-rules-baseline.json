@@ -235,9 +235,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/11.2-TMoW/Meereen.js": {
-        "legacy-helper": 1
-    },
     "server/game/cards/11.3-SoKL/DrownedGodFanatic.js": {
         "this-in-ability": 8,
         "legacy-helper": 1,
@@ -426,9 +423,6 @@
         "this-in-ability": 10,
         "legacy-helper": 1,
         "add-message": 2
-    },
-    "server/game/cards/17.1-R/Meereen.js": {
-        "legacy-helper": 1
     },
     "server/game/cards/17.1-R/SeaOfBlood.js": {
         "this-in-ability": 3
