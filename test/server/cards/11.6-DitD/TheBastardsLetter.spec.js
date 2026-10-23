@@ -1,6 +1,6 @@
 describe("The Bastard's Letter", function () {
-    function setup(test, kneeling) {
-        test.setupTest({
+    function setup(kneeling) {
+        this.setupTest({
             phase: 'challenge',
             player1: {
                 inPlay: [
@@ -12,15 +12,15 @@ describe("The Bastard's Letter", function () {
             },
             player2: { inPlay: ['Hedge Knight'] }
         });
-        test.player1.clickPrompt('Done');
-        test.player2.clickPrompt('Military');
-        test.player2.clickCard(test.hedgeKnight);
-        test.player2.clickPrompt('Done');
-        test.player1.triggerAbility("The Bastard's Letter");
+        this.player1.clickPrompt('Done');
+        this.player2.clickPrompt('Military');
+        this.player2.clickCard(this.hedgeKnight);
+        this.player2.clickPrompt('Done');
+        this.player1.triggerAbility("The Bastard's Letter");
     }
 
     it('can be triggered with no kneeling characters, and kills each attacker if you win', function () {
-        setup(this, false);
+        setup.call(this, false);
         this.player1.clickPrompt('Done');
         this.skipActionWindow();
         this.player1.clickCard(this.robbStark);
@@ -31,7 +31,7 @@ describe("The Bastard's Letter", function () {
 
     describe('with kneeling characters', function () {
         beforeEach(function () {
-            setup(this, true);
+            setup.call(this, true);
         });
 
         it('stands any number of your characters with a military icon, then kills each attacker if you win', function () {
