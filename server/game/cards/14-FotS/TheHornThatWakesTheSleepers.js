@@ -8,51 +8,38 @@ class TheHornThatWakesTheSleepers extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: (event) =>
-                    event.challenge.isMatch({ initiatedAgainstPlayer: this.controller })
+                onChallengeInitiated: (event, context) =>
+                    event.challenge.isMatch({ initiatedAgainstPlayer: context.player })
             },
             targets: {
-                builder: {
-                    cardCondition: (card) => this.isKneeledWithTrait(card, 'Builder'),
-                    gameAction: 'stand'
-                },
-                ranger: {
-                    cardCondition: (card) => this.isKneeledWithTrait(card, 'Ranger'),
-                    gameAction: 'stand'
-                },
-                steward: {
-                    cardCondition: (card) => this.isKneeledWithTrait(card, 'Steward'),
-                    gameAction: 'stand'
-                }
+                builder: standWithTrait('Builder'),
+                ranger: standWithTrait('Ranger'),
+                steward: standWithTrait('Steward')
             },
             message: {
                 format: '{player} plays {source} to stand {targets}',
-                args: { targets: (context) => this.getCharactersToStand(context) }
+                args: { targets: (context) => charactersToStand(context) }
             },
-            handler: (context) => {
-                let targets = this.getCharactersToStand(context);
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        targets.map((card) => GameActions.standCard({ card }))
-                    )
-                );
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                charactersToStand(context).map((card) => GameActions.standCard({ card }))
+            )
         });
     }
+}
 
-    isKneeledWithTrait(card, trait) {
-        return (
+function standWithTrait(trait) {
+    return {
+        cardCondition: (card, context) =>
             card.location === 'play area' &&
-            card.controller === this.controller &&
+            card.controller === context.player &&
             card.getType() === 'character' &&
-            card.kneeled &&
-            card.hasTrait(trait)
-        );
-    }
+            card.hasTrait(trait),
+        gameAction: 'stand'
+    };
+}
 
-    getCharactersToStand(context) {
-        return [context.targets.builder, context.targets.ranger, context.targets.steward];
-    }
+function charactersToStand(context) {
+    return [context.targets.builder, context.targets.ranger, context.targets.steward];
 }
 
 TheHornThatWakesTheSleepers.code = '14032';

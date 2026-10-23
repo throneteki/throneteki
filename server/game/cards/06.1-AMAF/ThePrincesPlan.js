@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ThePrincesPlan extends DrawCard {
     // The Prince's Plan (06016)
@@ -13,44 +14,31 @@ class ThePrincesPlan extends DrawCard {
                 cardCondition: (card) =>
                     card.location === 'play area' && card.getType() === 'character'
             },
-            handler: (context) => {
-                let strBoost = this.controller.getNumberOfUsedPlots();
-                this.game.promptForIcon(this.controller, this, (icon) => {
-                    this.game.addMessage(
-                        '{0} plays {1} to give {2} +{3} STR and {4} {5} icon until the end of the phase',
-                        this.controller,
-                        this,
-                        context.target,
-                        strBoost,
-                        icon === 'intrigue' ? 'an' : 'a',
-                        icon
-                    );
-                    this.untilEndOfPhase((ability) => ({
+            gameAction: GameActions.chooseIcon({
+                message: {
+                    format: '{player} plays {source} to give {target} +{strength} STR and {icon} icon until the end of the phase',
+                    args: { strength: (context) => context.player.getNumberOfUsedPlots() }
+                },
+                gameAction: (icon) =>
+                    GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
                         match: context.target,
                         effect: [
-                            ability.effects.modifyStrength(strBoost),
+                            ability.effects.modifyStrength(context.player.getNumberOfUsedPlots()),
                             ability.effects.addIcon(icon)
                         ]
-                    }));
-                });
-            }
+                    }))
+            })
         });
-
         this.reaction({
             location: 'discard pile',
             when: {
-                afterChallenge: (event) => event.challenge.loser === this.controller
+                afterChallenge: (event, context) => event.challenge.loser === context.player
             },
             ignoreEventCosts: true,
             cost: ability.costs.payGold(1),
-            handler: () => {
-                this.game.addMessage(
-                    '{0} pays 1 gold to move {1} back to their hand',
-                    this.controller,
-                    this
-                );
-                this.controller.moveCard(this, 'hand');
-            }
+            message: '{player} pays 1 gold to return {source} to their hand',
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.source }))
         });
     }
 }

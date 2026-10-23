@@ -1,5 +1,5 @@
-import SatisfyClaim from '../../gamesteps/challenge/SatisfyClaim.js';
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class NowItComesToWar extends PlotCard {
     // Now It Comes To War (09050)
@@ -11,47 +11,25 @@ class NowItComesToWar extends PlotCard {
                 onClaimApplied: (event) =>
                     event.challenge && ['intrigue', 'power'].includes(event.challenge.challengeType)
             },
-            handler: (context) => {
-                this.currentContext = context;
-                this.game.promptWithMenu(context.event.challenge.attackingPlayer, this, {
-                    activePrompt: {
-                        menuTitle: 'Apply military claim instead?',
-                        buttons: [
-                            { text: 'Yes', method: 'applyMilitaryClaim' },
-                            { text: 'No', method: 'applyNormalClaim' }
-                        ]
+            gameAction: GameActions.choose({
+                player: (context) => context.event.challenge.attackingPlayer,
+                title: 'Apply military claim instead?',
+                choices: {
+                    Yes: {
+                        message:
+                            '{choosingPlayer} chooses to apply military claim instead using {source}',
+                        gameAction: GameActions.changeClaimType((context) => ({
+                            event: context.event,
+                            challengeType: 'military'
+                        }))
                     },
-                    source: this
-                });
-            }
+                    No: {
+                        message: '{choosingPlayer} chooses to apply normal claim using {source}',
+                        gameAction: GameActions.genericHandler(() => true)
+                    }
+                }
+            })
         });
-    }
-
-    applyMilitaryClaim(player) {
-        this.game.addMessage(
-            '{0} chooses to apply {2} claim instead using {1}',
-            player,
-            this,
-            'military'
-        );
-
-        this.currentContext.replaceHandler((event) => {
-            event.claim.challengeType = 'military';
-
-            this.game.queueStep(new SatisfyClaim(this.game, event.claim));
-        });
-        return true;
-    }
-
-    applyNormalClaim(player) {
-        let challenge = this.currentContext.event.challenge;
-        this.game.addMessage(
-            '{0} chooses to apply normal {2} claim using {1}',
-            player,
-            this,
-            challenge.challengeType
-        );
-        return true;
     }
 }
 

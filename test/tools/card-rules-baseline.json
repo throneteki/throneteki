@@ -269,11 +269,6 @@
         "this-in-ability": 5,
         "add-message": 1
     },
-    "server/game/cards/06.1-AMAF/ThePrincesPlan.js": {
-        "this-in-ability": 14,
-        "add-message": 2,
-        "legacy-helper": 1
-    },
     "server/game/cards/06.2-GtR/ADragonIsNoSlave.js": {
         "this-in-ability": 11,
         "add-message": 2,
@@ -360,10 +355,6 @@
         "add-message": 2,
         "prompt-for-select": 1
     },
-    "server/game/cards/08.4-FotOG/SupportOfHarlaw.js": {
-        "this-in-ability": 6,
-        "add-message": 1
-    },
     "server/game/cards/08.4-FotOG/Yunkai.js": {
         "this-in-ability": 12,
         "add-message": 2,
@@ -423,10 +414,6 @@
         "this-in-ability": 7,
         "prompt-for-select": 1,
         "add-message": 1
-    },
-    "server/game/cards/09-HoT/NowItComesToWar.js": {
-        "this-in-ability": 6,
-        "add-message": 2
     },
     "server/game/cards/09-HoT/Qotho.js": {
         "this-in-ability": 1
@@ -620,11 +607,6 @@
         "legacy-helper": 2,
         "add-message": 1
     },
-    "server/game/cards/12-KotI/OldGreyGull.js": {
-        "this-in-ability": 5,
-        "legacy-helper": 2,
-        "add-message": 1
-    },
     "server/game/cards/12-KotI/SeaOfBlood.js": {
         "this-in-ability": 5
     },
@@ -778,9 +760,6 @@
     },
     "server/game/cards/14-FotS/SerImryFlorent.js": {
         "this-in-ability": 2
-    },
-    "server/game/cards/14-FotS/TheHornThatWakesTheSleepers.js": {
-        "this-in-ability": 7
     },
     "server/game/cards/14-FotS/ThePrinceThatWasPromised.js": {
         "event-registration": 1,
@@ -1021,15 +1000,6 @@
         "this-in-ability": 7,
         "prompt-for-select": 1,
         "add-message": 2
-    },
-    "server/game/cards/20-HMW/SetDownOurDeeds.js": {
-        "this-in-ability": 5,
-        "add-message": 1,
-        "legacy-helper": 2
-    },
-    "server/game/cards/20-HMW/TheManyFacedGod.js": {
-        "this-in-ability": 4,
-        "add-message": 1
     },
     "server/game/cards/20-HMW/WeLightTheWay.js": {
         "this-in-ability": 10,
