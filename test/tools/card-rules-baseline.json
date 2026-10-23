@@ -53,11 +53,6 @@
         "this-in-ability": 5,
         "add-message": 1
     },
-    "server/game/cards/10-SoD/FalsePlans.js": {
-        "add-message": 2,
-        "this-in-ability": 7,
-        "legacy-helper": 2
-    },
     "server/game/cards/10-SoD/ForcedMarch.js": {
         "this-in-ability": 7
     },
