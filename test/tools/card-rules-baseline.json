@@ -359,12 +359,6 @@
         "prompt-for-select": 1,
         "legacy-helper": 2
     },
-    "server/game/cards/11.4-MoD/VictarionGreyjoy.js": {
-        "this-in-ability": 8,
-        "prompt-for-select": 1,
-        "legacy-helper": 2,
-        "add-message": 3
-    },
     "server/game/cards/11.6-DitD/AssaultFromTheShadows.js": {
         "this-in-ability": 4,
         "add-message": 1,
@@ -386,25 +380,8 @@
     "server/game/cards/12-KotI/SeaOfBlood.js": {
         "this-in-ability": 5
     },
-    "server/game/cards/12-KotI/SecretsOfTheConclave.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 3,
-        "add-message": 1
-    },
     "server/game/cards/13.1-AtG/BaelorBlacktyde.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/13.1-AtG/Littlefinger.js": {
-        "this-in-ability": 6,
-        "add-message": 2,
-        "prompt-for-select": 1,
-        "legacy-helper": 2
-    },
-    "server/game/cards/13.1-AtG/SerMandonMoore.js": {
-        "this-in-ability": 10,
-        "prompt-for-select": 2,
-        "add-message": 2,
-        "legacy-helper": 2
     },
     "server/game/cards/13.2-CoS/ShadowOfTheWall.js": {
         "legacy-helper": 2,
@@ -487,11 +464,6 @@
     "server/game/cards/13.6-LMHR/ValyrianSteel.js": {
         "this-in-ability": 5
     },
-    "server/game/cards/14-FotS/ACaskOfAle.js": {
-        "this-in-ability": 7,
-        "prompt-for-select": 1,
-        "add-message": 1
-    },
     "server/game/cards/14-FotS/DothrakiSteed.js": {
         "this-in-ability": 3
     },
@@ -557,10 +529,6 @@
     },
     "server/game/cards/16-TTWDFL/HeadsOnPikes.js": {
         "this-in-ability": 2,
-        "add-message": 1
-    },
-    "server/game/cards/16-TTWDFL/NarrowEscape.js": {
-        "this-in-ability": 6,
         "add-message": 1
     },
     "server/game/cards/16-TTWDFL/SkyCell.js": {
@@ -673,11 +641,6 @@
     "server/game/cards/20-HMW/KindlyMan.js": {
         "this-in-ability": 5,
         "add-message": 1
-    },
-    "server/game/cards/20-HMW/LadyStoneheart.js": {
-        "add-message": 3,
-        "this-in-ability": 11,
-        "legacy-helper": 1
     },
     "server/game/cards/20-HMW/OurWordIsGoodAsGold.js": {
         "this-in-ability": 1

@@ -150,6 +150,13 @@ class AbilityTarget {
         });
     }
 
+    hasSingleChooser() {
+        return (
+            typeof this.choosingPlayer !== 'function' &&
+            !['each', 'eachOpponent'].includes(this.choosingPlayer)
+        );
+    }
+
     isAnyNumber() {
         return this.properties.mode === 'unlimited' || this.properties.numCards === 0;
     }
@@ -210,6 +217,10 @@ class AbilityTarget {
             selector,
             onSelect: (player, card) => {
                 result.resolve(card);
+                // A later target's condition can depend on this choice, such as "another character".
+                if (context.targets && this.hasSingleChooser()) {
+                    context.targets[this.name] = card;
+                }
                 if (!card || card.length === 0) {
                     this.messages.outputNoneSelected(context.game, context);
                 } else {
