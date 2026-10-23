@@ -16,33 +16,28 @@ class TheIronFleet extends DrawCard {
                 match: (card) => card.hasTrait('Raider')
             })
         });
-
         this.reaction({
             when: {
                 onChallengeInitiated: (event, context) =>
                     event.challenge.attackingPlayer === context.player &&
-                    this.hasAttackingRaider(context.player)
+                    context.player.anyCardsInPlay(
+                        (card) =>
+                            card.isAttacking() &&
+                            card.hasTrait('Raider') &&
+                            card.getType() === 'character'
+                    )
             },
             message: "{player} uses {source} to discard the top card from each opponent's deck",
             gameAction: GameActions.simultaneously((context) =>
-                this.game.getOpponents(context.player).map((opponent) =>
+                context.game.getOpponents(context.player).map((opponent) =>
                     GameActions.discardTopCards({
                         player: opponent,
                         amount: 1,
                         source: context.source
-                    }).thenExecute((event) => {
-                        this.game.addMessage('{player} discards {topCards}', event);
                     })
                 )
             )
         });
-    }
-
-    hasAttackingRaider(player) {
-        return player.anyCardsInPlay(
-            (card) =>
-                card.isAttacking() && card.hasTrait('Raider') && card.getType() === 'character'
-        );
     }
 }
 

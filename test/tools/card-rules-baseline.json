@@ -387,10 +387,6 @@
     "server/game/cards/14-FotS/RedPriest.js": {
         "this-in-ability": 4
     },
-    "server/game/cards/14-FotS/RobertBaratheon.js": {
-        "this-in-ability": 7,
-        "add-message": 1
-    },
     "server/game/cards/14-FotS/SerDavosSeaworth.js": {
         "this-in-ability": 4
     },
@@ -541,14 +537,6 @@
     "server/game/cards/21-FtR/LordTywinsHost.js": {
         "prompt-for-select": 1,
         "this-in-ability": 8,
-        "add-message": 1
-    },
-    "server/game/cards/21-FtR/SerBarristanSelmy.js": {
-        "this-in-ability": 8,
-        "add-message": 2
-    },
-    "server/game/cards/21-FtR/TheIronFleet.js": {
-        "this-in-ability": 3,
         "add-message": 1
     },
     "server/game/cards/22-BtB/BranStark.js": {
