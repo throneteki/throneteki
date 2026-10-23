@@ -714,9 +714,6 @@
         "this-in-ability": 8,
         "add-message": 2
     },
-    "server/game/cards/26.1-WAID/SlaversBay.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/26.2-WoW/QueenOfMeereen.js": {
         "prompt-for-select": 1,
         "this-in-ability": 5

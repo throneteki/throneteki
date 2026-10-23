@@ -7,7 +7,11 @@ class SlaversBay extends DrawCard {
     // - [intrigue] challenges, if you control Yunkai.
     // - [power] challenges, if you control Meereen.
     setupCardAbilities(ability) {
-        const killDuringChallengePersistentEffect = ({ challengeType, location }) => {
+        for (const [challengeType, location] of [
+            ['military', 'Astapor'],
+            ['intrigue', 'Yunkai'],
+            ['power', 'Meereen']
+        ]) {
             this.persistentEffect({
                 condition: (context) =>
                     context.game.isDuringChallenge({ challengeType }) &&
@@ -16,10 +20,7 @@ class SlaversBay extends DrawCard {
                 effect: ability.effects.killIf((card) => card.getStrength() === 0),
                 targetController: 'any'
             });
-        };
-        killDuringChallengePersistentEffect({ challengeType: 'military', location: 'Astapor' });
-        killDuringChallengePersistentEffect({ challengeType: 'intrigue', location: 'Yunkai' });
-        killDuringChallengePersistentEffect({ challengeType: 'power', location: 'Meereen' });
+        }
     }
 }
 
