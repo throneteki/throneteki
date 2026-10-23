@@ -122,11 +122,6 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/11.3-SoKL/DrownedGodFanatic.js": {
-        "this-in-ability": 8,
-        "legacy-helper": 1,
-        "add-message": 2
-    },
     "server/game/cards/11.3-SoKL/HiredAssassin.js": {
         "this-in-ability": 8,
         "add-message": 2,
@@ -165,16 +160,9 @@
         "game-listener": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/14-FotS/SerDavosSeaworth.js": {
-        "this-in-ability": 4
-    },
     "server/game/cards/14-FotS/ThePrinceThatWasPromised.js": {
         "event-registration": 1,
         "this-in-ability": 9,
-        "add-message": 1
-    },
-    "server/game/cards/15-DotE/FightToTheLast.js": {
-        "this-in-ability": 7,
         "add-message": 1
     },
     "server/game/cards/15-DotE/Incinerate.js": {
@@ -191,17 +179,6 @@
         "add-message": 2,
         "this-in-ability": 6,
         "legacy-helper": 1
-    },
-    "server/game/cards/17.1-R/BoundForTheWall.js": {
-        "this-in-ability": 8,
-        "legacy-helper": 2,
-        "add-message": 2,
-        "prompt-for-select": 1
-    },
-    "server/game/cards/17.1-R/DrownedGodFanatic.js": {
-        "this-in-ability": 10,
-        "legacy-helper": 1,
-        "add-message": 2
     },
     "server/game/cards/19-JS/TheWinterMaid.js": {
         "this-in-ability": 3,

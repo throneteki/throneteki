@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BoundForTheWall extends DrawCard {
     // Bound for the Wall (17121)
@@ -8,47 +9,33 @@ class BoundForTheWall extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.isMatch({
-                        winner: this.controller,
-                        attackingPlayer: this.controller
+                        winner: context.player,
+                        attackingPlayer: context.player
                     })
             },
-            handler: (context) => {
-                let opponent = context.event.challenge.loser;
-                opponent.discardFromDraw(2);
-
-                this.game.addMessage(
-                    "{0} plays {1} to discard the top 2 cards of {2}'s deck and have {2} select a character from their discard pile to put into play",
-                    context.player,
-                    this,
-                    opponent
-                );
-
-                this.game.promptForSelect(opponent, {
-                    source: this,
-                    cardCondition: (card) =>
-                        card.location === 'discard pile' &&
-                        card.controller === opponent &&
-                        card.getType() === 'character' &&
-                        context.player.canPutIntoPlay(card),
-                    onSelect: (player, card) => this.onCardSelected(player, card),
-                    onCancel: (player) => this.cancelSelection(player)
-                });
+            message: {
+                format: "{player} plays {source} to discard the top 2 cards of {loser}'s deck and have {loser} select a character from their discard pile to put into play",
+                args: { loser: (context) => context.event.challenge.loser }
             },
+            gameAction: GameActions.discardTopCards((context) => ({
+                player: context.event.challenge.loser,
+                amount: 2
+            })).then({
+                gameAction: GameActions.chooseCards({
+                    player: (context) => context.parentContext.event.challenge.loser,
+                    title: 'Select a character',
+                    cardCondition: (card, context) =>
+                        card.location === 'discard pile' &&
+                        card.controller === context.choosingPlayer &&
+                        card.getType() === 'character',
+                    gameAction: (card, context) =>
+                        GameActions.putIntoPlay({ player: context.player, card })
+                })
+            }),
             max: ability.limit.perChallenge(1)
         });
-    }
-
-    onCardSelected(player, card) {
-        this.controller.putIntoPlay(card);
-        this.game.addMessage('{0} chooses {1} for {2}', player, card, this);
-        return true;
-    }
-
-    cancelSelection(player) {
-        this.game.addAlert('danger', '{0} does not select a character for {1}', player, this);
-        return true;
     }
 }
 
