@@ -20,16 +20,18 @@ class DaenerysTargaryen extends DrawCard {
                 message: '{player} {gameAction}',
                 gameAction: GameActions.putIntoPlay((context) => ({
                     card: context.searchTarget
-                })).thenExecute((event) => {
-                    this.atEndOfPhase((ability) => ({
-                        match: event.card,
-                        condition: () => ['play area', 'duplicate'].includes(event.card.location),
+                })).then({
+                    gameAction: GameActions.lastingEffect((context) => ({
+                        duration: 'atEndOfPhase',
+                        match: context.event.card,
+                        condition: () =>
+                            ['play area', 'duplicate'].includes(context.event.card.location),
                         targetLocation: 'any',
                         effect: ability.effects.returnToHandIfStillInPlayAndNotAttachedToCardByTitle(
                             'Daenerys Targaryen',
                             false
                         )
-                    }));
+                    }))
                 })
             })
         });

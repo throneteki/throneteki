@@ -7,10 +7,10 @@ class AegonTargaryen extends DrawCard {
     // Reaction: After Aegon Targaryen enters play, search your deck for an Army or Mercenary
     // character, put it into play, and shuffle your deck. At the end of the phase, if that card is
     // still in play, return it to your hand.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             message:
                 '{player} uses {source} to search their deck for an Army or Mercenary character',
@@ -21,13 +21,15 @@ class AegonTargaryen extends DrawCard {
                 message: '{player} {gameAction}',
                 gameAction: GameActions.putIntoPlay((context) => ({
                     card: context.searchTarget
-                })).thenExecute((event) => {
-                    this.atEndOfPhase((ability) => ({
-                        match: event.card,
-                        condition: () => ['play area', 'duplicate'].includes(event.card.location),
+                })).then({
+                    gameAction: GameActions.lastingEffect((context) => ({
+                        duration: 'atEndOfPhase',
+                        match: context.event.card,
+                        condition: () =>
+                            ['play area', 'duplicate'].includes(context.event.card.location),
                         targetLocation: 'any',
                         effect: ability.effects.returnToHandIfStillInPlay(true)
-                    }));
+                    }))
                 })
             })
         });

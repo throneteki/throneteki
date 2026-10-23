@@ -246,9 +246,6 @@
         "legacy-helper": 2,
         "add-message": 1
     },
-    "server/game/cards/11.1-TSC/AegonTargaryen.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/11.1-TSC/BeneathTheBridgeOfDream.js": {
         "this-in-ability": 11,
         "add-message": 1,
@@ -474,9 +471,6 @@
         "add-message": 2,
         "prompt-for-select": 1
     },
-    "server/game/cards/17.1-R/DaenerysTargaryen.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/17.1-R/Dorne.js": {
         "this-in-ability": 8,
         "legacy-helper": 1,
@@ -512,9 +506,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/17.2-R2/AegonTargaryen.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/17.2-R2/RandyllTarly.js": {
         "prompt-for-select": 1,
         "this-in-ability": 4,
@@ -532,9 +523,6 @@
         "prompt-for-select": 1,
         "this-in-ability": 4,
         "add-message": 1
-    },
-    "server/game/cards/19-JS/SerBorosBlount.js": {
-        "this-in-ability": 2
     },
     "server/game/cards/19-JS/TheWinterMaid.js": {
         "this-in-ability": 3,
@@ -610,9 +598,6 @@
     "server/game/cards/22-BtB/StormsEnd.js": {
         "this-in-ability": 5,
         "add-message": 1
-    },
-    "server/game/cards/22-BtB/Sunspear.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/22-BtB/TheGreatPyramid.js": {
         "event-registration": 1,
