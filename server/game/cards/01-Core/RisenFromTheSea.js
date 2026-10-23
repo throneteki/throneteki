@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RisenFromTheSea extends DrawCard {
     // Risen from the Sea (01081)
@@ -16,25 +17,34 @@ class RisenFromTheSea extends DrawCard {
                 context.event.saveCard();
 
                 if (this.controller.canAttach(this, context.event.card)) {
-                    this.controller.attach(this.controller, this, context.event.card, 'play');
-                    this.lastingEffect((ability) => ({
-                        condition: () => !!this.parent,
-                        targetLocation: 'any',
-                        match: this,
-                        effect: [
-                            ability.effects.setCardType('attachment'),
-                            ability.effects.addKeyword('Terminal'),
-                            ability.effects.addTrait('Condition')
-                        ]
-                    }));
+                    this.game.resolveGameAction(
+                        GameActions.attach({
+                            player: this.controller,
+                            attachment: this,
+                            target: context.event.card,
+                            playingType: 'play'
+                        }).thenExecute(() => {
+                            this.lastingEffect((ability) => ({
+                                condition: () => !!this.parent,
+                                targetLocation: 'any',
+                                match: this,
+                                effect: [
+                                    ability.effects.setCardType('attachment'),
+                                    ability.effects.addKeyword('Terminal'),
+                                    ability.effects.addTrait('Condition')
+                                ]
+                            }));
 
-                    this.lastingEffect((ability) => ({
-                        condition: () => this.location === 'play area',
-                        targetLocation: 'any',
-                        targetController: 'any',
-                        match: (card) => card === this.parent,
-                        effect: ability.effects.modifyStrength(1)
-                    }));
+                            this.lastingEffect((ability) => ({
+                                condition: () => this.location === 'play area',
+                                targetLocation: 'any',
+                                targetController: 'any',
+                                match: (card) => card === this.parent,
+                                effect: ability.effects.modifyStrength(1)
+                            }));
+                        }),
+                        context
+                    );
                 }
 
                 this.game.addMessage(

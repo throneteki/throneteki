@@ -5,6 +5,7 @@ import AddToChallenge from './AddToChallenge.js';
 import AddToHand from './AddToHand.js';
 import ApplyClaim from './ApplyClaim.js';
 import ApplyLastingEffect from './ApplyLastingEffect.js';
+import Attach from './Attach.js';
 import CancelEffects from './CancelEffects.js';
 import ChangeClaimType from './ChangeClaimType.js';
 import ChangeEventAmount from './ChangeEventAmount.js';
@@ -71,6 +72,7 @@ const GameActions = {
     addToChallenge: (props) => new AbilityAdapter(AddToChallenge, props),
     addToHand: (props) => new AbilityAdapter(AddToHand, props),
     applyClaim: (props) => new AbilityAdapter(ApplyClaim, props),
+    attach: (props) => new AbilityAdapter(Attach, props),
     cancelEffects: (props) => new AbilityAdapter(CancelEffects, props),
     changeClaimType: (props) => new AbilityAdapter(ChangeClaimType, props),
     changeEventAmount: (props) => new AbilityAdapter(ChangeEventAmount, props),

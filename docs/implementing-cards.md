@@ -481,6 +481,17 @@ gameAction: GameActions.chooseCards({
 cancels the rest of the effect. When the text leaves no way out ("sacrifice it unless you pay X
 gold", The Gold Price), pass `cancelable: false` so there is no Done button.
 
+### Attaching cards
+
+For "attach X to Y" or "move X to another character", use
+`GameActions.attach({ player, attachment, target })`. `player` controls the attachment afterwards
+(default: its current controller). A card from outside play enters play (`onCardEntersPlay`) as
+well as being attached (`onCardAttached`); an attachment already in play only moves. The
+attachment is attached by the time interrupts are over, so reactions see it on its new parent. It
+can't change the game state unless the attachment is allowed on the target, or when it is already
+attached to it. Pass `facedown: true` for a facedown attachment, which ignores attachment
+restrictions and doesn't enter play.
+
 ### Switching cards
 
 `GameActions.switch({ cards: [first, second] })` switches the positions of two cards. It only
