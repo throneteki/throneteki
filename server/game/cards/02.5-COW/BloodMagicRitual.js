@@ -24,15 +24,14 @@ class BloodMagicRitual extends DrawCard {
                     attachment: context.source,
                     target: context.parentContext.event.card,
                     playingType: 'play',
-                    asCondition: ability.effects.blankExcludingTraits
+                    asAttachment: {
+                        keywords: ['Terminal'],
+                        traits: ['Condition'],
+                        effect: ability.effects.blankExcludingTraits
+                    }
                 }))
             })
         });
-    }
-
-    // Explicitly override since it has printed type 'event'.
-    canAttach(player, card) {
-        return card.getType() === 'character';
     }
 }
 

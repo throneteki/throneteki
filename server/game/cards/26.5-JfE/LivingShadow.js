@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LivingShadow extends DrawCard {
     // Living Shadow (26081)
@@ -9,51 +10,30 @@ class LivingShadow extends DrawCard {
     // saved."
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: this,
+            match: (card, context) => card === context.source,
             effect: ability.effects.cannotBeKilled()
         });
 
         this.forcedReaction({
             when: {
-                onBypassedByStealth: (event) =>
-                    event.source === this && this.canAttachTo(event.target)
+                onBypassedByStealth: (event, context) => event.source === context.source
             },
             message: {
-                format: '{player} is forced to attach {source} to {character}"',
+                format: '{player} is forced to attach {source} to {character}',
                 args: { character: (context) => context.event.target }
             },
-            handler: (context) => {
-                context.player.attach(context.player, this, context.event.target, 'effect');
-                this.lastingEffect((ability) => ({
-                    condition: () => !!this.parent,
-                    targetLocation: 'any',
-                    match: this,
-                    effect: [
-                        ability.effects.setCardType('attachment'),
-                        ability.effects.addKeyword('Terminal'),
-                        ability.effects.addTrait('Condition')
-                    ]
-                }));
-
-                this.lastingEffect((ability) => ({
-                    condition: () => this.location === 'play area',
-                    targetLocation: 'any',
-                    targetController: 'any',
-                    match: (card) => card === this.parent,
+            gameAction: GameActions.attach((context) => ({
+                player: context.player,
+                attachment: context.source,
+                target: context.event.target,
+                playingType: 'effect',
+                asAttachment: {
+                    keywords: ['Terminal'],
+                    traits: ['Condition'],
                     effect: ability.effects.cannotBeSaved()
-                }));
-            }
+                }
+            }))
         });
-    }
-
-    canAttachTo(card) {
-        // Need to fake a snapshot of this card when converted to an attachment to determine if it CAN be attached
-        const attachment = this.createSnapshot();
-        attachment.setCardType('attachment');
-        attachment.addKeyword('Terminal');
-        attachment.addTrait('Condition');
-
-        return attachment.controller.canAttach(attachment, card);
     }
 }
 

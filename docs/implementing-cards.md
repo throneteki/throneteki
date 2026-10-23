@@ -492,12 +492,13 @@ can't change the game state unless the attachment is allowed on the target, or w
 attached to it. Pass `facedown: true` for a facedown attachment, which ignores attachment
 restrictions and doesn't enter play.
 
-For an event that attaches itself "as a Condition attachment with the text: ..." (Risen from the
-Sea, Blood Magic Ritual), pass the effect that text gives the attached character as
-`asCondition`. The card becomes a Terminal Condition attachment while attached, and the effect
-applies to its parent while it is in play. Neither comes from the card's printed text, so blanking
-the attachment doesn't remove them. Override `canAttach` on the card, since its printed type is
-event.
+For a card that attaches "as an attachment with the text: ..." (Risen from the Sea, "Florian and
+Jonquil", Living Shadow, Valyrian's Crew), pass `asAttachment: { keywords, traits, effect }`.
+While attached, the card is an attachment with those keywords and traits, and `effect` applies to
+its parent while the card is in play. They come from the effect that attached it, not from its
+printed text, so blanking the attachment doesn't remove them. Whether it can be attached is
+checked against what it will be once attached, so a printed event or character doesn't need to
+override `canAttach`.
 
 ```javascript
 gameAction: GameActions.saveCard((context) => ({ event: context.event })).then({
@@ -506,7 +507,11 @@ gameAction: GameActions.saveCard((context) => ({ event: context.event })).then({
         attachment: context.source,
         target: context.parentContext.event.card,
         playingType: 'play',
-        asCondition: ability.effects.blankExcludingTraits
+        asAttachment: {
+            keywords: ['Terminal'],
+            traits: ['Condition'],
+            effect: ability.effects.blankExcludingTraits
+        }
     }))
 })
 ```

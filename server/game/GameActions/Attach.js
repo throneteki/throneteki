@@ -12,14 +12,36 @@ class Attach extends GameAction {
         return Message.fragment('attaches {attachment} to {target}', { attachment, target });
     }
 
-    canChangeGameState({ player, attachment, target, facedown = false }) {
+    canChangeGameState({ player, attachment, target, facedown = false, asAttachment }) {
+        if (!attachment) {
+            return false;
+        }
+
         player = player || attachment.controller;
         return (
             !!target &&
             target.location === 'play area' &&
             attachment.parent !== target &&
-            (facedown || player.canAttach(attachment, target))
+            (facedown || player.canAttach(this.asAttached(attachment, asAttachment), target))
         );
+    }
+
+    // Whether a card that becomes an attachment can be attached depends on what it will be once
+    // attached, not on its printed type.
+    asAttached(attachment, asAttachment) {
+        if (!asAttachment) {
+            return attachment;
+        }
+
+        const candidate = attachment.createSnapshot();
+        candidate.setCardType('attachment');
+        for (const keyword of asAttachment.keywords || []) {
+            candidate.addKeyword(keyword);
+        }
+        for (const trait of asAttachment.traits || []) {
+            candidate.addTrait(trait);
+        }
+        return candidate;
     }
 
     createEvent({
@@ -28,7 +50,8 @@ class Attach extends GameAction {
         target,
         playingType = 'play',
         facedown = false,
-        asCondition
+        asAttachment,
+        context
     }) {
         player = player || attachment.controller;
         const originalLocation = attachment.location;
@@ -57,8 +80,12 @@ class Attach extends GameAction {
             event.attachment.takeControl(player);
             event.target.attachments.push(event.attachment);
 
-            if (asCondition) {
-                this.applyConditionText(event.attachment, asCondition);
+            if (asAttachment) {
+                this.applyAttachmentText(
+                    (context && context.source) || event.attachment,
+                    event.attachment,
+                    asAttachment
+                );
             }
 
             game.queueSimpleStep(() => {
@@ -89,30 +116,36 @@ class Attach extends GameAction {
         return this.atomic(...events);
     }
 
-    // A card attached "as a Condition attachment with the text: ..." gets that text from the effect
-    // that attached it, so blanking the attachment doesn't remove it.
-    applyConditionText(card, effect) {
-        card.game.addEffect(card, {
+    // A card attached "as an attachment with the text: ..." gets that text from the effect that
+    // attached it, so blanking the attachment doesn't remove it.
+    applyAttachmentText(source, card, { keywords = [], traits = [], effect }) {
+        const until = { onCardLeftPlay: (event) => event.card === card };
+        card.game.addEffect(source, {
             duration: 'custom',
+            until,
             location: 'any',
             targetLocation: 'any',
             condition: () => !!card.parent,
             match: card,
             effect: [
                 Effects.setCardType('attachment'),
-                Effects.addKeyword('Terminal'),
-                Effects.addTrait('Condition')
+                ...keywords.map((keyword) => Effects.addKeyword(keyword)),
+                ...traits.map((trait) => Effects.addTrait(trait))
             ]
         });
-        card.game.addEffect(card, {
-            duration: 'custom',
-            location: 'any',
-            targetLocation: 'any',
-            targetController: 'any',
-            condition: () => card.location === 'play area',
-            match: (parent) => parent === card.parent,
-            effect
-        });
+
+        if (effect) {
+            card.game.addEffect(source, {
+                duration: 'custom',
+                until,
+                location: 'any',
+                targetLocation: 'any',
+                targetController: 'any',
+                condition: () => card.location === 'play area',
+                match: (parent) => parent === card.parent,
+                effect
+            });
+        }
     }
 
     outOfShadowsEvents({ player, card, originalLocation, type }) {

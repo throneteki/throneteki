@@ -1,5 +1,6 @@
 import AbilityContext from '../../../server/game/AbilityContext.js';
 import GameActions from '../../../server/game/GameActions/index.js';
+import AbilityDsl from '../../../server/game/abilitydsl.js';
 
 describe('attach game action', function () {
     beforeEach(function () {
@@ -11,7 +12,7 @@ describe('attach game action', function () {
                     'Winterfell Steward',
                     'The Roseroad'
                 ],
-                hand: ['Milk of the Poppy']
+                hand: ['Milk of the Poppy', 'Risen from the Sea']
             }
         });
 
@@ -80,5 +81,51 @@ describe('attach game action', function () {
         });
 
         expect(action.allow(this.context)).toBe(false);
+    });
+
+    describe('as an attachment with text', function () {
+        beforeEach(function () {
+            this.attach({
+                attachment: this.risenFromTheSea,
+                target: this.winterfellSteward,
+                asAttachment: {
+                    keywords: ['Terminal'],
+                    traits: ['Condition'],
+                    effect: AbilityDsl.effects.modifyStrength(1)
+                }
+            });
+        });
+
+        it('becomes an attachment with those keywords and traits', function () {
+            expect(this.risenFromTheSea.parent).toBe(this.winterfellSteward);
+            expect(this.risenFromTheSea.getType()).toBe('attachment');
+            expect(this.risenFromTheSea.isTerminal()).toBe(true);
+            expect(this.risenFromTheSea.hasTrait('Condition')).toBe(true);
+        });
+
+        it('applies the effect to its parent', function () {
+            expect(this.winterfellSteward.getStrength()).toBe(
+                this.winterfellSteward.getPrintedStrength() + 1
+            );
+        });
+    });
+
+    it('checks attachment restrictions against what the card becomes', function () {
+        const action = GameActions.attach({
+            player: this.player1Object,
+            attachment: this.risenFromTheSea,
+            target: this.theRoseroad,
+            asAttachment: {}
+        });
+
+        expect(action.allow(this.context)).toBe(false);
+        expect(
+            GameActions.attach({
+                player: this.player1Object,
+                attachment: this.risenFromTheSea,
+                target: this.winterfellSteward,
+                asAttachment: {}
+            }).allow(this.context)
+        ).toBe(true);
     });
 });

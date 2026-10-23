@@ -195,11 +195,6 @@
         "prompt-for-select": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/11.3-SoKL/ValyriansCrew.js": {
-        "this-in-ability": 9,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/11.4-MoD/AMissionInEssos.js": {
         "this-in-ability": 9,
         "legacy-helper": 4,
@@ -316,10 +311,6 @@
         "this-in-ability": 9,
         "add-message": 1
     },
-    "server/game/cards/15-DotE/DothrakiHandmaiden.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 1
-    },
     "server/game/cards/15-DotE/DragonstoneConvert.js": {
         "this-in-ability": 3,
         "add-message": 1
@@ -426,11 +417,6 @@
         "prompt-for-select": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/22-BtB/FlorianAndJonquil.js": {
-        "this-in-ability": 14,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/22-BtB/Highgarden.js": {
         "this-in-ability": 15,
         "add-message": 2,
@@ -447,11 +433,6 @@
     },
     "server/game/cards/23-AHaH/ATraitorsWhisper.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/23-AHaH/MaesterColemon.js": {
-        "this-in-ability": 2,
-        "prompt-for-select": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/23-AHaH/SerVardisEgen.js": {
         "this-in-ability": 3,
@@ -486,10 +467,6 @@
     "server/game/cards/25.5-TIC/Qyburn.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/25.5-TIC/SavedByTheWatch.js": {
-        "this-in-ability": 10,
-        "legacy-helper": 1
-    },
     "server/game/cards/25.6-WK/BurningTheBooks.js": {
         "this-in-ability": 4
     },
@@ -499,10 +476,6 @@
     },
     "server/game/cards/26.3-MaV/WanderingDisciple.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/26.5-JfE/LivingShadow.js": {
-        "this-in-ability": 9,
-        "legacy-helper": 1
     },
     "server/game/cards/27.2-WGYK/Hornvale.js": {
         "event-registration": 1,
