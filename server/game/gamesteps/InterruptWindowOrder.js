@@ -54,6 +54,7 @@ const OrderableEventFunc = {
 
                 game.promptForSelect(player, {
                     ordered: true,
+                    revealTargets: group.location === 'draw deck',
                     mode: 'exactly',
                     numCards: group.events.length,
                     activePromptTitle: group.title,

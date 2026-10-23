@@ -42,6 +42,7 @@ import NameCard from './NameCard.js';
 import NameTrait from './NameTrait.js';
 import PayGold from './PayGold.js';
 import PlaceAsDuplicate from './PlaceAsDuplicate.js';
+import MarshalAsDuplicate from './MarshalAsDuplicate.js';
 import PlaceCard from './PlaceCard.js';
 import PlaceCardUnderneath from './PlaceCardUnderneath.js';
 import PlaceToken from './PlaceToken.js';
@@ -112,6 +113,7 @@ const GameActions = {
     nameTrait: (props) => new NameTrait(props),
     payGold: (props) => new AbilityAdapter(PayGold, props),
     placeAsDuplicate: (props) => new AbilityAdapter(PlaceAsDuplicate, props),
+    marshalAsDuplicate: (props) => new AbilityAdapter(MarshalAsDuplicate, props),
     placeCard: (props) => new AbilityAdapter(PlaceCard, props),
     placeCardUnderneath: (props) => new AbilityAdapter(PlaceCardUnderneath, props),
     placeToken: (props) => new AbilityAdapter(PlaceToken, props),

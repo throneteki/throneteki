@@ -1,3 +1,5 @@
+import ManualMode from '../../server/game/ManualMode.js';
+
 describe('manual mode', function () {
     const VerifiedPlots = { plot: 'Confiscation', plotDeck: ['Confiscation', 'Confiscation'] };
 
@@ -107,7 +109,15 @@ describe('manual mode', function () {
 
     describe('when a card in the game is not verified', function () {
         beforeEach(function () {
+            const isVerified = ManualMode.isVerified;
+            vi.spyOn(ManualMode, 'isVerified').mockImplementation(
+                (cardData) => cardData.name !== 'Lady-in-Waiting' && isVerified(cardData)
+            );
             setup(this, { hand: ['Lady-in-Waiting'] });
+        });
+
+        afterEach(function () {
+            vi.restoreAllMocks();
         });
 
         it('starts on', function () {

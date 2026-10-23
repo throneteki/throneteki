@@ -14,6 +14,11 @@ class CustomPlayAction extends BaseAbility {
     }
 
     executeHandler(context) {
+        if (!this.handler) {
+            super.executeHandler(context);
+            return;
+        }
+
         this.handler(context);
     }
 

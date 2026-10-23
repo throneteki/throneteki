@@ -561,6 +561,19 @@ gameAction: GameActions.saveCard((context) => ({ event: context.event })).then({
 });
 ```
 
+### Placing cards in any order
+
+Cards placed in the same pile at once are ordered by the player resolving the effect (the owner
+for a discard or dead pile), and cards placed in a draw deck are shown to that player while they
+choose. Pass `orderable: false` for a random or fixed order. "Place the others on top, in any
+order" (The Bear and the Maiden Fair) passes `orderable: true` so the card already on top is
+ordered with the rest.
+
+### Marshaling as a duplicate
+
+`GameActions.marshalAsDuplicate({ card, parent, player })` raises `onCardMarshalled` with
+`type: 'dupe'` and places the card on `parent` as a duplicate, at no cost (Lady-in-Waiting).
+
 ### Redirecting challenges
 
 `GameActions.redirectChallenge({ challenge, player })` redirects the current challenge to another

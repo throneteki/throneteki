@@ -9,21 +9,11 @@
         "this-in-ability": 1,
         "add-message": 1
     },
-    "server/game/cards/01-Core/TheBearAndTheMaidenFair.js": {
-        "this-in-ability": 6,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/02.2-TRtW/BrothelMadame.js": {
         "event-registration": 1,
         "this-in-ability": 15,
         "add-message": 4,
         "legacy-helper": 1
-    },
-    "server/game/cards/02.2-TRtW/LadyInWaiting.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 2,
-        "add-message": 1
     },
     "server/game/cards/02.3-TKP/INeverBetAgainstMyFamily.js": {
         "prompt-for-select": 1,
@@ -45,11 +35,6 @@
     },
     "server/game/cards/04.5-GoH/RooseBolton.js": {
         "this-in-ability": 9,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/04.6-TC/HouseOfTheUndying.js": {
-        "this-in-ability": 1,
         "legacy-helper": 1,
         "add-message": 1
     },

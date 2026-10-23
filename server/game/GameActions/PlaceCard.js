@@ -6,10 +6,11 @@ class PlaceCard extends GameAction {
         super('placeCard');
     }
 
-    canChangeGameState({ player, card, location, bottom = false }) {
+    canChangeGameState({ player, card, location, bottom = false, orderable }) {
         player = location === 'play area' ? player || card.controller : card.owner;
         if (location === 'draw deck') {
             return (
+                (orderable === true && card.location === 'draw deck') ||
                 (player.drawDeck[0] !== card && !bottom) ||
                 (player.drawDeck[player.drawDeck.length - 1] !== card && bottom)
             );
