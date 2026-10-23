@@ -495,10 +495,6 @@
         "legacy-helper": 2,
         "add-message": 3
     },
-    "server/game/cards/11.5-IDP/HeCallsItThinking.js": {
-        "this-in-ability": 6,
-        "add-message": 2
-    },
     "server/game/cards/11.6-DitD/AssaultFromTheShadows.js": {
         "this-in-ability": 4,
         "add-message": 1,
@@ -554,11 +550,6 @@
         "prompt-for-select": 2,
         "add-message": 2,
         "legacy-helper": 2
-    },
-    "server/game/cards/13.2-CoS/GhostOfHighHeart.js": {
-        "this-in-ability": 4,
-        "add-message": 1,
-        "legacy-helper": 1
     },
     "server/game/cards/13.2-CoS/ShadowOfTheWall.js": {
         "legacy-helper": 2,
@@ -791,11 +782,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/17.1-R/TheQueensRetinue.js": {
-        "this-in-ability": 8,
-        "legacy-helper": 1,
-        "add-message": 2
-    },
     "server/game/cards/17.1-R/ValyrianSteel.js": {
         "this-in-ability": 5
     },
@@ -1002,9 +988,6 @@
         "prompt-for-select": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/23-AHaH/PrinceOfTheNarrowSea.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/23-AHaH/SerVardisEgen.js": {
         "this-in-ability": 3,
         "legacy-helper": 2
@@ -1176,9 +1159,6 @@
     },
     "server/game/cards/26.6-NCbT/WarElephants.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/27.1-THBIB/IntoTheLists.js": {
-        "this-in-ability": 4
     },
     "server/game/cards/27.2-WGYK/Hornvale.js": {
         "event-registration": 1,

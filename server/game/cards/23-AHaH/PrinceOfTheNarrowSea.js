@@ -13,10 +13,9 @@ class PrinceOfTheNarrowSea extends DrawCard {
             match: (card) => card.name === 'Salladhor Saan',
             effect: [ability.effects.addTrait('Commander'), ability.effects.addKeyword('Renown')]
         });
-
         this.reaction({
             when: {
-                onInitiativeDetermined: (event) => event.winner !== this.controller
+                onInitiativeDetermined: (event, context) => event.winner !== context.player
             },
             cost: ability.costs.returnToHand((card) =>
                 card.isMatch({ trait: ['Captain', 'Smuggler'], type: 'character' })
@@ -47,16 +46,9 @@ class PrinceOfTheNarrowSea extends DrawCard {
                 format: '{player} uses {source} and returns {costs.returnToHand} to its owners hand to kneel {knelt}',
                 args: { knelt: (context) => context.targets.getTargets() }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        context.targets
-                            .getTargets()
-                            .map((card) => GameActions.kneelCard({ card: card }), context)
-                    ),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                context.targets.getTargets().map((card) => GameActions.kneelCard({ card }))
+            )
         });
     }
 }

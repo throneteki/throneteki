@@ -9,55 +9,23 @@ class TheQueensRetinue extends DrawCard {
         this.action({
             title: 'Put into play',
             location: 'shadows',
-            condition: (context) => context.player.canPutIntoPlay(this, 'outOfShadows'),
-            handler: (context) => {
-                this.game
-                    .resolveGameAction(
-                        GameActions.putIntoPlay((context) => ({
-                            player: context.player,
-                            card: this
-                        })),
-                        context
+            message: '{player} uses {source} to put {source} into play from shadows',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.source
+            })).then({
+                gameAction: GameActions.simultaneously((context) =>
+                    context.game.getOpponents(context.player).map((opponent) =>
+                        GameActions.may({
+                            player: opponent,
+                            title: 'Draw 2 cards?',
+                            message: '{choosingPlayer} draws 2 cards for {source}',
+                            gameAction: GameActions.drawCards({ player: opponent, amount: 2 })
+                        })
                     )
-                    .thenExecute(() => {
-                        for (let opponent of this.game.getOpponents(this.controller)) {
-                            if (opponent.canDraw()) {
-                                this.game.promptWithMenu(opponent, this, {
-                                    activePrompt: {
-                                        menuTitle: 'Draw 2 cards?',
-                                        buttons: [
-                                            { text: 'Yes', method: 'draw2' },
-                                            { text: 'No', method: 'doNotDraw' }
-                                        ]
-                                    },
-                                    source: this
-                                });
-                            }
-                        }
-                    });
-            }
+                )
+            })
         });
-    }
-
-    draw2(opponent) {
-        opponent.drawCardsToHand(2);
-        this.game.addMessage(
-            '{0} uses {1} to put {1} into play from shadows and have {2} draw 2 cards',
-            this.controller,
-            this,
-            opponent
-        );
-        return true;
-    }
-
-    doNotDraw(opponent) {
-        this.game.addMessage(
-            '{0} uses {1} to put {1} into play from shadows, but {2} does not draw',
-            this.controller,
-            this,
-            opponent
-        );
-        return true;
     }
 }
 

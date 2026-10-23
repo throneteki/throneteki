@@ -8,55 +8,46 @@ class GhostOfHighHeart extends DrawCard {
     // card from that hand. Then, that player draws 1 card.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                !this.controller.anyCardsInPlay(
+            condition: (context) =>
+                !context.source.controller.anyCardsInPlay(
                     (card) => card.getType() === 'character' && card.isLoyal()
                 ),
             match: (card) => card.getType() === 'character',
             targetController: 'current',
             effect: ability.effects.modifyStrength(1)
         });
-
         this.action({
             title: 'Look at hand',
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
             choosePlayer: (player) => player.hand.length > 0,
             message: "{player} kneels {source} to look at {chosenPlayer}'s hand",
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.lookAtHand((context) => ({
-                        player: context.player,
-                        opponent: context.chosenPlayer
-                    })).then({
-                        target: {
-                            activePromptTitle: 'Select a card',
-                            cardCondition: (card, context) =>
-                                card.location === 'hand' &&
-                                (!context.parentContext.chosenPlayer ||
-                                    card.controller === context.parentContext.chosenPlayer),
-                            revealTargets: true
-                        },
-                        message: 'Then {player} uses {source} to discard {target}',
-                        handler: (thenContext) => {
-                            this.game
-                                .resolveGameAction(
-                                    GameActions.discardCard({ card: thenContext.target })
-                                )
-                                .thenExecute(() => {
-                                    if (context.chosenPlayer.canDraw()) {
-                                        this.game.addMessage(
-                                            'Then {0} draws 1 card',
-                                            context.chosenPlayer
-                                        );
-                                        context.chosenPlayer.drawCardsToHand(1);
-                                    }
-                                });
+            gameAction: GameActions.lookAtHand((context) => ({
+                player: context.player,
+                opponent: context.chosenPlayer
+            })).then({
+                target: {
+                    activePromptTitle: 'Select a card',
+                    cardCondition: (card, context) =>
+                        card.location === 'hand' &&
+                        card.controller === context.parentContext.chosenPlayer,
+                    revealTargets: true
+                },
+                message: 'Then {player} uses {source} to discard {target}',
+                gameAction: GameActions.discardCard((context) => ({ card: context.target })).then({
+                    message: {
+                        format: 'Then {chosenPlayer} draws 1 card',
+                        args: {
+                            chosenPlayer: (context) =>
+                                context.parentContext.parentContext.chosenPlayer
                         }
-                    }),
-                    context
-                );
-            }
+                    },
+                    gameAction: GameActions.drawCards((context) => ({
+                        player: context.parentContext.parentContext.chosenPlayer,
+                        amount: 1
+                    }))
+                })
+            })
         });
     }
 }
