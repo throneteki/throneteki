@@ -25,10 +25,6 @@
         "this-in-ability": 9,
         "add-message": 1
     },
-    "server/game/cards/20-HMW/KindlyMan.js": {
-        "this-in-ability": 5,
-        "add-message": 1
-    },
     "server/game/cards/21-FtR/BattleoftheTrident.js": {
         "this-in-ability": 12,
         "add-message": 2
