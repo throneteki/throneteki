@@ -108,7 +108,10 @@ class ChooseCards extends GameAction {
             revealTargets: this.revealTargets,
             canCancel: context.game.manualMode.enabled,
             onSelect: (selectingPlayer, cards) => {
-                chosen.set(player, Array.isArray(cards) ? cards : [cards]);
+                chosen.set(
+                    player,
+                    cards === undefined ? [] : Array.isArray(cards) ? cards : [cards]
+                );
                 return true;
             },
             source: context.source
@@ -116,6 +119,10 @@ class ChooseCards extends GameAction {
     }
 
     attachResolution(event, player, cards, context) {
+        if (cards.length === 0) {
+            return;
+        }
+
         const choosingContext = withChoosingPlayer(context, player);
         const action = new SimultaneousActions(
             cards.map((card) => this.gameActionFactory(card, choosingContext))

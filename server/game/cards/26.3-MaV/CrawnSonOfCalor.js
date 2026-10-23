@@ -10,7 +10,7 @@ class CrawnSonOfCalor extends DrawCard {
             location: 'any',
             targetController: 'current',
             effect: ability.effects.canMarshalIntoShadows(
-                (card) => card === this && card.location === 'discard pile'
+                (card, context) => card === context.source && card.location === 'discard pile'
             )
         });
     }

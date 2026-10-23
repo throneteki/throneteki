@@ -18,3 +18,20 @@ describe('Qotho (HoT)', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('Qotho (HoT) cost restrictions', function () {
+    it('cannot use himself as one of the two discarded Targaryen cards', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                hand: ['Qotho (HoT)', 'Dragon Sight', 'The Roseroad'],
+                plot: 'Name Day Tourney'
+            }
+        });
+        expect(this.player1.actionUnavailableReason(this.qotho)).toBe('cost');
+        expect(this.qotho.location).toBe('hand');
+        expect(this.dragonSight.location).toBe('hand');
+        expect(this.theRoseroad.location).toBe('hand');
+        expect(this.player1).isReadyToTakeAction();
+    });
+});

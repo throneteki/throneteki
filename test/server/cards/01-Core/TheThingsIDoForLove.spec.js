@@ -21,3 +21,46 @@ describe('The Things I Do For Love', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('The Things I Do For Love restrictions', function () {
+    it('restricts targets to cost zero when X is zero', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                hand: ['The Things I Do For Love'],
+                inPlay: ['Cersei Lannister (Core)'],
+                gold: 3
+            },
+            player2: { inPlay: ['Vale Refugee', 'Hedge Knight', 'The Roseroad'] }
+        });
+        this.player1.clickCard(this.theThingsIDoForLove);
+        this.player1.selectValue('0');
+        expect(this.player1).toBeAbleToSelect(this.valeRefugee);
+        expect(this.player1).not.toBeAbleToSelect(this.hedgeKnight);
+        expect(this.player1).not.toBeAbleToSelect(this.theRoseroad);
+        expect(this.player1).not.toBeAbleToSelect(this.cerseiLannister);
+        this.player1.clickCard(this.valeRefugee);
+        expect(this.valeRefugee.location).toBe('hand');
+        expect(this.hedgeKnight.location).toBe('play area');
+        expect(this.player1Object.gold).toBe(3);
+        expect(this.player1Object.faction.kneeled).toBe(true);
+        expect(this.player1).isReadyToTakeAction();
+    });
+
+    it('requires a Lannister Lord or Lady character', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                hand: ['The Things I Do For Love'],
+                inPlay: ['Lannisport Merchant'],
+                gold: 3
+            },
+            player2: { inPlay: ['Hedge Knight'] }
+        });
+        expect(this.player1.actionUnavailableReason(this.theThingsIDoForLove)).toBe('condition');
+        expect(this.player1Object.gold).toBe(3);
+        expect(this.player1Object.faction.kneeled).toBe(false);
+        expect(this.hedgeKnight.location).toBe('play area');
+        expect(this.player1).isReadyToTakeAction();
+    });
+});

@@ -14,7 +14,6 @@ class WheelsWithinWheels extends PlotCard {
                 match: { type: 'event' },
                 topCards: 10,
                 numToSelect: 10,
-                //TODO: When a SelectCards GameAction is implemented, update the below to reveal action (reveal=false on search), and select while revealed
                 gameAction: GameActions.choose({
                     title: 'Select event to draw',
                     message: {
@@ -26,28 +25,26 @@ class WheelsWithinWheels extends PlotCard {
                                 )
                         }
                     },
-                    choices: (context) => this.buildChoices(context.searchTarget)
+                    choices: (context) => buildChoices(context.searchTarget)
                 })
             })
         });
     }
+}
 
-    buildChoices(targets) {
-        return targets.reduce((choices, target) => {
-            choices[target.name] = choices[target.name] || {
-                card: target,
-                gameAction: GameActions.simultaneously([
-                    GameActions.addToHand({ card: target }),
-                    ...targets
-                        .filter((card) => card !== target)
-                        .map((card) =>
-                            GameActions.placeCard({ card: card, location: 'discard pile' })
-                        )
-                ])
-            };
-            return choices;
-        }, {});
-    }
+function buildChoices(targets) {
+    return targets.reduce((choices, target) => {
+        choices[target.name] = choices[target.name] || {
+            card: target,
+            gameAction: GameActions.simultaneously([
+                GameActions.addToHand({ card: target }),
+                ...targets
+                    .filter((card) => card !== target)
+                    .map((card) => GameActions.placeCard({ card: card, location: 'discard pile' }))
+            ])
+        };
+        return choices;
+    }, {});
 }
 
 WheelsWithinWheels.code = '06100';

@@ -9,8 +9,8 @@ class SerJacelynBywater extends DrawCard {
         this.persistentEffect({
             targetController: 'current',
             effect: ability.effects.canAmbush(
-                (card) =>
-                    card.controller === this.controller &&
+                (card, context) =>
+                    card.controller === context.source.controller &&
                     card.location === 'discard pile' &&
                     card.getType() === 'character' &&
                     card.isFaction('lannister') &&

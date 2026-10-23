@@ -8,14 +8,14 @@ class KingsLanding extends DrawCard {
     // your hand.
     // Challenges Action: Kneel King's Landing and discard 1 location from your hand to draw 1 card.
     setupCardAbilities(ability) {
-        this.tracker = GenericTracker.forPhase(this.game, 'onCardMarshalled');
+        const tracker = GenericTracker.forPhase(this.game, 'onCardMarshalled');
 
         this.persistentEffect({
-            condition: () => !this.hasMarshalledThisPhase(),
+            condition: (context) => !hasMarshalledThisPhase(tracker, context.source.controller),
             targetController: 'current',
             effect: ability.effects.canMarshal(
-                (card) =>
-                    card.controller === this.controller &&
+                (card, context) =>
+                    card.controller === context.source.controller &&
                     card.location === 'discard pile' &&
                     card.getType() === 'location'
             )
@@ -24,7 +24,7 @@ class KingsLanding extends DrawCard {
         this.action({
             title: 'Draw 1 card',
             phase: 'challenge',
-            condition: () => this.controller.canDraw(),
+            condition: (context) => context.player.canDraw(),
             cost: [
                 ability.costs.kneelSelf(),
                 ability.costs.discardFromHand((card) => card.getType() === 'location')
@@ -34,16 +34,16 @@ class KingsLanding extends DrawCard {
             gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });
     }
+}
 
-    hasMarshalledThisPhase() {
-        return this.tracker.events.some(
-            (event) =>
-                event.player === this.controller &&
-                event.originalController === this.controller &&
-                event.originalLocation === 'discard pile' &&
-                event.card.getType() === 'location'
-        );
-    }
+function hasMarshalledThisPhase(tracker, player) {
+    return tracker.events.some(
+        (event) =>
+            event.player === player &&
+            event.originalController === player &&
+            event.originalLocation === 'discard pile' &&
+            event.card.getType() === 'location'
+    );
 }
 
 KingsLanding.code = '11058';

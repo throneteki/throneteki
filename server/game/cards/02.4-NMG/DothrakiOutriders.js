@@ -8,14 +8,13 @@ class DothrakiOutriders extends DrawCard {
         this.persistentEffect({
             location: 'any',
             targetController: 'current',
-            effect: ability.effects.reduceSelfCost('marshal', () => this.getNumberOfDothraki())
+            effect: ability.effects.reduceSelfCost('marshal', (card) =>
+                card.controller.getNumberOfCardsInPlay(
+                    (character) =>
+                        character.hasTrait('Dothraki') && character.getType() === 'character'
+                )
+            )
         });
-    }
-
-    getNumberOfDothraki() {
-        return this.controller.getNumberOfCardsInPlay(
-            (card) => card.hasTrait('Dothraki') && card.getType() === 'character'
-        );
     }
 }
 

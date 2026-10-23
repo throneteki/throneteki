@@ -129,6 +129,49 @@ describe('chooseCards game action', function () {
         expect(this.kneeled).toEqual([]);
     });
 
+    it('lets a player decline an optional single-card choice without resolving an action', function () {
+        this.game.resolveGameAction(
+            GameActions.chooseCards({
+                optional: true,
+                title: 'Select a character to kneel',
+                cardCondition: (card, context) =>
+                    card.location === 'play area' && card.controller === context.choosingPlayer,
+                gameAction: (card) => GameActions.kneelCard({ card })
+            }),
+            this.context
+        );
+        this.game.continue();
+        this.player1.clickPrompt('Done');
+
+        expect(this.context.chosenCards).toEqual([]);
+        expect(this.kneeled).toEqual([]);
+        expect(this.tumblestoneKnight.kneeled).toBe(false);
+        expect(this.player1).isReadyToTakeAction();
+    });
+
+    it('continues to the next player when an optional single-card choice is declined', function () {
+        this.game.resolveGameAction(
+            GameActions.chooseCards({
+                players: () => [this.player1Object, this.player2Object],
+                optional: true,
+                title: 'Select a character to kneel',
+                cardCondition: (card, context) =>
+                    card.location === 'play area' && card.controller === context.choosingPlayer,
+                gameAction: (card) => GameActions.kneelCard({ card })
+            }),
+            this.context
+        );
+        this.game.continue();
+        this.player1.clickPrompt('Done');
+        expect(this.player2).toHavePrompt('Select a character to kneel');
+        this.player2.clickCard(this.bastardInHiding);
+
+        expect(this.context.chosenCards).toEqual([this.bastardInHiding]);
+        expect(this.kneeled).toEqual([this.bastardInHiding]);
+        expect(this.tumblestoneKnight.kneeled).toBe(false);
+        expect(this.player1).isReadyToTakeAction();
+    });
+
     it('cannot change the game state when no player has a card it could affect', function () {
         const action = this.chooseAndKneel(() => [this.player1Object]);
         this.game.resolveGameAction(

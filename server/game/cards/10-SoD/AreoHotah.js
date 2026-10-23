@@ -11,8 +11,8 @@ class AreoHotah extends DrawCard {
         this.persistentEffect({
             location: 'any',
             targetController: 'current',
-            effect: ability.effects.reduceSelfCost('ambush', () =>
-                this.controller.getNumberOfUsedPlots()
+            effect: ability.effects.reduceSelfCost('ambush', (card) =>
+                card.controller.getNumberOfUsedPlots()
             )
         });
 

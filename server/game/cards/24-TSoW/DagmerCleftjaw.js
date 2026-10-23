@@ -8,10 +8,10 @@ class DagmerCleftjaw extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',
-            condition: () => this.game.anyPlotHasTrait('Winter'),
+            condition: (context) => context.game.anyPlotHasTrait('Winter'),
             targetController: 'current',
             effect: ability.effects.canMarshalIntoShadows(
-                (card) => card === this && card.location === 'dead pile'
+                (card, context) => card === context.source && card.location === 'dead pile'
             )
         });
     }

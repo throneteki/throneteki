@@ -9,14 +9,13 @@ class HighgardenHonorGuard extends DrawCard {
         this.persistentEffect({
             location: 'any',
             targetController: 'current',
-            effect: ability.effects.reduceSelfCost('ambush', () => this.getNumberOfReachLocations())
+            effect: ability.effects.reduceSelfCost('ambush', (card) =>
+                card.controller.getNumberOfCardsInPlay(
+                    (location) =>
+                        location.getType() === 'location' && location.hasTrait('The Reach')
+                )
+            )
         });
-    }
-
-    getNumberOfReachLocations() {
-        return this.controller.getNumberOfCardsInPlay(
-            (card) => card.getType() === 'location' && card.hasTrait('The Reach')
-        );
     }
 }
 

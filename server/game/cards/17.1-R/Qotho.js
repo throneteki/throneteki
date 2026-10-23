@@ -14,7 +14,7 @@ class Qotho extends DrawCard {
                 context.game.anyPlotHasTrait('Summer'),
             cost: ability.costs.discardMultipleFromHand(
                 2,
-                (card) => card !== this && card.isFaction('targaryen')
+                (card, context) => card !== context.source && card.isFaction('targaryen')
             ),
             message: '{player} discards {costs.discardFromHand} to put {source} into play',
             gameAction: GameActions.putIntoPlay((context) => ({

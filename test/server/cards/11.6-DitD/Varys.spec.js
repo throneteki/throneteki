@@ -16,3 +16,30 @@ describe('Varys (DitD)', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('Varys (DitD) discount boundaries', function () {
+    for (const [otherShadows, cost] of [
+        [false, 8],
+        [true, 6]
+    ]) {
+        it('pays ' + cost + ' gold and offers no kill when no character has power', function () {
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    shadows: otherShadows ? ['Varys (DitD)', 'Catspaw'] : ['Varys (DitD)'],
+                    gold: cost
+                },
+                player2: {
+                    shadows: otherShadows ? ['Shadow Priestess'] : [],
+                    inPlay: ['Hedge Knight']
+                }
+            });
+            this.player1.clickCard(this.varys);
+            expect(this.varys.location).toBe('play area');
+            expect(this.player1Object.gold).toBe(0);
+            expect(this.player1).not.toAllowAbilityTrigger(this.varys);
+            expect(this.hedgeKnight.location).toBe('play area');
+            expect(this.player1).isReadyToTakeAction();
+        });
+    }
+});

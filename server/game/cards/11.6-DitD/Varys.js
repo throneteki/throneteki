@@ -10,12 +10,12 @@ class Varys extends DrawCard {
         this.persistentEffect({
             location: 'any',
             targetController: 'current',
-            effect: ability.effects.reduceSelfCost('outOfShadows', () =>
-                this.game
+            effect: ability.effects.reduceSelfCost('outOfShadows', (source) =>
+                source.game
                     .getPlayers()
                     .reduce(
                         (acc, player) =>
-                            acc + player.shadows.filter((card) => card !== this).length,
+                            acc + player.shadows.filter((card) => card !== source).length,
                         0
                     )
             )

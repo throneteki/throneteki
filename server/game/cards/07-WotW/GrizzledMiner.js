@@ -10,20 +10,16 @@ class GrizzledMiner extends DrawCard {
             location: 'any',
             targetController: 'current',
             effect: [
-                ability.effects.reduceSelfCost('marshal', () => this.getDiscount()),
+                ability.effects.reduceSelfCost('marshal', (card) =>
+                    card.controller.getNumberOfCardsInPlay(
+                        (controlledCard) =>
+                            controlledCard.isFaction('thenightswatch') &&
+                            ['attachment', 'location'].includes(controlledCard.getType())
+                    )
+                ),
                 ability.effects.setMinCost(1)
             ]
         });
-    }
-
-    getDiscount() {
-        let cards = this.controller.filterCardsInPlay(
-            (card) =>
-                card.isFaction('thenightswatch') &&
-                (card.getType() === 'attachment' || card.getType() === 'location')
-        );
-
-        return cards.length;
     }
 }
 

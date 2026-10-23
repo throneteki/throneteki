@@ -10,14 +10,12 @@ class GulltownCityGuard extends DrawCard {
             location: 'any',
             targetController: 'current',
             effect: [
-                ability.effects.reduceSelfCost('marshal', () => this.numOfCityPlots()),
+                ability.effects.reduceSelfCost('marshal', (card) =>
+                    card.controller.getNumberOfUsedPlotsByTrait('City')
+                ),
                 ability.effects.setMinCost(1)
             ]
         });
-    }
-
-    numOfCityPlots() {
-        return this.controller.getNumberOfUsedPlotsByTrait('City');
     }
 }
 

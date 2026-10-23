@@ -22,15 +22,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/01-Core/TheThingsIDoForLove.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/01-Core/TheTickler.js": {
-        "legacy-helper": 2,
-        "add-message": 2,
-        "this-in-ability": 7,
-        "prompt-for-select": 1
-    },
     "server/game/cards/01-Core/WakingTheDragon.js": {
         "this-in-ability": 5,
         "legacy-helper": 1,
@@ -74,9 +65,6 @@
         "this-in-ability": 2,
         "add-message": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/02.4-NMG/DothrakiOutriders.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/02.5-COW/BloodMagicRitual.js": {
         "this-in-ability": 14,
@@ -193,15 +181,6 @@
         "prompt-for-select": 2,
         "legacy-helper": 2
     },
-    "server/game/cards/06.5-OR/NorthernEncampment.js": {
-        "this-in-ability": 2
-    },
-    "server/game/cards/06.5-OR/WheelsWithinWheels.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/07-WotW/GrizzledMiner.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/07-WotW/Summer.js": {
         "this-in-ability": 18,
         "add-message": 2,
@@ -215,9 +194,6 @@
     "server/game/cards/08.2-JtO/JourneyToOldtown.js": {
         "this-in-ability": 4,
         "add-message": 1
-    },
-    "server/game/cards/08.5-TFM/TarleTheThriceDrowned.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/08.6-SAT/DriftwoodCudgel.js": {
         "this-in-ability": 11,
@@ -238,19 +214,10 @@
         "this-in-ability": 8,
         "add-message": 2
     },
-    "server/game/cards/09-HoT/HighgardenHonorGuard.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/09-HoT/Qotho.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/09-HoT/TheConclave.js": {
         "event-registration": 1,
         "this-in-ability": 5,
         "add-message": 1
-    },
-    "server/game/cards/10-SoD/AreoHotah.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/10-SoD/Dorne.js": {
         "this-in-ability": 9,
@@ -274,9 +241,6 @@
         "this-in-ability": 8,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/10-SoD/HouseDayneEscort.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/10-SoD/ObellaSand.js": {
         "this-in-ability": 11,
@@ -320,9 +284,6 @@
         "prompt-for-select": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/11.3-SoKL/KingsLanding.js": {
-        "this-in-ability": 5
-    },
     "server/game/cards/11.3-SoKL/ValyriansCrew.js": {
         "this-in-ability": 9,
         "legacy-helper": 1,
@@ -354,9 +315,6 @@
         "add-message": 1,
         "legacy-helper": 2
     },
-    "server/game/cards/11.6-DitD/Varys.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/12-KotI/MaidensBane.js": {
         "this-in-ability": 4,
         "legacy-helper": 2,
@@ -364,9 +322,6 @@
     },
     "server/game/cards/12-KotI/SeaOfBlood.js": {
         "this-in-ability": 5
-    },
-    "server/game/cards/13.1-AtG/BaelorBlacktyde.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/13.2-CoS/ShadowOfTheWall.js": {
         "legacy-helper": 2,
@@ -552,9 +507,6 @@
     "server/game/cards/17.1-R/Meereen.js": {
         "legacy-helper": 1
     },
-    "server/game/cards/17.1-R/Qotho.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/17.1-R/SeaOfBlood.js": {
         "this-in-ability": 3
     },
@@ -587,9 +539,6 @@
         "this-in-ability": 9,
         "legacy-helper": 2,
         "add-message": 2
-    },
-    "server/game/cards/19-JS/GulltownCityGuard.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/19-JS/RandyllTarly.js": {
         "prompt-for-select": 1,
@@ -653,9 +602,6 @@
         "this-in-ability": 8,
         "add-message": 2
     },
-    "server/game/cards/21-FtR/SerJacelynBywater.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/21-FtR/TheIronFleet.js": {
         "this-in-ability": 3,
         "add-message": 1
@@ -713,9 +659,6 @@
         "prompt-for-select": 1,
         "add-message": 1
     },
-    "server/game/cards/24-TSoW/DagmerCleftjaw.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/24-TSoW/Dragonstone.js": {
         "this-in-ability": 3
     },
@@ -730,9 +673,6 @@
         "add-message": 1
     },
     "server/game/cards/25.1-ATT/Bloodraven.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/25.1-ATT/CastMeForth.js": {
         "this-in-ability": 1
     },
     "server/game/cards/25.1-ATT/LadyMarya.js": {
@@ -799,9 +739,6 @@
         "prompt-for-select": 1,
         "this-in-ability": 5
     },
-    "server/game/cards/26.3-MaV/CrawnSonOfCalor.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/26.3-MaV/SerGulianQorgyle.js": {
         "this-in-ability": 8,
         "add-message": 1
@@ -820,9 +757,6 @@
     },
     "server/game/cards/26.5-JfE/Smiler.js": {
         "this-in-ability": 8
-    },
-    "server/game/cards/26.6-NCbT/ArmedToTheTeeth.js": {
-        "event-registration": 1
     },
     "server/game/cards/26.6-NCbT/TheStallionWhoMountsTheWorld.js": {
         "this-in-ability": 5,

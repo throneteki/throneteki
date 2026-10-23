@@ -2,12 +2,6 @@ import AgendaCard from '../../agendacard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ArmedToTheTeeth extends AgendaCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
-
-        this.registerEvents(['onDecksPrepared']);
-    }
-
     // Armed to the Teeth (26120)
     // Your deck cannot include non-Weapon attachments.
     // After all agendas are announced, search your deck for up to 5 different attachments, reveal
@@ -15,6 +9,29 @@ class ArmedToTheTeeth extends AgendaCard {
     // Reaction: After you win a challenge, kneel your faction card and pay X gold to put an
     // attachment with printed cost X into play from under this agenda.
     setupCardAbilities(ability) {
+        this.afterAgendasAnnounced({
+            gameAction: GameActions.search({
+                title: 'Select up to 5 attachments',
+                match: {
+                    type: 'attachment',
+                    trait: 'Weapon',
+                    condition: (card, context) =>
+                        !context.selectedCards.some((sc) => sc !== card && sc.name === card.name)
+                },
+                reveal: true,
+                numToSelect: 5,
+                message: '{player} places {searchTarget} facedown under {source}',
+                gameAction: GameActions.simultaneously((context) =>
+                    context.searchTarget.map((card) =>
+                        GameActions.placeCardUnderneath({
+                            card,
+                            parentCard: context.player.agenda,
+                            facedown: true
+                        })
+                    )
+                )
+            })
+        });
         this.reaction({
             when: {
                 afterChallenge: (event, context) => event.challenge.winner === context.player
@@ -32,7 +49,7 @@ class ArmedToTheTeeth extends AgendaCard {
                 cardCondition: (card, context) =>
                     context.player.agenda.underneath.includes(card) &&
                     card.getType() === 'attachment' &&
-                    card.hasPrintedCost() &&
+                    card.getCost() !== '-' &&
                     (context.xValue === undefined || card.getPrintedCost() === context.xValue) &&
                     GameActions.putIntoPlay({ card }).allow()
             },
@@ -43,43 +60,11 @@ class ArmedToTheTeeth extends AgendaCard {
             gameAction: GameActions.putIntoPlay((context) => ({ card: context.target }))
         });
     }
-
-    onDecksPrepared() {
-        const context = {
-            player: this.controller,
-            game: this.game,
-            source: this
-        };
-        this.game.resolveGameAction(
-            GameActions.search({
-                title: 'Select up to 5 attachments',
-                match: {
-                    type: 'attachment',
-                    trait: 'Weapon',
-                    condition: (card, context) =>
-                        !context.selectedCards.some((sc) => sc.name === card.name)
-                },
-                reveal: true,
-                numToSelect: 5,
-                message: '{player} places {searchTarget} facedown under {source}',
-                gameAction: GameActions.simultaneously((context) =>
-                    context.searchTarget.map((card) =>
-                        GameActions.placeCardUnderneath({
-                            card,
-                            parentCard: context.player.agenda,
-                            facedown: false
-                        })
-                    )
-                )
-            }),
-            context
-        );
-    }
 }
 
 function attachmentCosts(player) {
     return player.agenda.underneath
-        .filter((card) => card.getType() === 'attachment' && card.hasPrintedCost())
+        .filter((card) => card.getType() === 'attachment' && card.getCost() !== '-')
         .map((card) => card.getPrintedCost());
 }
 

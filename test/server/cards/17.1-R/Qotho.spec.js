@@ -21,3 +21,29 @@ describe('Qotho (R)', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('Qotho (R) cost restrictions', function () {
+    it('cannot use himself as one of the two discarded Targaryen cards', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                hand: ['Qotho (R)', 'Dragon Sight', 'The Roseroad'],
+                plot: 'Name Day Tourney'
+            }
+        });
+        expect(this.player1.actionUnavailableReason(this.qotho)).toBe('cost');
+        expect(this.qotho.location).toBe('hand');
+        expect(this.dragonSight.location).toBe('hand');
+        expect(this.theRoseroad.location).toBe('hand');
+        expect(this.player1).isReadyToTakeAction();
+    });
+    it('cannot enter play without a revealed Summer plot', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { hand: ['Qotho (R)', 'Deadly Khalasar', 'Dragon Sight'] }
+        });
+        expect(this.player1.actionUnavailableReason(this.qotho)).toBe('condition');
+        expect(this.qotho.location).toBe('hand');
+        expect(this.player1).isReadyToTakeAction();
+    });
+});

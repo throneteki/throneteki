@@ -7,11 +7,12 @@ class HouseDayneEscort extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',
-            condition: () =>
-                this.location === 'discard pile' && this.controller.getNumberOfUsedPlots() >= 3,
+            condition: (context) =>
+                context.source.location === 'discard pile' &&
+                context.source.controller.getNumberOfUsedPlots() >= 3,
             targetController: 'current',
             effect: ability.effects.canMarshal(
-                (card) => card === this && card.location === 'discard pile'
+                (card, context) => card === context.source && card.location === 'discard pile'
             )
         });
     }

@@ -452,6 +452,8 @@ player's result is logged. `numCards` and `title` can be functions of the contex
 that comes from an earlier part of the effect (Forced March). With `mode: 'exactly'`, a player
 who can't choose that many chooses as many as they can, and a number of 0 skips the choice.
 For "choose up to" text, `optional: true` lets the player choose no cards (Queenscrown).
+An optional choice also works with the default single-card mode: Done selects no cards and
+resolves no card actions, then the next choosing player continues if there is one.
 With `revealTargets: true`, the choosing player sees the cards they can choose while choosing, for
 "look at an opponent's hand, then choose a card in it" (Seen In Flames).
 

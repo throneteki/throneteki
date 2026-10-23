@@ -9,7 +9,7 @@ class TheThingsIDoForLove extends DrawCard {
     // controlled by an opponent, and return it to its owner's hand.
     setupCardAbilities(ability) {
         this.xValue({
-            min: () => this.getMinimumCharCost(),
+            min: (context) => getMinimumCharCost(context),
             max: () => 99
         });
 
@@ -18,6 +18,7 @@ class TheThingsIDoForLove extends DrawCard {
             condition: (context) =>
                 context.player.anyCardsInPlay(
                     (card) =>
+                        card.getType() === 'character' &&
                         card.isFaction('lannister') &&
                         (card.hasTrait('Lord') || card.hasTrait('Lady'))
                 ),
@@ -28,7 +29,7 @@ class TheThingsIDoForLove extends DrawCard {
                     card.location === 'play area' &&
                     card.controller !== context.player &&
                     card.getType() === 'character' &&
-                    (context.xValue
+                    (context.xValue !== undefined
                         ? card.getPrintedCost() <= context.xValue
                         : card.getPrintedCost() <= context.player.getSpendableGold())
             },
@@ -39,20 +40,20 @@ class TheThingsIDoForLove extends DrawCard {
             gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
+}
 
-    getMinimumCharCost() {
-        let opponents = this.game.getOpponents(this.controller);
-        let opponentCharacters = flatten(
-            opponents.map((opponent) =>
-                opponent.filterCardsInPlay(
-                    (card) => card.getType() === 'character' && card.hasPrintedCost()
-                )
+function getMinimumCharCost(context) {
+    let opponents = context.game.getOpponents(context.player);
+    let opponentCharacters = flatten(
+        opponents.map((opponent) =>
+            opponent.filterCardsInPlay(
+                (card) => card.getType() === 'character' && card.hasPrintedCost()
             )
-        );
-        let charCosts = opponentCharacters.map((card) => card.getPrintedCost());
+        )
+    );
+    let charCosts = opponentCharacters.map((card) => card.getPrintedCost());
 
-        return Math.min(...charCosts);
-    }
+    return Math.min(...charCosts);
 }
 
 TheThingsIDoForLove.code = '01101';
