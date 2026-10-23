@@ -65,20 +65,9 @@
     "server/game/cards/10-SoD/ForcedMarch.js": {
         "this-in-ability": 7
     },
-    "server/game/cards/10-SoD/ObellaSand.js": {
-        "this-in-ability": 11,
-        "add-message": 2,
-        "legacy-helper": 3
-    },
     "server/game/cards/11.1-TSC/BeneathTheBridgeOfDream.js": {
         "this-in-ability": 11,
         "add-message": 1,
-        "legacy-helper": 1
-    },
-    "server/game/cards/11.3-SoKL/HiredAssassin.js": {
-        "this-in-ability": 8,
-        "add-message": 2,
-        "prompt-for-select": 1,
         "legacy-helper": 1
     },
     "server/game/cards/13.5-TB/TyrionLannister.js": {

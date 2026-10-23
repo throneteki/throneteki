@@ -34,6 +34,7 @@ import InitiateWhenRevealed from './InitiateWhenRevealed.js';
 import Kill from './Kill.js';
 import KneelCard from './KneelCard.js';
 import LookAtDeck from './LookAtDeck.js';
+import LookAtCards from './LookAtCards.js';
 import LookAtHand from './LookAtHand.js';
 import lookAtShadows from './LookAtShadows.js';
 import LoseIcon from './LoseIcon.js';
@@ -105,6 +106,7 @@ const GameActions = {
     kill: (props) => new AbilityAdapter(Kill, props),
     kneelCard: (props) => new AbilityAdapter(KneelCard, props),
     lastingEffect: (propertyFactory) => new ApplyLastingEffect(propertyFactory),
+    lookAtCards: (props) => new AbilityAdapter(LookAtCards, props),
     lookAtDeck: (props) => new AbilityAdapter(LookAtDeck, props),
     lookAtHand: (props) => new AbilityAdapter(LookAtHand, props),
     lookAtShadows: (props) => new AbilityAdapter(lookAtShadows, props),

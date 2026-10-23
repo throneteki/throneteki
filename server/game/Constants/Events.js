@@ -238,6 +238,7 @@ export const Events = Object.freeze({
     onIncomeCollected: { params: { player: 'Player' } },
     onInitiativeDetermined: { params: { winner: 'Player' } },
     onLastingEffectApplied: { params: { source: 'BaseCard' } },
+    onLookAtCards: { params: { cards: 'DrawCard[]', player: 'Player' } },
     onLookAtDeck: {
         params: { amount: 'number', desiredAmount: 'number', lookingAt: 'Player', player: 'Player' }
     },
