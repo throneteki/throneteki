@@ -91,10 +91,6 @@
         "prompt-for-select": 2,
         "legacy-helper": 2
     },
-    "server/game/cards/08.2-JtO/JourneyToOldtown.js": {
-        "this-in-ability": 4,
-        "add-message": 1
-    },
     "server/game/cards/08.6-SAT/TheCrowIsATricksyBird.js": {
         "this-in-ability": 8,
         "add-message": 2
@@ -217,15 +213,6 @@
         "event-registration": 1,
         "this-in-ability": 7,
         "add-message": 1
-    },
-    "server/game/cards/23-AHaH/ATraitorsWhisper.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/24-TSoW/Dragonstone.js": {
-        "this-in-ability": 3
-    },
-    "server/game/cards/25.1-ATT/Bloodraven.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/25.3-FUtG/Greyscale.js": {
         "this-in-ability": 12,

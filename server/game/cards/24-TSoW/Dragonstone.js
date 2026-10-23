@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Dragonstone extends DrawCard {
     // Dragonstone (24003)
@@ -7,7 +8,7 @@ class Dragonstone extends DrawCard {
     // Dragonstone stands or leaves play, that card cannot come out of shadows.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: this,
+            match: (card, context) => card === context.source,
             effect: ability.effects.optionalStandDuringStanding()
         });
         this.reaction({
@@ -22,18 +23,18 @@ class Dragonstone extends DrawCard {
                 }
             },
             cost: ability.costs.kneelSelf(),
-            handler: (context) => {
-                this.lastingEffect((ability) => ({
-                    until: {
-                        onCardStood: (event) => event.card === this,
-                        onCardLeftPlay: (event) => event.card === this,
-                        onCardMoved: (event) => event.card === context.event.card
-                    },
-                    effect: ability.effects.cannotBringOutOfShadows(
-                        (card) => card === context.event.card
-                    )
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'custom',
+                until: {
+                    onCardStood: (event) => event.card === context.source,
+                    onCardLeftPlay: (event) => event.card === context.source,
+                    onCardMoved: (event) => event.card === context.event.card
+                },
+                targetController: 'any',
+                effect: ability.effects.cannotBringOutOfShadows(
+                    (card) => card === context.event.card
+                )
+            }))
         });
     }
 }
