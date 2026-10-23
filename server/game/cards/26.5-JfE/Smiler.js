@@ -10,42 +10,33 @@ class Smiler extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    this.parent.isAttacking() &&
-                    event.challenge.isMatch({ winner: this.controller, unopposed: true })
+                afterChallenge: (event, context) =>
+                    context.source.parent.isAttacking() &&
+                    event.challenge.isMatch({ winner: context.player, unopposed: true })
             },
             cost: ability.costs.kneelSelf(),
             message: {
                 format: '{player} kneels {costs.kneel} to give {parent} renown or intimidate until the end of the challenge',
-                args: { parent: () => this.parent }
+                args: { parent: (context) => context.source.parent }
             },
             gameAction: GameActions.choose({
-                title: () => `Choose keyword for ${this.parent}`,
+                title: (context) => `Choose keyword for ${context.source.parent.name}`,
                 message: {
-                    format: '{player} chooses to have {parent} gain {keyword} until the end of the challenge',
-                    args: {
-                        parent: () => this.parent,
-                        keyword: (context) => context.selectedChoice.text.toLowerCase()
-                    }
+                    format: '{player} chooses to have {parent} gain {choice} until the end of the challenge',
+                    args: { parent: (context) => context.source.parent }
                 },
-                choices: {
-                    Renown: GameActions.genericHandler((context) =>
-                        this.gainKeyword(context.selectedChoice.text.toLowerCase())
-                    ),
-                    Intimidate: GameActions.genericHandler((context) =>
-                        this.gainKeyword(context.selectedChoice.text.toLowerCase())
-                    )
-                }
+                choices: Object.fromEntries(
+                    ['Renown', 'Intimidate'].map((keyword) => [
+                        keyword,
+                        GameActions.lastingEffect((context) => ({
+                            duration: 'untilEndOfChallenge',
+                            match: context.source.parent,
+                            effect: ability.effects.addKeyword(keyword.toLowerCase())
+                        }))
+                    ])
+                )
             })
         });
-    }
-
-    gainKeyword(keyword) {
-        this.untilEndOfChallenge((ability) => ({
-            match: this.parent,
-            effect: ability.effects.addKeyword(keyword)
-        }));
-        return true;
     }
 }
 

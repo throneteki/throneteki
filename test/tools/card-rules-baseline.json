@@ -37,9 +37,6 @@
         "legacy-helper": 2,
         "add-message": 1
     },
-    "server/game/cards/02.1-TtB/PleasureBarge.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/02.2-TRtW/BrothelMadame.js": {
         "event-registration": 1,
         "this-in-ability": 15,
@@ -311,9 +308,6 @@
         "legacy-helper": 2,
         "add-message": 1
     },
-    "server/game/cards/12-KotI/SeaOfBlood.js": {
-        "this-in-ability": 5
-    },
     "server/game/cards/13.2-CoS/ShadowOfTheWall.js": {
         "legacy-helper": 2,
         "this-in-ability": 10,
@@ -391,9 +385,6 @@
         "add-message": 2,
         "game-listener": 1,
         "legacy-helper": 1
-    },
-    "server/game/cards/13.6-LMHR/ValyrianSteel.js": {
-        "this-in-ability": 5
     },
     "server/game/cards/14-FotS/NightfireVision.js": {
         "this-in-ability": 7,
@@ -496,9 +487,6 @@
         "this-in-ability": 9,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/17.1-R/ValyrianSteel.js": {
-        "this-in-ability": 5
     },
     "server/game/cards/17.1-R/WombOfTheWorld.js": {
         "prompt-for-select": 1,
@@ -607,9 +595,6 @@
     "server/game/cards/23-AHaH/ATraitorsWhisper.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/23-AHaH/DoranMartell.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/23-AHaH/MaesterColemon.js": {
         "this-in-ability": 2,
         "prompt-for-select": 1,
@@ -682,9 +667,6 @@
         "prompt-for-select": 1,
         "add-message": 2
     },
-    "server/game/cards/25.5-TIC/HarrenTheBlack.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/25.5-TIC/Qyburn.js": {
         "this-in-ability": 2
     },
@@ -718,9 +700,6 @@
     "server/game/cards/26.5-JfE/LivingShadow.js": {
         "this-in-ability": 9,
         "legacy-helper": 1
-    },
-    "server/game/cards/26.5-JfE/Smiler.js": {
-        "this-in-ability": 8
     },
     "server/game/cards/26.6-NCbT/TheStallionWhoMountsTheWorld.js": {
         "this-in-ability": 5,

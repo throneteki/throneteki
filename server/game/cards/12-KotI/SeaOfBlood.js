@@ -11,31 +11,30 @@ class SeaOfBlood extends AgendaCard {
     // it to your hand. Shuffle your deck.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),
+            condition: (context) => context.game.isDuringChallenge({ challengeType: 'military' }),
             effect: ability.effects.reduceCost({
                 playingTypes: 'play',
-                amount: () => this.tokens[Tokens.blood],
+                amount: (card, source) => source.tokens[Tokens.blood],
                 match: (card) => card.getType() === 'event'
             })
         });
-
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ challengeType: ['intrigue', 'power'] }),
+            condition: (context) =>
+                context.game.isDuringChallenge({ challengeType: ['intrigue', 'power'] }),
             effect: ability.effects.cannotPlay((card) => card.getType() === 'event')
         });
-
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'military' &&
-                    event.challenge.winner === this.controller &&
+                    event.challenge.winner === context.player &&
                     event.challenge.strengthDifference >= 5
             },
             cost: ability.costs.kneelFactionCard(),
             message:
                 '{player} uses {source} and kneels their faction card to place 1 blood token on {source}',
-            gameAction: GameActions.placeToken(() => ({
-                card: this,
+            gameAction: GameActions.placeToken((context) => ({
+                card: context.source,
                 token: Tokens.blood
             })).then({
                 message: 'Then, {player} searches their deck for an event',

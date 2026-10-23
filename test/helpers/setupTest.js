@@ -81,7 +81,7 @@ function deckCardNames(playerKey, options) {
         own.plot || DefaultPlot,
         ...asArray(plotDeck),
         ...asArray(own.usedPlots),
-        ...asArray(own.agenda),
+        ...asArray(own.agenda).map((agenda) => normaliseCardSpec(agenda).card),
         ...asArray(own.deck)
     ];
 
@@ -415,6 +415,12 @@ export function applySetupTest(options, ctx) {
 
     for (const key of PlayerKeys) {
         applyPlayerState(players[key], options[key]);
+        for (const agendaSpec of asArray(options[key].agenda).map(normaliseCardSpec)) {
+            const agenda = (players[key].player.agendas || []).find((card) =>
+                matchCardByNameAndPack(agendaSpec.card)(card.cardData)
+            );
+            applyCardState(agenda, agendaSpec);
+        }
     }
 
     flow.game.refreshGameState();

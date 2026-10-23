@@ -15,8 +15,8 @@ class ValyrianSteel extends AgendaCard {
             cost: [
                 ability.costs.kneelFactionCard(),
                 ability.costs.payXGold(
-                    () => Math.min(...this.attachmentCosts()),
-                    () => Math.max(...this.attachmentCosts())
+                    (context) => Math.min(...attachmentCosts(context.player)),
+                    (context) => Math.max(...attachmentCosts(context.player))
                 )
             ],
             target: {
@@ -39,13 +39,12 @@ class ValyrianSteel extends AgendaCard {
                 card: context.target
             }))
         });
-
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    event.card.controller === this.controller &&
+                onCardEntersPlay: (event, context) =>
+                    event.card.controller === context.player &&
                     event.card.getType() === 'attachment' &&
-                    (this.controller.canDraw() || this.controller.canGainGold())
+                    (context.player.canDraw() || context.player.canGainGold())
             },
             choices: {
                 'Gain 1 gold': {
@@ -66,13 +65,12 @@ class ValyrianSteel extends AgendaCard {
             limit: ability.limit.perRound(3)
         });
     }
+}
 
-    attachmentCosts() {
-        const attachments = this.controller.hand.filter(
-            (card) => card.getType() === 'attachment' && card.hasPrintedCost()
-        );
-        return attachments.map((card) => card.getPrintedCost());
-    }
+function attachmentCosts(player) {
+    return player.hand
+        .filter((card) => card.getType() === 'attachment' && card.hasPrintedCost())
+        .map((card) => card.getPrintedCost());
 }
 
 ValyrianSteel.code = '13118';

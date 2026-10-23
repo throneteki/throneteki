@@ -66,7 +66,7 @@ this.setupTest({
     firstPlayer: 'player1', // who the initiative winner picks as first player (default player1)
     player1: {
         faction: 'stark', // default 'stark'
-        agenda: 'Fealty', // or an array for Alliance and its banners
+        agenda: 'Fealty', // or an array for Alliance and its banners, or { card, tokens }
         plot: 'Filler Plot', // revealed in round 1 (default 'Filler Plot': income 5, initiative 0, claim 1, reserve 6, no text)
         plotDeck: ['Sneak Attack'], // the rest of the plot deck (default: two more 'Filler Plot')
         usedPlots: ['A Noble Cause'], // already in the used pile when the game starts

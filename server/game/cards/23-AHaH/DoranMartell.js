@@ -14,10 +14,10 @@ class DoranMartell extends DrawCard {
                 `Shadow (${card.translateXValue(card.getPrintedCost())})`
             ])
         });
-
         this.reaction({
             when: {
-                onDominanceDetermined: (event) => event.winner && this.controller !== event.winner
+                onDominanceDetermined: (event, context) =>
+                    event.winner && context.player !== event.winner
             },
             message: '{player} uses {source} to look at the top 2 cards of their deck',
             gameAction: GameActions.lookAtDeck((context) => ({
@@ -30,27 +30,25 @@ class DoranMartell extends DrawCard {
                     title: 'Select card to place in shadows',
                     message:
                         '{choosingPlayer} places 1 card in shadows, and places the other on the bottom of their deck',
-                    choices: (context) => this.buildChoices(context.event.topCards)
+                    choices: (context) => buildChoices(context.event.topCards)
                 })
             })
         });
     }
+}
 
-    buildChoices(topCards) {
-        return topCards.reduce((choices, card) => {
-            let actions = [GameActions.placeCard({ card, location: 'shadows' })];
-
-            let otherCard = topCards.find((c) => c !== card);
-            if (otherCard) {
-                actions.push(
-                    GameActions.placeCard({ card: otherCard, location: 'draw deck', bottom: true })
-                );
-            }
-
-            choices[card.uuid] = { card, gameAction: GameActions.simultaneously(actions) };
-            return choices;
-        }, {});
-    }
+function buildChoices(topCards) {
+    return topCards.reduce((choices, card) => {
+        let actions = [GameActions.placeCard({ card, location: 'shadows' })];
+        let otherCard = topCards.find((c) => c !== card);
+        if (otherCard) {
+            actions.push(
+                GameActions.placeCard({ card: otherCard, location: 'draw deck', bottom: true })
+            );
+        }
+        choices[card.uuid] = { card, gameAction: GameActions.simultaneously(actions) };
+        return choices;
+    }, {});
 }
 
 DoranMartell.code = '23007';
