@@ -123,8 +123,7 @@ the ongoing work, and it was not part of this batch.
   context to the card predicate. [EffectContext.spec.js](../test/server/effects/EffectContext.spec.js).
 - `toBeReadyToTakeAction` passes in the challenges phase when the player has the
   "Initiate an action" window open during a challenge, as well as the phase's idle prompt.
-  [matchers.spec.js](../test/server/helpers/matchers.spec.js). Card specs end their flows with
-  `isReadyToTakeAction`, except 8 older unit-style tests in TheRainsOfCastamere.spec.js.
+  [matchers.spec.js](../test/server/helpers/matchers.spec.js).
 - Scenario games (`SCENARIO` and `SCENARIO_USERS` on the game node) send `scenario: true` in the
   game state and summary, and the client navigates the players to `/play` for them.
   [scenarioRunner.spec.js](../test/server/devtools/scenarioRunner.spec.js).
