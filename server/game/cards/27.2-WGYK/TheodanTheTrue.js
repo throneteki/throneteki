@@ -10,8 +10,9 @@ class TheodanTheTrue extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    this.isParticipating() && event.challenge.isMatch({ winner: this.controller })
+                afterChallenge: (event, context) =>
+                    context.source.isParticipating() &&
+                    event.challenge.isMatch({ winner: context.player })
             },
             target: {
                 cardCondition: {
@@ -20,45 +21,23 @@ class TheodanTheTrue extends DrawCard {
                     trait: 'The Seven'
                 }
             },
-            message: '{player} uses {source} to give {target} insight or renown',
             limit: ability.limit.perPhase(2),
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.choose({
-                        title: (context) => `Choose keyword for ${context.target.name}`,
-                        message: {
-                            format: '{player} chooses to have {target} gain {keyword} until the end of the phase',
-                            args: {
-                                keyword: (context) => context.selectedChoice.text.toLowerCase()
-                            }
-                        },
-                        choices: {
-                            Renown: GameActions.genericHandler((context) =>
-                                this.gainKeyword(
-                                    context.target,
-                                    context.selectedChoice.text.toLowerCase()
-                                )
-                            ),
-                            Insight: GameActions.genericHandler((context) =>
-                                this.gainKeyword(
-                                    context.target,
-                                    context.selectedChoice.text.toLowerCase()
-                                )
-                            )
-                        }
-                    }),
-                    context
-                );
-            }
+            gameAction: GameActions.choose({
+                title: (context) => `Choose keyword for ${context.target.name}`,
+                message:
+                    '{player} uses {source} to have {target} gain {choice} until the end of the phase',
+                choices: Object.fromEntries(
+                    ['Renown', 'Insight'].map((keyword) => [
+                        keyword,
+                        GameActions.lastingEffect((context) => ({
+                            duration: 'untilEndOfPhase',
+                            match: context.target,
+                            effect: ability.effects.addKeyword(keyword.toLowerCase())
+                        }))
+                    ])
+                )
+            })
         });
-    }
-
-    gainKeyword(card, keyword) {
-        this.untilEndOfPhase((ability) => ({
-            match: card,
-            effect: ability.effects.addKeyword(keyword)
-        }));
-        return true;
     }
 }
 

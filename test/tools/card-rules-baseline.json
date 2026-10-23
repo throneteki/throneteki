@@ -95,12 +95,6 @@
     "server/game/cards/02.4-NMG/DothrakiOutriders.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/02.4-NMG/Gendry.js": {
-        "this-in-ability": 14,
-        "legacy-helper": 2,
-        "add-message": 2,
-        "prompt-for-select": 1
-    },
     "server/game/cards/02.4-NMG/PaidOff.js": {
         "this-in-ability": 14,
         "legacy-helper": 3,
@@ -229,11 +223,6 @@
     "server/game/cards/05-LoCR/TywinLannister.js": {
         "this-in-ability": 5,
         "add-message": 1
-    },
-    "server/game/cards/06.2-GtR/ADragonIsNoSlave.js": {
-        "this-in-ability": 11,
-        "add-message": 2,
-        "legacy-helper": 1
     },
     "server/game/cards/06.2-GtR/Melisandre.js": {
         "this-in-ability": 8,
@@ -518,11 +507,6 @@
     "server/game/cards/11.6-DitD/Varys.js": {
         "this-in-ability": 2
     },
-    "server/game/cards/12-KotI/DesertRaider.js": {
-        "this-in-ability": 12,
-        "legacy-helper": 2,
-        "add-message": 1
-    },
     "server/game/cards/12-KotI/MaidensBane.js": {
         "this-in-ability": 4,
         "legacy-helper": 2,
@@ -605,12 +589,6 @@
     "server/game/cards/13.5-TB/ShadowOfTheNorth.js": {
         "this-in-ability": 12,
         "add-message": 2,
-        "legacy-helper": 1
-    },
-    "server/game/cards/13.5-TB/Sparrows.js": {
-        "this-in-ability": 11,
-        "prompt-for-select": 1,
-        "add-message": 1,
         "legacy-helper": 1
     },
     "server/game/cards/13.5-TB/TyrionLannister.js": {
@@ -726,10 +704,6 @@
         "this-in-ability": 6,
         "add-message": 1
     },
-    "server/game/cards/16-TTWDFL/SamwellTarly.js": {
-        "add-message": 1,
-        "this-in-ability": 2
-    },
     "server/game/cards/16-TTWDFL/SkyCell.js": {
         "this-in-ability": 7,
         "legacy-helper": 1
@@ -812,11 +786,6 @@
         "this-in-ability": 7,
         "prompt-for-select": 1,
         "add-message": 1
-    },
-    "server/game/cards/18-FH/ReznakMoReznak.js": {
-        "this-in-ability": 16,
-        "add-message": 2,
-        "legacy-helper": 2
     },
     "server/game/cards/18-FH/RickardKarstark.js": {
         "this-in-ability": 3,
@@ -1076,9 +1045,6 @@
         "this-in-ability": 10,
         "legacy-helper": 1
     },
-    "server/game/cards/25.5-TIC/TheLastGreenseer.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/25.6-WK/BurningTheBooks.js": {
         "this-in-ability": 4
     },
@@ -1103,9 +1069,6 @@
     },
     "server/game/cards/26.2-WoW/QueenOfMeereen.js": {
         "prompt-for-select": 1,
-        "this-in-ability": 5
-    },
-    "server/game/cards/26.2-WoW/SorrowfulMan.js": {
         "this-in-ability": 5
     },
     "server/game/cards/26.3-MaV/CrawnSonOfCalor.js": {
@@ -1163,9 +1126,6 @@
     "server/game/cards/27.2-WGYK/Hornvale.js": {
         "event-registration": 1,
         "add-message": 1
-    },
-    "server/game/cards/27.2-WGYK/TheodanTheTrue.js": {
-        "this-in-ability": 5
     },
     "server/game/cards/titles/CrownRegent.js": {
         "this-in-ability": 4,

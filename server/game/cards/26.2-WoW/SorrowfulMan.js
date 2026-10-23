@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SorrowfulMan extends DrawCard {
     // Sorrowful Man (26033)
@@ -8,62 +9,53 @@ class SorrowfulMan extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) =>
-                    event.card === this &&
-                    // This check needs to be here to allow targeting to be more seamless (in 1 targeting sequence, rather than 2)
-                    // and to ensure there is a valid opponent to swap characters on
-                    this.game
-                        .getOpponents(this.controller)
-                        .some((player) => this.hasCharacterInBothPiles(player))
+                onCardOutOfShadows: (event, context) =>
+                    event.card === context.source &&
+                    // Both characters must belong to the same opponent, which the targets cannot
+                    // check on their own
+                    context.game
+                        .getOpponents(context.player)
+                        .some((player) => hasCharacterInBothPiles(player))
             },
-            target: {
-                mode: 'exactly',
-                numCards: 2,
-                activePromptTitle: 'Select 2 characters',
-                singleController: true,
-                cardCondition: (card, context) =>
-                    card.controller !== this.controller &&
-                    card.getType() === 'character' &&
-                    ['discard pile', 'dead pile']
-                        .filter(
-                            (location) =>
-                                !context.selectedCards.some((card) => card.location === location)
-                        )
-                        .includes(card.location)
+            targets: {
+                discardCard: {
+                    activePromptTitle: 'Select a character in a discard pile',
+                    cardCondition: (card, context) =>
+                        card.location === 'discard pile' &&
+                        card.getType() === 'character' &&
+                        card.controller !== context.player &&
+                        hasCharacterInBothPiles(card.controller)
+                },
+                deadCard: {
+                    activePromptTitle: 'Select a character in a dead pile',
+                    cardCondition: (card, context) =>
+                        card.location === 'dead pile' &&
+                        card.getType() === 'character' &&
+                        card.controller !== context.player &&
+                        (!context.targets.discardCard ||
+                            card.controller === context.targets.discardCard.controller)
+                }
             },
             message: {
                 format: "{player} uses {source} to switch {discardCard} in {controller}'s discard pile with {deadCard} in their dead pile",
                 args: {
-                    discardCard: (context) =>
-                        context.target.find((card) => card.location === 'discard pile'),
-                    deadCard: (context) =>
-                        context.target.find((card) => card.location === 'dead pile'),
-                    controller: (context) => context.target[0].controller
+                    discardCard: (context) => context.targets.discardCard,
+                    deadCard: (context) => context.targets.deadCard,
+                    controller: (context) => context.targets.discardCard.controller
                 }
             },
-            handler: (context) => {
-                // TODO: Implement a "Switch" game action, which switches two cards from two separate out-of-play pile (retaining index)
-                const discardCard = context.target.find((card) => card.location === 'discard pile');
-                const deadCard = context.target.find((card) => card.location === 'dead pile');
-                const opponent = context.target[0].controller;
-                const discardIndex = opponent.discardPile.indexOf(discardCard);
-                const deadIndex = opponent.deadPile.indexOf(deadCard);
-
-                opponent.discardPile[discardIndex] = deadCard;
-                deadCard.moveTo('discard pile');
-
-                opponent.deadPile[deadIndex] = discardCard;
-                discardCard.moveTo('dead pile');
-            }
+            gameAction: GameActions.switch((context) => ({
+                cards: [context.targets.discardCard, context.targets.deadCard]
+            }))
         });
     }
+}
 
-    hasCharacterInBothPiles(player) {
-        return (
-            player.discardPile.some((card) => card.getType() === 'character') &&
-            player.deadPile.some((card) => card.getType() === 'character')
-        );
-    }
+function hasCharacterInBothPiles(player) {
+    return (
+        player.discardPile.some((card) => card.getType() === 'character') &&
+        player.deadPile.some((card) => card.getType() === 'character')
+    );
 }
 
 SorrowfulMan.code = '26033';
