@@ -432,12 +432,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/17.1-R/WombOfTheWorld.js": {
-        "prompt-for-select": 1,
-        "this-in-ability": 5,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/17.2-R2/RedPriest.js": {
         "this-in-ability": 4
     },
