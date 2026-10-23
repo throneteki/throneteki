@@ -9,6 +9,7 @@ import Attach from './Attach.js';
 import CancelEffects from './CancelEffects.js';
 import ChangeClaimType from './ChangeClaimType.js';
 import ChangeEventAmount from './ChangeEventAmount.js';
+import ChangeEventCard from './ChangeEventCard.js';
 import CheckReserve from './CheckReserve.js';
 import ChooseCards from './ChooseCards.js';
 import ChooseGameAction from './ChooseGameAction.js';
@@ -78,6 +79,7 @@ const GameActions = {
     cancelEffects: (props) => new AbilityAdapter(CancelEffects, props),
     changeClaimType: (props) => new AbilityAdapter(ChangeClaimType, props),
     changeEventAmount: (props) => new AbilityAdapter(ChangeEventAmount, props),
+    changeEventCard: (props) => new AbilityAdapter(ChangeEventCard, props),
     checkReserve: (props) => new AbilityAdapter(CheckReserve, props),
     choose: (props) => new ChooseGameAction(props),
     chooseChallengeType: (props) => new ChooseChallengeType(props),
