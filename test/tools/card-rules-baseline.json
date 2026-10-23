@@ -214,10 +214,6 @@
         "prompt-for-select": 1,
         "legacy-helper": 2
     },
-    "server/game/cards/06.2-GtR/TheDornishmansWife.js": {
-        "this-in-ability": 8,
-        "add-message": 1
-    },
     "server/game/cards/06.3-TFoA/Duel.js": {
         "this-in-ability": 10,
         "add-message": 3,
@@ -267,12 +263,6 @@
         "add-message": 2,
         "prompt-for-select": 1
     },
-    "server/game/cards/08.4-FotOG/Yunkai.js": {
-        "this-in-ability": 12,
-        "add-message": 2,
-        "game-listener": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/08.5-TFM/TarleTheThriceDrowned.js": {
         "this-in-ability": 1
     },
@@ -291,23 +281,12 @@
         "this-in-ability": 8,
         "add-message": 2
     },
-    "server/game/cards/09-HoT/BrienneOfTarth.js": {
-        "this-in-ability": 12,
-        "prompt-for-select": 1,
-        "legacy-helper": 3,
-        "add-message": 1
-    },
     "server/game/cards/09-HoT/DesmeraRedwyne.js": {
         "this-in-ability": 8,
         "add-message": 2
     },
     "server/game/cards/09-HoT/HighgardenHonorGuard.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/09-HoT/MeleeAtBitterbridge.js": {
-        "this-in-ability": 7,
-        "prompt-for-select": 1,
-        "add-message": 1
     },
     "server/game/cards/09-HoT/Qotho.js": {
         "this-in-ability": 1
@@ -400,11 +379,6 @@
         "legacy-helper": 1,
         "add-message": 2
     },
-    "server/game/cards/11.3-SoKL/GlassCandle.js": {
-        "this-in-ability": 5,
-        "add-message": 2,
-        "legacy-helper": 1
-    },
     "server/game/cards/11.3-SoKL/GrowingAmbition.js": {
         "prompt-for-select": 1,
         "this-in-ability": 5,
@@ -455,12 +429,6 @@
         "this-in-ability": 4,
         "add-message": 1,
         "legacy-helper": 2
-    },
-    "server/game/cards/11.6-DitD/DaggersInTheDark.js": {
-        "this-in-ability": 9,
-        "prompt-for-select": 1,
-        "legacy-helper": 1,
-        "add-message": 2
     },
     "server/game/cards/11.6-DitD/RavagesOfWar.js": {
         "this-in-ability": 4,

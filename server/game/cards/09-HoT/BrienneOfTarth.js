@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BrienneOfTarth extends DrawCard {
     // Brienne of Tarth (09002)
@@ -7,70 +8,58 @@ class BrienneOfTarth extends DrawCard {
     // - 6 or higher, she gains 1 power.
     // - 10 or higher, choose another character. It gets +3 STR until the end of the phase.
     // - 15 or higher, stand her and draw 1 card.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player && context.source.isParticipating()
             },
-            handler: () => {
-                if (
-                    this.getStrength() >= 10 &&
-                    this.controller.anyCardsInPlay(
-                        (card) => card !== this && card.getType() === 'character'
-                    )
-                ) {
-                    this.game.promptForSelect(this.controller, {
-                        cardCondition: (card) =>
-                            card !== this &&
-                            card.location === 'play area' &&
-                            card.getType() === 'character',
-                        onSelect: (player, card) => this.activateBonuses(card),
-                        onCancel: () => this.activateBonuses(null),
-                        source: this
-                    });
-                    return;
-                }
-
-                this.activateBonuses(null);
-            }
+            gameAction: GameActions.simultaneously([
+                GameActions.ifCondition({
+                    condition: (context) => context.source.getStrength() >= 6,
+                    thenAction: {
+                        message: '{player} uses {source} to have {source} gain 1 power',
+                        gameAction: GameActions.gainPower((context) => ({
+                            card: context.source,
+                            amount: 1
+                        }))
+                    }
+                }),
+                GameActions.ifCondition({
+                    condition: (context) => context.source.getStrength() >= 10,
+                    thenAction: {
+                        message:
+                            '{player} uses {source} to give another character +3 STR until the end of the phase',
+                        gameAction: GameActions.chooseCards({
+                            title: 'Select a character',
+                            cardCondition: (card, context) =>
+                                card !== context.source &&
+                                card.location === 'play area' &&
+                                card.getType() === 'character',
+                            gameAction: (card) =>
+                                GameActions.lastingEffect(() => ({
+                                    duration: 'untilEndOfPhase',
+                                    match: card,
+                                    effect: ability.effects.modifyStrength(3)
+                                }))
+                        })
+                    }
+                }),
+                GameActions.ifCondition({
+                    condition: (context) => context.source.getStrength() >= 15,
+                    thenAction: {
+                        message: '{player} uses {source} to stand {source} and draw 1 card',
+                        gameAction: GameActions.simultaneously([
+                            GameActions.standCard((context) => ({ card: context.source })),
+                            GameActions.drawCards((context) => ({
+                                player: context.player,
+                                amount: 1
+                            }))
+                        ])
+                    }
+                })
+            ])
         });
-    }
-
-    activateBonuses(otherCharacter) {
-        let bonusMessages = [];
-        let strength = this.getStrength();
-
-        if (strength >= 6) {
-            this.modifyPower(1);
-            bonusMessages.push('gain 1 power');
-        }
-
-        if (strength >= 10 && otherCharacter) {
-            this.untilEndOfPhase((ability) => ({
-                match: otherCharacter,
-                effect: ability.effects.modifyStrength(3)
-            }));
-            bonusMessages.push('give {2} +3 STR until end of phase');
-        }
-
-        if (strength >= 15) {
-            this.controller.standCard(this);
-            bonusMessages.push('stand {1}');
-
-            if (this.controller.canDraw()) {
-                this.controller.drawCardsToHand(1);
-                bonusMessages.push('draw 1 card');
-            }
-        }
-
-        this.game.addMessage(
-            '{0} uses {1} to ' + bonusMessages.join(', '),
-            this.controller,
-            this,
-            otherCharacter
-        );
-        return true;
     }
 }
 
