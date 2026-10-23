@@ -8,6 +8,7 @@ import ApplyLastingEffect from './ApplyLastingEffect.js';
 import Attach from './Attach.js';
 import CancelEffects from './CancelEffects.js';
 import ChangeClaimType from './ChangeClaimType.js';
+import ChangeChallengeType from './ChangeChallengeType.js';
 import ChangeEventAmount from './ChangeEventAmount.js';
 import ChangeEventCard from './ChangeEventCard.js';
 import ChangeAbilityTarget from './ChangeAbilityTarget.js';
@@ -80,6 +81,7 @@ const GameActions = {
     applyClaim: (props) => new AbilityAdapter(ApplyClaim, props),
     attach: (props) => new AbilityAdapter(Attach, props),
     cancelEffects: (props) => new AbilityAdapter(CancelEffects, props),
+    changeChallengeType: (props) => new AbilityAdapter(ChangeChallengeType, props),
     changeClaimType: (props) => new AbilityAdapter(ChangeClaimType, props),
     changeEventAmount: (props) => new AbilityAdapter(ChangeEventAmount, props),
     changeEventCard: (props) => new AbilityAdapter(ChangeEventCard, props),
