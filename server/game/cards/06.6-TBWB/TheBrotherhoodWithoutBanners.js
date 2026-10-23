@@ -1,4 +1,5 @@
 import AgendaCard from '../../agendacard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheBrotherhoodWithoutBanners extends AgendaCard {
     // The Brotherhood Without Banners (06119)
@@ -13,51 +14,28 @@ class TheBrotherhoodWithoutBanners extends AgendaCard {
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
+                    card.controller === context.player &&
                     card.getType() === 'character' &&
                     card.isFaction('neutral')
             },
-            handler: (context) => {
-                this.target = context.target;
-                let buttons = [];
-                let keywords = ['Insight', 'Intimidate', 'Renown', 'Stealth'];
-
-                keywords.map((keyword) => {
-                    buttons.push({
-                        text: keyword,
-                        method: 'keywordSelected',
-                        arg: keyword.toLowerCase()
-                    });
-                });
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Select a keyword',
-                        buttons: buttons
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.choose({
+                title: 'Select a keyword',
+                message:
+                    '{player} uses {source} and kneels their faction card to have {target} gain {choice} until the end of the phase',
+                choices: Object.fromEntries(
+                    ['Insight', 'Intimidate', 'Renown', 'Stealth'].map((keyword) => [
+                        keyword,
+                        GameActions.lastingEffect((context) => ({
+                            duration: 'untilEndOfPhase',
+                            match: context.target,
+                            effect: ability.effects.addKeyword(keyword.toLowerCase())
+                        }))
+                    ])
+                )
+            })
         });
-    }
-
-    keywordSelected(player, keyword) {
-        this.untilEndOfPhase((ability) => ({
-            match: this.target,
-            effect: ability.effects.addKeyword(keyword)
-        }));
-
-        this.game.addMessage(
-            '{0} uses {1} and kneels their faction card to have {2} gain {3} until the end of the phase',
-            this.controller,
-            this,
-            this.target,
-            keyword
-        );
-
-        return true;
     }
 }
 

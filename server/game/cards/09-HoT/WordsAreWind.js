@@ -1,5 +1,5 @@
 import DrawCard from '../../drawcard.js';
-import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class WordsAreWind extends DrawCard {
     // Words Are Wind (09044)
@@ -9,55 +9,38 @@ class WordsAreWind extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: (event) =>
-                    event.source.getType() === 'event' && event.player !== this.controller
+                onCardAbilityInitiated: (event, context) =>
+                    event.source.getType() === 'event' && event.player !== context.player
             },
-            handler: (context) => {
-                this.context = context;
-
-                this.game.addMessage(
-                    '{0} plays {1} to have {2} choose whether to cancel {3} or have {0} draw 2 cards',
-                    context.player,
-                    this,
-                    context.event.player,
-                    context.event.source
-                );
-
-                this.game.promptWithMenu(context.event.player, this, {
-                    activePrompt: {
-                        menuTitle: `Cancel ${context.event.source.name} or ${context.player.name} draws 2 cards?`,
-                        buttons: [
-                            { text: `Cancel ${context.event.source.name}`, method: 'cancel' },
-                            { text: `${context.player.name} draws 2 cards`, method: 'draw' }
-                        ]
+            message: {
+                format: '{player} plays {source} to have {opponent} choose whether to cancel {event} or have {player} draw 2 cards',
+                args: {
+                    opponent: (context) => context.event.player,
+                    event: (context) => context.event.source
+                }
+            },
+            gameAction: GameActions.choose({
+                player: (context) => context.event.player,
+                title: (context) =>
+                    `Cancel ${context.event.source.name} or ${context.player.name} draws 2 cards?`,
+                choices: (context) => ({
+                    [`Cancel ${context.event.source.name}`]: {
+                        message: '{choosingPlayer} chooses to cancel their event for {source}',
+                        gameAction: GameActions.cancelEffects((context) => ({
+                            event: context.event
+                        }))
                     },
-                    source: this
-                });
-            }
+                    [`${context.player.name} draws 2 cards`]: {
+                        message:
+                            '{choosingPlayer} chooses to have {player} draw 2 cards for {source}',
+                        gameAction: GameActions.drawCards((context) => ({
+                            player: context.player,
+                            amount: 2
+                        }))
+                    }
+                })
+            })
         });
-    }
-
-    cancel() {
-        this.context.event.cancel();
-        this.game.addMessage(
-            '{0} chooses to have {1} cancelled for {2}',
-            this.context.event.player,
-            this.context.event.source,
-            this
-        );
-        return true;
-    }
-
-    draw() {
-        let cards = this.context.player.drawCardsToHand(2).length;
-        this.game.addMessage(
-            '{0} chooses to have {1} draw {2} for {3}',
-            this.context.event.player,
-            this.context.player,
-            TextHelper.count(cards, 'card'),
-            this
-        );
-        return true;
     }
 }
 

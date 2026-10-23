@@ -22,40 +22,27 @@ class OrtonMerryweather extends DrawCard {
                     card.controller === context.player &&
                     card.getType() === 'event'
             },
-            handler: (context) => {
-                context.player.moveCard(context.target, 'hand');
-                this.game.addMessage(
-                    '{0} uses {1} to return {2} from their discard pile to their hand',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} uses {source} to return {target} from their discard pile to their hand',
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
-
         this.interrupt({
             when: {
-                onCardLeftPlay: (event) => event.card === this
+                onCardLeftPlay: (event, context) => event.card === context.source
             },
             target: {
-                cardCondition: (card) =>
-                    card.controller === this.controller &&
+                cardCondition: (card, context) =>
+                    card.controller === context.player &&
                     card.location === 'hand' &&
                     card.getType() === 'character' &&
                     card.hasTrait('Spy') &&
-                    !card.isUnique() &&
-                    this.controller.canPutIntoPlay(card)
+                    !card.isUnique()
             },
             message: '{player} uses {source} to put {target} into play',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoPlay((context) => ({
-                        card: context.target,
-                        player: context.player
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({
+                card: context.target,
+                player: context.player
+            }))
         });
     }
 }

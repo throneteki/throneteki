@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ConsolidationOfPower extends DrawCard {
     // Consolidation of Power (01062)
@@ -19,45 +20,22 @@ class ConsolidationOfPower extends DrawCard {
                     !card.kneeled,
                 gameAction: 'kneel'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} plays {1} to kneel {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-                for (let card of context.target) {
-                    card.controller.kneelCard(card);
-                }
-
-                if (!context.target.some((card) => card.allowGameAction('gainPower'))) {
-                    return;
-                }
-
-                this.game.promptForSelect(context.player, {
+            message: '{player} plays {source} to kneel {target}',
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) => GameActions.kneelCard({ card }))
+            ).then({
+                target: {
                     activePromptTitle: 'Select character to gain power',
-                    source: this,
-                    cardCondition: (card) => context.target.includes(card),
-                    gameAction: 'gainPower',
-                    onSelect: (player, card) => this.onPowerSelected(player, card),
-                    onCancel: (player) => this.cancelSelection(player)
-                });
-            }
+                    cardCondition: (card, context) => context.parentContext.target.includes(card),
+                    gameAction: 'gainPower'
+                },
+                message: 'Then {player} chooses {target} to gain 1 power',
+                gameAction: GameActions.gainPower((context) => ({
+                    card: context.target,
+                    amount: 1
+                }))
+            })
         });
-    }
-
-    onPowerSelected(player, card) {
-        card.modifyPower(1);
-
-        this.game.addMessage('Then {0} chooses {1} to gain 1 power', player, card);
-
-        return true;
-    }
-
-    cancelSelection(player) {
-        this.game.addAlert('danger', '{0} cancels the resolution of {1}', player, this);
-
-        return true;
     }
 }
 

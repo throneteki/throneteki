@@ -11,12 +11,6 @@
         "add-message": 3,
         "prompt-for-select": 1
     },
-    "server/game/cards/01-Core/ConsolidationOfPower.js": {
-        "add-message": 2,
-        "this-in-ability": 6,
-        "legacy-helper": 2,
-        "prompt-for-select": 1
-    },
     "server/game/cards/01-Core/FireAndBlood.js": {
         "this-in-ability": 7,
         "legacy-helper": 3,
@@ -270,10 +264,6 @@
     "server/game/cards/06.5-OR/WheelsWithinWheels.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/06.6-TBWB/TheBrotherhoodWithoutBanners.js": {
-        "this-in-ability": 7,
-        "add-message": 1
-    },
     "server/game/cards/07-WotW/GrizzledMiner.js": {
         "this-in-ability": 1
     },
@@ -377,11 +367,6 @@
         "this-in-ability": 13,
         "legacy-helper": 2,
         "add-message": 1
-    },
-    "server/game/cards/09-HoT/WordsAreWind.js": {
-        "this-in-ability": 7,
-        "add-message": 3,
-        "legacy-helper": 1
     },
     "server/game/cards/10-SoD/AreoHotah.js": {
         "this-in-ability": 1
@@ -541,11 +526,6 @@
         "this-in-ability": 12,
         "legacy-helper": 2,
         "add-message": 1
-    },
-    "server/game/cards/12-KotI/GoldenStorm.js": {
-        "this-in-ability": 14,
-        "legacy-helper": 2,
-        "add-message": 2
     },
     "server/game/cards/12-KotI/MaidensBane.js": {
         "this-in-ability": 4,
@@ -708,13 +688,6 @@
         "this-in-ability": 9,
         "add-message": 1
     },
-    "server/game/cards/15-DotE/ChoosingTheSpear.js": {
-        "this-in-ability": 11,
-        "add-message": 2,
-        "game-listener": 1,
-        "prompt-for-select": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/15-DotE/DothrakiHandmaiden.js": {
         "this-in-ability": 4,
         "legacy-helper": 1
@@ -854,11 +827,6 @@
         "prompt-for-select": 1,
         "add-message": 1
     },
-    "server/game/cards/18-FH/OrtonMerryweather.js": {
-        "legacy-helper": 1,
-        "add-message": 1,
-        "this-in-ability": 6
-    },
     "server/game/cards/18-FH/ReznakMoReznak.js": {
         "this-in-ability": 16,
         "add-message": 2,
@@ -903,11 +871,6 @@
         "this-in-ability": 9,
         "legacy-helper": 1,
         "add-message": 1
-    },
-    "server/game/cards/20-HMW/Bronn.js": {
-        "this-in-ability": 8,
-        "add-message": 2,
-        "legacy-helper": 1
     },
     "server/game/cards/20-HMW/CornCornCorn.js": {
         "this-in-ability": 6,
@@ -1088,11 +1051,6 @@
         "game-listener": 1,
         "add-message": 3,
         "direct-state-write": 1
-    },
-    "server/game/cards/25.3-FUtG/BelligerentHeir.js": {
-        "this-in-ability": 5,
-        "game-listener": 1,
-        "add-message": 1
     },
     "server/game/cards/25.3-FUtG/Greyscale.js": {
         "this-in-ability": 12,
