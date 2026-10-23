@@ -47,12 +47,6 @@
         "this-in-ability": 12,
         "add-message": 2
     },
-    "server/game/cards/25.3-FUtG/Greyscale.js": {
-        "this-in-ability": 12,
-        "prompt-for-select": 1,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/25.6-WK/BurningTheBooks.js": {
         "this-in-ability": 4
     }
