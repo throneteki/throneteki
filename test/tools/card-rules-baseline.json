@@ -69,12 +69,6 @@
         "add-message": 3,
         "game-listener": 1
     },
-    "server/game/cards/05-LoCR/TheRainsOfCastamere.js": {
-        "event-registration": 1,
-        "this-in-ability": 8,
-        "add-message": 1,
-        "legacy-helper": 1
-    },
     "server/game/cards/05-LoCR/TywinLannister.js": {
         "this-in-ability": 5,
         "add-message": 1

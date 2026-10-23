@@ -1,14 +1,8 @@
 import AgendaCard from '../../agendacard.js';
-import RevealPlots from '../../gamesteps/revealplots.js';
+import GameActions from '../../GameActions/index.js';
 import { Flags } from '../../Constants/index.js';
 
 class TheRainsOfCastamere extends AgendaCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
-
-        this.registerEvents(['onPlotDiscarded']);
-    }
-
     // "The Rains of Castamere" (05045)
     // Your plot deck must be 12 cards, including exactly 5 different Scheme cards. During the plot
     // phase, Scheme cards are not considered to be in your plot deck.
@@ -17,64 +11,48 @@ class TheRainsOfCastamere extends AgendaCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'intrigue' &&
-                    event.challenge.winner === this.owner &&
+                    event.challenge.winner === context.player &&
                     event.challenge.strengthDifference >= 5 &&
-                    !this.owner.hasFlag(Flags.player.cannotRevealPlot)
+                    !context.player.hasFlag(Flags.player.cannotRevealPlot)
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
                 type: 'select',
                 activePromptTitle: 'Select a plot',
-                cardCondition: (card) =>
-                    card.controller === this.controller &&
-                    card.hasTrait('scheme') &&
+                cardCondition: (card, context) =>
+                    card.controller === context.player &&
+                    card.hasTrait('Scheme') &&
                     card.location === 'plot deck',
                 cardType: 'plot'
             },
-            handler: (context) => this.trigger(context)
-        });
-
-        this.action({
-            title: 'Manually trigger',
-            cost: ability.costs.kneelFactionCard(),
-            condition: () => !this.owner.hasFlag(Flags.player.cannotRevealPlot),
-            target: {
-                type: 'select',
-                activePromptTitle: 'Select a plot',
-                cardCondition: (card) =>
-                    card.controller === this.controller && card.hasTrait('scheme'),
-                cardType: 'plot'
-            },
-            handler: (context) => this.trigger(context)
+            message: '{player} uses {source} and kneels their faction card to reveal {target}',
+            gameAction: GameActions.simultaneously([
+                GameActions.revealNewPlot((context) => ({
+                    card: context.target,
+                    player: context.player
+                })),
+                GameActions.delayedEffect({
+                    duration: 'untilTriggered',
+                    when: {
+                        onCardLeftPlay: (event, context) => event.card === context.target
+                    },
+                    message: '{player} removes {target} from the game as it left play',
+                    gameAction: GameActions.removeFromGame((context) => ({
+                        card: context.target
+                    }))
+                })
+            ])
         });
 
         this.persistentEffect({
-            condition: () => this.game.currentPhase === 'plot',
+            condition: (context) => context.game.currentPhase === 'plot',
             match: (card) => card.getType() === 'plot' && card.hasTrait('Scheme'),
             targetController: 'current',
             targetLocation: 'plot deck',
             effect: ability.effects.notConsideredToBeInPlotDeck()
         });
-    }
-
-    trigger(context) {
-        this.game.addMessage(
-            '{0} uses {1} and kneels their faction card to reveal {2}',
-            context.player,
-            this,
-            context.target
-        );
-
-        context.player.selectedPlot = context.target;
-        this.game.queueStep(new RevealPlots(this.game, [context.target]));
-    }
-
-    onPlotDiscarded(event) {
-        if (event.card.controller === this.controller && event.card.hasTrait('Scheme')) {
-            this.owner.moveCard(event.card, 'out of game');
-        }
     }
 }
 
