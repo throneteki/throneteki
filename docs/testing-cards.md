@@ -88,6 +88,7 @@ this.setupTest({
         ],
         hand: ['Winter Is Coming'], // exactly these cards
         drawDeck: ['Robb Stark (Core)'], // placed on top of the deck in this order
+        drawDeckBottom: ['Hedge Knight'], // placed at the bottom of the deck, the last one lowest
         deck: ['The Crag (TSoW)'], // in the deck but not arranged, for agendas that search it
         discard: [],
         deadPile: [],

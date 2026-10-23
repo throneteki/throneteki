@@ -1,5 +1,8 @@
-import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
+
+const isEligible = (card) =>
+    card.location === 'active plot' && card.getType() === 'plot' && !card.hasTrait('Riddle');
 
 class VaryssRiddle extends PlotCard {
     // Varys's Riddle (04020)
@@ -7,62 +10,23 @@ class VaryssRiddle extends PlotCard {
     // you had just revealed it.
     setupCardAbilities() {
         this.whenRevealed({
-            handler: (context) => {
-                let opponents = this.game.getOpponents(context.player);
-                this.nonRiddlePlots = opponents
-                    .map((opponent) => opponent.activePlot)
-                    .filter((plot) => !plot.hasTrait('Riddle'));
-
-                if (this.resolving || this.nonRiddlePlots.length === 0) {
-                    return;
+            gameAction: GameActions.simultaneously((context) => {
+                const plots = context.game.allCards.filter((card) => isEligible(card));
+                if (plots.length === 1) {
+                    return [
+                        GameActions.initiateWhenRevealed({ plot: plots[0], player: context.player })
+                    ];
                 }
 
-                this.context = context;
-
-                if (this.nonRiddlePlots.length === 1) {
-                    this.resolveWhenRevealed(this.nonRiddlePlots[0]);
-                    return;
-                }
-
-                // TODO: It would be more consistent if this were a card select
-                // prompt, but that requires a bunch of reworking on the client
-                // side to allow clicking of the active plot.
-                let buttons = this.nonRiddlePlots.map((plot) => {
-                    return {
-                        text: `${plot.owner.name} - ${plot.name}`,
-                        method: 'selectPlot',
-                        card: plot
-                    };
-                });
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: 'Select a plot',
-                        buttons: buttons
-                    },
-                    source: this
-                });
-            }
-        });
-    }
-
-    selectPlot(player, plotId) {
-        let plot = this.nonRiddlePlots.find((plot) => plot.uuid === plotId);
-        this.resolveWhenRevealed(plot);
-        return true;
-    }
-
-    resolveWhenRevealed(plot) {
-        this.game.addMessage(
-            '{0} uses {1} to initiate the When Revealed ability of {2}',
-            this.context.player,
-            this,
-            plot
-        );
-        this.resolving = true;
-
-        this.game.resolveGameAction(GameActions.initiateWhenRevealed({ plot }), this.context);
-        this.game.queueSimpleStep(() => {
-            this.resolving = false;
+                return [
+                    GameActions.chooseCards({
+                        title: 'Select a plot',
+                        cardCondition: (card) => isEligible(card),
+                        gameAction: (plot, context) =>
+                            GameActions.initiateWhenRevealed({ plot, player: context.player })
+                    })
+                ];
+            })
         });
     }
 }

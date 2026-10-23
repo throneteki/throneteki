@@ -30,7 +30,7 @@ const PhaseOrder = ['setup', 'plot', 'marshal', 'challenge'];
 const CompletePhase = {
     marshal: 'completeMarshalPhase'
 };
-const ZoneKeys = ['hand', 'drawDeck', 'discard', 'deadPile', 'shadows'];
+const ZoneKeys = ['hand', 'drawDeck', 'drawDeckBottom', 'discard', 'deadPile', 'shadows'];
 const ZoneLocations = {
     discard: 'discard pile',
     deadPile: 'dead pile',
@@ -214,6 +214,12 @@ function arrangeSetupZones(claims, options) {
             player.placeCardInPile({ card, location: 'draw deck', bottom: true });
             return card;
         });
+
+        assigned[key].drawDeckBottom = asArray(own.drawDeckBottom).map((name) => {
+            const card = claims[key].claim(name);
+            player.placeCardInPile({ card, location: 'draw deck', bottom: true });
+            return card;
+        });
     }
 
     return assigned;
@@ -231,6 +237,10 @@ function finaliseHiddenZones(claims, assigned) {
 
         for (const card of [...assigned[key].drawDeck].reverse()) {
             player.placeCardInPile({ card, location: 'draw deck' });
+        }
+
+        for (const card of assigned[key].drawDeckBottom) {
+            player.placeCardInPile({ card, location: 'draw deck', bottom: true });
         }
     }
 }

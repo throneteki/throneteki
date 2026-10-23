@@ -15,69 +15,50 @@ class INeverBetAgainstMyFamily extends DrawCard {
             message:
                 '{player} plays {source} and kneels their faction card to reveal the bottom 5 cards of their deck',
             gameAction: GameActions.revealCards((context) => ({
-                cards: context.player.searchDrawDeck(-5),
+                cards: context.player.drawDeck.slice(-5),
                 player: context.player,
-                whileRevealed: GameActions.genericHandler((context) => {
-                    const isUniqueLannister = (card) =>
-                        card.isMatch({ type: 'character', unique: true, faction: 'lannister' });
-                    if (context.revealed.some(isUniqueLannister)) {
-                        this.game.promptForSelect(context.player, {
-                            activePromptTitle: 'Select a character',
-                            cardCondition: (card) =>
-                                context.revealed.includes(card) && isUniqueLannister(card),
-                            onSelect: (player, card) => {
-                                context.target = card;
-                                this.handleCards(context);
-                                return true;
-                            },
-                            onCancel: () => {
-                                this.handleCards(context);
-                                return true;
-                            }
-                        });
-                    }
+                whileRevealed: GameActions.chooseCards({
+                    optional: true,
+                    title: 'Select a character',
+                    cardCondition: (card, context) =>
+                        context.revealed.includes(card) &&
+                        card.isMatch({ type: 'character', unique: true, faction: 'lannister' }),
+                    gameAction: (card) => GameActions.putIntoPlay({ card })
                 })
-            }))
-        });
-    }
-
-    handleCards(context) {
-        if (context.target) {
-            this.game.addMessage('{0} puts {1} into play', context.player, context.target);
-        }
-        const placedOnBottom = context.revealed.filter((card) => card !== context.target);
-        if (placedOnBottom.length > 0) {
-            this.game.addMessage(
-                '{0} places {1} on the bottom of their deck',
-                context.player,
-                placedOnBottom
-            );
-        }
-        this.game.resolveGameAction(
-            GameActions.simultaneously((context) =>
-                context.revealed.map((card) =>
-                    card === context.target
-                        ? this.buildPutIntoPlayAction(card)
-                        : GameActions.placeCard({ card, location: 'draw deck', bottom: true })
-                )
-            ),
-            context
-        );
-    }
-
-    buildPutIntoPlayAction(card) {
-        return GameActions.putIntoPlay({ card }).then({
-            handler: () => {
-                this.atEndOfPhase((ability) => ({
-                    match: card,
-                    condition: () => ['play area', 'duplicate'].includes(card.location),
-                    targetLocation: 'any',
-                    effect: ability.effects.discardIfStillInPlay(false)
-                }));
-            }
+            })).then({
+                message: {
+                    format: '{player} places {cards} on the bottom of their deck',
+                    args: { cards: (context) => othersInDeck(context) }
+                },
+                gameAction: GameActions.simultaneously((context) => [
+                    ...othersInDeck(context).map((card) =>
+                        GameActions.placeCard({
+                            card,
+                            location: 'draw deck',
+                            bottom: true,
+                            player: context.player,
+                            orderable: true
+                        })
+                    ),
+                    ...(context.parentContext.chosenCards || [])
+                        .filter((card) => card.location === 'play area')
+                        .map((card) =>
+                            GameActions.lastingEffect(() => ({
+                                duration: 'atEndOfPhase',
+                                match: card,
+                                condition: () => ['play area', 'duplicate'].includes(card.location),
+                                targetLocation: 'any',
+                                effect: ability.effects.discardIfStillInPlay(false)
+                            }))
+                        )
+                ])
+            })
         });
     }
 }
+
+const othersInDeck = (context) =>
+    context.parentContext.revealed.filter((card) => card.location === 'draw deck');
 
 INeverBetAgainstMyFamily.code = '02050';
 

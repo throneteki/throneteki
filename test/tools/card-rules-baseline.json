@@ -15,15 +15,6 @@
         "add-message": 4,
         "legacy-helper": 1
     },
-    "server/game/cards/02.3-TKP/INeverBetAgainstMyFamily.js": {
-        "prompt-for-select": 1,
-        "this-in-ability": 5,
-        "add-message": 2
-    },
-    "server/game/cards/04.1-AtSK/VaryssRiddle.js": {
-        "this-in-ability": 13,
-        "add-message": 1
-    },
     "server/game/cards/05-LoCR/HighSepton.js": {
         "this-in-ability": 6,
         "add-message": 1
