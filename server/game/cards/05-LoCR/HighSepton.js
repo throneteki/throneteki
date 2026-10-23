@@ -1,4 +1,5 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class HighSepton extends DrawCard {
     // High Septon (05039)
@@ -9,40 +10,32 @@ class HighSepton extends DrawCard {
         this.interrupt({
             limit: ability.limit.perPhase(1),
             when: {
-                onTargetsChosen: (event) =>
+                onTargetsChosen: (event, context) =>
                     event.ability.isTriggeredAbility() &&
                     event.targets.hasSingleTarget() &&
                     event.targets.anySelection(
                         (selection) =>
-                            selection.choosingPlayer !== this.controller &&
+                            selection.choosingPlayer !== context.player &&
                             selection.value.getType() === 'character' &&
-                            selection.value.controller === this.controller
+                            selection.value.controller === context.player
                     )
             },
             target: {
-                cardCondition: (card, context) => this.isEligibleCharacter(card, context)
+                cardCondition: (card, context) =>
+                    context.event.targets.selections[0].isEligible(card) &&
+                    card.controller === context.player &&
+                    card.getType() === 'character' &&
+                    card.hasTrait('The Seven')
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to choose {2} as the target for {3} instead',
-                    this.controller,
-                    this,
-                    context.target,
-                    context.event.ability.card
-                );
-                context.event.targets.selections[0].resolve(context.target);
-            }
+            message: {
+                format: '{player} uses {source} to choose {target} as the target for {ability} instead',
+                args: { ability: (context) => context.event.ability.card }
+            },
+            gameAction: GameActions.changeAbilityTarget((context) => ({
+                selection: context.event.targets.selections[0],
+                card: context.target
+            }))
         });
-    }
-
-    isEligibleCharacter(card, context) {
-        let selection = context.event.targets.selections[0];
-        return (
-            selection.isEligible(card) &&
-            card.controller === this.controller &&
-            card.getType() === 'character' &&
-            card.hasTrait('The Seven')
-        );
     }
 }
 

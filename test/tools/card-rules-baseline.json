@@ -15,10 +15,6 @@
         "add-message": 4,
         "legacy-helper": 1
     },
-    "server/game/cards/05-LoCR/HighSepton.js": {
-        "this-in-ability": 6,
-        "add-message": 1
-    },
     "server/game/cards/09-HoT/TheConclave.js": {
         "event-registration": 1,
         "this-in-ability": 5,
