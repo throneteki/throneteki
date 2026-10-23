@@ -48,10 +48,6 @@
         "legacy-helper": 2,
         "add-message": 1
     },
-    "server/game/cards/02.2-TRtW/TheReader.js": {
-        "this-in-ability": 3,
-        "add-message": 1
-    },
     "server/game/cards/02.3-TKP/INeverBetAgainstMyFamily.js": {
         "prompt-for-select": 1,
         "this-in-ability": 5,
@@ -198,10 +194,6 @@
         "prompt-for-select": 1
     },
     "server/game/cards/08.6-SAT/TheCrowIsATricksyBird.js": {
-        "this-in-ability": 8,
-        "add-message": 2
-    },
-    "server/game/cards/09-HoT/DesmeraRedwyne.js": {
         "this-in-ability": 8,
         "add-message": 2
     },
@@ -424,10 +416,6 @@
         "this-in-ability": 4,
         "add-message": 1
     },
-    "server/game/cards/15-DotE/Khaleesi.js": {
-        "this-in-ability": 8,
-        "add-message": 1
-    },
     "server/game/cards/15-DotE/OverwhelmingNumbers.js": {
         "this-in-ability": 6,
         "legacy-helper": 2,
@@ -442,10 +430,6 @@
         "this-in-ability": 4,
         "legacy-helper": 1,
         "add-message": 2
-    },
-    "server/game/cards/16-TTWDFL/HeadsOnPikes.js": {
-        "this-in-ability": 2,
-        "add-message": 1
     },
     "server/game/cards/16-TTWDFL/SkyCell.js": {
         "this-in-ability": 7,
@@ -677,17 +661,9 @@
     "server/game/cards/25.6-WK/BurningTheBooks.js": {
         "this-in-ability": 4
     },
-    "server/game/cards/26.1-WAID/SerClaytonSuggs.js": {
-        "this-in-ability": 8,
-        "add-message": 2
-    },
     "server/game/cards/26.2-WoW/QueenOfMeereen.js": {
         "prompt-for-select": 1,
         "this-in-ability": 5
-    },
-    "server/game/cards/26.3-MaV/SerGulianQorgyle.js": {
-        "this-in-ability": 8,
-        "add-message": 1
     },
     "server/game/cards/26.3-MaV/WanderingDisciple.js": {
         "this-in-ability": 3

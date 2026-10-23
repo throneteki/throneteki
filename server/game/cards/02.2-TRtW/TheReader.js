@@ -9,8 +9,8 @@ class TheReader extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
                     event.challenge.isUnopposed() &&
                     event.challenge
                         .getWinnerCards()
@@ -29,13 +29,11 @@ class TheReader extends DrawCard {
                     message:
                         "{player} uses {source} to discard the top 3 cards from each opponent's deck",
                     gameAction: GameActions.simultaneously((context) =>
-                        this.game.getOpponents(context.player).map((opponent) =>
+                        context.game.getOpponents(context.player).map((opponent) =>
                             GameActions.discardTopCards({
                                 player: opponent,
                                 amount: 3,
                                 source: context.source
-                            }).thenExecute((event) => {
-                                this.game.addMessage('{player} discards {topCards}', event);
                             })
                         )
                     )

@@ -13,13 +13,11 @@ class HeadsOnPikes extends DrawCard {
             message:
                 '{player} plays {source} to have each opponent discard cards from the top of their deck',
             gameAction: GameActions.simultaneously((context) =>
-                this.game.getOpponents(context.player).map((opponent) =>
+                context.game.getOpponents(context.player).map((opponent) =>
                     GameActions.discardTopCards({
                         player: opponent,
                         amount: opponent.deadPile.length * 2,
                         source: context.source
-                    }).thenExecute((event) => {
-                        this.game.addMessage('{player} discards {topCards}', event);
                     })
                 )
             ),
