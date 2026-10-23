@@ -1,5 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
+import GameActions from '../../GameActions/index.js';
 
 class Saltcliffe extends DrawCard {
     // Saltcliffe (20008)
@@ -16,56 +17,45 @@ class Saltcliffe extends DrawCard {
                     card.getType() === 'character' &&
                     card.hasTrait('Raider')
             },
-            handler: (context) => {
-                this.target = context.target;
-                if (this.game.anyCardsInPlay((card) => card.hasToken(Tokens.gold))) {
-                    this.game.promptWithMenu(context.player, this, {
-                        activePrompt: {
-                            menuTitle: 'Move gold from treasury or card?',
-                            buttons: [
-                                { text: 'Treasury', method: 'moveGoldFromTreasury' },
-                                { text: 'Card', method: 'moveGoldFromCard' }
-                            ]
-                        },
-                        source: this
-                    });
-                } else {
-                    this.moveGoldFromTreasury(context.player);
-                }
-            }
+            gameAction: GameActions.ifCondition({
+                condition: (context) =>
+                    context.game.anyCardsInPlay((card) => card.hasToken(Tokens.gold)),
+                thenAction: GameActions.choose({
+                    title: 'Move gold from treasury or card?',
+                    choices: {
+                        Treasury: fromTreasury(),
+                        Card: {
+                            message:
+                                '{player} kneels {source} to move 1 gold from a card to {target}',
+                            gameAction: GameActions.chooseCards({
+                                title: 'Select a card',
+                                cardCondition: (card) =>
+                                    card.location === 'play area' && card.hasToken(Tokens.gold),
+                                gameAction: (card, context) =>
+                                    GameActions.transferGold({
+                                        from: card,
+                                        to: context.target,
+                                        amount: 1
+                                    })
+                            })
+                        }
+                    }
+                }),
+                elseAction: fromTreasury()
+            })
         });
     }
+}
 
-    moveGoldFromTreasury(player) {
-        this.target.modifyToken(Tokens.gold, 1);
-        this.game.addMessage('{0} kneels {1} to have {2} gain 1 gold', player, this, this.target);
-
-        return true;
-    }
-
-    moveGoldFromCard(player) {
-        this.game.promptForSelect(player, {
-            activePromptTitle: 'Select a card',
-            source: this,
-            cardCondition: (card) => card.location === 'play area' && card.hasToken(Tokens.gold),
-            onSelect: (player, card) => this.goldSourceSelected(player, card)
-        });
-
-        return true;
-    }
-
-    goldSourceSelected(player, card) {
-        this.game.transferGold({ from: card, to: this.target, amount: 1 });
-        this.game.addMessage(
-            '{0} uses {1} to move 1 gold from {2} to {3}',
-            player,
-            this,
-            card,
-            this.target
-        );
-
-        return true;
-    }
+function fromTreasury() {
+    return {
+        message: '{player} kneels {source} to have {target} gain 1 gold',
+        gameAction: GameActions.placeToken((context) => ({
+            card: context.target,
+            token: Tokens.gold,
+            amount: 1
+        }))
+    };
 }
 
 Saltcliffe.code = '20008';

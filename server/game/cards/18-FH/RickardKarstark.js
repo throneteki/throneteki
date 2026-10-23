@@ -25,24 +25,19 @@ class RickardKarstark extends DrawCard {
                     card.controller === context.choosingPlayer &&
                     (card.getType() === 'character' || card.getType() === 'location')
             },
-            handler: (context) => {
-                let selections = context.targets.selections.filter(
-                    (selection) => !!selection.value
-                );
-
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        selections.map((selection) =>
-                            GameActions.sacrificeCard({
-                                player: selection.choosingPlayer,
-                                card: selection.value
-                            })
-                        )
+            message:
+                '{player} uses {source} and kneels {costs.kneel} to have each player sacrifice a character or location',
+            gameAction: GameActions.simultaneously((context) =>
+                context.targets.selections
+                    .filter((selection) => !!selection.value)
+                    .map((selection) =>
+                        GameActions.sacrificeCard({
+                            player: selection.choosingPlayer,
+                            card: selection.value
+                        })
                     )
-                );
-            }
+            )
         });
-
         this.reaction({
             when: {
                 onPlotsRevealed: (event) => event.plots.some((plot) => plot.hasTrait('Winter'))
@@ -55,15 +50,9 @@ class RickardKarstark extends DrawCard {
                     card.hasTrait('The North') &&
                     card.getType() === 'location'
             },
-            handler: (context) => {
-                context.player.moveCard(context.target, 'hand');
-                this.game.addMessage(
-                    '{0} uses {1} to move {2} from their discard pile to their hand',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} uses {source} to move {target} from their discard pile to their hand',
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 }

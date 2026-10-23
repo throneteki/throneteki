@@ -95,11 +95,6 @@
     "server/game/cards/02.4-NMG/DothrakiOutriders.js": {
         "this-in-ability": 1
     },
-    "server/game/cards/02.4-NMG/PaidOff.js": {
-        "this-in-ability": 14,
-        "legacy-helper": 3,
-        "add-message": 3
-    },
     "server/game/cards/02.5-COW/BloodMagicRitual.js": {
         "this-in-ability": 14,
         "legacy-helper": 1,
@@ -469,9 +464,6 @@
         "direct-state-write": 1,
         "add-message": 1
     },
-    "server/game/cards/11.4-MoD/BondsOfChivalry.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/11.4-MoD/Shaggydog.js": {
         "this-in-ability": 16,
         "add-message": 3,
@@ -649,9 +641,6 @@
     "server/game/cards/14-FotS/SerDavosSeaworth.js": {
         "this-in-ability": 4
     },
-    "server/game/cards/14-FotS/SerImryFlorent.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/14-FotS/ThePrinceThatWasPromised.js": {
         "event-registration": 1,
         "this-in-ability": 9,
@@ -787,11 +776,6 @@
         "prompt-for-select": 1,
         "add-message": 1
     },
-    "server/game/cards/18-FH/RickardKarstark.js": {
-        "this-in-ability": 3,
-        "legacy-helper": 1,
-        "add-message": 1
-    },
     "server/game/cards/18-FH/SerAddamMarbrand.js": {
         "this-in-ability": 9,
         "legacy-helper": 2,
@@ -846,12 +830,6 @@
     },
     "server/game/cards/20-HMW/OurWordIsGoodAsGold.js": {
         "this-in-ability": 1
-    },
-    "server/game/cards/20-HMW/Saltcliffe.js": {
-        "this-in-ability": 7,
-        "legacy-helper": 2,
-        "add-message": 2,
-        "prompt-for-select": 1
     },
     "server/game/cards/20-HMW/SerGuyardMorrigen.js": {
         "this-in-ability": 7,
@@ -1090,10 +1068,6 @@
     },
     "server/game/cards/26.3-MaV/WanderingDisciple.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/26.4 LotW/SerHarryStrickland.js": {
-        "this-in-ability": 8,
-        "add-message": 1
     },
     "server/game/cards/26.5-JfE/BaelorBrightsmile.js": {
         "this-in-ability": 4,

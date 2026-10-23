@@ -7,10 +7,6 @@ class BondsOfChivalry extends DrawCard {
     // challenge. Then, you may kneel another Knight character you control to have it participate in
     // the challenge on your side.
     setupCardAbilities() {
-        const standAndRemoveAction = GameActions.simultaneously([
-            GameActions.standCard((context) => ({ card: context.target })),
-            GameActions.removeFromChallenge((context) => ({ card: context.target }))
-        ]);
         this.action({
             title: 'Stand and remove Knight',
             target: {
@@ -18,53 +14,51 @@ class BondsOfChivalry extends DrawCard {
                     type: 'character',
                     controller: 'current',
                     participating: true,
-                    trait: 'Knight',
-                    condition: (card, context) =>
-                        standAndRemoveAction.allow({ ...context, target: card })
+                    trait: 'Knight'
                 }
             },
             message: '{player} plays {source} to stand and remove {target} from the challenge',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    standAndRemoveAction.then({
-                        target: {
-                            optional: true,
-                            cardCondition: {
-                                type: 'character',
-                                controller: 'current',
-                                trait: 'Knight',
-                                condition: (card, context) =>
-                                    card !== context.parentContext.target &&
-                                    GameActions.kneelCard({ card }).allow() &&
-                                    GameActions.addToChallenge({ card }).allow()
-                            }
-                        },
-                        handler: (context) => {
-                            this.game.resolveGameAction(
-                                GameActions.ifCondition({
-                                    condition: (context) => context.target,
-                                    thenAction: {
-                                        gameAction: GameActions.simultaneously([
-                                            GameActions.kneelCard((context) => ({
-                                                card: context.target
-                                            })),
-                                            GameActions.addToChallenge((context) => ({
-                                                card: context.target
-                                            }))
-                                        ]),
-                                        message:
-                                            'Then, {player} kneels {target} to have it participate in the challenge on their side'
-                                    }
-                                }),
-                                context
-                            );
-                        }
-                    }),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously([
+                GameActions.standCard((context) => ({ card: context.target })),
+                GameActions.removeFromChallenge((context) => ({ card: context.target }))
+            ]).then({
+                condition: (context) =>
+                    context.player.anyCardsInPlay((card) =>
+                        canJoin(card, context.parentContext.target)
+                    ),
+                target: {
+                    optional: true,
+                    cardCondition: {
+                        type: 'character',
+                        controller: 'current',
+                        trait: 'Knight',
+                        condition: (card, context) => canJoin(card, context.parentContext.target)
+                    }
+                },
+                gameAction: GameActions.ifCondition({
+                    condition: (context) => !!context.target,
+                    thenAction: {
+                        message:
+                            'Then, {player} kneels {target} to have it participate in the challenge on their side',
+                        gameAction: GameActions.simultaneously([
+                            GameActions.kneelCard((context) => ({ card: context.target })),
+                            GameActions.addToChallenge((context) => ({ card: context.target }))
+                        ])
+                    }
+                })
+            })
         });
     }
+}
+
+function canJoin(card, removedCard) {
+    return (
+        card !== removedCard &&
+        card.getType() === 'character' &&
+        card.hasTrait('Knight') &&
+        GameActions.kneelCard({ card }).allow() &&
+        GameActions.addToChallenge({ card }).allow()
+    );
 }
 
 BondsOfChivalry.code = '11064';
