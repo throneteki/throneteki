@@ -312,12 +312,6 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/13.5-TB/BoundForTheWall.js": {
-        "this-in-ability": 6,
-        "prompt-for-select": 1,
-        "add-message": 2,
-        "legacy-helper": 2
-    },
     "server/game/cards/13.5-TB/HighgardenJester.js": {
         "this-in-ability": 10,
         "prompt-for-select": 1,
@@ -563,11 +557,6 @@
     },
     "server/game/cards/26.3-MaV/WanderingDisciple.js": {
         "this-in-ability": 3
-    },
-    "server/game/cards/26.5-JfE/BaelorBrightsmile.js": {
-        "this-in-ability": 4,
-        "legacy-helper": 2,
-        "direct-state-write": 1
     },
     "server/game/cards/26.5-JfE/LivingShadow.js": {
         "this-in-ability": 9,
