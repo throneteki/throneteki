@@ -250,6 +250,7 @@ export const Events = Object.freeze({
     onPlayerKeepHandOrMulligan: { params: { choice: 'string', player: 'Player' } },
     onNewPlotChosen: { params: { card: 'PlotCard', player: 'Player' } },
     onPlotDiscarded: { params: { card: 'PlotCard', player: 'Player' } },
+    onPlotReturnedToDeck: { params: { card: 'PlotCard', player: 'Player' } },
     onPlotRevealed: { params: { plot: 'PlotCard' } },
     onPlotsRecycled: { params: { player: 'Player' } },
     onPlotsRevealed: { params: { plots: 'PlotCard[]' } },

@@ -57,6 +57,7 @@ import RemoveFromGame from './RemoveFromGame.js';
 import ReplaceEvent from './ReplaceEvent.js';
 import ReturnCardToDeck from './ReturnCardToDeck.js';
 import ReturnCardToHand from './ReturnCardToHand.js';
+import ReturnPlotToDeck from './ReturnPlotToDeck.js';
 import ReturnGoldToTreasury from './ReturnGoldToTreasury.js';
 import RevealCards from './RevealCards.js';
 import RevealNewPlot from './RevealNewPlot.js';
@@ -133,6 +134,7 @@ const GameActions = {
     replaceEvent: (props) => new AbilityAdapter(ReplaceEvent, props),
     returnCardToDeck: (props) => new AbilityAdapter(ReturnCardToDeck, props),
     returnCardToHand: (props) => new AbilityAdapter(ReturnCardToHand, props),
+    returnPlotToDeck: (props) => new AbilityAdapter(ReturnPlotToDeck, props),
     returnGoldToTreasury: (props) => new AbilityAdapter(ReturnGoldToTreasury, props),
     revealCards: (props) => new AbilityAdapter(RevealCards, props),
     revealNewPlot: (props) => new AbilityAdapter(RevealNewPlot, props),

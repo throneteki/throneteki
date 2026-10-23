@@ -1,5 +1,5 @@
 import PlotCard from '../../plotcard.js';
-import RevealPlots from '../../gamesteps/revealplots.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheGatheringStorm extends PlotCard {
     // The Gathering Storm (16036)
@@ -14,34 +14,23 @@ class TheGatheringStorm extends PlotCard {
                 cardCondition: (card, context) => context.choosingPlayer.plotDeck.includes(card),
                 cardType: 'plot'
             },
-            handler: (context) => {
-                const plots = [];
-
-                for (const selection of context.targets.selections) {
-                    const player = selection.choosingPlayer;
-                    const plot = selection.value;
-                    if (plot) {
-                        this.game.addMessage('{player} chooses to reveal {plot} for {source}', {
-                            player,
-                            plot,
-                            source: this
-                        });
-                        player.selectedPlot = plot;
-                        player.moveCard(player.activePlot, 'plot deck');
-                        player.activePlot = null;
-                        plots.push(plot);
-                    } else {
-                        this.game.addMessage(
-                            '{player} does not choose to reveal a plot for {source}',
-                            { player, source: this }
-                        );
-                    }
-                }
-
-                if (plots.length > 0) {
-                    this.game.queueStep(new RevealPlots(this.game, plots, context.event));
-                }
-            }
+            message:
+                '{player} uses {source} to let each opponent return their revealed plot and reveal {target}',
+            gameAction: GameActions.simultaneously((context) =>
+                context.targets.selections
+                    .filter((selection) => !!selection.value)
+                    .map((selection) =>
+                        GameActions.returnPlotToDeck({
+                            card: selection.choosingPlayer.activePlot
+                        }).then({
+                            gameAction: GameActions.revealNewPlot({
+                                card: selection.value,
+                                player: selection.choosingPlayer,
+                                parentEvent: context.event
+                            })
+                        })
+                    )
+            )
         });
     }
 }

@@ -25,11 +25,6 @@
         "this-in-ability": 9,
         "add-message": 1
     },
-    "server/game/cards/16-TTWDFL/TheGatheringStorm.js": {
-        "add-message": 2,
-        "this-in-ability": 6,
-        "legacy-helper": 1
-    },
     "server/game/cards/20-HMW/KindlyMan.js": {
         "this-in-ability": 5,
         "add-message": 1
