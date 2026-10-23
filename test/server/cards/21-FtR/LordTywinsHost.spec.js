@@ -18,7 +18,7 @@ describe("Lord Tywin's Host", function () {
     it('gives Tywin Lannister a military icon', function () {
         this.setupTest({
             phase: 'marshal',
-            player1: { inPlay: ["Lord Tywin's Host", 'Tywin Lannister (Core)'] }
+            player1: { inPlay: ["Lord Tywin's Host", 'Tywin Lannister (LoCR)'] }
         });
         expect(this.tywinLannister.hasIcon('military')).toBe(true);
     });
