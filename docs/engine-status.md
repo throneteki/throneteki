@@ -175,8 +175,7 @@ The eight shared neutrals in the roadmap table are verified, and so is Stark Fea
 Standard v2.1 joust lists published in the last year, the next closest is
 [16389](https://thronesdb.com/decklist/view/16389) (Stark Fealty), at 9 unverified cards: The
 First Snow of Winter, Winter Festival, House Manderly Knight, Northern Keep, White Harbor, Winter
-Reserves, Shadow of the North, The Stranger and Crannogmen. The Lord of the Crossing lists are
-blocked on the agenda (see above). Add each finished list to `PlayableDecks.spec.js`.
+Reserves, Shadow of the North, The Stranger and Crannogmen. Add each finished list to `PlayableDecks.spec.js`.
 
 ## Do not reapply
 
