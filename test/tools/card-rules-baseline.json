@@ -32,11 +32,6 @@
         "add-message": 1,
         "legacy-helper": 1
     },
-    "server/game/cards/13.5-TB/TyrionLannister.js": {
-        "this-in-ability": 5,
-        "add-message": 1,
-        "legacy-helper": 2
-    },
     "server/game/cards/14-FotS/NightfireVision.js": {
         "this-in-ability": 7,
         "add-message": 2,
