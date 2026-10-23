@@ -6,18 +6,21 @@ class HighgardenDestrier extends DrawCard {
     // Attached character gets +1 STR for each character you control with printed cost 3 or lower.
     setupCardAbilities(ability) {
         this.attachmentRestriction(
-            (card) =>
+            (card, context) =>
                 card.getType() === 'character' &&
                 card.hasPrintedStrength() &&
                 card.getPrintedStrength() <= 3 &&
                 card.attachments.every(
-                    (attachment) => attachment === this || attachment.name !== 'Highgarden Destrier'
+                    (attachment) =>
+                        attachment === context.source || attachment.name !== 'Highgarden Destrier'
                 )
         );
-
         this.whileAttached({
-            effect: ability.effects.dynamicStrength(() =>
-                this.controller.getNumberOfCardsInPlay({ type: 'character', printedCostOrLower: 3 })
+            effect: ability.effects.dynamicStrength((card, context) =>
+                context.source.controller.getNumberOfCardsInPlay({
+                    type: 'character',
+                    printedCostOrLower: 3
+                })
             )
         });
     }

@@ -10,7 +10,8 @@ class NightGathers extends DrawCard {
         this.action({
             title: 'Allow marshaling from opponent discard',
             phase: 'marshal',
-            chooseOpponent: (opponent) => opponent.getReserve() < this.controller.getReserve(),
+            chooseOpponent: (opponent, context) =>
+                opponent.getReserve() < context.player.getReserve(),
             message:
                 "{player} plays {source} to allow cards from {opponent}'s discard pile to be marshaled",
             gameAction: GameActions.lastingEffect((context) => ({

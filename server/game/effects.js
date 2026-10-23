@@ -1008,33 +1008,41 @@ const Effects = {
         return this.cannotPutIntoPlay(restriction);
     },
     cannotMarshal: function (condition) {
-        let restriction = (card, playingType) => playingType === 'marshal' && condition(card);
+        let restriction = (card, playingType, context) =>
+            playingType === 'marshal' && condition(card, context);
         return this.cannotPutIntoPlay(restriction);
     },
     cannotBringOutOfShadows: function (condition) {
-        let restriction = (card, playingType) => playingType === 'outOfShadows' && condition(card);
+        let restriction = (card, playingType, context) =>
+            playingType === 'outOfShadows' && condition(card, context);
         return this.cannotPutIntoPlay(restriction);
     },
     cannotPlay: function (condition) {
-        let restriction = (card, playingType) =>
-            card.getType() === 'event' && playingType === 'play' && condition(card);
+        let restriction = (card, playingType, context) =>
+            card.getType() === 'event' && playingType === 'play' && condition(card, context);
         return this.cannotPutIntoPlay(restriction);
     },
     cannotPutIntoPlay: function (restriction) {
         return {
             targetType: 'player',
-            apply: function (player) {
-                player.playCardRestrictions.push(restriction);
+            apply: function (player, context) {
+                const bound = (card, playingType) => restriction(card, playingType, context);
+                context.playCardRestrictions = context.playCardRestrictions || {};
+                context.playCardRestrictions[player.name] = bound;
+                player.playCardRestrictions.push(bound);
             },
-            unapply: function (player) {
+            unapply: function (player, context) {
+                const bound = context.playCardRestrictions[player.name];
                 player.playCardRestrictions = player.playCardRestrictions.filter(
-                    (r) => r !== restriction
+                    (r) => r !== bound
                 );
+                delete context.playCardRestrictions[player.name];
             }
         };
     },
     cannotSetup: function (condition = () => true) {
-        let restriction = (card, playingType) => playingType === 'setup' && condition(card);
+        let restriction = (card, playingType, context) =>
+            playingType === 'setup' && condition(card, context);
         return this.cannotPutIntoPlay(restriction);
     },
     cannotSetupIntoShadows: function (condition = () => true) {

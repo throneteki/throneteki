@@ -7,21 +7,17 @@ class DothrakiSteed extends DrawCard {
     // trait).
     setupCardAbilities(ability) {
         this.attachmentRestriction(
-            (card) =>
+            (card, context) =>
                 card.getType() === 'character' &&
                 card.attachments.every(
-                    (attachment) => attachment === this || attachment.name !== 'Dothraki Steed'
+                    (attachment) =>
+                        attachment === context.source || attachment.name !== 'Dothraki Steed'
                 )
         );
-
         this.whileAttached({
-            condition: () => this.parent.isAttacking(),
-            effect: ability.effects.dynamicStrength(() => this.getSTR())
+            condition: (context) => context.source.parent.isAttacking(),
+            effect: ability.effects.dynamicStrength((card) => (card.hasTrait('Dothraki') ? 3 : 1))
         });
-    }
-
-    getSTR() {
-        return this.parent.hasTrait('Dothraki') ? 3 : 1;
     }
 }
 

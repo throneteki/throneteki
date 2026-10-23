@@ -6,27 +6,30 @@ class CatelynStark extends DrawCard {
     // Action: During an [intrigue] or [power] challenge in which you are the defending player, put
     // Catelyn Stark into play from your hand knelt, participating as a defender. At the end of the
     // phase, if Catelyn Stark is still in play, return her to your hand.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Add as a defender',
             location: 'hand',
-            condition: () =>
-                this.game.isDuringChallenge({
+            condition: (context) =>
+                context.game.isDuringChallenge({
                     challengeType: ['intrigue', 'power'],
-                    defendingPlayer: this.controller
-                }) && this.controller.canPutIntoPlay(this),
+                    defendingPlayer: context.player
+                }) && context.player.canPutIntoPlay(context.source),
             message: '{player} puts {source} into play as a defender',
             gameAction: GameActions.putIntoPlay((context) => ({
                 player: context.player,
-                card: this,
+                card: context.source,
                 kneeled: true
-            })).thenExecute(() => {
-                this.game.currentChallenge.addDefender(this);
-                this.atEndOfPhase((ability) => ({
-                    match: this,
-                    condition: () => 'play area' === this.location,
-                    effect: ability.effects.returnToHandIfStillInPlay(true)
-                }));
+            })).then({
+                gameAction: GameActions.simultaneously([
+                    GameActions.addToChallenge((context) => ({ card: context.source })),
+                    GameActions.lastingEffect((context) => ({
+                        duration: 'atEndOfPhase',
+                        match: context.source,
+                        condition: () => context.source.location === 'play area',
+                        effect: ability.effects.returnToHandIfStillInPlay(true)
+                    }))
+                ])
             })
         });
     }

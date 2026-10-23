@@ -101,12 +101,6 @@
         "legacy-helper": 2,
         "game-listener": 1
     },
-    "server/game/cards/04.3-FFH/BloodOfMyBlood.js": {
-        "this-in-ability": 1
-    },
-    "server/game/cards/04.3-FFH/NightGathers.js": {
-        "this-in-ability": 1
-    },
     "server/game/cards/04.4-TIMC/CaswellsKeep.js": {
         "this-in-ability": 9,
         "legacy-helper": 2,
@@ -404,9 +398,6 @@
     "server/game/cards/13.6-LMHR/ValyrianSteel.js": {
         "this-in-ability": 5
     },
-    "server/game/cards/14-FotS/DothrakiSteed.js": {
-        "this-in-ability": 3
-    },
     "server/game/cards/14-FotS/NightfireVision.js": {
         "this-in-ability": 7,
         "add-message": 2,
@@ -463,9 +454,6 @@
         "this-in-ability": 4,
         "legacy-helper": 1,
         "add-message": 2
-    },
-    "server/game/cards/16-TTWDFL/CatelynStark.js": {
-        "this-in-ability": 10
     },
     "server/game/cards/16-TTWDFL/HeadsOnPikes.js": {
         "this-in-ability": 2,
@@ -565,9 +553,6 @@
     "server/game/cards/20-HMW/KindlyMan.js": {
         "this-in-ability": 5,
         "add-message": 1
-    },
-    "server/game/cards/20-HMW/OurWordIsGoodAsGold.js": {
-        "this-in-ability": 1
     },
     "server/game/cards/20-HMW/WeLightTheWay.js": {
         "this-in-ability": 10,
@@ -725,15 +710,12 @@
     "server/game/cards/25.6-WK/BurningTheBooks.js": {
         "this-in-ability": 4
     },
-    "server/game/cards/26.1-WAID/HighgardenDestrier.js": {
-        "this-in-ability": 2
-    },
     "server/game/cards/26.1-WAID/SerClaytonSuggs.js": {
         "this-in-ability": 8,
         "add-message": 2
     },
     "server/game/cards/26.1-WAID/SlaversBay.js": {
-        "this-in-ability": 3
+        "this-in-ability": 1
     },
     "server/game/cards/26.2-WoW/QueenOfMeereen.js": {
         "prompt-for-select": 1,
@@ -762,9 +744,6 @@
         "this-in-ability": 5,
         "prompt-for-select": 1,
         "add-message": 1
-    },
-    "server/game/cards/26.6-NCbT/WarElephants.js": {
-        "this-in-ability": 3
     },
     "server/game/cards/27.2-WGYK/Hornvale.js": {
         "event-registration": 1,
