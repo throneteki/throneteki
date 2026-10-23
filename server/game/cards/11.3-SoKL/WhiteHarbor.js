@@ -9,59 +9,34 @@ class WhiteHarbor extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) => event.challenge.winner === this.controller
+                afterChallenge: (event, context) => event.challenge.winner === context.player
             },
             message: '{player} uses {source} to reveal the top 2 cards of their deck',
             gameAction: GameActions.revealTopCards((context) => ({
                 player: context.player,
                 amount: 2,
-                whileRevealed: GameActions.genericHandler((context) => {
-                    if (context.revealed.length > 0) {
-                        this.game.promptForSelect(context.event.challenge.loser, {
-                            activePromptTitle: `Select a card to add to ${context.player.name}'s hand`,
-                            cardCondition: (card) => context.revealed.includes(card),
-                            onSelect: (player, card) => {
-                                context.target = card;
-                                return true;
-                            },
-                            onCancel: (player) => {
-                                this.game.addAlert(
-                                    'danger',
-                                    '{0} does not select a card for {1}',
-                                    player,
-                                    this
-                                );
-                                return true;
-                            }
-                        });
-                    }
+                whileRevealed: GameActions.chooseCards({
+                    player: (context) => context.event.challenge.loser,
+                    title: (context) => `Select a card to add to ${context.player.name}'s hand`,
+                    cardCondition: (card, context) => context.revealed.includes(card),
+                    gameAction: (card, context) =>
+                        GameActions.addToHand({ card, player: context.player })
                 })
-            })).then((preThenContext) => ({
-                condition: () => !!preThenContext.target,
-                message: {
-                    format: "{loser} chooses to add {card} to {player}'s hand",
-                    args: {
-                        loser: () => preThenContext.event.challenge.loser,
-                        card: () => preThenContext.target
-                    }
-                },
-                gameAction: GameActions.simultaneously([
-                    GameActions.addToHand({
-                        card: preThenContext.target,
-                        player: preThenContext.player
-                    }),
-                    ...preThenContext.revealed
-                        .filter((card) => card !== preThenContext.target)
+            })).then({
+                message: 'Then {player} places the other card on the bottom of their deck',
+                gameAction: GameActions.simultaneously((context) =>
+                    context.parentContext.revealed
+                        .filter((card) => card.location === 'draw deck')
                         .map((card) =>
                             GameActions.placeCard({
                                 card,
-                                player: preThenContext.player,
+                                player: context.player,
                                 location: 'draw deck',
                                 bottom: true
                             })
                         )
-                ])
-            }))
+                )
+            })
         });
     }
 }

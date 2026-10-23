@@ -9,8 +9,8 @@ class BoltonLoyalist extends DrawCard {
         this.forcedReaction({
             cannotBeCanceled: true,
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.isMatch({ loser: this.controller, challengeType: 'intrigue' })
+                afterChallenge: (event, context) =>
+                    event.challenge.isMatch({ loser: context.player, challengeType: 'intrigue' })
             },
             message: {
                 format: '{player} is forced to give control of {source} to {winner}, or sacrifice another character they control',
@@ -30,38 +30,15 @@ class BoltonLoyalist extends DrawCard {
                         }))
                     },
                     'Sacrifice Character': {
-                        gameAction: GameActions.genericHandler((context) => {
-                            this.game.promptForSelect(context.player, {
-                                activePromptTitle: 'Select a character',
-                                cardCondition: (card) =>
-                                    card.getType() === 'character' &&
-                                    card.location === 'play area' &&
-                                    card !== context.source &&
-                                    card.controller === context.player,
-                                gameAction: 'sacrifice',
-                                onSelect: (player, card) => {
-                                    this.game.addMessage(
-                                        '{0} chooses to sacrifice {1}',
-                                        player,
-                                        card
-                                    );
-                                    this.game.resolveGameAction(
-                                        GameActions.sacrificeCard(() => ({ card })),
-                                        context
-                                    );
-                                    return true;
-                                },
-                                onCancel: (player) => {
-                                    this.game.addAlert(
-                                        'danger',
-                                        '{0} cancels resolution of {1}',
-                                        player,
-                                        context.source
-                                    );
-                                    return true;
-                                },
-                                source: context.source
-                            });
+                        message: '{player} chooses to sacrifice another character',
+                        gameAction: GameActions.chooseCards({
+                            title: 'Select a character',
+                            cardCondition: (card, context) =>
+                                card.getType() === 'character' &&
+                                card.location === 'play area' &&
+                                card !== context.source &&
+                                card.controller === context.player,
+                            gameAction: (card) => GameActions.sacrificeCard({ card })
                         })
                     }
                 }

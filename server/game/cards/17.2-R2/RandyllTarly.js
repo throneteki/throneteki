@@ -19,19 +19,15 @@ class RandyllTarly extends DrawCard {
             gameAction: GameActions.choose({
                 choices: {
                     'Stand an Army': {
-                        gameAction: GameActions.genericHandler((context) => {
-                            this.game.promptForSelect(context.player, {
-                                activePromptTitle: 'Select an Army',
-                                source: this,
-                                cardCondition: (card) =>
-                                    card.location === 'play area' &&
-                                    card.getType() === 'character' &&
-                                    card.hasTrait('Army') &&
-                                    card.kneeled,
-                                gameAction: 'stand',
-                                onSelect: (player, card) => this.onArmySelected(player, card),
-                                onCancel: (player) => this.cancelSelection(player)
-                            });
+                        message: '{player} chooses to stand an Army character',
+                        gameAction: GameActions.chooseCards({
+                            title: 'Select an Army',
+                            cardCondition: (card) =>
+                                card.location === 'play area' &&
+                                card.getType() === 'character' &&
+                                card.hasTrait('Army') &&
+                                card.kneeled,
+                            gameAction: (card) => GameActions.standCard({ card })
                         })
                     },
                     'Reveal top card': {
@@ -60,18 +56,6 @@ class RandyllTarly extends DrawCard {
                 }
             })
         });
-    }
-
-    onArmySelected(player, card) {
-        this.game.addMessage('{0} chooses to stand {1}', player, card);
-        this.game.resolveGameAction(GameActions.standCard({ card }));
-
-        return true;
-    }
-
-    cancelSelection(player) {
-        this.game.addAlert('danger', '{0} cancels the resolution of {1}', player, this);
-        return true;
     }
 }
 

@@ -264,10 +264,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/11.3-SoKL/WhiteHarbor.js": {
-        "this-in-ability": 4,
-        "prompt-for-select": 1
-    },
     "server/game/cards/11.4-MoD/AMissionInEssos.js": {
         "this-in-ability": 9,
         "legacy-helper": 4,
@@ -447,11 +443,6 @@
         "legacy-helper": 1,
         "add-message": 2
     },
-    "server/game/cards/17.1-R/EuronCrowsEye.js": {
-        "this-in-ability": 8,
-        "prompt-for-select": 1,
-        "add-message": 1
-    },
     "server/game/cards/17.1-R/Meereen.js": {
         "legacy-helper": 1
     },
@@ -469,11 +460,6 @@
         "legacy-helper": 1,
         "add-message": 1
     },
-    "server/game/cards/17.2-R2/RandyllTarly.js": {
-        "prompt-for-select": 1,
-        "this-in-ability": 4,
-        "add-message": 1
-    },
     "server/game/cards/17.2-R2/RedPriest.js": {
         "this-in-ability": 4
     },
@@ -481,11 +467,6 @@
         "this-in-ability": 9,
         "legacy-helper": 2,
         "add-message": 2
-    },
-    "server/game/cards/19-JS/RandyllTarly.js": {
-        "prompt-for-select": 1,
-        "this-in-ability": 4,
-        "add-message": 1
     },
     "server/game/cards/19-JS/TheWinterMaid.js": {
         "this-in-ability": 3,
@@ -527,11 +508,6 @@
     "server/game/cards/21-FtR/LordAndersHost.js": {
         "this-in-ability": 4,
         "legacy-helper": 1,
-        "add-message": 1
-    },
-    "server/game/cards/21-FtR/LordTywinsHost.js": {
-        "prompt-for-select": 1,
-        "this-in-ability": 8,
         "add-message": 1
     },
     "server/game/cards/22-BtB/BranStark.js": {
@@ -604,11 +580,6 @@
     },
     "server/game/cards/25.4-TTS/NymeriaOfNySar.js": {
         "this-in-ability": 5
-    },
-    "server/game/cards/25.5-TIC/BoltonLoyalist.js": {
-        "this-in-ability": 5,
-        "prompt-for-select": 1,
-        "add-message": 1
     },
     "server/game/cards/25.5-TIC/EnemiesInEveryShadow.js": {
         "this-in-ability": 4,
