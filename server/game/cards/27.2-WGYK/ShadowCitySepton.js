@@ -2,10 +2,15 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ShadowCitySepton extends DrawCard {
+    // Shadow City Septon (27027)
+    // Shadow (3).
+    // Reaction: After you lose dominance, return Shadow City Septon to shadows to have the winning
+    // opponent choose a standing character they control. Return that character to its owner's hand.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onDominanceDetermined: (event) => event.winner && event.winner !== this.controller
+                onDominanceDetermined: (event, context) =>
+                    event.winner && event.winner !== context.player
             },
             cost: ability.costs.putSelfIntoShadows(),
             target: {
@@ -22,12 +27,7 @@ class ShadowCitySepton extends DrawCard {
                     opponent: (context) => context.event.winner
                 }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.returnCardToHand((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 }

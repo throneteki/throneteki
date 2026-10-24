@@ -1,52 +1,39 @@
 describe('Privileged Position', function () {
-    integration(function () {
-        describe('after losing a power challenge the previous round', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('baratheon', [
-                    'A Noble Cause',
-                    'A Noble Cause',
-                    'Privileged Position',
-                    'Dragonstone Faithful',
-                    'Dragonstone Port'
-                ]);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.event = this.player1.findCardByName('Privileged Position', 'hand');
-                this.character = this.player2.findCardByName('Dragonstone Faithful', 'hand');
-                this.location = this.player2.findCardByName('Dragonstone Port', 'hand');
-
-                this.player2.clickCard(this.character);
-                this.player2.clickCard(this.location);
-
-                this.completeSetup();
-
-                this.player1.selectPlot('A Noble Cause');
-                this.player2.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player1);
-
-                this.player1.clickPrompt('Done');
-                this.player2.clickPrompt('Done');
-
-                this.player1.clickPrompt('Done');
-                this.unopposedChallenge(this.player2, 'Power', this.character);
-                this.player2.clickPrompt('Apply Claim');
-
-                this.player2.clickPrompt('Done');
-
-                this.selectFirstPlayer(this.player1);
-
-                this.player1.clickPrompt('Done');
-
-                // Activate reducer card
-                this.player2.clickCard(this.location);
-            });
-
-            it('prompts to cancel', function () {
-                expect(this.player1).toAllowAbilityTrigger(this.event);
-            });
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { hand: ['Privileged Position'] },
+            player2: { inPlay: ['Dragonstone Faithful', 'Dragonstone Port'] }
         });
+        this.player1.clickPrompt('Done');
+    });
+
+    it("cancels an opponent's triggered location ability", function () {
+        this.player2.clickPrompt('Done');
+        this.player1.selectPlot('Filler Plot');
+        this.player2.selectPlot('Filler Plot');
+        this.selectFirstPlayer(this.player1);
+        this.player1.clickPrompt('Done');
+        this.player2.clickCard(this.dragonstonePort);
+
+        expect(this.player1).toAllowAbilityTrigger(this.privilegedPosition);
+        this.player1.triggerAbility(this.privilegedPosition);
+
+        expect(this.privilegedPosition.location).toBe('discard pile');
+        expect(this.player2).isReadyToTakeAction();
+    });
+
+    it('can be played after losing a power challenge the previous round', function () {
+        this.unopposedChallenge(this.player2, 'Power', this.dragonstoneFaithful);
+        this.player2.clickPrompt('Done');
+        this.player1.selectPlot('Filler Plot');
+        this.player2.selectPlot('Filler Plot');
+        this.selectFirstPlayer(this.player1);
+        this.player1.clickPrompt('Done');
+        this.player2.clickCard(this.dragonstonePort);
+
+        expect(this.player1).toAllowAbilityTrigger(this.privilegedPosition);
+        this.player1.clickPrompt('Pass');
+        expect(this.player2).isReadyToTakeAction();
     });
 });

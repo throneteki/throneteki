@@ -2,89 +2,66 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ACaskOfAle extends DrawCard {
+    // "A Cask of Ale" (14023)
+    // Reaction: After you win a [power] challenge, choose 2 cards controlled by the same player.
+    // Move up to 2 power from one of those cards to the other.
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.isMatch({ winner: this.controller, challengeType: 'power' }) &&
-                    this.game.allCards.some(
-                        (card) =>
-                            ['active plot', 'faction', 'play area'].includes(card.location) &&
-                            card.getPower() > 0
-                    )
+                afterChallenge: (event, context) =>
+                    event.challenge.isMatch({ winner: context.player, challengeType: 'power' })
             },
-            target: {
-                mode: 'exactly',
-                numCards: 2,
-                activePromptTitle: 'Select 2 cards',
-                singleController: true,
-                cardCondition: (card) =>
-                    ['active plot', 'faction', 'play area'].includes(card.location),
-                cardType: ['attachment', 'character', 'faction', 'location', 'plot'],
-                gameAction: 'movePower'
-            },
-            handler: (context) => {
-                this.context = context;
-                this.game.promptForSelect(context.player, {
+            targets: {
+                from: {
                     activePromptTitle: 'Select card with power',
-                    source: this,
-                    cardCondition: (card) => context.target.includes(card) && card.getPower() > 0,
-                    cardType: ['attachment', 'character', 'faction', 'location', 'plot'],
-                    onSelect: (player, card) => this.fromCardSelected(player, card),
-                    onCancel: (player) => this.cancelSelection(player)
-                });
-            }
+                    cardCondition: (card) => hasPowerLocation(card) && card.getPower() > 0,
+                    cardType: PowerCardTypes,
+                    gameAction: 'movePower'
+                },
+                to: {
+                    activePromptTitle: 'Select card to move power to',
+                    cardCondition: (card, context) =>
+                        hasPowerLocation(card) &&
+                        card !== context.targets.from &&
+                        (!context.targets.from ||
+                            card.controller === context.targets.from.controller),
+                    cardType: PowerCardTypes
+                }
+            },
+            gameAction: GameActions.ifCondition({
+                condition: (context) => context.targets.from.power > 1,
+                thenAction: GameActions.choose({
+                    title: 'Choose amount of power',
+                    choices: { 2: movePower(2), 1: movePower(1) }
+                }),
+                elseAction: movePower(1)
+            })
         });
     }
-    fromCardSelected(player, fromCard) {
-        this.fromCard = fromCard;
-        this.toCard = this.context.target.find((card) => card !== fromCard);
+}
 
-        if (fromCard.power > 1) {
-            this.game.promptWithMenu(this.context.player, this, {
-                activePrompt: {
-                    menuTitle: 'Choose amount of power',
-                    buttons: [
-                        { text: '2', arg: 2, method: 'selectPowerAmount' },
-                        { text: '1', arg: 1, method: 'selectPowerAmount' }
-                    ]
-                },
-                source: this
-            });
-            return true;
-        }
+const PowerCardTypes = ['attachment', 'character', 'faction', 'location', 'plot'];
 
-        this.selectPowerAmount(this.context.player, 1);
+function hasPowerLocation(card) {
+    return ['active plot', 'faction', 'play area'].includes(card.location);
+}
 
-        return true;
-    }
-
-    selectPowerAmount(player, amount) {
-        this.game.addMessage(
-            '{0} plays {1} to move {2} power from {3} to {4}',
-            this.context.player,
-            this,
-            amount,
-            this.fromCard,
-            this.toCard
-        );
-
-        this.game.resolveGameAction(
-            GameActions.movePower({
-                from: this.fromCard,
-                to: this.toCard,
-                amount
-            }),
-            this.context
-        );
-
-        return true;
-    }
-    cancelSelection(player) {
-        this.game.addAlert('danger', '{0} cancels the resolution of {1}', player, this);
-
-        return true;
-    }
+function movePower(amount) {
+    return {
+        message: {
+            format: '{player} plays {source} to move {amount} power from {from} to {to}',
+            args: {
+                amount: () => amount,
+                from: (context) => context.targets.from,
+                to: (context) => context.targets.to
+            }
+        },
+        gameAction: GameActions.movePower((context) => ({
+            from: context.targets.from,
+            to: context.targets.to,
+            amount
+        }))
+    };
 }
 
 ACaskOfAle.code = '14023';

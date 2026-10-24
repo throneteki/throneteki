@@ -2,18 +2,18 @@ import AtomicEvent from '../../server/game/AtomicEvent.js';
 
 describe('AtomicEvent', function () {
     beforeEach(function () {
-        this.childEventSpy1 = jasmine.createSpyObj('childEvent1', [
-            'cancel',
-            'emitTo',
-            'executeHandler',
-            'getConcurrentEvents'
-        ]);
-        this.childEventSpy2 = jasmine.createSpyObj('childEvent2', [
-            'cancel',
-            'emitTo',
-            'executeHandler',
-            'getConcurrentEvents'
-        ]);
+        this.childEventSpy1 = {
+            cancel: vi.fn(),
+            emitTo: vi.fn(),
+            executeHandler: vi.fn(),
+            getConcurrentEvents: vi.fn()
+        };
+        this.childEventSpy2 = {
+            cancel: vi.fn(),
+            emitTo: vi.fn(),
+            executeHandler: vi.fn(),
+            getConcurrentEvents: vi.fn()
+        };
         this.event = new AtomicEvent();
         this.event.addChildEvent(this.childEventSpy1);
         this.event.addChildEvent(this.childEventSpy2);
@@ -67,7 +67,7 @@ describe('AtomicEvent', function () {
 
         describe('when the event has a parent', function () {
             beforeEach(function () {
-                this.parentEventSpy = jasmine.createSpyObj('parentEvent', ['onChildCancelled']);
+                this.parentEventSpy = { onChildCancelled: vi.fn() };
                 this.event.parent = this.parentEventSpy;
                 this.event.cancel();
             });
@@ -115,8 +115,8 @@ describe('AtomicEvent', function () {
 
     describe('getConcurrentEvents', function () {
         beforeEach(function () {
-            this.childEventSpy1.getConcurrentEvents.and.returnValue(['child1-events']);
-            this.childEventSpy2.getConcurrentEvents.and.returnValue(['child2-events']);
+            this.childEventSpy1.getConcurrentEvents.mockReturnValue(['child1-events']);
+            this.childEventSpy2.getConcurrentEvents.mockReturnValue(['child2-events']);
         });
 
         it('should return an array with the concurrent events of the children', function () {

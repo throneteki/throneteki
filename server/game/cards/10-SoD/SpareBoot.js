@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SpareBoot extends DrawCard {
+    // Spare Boot (10031)
+    // Challenges Action: Choose an attachment attached to a character you control. Stand that
+    // attachment and move it to Spare Boot. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand and move attachment',
@@ -8,43 +12,21 @@ class SpareBoot extends DrawCard {
             limit: ability.limit.perPhase(1),
             target: {
                 activePromptTitle: 'Select an attachment',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'attachment' &&
                     card.parent &&
-                    card.parent.controller === this.controller &&
-                    (this.allowMoveAttachment(card) || card.kneeled)
+                    card.parent.controller === context.player
             },
-            handler: (context) => {
-                let attachment = context.target;
-                let canMove = this.allowMoveAttachment(attachment);
-                let canStand = attachment.kneeled;
-
-                if (canMove) {
-                    context.player.attach(attachment.controller, attachment, this);
-                }
-
-                if (canStand) {
-                    context.player.standCard(attachment);
-                }
-
-                let message;
-
-                if (canMove && canStand) {
-                    message = '{0} uses {1} to stand {2} and move it to {1}';
-                } else if (canMove) {
-                    message = '{0} uses {1} to move {2} to {1}';
-                } else {
-                    message = '{0} uses {1} to stand {2}';
-                }
-
-                this.game.addMessage(message, context.player, this, attachment);
-            }
+            message: '{player} uses {source} to {gameAction}',
+            gameAction: GameActions.simultaneously([
+                GameActions.standCard((context) => ({ card: context.target })),
+                GameActions.attach((context) => ({
+                    attachment: context.target,
+                    target: context.source
+                }))
+            ])
         });
-    }
-
-    allowMoveAttachment(attachment) {
-        return attachment.parent !== this && attachment.controller.canAttach(attachment, this);
     }
 }
 

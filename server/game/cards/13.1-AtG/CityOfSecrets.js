@@ -2,7 +2,14 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 import Message from '../../Message.js';
 
+function hasUsedCityPlot(player) {
+    return player.getNumberOfUsedPlotsByTrait('City') > 0;
+}
+
 class CityOfSecrets extends PlotCard {
+    // City of Secrets (13019)
+    // When Revealed: Each player draws 2 cards. Then, each player without a City plot card in his
+    // or her used pile chooses and discards 2 cards from his or her hand.
     setupCardAbilities() {
         this.whenRevealed({
             message: '{player} uses {source} to have each player draw 2 cards',
@@ -12,11 +19,14 @@ class CityOfSecrets extends PlotCard {
                     .map((player) => GameActions.drawCards({ player, amount: 2 }))
             ).then({
                 target: {
-                    choosingPlayer: (player) => !this.hasUsedCityPlot(player),
+                    choosingPlayer: (player) => !hasUsedCityPlot(player),
                     mode: 'exactly',
                     numCards: 2,
                     activePromptTitle: 'Select 2 cards',
-                    cardCondition: { location: 'hand', controller: 'choosingPlayer' }
+                    cardCondition: { location: 'hand', controller: 'choosingPlayer' },
+                    gameAction: GameActions.simultaneously((context) =>
+                        context.target.map((card) => GameActions.discardCard({ card }))
+                    )
                 },
                 message: {
                     format: 'Then {fragments} for {source}',
@@ -29,23 +39,9 @@ class CityOfSecrets extends PlotCard {
                                 })
                             )
                     }
-                },
-                handler: (context) => {
-                    context.game.resolveGameAction(
-                        GameActions.simultaneously((context) =>
-                            context.targets
-                                .getTargets()
-                                .map((card) => GameActions.discardCard({ card }))
-                        ),
-                        context
-                    );
                 }
             })
         });
-    }
-
-    hasUsedCityPlot(player) {
-        return player.getNumberOfUsedPlotsByTrait('City') > 0;
     }
 }
 

@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Summerhall extends DrawCard {
+    // Summerhall (25034)
+    // Reaction: After a character's STR is reduced to 0 by a card effect, kneel Summerhall to kill
+    // it.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

@@ -2,6 +2,7 @@ import AbilityContext from './AbilityContext.js';
 import BaseAbility from './baseability.js';
 import Costs from './costs.js';
 import EventRegistrar from './eventregistrar.js';
+import { Requirements } from './Constants/index.js';
 
 /**
  * Represents an action ability provided by card text.
@@ -64,6 +65,8 @@ class CardAction extends BaseAbility {
         if (!this.gameAction) {
             throw new Error('Actions must have a `gameAction` or `handler` property.');
         }
+
+        this.useDefaultMessage(card.getPrintedType() === 'event' ? 'plays' : 'uses');
     }
 
     buildPhase(properties) {
@@ -110,59 +113,59 @@ class CardAction extends BaseAbility {
         });
     }
 
-    meetsRequirements(context) {
+    getUnmetRequirement(context) {
         if (
             (this.phase !== 'any' && this.phase !== this.game.currentPhase) ||
             this.game.currentPhase === 'setup'
         ) {
-            return false;
+            return Requirements.phase;
+        }
+
+        const timingRequirement = this.game.getActionTimingRequirement(context.player);
+        if (timingRequirement) {
+            return timingRequirement;
         }
 
         if (this.isCardAbility() && !context.player.canTrigger(this)) {
-            return false;
+            return Requirements.cannotTrigger;
         }
 
         if (this.limit && this.limit.isAtMax()) {
-            return false;
+            return Requirements.limit;
         }
 
         if (this.max && context.player.isAbilityAtMax(context.source.name)) {
-            return false;
+            return Requirements.limit;
         }
 
         if (!this.allowPlayer(context.player)) {
-            return false;
+            return Requirements.player;
         }
 
         if (
             this.card.getPrintedType() === 'event' &&
             !context.player.isCardInPlayableLocation(this.card, 'play')
         ) {
-            return false;
+            return Requirements.location;
         }
 
         if (this.card.getPrintedType() !== 'event' && this.location !== this.card.location) {
-            return false;
+            return Requirements.location;
         }
 
-        if (this.card.isAnyBlank()) {
-            return false;
+        if (!this.gained && this.card.isAnyBlank()) {
+            return Requirements.blank;
         }
 
         if (this.condition && !this.condition(context)) {
-            return false;
+            return Requirements.condition;
         }
 
         if (this.card.getPrintedType() !== 'event' && this.card.facedown) {
-            return false;
+            return Requirements.facedown;
         }
 
-        return (
-            this.canResolvePlayer(context) &&
-            this.canPayCosts(context) &&
-            this.canResolveTargets(context) &&
-            this.gameAction.allow(context)
-        );
+        return this.getResolutionFailure(context);
     }
 
     execute(player, arg) {
@@ -181,12 +184,14 @@ class CardAction extends BaseAbility {
 
     getMenuItem(arg, player) {
         let context = this.createContext(player);
+        const unmetRequirement = this.getUnmetRequirement(context);
         return {
             text: this.title,
             method: 'doAction',
             arg: arg,
             anyPlayer: !!this.anyPlayer,
-            disabled: !this.meetsRequirements(context)
+            disabled: !!unmetRequirement,
+            disabledReason: unmetRequirement
         };
     }
 

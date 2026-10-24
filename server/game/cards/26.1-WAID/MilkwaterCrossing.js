@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MilkwaterCrossing extends DrawCard {
+    // Milkwater Crossing (26018)
+    // Reaction: After a phase begins, kneel and sacrifice Milkwater Crossing to have each character
+    // lose all keywords and immunities until the end of the phase.
+    // +1 Initiative.
     setupCardAbilities(ability) {
         this.plotModifiers({
             initiative: 1
@@ -13,16 +17,12 @@ class MilkwaterCrossing extends DrawCard {
             cost: [ability.costs.kneelSelf(), ability.costs.sacrificeSelf()],
             message:
                 '{player} kneels and sacrifices {costs.sacrifice} to have each character lose all keywords and immunities until the end of the phase',
-            gameAction: GameActions.genericHandler(() => {
-                this.untilEndOfPhase((ability) => ({
-                    targetController: 'any',
-                    match: this.game.filterCardsInPlay((card) => card.getType() === 'character'),
-                    effect: [
-                        ability.effects.losesAllKeywords(),
-                        ability.effects.losesAllImmunities()
-                    ]
-                }));
-            })
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                targetController: 'any',
+                match: context.game.filterCardsInPlay((card) => card.getType() === 'character'),
+                effect: [ability.effects.losesAllKeywords(), ability.effects.losesAllImmunities()]
+            }))
         });
     }
 }

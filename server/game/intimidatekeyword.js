@@ -19,16 +19,18 @@ class IntimidateKeyword extends ChallengeKeywordAbility {
                 format: '{player} uses {source} to kneel {targets} using intimidate',
                 args: { targets: (context) => context.targets.getTargets() }
             },
-            handler: (context) => {
-                context.game.resolveGameAction(
-                    GameActions.kneelCard((context) => ({
-                        card: context.target,
-                        reason: 'intimidate',
-                        source: context.source
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                [context.target]
+                    .flat()
+                    .filter(Boolean)
+                    .map((card) =>
+                        GameActions.kneelCard({
+                            card,
+                            reason: 'intimidate',
+                            source: context.source
+                        })
+                    )
+            )
         });
         // Order by highest printed cost (sorts by smallest values first)
         this.orderBy = (context) => -context.source.getPrintedCost();
@@ -44,7 +46,7 @@ class IntimidateKeyword extends ChallengeKeywordAbility {
             super.getTriggerAmount(context) -
             context.resolved.reduce(
                 (total, resolvedIntimidate) =>
-                    (total += resolvedIntimidate.context.targets.getTargets()),
+                    (total += resolvedIntimidate.context.targets.getTargets().length),
                 0
             )
         );

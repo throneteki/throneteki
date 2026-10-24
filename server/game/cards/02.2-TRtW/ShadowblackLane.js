@@ -2,11 +2,15 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ShadowblackLane extends DrawCard {
+    // Shadowblack Lane (02038)
+    // Reaction: After you win an [intrigue] challenge, kneel your faction card to search the top 10
+    // cards of your deck for an in-faction event, reveal it, and add it to your hand. Shuffle your
+    // deck.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.challengeType === 'intrigue'
             },
             cost: ability.costs.kneelFactionCard(),
@@ -17,7 +21,8 @@ class ShadowblackLane extends DrawCard {
                 title: 'Select an event',
                 match: {
                     type: 'event',
-                    condition: (card) => card.isFaction(this.controller.getFaction())
+                    condition: (card, context) =>
+                        card.isFaction(context.source.controller.getFaction())
                 },
                 message: '{player} {gameAction}',
                 gameAction: GameActions.addToHand((context) => ({

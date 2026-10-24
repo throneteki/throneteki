@@ -1,28 +1,27 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class DoreaSand extends DrawCard {
+    // Dorea Sand (08016)
+    // Reaction: After Dorea Sand enters play, choose another character with printed cost X or lower
+    // and return it to its owner's hand. X is the number of Sand Snake characters you control.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card !== this &&
+                    card !== context.source &&
                     card.getType() === 'character' &&
-                    card.getPrintedCost() <= this.getNumberOfSandSnakes()
+                    card.getPrintedCost() <= context.source.getNumberOfSandSnakes()
             },
-            handler: (context) => {
-                context.target.owner.returnCardToHand(context.target);
-                this.game.addMessage(
-                    "{0} uses {1} to return {2} to {3}'s hand",
-                    context.player,
-                    this,
-                    context.target,
-                    context.target.owner
-                );
-            }
+            message: {
+                format: "{player} uses {source} to return {target} to {owner}'s hand",
+                args: { owner: (context) => context.target.owner }
+            },
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 

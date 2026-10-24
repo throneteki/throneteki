@@ -1,58 +1,47 @@
-import DrawCard from '../../drawcard.js';
+﻿import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class DolorousEdd extends DrawCard {
+    // Dolorous Edd (04025)
+    // Action: During an [intrigue] challenge in which you are the defending player, kneel your
+    // faction card to put Dolorous Edd into play from your hand knelt, participating as a defender.
+    // If you win the challenge, you may return him to your hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Add as a defender',
             location: 'hand',
-            condition: () =>
-                this.game.isDuringChallenge({
+            condition: (context) =>
+                context.game.isDuringChallenge({
                     challengeType: 'intrigue',
-                    defendingPlayer: this.controller
-                }) && this.controller.canPutIntoPlay(this),
+                    defendingPlayer: context.player
+                }) && context.player.canPutIntoPlay(context.source),
             cost: ability.costs.kneelFactionCard(),
-            handler: () => {
-                this.game.addMessage(
-                    '{0} kneels their faction card to put {1} into play as a defender',
-                    this.controller,
-                    this
-                );
-                this.controller.putIntoPlay(this, 'play', { kneeled: true });
-                this.game.currentChallenge.addDefender(this);
-                this.game.once('afterChallenge', (event) => this.promptOnWin(event.challenge));
-            }
+            message: '{player} kneels their faction card to put {source} into play as a defender',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                card: context.source,
+                kneeled: true
+            })).then({
+                gameAction: GameActions.simultaneously([
+                    GameActions.addToChallenge((context) => ({ card: context.source })),
+                    GameActions.delayedEffect({
+                        duration: 'untilEndOfChallenge',
+                        when: {
+                            afterChallenge: (event, context) =>
+                                event.challenge.winner === context.player &&
+                                context.source.location === 'play area'
+                        },
+                        gameAction: GameActions.may({
+                            title: 'Return Dolorous Edd to your hand?',
+                            message:
+                                '{player} returns {source} to their hand after winning the challenge',
+                            gameAction: GameActions.returnCardToHand((context) => ({
+                                card: context.source
+                            }))
+                        })
+                    })
+                ])
+            })
         });
-    }
-
-    promptOnWin(challenge) {
-        if (challenge.winner !== this.controller || this.location !== 'play area') {
-            return;
-        }
-
-        this.game.promptWithMenu(this.controller, this, {
-            activePrompt: {
-                menuTitle: 'Return ' + this.name + ' to your hand?',
-                buttons: [
-                    { text: 'Yes', method: 'returnToHand' },
-                    { text: 'No', method: 'cancelReturnToHand' }
-                ]
-            }
-        });
-    }
-
-    returnToHand() {
-        this.game.addMessage(
-            '{0} chooses to return {1} to their hand after winning the challenge',
-            this.controller,
-            this
-        );
-        this.controller.returnCardToHand(this, false);
-        return true;
-    }
-
-    cancelReturnToHand() {
-        this.game.addMessage('{0} declines to return {1} to their hand', this.controller, this);
-        return true;
     }
 }
 

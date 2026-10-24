@@ -1,13 +1,19 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class OutfittedForWar extends DrawCard {
+    // Outfitted for War (13052)
+    // Warship location only.
+    // Action: During a [military] challenge, kneel attached location to give a participating
+    // [greyjoy] character +3 STR until the end of the challenge.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ type: 'location', trait: 'Warship' });
 
         this.action({
             title: 'Give +3 STR',
-            condition: () =>
-                !!this.parent && this.game.isDuringChallenge({ challengeType: 'military' }),
+            condition: (context) =>
+                !!context.source.parent &&
+                context.game.isDuringChallenge({ challengeType: 'military' }),
             cost: ability.costs.kneelParent(),
             target: {
                 cardCondition: (card) =>
@@ -16,12 +22,11 @@ class OutfittedForWar extends DrawCard {
                     card.getType() === 'character'
             },
             message: '{player} kneels {source} to give {target} +3 STR',
-            handler: (context) => {
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(3)
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                effect: ability.effects.modifyStrength(3)
+            }))
         });
     }
 }

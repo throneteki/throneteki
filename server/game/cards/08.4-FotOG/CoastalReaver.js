@@ -2,48 +2,24 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class CoastalReaver extends DrawCard {
+    // Coastal Reaver (08071)
+    // Reaction: After Coastal Reaver enters play, choose an opponent. That player chooses a card in
+    // his or her hand and places it on top of his or her deck.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             chooseOpponent: (opponent) => opponent.hand.length > 0,
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to choose {2}',
-                    context.player,
-                    this,
-                    context.opponent
-                );
-
-                this.game.promptForSelect(context.opponent, {
-                    acticePromptTitle: 'Select a card',
-                    source: this,
-                    cardCondition: (card) =>
-                        card.location === 'hand' && card.controller === context.opponent,
-                    onSelect: (player, card) => this.onCardSelected(player, card),
-                    onCancel: (player) => this.cancelSelection(player)
-                });
-            }
+            message: '{player} uses {source} to choose {opponent}',
+            gameAction: GameActions.chooseCards({
+                player: (context) => context.opponent,
+                title: 'Select a card',
+                cardCondition: (card, context) =>
+                    card.location === 'hand' && card.controller === context.choosingPlayer,
+                gameAction: (card) => GameActions.returnCardToDeck({ card })
+            })
         });
-    }
-
-    onCardSelected(player, card) {
-        this.game.resolveGameAction(GameActions.returnCardToDeck({ card }));
-        this.game.addMessage('{0} places a card on top of their deck for {1}', player, this);
-
-        return true;
-    }
-
-    cancelSelection(player) {
-        this.game.addAlert(
-            'danger',
-            '{0} cancels the resolution of {1} even though they had card(s) in their hand',
-            player,
-            this
-        );
-
-        return true;
     }
 }
 

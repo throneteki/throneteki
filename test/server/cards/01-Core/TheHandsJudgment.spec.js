@@ -1,100 +1,59 @@
 describe("The Hand's Judgment", function () {
-    integration(function () {
+    describe('when an event is played', function () {
         beforeEach(function () {
-            const deck = this.buildDeck('lannister', [
-                'A Noble Cause',
-                "The Hand's Judgment",
-                'Hear Me Roar!',
-                'Ser Jaime Lannister (Core)'
-            ]);
-
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-            this.completeSetup();
-
-            this.character = this.player1.findCardByName('Ser Jaime Lannister', 'hand');
-
-            this.selectFirstPlayer(this.player1);
-
-            this.completeMarshalPhase();
+            this.setupTest({
+                phase: 'challenge',
+                player1: {
+                    hand: ['Hear Me Roar!', "The Hand's Judgment", 'Ser Jaime Lannister (Core)']
+                },
+                player2: { hand: ["The Hand's Judgment"] }
+            });
+            this.judgment1 = this.player1.findCardByName("The Hand's Judgment", 'hand');
+            this.judgment2 = this.player2.findCardByName("The Hand's Judgment", 'hand');
+            this.player1GoldBefore = this.player1Object.gold;
+            this.player2GoldBefore = this.player2Object.gold;
+            this.player1.clickCard(this.hearMeRoar);
+            expect(this.player1).toHavePrompt('Select a character');
+            this.player1.clickCard(this.serJaimeLannister);
         });
 
-        describe('when an event is played', function () {
-            beforeEach(function () {
-                this.player1.clickCard('Hear Me Roar!', 'hand');
-                expect(this.player1).toHavePrompt('Select a character');
-                this.player1.clickCard(this.character);
-            });
+        it('cancels the event for the same cost as the event', function () {
+            expect(this.player2).toAllowAbilityTrigger(this.judgment2);
 
-            it('should prompt to play Judgment', function () {
-                expect(this.player2).toAllowAbilityTrigger("The Hand's Judgment");
-            });
+            this.player2.triggerAbility(this.judgment2);
+            this.player1.clickPrompt('Pass');
 
-            describe('and Judgment is used to cancel the event', function () {
-                beforeEach(function () {
-                    this.player2.triggerAbility("The Hand's Judgment");
-                    this.player1.clickPrompt('Pass');
-                });
+            expect(this.serJaimeLannister.location).not.toBe('play area');
+            expect(this.player2Object.gold).toBe(this.player2GoldBefore - 1);
+            expect(this.player1).isReadyToTakeAction();
+        });
 
-                it('should cancel the resolution of the original event', function () {
-                    expect(this.character.location).not.toBe('play area');
-                });
+        it('can itself be canceled by another Judgment at no cost', function () {
+            this.player2.triggerAbility(this.judgment2);
+            this.player1.triggerAbility(this.judgment1);
 
-                it('should cost the same as the original event', function () {
-                    // 5 gold from plot - 1 gold for Judgment
-                    expect(this.player2Object.gold).toBe(4);
-                });
-            });
-
-            describe('and Judgment is cancelled by Judgment', function () {
-                beforeEach(function () {
-                    this.player2.triggerAbility("The Hand's Judgment");
-                    this.player1.triggerAbility("The Hand's Judgment");
-                });
-
-                it('should allow the effects of the original event', function () {
-                    expect(this.character.location).toBe('play area');
-                });
-
-                it('should cost 0', function () {
-                    // 5 gold from plot - 1 gold from Hear Me Roar - 0 gold from Judgment
-                    expect(this.player1Object.gold).toBe(4);
-                });
-            });
+            expect(this.serJaimeLannister.location).toBe('play area');
+            expect(this.player1Object.gold).toBe(this.player1GoldBefore - 1);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 
-    describe('vs - cost events', function () {
-        integration(function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('lannister', [
-                    'A Noble Cause',
-                    'Beneath the Bridge of Dream',
-                    "The Hand's Judgment"
-                ]);
-
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.event = this.player2.findCardByName('Beneath the Bridge of Dream', 'hand');
-
-                this.player2.clickCard(this.event);
-
-                this.completeSetup();
-
-                this.player2.triggerAbility(this.event);
+    describe('vs an event with no printed cost', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'plot',
+                player1: { hand: ["The Hand's Judgment"] },
+                player2: { shadows: ['Beneath the Bridge of Dream'] }
             });
+            this.player2.triggerAbility(this.beneathTheBridgeOfDream);
+        });
 
-            it('should allow cancel at 0 cost', function () {
-                // Because Beneath the Bridge of Dream triggers before plot
-                // reveals, each player has 0 gold, so just checking that Hand's
-                // Judgment can be triggered is sufficient.
-                expect(this.player1).toAllowAbilityTrigger("The Hand's Judgment");
-            });
+        it('can cancel it at 0 cost', function () {
+            expect(this.player1).toAllowAbilityTrigger(this.theHandsJudgment);
+
+            this.player1.triggerAbility(this.theHandsJudgment);
+
+            expect(this.theHandsJudgment.location).toBe('discard pile');
         });
     });
 });

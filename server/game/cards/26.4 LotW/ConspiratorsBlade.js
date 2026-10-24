@@ -2,25 +2,32 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ConspiratorsBlade extends DrawCard {
+    // Conspirator's Blade (26070)
+    // Shadow (1).
+    // While attached character is participating in a challenge, the effects of events you play
+    // cannot be canceled.
+    // Reaction: After Conspirator's Blade comes out of shadows, reduce the cost of the next card
+    // you bring out of shadows this phase by 2.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.parent && this.parent.isParticipating(),
+            condition: (context) =>
+                context.source.parent && context.source.parent.isParticipating(),
             targetLocation: 'any',
-            match: (card) => card.getType() === 'event' && card.controller === this.controller,
+            match: (card, context) =>
+                card.getType() === 'event' && card.controller === context.source.controller,
             effect: ability.effects.cannotBeCanceled()
         });
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             message:
                 '{player} uses {source} to reduce the cost of the next card they bring out of shadows this phase by 2',
-            gameAction: GameActions.genericHandler(() => {
-                this.untilEndOfPhase((ability) => ({
-                    targetController: 'current',
-                    effect: ability.effects.reduceNextOutOfShadowsCardCost(2)
-                }));
-            })
+            gameAction: GameActions.lastingEffect(() => ({
+                duration: 'untilEndOfPhase',
+                targetController: 'current',
+                effect: ability.effects.reduceNextOutOfShadowsCardCost(2)
+            }))
         });
     }
 }

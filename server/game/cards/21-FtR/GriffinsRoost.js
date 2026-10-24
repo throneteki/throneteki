@@ -1,16 +1,19 @@
 import DrawCard from '../../drawcard.js';
-import GenericTracker from '../../EventTrackers/GenericTracker.js';
+import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class GriffinsRoost extends DrawCard {
+    // Griffin's Roost (21021)
+    // While you control Jon Connington, he gains a [power] icon.
+    // Reaction: After you win a [power] challenge, kneel your faction card to choose 1 card in your
+    // hand and place it facedown in shadows with a shadow token on it. While that card is in
+    // shadows, if it does not have the printed shadow keyword, it gains shadow (X). X is its
+    // printed cost.
     setupCardAbilities(ability) {
-        this.tracker = GenericTracker.forPhase(this.game, 'onCardOutOfShadows');
-
         this.persistentEffect({
             match: (card) => card.name === 'Jon Connington',
             effect: ability.effects.addIcon('power')
         });
-
         this.reaction({
             when: {
                 afterChallenge: (event, context) =>
@@ -18,35 +21,35 @@ class GriffinsRoost extends DrawCard {
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
-                activePromptTitle: 'Select a card',
+                type: 'select',
                 cardCondition: (card, context) =>
-                    card.location === 'hand' && card.controller === context.player,
-                // Even though the card text uses the word 'choose', use a non
-                // targeting prompt to prevent the card from being revealed
-                // when the opponent is prompted to cancel the ability.
-                type: 'select'
+                    card.location === 'hand' && card.controller === context.player
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to put a card into shadow',
-                    context.player,
-                    this
-                );
-                context.player.putIntoShadows(context.target, false, () => {
-                    context.target.modifyToken(Tokens.shadow, 1);
-
-                    if (!context.target.isShadow()) {
-                        this.lastingEffect((ability) => ({
-                            condition: () => context.target.location === 'shadows',
-                            targetLocation: 'any',
-                            match: context.target,
-                            effect: ability.effects.addKeyword(
-                                `Shadow (${context.target.translateXValue(context.target.getPrintedCost())})`
-                            )
-                        }));
+            message: '{player} uses {source} to put a card from their hand into shadows',
+            gameAction: GameActions.putIntoShadows((context) => ({ card: context.target })).then(
+                (context, event) => {
+                    const card = event.card;
+                    const actions = [GameActions.placeToken({ card, token: Tokens.shadow })];
+                    if (
+                        !card.getPrintedKeywords().some((keyword) => keyword.startsWith('shadow'))
+                    ) {
+                        const shadowCost = card.translateXValue(card.getPrintedCost());
+                        actions.push(
+                            GameActions.lastingEffect(() => ({
+                                duration: 'custom',
+                                until: {
+                                    onCardMoved: (event) =>
+                                        event.card === card && event.originalLocation === 'shadows'
+                                },
+                                match: card,
+                                targetLocation: 'shadows',
+                                effect: ability.effects.addKeyword(`Shadow (${shadowCost})`)
+                            }))
+                        );
                     }
-                });
-            }
+                    return { gameAction: GameActions.simultaneously(actions) };
+                }
+            )
         });
     }
 }

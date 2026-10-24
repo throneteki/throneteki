@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class TraitorToTheCrown extends DrawCard {
+    // Traitor to the Crown (08009)
+    // Opponent's character only.
+    // Attached character does not contribute its STR to [power] challenges or to its controller's
+    // total for dominance.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ controller: 'opponent' });
 
@@ -9,7 +13,7 @@ class TraitorToTheCrown extends DrawCard {
         });
 
         this.whileAttached({
-            condition: () => this.game.isDuringChallenge({ challengeType: 'power' }),
+            condition: (context) => context.game.isDuringChallenge({ challengeType: 'power' }),
             effect: ability.effects.doesNotContributeStrength()
         });
     }

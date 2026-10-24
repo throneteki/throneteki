@@ -1,9 +1,15 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Foamdrinker extends DrawCard {
+    // Foamdrinker (21005)
+    // While you control Dagmer Cleftjaw, he gains assault.
+    // Action: Kneel Foamdrinker to choose a Captain or Raider character. Until the end of the
+    // phase, that character gains a challenge icon of your choice.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: (card) => card.name === 'Dagmer Cleftjaw',
+            match: (card, context) =>
+                card.name === 'Dagmer Cleftjaw' && card.controller === context.source.controller,
             effect: ability.effects.addKeyword('Assault')
         });
 
@@ -16,23 +22,16 @@ class Foamdrinker extends DrawCard {
                     card.getType() === 'character' &&
                     (card.hasTrait('Captain') || card.hasTrait('Raider'))
             },
-            handler: (context) => {
-                this.game.promptForIcon(context.player, this, (icon) => {
-                    this.untilEndOfPhase((ability) => ({
+            gameAction: GameActions.chooseIcon({
+                message:
+                    '{player} kneels {source} to give {icon} icon to {target} until the end of the phase',
+                gameAction: (icon) =>
+                    GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
                         match: context.target,
                         effect: ability.effects.addIcon(icon)
-                    }));
-
-                    this.game.addMessage(
-                        '{0} kneels {1} to give {2} {3} icon to {4} until the end of the phase',
-                        context.player,
-                        this,
-                        icon === 'intrigue' ? 'an' : 'a',
-                        icon,
-                        context.target
-                    );
-                });
-            }
+                    }))
+            })
         });
     }
 }

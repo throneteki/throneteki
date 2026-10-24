@@ -1,6 +1,11 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class OlennasWheelhouse extends DrawCard {
+    // Olenna's Wheelhouse (25076)
+    // Bestow (3).
+    // Marshaling Action: Kneel Olenna's Wheelhouse and discard 1 gold from it to remove a [tyrell]
+    // character you control from the game until the beginning of the next phase.
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove a character from game',
@@ -11,16 +16,15 @@ class OlennasWheelhouse extends DrawCard {
             },
             message:
                 '{player} kneels {costs.kneel} and discards 1 gold from it to remove {target} from the game until the beginning of the next phase',
-            handler: (context) => {
-                this.lastingEffect((ability) => ({
-                    until: {
-                        onPhaseStarted: () => true
-                    },
-                    match: context.target,
-                    targetLocation: ['play area', 'out of game'],
-                    effect: ability.effects.removeFromGame()
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'custom',
+                until: {
+                    onPhaseStarted: () => true
+                },
+                match: context.target,
+                targetLocation: ['play area', 'out of game'],
+                effect: ability.effects.removeFromGame()
+            }))
         });
     }
 }

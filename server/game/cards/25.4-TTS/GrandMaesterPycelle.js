@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class GrandMaesterPycelle extends DrawCard {
+    // Grand Maester Pycelle (25065)
+    // Interrupt: When a card is discarded from a player's hand, place it facedown under that
+    // player's agenda instead of placing it in their discard pile. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

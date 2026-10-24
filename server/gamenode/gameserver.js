@@ -98,6 +98,14 @@ class GameServer {
 
         this.healthServer = new HealthServer(this);
         this.healthServer.start();
+
+        if (process.env.SCENARIO) {
+            import('../devtools/scenario/host.js')
+                .then(({ install }) =>
+                    install(this, process.env.SCENARIO, process.env.SCENARIO_USERS)
+                )
+                .catch((err) => logger.error('Unable to start the scenario:', err));
+        }
     }
 
     debugDump() {

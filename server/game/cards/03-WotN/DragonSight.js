@@ -1,28 +1,25 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class DragonSight extends DrawCard {
-    setupCardAbilities() {
+    // Dragon Sight (03036)
+    // Action: Each participating non-Dragon character gets -1 STR until the end of the challenge.
+    setupCardAbilities(ability) {
         this.action({
             title: 'Reduce non-Dragon characters STR by 1',
-            handler: () => {
-                let participatingChars = this.game.filterCardsInPlay(
+            message:
+                '{player} uses {source} to give each non-Dragon participating character -1 STR until the end of the challenge',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.game.filterCardsInPlay(
                     (card) =>
                         card.getType() === 'character' &&
                         !card.hasTrait('Dragon') &&
                         card.isParticipating()
-                );
-
-                this.game.addMessage(
-                    '{0} uses {1} to give each non-Dragon participating character -1 STR until the end of the challenge',
-                    this.controller,
-                    this
-                );
-                this.untilEndOfChallenge((ability) => ({
-                    match: participatingChars,
-                    targetController: 'any',
-                    effect: ability.effects.modifyStrength(-1)
-                }));
-            }
+                ),
+                targetController: 'any',
+                effect: ability.effects.modifyStrength(-1)
+            }))
         });
     }
 }

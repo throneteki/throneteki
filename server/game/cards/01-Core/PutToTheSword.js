@@ -1,32 +1,29 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class PutToTheSword extends DrawCard {
+    // Put to the Sword (01041)
+    // Reaction: After you win a [military] challenge by 5 or more STR as the attacking player,
+    // choose and kill a character controlled by the losing opponent. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'military' &&
-                    event.challenge.winner === this.controller &&
-                    event.challenge.attackingPlayer === this.controller &&
+                    event.challenge.winner === context.player &&
+                    event.challenge.attackingPlayer === context.player &&
                     event.challenge.strengthDifference >= 5
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.game.currentChallenge.loser &&
+                    card.controller === context.event.challenge.loser &&
                     card.getType() === 'character',
                 gameAction: 'kill'
             },
-            handler: (context) => {
-                this.game.killCharacter(context.target);
-                this.game.addMessage(
-                    '{0} plays {1} to kill {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} plays {source} to kill {target}',
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 }

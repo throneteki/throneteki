@@ -1,6 +1,18 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+
+function isStarkCardParticipatingInChallenge(source) {
+    return source.controller.anyCardsInPlay(
+        (card) => card.isParticipating() && card.isFaction('stark')
+    );
+}
 
 class BloodOfTheFirstMen extends DrawCard {
+    // Blood of the First Men (13102)
+    // Character you control only.
+    // Attached character gains the Old Gods trait.
+    // Action: During a challenge in which you control a participating [stark] character, kneel
+    // attached character to have it participate in the challenge on your side.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ controller: 'current' });
         this.whileAttached({
@@ -8,26 +20,19 @@ class BloodOfTheFirstMen extends DrawCard {
         });
         this.action({
             title: 'Participate in challenge',
-            condition: () =>
-                this.isStarkCardParticipatingInChallenge() &&
-                this.parent.canParticipateInChallenge(),
+            condition: (context) =>
+                isStarkCardParticipatingInChallenge(context.source) &&
+                context.source.parent.canParticipateInChallenge(),
             cost: ability.costs.kneelParent(),
-            handler: (context) => {
-                this.game.currentChallenge.addParticipantToSide(context.player, this.parent);
-                this.game.addMessage(
-                    '{0} uses {1} and kneels {2} to add them to the challenge',
-                    context.player,
-                    this,
-                    this.parent
-                );
-            }
+            message: {
+                format: '{player} uses {source} and kneels {parent} to add them to the challenge',
+                args: { parent: (context) => context.source.parent }
+            },
+            gameAction: GameActions.addToChallenge((context) => ({
+                card: context.source.parent,
+                player: context.player
+            }))
         });
-    }
-
-    isStarkCardParticipatingInChallenge() {
-        return this.controller.anyCardsInPlay(
-            (card) => card.isParticipating() && card.isFaction('stark')
-        );
     }
 }
 

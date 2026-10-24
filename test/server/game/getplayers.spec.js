@@ -2,14 +2,14 @@ import Game from '../../../server/game/game.js';
 
 describe('Game', function () {
     function createPlayerSpy(props) {
-        let spy = jasmine.createSpyObj(props.name, ['isSpectator', 'isPlaying']);
-        spy.isPlaying.and.returnValue(true);
+        let spy = { isSpectator: vi.fn(), isPlaying: vi.fn() };
+        spy.isPlaying.mockReturnValue(true);
         Object.assign(spy, { id: props.id, firstPlayer: props.firstPlayer });
         return spy;
     }
 
     beforeEach(function () {
-        this.gameService = jasmine.createSpyObj('gameService', ['save']);
+        this.gameService = { save: vi.fn() };
         this.game = new Game({ owner: {} }, { gameService: this.gameService });
 
         this.notSetPlayer1 = createPlayerSpy({ id: '1', name: 'test' });

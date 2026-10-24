@@ -1,3 +1,4 @@
+import EventEmitter from 'events';
 import { formatDeckAsFullCards } from '../../deck-helper/formatDeckAsFullCards.js';
 import { validateDeck } from '../../deck-helper/index.js';
 import defaultDb from '../db/index.js';
@@ -177,16 +178,51 @@ function eventIdExpression(index, eventId) {
     return `(SELECT id FROM events WHERE ${idColumn(eventId)} = $${index})`;
 }
 
-class DeckService {
+function deckCardCodes(deck) {
+    const codeOf = (card) => (typeof card === 'object' ? card?.code : card);
+    const countedCodes = (cardCounts = []) =>
+        cardCounts.map((cardCount) => codeOf(cardCount.cardcode ?? cardCount.card));
+
+    return [
+        codeOf(deck.agenda),
+        ...(deck.bannerCards ?? []).map(codeOf),
+        ...countedCodes(deck.drawCards),
+        ...countedCodes(deck.plotCards)
+    ].filter((code) => !!code);
+}
+
+class DeckService extends EventEmitter {
     constructor(cardService, eventService, db = defaultDb) {
+        super();
         this.cardService = cardService;
         this.eventService = eventService;
         this.db = db;
     }
 
     async init() {
+        await this.loadCardData();
+    }
+
+    async loadCardData() {
         this.packs = await this.cardService.getAllPacks();
         this.cards = await this.cardService.getAllCards();
+        this.unknownCardCodes = new Set();
+    }
+
+    // Card data is imported separately from deploys, so it can be newer than this cache.
+    async ensureCardData(deck) {
+        const isMissing = (code) => !this.cards[code] && !this.unknownCardCodes.has(code);
+        if (!deckCardCodes(deck).some(isMissing)) {
+            return;
+        }
+
+        const unknownCardCodes = this.unknownCardCodes;
+        await this.loadCardData();
+        this.unknownCardCodes = unknownCardCodes;
+        for (const code of deckCardCodes(deck).filter((code) => !this.cards[code])) {
+            this.unknownCardCodes.add(code);
+        }
+        this.emit('cardDataReloaded');
     }
 
     processDeck = async (deck, options = {}) => {
@@ -213,6 +249,7 @@ class DeckService {
         // Only validate if all required parameters were provided
         // Note: Sometimes, deck validation is not needed, such as fetching deck id for deck update
         if (format && variant && legalityObj) {
+            await this.ensureCardData(deck);
             const fullDeck = formatDeckAsFullCards(deck, { cards: this.cards });
             deck.status = validateDeck(fullDeck, {
                 packs: this.packs,

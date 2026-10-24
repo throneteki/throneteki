@@ -1,58 +1,66 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class OverwhelmingNumbers extends DrawCard {
+    // Overwhelming Numbers (15022)
+    // Play only during a challenge in which you control 2 or more attacking Dothraki characters.
+    // Action: Put up to 2 Dothraki characters into play from your hand and/or discard pile knelt,
+    // participating as attackers. At the end of the challenge, if any of those characters are still
+    // in play, return them to your hand. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Put characters into play',
-            condition: (context) => this.getNumberOfAttackingDothraki(context) >= 2,
+            condition: (context) =>
+                context.player.getNumberOfCardsInPlay({
+                    trait: 'Dothraki',
+                    type: 'character',
+                    attacking: true
+                }) >= 2,
             target: {
                 type: 'select',
+                mode: 'upTo',
                 numCards: 2,
                 cardCondition: (card, context) =>
                     card.isMatch({
                         trait: 'Dothraki',
                         type: 'character',
                         location: ['hand', 'discard pile']
-                    }) &&
-                    card.controller === context.player &&
-                    context.player.canPutIntoPlay(card)
+                    }) && card.controller === context.player
             },
-            handler: (context) => {
-                for (const card of context.target) {
-                    if (
-                        !this.controller.anyCardsInPlay(
-                            (attacking) => attacking.name === card.name
-                        ) ||
-                        !card.isUnique()
-                    ) {
-                        context.player.putIntoPlay(card, 'play', { kneeled: true });
-                        this.game.currentChallenge.addAttacker(card);
-                    } else {
-                        context.player.putIntoPlay(card, 'play', { kneeled: true });
-                    }
-                    this.atEndOfChallenge((ability) => ({
-                        match: card,
-                        condition: () => 'play area' === card.location,
-                        effect: ability.effects.returnToHandIfStillInPlay(true, 'challenge')
-                    }));
-                }
-
-                this.game.addMessage(
-                    '{0} plays {1} to put {2} into play from their hand knelt, participating as attackers',
-                    context.player,
-                    this,
-                    context.target
-                );
-            },
+            message:
+                '{player} plays {source} to put {target} into play knelt, participating as attackers',
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) =>
+                    GameActions.putIntoPlay({ card, player: context.player, kneeled: true }).then({
+                        gameAction: GameActions.simultaneously([
+                            GameActions.addToChallenge({ card }),
+                            GameActions.delayedEffect(() => {
+                                return {
+                                    duration: 'untilTriggered',
+                                    group: context,
+                                    groupTitle: 'Return Dothraki characters to hand',
+                                    title: card.name,
+                                    when: { onAtEndOfChallenge: () => true },
+                                    until: { onCardLeftPlay: (event) => event.card === card },
+                                    gameAction: GameActions.ifCondition({
+                                        condition: () =>
+                                            ['play area', 'duplicate'].includes(card.location),
+                                        thenAction: {
+                                            message:
+                                                '{player} resolves the delayed effect from {source}: {gameAction}',
+                                            gameAction: GameActions.returnCardToHand({
+                                                card,
+                                                allowSave: true
+                                            })
+                                        }
+                                    })
+                                };
+                            })
+                        ])
+                    })
+                )
+            ),
             max: ability.limit.perChallenge(1)
-        });
-    }
-
-    getNumberOfAttackingDothraki(context) {
-        return context.player.getNumberOfCardsInPlay({
-            trait: 'Dothraki',
-            type: 'character',
-            attacking: true
         });
     }
 }

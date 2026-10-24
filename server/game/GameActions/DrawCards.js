@@ -12,6 +12,14 @@ class DrawCards extends GameAction {
         return Message.fragment('draws {cards}', { cards: TextHelper.count(actualAmount, 'card') });
     }
 
+    resultMessage(props, event) {
+        if (!this.hasResult(event)) {
+            return '';
+        }
+
+        return Message.fragment('draws {cards}', { cards: TextHelper.count(event.amount, 'card') });
+    }
+
     canChangeGameState({ player, amount }) {
         return amount > 0 && player.getNumCardsToDraw(amount) > 0;
     }

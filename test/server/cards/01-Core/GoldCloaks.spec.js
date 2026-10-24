@@ -1,61 +1,26 @@
 describe('Gold Cloaks', function () {
-    integration(function () {
-        describe('when Gold Cloaks is ambushed normally', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('thenightswatch', ['A Noble Cause', 'Gold Cloaks']);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-                this.completeSetup();
-
-                this.selectFirstPlayer(this.player1);
-
-                this.completeMarshalPhase();
-
-                this.character = this.player1.findCardByName('Gold Cloaks', 'hand');
-
-                this.player1.clickCard(this.character);
-
-                this.completeChallengesPhase();
-            });
-
-            it('should discard it from play', function () {
-                expect(this.character.location).toBe('discard pile');
-            });
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { hand: ['Gold Cloaks', 'Nightmares'] }
         });
+        this.player1.togglePromptedActionWindow('dominance', true);
+        this.player1.clickCard(this.goldCloaks);
+    });
 
-        describe('when Gold Cloaks is blanked during the phase it is ambushed into play', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('thenightswatch', [
-                    'A Noble Cause',
-                    'Gold Cloaks',
-                    'Nightmares'
-                ]);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-                this.completeSetup();
+    it('is discarded from play when the phase it was ambushed in ends', function () {
+        this.completeChallengesPhase();
 
-                this.selectFirstPlayer(this.player1);
+        expect(this.goldCloaks.location).toBe('discard pile');
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-                this.completeMarshalPhase();
+    it('is not discarded if it is blanked during the phase it was ambushed in', function () {
+        this.player1.clickCard(this.nightmares);
+        this.player1.clickCard(this.goldCloaks);
+        this.completeChallengesPhase();
 
-                this.character = this.player1.findCardByName('Gold Cloaks', 'hand');
-
-                this.player1.clickCard(this.character);
-
-                // Blank Gold Cloaks to prevent the forced interrupt this phase
-                this.player1.clickCard('Nightmares', 'hand');
-                this.player1.clickCard(this.character);
-
-                this.completeChallengesPhase();
-            });
-
-            it('should not discard it the following phase', function () {
-                expect(this.character.location).toBe('play area');
-            });
-        });
+        expect(this.goldCloaks.location).toBe('play area');
+        expect(this.player1).isReadyToTakeAction();
     });
 });

@@ -2,16 +2,20 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class PrinceOfTheNarrowSea extends DrawCard {
+    // Prince of the Narrow Sea (23002)
+    // Unique [baratheon] character only.
+    // If attached character is Salladhor Saan, he gains the Commander trait and renown.
+    // Reaction: After you lose initiative, return a Captain or Smuggler character to your hand to
+    // choose and kneel 1 character and 1 location, each with lower printed cost.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'baratheon', unique: true });
         this.whileAttached({
             match: (card) => card.name === 'Salladhor Saan',
             effect: [ability.effects.addTrait('Commander'), ability.effects.addKeyword('Renown')]
         });
-
         this.reaction({
             when: {
-                onInitiativeDetermined: (event) => event.winner !== this.controller
+                onInitiativeDetermined: (event, context) => event.winner !== context.player
             },
             cost: ability.costs.returnToHand((card) =>
                 card.isMatch({ trait: ['Captain', 'Smuggler'], type: 'character' })
@@ -42,16 +46,9 @@ class PrinceOfTheNarrowSea extends DrawCard {
                 format: '{player} uses {source} and returns {costs.returnToHand} to its owners hand to kneel {knelt}',
                 args: { knelt: (context) => context.targets.getTargets() }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        context.targets
-                            .getTargets()
-                            .map((card) => GameActions.kneelCard({ card: card }), context)
-                    ),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                context.targets.getTargets().map((card) => GameActions.kneelCard({ card }))
+            )
         });
     }
 }

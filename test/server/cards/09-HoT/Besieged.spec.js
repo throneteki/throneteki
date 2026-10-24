@@ -1,44 +1,59 @@
 describe('Besieged', function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck = this.buildDeck('lannister', ['Besieged', 'A Noble Cause']);
-
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-            this.completeSetup();
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                plot: 'Besieged',
+                inPlay: ['Tumblestone Knight', 'Hedge Knight']
+            },
+            player2: {
+                inPlay: ['Bastard in Hiding', { card: 'House Dayne Knight', kneeling: true }]
+            }
         });
 
-        describe('when Besieged is selected', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('Besieged');
-                this.player2.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player1);
-            });
+        this.player1.clickPrompt('Military');
+        this.player1.clickCard(this.tumblestoneKnight);
+        this.player1.clickPrompt('Done');
+        this.skipActionWindow();
+    });
 
-            it('should set a minimum on both players', function () {
-                expect(this.player1Object.defenderLimits.getMin()).toBe(1);
-                expect(this.player2Object.defenderLimits.getMin()).toBe(1);
-            });
+    it('makes the defending player declare at least one defender, if able', function () {
+        this.player2.clickPrompt('Done');
+
+        expect(this.game.currentChallenge.defenders).toEqual([]);
+        expect(this.player2).toHavePrompt('Select defenders (min 1)');
+
+        this.player2.clickCard(this.bastardInHiding);
+        this.player2.clickPrompt('Done');
+
+        expect(this.game.currentChallenge.defenders).toEqual([this.bastardInHiding]);
+        expect(this.player1).isReadyToTakeAction();
+    });
+});
+
+describe('Besieged, when no character can defend', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                plot: 'Besieged',
+                inPlay: ['Tumblestone Knight']
+            },
+            player2: {
+                inPlay: [{ card: 'Bastard in Hiding', kneeling: true }]
+            }
         });
 
-        describe('when double Besieged is selected', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('Besieged');
-                this.player2.selectPlot('Besieged');
-                this.selectFirstPlayer(this.player1);
+        this.player1.clickPrompt('Military');
+        this.player1.clickCard(this.tumblestoneKnight);
+        this.player1.clickPrompt('Done');
+        this.skipActionWindow();
+    });
 
-                this.completeMarshalPhase();
-                this.completeChallengesPhase();
+    it('lets the defending player declare no defenders', function () {
+        this.player2.clickPrompt('Done');
 
-                this.selectFirstPlayer(this.player1);
-            });
-
-            it('should properly reset the defender limit', function () {
-                expect(this.player1Object.defenderLimits.getMin()).toBe(0);
-                expect(this.player2Object.defenderLimits.getMin()).toBe(0);
-            });
-        });
+        expect(this.game.currentChallenge.defenders).toEqual([]);
+        expect(this.player1).isReadyToTakeAction();
     });
 });

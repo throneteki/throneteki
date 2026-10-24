@@ -1,38 +1,39 @@
 import DrawCard from '../../drawcard.js';
-import TextHelper from '../../TextHelper.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheRedKeep extends DrawCard {
+    // The Red Keep (01061)
+    // The Red Keep contributes 2 STR to your side during any [power] challenge in which you control
+    // a participating character.
+    // Interrupt: When the challenges phase ends, if you have not lost a [power] challenge this
+    // round, kneel The Red Keep to draw 2 cards.
     setupCardAbilities(ability) {
         this.tracker = ChallengeTracker.forRound(this.game);
 
         this.persistentEffect({
-            condition: () =>
-                this.game.currentChallenge &&
-                this.game.currentChallenge.challengeType === 'power' &&
-                this.game.currentChallenge.anyParticipants(
-                    (card) => card.controller === this.controller
+            condition: (context) =>
+                context.game.currentChallenge &&
+                context.game.currentChallenge.challengeType === 'power' &&
+                context.game.currentChallenge.anyParticipants(
+                    (card) => card.controller === context.source.controller
                 ) &&
-                this.controller.canDraw(),
+                context.source.controller.canDraw(),
             targetController: 'current',
             effect: ability.effects.contributeStrength(this, 2)
         });
         this.interrupt({
             when: {
-                onPhaseEnded: (event) =>
+                onPhaseEnded: (event, context) =>
                     event.phase === 'challenge' &&
-                    !this.tracker.some({ loser: this.controller, challengeType: 'power' })
+                    !context.source.tracker.some({
+                        loser: context.source.controller,
+                        challengeType: 'power'
+                    })
             },
             cost: ability.costs.kneelSelf(),
-            handler: () => {
-                let cards = this.controller.drawCardsToHand(2).length;
-                this.game.addMessage(
-                    '{0} kneels {1} to draw {2}',
-                    this.controller,
-                    this,
-                    TextHelper.count(cards, 'card')
-                );
-            }
+            message: '{player} kneels {source} to draw 2 cards',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 2 }))
         });
     }
 }

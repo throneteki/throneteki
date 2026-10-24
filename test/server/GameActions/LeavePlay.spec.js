@@ -2,20 +2,14 @@ import LeavePlay from '../../../server/game/GameActions/LeavePlay.js';
 
 describe('LeavePlay', function () {
     beforeEach(function () {
-        this.cardSpy = jasmine.createSpyObj('card', [
-            'allowGameAction',
-            'createSnapshot',
-            'leavesPlay'
-        ]);
+        this.cardSpy = { allowGameAction: vi.fn(), createSnapshot: vi.fn(), leavesPlay: vi.fn() };
         this.cardSpy.location = 'play area';
-        this.cardSpy.createSnapshot.and.returnValue('SNAPSHOT');
-        this.nonTerminalAttachmentSpy = jasmine.createSpyObj('nonTerminalAttachment', [
-            'isTerminal'
-        ]);
-        this.nonTerminalAttachmentSpy.isTerminal.and.returnValue(false);
-        this.terminalAttachmentSpy = jasmine.createSpyObj('terminalAttachment', ['isTerminal']);
-        this.terminalAttachmentSpy.isTerminal.and.returnValue(true);
-        this.dupeSpy = jasmine.createSpyObj('dupe', ['']);
+        this.cardSpy.createSnapshot.mockReturnValue('SNAPSHOT');
+        this.nonTerminalAttachmentSpy = { isTerminal: vi.fn() };
+        this.nonTerminalAttachmentSpy.isTerminal.mockReturnValue(false);
+        this.terminalAttachmentSpy = { isTerminal: vi.fn() };
+        this.terminalAttachmentSpy.isTerminal.mockReturnValue(true);
+        this.dupeSpy = {};
 
         this.cardSpy.dupes = [this.dupeSpy];
         this.cardSpy.attachments = [this.nonTerminalAttachmentSpy, this.terminalAttachmentSpy];
@@ -25,7 +19,7 @@ describe('LeavePlay', function () {
 
     describe('allow()', function () {
         beforeEach(function () {
-            this.cardSpy.allowGameAction.and.returnValue(true);
+            this.cardSpy.allowGameAction.mockReturnValue(true);
         });
 
         for (const location of ['active plot', 'faction', 'play area', 'title']) {
@@ -52,7 +46,7 @@ describe('LeavePlay', function () {
 
         describe('when the card is immune', function () {
             beforeEach(function () {
-                this.cardSpy.allowGameAction.and.returnValue(false);
+                this.cardSpy.allowGameAction.mockReturnValue(false);
             });
 
             it('returns false', function () {
@@ -91,21 +85,21 @@ describe('LeavePlay', function () {
             });
 
             it('attaches discard events for the dupes', function () {
-                expect(this.attachedEvents).toContain({
+                expect(this.attachedEvents).toContainEqual({
                     name: 'onCardDiscarded',
                     card: this.dupeSpy
                 });
             });
 
             it('attaches discard events for terminal attachments', function () {
-                expect(this.attachedEvents).toContain({
+                expect(this.attachedEvents).toContainEqual({
                     name: 'onCardDiscarded',
                     card: this.terminalAttachmentSpy
                 });
             });
 
             it('attaches return to hand events for non-terminal attachments', function () {
-                expect(this.attachedEvents).toContain({
+                expect(this.attachedEvents).toContainEqual({
                     name: 'onCardReturnedToHand',
                     card: this.nonTerminalAttachmentSpy
                 });

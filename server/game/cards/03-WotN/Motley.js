@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Motley extends DrawCard {
+    // Motley (03025)
+    // Opponent's character only.
+    // Attached character gains the Fool trait.
+    // Reaction: After attached character is declared as an attacker or defender, discard 1 card at
+    // random from its controller's hand.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ controller: 'opponent' });
         this.whileAttached({
@@ -8,18 +14,17 @@ class Motley extends DrawCard {
         });
         this.reaction({
             when: {
-                onDeclaredAsAttacker: (event) => event.card === this.parent,
-                onDeclaredAsDefender: (event) => event.card === this.parent
+                onDeclaredAsAttacker: (event, context) => event.card === context.source.parent,
+                onDeclaredAsDefender: (event, context) => event.card === context.source.parent
             },
-            handler: () => {
-                this.parent.controller.discardAtRandom(1);
-                this.game.addMessage(
-                    "{0} uses {1} to discard 1 card at random from {2}'s hand",
-                    this.controller,
-                    this,
-                    this.parent.controller
-                );
-            }
+            message: {
+                format: "{player} uses {source} to discard 1 card at random from {opponent}'s hand",
+                args: { opponent: (context) => context.source.parent.controller }
+            },
+            gameAction: GameActions.discardAtRandom((context) => ({
+                player: context.source.parent.controller,
+                amount: 1
+            }))
         });
     }
 }

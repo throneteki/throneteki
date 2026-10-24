@@ -1,62 +1,31 @@
 describe('Naval Superiority', function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck = this.buildDeck('lannister', [
-                'Naval Superiority',
-                'A Noble Cause',
-                'A Feast for Crows',
-                'A Clash of Kings',
-                'The Roseroad',
-                'Littlefinger (Core)'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.player2.clickCard('The Roseroad', 'hand');
-            this.player2.clickCard('Littlefinger', 'hand');
-
-            this.completeSetup();
+    function setup(context, opponentPlot) {
+        context.setupTest({
+            phase: 'marshal',
+            player1: { plot: 'Naval Superiority' },
+            player2: { plot: opponentPlot }
         });
+    }
 
-        describe('vs a Kingdom plot', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('Naval Superiority');
-                this.player2.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player2);
-            });
+    it('treats the base gold value on a revealed Kingdom plot as 0', function () {
+        setup(this, 'A Noble Cause');
 
-            it('should treat the base gold value as 0', function () {
-                // 0 from plot, 1 from Littlefinger, 1 from Roseroad
-                expect(this.player2Object.gold).toBe(2);
-            });
-        });
+        expect(this.player2Object.getIncome()).toBe(0);
+        expect(this.player1Object.getIncome()).toBe(2);
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-        describe('vs a Edict plot', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('Naval Superiority');
-                this.player2.selectPlot('A Feast for Crows');
-                this.selectFirstPlayer(this.player2);
-            });
+    it('treats the base gold value on a revealed Edict plot as 0', function () {
+        setup(this, 'Confiscation');
 
-            it('should treat the base gold value as 0', function () {
-                // 0 from plot, 1 from Littlefinger, 1 from Roseroad
-                expect(this.player2Object.gold).toBe(2);
-            });
-        });
+        expect(this.player2Object.getIncome()).toBe(0);
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-        describe('vs a normal plot', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('Naval Superiority');
-                this.player2.selectPlot('A Clash of Kings');
-                this.selectFirstPlayer(this.player2);
-            });
+    it('does not affect other plots', function () {
+        setup(this, 'Sneak Attack');
 
-            it('should not modify the base gold value', function () {
-                // 4 from plot, 1 from Littlefinger, 1 from Roseroad
-                expect(this.player2Object.gold).toBe(6);
-            });
-        });
+        expect(this.player2Object.getIncome()).toBe(5);
+        expect(this.player1).isReadyToTakeAction();
     });
 });

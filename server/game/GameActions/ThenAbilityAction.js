@@ -13,6 +13,14 @@ class ThenAbilityAction {
         return this.preThenAction.message(context);
     }
 
+    resultMessage(context, event) {
+        return this.preThenAction.resultMessage(context, event);
+    }
+
+    logsOwnMessage() {
+        return this.preThenAction.logsOwnMessage();
+    }
+
     allow(context) {
         return this.preThenAction.allow(context);
     }

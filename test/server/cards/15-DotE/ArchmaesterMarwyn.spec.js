@@ -1,108 +1,62 @@
-import PlaceCardUnderneath from '../../../../server/game/GameActions/PlaceCardUnderneath.js';
-
 describe('Archmaester Marwyn', function () {
-    integration(function () {
-        describe('ability', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('baratheon', [
-                    'The Conclave',
-                    'Late Summer Feast',
-                    'Archmaester Marwyn',
-                    'Archmaester Marwyn',
-                    'Shadow Priestess',
-                    'Hedge Knight',
-                    'Tithe'
-                ]);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                agenda: 'Fealty',
+                gold: 10,
+                hand: ['Archmaester Marwyn'],
+                drawDeck: ['Hedge Knight', 'Nightmares']
+            },
+            player2: {
+                inPlay: ['Bastard in Hiding']
+            }
+        });
 
-                [this.marwyn, this.dupe] = this.player1.filterCardsByName('Archmaester Marwyn');
-                this.card = this.player1.findCardByName('Hedge Knight');
-                this.shadowCard = this.player1.findCardByName('Shadow Priestess');
-                this.event = this.player1.findCardByName('Tithe');
+        this.player1.clickCard(this.archmaesterMarwyn);
+    });
 
-                this.player1.clickCard(this.marwyn);
-                // Properly place all cards facedown under agenda
-                for (const card of [this.dupe, this.card, this.shadowCard, this.event]) {
-                    PlaceCardUnderneath.createEvent({
-                        card,
-                        parentCard: this.player1Object.agenda,
-                        facedown: true
-                    }).executeHandler();
-                }
+    describe('when he enters play', function () {
+        beforeEach(function () {
+            this.player1.triggerAbility(this.archmaesterMarwyn);
+        });
 
-                this.completeSetup();
+        it('places the top 2 cards of your deck facedown under your agenda', function () {
+            expect(this.fealty.underneath).toEqual(
+                expect.arrayContaining([this.hedgeKnight, this.nightmares])
+            );
+            expect(this.hedgeKnight.facedown).toBe(true);
+            expect(this.nightmares.facedown).toBe(true);
+            expect(this.game.isCardVisible(this.hedgeKnight, this.player1Object)).toBe(true);
+            expect(this.game.isCardVisible(this.hedgeKnight, this.player2Object)).toBe(false);
+            expect(this.game.getPlainTextLog()).toContain(
+                'player1 uses Archmaester Marwyn to place top 2 cards of their deck facedown under their agenda'
+            );
+            expect(this.game.getPlainTextLog()).not.toContain('Hedge Knight');
+            expect(this.player1).isReadyToTakeAction();
+        });
 
-                this.selectFirstPlayer(this.player1);
-            });
+        it('lets you marshal a card from under your agenda once per phase', function () {
+            this.player1.clickCard(this.hedgeKnight);
 
-            describe('when marshalling a card', function () {
-                beforeEach(function () {
-                    this.player1.clickCard(this.card);
-                });
+            expect(this.hedgeKnight.location).toBe('play area');
+            expect(this.player1Object.gold).toBe(3);
 
-                it('marshals the card', function () {
-                    expect(this.card.location).toContain('play area');
-                });
+            this.player1.clickCard(this.nightmares);
 
-                it('counts toward the limit', function () {
-                    this.player1.clickCard(this.dupe);
+            expect(this.nightmares.location).toBe('underneath');
+            expect(this.player1).isReadyToTakeAction();
+        });
 
-                    expect(this.player1Object.agenda.underneath).toContain(this.dupe);
-                });
-            });
+        it('lets you play a card from under your agenda in a later phase', function () {
+            this.player1.clickCard(this.hedgeKnight);
+            this.player1.clickPrompt('Done');
+            this.player2.clickPrompt('Done');
+            this.player1.clickCard(this.nightmares);
+            this.player1.clickCard(this.bastardInHiding);
 
-            describe('when playing an event', function () {
-                beforeEach(function () {
-                    this.player1.clickCard(this.event);
-                    this.player1.clickCard(this.marwyn);
-                });
-
-                it('plays the event', function () {
-                    expect(this.event.location).toContain('discard pile');
-                });
-
-                it('counts toward the limit', function () {
-                    this.player1.clickCard(this.card);
-
-                    expect(this.player1Object.agenda.underneath).toContain(this.card);
-                });
-            });
-
-            describe('when marshalling a dupe', function () {
-                beforeEach(function () {
-                    this.player1.clickCard(this.dupe);
-                });
-
-                it('marshals the dupe', function () {
-                    expect(this.marwyn.dupes).toContain(this.dupe);
-                });
-
-                it('counts toward the limit', function () {
-                    this.player1.clickCard(this.card);
-
-                    expect(this.player1Object.agenda.underneath).toContain(this.card);
-                });
-            });
-
-            describe('when marshalling into shadows', function () {
-                beforeEach(function () {
-                    this.player1.clickCard(this.shadowCard);
-                    this.player1.clickPrompt('Marshal into shadows');
-                });
-
-                it('marshals the card into shadows', function () {
-                    expect(this.shadowCard.location).toEqual('shadows');
-                });
-
-                it('counts toward the limit', function () {
-                    this.player1.clickCard(this.card);
-
-                    expect(this.player1Object.agenda.underneath).toContain(this.card);
-                });
-            });
+            expect(this.nightmares.location).toBe('discard pile');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

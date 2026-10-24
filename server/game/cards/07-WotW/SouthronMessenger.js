@@ -1,10 +1,16 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SouthronMessenger extends DrawCard {
+    // Southron Messenger (07031)
+    // Ambush (5).
+    // Reaction: After Southron Messenger enters play during a challenge, choose a participating
+    // character with fewer than 2 challenge icons, and return that character to its owner's hand.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this && this.game.isDuringChallenge()
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source && context.game.isDuringChallenge()
             },
             target: {
                 activePromptTitle: 'Select participating character',
@@ -13,16 +19,11 @@ class SouthronMessenger extends DrawCard {
                     card.isParticipating() &&
                     card.getNumberOfIcons() <= 1
             },
-            handler: (context) => {
-                context.target.controller.returnCardToHand(context.target);
-                this.game.addMessage(
-                    "{0} uses {1} to return {2} to {3}'s hand",
-                    context.player,
-                    this,
-                    context.target,
-                    context.target.controller
-                );
-            }
+            message: {
+                format: "{player} uses {source} to return {target} to {controller}'s hand",
+                args: { controller: (context) => context.target.controller }
+            },
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 }

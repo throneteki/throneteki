@@ -1,28 +1,28 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerGarlanTyrell extends DrawCard {
+    // Ser Garlan Tyrell (09003)
+    // Action: During a challenge in which a Knight character you control is attacking alone,
+    // discard 1 card from your hand to raise the claim value on your revealed plot card by 1 until
+    // the end of the challenge. (Limit once per challenge.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Raise claim',
             limit: ability.limit.perChallenge(1),
-            condition: () =>
-                this.game.currentChallenge &&
-                this.game.currentChallenge.attackingPlayer === this.controller &&
-                this.game.currentChallenge.attackers.length === 1 &&
-                this.hasParticipatingKnight(),
+            condition: (context) =>
+                context.game.currentChallenge &&
+                context.game.currentChallenge.attackingPlayer === context.source.controller &&
+                context.game.currentChallenge.attackers.length === 1 &&
+                context.source.hasParticipatingKnight(),
             cost: ability.costs.discardFromHand(),
-            handler: (context) => {
-                this.untilEndOfChallenge((ability) => ({
-                    match: (card) => card === this.controller.activePlot,
-                    effect: ability.effects.modifyClaim(1)
-                }));
-                this.game.addMessage(
-                    '{0} uses {1} and discards {2} from their hand to raise the claim value on their revealed plot card by 1 until the end of the challenge',
-                    this.controller,
-                    this,
-                    context.costs.discardFromHand
-                );
-            }
+            message:
+                '{player} uses {source} and discards {costs.discardFromHand} from their hand to raise the claim value on their revealed plot card by 1 until the end of the challenge',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: (card) => card === context.player.activePlot,
+                effect: ability.effects.modifyClaim(1)
+            }))
         });
     }
 

@@ -1,135 +1,76 @@
 describe("Varys's Riddle", function () {
-    integration(function () {
+    function reveal(context, player1, player2) {
+        context.setupTest({
+            phase: 'plot',
+            player1: { plotDeck: ["Varys's Riddle"], ...player1 },
+            player2
+        });
+        context.player1.selectPlot("Varys's Riddle");
+        context.player2.selectPlot(player2.plotDeck[0]);
+    }
+
+    it('does not crash when there are plot modifiers out', function () {
+        reveal(
+            this,
+            { faction: 'greyjoy', inPlay: ['The Roseroad'] },
+            { faction: 'lannister', plotDeck: ['Wildfire Assault'] }
+        );
+        expect(() => {
+            this.selectFirstPlayer(this.player1);
+            this.selectPlotOrder(this.player1);
+        }).not.toThrow();
+    });
+
+    it('has its reserve reduced by Wraiths in Their Midst', function () {
+        reveal(this, {}, { faction: 'lannister', plotDeck: ['Wraiths in Their Midst'] });
+        this.selectFirstPlayer(this.player1);
+        expect(this.varyssRiddle.getReserve()).toBe(5);
+    });
+
+    describe('against Calm Over Westeros', function () {
         beforeEach(function () {
-            const deck1 = this.buildDeck('greyjoy', ["Varys's Riddle", 'The Roseroad']);
-
-            this.player1.selectDeck(deck1);
+            reveal(
+                this,
+                { faction: 'lannister' },
+                {
+                    faction: 'lannister',
+                    agenda: '"The Rains of Castamere"',
+                    plotDeck: ['Calm Over Westeros', 'Power Behind the Throne'],
+                    inPlay: ['The Tickler', 'Ser Jaime Lannister (Core)']
+                }
+            );
+            this.selectFirstPlayer(this.player2);
+            this.selectPlotOrder(this.player1);
+            this.player1.clickCard(this.calmOverWesteros);
+            this.player1.clickPrompt('Intrigue');
+            this.player2.clickPrompt('Military');
+            this.completeMarshalPhase();
         });
 
-        describe('when there are plot modifiers out', function () {
-            beforeEach(function () {
-                const deck2 = this.buildDeck('lannister', ['Wildfire Assault']);
-
-                this.player2.selectDeck(deck2);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.player1.clickCard('The Roseroad', 'hand');
-                this.completeSetup();
-            });
-
-            it('should not crash', function () {
-                expect(() => {
-                    this.selectFirstPlayer(this.player1);
-                    this.selectPlotOrder(this.player1);
-                }).not.toThrow();
-            });
+        it('initiates its When Revealed ability to reduce claim', function () {
+            const discarded = this.player1Object.discardPile.length;
+            this.unopposedChallenge(this.player2, 'Intrigue', this.theTickler);
+            expect(this.player1Object.discardPile).toHaveLength(discarded);
         });
 
-        describe('when played against Wraiths in Their Midst', function () {
-            beforeEach(function () {
-                const deck2 = this.buildDeck('lannister', ['Wraiths in Their Midst']);
-
-                this.player2.selectDeck(deck2);
-                this.startGame();
-                this.keepStartingHands();
-                this.completeSetup();
-
-                this.varysRiddle = this.player1.findCardByName("Varys's Riddle");
-
-                this.selectFirstPlayer(this.player1);
-            });
-
-            it("should reduce Varys's Riddle by the proper amount", function () {
-                // Reduce 7 by 2 from Wraiths
-                expect(this.varysRiddle.getReserve()).toBe(5);
-            });
+        it('keeps the claim reduced when Calm is replaced using Rains', function () {
+            const discarded = this.player1Object.discardPile.length;
+            this.unopposedChallenge(this.player2, 'Intrigue', this.serJaimeLannister);
+            this.player2.triggerAbility('"The Rains of Castamere"');
+            this.player2.clickCard(this.powerBehindTheThrone);
+            expect(this.player1Object.discardPile).toHaveLength(discarded);
         });
+    });
 
-        describe('when played against Calm Over Westeros', function () {
-            integration(function () {
-                beforeEach(function () {
-                    const deck1 = this.buildDeck('lannister', ["Varys's Riddle", 'Hedge Knight']);
-                    const deck2 = this.buildDeck('lannister', [
-                        '"The Rains of Castamere"',
-                        'Calm Over Westeros',
-                        'Power Behind the Throne',
-                        'The Tickler',
-                        'Ser Jaime Lannister (Core)'
-                    ]);
-                    this.player1.selectDeck(deck1);
-                    this.player2.selectDeck(deck2);
-                    this.startGame();
-                    this.keepStartingHands();
-
-                    this.player2.clickCard('Ser Jaime Lannister', 'hand');
-
-                    this.completeSetup();
-
-                    this.powerBehindTheThrone =
-                        this.player2.findCardByName('Power Behind the Throne');
-
-                    this.selectFirstPlayer(this.player2);
-
-                    this.selectPlotOrder(this.player1);
-
-                    // Reduce Intrigue claim using Varys's Riddle
-                    this.player1.clickPrompt('Intrigue');
-
-                    // Reduce claim on Military this round.
-                    this.player2.clickPrompt('Military');
-
-                    // Marshal cards
-                    this.player2.clickCard('The Tickler', 'hand');
-                    this.completeMarshalPhase();
-                });
-
-                describe('on a normal challenge', function () {
-                    beforeEach(function () {
-                        this.unopposedChallenge(this.player2, 'Intrigue', 'The Tickler');
-                        this.player2.clickPrompt('Apply Claim');
-                    });
-
-                    it('should reduce the claim', function () {
-                        expect(this.player1Object.discardPile.length).toBe(0);
-                    });
-                });
-
-                describe('when Calm is replaced using Rains', function () {
-                    beforeEach(function () {
-                        this.unopposedChallenge(this.player2, 'Intrigue', 'Ser Jaime Lannister');
-                        this.player2.triggerAbility('"The Rains of Castamere"');
-                        this.player2.clickCard(this.powerBehindTheThrone);
-                        this.player2.clickPrompt('Apply Claim');
-                    });
-
-                    it('should reduce the claim', function () {
-                        expect(this.player1Object.discardPile.length).toBe(0);
-                    });
-                });
-            });
-        });
-
-        describe('when played against something that reacts to plots being revealed', function () {
-            beforeEach(function () {
-                const deck2 = this.buildDeck('stark', ['Trading with the Pentoshi', 'Old Nan']);
-
-                this.player2.selectDeck(deck2);
-                this.startGame();
-                this.keepStartingHands();
-                this.player2.clickCard('Old Nan', 'hand');
-                this.completeSetup();
-
-                expect(this.player2).toAllowAbilityTrigger('Old Nan');
-                this.player2.clickPrompt('Pass');
-
-                this.selectFirstPlayer(this.player1);
-                this.selectPlotOrder(this.player1);
-            });
-
-            it('should not trigger plot reveal interrupts / reactions', function () {
-                expect(this.player2).not.toAllowAbilityTrigger('Old Nan');
-            });
-        });
+    it('does not trigger reactions to plots being revealed', function () {
+        reveal(
+            this,
+            {},
+            { faction: 'stark', plotDeck: ['Trading with the Pentoshi'], inPlay: ['Old Nan'] }
+        );
+        this.player2.clickPrompt('Pass');
+        this.selectFirstPlayer(this.player1);
+        this.selectPlotOrder(this.player1);
+        expect(this.player2).not.toAllowAbilityTrigger('Old Nan');
     });
 });

@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MarriagePact extends DrawCard {
+    // Marriage Pact (06022)
+    // Terminal.
+    // Attached character cannot participate in challenges against you.
+    // Forced Interrupt: When attached character leaves play, sacrifice a character you control.
     setupCardAbilities(ability) {
         this.whileAttached({
             effect: ability.effects.cannotParticipate()
@@ -8,23 +13,16 @@ class MarriagePact extends DrawCard {
 
         this.forcedInterrupt({
             when: {
-                onCardLeftPlay: (event) => event.card === this.parent
+                onCardLeftPlay: (event, context) => event.card === context.source.parent
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                context.target.controller.sacrificeCard(context.target);
-                this.game.addMessage(
-                    '{0} is forced by {1} to sacrifice {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} is forced by {source} to sacrifice {target}',
+            gameAction: GameActions.sacrificeCard((context) => ({ card: context.target }))
         });
     }
 }

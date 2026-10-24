@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Sweetrobin extends DrawCard {
+    // Sweetrobin (23028)
+    // Interrupt: When a card with printed cost equal to or lower than its owner's initiative value
+    // is revealed from a player's hand, deck, or shadows area, remove it from the game. (Limit once
+    // per phase.)
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

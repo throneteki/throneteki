@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class ANobleCause extends PlotCard {
+    // A Noble Cause (01004)
+    // Reduce the cost of the first Lord or Lady character you marshal this round by 2.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',

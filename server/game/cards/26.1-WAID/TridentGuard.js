@@ -1,12 +1,14 @@
 import DrawCard from '../../drawcard.js';
 
 class TridentGuard extends DrawCard {
+    // Trident Guard (26011)
+    // While your claim value is higher than an opponent's, Trident Guard gains renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.game
+            condition: (context) =>
+                context.game
                     .getPlayers()
-                    .some((player) => player.getClaim() < this.controller.getClaim()),
+                    .some((player) => player.getClaim() < context.source.controller.getClaim()),
             match: this,
             effect: ability.effects.addKeyword('renown')
         });

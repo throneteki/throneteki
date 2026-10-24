@@ -2,13 +2,18 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Hero extends DrawCard {
+    // Hero (24019)
+    // No attachments except Weapon.
+    // Reaction: After you win a challenge in which Hero is participating, if you have fewer cards
+    // in hand than the losing opponent, choose and stand an Army character or Grey Worm. (Limit
+    // twice per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.isParticipating() &&
-                    this.controller.getHandCount() < event.challenge.loser.getHandCount()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isParticipating() &&
+                    context.source.controller.getHandCount() < event.challenge.loser.getHandCount()
             },
             target: {
                 cardCondition: {
@@ -20,12 +25,7 @@ class Hero extends DrawCard {
             },
             limit: ability.limit.perPhase(2),
             message: '{player} uses {source} to stand {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.standCard((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

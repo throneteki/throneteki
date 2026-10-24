@@ -1,10 +1,14 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Yoren extends DrawCard {
-    setupCardAbilities() {
+    // Yoren (13085)
+    // Reaction: After Yoren enters play, choose a character with printed cost 5 or lower. Take
+    // control of that character until Yoren leaves play.
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             target: {
                 cardCondition: (card) =>
@@ -12,22 +16,16 @@ class Yoren extends DrawCard {
                     card.getPrintedCost() <= 5 &&
                     card.location === 'play area'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to take control of {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-                this.lastingEffect((ability) => ({
-                    until: {
-                        onCardLeftPlay: (event) =>
-                            event.card === this || event.card === context.target
-                    },
-                    match: context.target,
-                    effect: ability.effects.takeControl(this.controller)
-                }));
-            }
+            message: '{player} uses {source} to take control of {target}',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'custom',
+                until: {
+                    onCardLeftPlay: (event) =>
+                        event.card === context.source || event.card === context.target
+                },
+                match: context.target,
+                effect: ability.effects.takeControl(context.player)
+            }))
         });
     }
 }

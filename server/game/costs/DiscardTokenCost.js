@@ -1,3 +1,5 @@
+import GameActions from '../GameActions/index.js';
+
 class DiscardTokenCost {
     constructor(token, amount) {
         this.name = 'discardToken';
@@ -5,23 +7,26 @@ class DiscardTokenCost {
         this.amount = amount;
     }
 
-    isEligible(card) {
-        if (typeof this.amount === 'function') {
-            return card.tokens[this.token] >= this.amount(card);
-        }
-
-        return card.tokens[this.token] >= this.amount;
+    getAmount(card) {
+        return typeof this.amount === 'function' ? this.amount(card) : this.amount;
     }
 
-    pay(cards) {
-        for (let card of cards) {
-            if (typeof this.amount === 'function') {
-                let amount = this.amount(card);
-                card.modifyToken(this.token, -amount);
-            } else {
-                card.modifyToken(this.token, -this.amount);
-            }
-        }
+    isEligible(card) {
+        return card.tokens[this.token] >= this.getAmount(card);
+    }
+
+    pay(cards, context) {
+        context.game.resolveGameAction(
+            GameActions.simultaneously(
+                cards.map((card) =>
+                    GameActions.discardToken({
+                        card,
+                        token: this.token,
+                        amount: this.getAmount(card)
+                    })
+                )
+            )
+        );
     }
 }
 

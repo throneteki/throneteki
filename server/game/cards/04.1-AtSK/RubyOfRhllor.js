@@ -1,42 +1,37 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RubyOfRhllor extends DrawCard {
+    // Ruby of R'hllor (04009)
+    // R'hllor character only.
+    // Reaction: After you win an [intrigue] challenge in which attached character is attacking,
+    // name a card. The losing opponent reveals his or her hand and discards each card with that
+    // name.
     setupCardAbilities() {
         this.attachmentRestriction({ trait: "R'hllor" });
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'intrigue' &&
-                    event.challenge.winner === this.controller &&
-                    event.challenge.isAttacking(this.parent)
+                    event.challenge.winner === context.player &&
+                    !!context.source.parent &&
+                    event.challenge.isAttacking(context.source.parent)
             },
-            handler: (context) => {
-                this.game.promptForCardName({
-                    player: context.player,
-                    onSelect: (player, cardName) => this.selectCardName(player, cardName),
-                    source: context.source
-                });
-            }
+            gameAction: GameActions.nameCard({
+                message: {
+                    format: "{player} uses {source} to name {cardName}, reveal {loser}'s hand as {hand} and discard each card with that name",
+                    args: {
+                        loser: (context) => context.event.challenge.loser,
+                        hand: (context) => context.event.challenge.loser.hand
+                    }
+                },
+                gameAction: GameActions.simultaneously((context) =>
+                    context.event.challenge.loser.hand
+                        .filter((card) => card.name === context.namedCard)
+                        .map((card) => GameActions.discardCard({ card }))
+                )
+            })
         });
-    }
-
-    selectCardName(player, cardName) {
-        const loser = this.game.currentChallenge.loser;
-        const matchingCards = loser.hand.filter((card) => card.name === cardName);
-
-        this.game.addMessage(
-            "{0} uses {1} to name {2}, reveal {3}'s hand as {4} and discard all matching cards by name",
-            this.controller,
-            this,
-            cardName,
-            loser,
-            loser.hand
-        );
-        if (matchingCards.length === 0) {
-            return true;
-        }
-
-        loser.discardCards(matchingCards);
     }
 }
 

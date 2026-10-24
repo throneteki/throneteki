@@ -1,10 +1,15 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerRichardHorpe extends DrawCard {
+    // Ser Richard Horpe (20001)
+    // Renown.
+    // Ser Richard Horpe gets +1 STR for each power he has.
+    // Action: Move 1 power from a card you control to another card in play. (Limit once per round.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.power)
+            effect: ability.effects.dynamicStrength((card, context) => context.source.power)
         });
 
         this.action({
@@ -27,17 +32,18 @@ class SerRichardHorpe extends DrawCard {
                     cardType: ['attachment', 'character', 'faction', 'location', 'plot']
                 }
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to move 1 power from {2} to {3}',
-                    context.player,
-                    this,
-                    context.targets.from,
-                    context.targets.to
-                );
-
-                this.game.movePower(context.targets.from, context.targets.to, 1);
-            }
+            message: {
+                format: '{player} uses {source} to move 1 power from {from} to {to}',
+                args: {
+                    from: (context) => context.targets.from,
+                    to: (context) => context.targets.to
+                }
+            },
+            gameAction: GameActions.movePower((context) => ({
+                from: context.targets.from,
+                to: context.targets.to,
+                amount: 1
+            }))
         });
     }
 }

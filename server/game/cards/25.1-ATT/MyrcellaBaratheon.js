@@ -2,11 +2,16 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MyrcellaBaratheon extends DrawCard {
+    // Myrcella Baratheon (25005)
+    // Reaction: After you win a challenge in which Myrcella Baratheon is participating, return her
+    // to your hand. Then, you may initiate an additional [intrigue] challenge against the losing
+    // opponent this phase. (Max once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isParticipating()
             },
             max: ability.limit.perPhase(1),
             message: '{player} returns {source} to their hand',
@@ -15,15 +20,14 @@ class MyrcellaBaratheon extends DrawCard {
                     format: 'Then, {player} may initiate an additional intrigue challenge this phase against {opponent}',
                     args: { opponent: (context) => context.parentContext.event.challenge.loser }
                 },
-                gameAction: GameActions.genericHandler((context) => {
-                    this.untilEndOfPhase((ability) => ({
-                        targetController: 'current',
-                        effect: ability.effects.mayInitiateAdditionalChallenge(
-                            'intrigue',
-                            (opponent) => opponent === context.parentContext.event.challenge.loser
-                        )
-                    }));
-                })
+                gameAction: GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfPhase',
+                    targetController: 'current',
+                    effect: ability.effects.mayInitiateAdditionalChallenge(
+                        'intrigue',
+                        (opponent) => opponent === context.parentContext.event.challenge.loser
+                    )
+                }))
             })
         });
     }

@@ -3,7 +3,7 @@ import DrawCard from '../../../server/game/drawcard.js';
 describe('DrawCard', function () {
     beforeEach(function () {
         this.owner = {
-            game: jasmine.createSpyObj('game', ['raiseEvent'])
+            game: { raiseEvent: vi.fn() }
         };
     });
 
@@ -21,7 +21,7 @@ describe('DrawCard', function () {
 
             describe('when the target card is not a character', function () {
                 beforeEach(function () {
-                    spyOn(this.targetCard, 'getType').and.returnValue('location');
+                    vi.spyOn(this.targetCard, 'getType').mockReturnValue('location');
                 });
 
                 it('should return false', function () {
@@ -31,7 +31,7 @@ describe('DrawCard', function () {
 
             describe('when custom restrictions are added', function () {
                 beforeEach(function () {
-                    this.matcherSpy = jasmine.createSpy('matcher');
+                    this.matcherSpy = vi.fn();
                     this.attachment.attachmentRestriction(this.matcherSpy);
                 });
 
@@ -39,12 +39,12 @@ describe('DrawCard', function () {
                     this.attachment.canAttach(this.player, this.targetCard);
                     expect(this.matcherSpy).toHaveBeenCalledWith(
                         this.targetCard,
-                        jasmine.objectContaining({ player: this.player })
+                        expect.objectContaining({ player: this.player })
                     );
                 });
 
                 it('should return the result of the matcher', function () {
-                    this.matcherSpy.and.returnValue(true);
+                    this.matcherSpy.mockReturnValue(true);
                     expect(this.attachment.canAttach(this.player, this.targetCard)).toBe(true);
                 });
             });

@@ -2,14 +2,19 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SmallPaul extends DrawCard {
+    // Small Paul (09033)
+    // No attachments except Weapon.
+    // Interrupt: When Small Paul is killed, search the top X cards of your deck for any number of
+    // Steward characters, reveal them, and add them to your hand. X is your reserve value. Shuffle
+    // your deck.
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCharacterKilled: (event) => event.card === this
+                onCharacterKilled: (event, context) => event.card === context.source
             },
             message: {
                 format: '{player} uses {source} to search the top {reserve} cards of their deck for any number of Steward characters',
-                args: { reserve: () => this.controller.getReserve() }
+                args: { reserve: (context) => context.source.controller.getReserve() }
             },
             gameAction: GameActions.search({
                 title: 'Select any number of characters',

@@ -1,13 +1,16 @@
 import DrawCard from '../../drawcard.js';
 
 class ShipbornBastard extends DrawCard {
+    // Shipborn Bastard (26103)
+    // X is the number of cards you control with initiative modifiers.
+    // +1 Initiative.
     setupCardAbilities(ability) {
         this.plotModifiers({
             initiative: 1
         });
         this.persistentEffect({
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.getSTR())
+            effect: ability.effects.dynamicStrength((card, context) => context.source.getSTR())
         });
     }
 

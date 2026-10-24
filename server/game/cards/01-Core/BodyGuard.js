@@ -1,27 +1,31 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BodyGuard extends DrawCard {
+    // Bodyguard (01033)
+    // Lord or Lady character only.
+    // Interrupt: When attached character would be killed or discarded from play, sacrifice
+    // Bodyguard to save that character.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: ['Lord', 'Lady'] });
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: (event) =>
-                    event.card === this.parent && this.parent.canBeSaved() && event.allowSave,
-                onCardDiscarded: (event) =>
-                    event.card === this.parent && this.parent.canBeSaved() && event.allowSave
+                onCharacterKilled: (event, context) =>
+                    event.card === context.source.parent &&
+                    context.source.parent.canBeSaved() &&
+                    event.allowSave,
+                onCardDiscarded: (event, context) =>
+                    event.card === context.source.parent &&
+                    context.source.parent.canBeSaved() &&
+                    event.allowSave
             },
             cost: ability.costs.sacrificeSelf(),
-            handler: (context) => {
-                let parent = context.cardStateWhenInitiated.parent;
-                context.event.saveCard();
-                this.game.addMessage(
-                    '{0} sacrifices {1} to save {2}',
-                    this.controller,
-                    this,
-                    parent
-                );
-            }
+            message: {
+                format: '{player} sacrifices {source} to save {parent}',
+                args: { parent: (context) => context.cardStateWhenInitiated.parent }
+            },
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 }

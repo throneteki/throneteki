@@ -2,13 +2,17 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class DanceOfTheDragons extends PlotCard {
+    // Dance of the Dragons (25014)
+    // Interrupt: When claim is applied for a [military] or [intrigue] challenge in which you are
+    // the attacking player, instead of the normal claim effects, kneel a Dragon character to move 2
+    // power from the losing opponent's faction card to your own.
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onClaimApplied: (event) =>
+                onClaimApplied: (event, context) =>
                     event.challenge &&
                     event.challenge.isMatch({
-                        attackingPlayer: this.controller,
+                        attackingPlayer: context.player,
                         challengeType: ['military', 'intrigue']
                     }) &&
                     event.challenge.loser.faction.power > 0
@@ -23,18 +27,14 @@ class DanceOfTheDragons extends PlotCard {
                     loser: (context) => context.event.challenge.loser
                 }
             },
-            handler: (context) => {
-                context.replaceHandler(() => {
-                    this.game.resolveGameAction(
-                        GameActions.movePower((context) => ({
-                            from: context.event.challenge.loser.faction,
-                            to: context.player.faction,
-                            amount: 2
-                        })),
-                        context
-                    );
-                });
-            }
+            gameAction: GameActions.replaceEvent((context) => ({
+                event: context.event,
+                replacement: GameActions.movePower({
+                    from: context.event.challenge.loser.faction,
+                    to: context.player.faction,
+                    amount: 2
+                })
+            }))
         });
     }
 }

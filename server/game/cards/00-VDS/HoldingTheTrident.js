@@ -1,9 +1,13 @@
 import PlotCard from '../../plotcard.js';
 
 class HoldingTheTrident extends PlotCard {
+    // Holding the Trident (00020)
+    // While you control fewer characters than each opponent, each character you control gets +2
+    // STR.
+    // Draft format only.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.controlsFewerCharactersThanOpponent(),
+            condition: (context) => context.source.controlsFewerCharactersThanOpponent(),
             match: (card) => card.getType() === 'character',
             effect: ability.effects.modifyStrength(2)
         });

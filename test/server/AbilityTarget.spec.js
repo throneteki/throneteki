@@ -2,33 +2,33 @@ import AbilityTarget from '../../server/game/AbilityTarget.js';
 
 describe('AbilityTarget', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', [
-            'addMessage',
-            'getPlayersInFirstPlayerOrder',
-            'promptForSelect',
-            'queueSimpleStep'
-        ]);
-        this.gameSpy.queueSimpleStep.and.callFake((func) => func());
-        this.card1 = jasmine.createSpyObj('card', ['allowGameAction', 'getType']);
-        this.card1.allowGameAction.and.returnValue(true);
-        this.card1.getType.and.returnValue('character');
-        this.card2 = jasmine.createSpyObj('card', ['allowGameAction', 'getType']);
-        this.card2.allowGameAction.and.returnValue(true);
-        this.card2.getType.and.returnValue('location');
+        this.gameSpy = {
+            addMessage: vi.fn(),
+            getPlayersInFirstPlayerOrder: vi.fn(),
+            promptForSelect: vi.fn(),
+            queueSimpleStep: vi.fn()
+        };
+        this.gameSpy.queueSimpleStep.mockImplementation((func) => func());
+        this.card1 = { allowGameAction: vi.fn(), getType: vi.fn() };
+        this.card1.allowGameAction.mockReturnValue(true);
+        this.card1.getType.mockReturnValue('character');
+        this.card2 = { allowGameAction: vi.fn(), getType: vi.fn() };
+        this.card2.allowGameAction.mockReturnValue(true);
+        this.card2.getType.mockReturnValue('location');
         this.gameSpy.allCards = [this.card1, this.card2];
         this.player = { player: 1 };
         this.source = { source: 1 };
 
-        this.abilityMessagesSpy = jasmine.createSpyObj('abilityMessages', [
-            'outputNoneSelected',
-            'outputSelected',
-            'outputSkipped',
-            'outputUnable'
-        ]);
+        this.abilityMessagesSpy = {
+            outputNoneSelected: vi.fn(),
+            outputSelected: vi.fn(),
+            outputSkipped: vi.fn(),
+            outputUnable: vi.fn()
+        };
 
         this.context = { game: this.gameSpy, player: this.player, source: this.source };
 
-        this.cardCondition = jasmine.createSpy('cardCondition');
+        this.cardCondition = vi.fn();
         this.properties = {
             target: 1,
             cardCondition: this.cardCondition,
@@ -44,7 +44,7 @@ describe('AbilityTarget', function () {
         describe('canResolve()', function () {
             describe('when there is a non-draw card', function () {
                 beforeEach(function () {
-                    this.card1.getType.and.returnValue('plot');
+                    this.card1.getType.mockReturnValue('plot');
 
                     this.target.canResolve(this.context);
                 });
@@ -57,7 +57,7 @@ describe('AbilityTarget', function () {
 
             describe('when there is at least 1 matching card', function () {
                 beforeEach(function () {
-                    this.cardCondition.and.callFake((card) => card === this.card2);
+                    this.cardCondition.mockImplementation((card) => card === this.card2);
                 });
 
                 it('should return true', function () {
@@ -67,7 +67,7 @@ describe('AbilityTarget', function () {
 
             describe('when there are no matching cards', function () {
                 beforeEach(function () {
-                    this.cardCondition.and.returnValue(false);
+                    this.cardCondition.mockReturnValue(false);
                 });
 
                 it('should return false', function () {
@@ -79,7 +79,7 @@ describe('AbilityTarget', function () {
         describe('resolve()', function () {
             it('should return an array of pending target result', function () {
                 expect(this.target.resolve(this.context)).toEqual([
-                    jasmine.objectContaining({
+                    expect.objectContaining({
                         resolved: false,
                         name: 'foo',
                         value: null,
@@ -94,9 +94,9 @@ describe('AbilityTarget', function () {
                 expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(this.player, {
                     source: this.source,
                     target: 1,
-                    onSelect: jasmine.any(Function),
-                    onCancel: jasmine.any(Function),
-                    selector: jasmine.any(Object),
+                    onSelect: expect.any(Function),
+                    onCancel: expect.any(Function),
+                    selector: expect.any(Object),
                     context: this.context
                 });
             });
@@ -104,8 +104,8 @@ describe('AbilityTarget', function () {
             describe('the select prompt', function () {
                 beforeEach(function () {
                     this.result = this.target.resolve(this.context)[0];
-                    let call = this.gameSpy.promptForSelect.calls.mostRecent();
-                    this.lastPromptProperties = call.args[1];
+                    let call = this.gameSpy.promptForSelect.mock.lastCall;
+                    this.lastPromptProperties = call[1];
                 });
 
                 describe('when a card is selected', function () {
@@ -200,7 +200,7 @@ describe('AbilityTarget', function () {
 
         describe('canResolve()', function () {
             it('returns true even with no matching cards', function () {
-                this.cardCondition.and.returnValue(false);
+                this.cardCondition.mockReturnValue(false);
 
                 expect(this.target.canResolve(this.context)).toBe(true);
             });
@@ -209,7 +209,7 @@ describe('AbilityTarget', function () {
         describe('resolve()', function () {
             describe('when there are no eligible targets', function () {
                 beforeEach(function () {
-                    this.cardCondition.and.returnValue(false);
+                    this.cardCondition.mockReturnValue(false);
                     this.target.resolve(this.context);
                 });
 
@@ -227,19 +227,19 @@ describe('AbilityTarget', function () {
 
             describe('when there are eligible targets', function () {
                 beforeEach(function () {
-                    this.cardCondition.and.returnValue(true);
+                    this.cardCondition.mockReturnValue(true);
                 });
 
                 it('prompts the player to select the target', function () {
                     this.target.resolve(this.context);
                     expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(
                         this.player,
-                        jasmine.objectContaining({
+                        expect.objectContaining({
                             source: this.source,
                             target: 1,
-                            onSelect: jasmine.any(Function),
-                            onCancel: jasmine.any(Function),
-                            selector: jasmine.any(Object),
+                            onSelect: expect.any(Function),
+                            onCancel: expect.any(Function),
+                            selector: expect.any(Object),
                             context: this.context
                         })
                     );
@@ -248,10 +248,10 @@ describe('AbilityTarget', function () {
 
             describe('the select prompt', function () {
                 beforeEach(function () {
-                    this.cardCondition.and.returnValue(true);
+                    this.cardCondition.mockReturnValue(true);
                     this.result = this.target.resolve(this.context)[0];
-                    let call = this.gameSpy.promptForSelect.calls.mostRecent();
-                    this.lastPromptProperties = call.args[1];
+                    let call = this.gameSpy.promptForSelect.mock.lastCall;
+                    this.lastPromptProperties = call[1];
                 });
 
                 describe('when a card is selected', function () {
@@ -299,7 +299,7 @@ describe('AbilityTarget', function () {
     describe('an each-player target', function () {
         beforeEach(function () {
             this.player2 = { player: 2 };
-            this.gameSpy.getPlayersInFirstPlayerOrder.and.returnValue([this.player, this.player2]);
+            this.gameSpy.getPlayersInFirstPlayerOrder.mockReturnValue([this.player, this.player2]);
             this.properties.choosingPlayer = 'each';
             this.target = new AbilityTarget('foo', this.properties);
         });
@@ -307,7 +307,7 @@ describe('AbilityTarget', function () {
         describe('canResolve()', function () {
             describe('when all players have eligible cards', function () {
                 beforeEach(function () {
-                    this.cardCondition.and.returnValue(true);
+                    this.cardCondition.mockReturnValue(true);
                 });
 
                 it('returns true', function () {
@@ -319,7 +319,7 @@ describe('AbilityTarget', function () {
                     // this mutates the context object and Jasmine only knows
                     // to check the final value, not the value when called.
                     let choosingPlayers = [];
-                    this.cardCondition.and.callFake((card, context) => {
+                    this.cardCondition.mockImplementation((card, context) => {
                         choosingPlayers.push(context.choosingPlayer);
                         return true;
                     });
@@ -332,7 +332,7 @@ describe('AbilityTarget', function () {
 
             describe('when any player does not have eligible cards', function () {
                 beforeEach(function () {
-                    this.cardCondition.and.callFake(
+                    this.cardCondition.mockImplementation(
                         (card, context) => context.choosingPlayer === this.player2
                     );
                 });
@@ -346,14 +346,14 @@ describe('AbilityTarget', function () {
         describe('resolve()', function () {
             it('should return an array of pending target results for each player', function () {
                 expect(this.target.resolve(this.context)).toEqual([
-                    jasmine.objectContaining({
+                    expect.objectContaining({
                         resolved: false,
                         name: 'foo',
                         value: null,
                         choosingPlayer: this.player,
                         eligibleChoices: []
                     }),
-                    jasmine.objectContaining({
+                    expect.objectContaining({
                         resolved: false,
                         name: 'foo',
                         value: null,
@@ -368,17 +368,17 @@ describe('AbilityTarget', function () {
                 expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(this.player, {
                     source: this.source,
                     target: 1,
-                    onSelect: jasmine.any(Function),
-                    onCancel: jasmine.any(Function),
-                    selector: jasmine.any(Object),
+                    onSelect: expect.any(Function),
+                    onCancel: expect.any(Function),
+                    selector: expect.any(Object),
                     context: this.context
                 });
                 expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(this.player2, {
                     source: this.source,
                     target: 1,
-                    onSelect: jasmine.any(Function),
-                    onCancel: jasmine.any(Function),
-                    selector: jasmine.any(Object),
+                    onSelect: expect.any(Function),
+                    onCancel: expect.any(Function),
+                    selector: expect.any(Object),
                     context: this.context
                 });
             });

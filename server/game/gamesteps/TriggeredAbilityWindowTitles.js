@@ -20,6 +20,7 @@ const EventToTitle = {
 
 const AbilityTypeToWord = {
     cancelinterrupt: 'interrupt',
+    wouldinterrupt: 'interrupt',
     interrupt: 'interrupt',
     reaction: 'reaction',
     forcedreaction: 'forced reaction',

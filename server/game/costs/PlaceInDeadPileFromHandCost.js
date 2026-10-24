@@ -1,3 +1,5 @@
+import GameActions from '../GameActions/index.js';
+
 class PlaceInDeadPileFromHandCost {
     constructor() {
         this.name = 'placeInDeadPileFromHand';
@@ -8,9 +10,12 @@ class PlaceInDeadPileFromHandCost {
     }
 
     pay(cards, context) {
-        for (let card of cards) {
-            context.player.moveCard(card, 'dead pile');
-        }
+        context.game.resolveGameAction(
+            GameActions.simultaneously(
+                cards.map((card) => GameActions.placeCard({ card, location: 'dead pile' }))
+            ),
+            context
+        );
     }
 }
 

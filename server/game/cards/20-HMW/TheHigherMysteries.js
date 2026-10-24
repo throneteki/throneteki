@@ -2,11 +2,15 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheHigherMysteries extends DrawCard {
+    // The Higher Mysteries (20048)
+    // Reaction: After you win a challenge in which you control a participating Maester character,
+    // reveal the top card of your deck and put it into play.
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.hasParticipatingMaester()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.hasParticipatingMaester()
             },
             message: '{player} plays {source} to reveal the top card of their deck',
             gameAction: GameActions.revealTopCards((context) => ({

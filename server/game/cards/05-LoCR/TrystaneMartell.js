@@ -1,30 +1,30 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TrystaneMartell extends DrawCard {
-    setupCardAbilities() {
+    // Trystane Martell (05029)
+    // Reaction: After you lose a challenge in which Trystane Martell is participating, choose a
+    // character with lower STR than his. Until the end of the phase, that character cannot be
+    // declared as a defender.
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    this.controller === event.challenge.loser && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    context.source.controller === event.challenge.loser &&
+                    context.source.isParticipating()
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.getStrength() < this.getStrength()
+                    card.getStrength() < context.source.getStrength()
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to make {2} unable to be declared as a defender',
-                    this.controller,
-                    this,
-                    context.target
-                );
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.cannotBeDeclaredAsDefender()
-                }));
-            }
+            message: '{player} uses {source} to make {target} unable to be declared as a defender',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.cannotBeDeclaredAsDefender()
+            }))
         });
     }
 }

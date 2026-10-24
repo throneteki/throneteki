@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class Famine extends PlotCard {
+    // Famine (02100)
+    // Increase the cost for each opponent to marshal each of his or her characters by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'opponent',

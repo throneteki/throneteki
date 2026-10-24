@@ -2,34 +2,30 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class DeepwoodMotte extends DrawCard {
+    // Deepwood Motte (27024)
+    // Reaction: After a location is knelt by assault during a challenge in which you are the
+    // attacking player, kneel Deepwood Motte to choose and stand a Raider character you control or
+    // Asha Greyjoy.
+    // -2 Initiative.
     setupCardAbilities(ability) {
         this.plotModifiers({ initiative: -2 });
         this.reaction({
             when: {
-                onCardKneeled: (event) =>
+                onCardKneeled: (event, context) =>
                     event.reason === 'assault' &&
                     event.card.getType() === 'location' &&
-                    this.game.isDuringChallenge({ attackingPlayer: this.controller })
+                    context.game.isDuringChallenge({ attackingPlayer: context.player })
             },
             cost: ability.costs.kneelSelf(),
             target: {
-                type: 'select',
-                activePromptTitle: 'Select a character to stand',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.kneeled &&
                     card.getType() === 'character' &&
-                    ((card.hasTrait('Raider') && card.controller === this.controller) ||
-                        card.name === 'Asha Greyjoy'),
-                gameAction: 'stand'
+                    ((card.hasTrait('Raider') && card.controller === context.player) ||
+                        card.name === 'Asha Greyjoy')
             },
-            message: '{player} uses {source} to stand {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.standCard((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            message: '{player} kneels {costs.kneel} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

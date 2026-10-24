@@ -5,6 +5,7 @@ import RevealPlots from './revealplots.js';
 import ChooseTitlePrompt from './plot/ChooseTitlePrompt.js';
 import ActionWindow from './actionwindow.js';
 import { Flags } from '../Constants/index.js';
+import ResetRound from '../GameActions/ResetRound.js';
 
 class PlotPhase extends Phase {
     constructor(game) {
@@ -27,9 +28,8 @@ class PlotPhase extends Phase {
     }
 
     startPlotPhase() {
-        for (const player of this.game.getPlayers()) {
-            player.resetForStartOfRound();
-        }
+        this.plotSelectionFirstPlayer = this.game.getFirstPlayer();
+        this.game.resolveGameAction(ResetRound, { players: this.game.getPlayers() });
     }
 
     announceForcedPlotSelection() {
@@ -49,7 +49,7 @@ class PlotPhase extends Phase {
                 (player) => !player.mustRevealPlot && !player.hasFlag(Flags.player.cannotRevealPlot)
             );
         this.game.raiseEvent('onChoosePlot', { players: choosingPlayers }, () => {
-            this.game.queueStep(new SelectPlotPrompt(this.game));
+            this.game.queueStep(new SelectPlotPrompt(this.game, this.plotSelectionFirstPlayer));
         });
     }
 

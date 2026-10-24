@@ -2,9 +2,13 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Bribery extends DrawCard {
+    // Bribery (17146)
+    // Action: Choose and kneel a character with printed cost X or lower. Then, if there is no
+    // attachment attached to that character and it has the Ally or Mercenary trait, you may take
+    // control of it.
     setupCardAbilities() {
         this.xValue({
-            min: () => this.getMinXValue(),
+            min: (context) => context.source.getMinXValue(),
             max: () => 99
         });
 
@@ -19,30 +23,24 @@ class Bribery extends DrawCard {
                 format: '{player} plays {source} and pays {xValue} gold to kneel {target}',
                 args: { xValue: (context) => context.xValue }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.kneelCard((context) => ({ card: context.target })).then({
-                        condition: (context) =>
-                            context.parentContext.target.isMatch({
-                                trait: ['Ally', 'Mercenary'],
-                                hasAttachments: false
-                            }),
-                        gameAction: GameActions.may({
-                            title: (context) =>
-                                `Take control of ${context.parentContext.target.name}?`,
-                            message: {
-                                format: 'Then, {player} takes control of {card}',
-                                args: { card: (context) => context.event.card }
-                            },
-                            gameAction: GameActions.takeControl((context) => ({
-                                player: context.player,
-                                card: context.parentContext.target
-                            }))
-                        })
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target })).then({
+                condition: (context) =>
+                    context.parentContext.target.isMatch({
+                        trait: ['Ally', 'Mercenary'],
+                        hasAttachments: false
                     }),
-                    context
-                );
-            }
+                gameAction: GameActions.may({
+                    title: (context) => `Take control of ${context.parentContext.target.name}?`,
+                    message: {
+                        format: 'Then, {player} takes control of {card}',
+                        args: { card: (context) => context.event.card }
+                    },
+                    gameAction: GameActions.takeControl((context) => ({
+                        player: context.player,
+                        card: context.parentContext.target
+                    }))
+                })
+            })
         });
     }
 

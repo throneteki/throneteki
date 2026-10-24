@@ -1,6 +1,13 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class GreyWind extends DrawCard {
+    // Grey Wind (21018)
+    // Unique [stark] character only.
+    // Attached character gains stealth.
+    // Interrupt: When the effects of a triggered character ability would initiate, return a
+    // Direwolf card to your hand to cancel those effects. (Limit once per phase.)
+    // Action: Pay 1 gold to attach Grey Wind to a different character. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'stark', unique: true });
         this.whileAttached({
@@ -17,37 +24,25 @@ class GreyWind extends DrawCard {
             },
             cost: ability.costs.returnToHand((card) => card.hasTrait('Direwolf')),
             limit: ability.limit.perPhase(1),
-            handler: (context) => {
-                context.event.cancel();
-                this.game.addMessage(
-                    '{0} uses {1} and returns {2} to their hand to cancel {3}',
-                    context.player,
-                    this,
-                    context.costs.returnToHand,
-                    context.event.source
-                );
-            }
+            message: {
+                format: '{player} uses {source} and returns {costs.returnToHand} to their hand to cancel {eventSource}',
+                args: { eventSource: (context) => context.event.source }
+            },
+            gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
         });
         this.action({
             title: 'Attach Greywind to another character',
             cost: ability.costs.payGold(1),
             target: {
                 type: 'select',
-                cardCondition: (card, context) =>
-                    context.player.canAttach(this, card) &&
-                    card.location === 'play area' &&
-                    card !== this.parent
+                cardCondition: { location: 'play area', type: 'character' }
             },
             limit: ability.limit.perPhase(1),
-            handler: (context) => {
-                context.player.attach(context.player, this, context.target);
-                this.game.addMessage(
-                    '{0} pays 1 gold to attach {1} to {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} pays 1 gold to attach {source} to {target}',
+            gameAction: GameActions.attach((context) => ({
+                attachment: context.source,
+                target: context.target
+            }))
         });
     }
 }

@@ -16,7 +16,6 @@ class DrawCard extends BaseCard {
         this.attachments = [];
         this.childCards = [];
         this.strength = new CardStat(this.getPrintedStrength());
-        this.dominanceStrengthModifier = 0;
         this.kneeled = false;
         this.inChallenge = false;
         this.isContributing = false;
@@ -42,6 +41,7 @@ class DrawCard extends BaseCard {
         clone.parent = this.parent;
         clone.power = this.power;
         clone.strength = this.strength.clone();
+        clone.dominanceStrengthModifiers = this.dominanceStrengthModifiers.clone();
         clone.tokens = Object.assign({}, this.tokens);
         clone.traits = this.traits.clone();
 
@@ -65,6 +65,7 @@ class DrawCard extends BaseCard {
             event.card === this.parent &&
             this.parent.canBeSaved() &&
             event.allowSave &&
+            !event.isBurn &&
             (this.controller.promptDupes || this.parent.controller !== this.controller);
 
         this.interrupt({
@@ -82,14 +83,14 @@ class DrawCard extends BaseCard {
                 onCardPutIntoShadows: dupeCondition
             },
             cost: ability.costs.discardDuplicate(),
-            handler: (context) => {
-                context.event.saveCard();
-                this.game.addMessage(
-                    '{0} discards a duplicate to save {1}',
-                    this.owner,
-                    context.cardStateWhenInitiated.parent
-                );
-            }
+            message: {
+                format: '{owner} discards a duplicate to save {card}',
+                args: {
+                    owner: (context) => context.source.owner,
+                    card: (context) => context.cardStateWhenInitiated.parent
+                }
+            },
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 
@@ -210,18 +211,10 @@ class DrawCard extends BaseCard {
         this.raiseStrengthChangeEvent(changedAmount, applying);
     }
 
-    removeSetStrengthEffect(effect, _applying = false) {
-        let _strengthBefore = this.getStrength();
+    removeSetStrengthEffect(effect, applying = false) {
+        const strengthBefore = this.getStrength();
         this.strength.removeSetValue(effect);
-        let _changedAmount = this.getStrength() - _strengthBefore;
-
-        //TODO
-        //Prior to the rework of card stats, a burn check was not carried out on expiration of a set strength effect
-        //most relevant cases were caught by a burn check at the end of a challenge
-        //adding this exposes an issue with simultaneous effects when Blood of the Dragon and At the Palace of Sorrows expire
-        //keep this commented out to maintain previous functionality until a more thorough fix for simultaneous strength changes from multiple cards
-        //is implemented.
-        //this.raiseStrengthChangeEvent(_changedAmount, _applying);
+        this.raiseStrengthChangeEvent(this.getStrength() - strengthBefore, applying);
     }
 
     addStrengthModifier(effect, amount, applying = true) {
@@ -274,6 +267,9 @@ class DrawCard extends BaseCard {
     }
 
     raiseStrengthChangeEvent(amount, applying) {
+        if (this.game.effectEngine?.recordStrengthChange(this, amount, applying)) {
+            return;
+        }
         let params = {
             card: this,
             amount: amount,
@@ -304,10 +300,6 @@ class DrawCard extends BaseCard {
         }
 
         return this.strength.calculate(boostValue);
-    }
-
-    modifyDominanceStrength(amount) {
-        this.dominanceStrengthModifier += amount;
     }
 
     getDominanceStrength() {
@@ -426,7 +418,7 @@ class DrawCard extends BaseCard {
             return card.getType() === 'character';
         }
 
-        let context = { player: player };
+        let context = { player: player, source: this };
 
         return attachmentRestrictions.some((restriction) => restriction(card, context));
     }
@@ -545,13 +537,25 @@ class DrawCard extends BaseCard {
         this.saved = false;
     }
 
-    setIsBurning(burning) {
-        this.isBurning = burning;
+    setIsBurning(burning, source = 'manual') {
+        this.burnSources = this.burnSources || new Set();
+        if (burning) {
+            this.burnSources.add(source);
+        } else {
+            this.burnSources.delete(source);
+        }
+        this.isBurning = this.burnSources.size > 0;
         this.updateBurnEventRegistration();
     }
 
-    setIsShadowBurning(burning) {
-        this.isShadowBurning = burning;
+    setIsShadowBurning(burning, source = 'manual') {
+        this.shadowBurnSources = this.shadowBurnSources || new Set();
+        if (burning) {
+            this.shadowBurnSources.add(source);
+        } else {
+            this.shadowBurnSources.delete(source);
+        }
+        this.isShadowBurning = this.shadowBurnSources.size > 0;
         this.updateBurnEventRegistration();
     }
 
@@ -582,7 +586,9 @@ class DrawCard extends BaseCard {
         }
 
         if (this.isBurning) {
-            this.game.killCharacter(this, { allowSave: false, isBurn: true });
+            this.game.resolveGameAction(
+                GameActions.kill({ card: this, allowSave: false, isBurn: true })
+            );
         } else if (this.isShadowBurning) {
             this.game.addMessage('{0} is 0 STR and placed in shadows', this);
             this.game.resolveGameAction(

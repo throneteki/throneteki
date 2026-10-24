@@ -1,8 +1,25 @@
 import GameAction from './GameAction.js';
+import Message from '../Message.js';
 
 class DiscardPower extends GameAction {
     constructor() {
         super('discardPower');
+    }
+
+    message({ card, amount = 1 }) {
+        return Message.fragment('discards {amount} from {card}', {
+            amount: `${Math.min(card.power, amount)} power`,
+            card
+        });
+    }
+
+    resultMessage(props, event) {
+        return this.hasResult(event)
+            ? Message.fragment('discards {amount} from {card}', {
+                  amount: `${event.power} power`,
+                  card: event.card
+              })
+            : '';
     }
 
     canChangeGameState({ card }) {

@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class ManceRayder extends DrawCard {
+    // Mance Rayder (03039)
+    // Renown.
+    // Each Wildling character in your hand gains ambush (X). X is that card's printed cost.
+    // While there is a Winter plot card revealed, reduce the cost to ambush each of your Wildling
+    // characters by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetLocation: 'hand',
@@ -8,8 +13,8 @@ class ManceRayder extends DrawCard {
             effect: ability.effects.gainAmbush()
         });
         this.persistentEffect({
-            condition: () =>
-                this.game
+            condition: (context) =>
+                context.game
                     .getPlayers()
                     .some((player) => player.activePlot && player.activePlot.hasTrait('Winter')),
             targetController: 'current',

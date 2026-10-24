@@ -1,57 +1,36 @@
 describe('The Knight (KotI)', function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck = this.buildDeck('greyjoy', [
-                'Marching Orders',
-                'The Knight (KotI)',
-                'Hedge Knight'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.knight = this.player1.findCardByName('The Knight');
-            this.otherCharacter = this.player1.findCardByName('Hedge Knight');
-
-            this.player1.clickCard(this.knight);
-            this.player1.clickCard(this.otherCharacter);
-
-            this.player2.clickCard('Hedge Knight');
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player1);
-
-            this.completeMarshalPhase();
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                faction: 'greyjoy',
+                inPlay: ['The Knight (KotI)', 'House Maester']
+            }
         });
+    });
 
-        describe('when attacking alone', function () {
-            beforeEach(function () {
-                this.player1.clickPrompt('Military');
-                this.player1.clickCard(this.knight);
-                this.player1.clickPrompt('Done');
-            });
+    it('gains stealth and renown while attacking alone', function () {
+        expect(this.theKnight.hasKeyword('stealth')).toBe(false);
+        expect(this.theKnight.hasKeyword('renown')).toBe(false);
 
-            it('gains stealth and renown', function () {
-                expect(this.knight.hasKeyword('Stealth')).toBe(true);
-                expect(this.knight.hasKeyword('Renown')).toBe(true);
-                expect(this.player1).toHavePrompt('Select stealth target for The Knight');
-            });
-        });
+        this.player1.clickPrompt('Power');
+        this.player1.clickCard(this.theKnight);
+        this.player1.clickPrompt('Done');
 
-        describe('when not attacking alone', function () {
-            beforeEach(function () {
-                this.player1.clickPrompt('Military');
-                this.player1.clickCard(this.knight);
-                this.player1.clickCard(this.otherCharacter);
-                this.player1.clickPrompt('Done');
-            });
+        expect(this.theKnight.hasKeyword('stealth')).toBe(true);
+        expect(this.theKnight.hasKeyword('renown')).toBe(true);
+        expect(this.houseMaester.hasKeyword('renown')).toBe(false);
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-            it('does not gains stealth and renown', function () {
-                expect(this.knight.hasKeyword('Stealth')).toBe(false);
-                expect(this.knight.hasKeyword('Renown')).toBe(false);
-                expect(this.player1).not.toHavePrompt('Select stealth target for The Knight');
-            });
-        });
+    it('gains nothing while attacking with another character', function () {
+        this.player1.clickPrompt('Power');
+        this.player1.clickCard(this.theKnight);
+        this.player1.clickCard(this.houseMaester);
+        this.player1.clickPrompt('Done');
+
+        expect(this.theKnight.hasKeyword('stealth')).toBe(false);
+        expect(this.theKnight.hasKeyword('renown')).toBe(false);
+        expect(this.player1).isReadyToTakeAction();
     });
 });

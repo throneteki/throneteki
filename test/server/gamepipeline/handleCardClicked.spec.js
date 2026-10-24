@@ -25,7 +25,7 @@ describe('the GamePipeline', function () {
         describe('when the step returns false', () => {
             beforeEach(() => {
                 pipeline.initialise([step]);
-                spyOn(step, 'onCardClicked').and.returnValue(false);
+                vi.spyOn(step, 'onCardClicked').mockReturnValue(false);
             });
 
             it('should call the onCardClicked handler', () => {
@@ -41,7 +41,7 @@ describe('the GamePipeline', function () {
         describe('when the step returns true', () => {
             beforeEach(() => {
                 pipeline.initialise([step]);
-                spyOn(step, 'onCardClicked').and.returnValue(true);
+                vi.spyOn(step, 'onCardClicked').mockReturnValue(true);
             });
 
             it('should call the onCardClicked handler', () => {

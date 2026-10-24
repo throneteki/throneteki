@@ -1,12 +1,13 @@
 import UiPrompt from './uiprompt.js';
 
 class AttachmentPrompt extends UiPrompt {
-    constructor(game, player, attachmentCard, playingType, targets) {
+    constructor(game, player, attachmentCard, playingType, targets, options = {}) {
         super(game);
         this.player = player;
         this.attachmentCard = attachmentCard;
         this.playingType = playingType;
         this.targets = targets || (() => true);
+        this.options = options;
     }
 
     continue() {
@@ -18,7 +19,14 @@ class AttachmentPrompt extends UiPrompt {
                 this.targets(card),
             onSelect: (player, card) => {
                 let targetPlayer = card.controller;
-                targetPlayer.attach(player, this.attachmentCard, card, this.playingType);
+                targetPlayer.attach(
+                    player,
+                    this.attachmentCard,
+                    card,
+                    this.playingType,
+                    false,
+                    this.options
+                );
                 return true;
             }
         });

@@ -12,6 +12,7 @@ class InterruptWindow extends BaseStep {
         this.pipeline.initialise([
             new SimpleStep(game, () => this.openAbilityWindow('cancelinterrupt')),
             new SimpleStep(game, () => this.automaticSaveWithDupes()),
+            new SimpleStep(game, () => this.openAbilityWindow('wouldinterrupt')),
             new SimpleStep(game, () => this.openAbilityWindow('forcedinterrupt')),
             new SimpleStep(game, () => this.openAbilityWindow('interrupt')),
             new SimpleStep(game, () => this.validateExecution()),
@@ -89,6 +90,10 @@ class InterruptWindow extends BaseStep {
     executeHandler() {
         if (this.event.cancelled) {
             return;
+        }
+
+        for (const callback of this.event.beforeHandlers || []) {
+            callback(this.event);
         }
 
         this.event.executeHandler();

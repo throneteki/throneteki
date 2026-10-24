@@ -1,7 +1,11 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class GrowingStrong extends DrawCard {
-    setupCardAbilities() {
+    // Growing Strong (01195)
+    // Challenges Action: Choose up to three [tyrell] characters. Until the end of the phase, each
+    // of the chosen characters gets +2 STR.
+    setupCardAbilities(ability) {
         this.action({
             title: 'Give +2 STR to up to 3 characters',
             phase: 'challenge',
@@ -13,20 +17,12 @@ class GrowingStrong extends DrawCard {
                     card.isFaction('tyrell') &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                for (let card of context.target) {
-                    card.untilEndOfPhase((ability) => ({
-                        match: card,
-                        effect: ability.effects.modifyStrength(2)
-                    }));
-                }
-                this.game.addMessage(
-                    '{0} plays {1} to give +2 STR to {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} plays {source} to give +2 STR to {target}',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.modifyStrength(2)
+            }))
         });
     }
 }

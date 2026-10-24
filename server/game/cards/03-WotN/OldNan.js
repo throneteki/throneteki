@@ -1,74 +1,38 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class OldNan extends DrawCard {
+    // Old Nan (03010)
+    // Interrupt: When a plot card is revealed, kneel Old Nan to have that plot card gain the Summer
+    // or Winter trait until the end of the round.
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
                 onPlotsRevealed: () => true
             },
             cost: ability.costs.kneelSelf(),
-            handler: (context) => {
-                let buttons = context.event.plots.map((plot) => {
-                    return { method: 'plotSelected', card: plot, mapCard: true };
-                });
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Select plot to modify',
-                        buttons: buttons
-                    },
-                    source: this
-                });
-            }
-        });
-    }
-
-    plotSelected(player, card) {
-        if (this.controller !== player) {
-            return false;
-        }
-
-        this.game.promptWithMenu(this.controller, this, {
-            activePrompt: {
-                menuTitle: 'Select trait to add',
-                buttons: [
-                    { text: 'Winter', method: 'traitSelected', arg: 'Winter' },
-                    { text: 'Summer', method: 'traitSelected', arg: 'Summer' }
-                ]
+            target: {
+                type: 'select',
+                activePromptTitle: 'Select plot to modify',
+                cardType: ['plot'],
+                cardCondition: (card, context) => context.event.plots.includes(card)
             },
-            source: this
+            gameAction: GameActions.choose({
+                title: 'Select trait to add',
+                message: '{player} uses {source} to add the {choice} trait to {target}',
+                choices: Object.fromEntries(
+                    ['Winter', 'Summer'].map((trait) => [
+                        trait,
+                        GameActions.lastingEffect((context) => ({
+                            duration: 'untilEndOfRound',
+                            match: context.target,
+                            targetController: 'any',
+                            effect: ability.effects.addTrait(trait)
+                        }))
+                    ])
+                )
+            })
         });
-
-        this.selectedCard = card;
-
-        return true;
-    }
-
-    traitSelected(player, trait) {
-        let plotCard = this.selectedCard;
-        if (!plotCard) {
-            return false;
-        }
-
-        let lowerTrait = trait.toLowerCase();
-        if (lowerTrait !== 'summer' && lowerTrait !== 'winter') {
-            return false;
-        }
-
-        this.untilEndOfRound((ability) => ({
-            match: plotCard,
-            effect: ability.effects.addTrait(trait)
-        }));
-
-        this.game.addMessage(
-            '{0} uses {1} to add the {2} trait to {3}',
-            player,
-            this,
-            trait,
-            plotCard
-        );
-
-        return true;
     }
 }
 

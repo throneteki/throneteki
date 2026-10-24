@@ -46,7 +46,7 @@ class CostReducer {
 
     getAmount(card) {
         if (typeof this.amount === 'function') {
-            return this.amount(card) || 0;
+            return this.amount(card, this.source) || 0;
         }
 
         return this.amount;

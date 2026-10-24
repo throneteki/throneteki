@@ -3,17 +3,17 @@ import InterruptWindow from '../../../server/game/gamesteps/InterruptWindow.js';
 
 describe('Game', function () {
     beforeEach(function () {
-        this.gameService = jasmine.createSpyObj('gameService', ['save']);
+        this.gameService = { save: vi.fn() };
         this.game = new Game({ owner: {} }, { gameService: this.gameService });
 
-        this.eventSpy = jasmine.createSpyObj('event', [
-            'clearAttachedEvents',
-            'emitTo',
-            'getConcurrentEvents'
-        ]);
-        this.eventSpy.getConcurrentEvents.and.returnValue([this.eventSpy]);
+        this.eventSpy = {
+            clearAttachedEvents: vi.fn(),
+            emitTo: vi.fn(),
+            getConcurrentEvents: vi.fn()
+        };
+        this.eventSpy.getConcurrentEvents.mockReturnValue([this.eventSpy]);
 
-        spyOn(this.game, 'queueStep');
+        vi.spyOn(this.game, 'queueStep').mockImplementation(() => {});
     });
 
     describe('openWindowForAttachedEvents()', function () {
@@ -41,13 +41,13 @@ describe('Game', function () {
             });
 
             it('should open an interrupt window', function () {
-                expect(this.game.queueStep).toHaveBeenCalledWith(jasmine.any(InterruptWindow));
+                expect(this.game.queueStep).toHaveBeenCalledWith(expect.any(InterruptWindow));
             });
 
             it('should create an event grouping the attached events', function () {
                 expect(this.game.queueStep).toHaveBeenCalledWith(
-                    jasmine.objectContaining({
-                        event: jasmine.objectContaining({
+                    expect.objectContaining({
+                        event: expect.objectContaining({
                             childEvents: [this.attachedEvent1, this.attachedEvent2]
                         })
                     })

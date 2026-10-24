@@ -1,6 +1,11 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class RecruiterForTheWatch extends DrawCard {
+    // Recruiter for the Watch (06045)
+    // You may choose not to stand Recruiter for the Watch during the standing phase.
+    // Marshaling Action: Kneel Recruiter for the Watch to choose a character with printed cost 2 or
+    // lower. Take control of that character until Recruiter for the Watch stands or leaves play.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
@@ -17,23 +22,17 @@ class RecruiterForTheWatch extends DrawCard {
                     card.location === 'play area' &&
                     card.getPrintedCost() <= 2
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} kneels {1} to take control of {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-                this.lastingEffect((ability) => ({
-                    until: {
-                        onCardStood: (event) => event.card === this,
-                        onCardLeftPlay: (event) =>
-                            event.card === this || event.card === context.target
-                    },
-                    match: context.target,
-                    effect: ability.effects.takeControl(this.controller)
-                }));
-            }
+            message: '{player} kneels {source} to take control of {target}',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'custom',
+                until: {
+                    onCardStood: (event) => event.card === context.source,
+                    onCardLeftPlay: (event) =>
+                        event.card === context.source || event.card === context.target
+                },
+                match: context.target,
+                effect: ability.effects.takeControl(context.player)
+            }))
         });
     }
 }

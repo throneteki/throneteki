@@ -2,10 +2,15 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class HightowerSpy extends DrawCard {
-    setupCardAbilities() {
+    // Hightower Spy (08063)
+    // Ambush (3).
+    // Reaction: After Hightower Spy enters play, choose a character and reveal the top card of your
+    // deck. Until the end of the phase, that character gets +X STR. X is the printed cost of the
+    // revealed card.
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             target: {
                 cardCondition: (card) =>
@@ -13,31 +18,29 @@ class HightowerSpy extends DrawCard {
             },
             message:
                 '{player} uses {source} to choose {target} and reveal the top card of their deck',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.revealTopCards((context) => ({
-                        player: context.player
-                    })).then((preThenContext) => ({
-                        handler: (context) => {
-                            const topCard = context.event.cards[0];
-                            if (topCard.hasPrintedCost()) {
-                                const increase = topCard.getPrintedCost();
-                                this.game.addMessage(
-                                    '{0} gives {1} +{2} STR until the end of the phase',
-                                    context.player,
-                                    preThenContext.target,
-                                    increase
-                                );
-                                this.untilEndOfPhase((ability) => ({
-                                    match: preThenContext.target,
-                                    effect: ability.effects.modifyStrength(increase)
-                                }));
+            gameAction: GameActions.revealTopCards((context) => ({
+                player: context.player
+            })).then({
+                gameAction: GameActions.ifCondition({
+                    condition: (context) => context.event.cards[0].hasPrintedCost(),
+                    thenAction: {
+                        message: {
+                            format: '{player} gives {character} +{strength} STR until the end of the phase',
+                            args: {
+                                character: (context) => context.parentContext.target,
+                                strength: (context) => context.event.cards[0].getPrintedCost()
                             }
-                        }
-                    })),
-                    context
-                );
-            }
+                        },
+                        gameAction: GameActions.lastingEffect((context) => ({
+                            duration: 'untilEndOfPhase',
+                            match: context.parentContext.target,
+                            effect: ability.effects.modifyStrength(
+                                context.event.cards[0].getPrintedCost()
+                            )
+                        }))
+                    }
+                })
+            })
         });
     }
 }

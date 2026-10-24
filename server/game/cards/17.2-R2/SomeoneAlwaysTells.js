@@ -1,26 +1,26 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SomeoneAlwaysTells extends DrawCard {
+    // Someone Always Tells (17168)
+    // Interrupt: When the effects of an opponent's event or when revealed ability would initiate,
+    // cancel those effects.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,
             cost: ability.costs.kneelFactionCard(),
             when: {
-                onCardAbilityInitiated: (event) =>
-                    event.source.controller !== this.controller &&
+                onCardAbilityInitiated: (event, context) =>
+                    event.source.controller !== context.source.controller &&
                     (event.source.getType() === 'event' ||
                         (event.source.getType() === 'plot' &&
                             event.ability.isWhenRevealedAbility()))
             },
-            handler: (context) => {
-                context.event.cancel();
-                this.game.addMessage(
-                    '{0} plays {1} to cancel {2}',
-                    context.player,
-                    this,
-                    context.event.source
-                );
-            }
+            message: {
+                format: '{player} plays {source} to cancel {eventSource}',
+                args: { eventSource: (context) => context.event.source }
+            },
+            gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
         });
     }
 }

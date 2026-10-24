@@ -2,8 +2,8 @@ import DrawCard from '../../../server/game/drawcard.js';
 
 describe('DrawCard', function () {
     beforeEach(function () {
-        this.game = jasmine.createSpyObj('game', ['raiseEvent', 'applyGameAction']);
-        this.player = jasmine.createSpyObj('player', ['discardCard']);
+        this.game = { raiseEvent: vi.fn(), applyGameAction: vi.fn() };
+        this.player = { discardCard: vi.fn() };
         this.player.game = this.game;
         this.card = new DrawCard(this.player, { strength: 3 });
 

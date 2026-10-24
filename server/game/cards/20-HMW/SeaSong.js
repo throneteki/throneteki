@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SeaSong extends DrawCard {
+    // Sea Song (20007)
+    // While you control The Reader, he gains insight.
+    // Reaction: After 1 or more cards are discarded for reserve, either: draw 1 card, or gain 1
+    // power for your faction. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'The Reader',

@@ -36,7 +36,10 @@ class RevealPlots extends BaseStep {
         // * Initiative is compared and first player chosen if a new round
         // * "When revealed" abilities are resolved
         // * Reactions to plots being revealed, plots being discarded
-        const event = new Event('_TOP_LEVEL_REVEAL_', {});
+        const event = new Event('_TOP_LEVEL_REVEAL_', {}, () => {
+            this.game.effectEngine.beginEffectChanges();
+            this.game.effectEngine.revealingPlots = true;
+        });
         for (const plot of plots) {
             event.addChildEvent(RevealPlot.createEvent({ card: plot, player: plot.controller }));
         }
@@ -52,6 +55,8 @@ class RevealPlots extends BaseStep {
     generateRevealEvent(plots) {
         let event = new Event('onPlotsRevealed', { plots: plots }, () => {
             this.game.addSimultaneousEffects(this.getPlotEffects(plots));
+            this.game.effectEngine.revealingPlots = false;
+            this.game.effectEngine.endEffectChanges();
             if (this.needsFirstPlayerChoice()) {
                 this.game.raiseEvent('onCompareInitiative', { plots }, () => {
                     this.game.queueSimpleStep(() => this.determineInitiative());

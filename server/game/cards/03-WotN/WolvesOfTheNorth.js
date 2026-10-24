@@ -1,32 +1,34 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WolvesOfTheNorth extends DrawCard {
-    setupCardAbilities() {
+    // Wolves of the North (03006)
+    // No attachments. Stealth.
+    // Reaction: After Wolves of the North bypasses a character using stealth, that character gets
+    // -X STR until the end of the phase. X is the number of Direwolf cards you control.
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onBypassedByStealth: (event) => event.source === this
+                onBypassedByStealth: (event, context) => event.source === context.source
             },
-            handler: (context) => {
-                let target = context.event.target;
-                let strDecrease = -this.controller.getNumberOfCardsInPlay((c) =>
-                    c.hasTrait('Direwolf')
-                );
-
-                this.untilEndOfPhase((ability) => ({
-                    match: target,
-                    effect: ability.effects.modifyStrength(strDecrease)
-                }));
-
-                this.game.addMessage(
-                    '{0} uses {1} to give {2} {3}STR until the end of the phase',
-                    this.controller,
-                    this,
-                    target,
-                    strDecrease
-                );
-            }
+            message: {
+                format: '{player} uses {source} to give {character} -{amount} STR until the end of the phase',
+                args: {
+                    character: (context) => context.event.target,
+                    amount: (context) => direwolfCount(context.player)
+                }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.event.target,
+                effect: ability.effects.modifyStrength(-direwolfCount(context.player))
+            }))
         });
     }
+}
+
+function direwolfCount(player) {
+    return player.getNumberOfCardsInPlay((card) => card.hasTrait('Direwolf'));
 }
 
 WolvesOfTheNorth.code = '03006';

@@ -40,9 +40,9 @@ describe('Postgres UserService', function () {
         it('should return the stored user in the same shape as the MongoDB documents', async function () {
             const user = await this.service.addUser(newUser());
 
-            expect(user._id).toEqual(jasmine.any(String));
+            expect(user._id).toEqual(expect.any(String));
             expect(user).toEqual(
-                jasmine.objectContaining({
+                expect.objectContaining({
                     username: 'Stark',
                     email: 'ned@winterfell.example',
                     registered: new Date('2026-01-02T03:04:05Z'),
@@ -86,22 +86,20 @@ describe('Postgres UserService', function () {
         it('should reject a username that differs from an existing one only by case', async function () {
             await this.service.addUser(newUser());
 
-            await expectAsync(
+            await expect(
                 this.service.addUser(newUser({ username: 'STARK', email: 'other@example' }))
-            ).toBeRejected(
-                jasmine.objectContaining({
-                    message: 'Error occured adding user',
-                    duplicateField: 'username'
-                })
-            );
+            ).rejects.toMatchObject({
+                message: 'Error occured adding user',
+                duplicateField: 'username'
+            });
         });
 
         it('should reject an email that differs from an existing one only by case', async function () {
             await this.service.addUser(newUser());
 
-            await expectAsync(
+            await expect(
                 this.service.addUser(newUser({ username: 'Snow', email: 'NED@winterfell.example' }))
-            ).toBeRejected(jasmine.objectContaining({ duplicateField: 'email' }));
+            ).rejects.toMatchObject({ duplicateField: 'email' });
         });
     });
 
@@ -200,7 +198,7 @@ describe('Postgres UserService', function () {
     describe('updateBlockList()', function () {
         it('should store the block list lower cased and tell listeners', async function () {
             await this.service.addUser(newUser());
-            const listener = jasmine.createSpy('onBlocklistChanged');
+            const listener = vi.fn();
             this.service.on('onBlocklistChanged', listener);
 
             await this.service.updateBlockList({
@@ -319,11 +317,11 @@ describe('Postgres UserService', function () {
             const stored = user.tokens.find((token) => token._id.toString() === added.id);
 
             expect(stored).toEqual(
-                jasmine.objectContaining({
+                expect.objectContaining({
                     token: added.token,
                     ip: '10.0.0.1',
-                    exp: jasmine.any(Date),
-                    lastUsed: jasmine.any(Date)
+                    exp: expect.any(Date),
+                    lastUsed: expect.any(Date)
                 })
             );
             expect(this.service.verifyRefreshToken('Stark', stored, added.token)).toBe(true);
@@ -538,9 +536,9 @@ describe('Postgres UserService', function () {
         });
 
         it('should refuse a field that does not exist', async function () {
-            await expectAsync(
+            await expect(
                 this.service.updateUserFields({ username: 'Stark' }, { isKing: true })
-            ).toBeRejectedWithError("Unknown user field 'isKing'");
+            ).rejects.toThrow("Unknown user field 'isKing'");
         });
     });
 });

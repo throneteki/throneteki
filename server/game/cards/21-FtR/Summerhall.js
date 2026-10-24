@@ -1,19 +1,23 @@
 import DrawCard from '../../drawcard.js';
 
 class Summerhall extends DrawCard {
+    // Summerhall (21003)
+    // While Summerhall is standing, cards cannot enter or leave play during [power] challenges.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'any',
-            condition: () =>
-                !this.kneeled && this.game.isDuringChallenge({ challengeType: 'power' }),
+            condition: (context) =>
+                !context.source.kneeled &&
+                context.game.isDuringChallenge({ challengeType: 'power' }),
             effect: ability.effects.cannotPutIntoPlay((card) => card.getType() !== 'event')
         });
 
         this.persistentEffect({
             targetController: 'any',
             match: (card) => ['play area', 'duplicate'].includes(card.location),
-            condition: () =>
-                !this.kneeled && this.game.isDuringChallenge({ challengeType: 'power' }),
+            condition: (context) =>
+                !context.source.kneeled &&
+                context.game.isDuringChallenge({ challengeType: 'power' }),
             effect: [
                 ability.effects.cannotBeKilled(),
                 ability.effects.cannotBeDiscarded(),
@@ -27,8 +31,9 @@ class Summerhall extends DrawCard {
 
         this.persistentEffect({
             targetController: 'any',
-            condition: () =>
-                !this.kneeled && this.game.isDuringChallenge({ challengeType: 'power' }),
+            condition: (context) =>
+                !context.source.kneeled &&
+                context.game.isDuringChallenge({ challengeType: 'power' }),
             effect: ability.effects.cannotRevealPlot()
         });
     }

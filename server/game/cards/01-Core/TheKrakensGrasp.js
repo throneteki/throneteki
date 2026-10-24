@@ -1,10 +1,15 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TheKrakensGrasp extends DrawCard {
-    setupCardAbilities() {
+    // The Kraken's Grasp (01082)
+    // Play only if you are the first player.
+    // Challenges Action: Choose a defending character with STR 5 or lower. That character does not
+    // contribute is STR to this challenge.
+    setupCardAbilities(ability) {
         this.action({
             title: "Remove character's strength",
-            condition: () => this.controller.firstPlayer,
+            condition: (context) => context.source.controller.firstPlayer,
             phase: 'challenge',
             target: {
                 cardCondition: (card) =>
@@ -13,19 +18,12 @@ class TheKrakensGrasp extends DrawCard {
                     card.isDefending() &&
                     card.getStrength() <= 5
             },
-            handler: (context) => {
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.doesNotContributeStrength()
-                }));
-
-                this.game.addMessage(
-                    "{0} plays {1} to remove {2}' STR from the challenge",
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: "{player} plays {source} to remove {target}' STR from the challenge",
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                effect: ability.effects.doesNotContributeStrength()
+            }))
         });
     }
 }

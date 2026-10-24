@@ -23,7 +23,7 @@ describe('Matcher', function () {
 
     describe('anyValue', function () {
         beforeEach(function () {
-            this.predicateSpy = jasmine.createSpy('predicate');
+            this.predicateSpy = vi.fn();
         });
 
         it('should return true when the expected value is undefined', function () {
@@ -36,12 +36,12 @@ describe('Matcher', function () {
         });
 
         it('should return true when the predicate returns true', function () {
-            this.predicateSpy.and.returnValue(true);
+            this.predicateSpy.mockReturnValue(true);
             expect(Matcher.anyValue(1, this.predicateSpy)).toBe(true);
         });
 
         it('should return false when the predicate returns false', function () {
-            this.predicateSpy.and.returnValue(false);
+            this.predicateSpy.mockReturnValue(false);
             expect(Matcher.anyValue(1, this.predicateSpy)).toBe(false);
         });
 
@@ -54,7 +54,7 @@ describe('Matcher', function () {
             });
 
             it('should return true if the predicate returns true for at least 1 value in the array', function () {
-                this.predicateSpy.and.callFake((i) => i % 2 === 0);
+                this.predicateSpy.mockImplementation((i) => i % 2 === 0);
                 expect(Matcher.anyValue([1, 2, 3], this.predicateSpy)).toBe(true);
             });
         });

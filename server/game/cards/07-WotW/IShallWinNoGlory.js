@@ -1,11 +1,15 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class IShallWinNoGlory extends DrawCard {
+    // I Shall Win No Glory (07024)
+    // Reaction: After a challenge is initiated against you, kneel 3 Builder characters, 3 Ranger
+    // characters, or 3 Steward characters to end the challenge immediately with no winner or loser.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onChallengeInitiated: (event) =>
-                    event.challenge.initiatedAgainstPlayer === this.controller
+                onChallengeInitiated: (event, context) =>
+                    event.challenge.initiatedAgainstPlayer === context.player
             },
             cost: ability.costs.choose({
                 'Kneel Builders': ability.costs.kneelMultiple(
@@ -21,16 +25,11 @@ class IShallWinNoGlory extends DrawCard {
                     (card) => card.hasTrait('Steward') && card.getType() === 'character'
                 )
             }),
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} plays {1} and kneels {2} to end the challenge immediately with no winner or loser',
-                    this.controller,
-                    this,
-                    context.costs.kneel
-                );
-
-                this.game.currentChallenge.cancelChallenge();
-            }
+            message:
+                '{player} plays {source} and kneels {costs.kneel} to end the challenge immediately with no winner or loser',
+            gameAction: GameActions.endChallenge((context) => ({
+                challenge: context.event.challenge
+            }))
         });
     }
 }

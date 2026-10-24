@@ -3,14 +3,20 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class BelligerentHeir extends DrawCard {
+    // Belligerent Heir (25057)
+    // Belligerent Heir gets +1 STR for each gold it has.
+    // Reaction: After you initiate a challenge, place 1 gold from the treasury on an attacking
+    // neutral character. If you lose the challenge, sacrifice that character. (Limit once per
+    // phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: this,
-            effect: ability.effects.dynamicStrength(() => this.tokens[Tokens.gold])
+            match: (card, context) => card === context.source,
+            effect: ability.effects.dynamicStrength((card) => card.tokens[Tokens.gold] || 0)
         });
         this.reaction({
             when: {
-                onChallengeInitiated: (event) => event.challenge.attackingPlayer === this.controller
+                onChallengeInitiated: (event, context) =>
+                    event.challenge.attackingPlayer === context.player
             },
             target: {
                 type: 'select',
@@ -22,36 +28,23 @@ class BelligerentHeir extends DrawCard {
                 }
             },
             limit: ability.limit.perPhase(1),
-            message: '{player} uses {source} to place 1 gold on {source}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.placeToken((context) => ({
-                        token: Tokens.gold,
-                        card: context.target,
-                        amount: 1
-                    })),
-                    context
-                );
-
-                this.game.once('afterChallenge:interrupt', (event) =>
-                    this.resolveIfLose(event.challenge, context)
-                );
-            }
+            message: '{player} uses {source} to place 1 gold on {target}',
+            gameAction: GameActions.simultaneously([
+                GameActions.placeToken((context) => ({
+                    token: Tokens.gold,
+                    card: context.target,
+                    amount: 1
+                })),
+                GameActions.delayedEffect({
+                    duration: 'untilEndOfChallenge',
+                    when: {
+                        afterChallenge: (event, context) => event.challenge.loser === context.player
+                    },
+                    message: '{player} is forced to sacrifice {target} due to {source}',
+                    gameAction: GameActions.sacrificeCard((context) => ({ card: context.target }))
+                })
+            ])
         });
-    }
-
-    resolveIfLose(challenge, context) {
-        if (challenge.loser !== context.player) {
-            return;
-        }
-
-        this.game.addMessage(
-            '{0} is forced to sacrifice {1} due to {2}',
-            context.target.controller,
-            context.target,
-            this
-        );
-        this.game.resolveGameAction(GameActions.sacrificeCard({ card: context.target }));
     }
 }
 

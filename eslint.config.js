@@ -19,14 +19,20 @@ export default [
         }
     },
     {
-        files: ['client/**/*.jsx', 'client/**/*.js', 'server/**/*.js', 'test/server/**/*.js'],
+        files: [
+            'client/**/*.jsx',
+            'client/**/*.js',
+            'server/**/*.js',
+            'test/**/*.js',
+            'vitest*.js'
+        ],
         ignores: ['coverage'],
         languageOptions: {
             ...reactRecommended.languageOptions,
             globals: {
                 ...globals.browser,
                 ...globals.node,
-                ...globals.jasmine,
+                ...globals.vitest,
                 integration: 'readable'
             },
             ecmaVersion: 'latest',

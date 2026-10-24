@@ -4,7 +4,6 @@ class DynamicKeywordsEffect {
     constructor({ game }) {
         this.game = game;
         this.duration = 'persistent';
-        this.order = 999; // Apply this effect after all other keyword effects
         this.isStateDependent = true;
 
         this.graph = this.buildGraph();

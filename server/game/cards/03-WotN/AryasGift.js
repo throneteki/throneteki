@@ -1,49 +1,39 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class AryasGift extends DrawCard {
+    // Arya's Gift (03024)
+    // Action: Move an attachment from a [stark] character you control to another eligible character
+    // you control.
     setupCardAbilities() {
         this.action({
             title: 'Move attachment',
             target: {
                 type: 'select',
                 activePromptTitle: 'Select an attachment',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'attachment' &&
                     card.parent &&
                     card.parent.isFaction('stark') &&
                     card.parent.getType() === 'character' &&
-                    card.parent.controller === this.controller
+                    card.parent.controller === context.player
             },
-            handler: (context) => {
-                let attachment = context.target;
-                let oldParent = attachment.parent;
-
-                this.game.promptForSelect(context.player, {
-                    cardCondition: (card) =>
-                        card.getType() === 'character' &&
-                        card.controller === context.player &&
-                        card !== oldParent &&
-                        attachment.controller.canAttach(attachment, card) &&
-                        card.location === 'play area',
-                    onSelect: (player, card) =>
-                        this.moveAttachment(player, card, attachment, oldParent)
-                });
-            }
+            message: '{player} plays {source} to move {target}',
+            gameAction: GameActions.chooseCards({
+                title: 'Select a character',
+                cardCondition: (card, context) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.controller === context.player,
+                gameAction: (card, context) =>
+                    GameActions.attach({
+                        player: context.target.controller,
+                        attachment: context.target,
+                        target: card
+                    })
+            })
         });
-    }
-
-    moveAttachment(player, newParent, attachment, oldParent) {
-        player.attach(attachment.controller, attachment, newParent);
-        this.game.addMessage(
-            '{0} plays {1} to move {2} from {3} to {4}',
-            player,
-            this,
-            attachment,
-            oldParent,
-            newParent
-        );
-        return true;
     }
 }
 

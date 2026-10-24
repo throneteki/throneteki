@@ -1,8 +1,13 @@
 import GameAction from './GameAction.js';
+import Message from '../Message.js';
 
 class LookAtShadows extends GameAction {
     constructor() {
         super('lookAtShadows');
+    }
+
+    message({ opponent }) {
+        return Message.fragment("looks at {opponent}'s shadows area", { opponent });
     }
 
     canChangeGameState({ opponent }) {

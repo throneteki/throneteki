@@ -1,24 +1,27 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class EuronCrowsEye extends DrawCard {
+    // Euron Crow's Eye (01069)
+    // Pillage. Renown.
+    // Reaction: After Euron Crow's Eye discards a card using pillage, put a location from the
+    // losing opponent's discard pile into play under your control.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardDiscarded: (event) => event.isPillage && event.source === this
+                onCardDiscarded: (event, context) =>
+                    event.isPillage && event.source === context.source
             },
             target: {
                 activePromptTitle: 'Select location',
-                cardCondition: (card) => this.cardCondition(card)
+                cardCondition: (card, context) => context.source.cardCondition(card)
             },
-            handler: (context) => {
-                context.player.putIntoPlay(context.target);
-                this.game.addMessage(
-                    "{0} uses {1} to put {2} into play from their opponent's discard pile",
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                "{player} uses {source} to put {target} into play from their opponent's discard pile",
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 

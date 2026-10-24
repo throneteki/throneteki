@@ -1,6 +1,12 @@
 import GameAction from './GameAction.js';
 import AbilityMessage from '../AbilityMessage.js';
 
+// The context can inherit its properties from a prototype (see BaseAbility.allowsTarget), which
+// spreading it would drop.
+function withChoosingPlayer(context, choosingPlayer) {
+    return Object.assign(Object.create(context), { choosingPlayer });
+}
+
 class MayGameAction extends GameAction {
     constructor({ player, gameAction, message, title }) {
         super('may');
@@ -18,14 +24,18 @@ class MayGameAction extends GameAction {
 
     message(context) {
         const choosingPlayer = this.player instanceof Function ? this.player(context) : this.player;
-        let tempContext = { ...context, choosingPlayer };
+        let tempContext = withChoosingPlayer(context, choosingPlayer);
         return this.gameAction.message(tempContext);
     }
 
     allow(context) {
         const choosingPlayer = this.player instanceof Function ? this.player(context) : this.player;
-        let tempContext = { ...context, choosingPlayer };
+        let tempContext = withChoosingPlayer(context, choosingPlayer);
         return this.gameAction.allow(tempContext);
+    }
+
+    logsOwnMessage() {
+        return true;
     }
 
     createEvent(context) {
@@ -33,14 +43,16 @@ class MayGameAction extends GameAction {
             const title = this.title instanceof Function ? this.title(context) : this.title;
             const choosingPlayer =
                 this.player instanceof Function ? this.player(context) : this.player;
-            let tempContext = { ...context, choosingPlayer };
+            let tempContext = withChoosingPlayer(context, choosingPlayer);
             const handler = new MayPromptHandler({
                 yesHandler: () => {
                     if (this.gameAction.allow(tempContext)) {
-                        this.abilityMessage.output(tempContext.game, {
-                            ...tempContext,
-                            gameAction: this.gameAction
-                        });
+                        this.abilityMessage.output(
+                            tempContext.game,
+                            Object.assign(Object.create(tempContext), {
+                                gameAction: this.gameAction
+                            })
+                        );
                         event.thenAttachEvent(this.gameAction.createEvent(tempContext));
                     }
                     return true;

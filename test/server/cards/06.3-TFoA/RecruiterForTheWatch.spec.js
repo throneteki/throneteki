@@ -1,98 +1,84 @@
 describe('Recruiter for the Watch', function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck = this.buildDeck('thenightswatch', [
-                'Trading with the Pentoshi',
-                'Recruiter for the Watch',
-                'Dragonstone Faithful',
-                'Nightmares',
-                'Yoren (Core)'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.recruiter = this.player1.findCardByName('Recruiter for the Watch', 'hand');
-            this.character = this.player2.findCardByName('Dragonstone Faithful', 'hand');
-            this.nightmares = this.player2.findCardByName('Nightmares', 'hand');
-
-            this.player1.clickCard(this.recruiter);
-            this.player2.clickCard(this.character);
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player1);
-            this.selectPlotOrder(this.player1);
-
-            this.player1.clickMenu(this.recruiter, 'Take control of character');
-            this.player1.clickCard(this.character);
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                plot: 'Trading with the Pentoshi',
+                inPlay: ['Recruiter for the Watch'],
+                hand: ['House Florent Knight', 'Yoren (Core)']
+            },
+            player2: { inPlay: ['Dragonstone Faithful', 'Castle Guard'], hand: ['Nightmares'] }
         });
+        this.player1.togglePromptedActionWindow('taxation', true);
+        this.player1.clickMenu(this.recruiterForTheWatch, 'Take control of character');
+        this.player1.clickCard(this.dragonstoneFaithful);
+    });
 
-        it('should kneel the Recruiter', function () {
-            expect(this.recruiter.kneeled).toBe(true);
-        });
+    it('kneels to take control of a character with printed cost 2 or lower', function () {
+        expect(this.recruiterForTheWatch.kneeled).toBe(true);
+        expect(this.dragonstoneFaithful).toBeControlledBy(this.player1);
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-        it('should take control of the selected character', function () {
-            expect(this.character.controller.name).toBe(this.player1Object.name);
-        });
+    it('returns control when it stands', function () {
+        this.completeMarshalPhase();
+        this.completeChallengesPhase();
 
-        describe('when the Recruiter stands', function () {
-            beforeEach(function () {
-                this.completeMarshalPhase();
-                this.completeChallengesPhase();
+        expect(this.player1).toHavePrompt('Select optional cards to stand');
+        this.player1.clickCard(this.recruiterForTheWatch);
+        this.player1.clickPrompt('Done');
 
-                expect(this.player1).toHavePrompt('Select optional cards to stand');
-                this.player1.clickCard(this.recruiter);
-                this.player1.clickPrompt('Done');
-            });
+        expect(this.dragonstoneFaithful).toBeControlledBy(this.player2);
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-            it('should revert control of the selected character', function () {
-                expect(this.character.controller.name).toBe(this.player2Object.name);
-            });
-        });
+    it('keeps control while it stays kneeling through the standing phase', function () {
+        this.completeMarshalPhase();
+        this.completeChallengesPhase();
+        this.player1.clickPrompt('Done');
 
-        describe('when the Recruiter leaves play', function () {
-            beforeEach(function () {
-                this.player1.dragCard(this.recruiter, 'discard pile');
-            });
+        expect(this.recruiterForTheWatch.kneeled).toBe(true);
+        expect(this.dragonstoneFaithful).toBeControlledBy(this.player1);
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-            it('should revert control of the selected character', function () {
-                expect(this.character.controller.name).toBe(this.player2Object.name);
-            });
-        });
+    it('returns control when it leaves play', function () {
+        this.completeMarshalPhase();
+        this.player1.clickPrompt('Done');
+        this.unopposedChallenge(this.player2, 'Military', this.castleGuard);
+        this.player1.clickCard(this.recruiterForTheWatch);
 
-        describe('when the Recruiter is blanked', function () {
-            beforeEach(function () {
-                this.player2.clickCard(this.nightmares);
-                this.player2.clickCard(this.recruiter);
-            });
+        expect(this.recruiterForTheWatch.location).toBe('dead pile');
+        expect(this.dragonstoneFaithful).toBeControlledBy(this.player2);
+        expect(this.player2).isReadyToTakeAction();
+    });
 
-            it('should not modify control of the character', function () {
-                expect(this.character.controller.name).toBe(this.player1Object.name);
-            });
-        });
+    it('keeps control when it is blanked', function () {
+        this.player1.clickPrompt('Done');
+        this.player2.clickCard(this.nightmares);
+        this.player2.clickCard(this.recruiterForTheWatch);
 
-        describe('when the card leaves play and is taken control of again', function () {
-            beforeEach(function () {
-                // Manually discard the controlled character
-                this.player1.dragCard(this.character, 'discard pile');
+        expect(this.dragonstoneFaithful).toBeControlledBy(this.player1);
+        expect(this.player2).isReadyToTakeAction();
+    });
 
-                // Take control of the character again
-                this.player1.clickCard('Yoren', 'hand');
-                this.player1.triggerAbility('Yoren');
-                this.player1.clickCard(this.character);
+    it('does not return control of the character after it leaves play and is taken control of again', function () {
+        this.player1.clickCard(this.houseFlorentKnight);
+        this.player1.clickCard(this.dragonstoneFaithful);
+        expect(this.dragonstoneFaithful.location).toBe('discard pile');
 
-                expect(this.character.location).toBe('play area');
-                expect(this.character).toBeControlledBy(this.player1);
+        this.player1.clickCard(this.yoren);
+        this.player1.triggerAbility(this.yoren);
+        this.player1.clickCard(this.dragonstoneFaithful);
+        expect(this.dragonstoneFaithful).toBeControlledBy(this.player1);
 
-                // Stand the Recruiter to end its effect
-                this.player1.clickCard(this.recruiter);
-            });
+        this.completeMarshalPhase();
+        this.completeChallengesPhase();
+        this.player1.clickCard(this.recruiterForTheWatch);
+        this.player1.clickPrompt('Done');
 
-            it('should not return control', function () {
-                expect(this.character.location).toBe('play area');
-                expect(this.character).toBeControlledBy(this.player1);
-            });
-        });
+        expect(this.dragonstoneFaithful.location).toBe('play area');
+        expect(this.dragonstoneFaithful).toBeControlledBy(this.player1);
+        expect(this.player1).isReadyToTakeAction();
     });
 });

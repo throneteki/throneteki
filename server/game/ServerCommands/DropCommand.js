@@ -12,15 +12,16 @@ class DropCommand {
 
     execute() {
         if (this.originalLocation === this.targetLocation || this.card.controller !== this.player) {
-            return;
+            return false;
         }
 
         if (!this.isValidDropCombination()) {
-            return;
+            return false;
         }
 
         if (this.targetLocation === 'play area') {
-            this.player.putIntoPlay(this.card, 'play', { force: true });
+            const playingType = this.game.currentPhase === 'setup' ? 'setup' : 'play';
+            this.player.putIntoPlay(this.card, playingType, { force: true });
         } else if (this.targetLocation === 'dead pile' && this.card.location === 'play area') {
             this.game.killCharacter(this.card, { allowSave: false, force: true });
         } else if (
@@ -37,6 +38,8 @@ class DropCommand {
         }
 
         this.addGameMessage();
+
+        return true;
     }
 
     isValidDropCombination() {

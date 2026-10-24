@@ -36,6 +36,8 @@ import CardSelector from '../CardSelector.js';
  *                      buttons is clicked.
  * onCancel           - a callback that is called when the player clicks the
  *                      done button without selecting any cards.
+ * canCancel          - when false, Done with nothing selected leaves the prompt
+ *                      open. Defaults to allowing that cancel.
  * source             - what is at the origin of the user prompt, usually a card;
  *                      used to provide a default waitingPromptTitle, if missing
  * gameAction         - a string representing the game action to be checked on
@@ -63,7 +65,7 @@ class SelectCardPrompt extends UiPrompt {
         this.mustSelect = properties.mustSelect || [];
         if (this.mustSelect.length > 0) {
             if (
-                this.selector.hasReachedLimit(this.mustSelect, this.numPlayers) &&
+                this.selector.hasReachedLimit(this.mustSelect, this.numPlayers, this.context) &&
                 this.mustSelect.length > this.selector.numCards
             ) {
                 this.onlyMustSelectMayBeChosen = true;
@@ -151,6 +153,10 @@ class SelectCardPrompt extends UiPrompt {
             return false;
         }
 
+        if (this.isBlockedOnlyByLimit(card)) {
+            return true;
+        }
+
         if (!this.checkCardCondition(card)) {
             return false;
         }
@@ -161,10 +167,21 @@ class SelectCardPrompt extends UiPrompt {
 
         if (
             this.selector.automaticFireOnSelect() &&
-            this.selector.hasReachedLimit(this.selectedCards, this.numPlayers)
+            this.selector.hasReachedLimit(this.selectedCards, this.numPlayers, this.context)
         ) {
             this.fireOnSelect();
         }
+    }
+
+    isBlockedOnlyByLimit(card) {
+        return (
+            !this.selectedCards.includes(card) &&
+            !this.onlyMustSelectMayBeChosen &&
+            this.selector.canTarget(card, this.context, this.selectedCards) &&
+            this.selector.checkForSingleController(this.selectedCards, card) &&
+            (this.selector.wouldExceedLimit(this.selectedCards, card, this.context) ||
+                this.selector.hasReachedLimit(this.selectedCards, this.numPlayers, this.context))
+        );
     }
 
     checkCardCondition(card) {
@@ -179,13 +196,13 @@ class SelectCardPrompt extends UiPrompt {
         return (
             this.selector.canTarget(card, this.context, this.selectedCards) &&
             this.selector.checkForSingleController(this.selectedCards, card) &&
-            !this.selector.wouldExceedLimit(this.selectedCards, card)
+            !this.selector.wouldExceedLimit(this.selectedCards, card, this.context)
         );
     }
 
     selectCard(card) {
         if (
-            this.selector.hasReachedLimit(this.selectedCards, this.numPlayers) &&
+            this.selector.hasReachedLimit(this.selectedCards, this.numPlayers, this.context) &&
             !this.selectedCards.includes(card)
         ) {
             return false;
@@ -242,7 +259,7 @@ class SelectCardPrompt extends UiPrompt {
 
         if (this.selector.hasEnoughSelected(this.selectedCards, this.numPlayers, this.context)) {
             this.fireOnSelect();
-        } else if (this.selectedCards.length === 0) {
+        } else if (this.selectedCards.length === 0 && this.properties.canCancel !== false) {
             this.properties.onCancel(player);
             this.complete();
         }

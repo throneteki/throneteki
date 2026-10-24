@@ -3,17 +3,12 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class StarrySepta extends DrawCard {
+    // Starry Septa (27035)
+    // Action: Kneel Starry Septa to choose a participating character with gold or power. Stand that
+    // character and remove it from the challenge.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand and remove participating character',
-            phase: 'challenge',
-            condition: () =>
-                this.game.filterCardsInPlay(
-                    (card) =>
-                        card.getType() === 'character' &&
-                        card.isParticipating() &&
-                        (card.getPower() > 0 || card.hasToken(Tokens.gold))
-                ).length > 0,
             cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: (card) =>
@@ -24,18 +19,10 @@ class StarrySepta extends DrawCard {
             },
             message:
                 '{player} kneels {costs.kneel} to stand {target} and remove it from the challenge',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously([
-                        GameActions.standCard((context) => ({ card: context.target })),
-                        GameActions.removeFromChallenge((context) => ({
-                            card: context.target,
-                            reason: 'effect'
-                        }))
-                    ]),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously([
+                GameActions.standCard((context) => ({ card: context.target })),
+                GameActions.removeFromChallenge((context) => ({ card: context.target }))
+            ])
         });
     }
 }

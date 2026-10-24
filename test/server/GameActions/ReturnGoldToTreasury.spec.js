@@ -2,7 +2,7 @@ import ReturnGoldToTreasury from '../../../server/game/GameActions/ReturnGoldToT
 
 describe('ReturnGoldToTreasury', function () {
     beforeEach(function () {
-        this.playerSpy = jasmine.createSpyObj('player', ['modifyGold']);
+        this.playerSpy = { modifyGold: vi.fn() };
         this.playerSpy.gold = 2;
         this.props = { player: this.playerSpy, amount: 3 };
     });

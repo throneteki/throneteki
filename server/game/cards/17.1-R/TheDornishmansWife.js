@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheDornishmansWife extends DrawCard {
+    // "The Dornishman's Wife" (17145)
+    // Interrupt: When a unique character is killed:
+    // - if it has a [military] icon, gain 2 gold.
+    // - if it has an [intrigue] icon, draw 2 cards.
+    // - if it has a [power] icon, it gains 2 power. (Max 1 per phase.)
     setupCardAbilities(ability) {
         this.interrupt({
             when: {

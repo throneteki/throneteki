@@ -1,143 +1,90 @@
 describe('Brothel Madame', function () {
-    integration(function () {
+    function setup(context, player1 = {}) {
+        context.setupTest({
+            phase: 'marshal',
+            player1: { faction: 'lannister', inPlay: ['Brothel Madame'], gold: 5, ...player1 },
+            player2: { faction: 'lannister', inPlay: ['Hedge Knight'], gold: 5 }
+        });
+    }
+
+    describe('when the opponent does not pay', function () {
         beforeEach(function () {
-            const deck = this.buildDeck('lannister', [
-                'A Noble Cause',
-                'Brothel Madame',
-                'Brothel Madame',
-                'Hedge Knight',
-                'Paid Off'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.character = this.player2.findCardByName('Hedge Knight', 'hand');
-
-            this.player1.clickCard('Brothel Madame', 'hand');
-            this.player2.clickCard(this.character);
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player1);
+            setup(this);
+            this.completeMarshalPhase();
+            this.player1.triggerAbility('Brothel Madame');
+            this.player2.clickPrompt('No');
+            this.player1.clickPrompt('Done');
         });
 
-        describe('when the opponent does not pay', function () {
-            beforeEach(function () {
-                this.completeMarshalPhase();
+        it('stops them initiating military challenges against you this phase', function () {
+            expect(this.player2).toHaveDisabledPromptButton('Military');
+        });
+    });
 
-                this.player1.triggerAbility('Brothel Madame');
-                this.player2.clickPrompt('No');
-
-                this.player1.clickPrompt('Done');
-            });
-
-            it('should not allow the opponent to initiate military challenges', function () {
-                expect(this.player2).toHaveDisabledPromptButton('Military');
-            });
+    describe('when the opponent pays', function () {
+        beforeEach(function () {
+            setup(this);
+            this.completeMarshalPhase();
+            this.goldBefore = [this.player1Object.gold, this.player2Object.gold];
+            this.player1.triggerAbility('Brothel Madame');
+            this.player2.clickPrompt('Yes');
+            this.player1.clickPrompt('Done');
         });
 
-        describe('when the opponent pays directly', function () {
-            beforeEach(function () {
-                this.completeMarshalPhase();
-
-                this.player1.triggerAbility('Brothel Madame');
-                this.player2.clickPrompt('Yes');
-
-                this.player1.clickPrompt('Done');
-            });
-
-            it('should give the gold to the player', function () {
-                expect(this.player1Object.gold).toBe(6);
-                expect(this.player2Object.gold).toBe(4);
-            });
-
-            it('should allow the opponent to initiate military challenges', function () {
-                this.player2.clickPrompt('Military');
-
-                expect(this.player2).toHavePrompt('Select challenge attackers');
-            });
+        it('gives you their gold', function () {
+            expect(this.player1Object.gold).toBe(this.goldBefore[0] + 1);
+            expect(this.player2Object.gold).toBe(this.goldBefore[1] - 1);
         });
 
-        describe('when the opponent pays indirectly', function () {
-            beforeEach(function () {
-                this.player1.clickCard('Paid Off', 'hand');
-                this.player1.clickCard(this.character);
-                this.completeMarshalPhase();
+        it('lets them initiate military challenges', function () {
+            this.player2.clickPrompt('Military');
+            expect(this.player2).toHavePrompt('Select challenge attackers');
+        });
+    });
 
-                this.player1.triggerAbility('Brothel Madame');
-                this.player2.clickPrompt('No');
+    it('lets the opponent initiate military challenges after giving you gold some other way', function () {
+        setup(this, { hand: ['Paid Off'], gold: 6 });
+        this.player1.clickCard(this.paidOff);
+        this.player1.clickCard(this.hedgeKnight);
+        this.completeMarshalPhase();
+        this.player1.triggerAbility('Brothel Madame');
+        this.player2.clickPrompt('No');
+        this.player1.clickPrompt('Intrigue');
+        this.player1.clickCard(this.brothelMadame);
+        this.player1.clickPrompt('Done');
+        this.skipActionWindow();
+        this.player2.clickPrompt('Done');
+        this.skipActionWindow();
+        this.player1.triggerAbility('Paid Off');
+        this.player2.clickPrompt('Yes');
+        this.player1.clickPrompt('Done');
+        this.player2.clickPrompt('Military');
+        expect(this.player2).toHavePrompt('Select challenge attackers');
+    });
 
-                this.player1.clickPrompt('Intrigue');
-                this.player1.clickCard('Brothel Madame', 'play area');
-                this.player1.clickPrompt('Done');
-                this.skipActionWindow();
-                this.player2.clickPrompt('Done');
-                this.skipActionWindow();
-                this.player1.triggerAbility('Paid Off');
-
-                // Pay for Paid Off to re-stand the character
-                this.player2.clickPrompt('Yes');
-
-                this.player1.clickPrompt('Apply Claim');
-                this.player1.clickPrompt('Done');
-            });
-
-            it('should allow the opponent to initiate military challenges', function () {
-                this.player2.clickPrompt('Military');
-
-                expect(this.player2).toHavePrompt('Select challenge attackers');
-            });
+    describe('when there are two Brothel Madames', function () {
+        beforeEach(function () {
+            setup(this, { inPlay: ['Brothel Madame', 'Brothel Madame'] });
+            this.completeMarshalPhase();
         });
 
-        describe('when there are multiple Brothel Madames', function () {
-            beforeEach(function () {
-                this.player1.clickCard('Brothel Madame', 'hand');
-                this.completeMarshalPhase();
-            });
+        it('does not offer the second once the opponent has paid', function () {
+            this.player1.triggerAbility('Brothel Madame');
+            this.player2.clickPrompt('Yes');
+            expect(this.player1).not.toAllowAbilityTrigger('Brothel Madame');
+            this.player1.clickPrompt('Done');
+            this.player2.clickPrompt('Military');
+            expect(this.player2).toHavePrompt('Select challenge attackers');
+        });
 
-            describe('and the opponent pays for the first one', function () {
-                beforeEach(function () {
-                    // First Madame
-                    this.player1.triggerAbility('Brothel Madame');
-                    this.player2.clickPrompt('Yes');
-
-                    // Second Madame
-                    this.player1.triggerAbility('Brothel Madame');
-                });
-
-                it('should not prompt the opponent to pay again', function () {
-                    expect(this.player2).not.toHavePromptButton('Yes');
-                    expect(this.player2).not.toHavePromptButton('No');
-                });
-
-                it('should allow the opponent to initiate military challenges', function () {
-                    this.player1.clickPrompt('Done');
-                    this.player2.clickPrompt('Military');
-
-                    expect(this.player2).toHavePrompt('Select challenge attackers');
-                });
-            });
-
-            describe('and the opponent pays for the second one', function () {
-                beforeEach(function () {
-                    // First Madame
-                    this.player1.triggerAbility('Brothel Madame');
-                    this.player2.clickPrompt('No');
-
-                    // Second Madame
-                    this.player1.triggerAbility('Brothel Madame');
-                    this.player2.clickPrompt('Yes');
-
-                    this.player1.clickPrompt('Done');
-                });
-
-                it('should allow the opponent to initiate military challenges', function () {
-                    this.player2.clickPrompt('Military');
-
-                    expect(this.player2).toHavePrompt('Select challenge attackers');
-                });
-            });
+        it('lets the opponent pay for the second after declining the first', function () {
+            this.player1.triggerAbility('Brothel Madame');
+            this.player2.clickPrompt('No');
+            this.player1.triggerAbility('Brothel Madame');
+            this.player2.clickPrompt('Yes');
+            this.player1.clickPrompt('Done');
+            this.player2.clickPrompt('Military');
+            expect(this.player2).toHavePrompt('Select challenge attackers');
         });
     });
 });

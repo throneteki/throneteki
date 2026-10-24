@@ -3,6 +3,7 @@ import BaseAbility from './baseability.js';
 import Costs from './costs.js';
 import SingularTrigger from './SingularTrigger.js';
 import TriggeredAbilityContext from './TriggeredAbilityContext.js';
+import { Requirements } from './Constants/index.js';
 
 class TriggeredAbility extends BaseAbility {
     constructor(game, card, eventType, properties) {
@@ -23,6 +24,8 @@ class TriggeredAbility extends BaseAbility {
         if (this.max) {
             this.card.owner.registerAbilityMax(this.card.name, this.max);
         }
+
+        this.useDefaultMessage(card.getPrintedType() === 'event' ? 'plays' : 'uses');
     }
 
     isTriggeredAbility() {
@@ -65,7 +68,7 @@ class TriggeredAbility extends BaseAbility {
             event: event,
             game: this.game,
             source: this.card,
-            player: this.playerFunc()
+            player: this.playerFunc(event, { game: this.game, source: this.card })
         });
     }
 
@@ -77,11 +80,11 @@ class TriggeredAbility extends BaseAbility {
         return this.abilityTriggers.some((t) => t.isTriggeredByContext(context));
     }
 
-    meetsRequirements(context) {
+    getUnmetRequirement(context) {
         let isPlayableEventAbility = this.isPlayableEventAbility();
 
         if (this.game.currentPhase === 'setup') {
-            return false;
+            return Requirements.phase;
         }
 
         if (
@@ -90,31 +93,31 @@ class TriggeredAbility extends BaseAbility {
             context.player &&
             !context.player.canTrigger(this)
         ) {
-            return false;
+            return Requirements.cannotTrigger;
         }
 
         if (this.limit && this.limit.isAtMax()) {
-            return false;
+            return Requirements.limit;
         }
 
         if (this.max && context.player.isAbilityAtMax(context.source.name)) {
-            return false;
+            return Requirements.limit;
         }
 
         if (this.card.isAnyBlank()) {
-            return false;
+            return Requirements.blank;
         }
 
         if (!this.isTriggeredByContext(context)) {
-            return false;
+            return Requirements.trigger;
         }
 
         if (isPlayableEventAbility && !context.player.isCardInPlayableLocation(this.card, 'play')) {
-            return false;
+            return Requirements.location;
         }
 
         if (!isPlayableEventAbility && !this.location.includes(this.card.location)) {
-            return false;
+            return Requirements.location;
         }
 
         if (
@@ -122,18 +125,10 @@ class TriggeredAbility extends BaseAbility {
             this.card.facedown &&
             this.card.location !== 'duplicate'
         ) {
-            return false;
+            return Requirements.facedown;
         }
 
-        if (
-            !this.canResolvePlayer(context) ||
-            !this.canPayCosts(context) ||
-            !this.canResolveTargets(context)
-        ) {
-            return false;
-        }
-
-        return true;
+        return this.getResolutionFailure(context, { checkGameAction: false });
     }
 
     isEventListeningLocation(location) {

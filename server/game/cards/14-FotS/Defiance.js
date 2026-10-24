@@ -3,6 +3,9 @@ import GameActions from '../../GameActions/index.js';
 import ParticipationTracker from '../../EventTrackers/ParticipationTracker.js';
 
 class Defiance extends DrawCard {
+    // Defiance (14044)
+    // Challenges Action: Choose and stand a character that has not participated in a challenge this
+    // phase. (Max 1 per phase.)
     setupCardAbilities(ability) {
         this.tracker = ParticipationTracker.forPhase(this.game);
 
@@ -10,20 +13,15 @@ class Defiance extends DrawCard {
             title: 'Stand character',
             phase: 'challenge',
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
                     card.kneeled &&
-                    !this.tracker.hasParticipated(card),
+                    !context.source.tracker.hasParticipated(card),
                 gameAction: 'stand'
             },
             message: '{player} plays {source} to stand {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.standCard((context) => ({ card: context.target })),
-                    context
-                );
-            },
+            gameAction: GameActions.standCard((context) => ({ card: context.target })),
             max: ability.limit.perPhase(1)
         });
     }

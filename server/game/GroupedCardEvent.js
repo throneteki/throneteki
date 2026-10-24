@@ -7,8 +7,7 @@ class GroupedCardEvent extends Event {
 
     saveCard(card) {
         this.removeCard(card);
-        card.markAsSaved();
-        card.game.raiseEvent('onCardSaved', { card: card });
+        card.game.saveCard(card);
     }
 
     removeCard(card) {

@@ -38,11 +38,11 @@ describe('Dynamic keyword sources', function () {
             });
 
             it('spreads the keywords', function () {
-                expect(this.shagwell.getKeywords()).toEqual(
-                    jasmine.arrayWithExactContents(['bestow (1)', 'insight', 'stealth'])
+                expect([...this.shagwell.getKeywords()].sort()).toEqual(
+                    ['bestow (1)', 'insight', 'stealth'].sort()
                 );
-                expect(this.patchface.getKeywords()).toEqual(
-                    jasmine.arrayWithExactContents(['bestow (1)', 'insight', 'stealth'])
+                expect([...this.patchface.getKeywords()].sort()).toEqual(
+                    ['bestow (1)', 'insight', 'stealth'].sort()
                 );
             });
 
@@ -51,12 +51,8 @@ describe('Dynamic keyword sources', function () {
                     this.player1.dragCard(this.moonboy, 'discard pile');
                     this.player1.dragCard(this.stealthCharacter, 'discard pile');
 
-                    expect(this.shagwell.getKeywords()).toEqual(
-                        jasmine.arrayWithExactContents(['bestow (1)'])
-                    );
-                    expect(this.patchface.getKeywords()).toEqual(
-                        jasmine.arrayWithExactContents(['bestow (1)'])
-                    );
+                    expect([...this.shagwell.getKeywords()].sort()).toEqual(['bestow (1)'].sort());
+                    expect([...this.patchface.getKeywords()].sort()).toEqual(['bestow (1)'].sort());
                 });
             });
 
@@ -67,11 +63,9 @@ describe('Dynamic keyword sources', function () {
                     // Take some harmless action to ensure effects are recalculated after manually adding gold
                     this.player1.clickCard(this.stealthCharacter);
 
-                    expect(this.shagwell.getKeywords()).toEqual(
-                        jasmine.arrayWithExactContents(['bestow (1)'])
-                    );
-                    expect(this.patchface.getKeywords()).toEqual(
-                        jasmine.arrayWithExactContents(['bestow (1)', 'insight'])
+                    expect([...this.shagwell.getKeywords()].sort()).toEqual(['bestow (1)'].sort());
+                    expect([...this.patchface.getKeywords()].sort()).toEqual(
+                        ['bestow (1)', 'insight'].sort()
                     );
                 });
             });

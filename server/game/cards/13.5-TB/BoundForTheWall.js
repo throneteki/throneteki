@@ -3,13 +3,18 @@ import shuffle from 'lodash.shuffle';
 import GameActions from '../../GameActions/index.js';
 
 class BoundForTheWall extends DrawCard {
+    // Bound for the Wall (13086)
+    // Reaction: After you win a challenge as the attacking player, reveal the top 5 cards of the
+    // losing opponent's deck. You may put a character revealed this way into play under your
+    // control. Place the other revealed cards on the bottom of that player's deck in a random
+    // order. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.isMatch({
-                        winner: this.controller,
-                        attackingPlayer: this.controller
+                        winner: context.player,
+                        attackingPlayer: context.player
                     })
             },
             message: {
@@ -19,57 +24,40 @@ class BoundForTheWall extends DrawCard {
             gameAction: GameActions.revealTopCards((context) => ({
                 player: context.event.challenge.loser,
                 amount: 5,
-                whileRevealed: GameActions.genericHandler((context) => {
-                    const loser = context.event.challenge.loser;
-                    const topCards = context.revealed;
-                    this.game.promptForSelect(context.player, {
-                        cardCondition: (card) =>
-                            topCards.includes(card) &&
-                            card.controller === loser &&
-                            card.location === 'draw deck' &&
-                            card.getType() === 'character' &&
-                            context.player.canPutIntoPlay(card),
-                        onSelect: (player, card) =>
-                            this.handleSelect({ player, card, loser, topCards }),
-                        onCancel: (player) => this.handleCancel({ player, loser, topCards }),
-                        source: this
-                    });
+                whileRevealed: GameActions.chooseCards({
+                    optional: true,
+                    title: 'Select a character',
+                    cardCondition: (card, context) =>
+                        context.revealed.includes(card) && card.getType() === 'character',
+                    gameAction: (card, context) =>
+                        GameActions.putIntoPlay({ card, player: context.player })
                 })
-            })),
+            })).then({
+                message: {
+                    format: "Then {player} places {cards} on the bottom of {loser}'s deck in random order",
+                    args: {
+                        cards: (context) => remainingCards(context),
+                        loser: (context) => context.parentContext.event.challenge.loser
+                    }
+                },
+                gameAction: GameActions.simultaneously((context) =>
+                    shuffle(remainingCards(context)).map((card) =>
+                        GameActions.placeCard({
+                            card,
+                            location: 'draw deck',
+                            bottom: true,
+                            orderable: false
+                        })
+                    )
+                )
+            }),
             max: ability.limit.perChallenge(1)
         });
     }
+}
 
-    handleSelect({ player, card, loser, topCards }) {
-        const remainingCards = topCards.filter((c) => c !== card);
-        this.game.addMessage(
-            "Then {0} chooses to put {1} into play. {2} are placed on the bottom of {3}'s deck in random order.",
-            player,
-            card,
-            remainingCards,
-            loser
-        );
-        player.putIntoPlay(card);
-        this.placeCardsOnBottom({ loser, cards: remainingCards });
-        return true;
-    }
-
-    handleCancel({ player, loser, topCards }) {
-        this.game.addMessage(
-            "Then {0} does not choose to put a card into play. {1} are placed on the bottom of {2}'s deck in random order.",
-            player,
-            topCards,
-            loser
-        );
-        this.placeCardsOnBottom({ loser, cards: topCards });
-        return true;
-    }
-
-    placeCardsOnBottom({ loser, cards }) {
-        for (let card of shuffle(cards)) {
-            loser.moveCard(card, 'draw deck', { bottom: true });
-        }
-    }
+function remainingCards(context) {
+    return context.parentContext.revealed.filter((card) => card.location === 'draw deck');
 }
 
 BoundForTheWall.code = '13086';

@@ -3,24 +3,36 @@ import GenericTracker from '../../EventTrackers/GenericTracker.js';
 import GameActions from '../../GameActions/index.js';
 
 class ArchmaesterMarwyn extends DrawCard {
+    // Archmaester Marwyn (15041)
+    // Once per phase, you may marshal or play a facedown card under your agenda as if it were in
+    // your hand.
+    // Reaction: After Archmaester Marwyn enters play, place the top 2 cards of your deck facedown
+    // under your agenda.
     setupCardAbilities(ability) {
-        this.enterPlayTracker = GenericTracker.forPhase(this.game, 'onCardMarshalled');
-        this.playedTracker = GenericTracker.forPhase(this.game, 'onCardPlayed');
+        const enterPlayTracker = GenericTracker.forPhase(this.game, 'onCardMarshalled');
+        const playedTracker = GenericTracker.forPhase(this.game, 'onCardPlayed');
 
         this.persistentEffect({
-            condition: () =>
-                !this.hasPlayedFromUnderAgenda() && !this.hasMarshalledFromUnderAgenda(),
+            condition: (context) =>
+                !hasPlayedFromUnderAgenda(playedTracker, context.source.controller) &&
+                !hasMarshalledFromUnderAgenda(enterPlayTracker, context.source.controller),
             targetController: 'current',
             effect: [
-                ability.effects.canMarshal((card) => this.isUnderneathAgenda(card)),
-                ability.effects.canMarshalIntoShadows((card) => this.isUnderneathAgenda(card)),
-                ability.effects.canPlay((card) => this.isUnderneathAgenda(card))
+                ability.effects.canMarshal((card, context) =>
+                    isUnderneathAgenda(card, context.source.controller)
+                ),
+                ability.effects.canMarshalIntoShadows((card, context) =>
+                    isUnderneathAgenda(card, context.source.controller)
+                ),
+                ability.effects.canPlay((card, context) =>
+                    isUnderneathAgenda(card, context.source.controller)
+                )
             ]
         });
 
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             message:
                 '{player} uses {source} to place top 2 cards of their deck facedown under their agenda',
@@ -29,34 +41,34 @@ class ArchmaesterMarwyn extends DrawCard {
                     GameActions.placeCardUnderneath({
                         card,
                         parentCard: context.player.agenda,
-                        facedown: false
+                        facedown: true
                     })
                 )
             )
         });
     }
+}
 
-    hasPlayedFromUnderAgenda() {
-        return this.playedTracker.events.some(
-            (event) =>
-                event.originalParent === this.controller.agenda &&
-                event.originalLocation === 'underneath' &&
-                event.player === this.controller
-        );
-    }
+function hasPlayedFromUnderAgenda(playedTracker, player) {
+    return playedTracker.events.some(
+        (event) =>
+            event.originalParent === player.agenda &&
+            event.originalLocation === 'underneath' &&
+            event.player === player
+    );
+}
 
-    hasMarshalledFromUnderAgenda() {
-        return this.enterPlayTracker.events.some(
-            (event) =>
-                event.originalParent === this.controller.agenda &&
-                event.originalLocation === 'underneath' &&
-                event.originalController === this.controller
-        );
-    }
+function hasMarshalledFromUnderAgenda(enterPlayTracker, player) {
+    return enterPlayTracker.events.some(
+        (event) =>
+            event.originalParent === player.agenda &&
+            event.originalLocation === 'underneath' &&
+            event.originalController === player
+    );
+}
 
-    isUnderneathAgenda(card) {
-        return this.controller.agenda.underneath.includes(card);
-    }
+function isUnderneathAgenda(card, player) {
+    return player.agenda.underneath.includes(card);
 }
 
 ArchmaesterMarwyn.code = '15041';

@@ -1,111 +1,47 @@
 describe('Valar Dohaeris', function () {
-    integration(function () {
-        describe('simultaneous placement with attachments', function () {
-            beforeEach(function () {
-                const deck1 = this.buildDeck('thenightswatch', [
-                    "A Mummer's Farce",
-                    'A Noble Cause',
-                    'Valar Dohaeris',
-                    'Patchface',
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'plot',
+            player1: {
+                faction: 'stark',
+                plot: 'Valar Dohaeris',
+                inPlay: [
+                    'Greatjon Umber',
+                    'Umber Loyalist',
                     'Hedge Knight',
-                    'Milk of the Poppy',
-                    'Citadel Archivist'
-                ]);
-                const deck2 = this.buildDeck('greyjoy', [
-                    'A Noble Cause',
-                    'A Noble Cause',
-                    'Hedge Knight',
-                    'Hedge Knight',
-                    'Milk of the Poppy',
-                    'Milk of the Poppy'
-                ]);
-
-                this.player1.selectDeck(deck1);
-                this.player2.selectDeck(deck2);
-                this.startGame();
-                this.keepStartingHands();
-
-                [this.character1, this.character2] = this.player2.filterCardsByName(
-                    'Hedge Knight',
-                    'hand'
-                );
-                [this.attachment1, this.attachment2] = this.player2.filterCardsByName(
-                    'Milk of the Poppy',
-                    'hand'
-                );
-
-                this.fool = this.player1.findCardByName('Patchface', 'hand');
-                this.character3 = this.player1.findCardByName('Hedge Knight', 'hand');
-                this.attachment3 = this.player1.findCardByName('Milk of the Poppy', 'hand');
-                this.archivist = this.player1.findCardByName('Citadel Archivist', 'hand');
-
-                this.player1.clickCard(this.fool);
-                this.player1.clickCard(this.character3);
-                this.player1.clickCard(this.attachment3);
-
-                this.player2.clickCard(this.character1);
-                this.player2.clickCard(this.character2);
-                this.player2.clickCard(this.attachment1);
-                this.player2.clickCard(this.attachment2);
-
-                this.completeSetup();
-
-                this.player1.clickCard(this.attachment3);
-                this.player1.clickCard(this.character3);
-
-                this.player2.clickCard(this.attachment1);
-                this.player2.clickCard(this.character1);
-                this.player2.clickCard(this.attachment2);
-                this.player2.clickCard(this.character2);
-
-                this.player1.selectPlot('A Noble Cause');
-                this.player2.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player1);
-
-                this.completeMarshalPhase();
-
-                // Get Citadel Archivist attached to the fool
-                this.player1Object.moveCard(this.archivist, 'draw deck');
-
-                this.player1.clickPrompt('Power');
-                this.player1.clickCard(this.fool);
-                this.player1.clickPrompt('Done');
-                this.player1.clickPrompt('Pass');
-                this.player2.clickPrompt('Pass');
-                this.player2.clickPrompt('Done');
-                this.player1.clickPrompt('Pass');
-                this.player2.clickPrompt('Pass');
-
-                this.player1.clickPrompt('Apply Claim');
-                this.player1.clickPrompt('Done');
-                this.player2.clickPrompt('Done');
-
-                this.selectFirstPlayer(this.player2);
-
-                // Select no cards for Dohaeris
-                this.player2.clickPrompt('Done');
-                this.player1.clickPrompt('Done');
-
-                // Don't choose order for bottom for Dohaeris
-                this.player2.clickPrompt('Done');
-                this.player1.clickPrompt('Done');
-
-                // Don't choose order for attachments to discard pile
-                this.player2.clickPrompt('Done');
-                this.player1.clickPrompt('Done');
-            });
-
-            it('puts all attachments in discard before triggering archivist', function () {
-                expect(this.player1).toAllowAbilityTrigger(this.archivist);
-                expect(this.character1.location).toBe('draw deck');
-                expect(this.character2.location).toBe('draw deck');
-                expect(this.character3.location).toBe('draw deck');
-                expect(this.fool.location).toBe('draw deck');
-                expect(this.attachment1.location).toBe('discard pile');
-                expect(this.attachment2.location).toBe('discard pile');
-                expect(this.attachment3.location).toBe('discard pile');
-                expect(this.archivist.location).toBe('discard pile');
-            });
+                    { card: 'Winterfell Steward', attachments: ['Little Bird (Core)'] }
+                ]
+            },
+            player2: {
+                inPlay: ['House Maester']
+            }
         });
+
+        this.player1.selectPlot('Valar Dohaeris');
+        this.player2.selectPlot('Filler Plot');
+        this.selectFirstPlayer(this.player1);
+    });
+
+    it('has each player keep characters with a total printed cost of 10 or lower and places the rest on the bottom of their decks', function () {
+        this.player1.clickCard(this.greatjonUmber);
+        this.player1.clickCard(this.umberLoyalist);
+        this.player1.clickCard(this.hedgeKnight);
+
+        expect(this.player1).not.toBeAbleToSelect(this.winterfellSteward);
+
+        this.player1.clickPrompt('Done');
+        this.player2.clickPrompt('Done');
+
+        expect(this.greatjonUmber.location).toBe('play area');
+        expect(this.umberLoyalist.location).toBe('play area');
+        expect(this.hedgeKnight.location).toBe('play area');
+        expect(this.winterfellSteward.location).toBe('draw deck');
+        expect(this.player1Object.drawDeck.at(-1)).toBe(this.winterfellSteward);
+        expect(this.littleBird.location).toBe('hand');
+        expect(this.houseMaester.location).toBe('draw deck');
+        expect(this.game.getPlainTextLog()).toContain(
+            "player1 uses Valar Dohaeris and places Winterfell Steward on the bottom of its owner's deck and places House Maester on the bottom of its owner's deck"
+        );
+        expect(this.player1).isReadyToTakeAction();
     });
 });

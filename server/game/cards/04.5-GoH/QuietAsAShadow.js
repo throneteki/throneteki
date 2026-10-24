@@ -1,7 +1,11 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class QuietAsAShadow extends DrawCard {
-    setupCardAbilities() {
+    // Quiet as a Shadow (04099)
+    // Action: Choose a unique character with printed cost 3 or lower. Until the end of the phase,
+    // that character gains stealth.
+    setupCardAbilities(ability) {
         this.action({
             title: 'Give character stealth',
             target: {
@@ -11,18 +15,12 @@ class QuietAsAShadow extends DrawCard {
                     card.getPrintedCost() <= 3 &&
                     card.location === 'play area'
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.addKeyword('stealth')
-                }));
-                this.game.addMessage(
-                    '{0} plays {1} to give {2} stealth until the end of the phase',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} plays {source} to give {target} stealth until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.addKeyword('stealth')
+            }))
         });
     }
 }

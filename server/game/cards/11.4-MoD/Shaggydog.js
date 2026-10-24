@@ -1,68 +1,46 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Shaggydog extends DrawCard {
+    // Shaggydog (11062)
+    // [stark] character you control only.
+    // Reaction: After you win a challenge in which attached character is attacking, the losing
+    // opponent must choose and kill a defending character.
+    // Action: Pay 1 gold to attach Shaggydog to a different character. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'stark', controller: 'current' });
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    event.challenge.isAttacking(this.parent) &&
-                    this.game.anyCardsInPlay((card) => card.isDefending())
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
+                    event.challenge.isAttacking(context.source.parent)
             },
-            handler: (context) => {
-                let loser = context.event.challenge.loser;
-                this.game.addMessage(
-                    '{0} uses {1} to have {2} choose and kill a defending character',
-                    context.player,
-                    this,
-                    loser
-                );
-                this.game.promptForSelect(loser, {
-                    cardCondition: (card) => card.isDefending(),
-                    source: this,
-                    onSelect: (player, card) => this.onCardSelected(player, card),
-                    onCancel: (player) => this.cancelSelection(player)
-                });
-            }
+            message: {
+                format: '{player} uses {source} to have {loser} choose and kill a defending character',
+                args: { loser: (context) => context.event.challenge.loser }
+            },
+            gameAction: GameActions.chooseCards({
+                player: (context) => context.event.challenge.loser,
+                title: 'Select a character to kill',
+                cardCondition: (card, context) =>
+                    card.isDefending() && card.controller === context.choosingPlayer,
+                gameAction: (card) => GameActions.kill({ card })
+            })
         });
         this.action({
             title: 'Attach Shaggydog to another character',
             cost: ability.costs.payGold(1),
             target: {
                 type: 'select',
-                cardCondition: (card) =>
-                    this.controller.canAttach(this, card) &&
-                    card.location === 'play area' &&
-                    card !== this.parent
+                cardCondition: { location: 'play area', type: 'character' }
             },
             limit: ability.limit.perPhase(1),
-            handler: (context) => {
-                context.player.attach(this.controller, this, context.target);
-                this.game.addMessage(
-                    '{0} pays 1 gold to attach {1} to {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} pays 1 gold to attach {source} to {target}',
+            gameAction: GameActions.attach((context) => ({
+                attachment: context.source,
+                target: context.target
+            }))
         });
-    }
-
-    onCardSelected(player, card) {
-        this.game.killCharacter(card);
-        this.game.addMessage('{0} chooses to kill {1} for {2}', player, card, this);
-        return true;
-    }
-
-    cancelSelection(player) {
-        this.game.addAlert(
-            'danger',
-            '{0} does not select a character to kill for {1}',
-            player,
-            this
-        );
-        return true;
     }
 }
 

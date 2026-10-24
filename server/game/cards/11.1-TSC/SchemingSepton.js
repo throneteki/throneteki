@@ -1,30 +1,24 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SchemingSepton extends DrawCard {
+    // Scheming Septon (11004)
+    // Shadow (2).
+    // Challenges Action: Draw 1 card and gain 2 gold. Then, place Scheming Septon on top of your
+    // deck. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Draw 1 card and gain 2 gold',
             phase: 'challenge',
             limit: ability.limit.perPhase(1),
-            handler: () => {
-                let numCardsDrawn = this.controller.drawCardsToHand(1).length;
-                let goldGained = this.game.addGold(this.controller, 2);
-                this.game.addMessage(
-                    '{0} uses {1} to draw {2} card and gain {3} gold',
-                    this.controller,
-                    this,
-                    numCardsDrawn,
-                    goldGained
-                );
-                if (numCardsDrawn === 1 && goldGained === 2) {
-                    this.controller.moveCard(this, 'draw deck');
-                    this.game.addMessage(
-                        '{0} then places {1} on top of their deck',
-                        this.controller,
-                        this
-                    );
-                }
-            }
+            message: '{player} uses {source} and {gameAction}',
+            gameAction: GameActions.simultaneously([
+                GameActions.drawCards((context) => ({ player: context.player, amount: 1 })),
+                GameActions.gainGold((context) => ({ player: context.player, amount: 2 }))
+            ]).then({
+                message: 'Then {player} places {source} on top of their deck',
+                gameAction: GameActions.returnCardToDeck((context) => ({ card: context.source }))
+            })
         });
     }
 }

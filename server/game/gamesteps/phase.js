@@ -41,6 +41,7 @@ class Phase extends BaseStep {
     }
 
     startPhase() {
+        this.game.finishEndingDuration('untilEndOfPhase');
         this.game.currentPhase = this.name;
 
         this.game.raiseEvent('onPhaseStarted', { phase: this.name });

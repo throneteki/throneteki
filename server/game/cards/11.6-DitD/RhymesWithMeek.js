@@ -1,23 +1,32 @@
 import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class RhymesWithMeek extends DrawCard {
+    // Rhymes With Meek (11112)
+    // Shadow (0).
+    // Reaction: After you win an unopposed challenge, draw 2 cards (3 cards instead if you played
+    // this event from shadows).
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.isMatch({ winner: this.controller, unopposed: true })
+                afterChallenge: (event, context) =>
+                    event.challenge.isMatch({ winner: context.source.controller, unopposed: true })
             },
-            handler: (context) => {
-                let amount = context.cardStateWhenInitiated.location === 'shadows' ? 3 : 2;
-                let numCardsDrawn = context.player.drawCardsToHand(amount).length;
-                this.game.addMessage(
-                    '{0} plays {1} to draw {2}',
-                    context.player,
-                    this,
-                    TextHelper.count(numCardsDrawn, 'card')
-                );
-            }
+            message: {
+                format: '{player} plays {source} to draw {cards}',
+                args: {
+                    cards: (context) =>
+                        TextHelper.count(
+                            context.cardStateWhenInitiated.location === 'shadows' ? 3 : 2,
+                            'card'
+                        )
+                }
+            },
+            gameAction: GameActions.drawCards((context) => ({
+                player: context.player,
+                amount: context.cardStateWhenInitiated.location === 'shadows' ? 3 : 2
+            }))
         });
     }
 }

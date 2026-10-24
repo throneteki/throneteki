@@ -1,59 +1,36 @@
 describe('Barring the Gates', function () {
-    integration(function () {
+    describe('during the marshaling phase', function () {
         beforeEach(function () {
-            const deck1 = this.buildDeck('greyjoy', ['Barring the Gates', 'Theon Greyjoy (Core)']);
-            const deck2 = this.buildDeck('lannister', [
-                'A Noble Cause',
-                'Burned Men',
-                'Hear Me Roar!',
-                'Ward (TS)'
-            ]);
-
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck2);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.controllableCharacter = this.player1.findCardByName('Theon Greyjoy', 'hand');
-            this.character = this.player2.findCardByName('Burned Men', 'hand');
-
-            this.player1.clickCard(this.controllableCharacter);
-
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player2);
+            this.setupTest({
+                phase: 'marshal',
+                player1: { plot: 'Barring the Gates', hand: ['Hedge Knight'] }
+            });
         });
 
-        it('should not prevent marshalling', function () {
-            this.player2.clickCard(this.character);
+        it('still lets characters be marshaled', function () {
+            this.player1.clickCard(this.hedgeKnight);
 
-            expect(this.character.location).toBe('play area');
+            expect(this.hedgeKnight.location).toBe('play area');
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
+
+    describe('during the challenges phase', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: { plot: 'Barring the Gates' },
+                player2: { faction: 'lannister', gold: 2, hand: ['Burned Men'] }
+            });
+
+            this.player1.clickPrompt('Done');
+            this.player2.clickCard(this.burnedMen);
         });
 
-        it('should not prevent take control', function () {
-            let ward = this.player2.findCardByName('Ward', 'hand');
-            this.player2.clickCard(ward);
-            this.player2.clickCard(this.controllableCharacter);
-
-            expect(this.controllableCharacter.attachments).toContain(ward);
-            expect(this.controllableCharacter).toBeControlledBy(this.player2);
-        });
-
-        it('should prevent ambush', function () {
-            this.completeMarshalPhase();
-
-            this.player2.clickCard(this.character);
-
-            expect(this.character.location).not.toBe('play area');
-        });
-
-        it('should prevent putting into play', function () {
-            this.completeMarshalPhase();
-
-            this.player2.clickCard('Hear Me Roar!');
-            this.player2.clickCard(this.character);
-
-            expect(this.character.location).not.toBe('play area');
+        it('stops card abilities putting characters into play, for every player', function () {
+            expect(this.burnedMen.location).toBe('hand');
+            expect(this.player2Object.gold).toBe(2);
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

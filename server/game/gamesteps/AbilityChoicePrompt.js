@@ -8,6 +8,7 @@ class AbilityChoicePrompt extends BaseStep {
         choosingPlayer,
         title,
         choices,
+        cancelable = true,
         cancelText,
         cancelMessage,
         gameActionResolver
@@ -17,6 +18,7 @@ class AbilityChoicePrompt extends BaseStep {
         this.choosingPlayer = choosingPlayer || this.context.choosingPlayer;
         this.title = title;
         this.choices = choices;
+        this.cancelable = cancelable;
         this.cancelText = cancelText || 'Done';
         this.cancelMessage = AbilityMessage.create(
             cancelMessage || {
@@ -51,7 +53,9 @@ class AbilityChoicePrompt extends BaseStep {
             };
         });
 
-        buttons.push({ text: this.cancelText, method: 'skipResolution' });
+        if (this.cancelable) {
+            buttons.push({ text: this.cancelText, method: 'skipResolution' });
+        }
 
         this.game.promptWithMenu(this.choosingPlayer, this, {
             activePrompt: {

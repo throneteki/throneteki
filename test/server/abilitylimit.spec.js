@@ -3,7 +3,7 @@ import AbilityLimit from '../../server/game/abilitylimit.js';
 
 describe('AbilityLimit', function () {
     beforeEach(function () {
-        this.eventEmitterSpy = jasmine.createSpyObj('event emitter', ['on', 'removeListener']);
+        this.eventEmitterSpy = { on: vi.fn(), removeListener: vi.fn() };
 
         this.limit = AbilityLimit.repeatable(2, 'onEventForReset');
     });
@@ -43,7 +43,7 @@ describe('AbilityLimit', function () {
             this.limit.registerEvents(this.eventEmitterSpy);
             expect(this.eventEmitterSpy.on).toHaveBeenCalledWith(
                 'onEventForReset',
-                jasmine.any(Function)
+                expect.any(Function)
             );
         });
     });
@@ -53,7 +53,7 @@ describe('AbilityLimit', function () {
             this.limit.unregisterEvents(this.eventEmitterSpy);
             expect(this.eventEmitterSpy.removeListener).toHaveBeenCalledWith(
                 'onEventForReset',
-                jasmine.any(Function)
+                expect.any(Function)
             );
         });
 

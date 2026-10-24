@@ -2,22 +2,22 @@ import MarshalCardAction from '../../../server/game/PlayActions/MarshalCardActio
 
 describe('MarshalCardAction', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', [
-            'addMessage',
-            'on',
-            'raiseEvent',
-            'removeListener'
-        ]);
-        this.gameSpy.raiseEvent.and.callFake(function (name, params, handler) {
+        this.gameSpy = {
+            addMessage: vi.fn(),
+            on: vi.fn(),
+            raiseEvent: vi.fn(),
+            removeListener: vi.fn()
+        };
+        this.gameSpy.raiseEvent.mockImplementation(function (name, params, handler) {
             handler();
         });
-        this.playerSpy = jasmine.createSpyObj('player', [
-            'canDuplicate',
-            'canPutIntoPlay',
-            'isCardInPlayableLocation',
-            'putIntoPlay'
-        ]);
-        this.cardSpy = jasmine.createSpyObj('card', ['getType']);
+        this.playerSpy = {
+            canDuplicate: vi.fn(),
+            canPutIntoPlay: vi.fn(),
+            isCardInPlayableLocation: vi.fn(),
+            putIntoPlay: vi.fn()
+        };
+        this.cardSpy = { getType: vi.fn() };
         this.cardSpy.controller = this.playerSpy;
         this.cardSpy.owner = this.playerSpy;
         this.context = {
@@ -33,10 +33,10 @@ describe('MarshalCardAction', function () {
         beforeEach(function () {
             this.gameSpy.currentPhase = 'marshal';
             this.playerSpy.allowMarshal = true;
-            this.playerSpy.canDuplicate.and.returnValue(false);
-            this.playerSpy.canPutIntoPlay.and.returnValue(true);
-            this.playerSpy.isCardInPlayableLocation.and.returnValue(true);
-            this.cardSpy.getType.and.returnValue('character');
+            this.playerSpy.canDuplicate.mockReturnValue(false);
+            this.playerSpy.canPutIntoPlay.mockReturnValue(true);
+            this.playerSpy.isCardInPlayableLocation.mockReturnValue(true);
+            this.cardSpy.getType.mockReturnValue('character');
         });
 
         describe('when all conditions are met', function () {
@@ -57,7 +57,7 @@ describe('MarshalCardAction', function () {
 
         describe('when the card is not in a valid marshal location', function () {
             beforeEach(function () {
-                this.playerSpy.isCardInPlayableLocation.and.returnValue(false);
+                this.playerSpy.isCardInPlayableLocation.mockReturnValue(false);
             });
 
             it('should return false', function () {
@@ -67,7 +67,7 @@ describe('MarshalCardAction', function () {
 
         describe('when the card is an event', function () {
             beforeEach(function () {
-                this.cardSpy.getType.and.returnValue('event');
+                this.cardSpy.getType.mockReturnValue('event');
             });
 
             it('should return false', function () {
@@ -77,7 +77,7 @@ describe('MarshalCardAction', function () {
 
         describe('when the card cannot be put into play', function () {
             beforeEach(function () {
-                this.playerSpy.canPutIntoPlay.and.returnValue(false);
+                this.playerSpy.canPutIntoPlay.mockReturnValue(false);
             });
 
             it('should return false', function () {

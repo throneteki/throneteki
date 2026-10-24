@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class BoniferTheGood extends DrawCard {
+    // Bonifer the Good (18001)
+    // Each non-neutral The Seven character you control gains insight.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>

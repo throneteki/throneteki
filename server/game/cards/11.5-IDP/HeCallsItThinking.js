@@ -1,61 +1,52 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class HeCallsItThinking extends DrawCard {
+    // He Calls It Thinking (11096)
+    // Interrupt: When the effects of an opponent's non-agenda, non-plot triggered ability would
+    // initiate, cancel those effects unless that player pays 1 gold.
     setupCardAbilities() {
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: (event) =>
-                    event.source.controller !== this.controller &&
+                onCardAbilityInitiated: (event, context) =>
+                    event.source.controller !== context.player &&
                     !['agenda', 'plot'].includes(event.source.getType()) &&
                     event.ability.isTriggeredAbility()
             },
-            handler: (context) => {
-                this.context = context;
-                let opponent = context.event.source.controller;
-
-                if (opponent.gold < 1) {
-                    this.cancel();
-                    return;
-                }
-
-                this.game.promptWithMenu(opponent, this, {
-                    activePrompt: {
-                        menuTitle: 'Pay 1 gold to prevent "He Calls It Thinking"',
-                        buttons: [
-                            { text: 'Yes', method: 'prevent' },
-                            { text: 'No', method: 'cancel' }
-                        ]
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.ifCondition({
+                condition: (context) => context.event.source.controller.gold >= 1,
+                thenAction: GameActions.choose({
+                    player: (context) => context.event.source.controller,
+                    title: 'Pay 1 gold to prevent "He Calls It Thinking"',
+                    choices: {
+                        Yes: {
+                            message: {
+                                format: '{player} plays {source} to try to cancel {eventSource}, but {choosingPlayer} pays 1 gold to prevent the cancel',
+                                args: { eventSource: (context) => context.event.source }
+                            },
+                            gameAction: GameActions.returnGoldToTreasury((context) => ({
+                                player: context.event.source.controller,
+                                amount: 1
+                            }))
+                        },
+                        No: cancelEffects()
+                    }
+                }),
+                elseAction: cancelEffects()
+            })
         });
     }
+}
 
-    cancel() {
-        this.context.event.cancel();
-        this.game.addMessage(
-            '{0} plays {1} to cancel {2}',
-            this.context.player,
-            this,
-            this.context.event.source
-        );
-        return true;
-    }
-
-    prevent() {
-        let opponent = this.context.event.source.controller;
-        this.game.spendGold({ player: opponent, amount: 1 });
-        this.game.addMessage(
-            '{0} plays {1} to try to cancel {2}, but {3} pays 1 gold to prevent the cancel',
-            this.context.player,
-            this,
-            this.context.event.source,
-            opponent
-        );
-        return true;
-    }
+function cancelEffects() {
+    return {
+        message: {
+            format: '{player} plays {source} to cancel {eventSource}',
+            args: { eventSource: (context) => context.event.source }
+        },
+        gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
+    };
 }
 
 HeCallsItThinking.code = '11096';

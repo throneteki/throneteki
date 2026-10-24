@@ -1,5 +1,7 @@
 import uuid from 'uuid';
+import AbilityContext from './AbilityContext.js';
 import AbilityDsl from './abilitydsl.js';
+import AgendaSetupAbility from './AgendaSetupAbility.js';
 import CardAction from './cardaction.js';
 import CardForcedInterrupt from './cardforcedinterrupt.js';
 import CardForcedReaction from './cardforcedreaction.js';
@@ -11,9 +13,12 @@ import EventRegistrar from './eventregistrar.js';
 import GameActions from './GameActions/index.js';
 import KeywordsProperty from './PropertyTypes/KeywordsProperty.js';
 import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
+import StateCheckAbility from './StateCheckAbility.js';
+import EventCheckAbility from './EventCheckAbility.js';
 import XValueDefinition from './XValueDefinition.js';
 import { Flags, Tokens } from './Constants/index.js';
 import StackProperty from './PropertyTypes/StackProperty.js';
+import ModifierProperty from './PropertyTypes/ModifierProperty.js';
 
 const ValidKeywords = [
     'ambush',
@@ -59,6 +64,7 @@ class BaseCard {
         this.traits = new ReferenceCountedSetProperty();
         this.controllerStack = new StackProperty(this.owner);
         this.loyalStack = new StackProperty(!!this.cardData.loyal);
+        this.dominanceStrengthModifiers = new ModifierProperty();
         this.eventsForRegistration = [];
         this.keywordSources = [];
 
@@ -69,7 +75,15 @@ class BaseCard {
         this.abilityRestrictions = [];
         this.events = new EventRegistrar(this.game, this);
 
-        this.abilities = { actions: [], reactions: [], persistentEffects: [], playActions: [] };
+        this.abilities = {
+            actions: [],
+            reactions: [],
+            persistentEffects: [],
+            playActions: [],
+            stateChecks: [],
+            eventChecks: [],
+            agendaSetup: []
+        };
 
         this.setupCardTextProperties(AbilityDsl);
         this.setupCardAbilities(AbilityDsl);
@@ -163,6 +177,18 @@ class BaseCard {
         this.abilities.reactions.push(reaction);
     }
 
+    stateCheck(properties) {
+        this.abilities.stateChecks.push(new StateCheckAbility(this.game, this, properties));
+    }
+
+    eventCheck(properties) {
+        this.abilities.eventChecks.push(new EventCheckAbility(this.game, this, properties));
+    }
+
+    afterAgendasAnnounced(properties) {
+        this.abilities.agendaSetup.push(new AgendaSetupAbility(this.game, this, properties));
+    }
+
     /**
      * Defines a special play action that can occur when the card is outside the
      * play area (e.g. Lady-in-Waiting's dupe marshal ability)
@@ -210,9 +236,11 @@ class BaseCard {
      */
     whileAttached(properties) {
         this.persistentEffect({
-            condition: () => !!this.parent && (!properties.condition || properties.condition()),
+            condition: (context) =>
+                !!context.source.parent && (!properties.condition || properties.condition(context)),
             match: (card, context) =>
-                card === this.parent && (!properties.match || properties.match(card, context)),
+                card === context.source.parent &&
+                (!properties.match || properties.match(card, context)),
             targetController: 'any',
             effect: properties.effect
         });
@@ -242,30 +270,6 @@ class BaseCard {
     }
 
     /**
-     * Applies an immediate effect which expires at the end of the current
-     * challenge. Per game rules this duration is outside of the challenge.
-     */
-    atEndOfChallenge(propertyFactory) {
-        var properties = propertyFactory(AbilityDsl);
-        this.game.addEffect(
-            this,
-            Object.assign({ duration: 'atEndOfChallenge', location: 'any' }, properties)
-        );
-    }
-
-    /**
-     * Applies an immediate effect which expires at the end of the phase. Per
-     * game rules this duration is outside of the phase.
-     */
-    atEndOfPhase(propertyFactory) {
-        var properties = propertyFactory(AbilityDsl);
-        this.game.addEffect(
-            this,
-            Object.assign({ duration: 'atEndOfPhase', location: 'any' }, properties)
-        );
-    }
-
-    /**
      * Applies an immediate effect which lasts until the end of the round.
      */
     untilEndOfRound(propertyFactory) {
@@ -273,18 +277,6 @@ class BaseCard {
         this.game.addEffect(
             this,
             Object.assign({ duration: 'untilEndOfRound', location: 'any' }, properties)
-        );
-    }
-
-    /**
-     * Applies an immediate effect which expires at the end of the round. Per
-     * game rules this duration is outside of the round.
-     */
-    atEndOfRound(propertyFactory) {
-        var properties = propertyFactory(AbilityDsl);
-        this.game.addEffect(
-            this,
-            Object.assign({ duration: 'atEndOfRound', location: 'any' }, properties)
         );
     }
 
@@ -319,6 +311,7 @@ class BaseCard {
 
         clone.controllerStack = this.controllerStack.clone();
         clone.loyalStack = this.loyalStack.clone();
+        clone.dominanceStrengthModifiers = this.dominanceStrengthModifiers.clone();
         clone.factions = this.factions.clone();
         clone.flags = this.flags.clone();
         clone.location = this.location;
@@ -343,8 +336,38 @@ class BaseCard {
         return [];
     }
 
+    hasUsableAction(player) {
+        return (
+            this.abilities.actions.some(
+                (action) =>
+                    action.allowPlayer(player) &&
+                    action.meetsRequirements(action.createContext(player))
+            ) ||
+            this.getPlayActions().some((action) => {
+                const context = new AbilityContext({ game: this.game, player, source: this });
+                return (
+                    action.meetsRequirements(context) &&
+                    action.canPayCosts(context) &&
+                    action.canResolveTargets(context)
+                );
+            })
+        );
+    }
+
     get controller() {
         return this.controllerStack.get();
+    }
+
+    get dominanceStrengthModifier() {
+        return this.dominanceStrengthModifiers.value;
+    }
+
+    set dominanceStrengthModifier(value) {
+        this.dominanceStrengthModifiers.set('manual', value);
+    }
+
+    modifyDominanceStrength(amount) {
+        this.dominanceStrengthModifiers.add(amount);
     }
 
     takeControl(controller, source) {
@@ -612,6 +635,45 @@ class BaseCard {
         return menuActionPairs.map(([action, index]) => action.getMenuItem(index, player));
     }
 
+    getUnavailableActions(player) {
+        if (player.isSpectator()) {
+            return undefined;
+        }
+
+        const actions = this.abilities.actions
+            .filter(
+                (action) =>
+                    action.allowPlayer(player) &&
+                    (this.getPrintedType() === 'event'
+                        ? player.isCardInPlayableLocation(this, 'play')
+                        : action.location === this.location)
+            )
+            .map((action) => ({
+                title: action.title,
+                reason: action.getUnmetRequirement(action.createContext(player))
+            }))
+            .filter((action) => !!action.reason);
+
+        if (this.controller === player) {
+            for (const action of this.getPlayActions()) {
+                const context = new AbilityContext({ game: this.game, player, source: this });
+                if (!action.isRelevant?.(context)) {
+                    continue;
+                }
+                const reason =
+                    action.getUnmetRequirement(context) ||
+                    (this.game.currentPhase !== 'setup' &&
+                        this.game.getActionTimingRequirement(player)) ||
+                    action.getResolutionFailure(context, { checkGameAction: false });
+                if (reason) {
+                    actions.push({ title: action.title, reason });
+                }
+            }
+        }
+
+        return actions.length > 0 ? actions : undefined;
+    }
+
     isCopyOf(card) {
         return this.name === card.name;
     }
@@ -877,11 +939,16 @@ class BaseCard {
         }
 
         let state = {
+            canPlay: this.getCanPlayState(activePlayer),
             code: this.cardData.code,
             controlled: this.owner !== this.controller && this.getType() !== 'title',
             facedown: this.facedown,
             factionStatus: this.getFactionStatus(),
-            menu: this.getMenu(activePlayer),
+            menu: this.game.manualMode.enabled ? this.getMenu(activePlayer) : undefined,
+            unavailableActions: this.getUnavailableActions(activePlayer),
+            unavailableTriggers: activePlayer.isSpectator()
+                ? undefined
+                : this.game.getUnavailableAbilityReasons?.(this, activePlayer),
             name: this.cardData.label,
             new: this.new,
             power: this.power,
@@ -892,6 +959,19 @@ class BaseCard {
         };
 
         return Object.assign(state, selectionState);
+    }
+
+    getCanPlayState(player) {
+        if (this.controller !== player || !this.game.canTakeActionsNow(player)) {
+            return undefined;
+        }
+
+        try {
+            return this.hasUsableAction(player);
+        } catch (error) {
+            this.game.reportError(error);
+            return undefined;
+        }
     }
 }
 

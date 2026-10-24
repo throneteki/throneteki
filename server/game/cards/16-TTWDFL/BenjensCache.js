@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class BenjensCache extends PlotCard {
+    // Benjen's Cache (16031)
+    // When Revealed: If there are no Kingdom plot cards in your used pile, search your deck for a
+    // card and add it to your hand. Shuffle your deck.
     setupCardAbilities() {
         this.whenRevealed({
             condition: (context) => context.player.getNumberOfUsedPlotsByTrait('kingdom') === 0,

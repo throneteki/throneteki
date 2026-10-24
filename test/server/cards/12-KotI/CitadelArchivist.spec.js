@@ -1,81 +1,94 @@
 describe('Citadel Archivist (KotI)', function () {
-    integration(function () {
-        describe('vs Heads on Spikes', function () {
-            beforeEach(function () {
-                const deck1 = this.buildDeck('greyjoy', [
-                    'A Noble Cause',
-                    'A Noble Cause',
-                    { name: 'Citadel Archivist', count: 20 }
-                ]);
-                const deck2 = this.buildDeck('greyjoy', [
-                    'Heads on Spikes',
-                    'A Noble Cause',
-                    'Hedge Knight'
-                ]);
-                this.player1.selectDeck(deck1);
-                this.player2.selectDeck(deck2);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.completeSetup();
+    describe('when it is discarded from your hand', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                firstPlayer: 'player2',
+                player1: {
+                    hand: ['Citadel Archivist'],
+                    discard: ['Hedge Knight']
+                },
+                player2: {
+                    inPlay: ['House Maester'],
+                    discard: ['Winterfell Steward']
+                }
             });
 
-            describe('when killed by Spikes', function () {
-                beforeEach(function () {
-                    this.player1.selectPlot('A Noble Cause');
-                    this.player2.selectPlot('Heads on Spikes');
-                    this.selectFirstPlayer(this.player1);
-                });
-
-                it('does not allow Archivist to trigger', function () {
-                    expect(this.player1).not.toAllowAbilityTrigger('Citadel Archivist');
-                });
-            });
+            this.unopposedChallenge(this.player2, 'Intrigue', this.houseMaester);
         });
 
-        describe('vs Corpse Lake', function () {
-            beforeEach(function () {
-                const deck1 = this.buildDeck('greyjoy', [
-                    'A Noble Cause',
-                    { name: 'Citadel Archivist', count: 20 }
-                ]);
-                const deck2 = this.buildDeck('greyjoy', [
-                    'A Noble Cause',
-                    'Orkmont Reaver',
-                    'Corpse Lake'
-                ]);
-                this.player1.selectDeck(deck1);
-                this.player2.selectDeck(deck2);
-                this.startGame();
-                this.keepStartingHands();
+        it("shuffles each player's discard pile into their deck", function () {
+            this.player1.triggerAbility(this.citadelArchivist);
 
-                this.pillageChar = this.player2.findCardByName('Orkmont Reaver');
-                this.corpseLake = this.player2.findCardByName('Corpse Lake');
+            expect(this.citadelArchivist.location).toBe('draw deck');
+            expect(this.hedgeKnight.location).toBe('draw deck');
+            expect(this.winterfellSteward.location).toBe('draw deck');
+            expect(this.player1Object.discardPile).toHaveLength(0);
+            expect(this.player2Object.discardPile).toHaveLength(0);
+            expect(this.game.getPlainTextLog()).toContain(
+                "player1 uses Citadel Archivist to shuffle each player's discard pile into their deck"
+            );
+            expect(this.player2).isReadyToTakeAction();
+        });
 
-                this.player2.clickCard(this.pillageChar);
-                this.player2.clickCard(this.corpseLake);
+        it('can be declined', function () {
+            this.player1.clickPrompt('Pass');
 
-                this.completeSetup();
+            expect(this.citadelArchivist.location).toBe('discard pile');
+            expect(this.hedgeKnight.location).toBe('discard pile');
+            expect(this.player2).isReadyToTakeAction();
+        });
+    });
 
-                this.selectFirstPlayer(this.player1);
-
-                this.completeMarshalPhase();
+    describe('when it is discarded from your deck by pillage', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: {
+                    drawDeck: ['Citadel Archivist']
+                },
+                player2: {
+                    faction: 'greyjoy',
+                    inPlay: ['Orkmont Reaver', 'Corpse Lake']
+                }
             });
 
-            describe('when triggered after pillage', function () {
-                beforeEach(function () {
-                    this.player1.clickPrompt('Done');
+            this.player1.clickPrompt('Done');
+            this.unopposedChallenge(this.player2, 'Military', this.orkmontReaver);
+            this.player1.triggerAbility(this.citadelArchivist);
+        });
 
-                    this.unopposedChallenge(this.player2, 'Military', this.pillageChar);
-                    this.player2.clickPrompt('Apply Claim');
-                    this.player1.clickPrompt('Done');
-                    this.player1.triggerAbility('Citadel Archivist');
-                });
+        it('still lets reactions to the discard trigger', function () {
+            expect(this.citadelArchivist.location).toBe('draw deck');
+            expect(this.player2).toAllowAbilityTrigger(this.corpseLake);
 
-                it('allows Corpse Lake to trigger', function () {
-                    expect(this.player2).toAllowAbilityTrigger(this.corpseLake);
-                });
+            this.player2.clickPrompt('Pass');
+
+            expect(this.player2).isReadyToTakeAction();
+        });
+    });
+
+    describe('when it is placed in your dead pile instead', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'plot',
+                player1: {
+                    hand: ['Citadel Archivist']
+                },
+                player2: {
+                    plot: 'Heads on Spikes'
+                }
             });
+
+            this.player1.selectPlot('Filler Plot');
+            this.player2.selectPlot('Heads on Spikes');
+            this.selectFirstPlayer(this.player1);
+        });
+
+        it('cannot be triggered', function () {
+            expect(this.citadelArchivist.location).toBe('dead pile');
+            expect(this.player1).not.toAllowAbilityTrigger(this.citadelArchivist);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

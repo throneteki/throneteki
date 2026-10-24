@@ -1,12 +1,16 @@
 import DrawCard from '../../drawcard.js';
 
 class SerOsfrydKettleblack extends DrawCard {
+    // Ser Osfryd Kettleblack (26085)
+    // While you have more cards in hand than each opponent, Ser Osfryd Kettleblack gains renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.game
-                    .getOpponents(this.controller)
-                    .every((player) => this.controller.getHandCount() > player.getHandCount()),
+            condition: (context) =>
+                context.game
+                    .getOpponents(context.source.controller)
+                    .every(
+                        (player) => context.source.controller.getHandCount() > player.getHandCount()
+                    ),
             match: this,
             effect: ability.effects.addKeyword('Renown')
         });

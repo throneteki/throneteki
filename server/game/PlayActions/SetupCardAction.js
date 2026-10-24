@@ -1,5 +1,6 @@
 import BaseAbility from '../baseability.js';
 import Costs from '../costs.js';
+import { Requirements } from '../Constants/index.js';
 
 class SetupCardAction extends BaseAbility {
     constructor() {
@@ -10,13 +11,32 @@ class SetupCardAction extends BaseAbility {
         this.title = 'Setup';
     }
 
-    meetsRequirements(context) {
+    isRelevant({ game, player, source }) {
         return (
-            context.player.readyToStart &&
-            context.game.currentPhase === 'setup' &&
-            context.player.hand.includes(context.source) &&
-            context.source.getType() !== 'event'
+            game.currentPhase === 'setup' &&
+            source.getType() !== 'event' &&
+            player.hand.includes(source)
         );
+    }
+
+    getUnmetRequirement(context) {
+        if (context.game.currentPhase !== 'setup') {
+            return Requirements.phase;
+        }
+
+        if (!context.player.readyToStart) {
+            return Requirements.player;
+        }
+
+        if (context.source.getType() === 'event') {
+            return Requirements.condition;
+        }
+
+        if (!context.player.hand.includes(context.source)) {
+            return Requirements.location;
+        }
+
+        return undefined;
     }
 
     executeHandler(context) {

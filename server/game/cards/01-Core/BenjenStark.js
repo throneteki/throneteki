@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BenjenStark extends DrawCard {
+    // Benjen Stark (01122)
+    // Each Ranger character you control cannot be bypassed by stealth.
+    // Interrupt: When Benjen Stark is killed, gain 2 power for your faction. Then, shuffle him back
+    // into your deck instead of placing him in your dead pile.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.getType() === 'character' && card.hasTrait('Ranger'),
@@ -8,24 +13,25 @@ class BenjenStark extends DrawCard {
         });
         this.interrupt({
             when: {
-                onCharacterKilled: (event) =>
-                    event.card === this && this.controller.canGainFactionPower()
+                onCharacterKilled: (event, context) => event.card === context.source
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to gain 2 power for their faction and shuffles {1} back into their deck instead of placing it in their dead pile',
-                    this.controller,
-                    this
-                );
-
-                this.game.addPower(this.controller, 2);
-                context.replaceHandler(() => {
-                    context.event.cardStateWhenKilled = this.createSnapshot();
-                    this.controller.moveCard(this, 'draw deck', {}, () => {
-                        this.controller.shuffleDrawDeck();
-                    });
-                });
-            }
+            message: '{player} uses {source} to gain 2 power for their faction',
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.player.faction,
+                amount: 2
+            })).then({
+                message:
+                    'Then {player} shuffles {source} back into their deck instead of placing it in their dead pile',
+                gameAction: GameActions.replaceEvent((context) => ({
+                    event: context.parentContext.event,
+                    replacement: GameActions.placeCard({
+                        card: context.source,
+                        location: 'draw deck'
+                    }).then({
+                        gameAction: GameActions.shuffle((context) => ({ player: context.player }))
+                    })
+                }))
+            })
         });
     }
 }

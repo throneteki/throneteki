@@ -25,7 +25,7 @@ describe('Postgres MessageService and NewsService', function () {
                 time: new Date('2026-01-02T00:00:00Z')
             });
 
-            expect(first._id).toEqual(jasmine.any(String));
+            expect(first._id).toEqual(expect.any(String));
 
             const messages = await this.messageService.getLastMessages(false);
             expect(messages.map((message) => message.message)).toEqual([
@@ -37,7 +37,7 @@ describe('Postgres MessageService and NewsService', function () {
 
         it('should hide deleted messages from everyone but moderators', async function () {
             const message = await this.messageService.addMessage({ user: poster, message: 'spam' });
-            const listener = jasmine.createSpy('messageDeleted');
+            const listener = vi.fn();
             this.messageService.on('messageDeleted', listener);
 
             await this.messageService.removeMessage(message._id, { username: 'Admin' });
@@ -75,7 +75,7 @@ describe('Postgres MessageService and NewsService', function () {
             let motd = await this.messageService.getMotdMessage();
             expect(motd.length).toBe(1);
             expect(motd[0]).toEqual(
-                jasmine.objectContaining({ message: 'Maintenance tomorrow', motdType: 'info' })
+                expect.objectContaining({ message: 'Maintenance tomorrow', motdType: 'info' })
             );
 
             await this.messageService.setMotdMessage({});

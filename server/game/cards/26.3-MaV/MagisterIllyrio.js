@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MagisterIllyrio extends DrawCard {
+    // Magister Illyrio (26053)
+    // Insight. Shadow (5).
+    // Reaction: After the challenges phase begins, gain 1 gold for every 2 cards in shadows.
+    // +1 Income.
     setupCardAbilities() {
         this.plotModifiers({
             gold: 1

@@ -3,24 +3,24 @@ import PlayActionPrompt from '../../../server/game/gamesteps/playactionprompt.js
 
 describe('Player', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', [
-            'addMessage',
-            'resolveAbility',
-            'queueStep',
-            'raiseEvent'
-        ]);
+        this.gameSpy = {
+            addMessage: vi.fn(),
+            resolveAbility: vi.fn(),
+            queueStep: vi.fn(),
+            raiseEvent: vi.fn()
+        };
         this.player = new Player('1', { username: 'Player 1', settings: {} }, true, this.gameSpy);
         this.player.initialise();
     });
 
     describe('playCard', function () {
         beforeEach(function () {
-            this.playActionSpy = jasmine.createSpyObj('playAction', [
-                'meetsRequirements',
-                'canPayCosts',
-                'canResolveTargets'
-            ]);
-            this.cardSpy = jasmine.createSpyObj('card', ['getPlayActions']);
+            this.playActionSpy = {
+                meetsRequirements: vi.fn(),
+                canPayCosts: vi.fn(),
+                canResolveTargets: vi.fn()
+            };
+            this.cardSpy = { getPlayActions: vi.fn() };
 
             this.player.hand.push(this.cardSpy);
             this.cardSpy.location = 'hand';
@@ -44,21 +44,21 @@ describe('Player', function () {
 
         describe('when card has play actions', function () {
             beforeEach(function () {
-                this.cardSpy.getPlayActions.and.returnValue([this.playActionSpy]);
+                this.cardSpy.getPlayActions.mockReturnValue([this.playActionSpy]);
             });
 
             describe('when the requirements are met and the costs can be paid', function () {
                 beforeEach(function () {
-                    this.playActionSpy.meetsRequirements.and.returnValue(true);
-                    this.playActionSpy.canPayCosts.and.returnValue(true);
-                    this.playActionSpy.canResolveTargets.and.returnValue(true);
+                    this.playActionSpy.meetsRequirements.mockReturnValue(true);
+                    this.playActionSpy.canPayCosts.mockReturnValue(true);
+                    this.playActionSpy.canResolveTargets.mockReturnValue(true);
                 });
 
                 it('should resolve the play action', function () {
                     this.player.playCard(this.cardSpy);
                     expect(this.gameSpy.resolveAbility).toHaveBeenCalledWith(
                         this.playActionSpy,
-                        jasmine.objectContaining({
+                        expect.objectContaining({
                             game: this.gameSpy,
                             player: this.player,
                             source: this.cardSpy
@@ -73,9 +73,9 @@ describe('Player', function () {
 
             describe('when the requirements are met but the costs cannot be paid', function () {
                 beforeEach(function () {
-                    this.playActionSpy.meetsRequirements.and.returnValue(true);
-                    this.playActionSpy.canPayCosts.and.returnValue(false);
-                    this.playActionSpy.canResolveTargets.and.returnValue(true);
+                    this.playActionSpy.meetsRequirements.mockReturnValue(true);
+                    this.playActionSpy.canPayCosts.mockReturnValue(false);
+                    this.playActionSpy.canResolveTargets.mockReturnValue(true);
                 });
 
                 it('should not resolve the play action', function () {
@@ -90,9 +90,9 @@ describe('Player', function () {
 
             describe('when the costs can be paid but the requirements are not met', function () {
                 beforeEach(function () {
-                    this.playActionSpy.meetsRequirements.and.returnValue(false);
-                    this.playActionSpy.canPayCosts.and.returnValue(true);
-                    this.playActionSpy.canResolveTargets.and.returnValue(true);
+                    this.playActionSpy.meetsRequirements.mockReturnValue(false);
+                    this.playActionSpy.canPayCosts.mockReturnValue(true);
+                    this.playActionSpy.canResolveTargets.mockReturnValue(true);
                 });
 
                 it('should not resolve the play action', function () {
@@ -107,9 +107,9 @@ describe('Player', function () {
 
             describe('when targets cannot be resolved', function () {
                 beforeEach(function () {
-                    this.playActionSpy.meetsRequirements.and.returnValue(true);
-                    this.playActionSpy.canPayCosts.and.returnValue(true);
-                    this.playActionSpy.canResolveTargets.and.returnValue(false);
+                    this.playActionSpy.meetsRequirements.mockReturnValue(true);
+                    this.playActionSpy.canPayCosts.mockReturnValue(true);
+                    this.playActionSpy.canResolveTargets.mockReturnValue(false);
                 });
 
                 it('should not resolve the play action', function () {
@@ -125,18 +125,18 @@ describe('Player', function () {
 
         describe('when card has multiple matching play actions', function () {
             beforeEach(function () {
-                this.playActionSpy.meetsRequirements.and.returnValue(true);
-                this.playActionSpy.canPayCosts.and.returnValue(true);
-                this.playActionSpy.canResolveTargets.and.returnValue(true);
-                this.playActionSpy2 = jasmine.createSpyObj('playAction', [
-                    'meetsRequirements',
-                    'canPayCosts',
-                    'canResolveTargets'
-                ]);
-                this.playActionSpy2.meetsRequirements.and.returnValue(true);
-                this.playActionSpy2.canPayCosts.and.returnValue(true);
-                this.playActionSpy2.canResolveTargets.and.returnValue(true);
-                this.cardSpy.getPlayActions.and.returnValue([
+                this.playActionSpy.meetsRequirements.mockReturnValue(true);
+                this.playActionSpy.canPayCosts.mockReturnValue(true);
+                this.playActionSpy.canResolveTargets.mockReturnValue(true);
+                this.playActionSpy2 = {
+                    meetsRequirements: vi.fn(),
+                    canPayCosts: vi.fn(),
+                    canResolveTargets: vi.fn()
+                };
+                this.playActionSpy2.meetsRequirements.mockReturnValue(true);
+                this.playActionSpy2.canPayCosts.mockReturnValue(true);
+                this.playActionSpy2.canResolveTargets.mockReturnValue(true);
+                this.cardSpy.getPlayActions.mockReturnValue([
                     this.playActionSpy,
                     this.playActionSpy2
                 ]);
@@ -144,7 +144,7 @@ describe('Player', function () {
 
             it('should prompt the player to choose a play action', function () {
                 this.player.playCard(this.cardSpy);
-                expect(this.gameSpy.queueStep).toHaveBeenCalledWith(jasmine.any(PlayActionPrompt));
+                expect(this.gameSpy.queueStep).toHaveBeenCalledWith(expect.any(PlayActionPrompt));
             });
 
             it('should return true', function () {

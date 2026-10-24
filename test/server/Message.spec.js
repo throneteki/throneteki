@@ -114,7 +114,7 @@ describe('Message', function () {
                         expect(this.message.flatten()).toEqual([
                             'Arya kills ',
                             'Polliver',
-                            ', and ',
+                            ' and ',
                             'Walder Frey'
                         ]);
                     });

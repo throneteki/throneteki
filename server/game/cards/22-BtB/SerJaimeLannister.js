@@ -2,12 +2,16 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SerJaimeLannister extends DrawCard {
+    // Ser Jaime Lannister (22007)
+    // Renown.
+    // Forced Reaction: After a character enters play during the challenges phase, stand Ser Jaime
+    // Lannister. Then, discard that character from play.
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    this.kneeled &&
-                    this.game.currentPhase === 'challenge' &&
+                onCardEntersPlay: (event, context) =>
+                    context.source.kneeled &&
+                    context.game.currentPhase === 'challenge' &&
                     event.card.getType() === 'character'
             },
             message: '{player} uses {source} to stand {source}',

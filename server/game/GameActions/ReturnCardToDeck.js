@@ -9,7 +9,7 @@ class ReturnCardToDeck extends GameAction {
     }
 
     message({ card, bottom }) {
-        return Message.fragment('places {card} on {position} of their deck', {
+        return Message.fragment("places {card} on {position} of its owner's deck", {
             card,
             position: bottom ? 'the bottom' : 'top'
         });

@@ -2,12 +2,12 @@ import Event from '../../server/game/event.js';
 
 describe('Event', function () {
     beforeEach(function () {
-        this.childEventSpy = jasmine.createSpyObj('childEvent', [
-            'cancel',
-            'emitTo',
-            'executeHandler',
-            'getConcurrentEvents'
-        ]);
+        this.childEventSpy = {
+            cancel: vi.fn(),
+            emitTo: vi.fn(),
+            executeHandler: vi.fn(),
+            getConcurrentEvents: vi.fn()
+        };
     });
 
     describe('constructor', function () {
@@ -29,7 +29,7 @@ describe('Event', function () {
     describe('emitTo', function () {
         beforeEach(function () {
             this.event = new Event('onEvent', { foo: 'bar' });
-            this.emitterSpy = jasmine.createSpyObj('emitter', ['emit']);
+            this.emitterSpy = { emit: vi.fn() };
         });
 
         describe('when called without a suffix', function () {
@@ -66,7 +66,7 @@ describe('Event', function () {
 
     describe('executeHandler', function () {
         beforeEach(function () {
-            this.handlerSpy = jasmine.createSpy('handler');
+            this.handlerSpy = vi.fn();
             this.event = new Event('onEvent', { foo: 'bar' }, this.handlerSpy);
         });
 
@@ -77,7 +77,7 @@ describe('Event', function () {
 
         describe('when the handler has been replaced', function () {
             beforeEach(function () {
-                this.replacementHandlerSpy = jasmine.createSpy('replacementHandler');
+                this.replacementHandlerSpy = vi.fn();
                 this.event.replaceHandler(this.replacementHandlerSpy);
                 this.event.executeHandler();
             });
@@ -126,7 +126,7 @@ describe('Event', function () {
 
         describe('when the event has a parent', function () {
             beforeEach(function () {
-                this.parentEventSpy = jasmine.createSpyObj('parentEvent', ['onChildCancelled']);
+                this.parentEventSpy = { onChildCancelled: vi.fn() };
                 this.event.parent = this.parentEventSpy;
                 this.event.cancel();
             });
@@ -175,7 +175,7 @@ describe('Event', function () {
 
         describe('when the event has children', function () {
             beforeEach(function () {
-                this.childEventSpy.getConcurrentEvents.and.returnValue(['child-events']);
+                this.childEventSpy.getConcurrentEvents.mockReturnValue(['child-events']);
                 this.event.addChildEvent(this.childEventSpy);
             });
 
@@ -202,8 +202,8 @@ describe('Event', function () {
 
         describe('when the custom isFullyResolved function returns false', function () {
             beforeEach(function () {
-                const isFullyResolved = jasmine.createSpy('isFullyResolved');
-                isFullyResolved.and.returnValue(false);
+                const isFullyResolved = vi.fn();
+                isFullyResolved.mockReturnValue(false);
                 this.event = new Event('onEvent', { isFullyResolved });
             });
 
@@ -214,8 +214,8 @@ describe('Event', function () {
 
         describe('when the custom isFullyResolved function returns true', function () {
             beforeEach(function () {
-                const isFullyResolved = jasmine.createSpy('isFullyResolved');
-                isFullyResolved.and.returnValue(true);
+                const isFullyResolved = vi.fn();
+                isFullyResolved.mockReturnValue(true);
                 this.event = new Event('onEvent', { isFullyResolved });
             });
 

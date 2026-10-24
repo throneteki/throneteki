@@ -4,7 +4,7 @@ describe('LookAtHand', function () {
     beforeEach(function () {
         this.playerSpy = { player: 1 };
         this.opponentSpy = { player: 2, name: 'opponent', hand: ['card1', 'card2'] };
-        this.gameSpy = jasmine.createSpyObj('game', ['promptForSelect']);
+        this.gameSpy = { promptForSelect: vi.fn() };
         this.contextSpy = {
             game: this.gameSpy,
             source: 'SOURCE'
@@ -57,14 +57,14 @@ describe('LookAtHand', function () {
             it('prompts the player', function () {
                 expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(
                     this.playerSpy,
-                    jasmine.any(Object)
+                    expect.any(Object)
                 );
             });
 
             it('uses the correct prompt properties', function () {
                 expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(
-                    jasmine.anything(),
-                    jasmine.objectContaining({
+                    expect.anything(),
+                    expect.objectContaining({
                         activePromptTitle: "Look at opponent's hand",
                         source: 'SOURCE',
                         revealTargets: true

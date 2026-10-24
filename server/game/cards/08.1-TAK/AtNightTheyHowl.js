@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class AtNightTheyHowl extends DrawCard {
+    // At Night They Howl (08003)
+    // Challenges Action: Choose and stand any number of Direwolf characters and characters with a
+    // Direwolf attachment.
     setupCardAbilities() {
         this.action({
             title: 'Stand Direwolves',
@@ -14,18 +18,10 @@ class AtNightTheyHowl extends DrawCard {
                     (card.hasTrait('Direwolf') ||
                         card.attachments.some((attachment) => attachment.hasTrait('Direwolf')))
             },
-            handler: (context) => {
-                for (let card of context.target) {
-                    card.controller.standCard(card);
-                }
-
-                this.game.addMessage(
-                    '{0} plays {1} to stand {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} plays {source} to stand {target}',
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) => GameActions.standCard({ card }))
+            )
         });
     }
 }

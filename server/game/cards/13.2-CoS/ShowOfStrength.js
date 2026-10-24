@@ -1,22 +1,25 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ShowOfStrength extends DrawCard {
-    setupCardAbilities() {
+    // Show of Strength (13024)
+    // Challenges Action: Until the end of the phase, treat each character with STR 3 or lower as if
+    // its printed text box were blank (except for Traits).
+    setupCardAbilities(ability) {
         this.action({
             phase: 'challenge',
-            condition: () => this.getLowStrengthCharacters().length > 0,
+            condition: (context) => context.source.getLowStrengthCharacters().length > 0,
             message: {
                 format: '{player} plays {source} to treat {lowStrengthCharacters} as blank',
-                args: { lowStrengthCharacters: () => this.getLowStrengthCharacters() }
+                args: {
+                    lowStrengthCharacters: (context) => context.source.getLowStrengthCharacters()
+                }
             },
-            handler: () => {
-                let characters = this.getLowStrengthCharacters();
-
-                this.untilEndOfPhase((ability) => ({
-                    match: characters,
-                    effect: ability.effects.blankExcludingTraits
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.source.getLowStrengthCharacters(),
+                effect: ability.effects.blankExcludingTraits
+            }))
         });
     }
 

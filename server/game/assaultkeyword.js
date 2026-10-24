@@ -1,3 +1,4 @@
+import GameActions from './GameActions/index.js';
 import ChallengeKeywordAbility from './ChallengeKeywordAbility.js';
 import TargetByAssault from './GameActions/TargetByAssault.js';
 
@@ -19,16 +20,19 @@ class AssaultKeyword extends ChallengeKeywordAbility {
                 format: '{player} uses {source} to blank {targets} using assault until the end of the challenge',
                 args: { targets: (context) => context.targets.getTargets() }
             },
-            handler: (context) => {
-                context.targets.getTargets().forEach((target) => {
-                    let props = {
-                        challenge: context.challenge,
-                        source: context.source,
-                        card: target
-                    };
-                    context.challenge.addInitiationAction(TargetByAssault, props);
-                });
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                [context.target]
+                    .flat()
+                    .filter(Boolean)
+                    .map((card) =>
+                        GameActions.queueChallengeAction({
+                            action: TargetByAssault,
+                            challenge: context.challenge,
+                            source: context.source,
+                            card
+                        })
+                    )
+            )
         });
         // Order by highest printed cost (sorts by smallest values first)
         this.orderBy = (context) => -context.source.getPrintedCost();

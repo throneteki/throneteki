@@ -1,13 +1,18 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class GoldenStorm extends DrawCard {
+    // Golden Storm (12018)
+    // Reaction: After you win a [military] challenge as the attacking player, kneel Golden Storm to
+    // choose and kill a participating character. Then, if you control a participating Raider
+    // character, stand Golden Storm.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
                     event.challenge.challengeType === 'military' &&
-                    event.challenge.attackingPlayer === this.controller
+                    event.challenge.attackingPlayer === context.player
             },
             target: {
                 cardCondition: (card) =>
@@ -17,41 +22,22 @@ class GoldenStorm extends DrawCard {
                 gameAction: 'kill'
             },
             cost: ability.costs.kneelSelf(),
-            handler: (context) => {
-                var wasStand = false;
-                context.target.owner.killCharacter(context.target);
-                let cards = this.controller.filterCardsInPlay(
-                    (card) =>
-                        card.hasTrait('Raider') &&
-                        card.getType() === 'character' &&
-                        card.isParticipating() &&
-                        card.controller === this.controller &&
-                        card.location === 'play area'
-                );
-                if (cards.length > 0) {
-                    if (this.allowGameAction('stand')) {
-                        this.controller.standCard(this);
-                        wasStand = true;
+            message: '{player} kneels {source} to kill {target}',
+            gameAction: GameActions.kill((context) => ({ card: context.target })).then({
+                gameAction: GameActions.ifCondition({
+                    condition: (context) =>
+                        context.player.anyCardsInPlay(
+                            (card) =>
+                                card.hasTrait('Raider') &&
+                                card.getType() === 'character' &&
+                                card.isParticipating()
+                        ),
+                    thenAction: {
+                        message: 'Then {player} stands {source}',
+                        gameAction: GameActions.standCard((context) => ({ card: context.source }))
                     }
-                }
-                if (wasStand === true) {
-                    this.game.addMessage(
-                        '{0} uses {1} to kill {2} and stand {3}',
-                        this.controller,
-                        this,
-                        context.target,
-                        this
-                    );
-                    return;
-                }
-
-                this.game.addMessage(
-                    '{0} uses {1} to kill {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+                })
+            })
         });
     }
 }

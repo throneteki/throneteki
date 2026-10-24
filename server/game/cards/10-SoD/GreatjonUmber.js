@@ -1,20 +1,22 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class GreatjonUmber extends DrawCard {
+    // Greatjon Umber (10033)
+    // Intimidate.
+    // Reaction: After you win a [military] challenge in which Greatjon Umber is attacking, if there
+    // are fewer than 3 plot cards in your used pile, stand him.
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'military' &&
-                    event.challenge.winner === this.controller &&
-                    this.isAttacking() &&
-                    this.controller.getNumberOfUsedPlots() < 3 &&
-                    this.kneeled
+                    event.challenge.winner === context.player &&
+                    context.source.isAttacking() &&
+                    context.player.getNumberOfUsedPlots() < 3
             },
-            handler: (context) => {
-                context.player.standCard(this);
-                this.game.addMessage('{0} stands {1}', context.player, this);
-            }
+            message: '{player} uses {source} to stand {source}',
+            gameAction: GameActions.standCard((context) => ({ card: context.source }))
         });
     }
 }

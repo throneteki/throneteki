@@ -61,7 +61,6 @@ class Challenge {
 
     redirectChallengeTo(player) {
         this.defendingPlayer = player;
-        this.initiatedAgainstPlayer = player;
         this.initiationActions = [];
     }
 

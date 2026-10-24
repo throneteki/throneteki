@@ -1,43 +1,43 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+
+function isStarkCharacter(source, card) {
+    return (
+        card.controller === source.controller &&
+        card.isFaction('stark') &&
+        card.getType() === 'character'
+    );
+}
+
+function canChangeGameState(source) {
+    return source.controller.anyCardsInPlay(
+        (card) => card.getType() === 'character' && card.kneeled
+    );
+}
 
 class RobbStark extends DrawCard {
+    // Robb Stark (01146)
+    // Renown.
+    // Reaction: After a [stark] character you control is sacrificed or killed, stand each character
+    // you control. (Limit once per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCharacterKilled: (event) =>
-                    this.isStarkCharacter(event.cardStateWhenKilled) && this.canChangeGameState(),
-                onSacrificed: (event) =>
-                    this.isStarkCharacter(event.cardStateWhenSacrificed) &&
-                    this.canChangeGameState()
+                onCharacterKilled: (event, context) =>
+                    isStarkCharacter(context.source, event.cardStateWhenKilled) &&
+                    canChangeGameState(context.source),
+                onSacrificed: (event, context) =>
+                    isStarkCharacter(context.source, event.cardStateWhenSacrificed) &&
+                    canChangeGameState(context.source)
             },
             limit: ability.limit.perRound(1),
-            handler: () => {
-                let characters = this.controller.filterCardsInPlay(
-                    (card) => card.getType() === 'character'
-                );
-                characters.forEach((card) => card.controller.standCard(card));
-                this.game.addMessage(
-                    '{0} uses {1} to stand each {2} character they control',
-                    this.controller,
-                    this,
-                    'stark'
-                );
-            }
+            message: '{player} uses {source} to stand each character they control',
+            gameAction: GameActions.simultaneously((context) =>
+                context.player
+                    .filterCardsInPlay((card) => card.getType() === 'character')
+                    .map((card) => GameActions.standCard({ card }))
+            )
         });
-    }
-
-    isStarkCharacter(card) {
-        return (
-            card.controller === this.controller &&
-            card.isFaction('stark') &&
-            card.getType() === 'character'
-        );
-    }
-
-    canChangeGameState() {
-        return this.controller.anyCardsInPlay(
-            (card) => card.getType() === 'character' && card.kneeled
-        );
     }
 }
 

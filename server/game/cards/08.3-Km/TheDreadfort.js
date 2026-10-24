@@ -1,11 +1,15 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheDreadfort extends DrawCard {
+    // The Dreadfort (08042)
+    // Reaction: After a character you control is sacrificed, kneel The Dreadfort to choose and
+    // stand a House Bolton or non-[stark] character.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onSacrificed: (event) =>
-                    event.cardStateWhenSacrificed.controller === this.controller &&
+                onSacrificed: (event, context) =>
+                    event.cardStateWhenSacrificed.controller === context.source.controller &&
                     event.cardStateWhenSacrificed.getType() === 'character'
             },
             cost: ability.costs.kneelSelf(),
@@ -17,15 +21,8 @@ class TheDreadfort extends DrawCard {
                     card.kneeled,
                 gameAction: 'stand'
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.addMessage(
-                    '{0} kneels {1} to stand {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} kneels {source} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

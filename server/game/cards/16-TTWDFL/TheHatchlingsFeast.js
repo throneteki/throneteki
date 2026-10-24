@@ -1,75 +1,58 @@
 import DrawCard from '../../drawcard.js';
-import Message from '../../Message.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheHatchlingsFeast extends DrawCard {
-    setupCardAbilities() {
+    // The Hatchlings' Feast (16014)
+    // Action: Choose 3 characters without attachments. Until the end of the phase, one of those
+    // characters gets -1 STR, one gets -2 STR, and one gets -3 STR.
+    setupCardAbilities(ability) {
         this.action({
             title: 'Give -STR',
-            target: {
-                mode: 'exactly',
-                numCards: 3,
-                cardCondition: { location: 'play area', type: 'character', hasAttachments: false }
+            condition: (context) => context.game.filterCardsInPlay(isEligible).length >= 3,
+            targets: {
+                minus1: {
+                    activePromptTitle: 'Select -1 STR',
+                    cardCondition: (card) => isEligible(card)
+                },
+                minus2: {
+                    activePromptTitle: 'Select -2 STR',
+                    cardCondition: (card, context) =>
+                        isEligible(card) && card !== context.targets.minus1
+                },
+                minus3: {
+                    activePromptTitle: 'Select -3 STR',
+                    cardCondition: (card, context) =>
+                        isEligible(card) &&
+                        ![context.targets.minus1, context.targets.minus2].includes(card)
+                }
             },
-            handler: (context) => {
-                this.chooseStrDebuff({
-                    amount: 1,
-                    choices: [],
-                    context,
-                    remainingCards: [...context.target]
-                });
-            }
+            message: {
+                format: '{player} plays {source} to give {minus1} -1 STR, {minus2} -2 STR and {minus3} -3 STR',
+                args: {
+                    minus1: (context) => context.targets.minus1,
+                    minus2: (context) => context.targets.minus2,
+                    minus3: (context) => context.targets.minus3
+                }
+            },
+            gameAction: GameActions.simultaneously(
+                [1, 2, 3].map((amount) =>
+                    GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
+                        match: context.targets[`minus${amount}`],
+                        effect: ability.effects.modifyStrength(-amount)
+                    }))
+                )
+            )
         });
     }
+}
 
-    chooseStrDebuff({ context, remainingCards, amount, choices }) {
-        this.game.promptForSelect(context.player, {
-            activePromptTitle: `Select -${amount} STR`,
-            cardCondition: (card) => remainingCards.includes(card),
-            onSelect: (player, card) => {
-                this.handleStrDebuffSelected({ context, remainingCards, amount, choices, card });
-                return true;
-            },
-            onCancel: () => {
-                this.game.addAlert(
-                    'danger',
-                    '{0} cancels the resolution of {1}',
-                    context.player,
-                    this
-                );
-                return true;
-            },
-            source: context.source
-        });
-    }
-
-    handleStrDebuffSelected({ context, remainingCards, amount, choices, card }) {
-        choices.push({ card, amount });
-        remainingCards = remainingCards.filter((c) => c !== card);
-
-        if (remainingCards.length > 0) {
-            this.chooseStrDebuff({ context, remainingCards, amount: amount + 1, choices });
-        } else {
-            this.applyStrDebuffs({ context, choices });
-        }
-    }
-
-    applyStrDebuffs({ context, choices }) {
-        const fragments = choices.map((choice) =>
-            Message.fragment('give {card} -{amount} STR', choice)
-        );
-        this.game.addMessage('{player} plays {source} to {fragments}', {
-            player: context.player,
-            source: this,
-            fragments
-        });
-
-        for (const choice of choices) {
-            this.untilEndOfPhase((ability) => ({
-                match: choice.card,
-                effect: ability.effects.modifyStrength(-choice.amount)
-            }));
-        }
-    }
+function isEligible(card) {
+    return (
+        card.location === 'play area' &&
+        card.getType() === 'character' &&
+        card.attachments.length === 0
+    );
 }
 
 TheHatchlingsFeast.code = '16014';

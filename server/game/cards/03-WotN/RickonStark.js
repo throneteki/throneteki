@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RickonStark extends DrawCard {
+    // Rickon Stark (03016)
+    // Interrupt: When the effects of a triggered ability with the word "search" in it would
+    // initiate, sacrifice Rickon Stark to cancel those effects.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,
@@ -9,16 +13,11 @@ class RickonStark extends DrawCard {
                     event.ability.isTriggeredAbility() && event.source.hasText('search')
             },
             cost: ability.costs.sacrificeSelf(),
-            handler: (context) => {
-                context.event.cancel();
-
-                this.game.addMessage(
-                    '{0} sacrifices {1} to cancel {2}',
-                    context.player,
-                    this,
-                    context.event.source
-                );
-            }
+            message: {
+                format: '{player} sacrifices {source} to cancel {eventSource}',
+                args: { eventSource: (context) => context.event.source }
+            },
+            gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
         });
     }
 }

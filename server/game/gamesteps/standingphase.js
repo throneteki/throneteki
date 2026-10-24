@@ -15,15 +15,22 @@ class StandingPhase extends Phase {
     }
 
     standCards() {
-        for (let player of this.game.getPlayers()) {
-            this.standCardsForPlayer(player);
-        }
+        const selections = this.game.getPlayers().map((player) => this.selectCardsToStand(player));
+
+        this.game.queueSimpleStep(() => {
+            const cards = flatten(
+                selections.map((selection) => selection.automatic.concat(selection.selected))
+            );
+            this.game.resolveGameAction(
+                GameActions.simultaneously(cards.map((card) => GameActions.standCard({ card })))
+            );
+        });
     }
 
-    standCardsForPlayer(player) {
+    selectCardsToStand(player) {
         let kneelingCards = this.game.allCards.filter(
             (card) =>
-                card.location === 'play area' &&
+                ['faction', 'play area'].includes(card.location) &&
                 card.kneeled &&
                 card.controller === player &&
                 card.allowGameAction('stand')
@@ -43,15 +50,8 @@ class StandingPhase extends Phase {
         this.game.queueSimpleStep(() => {
             this.selectOptionalCards(cardsToStand, player);
         });
-        this.game.queueSimpleStep(() => {
-            let finalCards = flatten(cardsToStand.automatic.concat(cardsToStand.selected));
-            player.faction.kneeled = false;
-            let standActions = [];
-            for (let card of finalCards) {
-                standActions.push(GameActions.standCard({ card: card }));
-            }
-            this.game.resolveGameAction(GameActions.simultaneously(standActions));
-        });
+
+        return cardsToStand;
     }
 
     selectRestrictedCards(cardsToStand, player, restriction) {
@@ -66,6 +66,7 @@ class StandingPhase extends Phase {
             activePromptTitle: 'Select ' + restriction.max + ' cards to stand',
             gameAction: 'stand',
             cardCondition: (card) => restriction.cards.includes(card),
+            canCancel: this.game.manualMode.enabled,
             onSelect: (player, cards) => {
                 // The player must select as many cards as possible to stand
                 // because standing during the standing phase is mandatory.

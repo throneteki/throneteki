@@ -3,18 +3,18 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class JaqenHGhar extends DrawCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
-
-        this.registerEvents([{ 'onCardLeftPlay:forcedinterrupt': 'onCardLeftPlay' }]);
-    }
-
+    // Jaqen H'ghar (04077)
+    // Reaction: After Jaqen H'ghar enters play, place a Valar Morghulis token on up to 3 different
+    // unique characters. If Jaqen H'ghar leaves play, discard those tokens from play.
+    // Reaction: After you win a challenge in which Jaqen H'ghar is attacking alone, choose and kill
+    // a character with a Valar Morghulis token.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             target: {
+                mode: 'upTo',
                 numCards: 3,
                 activePromptTitle: 'Select up to 3 characters',
                 cardCondition: (card) =>
@@ -22,27 +22,36 @@ class JaqenHGhar extends DrawCard {
                     card.getType() === 'character' &&
                     card.isUnique()
             },
-            message: '{player} uses {source} to add Valar Morghulis tokens to {target}',
-            handler: (context) => {
-                this.selectedCards = context.target;
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
+            message: '{player} uses {source} to place Valar Morghulis tokens on {target}',
+            gameAction: GameActions.simultaneously([
+                GameActions.simultaneously((context) =>
+                    context.target.map((card) =>
+                        GameActions.placeToken({ card, token: Tokens.valarmorghulis })
+                    )
+                ),
+                GameActions.delayedEffect({
+                    duration: 'untilTriggered',
+                    when: {
+                        onCardLeftPlay: (event, context) => event.card === context.source
+                    },
+                    message:
+                        '{player} discards the Valar Morghulis tokens from {target} as {source} left play',
+                    gameAction: GameActions.simultaneously((context) =>
                         context.target.map((card) =>
-                            GameActions.placeToken({
-                                card,
-                                token: Tokens.valarmorghulis
-                            })
+                            GameActions.discardToken({ card, token: Tokens.valarmorghulis })
                         )
-                    ),
-                    context
-                );
-            }
+                    )
+                })
+            ])
         });
 
         this.reaction({
             when: {
-                afterChallenge: () =>
-                    this.game.isDuringChallenge({ winner: this.controller, attackingAlone: this })
+                afterChallenge: (event, context) =>
+                    context.game.isDuringChallenge({
+                        winner: context.player,
+                        attackingAlone: context.source
+                    })
             },
             target: {
                 cardCondition: (card) =>
@@ -51,32 +60,9 @@ class JaqenHGhar extends DrawCard {
                     card.hasToken(Tokens.valarmorghulis),
                 gameAction: 'kill'
             },
-            handler: (context) => {
-                this.game.killCharacter(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to kill {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to kill {target}',
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
-    }
-
-    onCardLeftPlay(event) {
-        if (event.card !== this) {
-            return;
-        }
-
-        if (!this.selectedCards) {
-            return;
-        }
-
-        for (let card of this.selectedCards) {
-            card.modifyToken(Tokens.valarmorghulis, -1);
-        }
-
-        this.selectedCards = null;
     }
 }
 

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Dissension extends DrawCard {
+    // Dissension (04059)
+    // Marshaling Action: Choose an Ally character, and discard it from play.
     setupCardAbilities() {
         this.action({
             title: 'Discard Ally from play',
@@ -11,15 +14,8 @@ class Dissension extends DrawCard {
                     card.getType() === 'character' &&
                     card.location === 'play area'
             },
-            handler: (context) => {
-                context.target.controller.discardCard(context.target);
-                this.game.addMessage(
-                    '{0} plays {1} to discard {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} plays {source} to discard {target}',
+            gameAction: GameActions.discardCard((context) => ({ card: context.target }))
         });
     }
 }

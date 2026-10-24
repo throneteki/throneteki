@@ -1,6 +1,11 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class ArborMarket extends DrawCard {
+    // Arbor Marketplace (11104)
+    // Challenges Action: Kneel Arbor Marketplace to choose a participating character. Until the end
+    // of the challenge, that character gets +1 STR.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.plotModifiers({
             gold: 1
@@ -9,25 +14,19 @@ class ArborMarket extends DrawCard {
         this.action({
             title: 'Give character +1 STR',
             cost: ability.costs.kneelSelf(),
-            condition: () => this.game.isDuringChallenge(),
+            condition: (context) => context.game.isDuringChallenge(),
             phase: 'challenge',
 
             target: {
                 cardCondition: (card) => card.location === 'play area' && card.isParticipating()
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} kneels {1} to give +1 STR to {2} until the end of the challenge',
-                    this.controller,
-                    this,
-                    context.target
-                );
-
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(1)
-                }));
-            }
+            message:
+                '{player} kneels {source} to give +1 STR to {target} until the end of the challenge',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                effect: ability.effects.modifyStrength(1)
+            }))
         });
     }
 }

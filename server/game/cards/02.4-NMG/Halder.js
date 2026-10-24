@@ -1,6 +1,11 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Halder extends DrawCard {
+    // Halder (02065)
+    // No attachments except Weapon.
+    // Action: Kneel a [thenightswatch] location or attachment to choose a [thenightswatch]
+    // character. Until the end of the phase, that character gets +1 STR.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel a location or attachment',
@@ -15,20 +20,13 @@ class Halder extends DrawCard {
                     card.getType() === 'character' &&
                     card.location === 'play area'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} and kneels {2} to give {3} +1 STR until the end of the phase',
-                    this.controller,
-                    this,
-                    context.costs.kneel,
-                    context.target
-                );
-
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(1)
-                }));
-            }
+            message:
+                '{player} uses {source} and kneels {costs.kneel} to give {target} +1 STR until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.modifyStrength(1)
+            }))
         });
     }
 }

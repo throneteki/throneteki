@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class GatesOfWinterfell extends DrawCard {
+    // Gates of Winterfell (01154)
+    // Challenges Action: Kneel Gates of Winterfell to reveal the top card of your deck. If it is a
+    // [stark] card, draw it.
     setupCardAbilities(ability) {
         this.action({
             title: 'Reveal top card of deck',

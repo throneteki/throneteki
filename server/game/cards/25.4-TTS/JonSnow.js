@@ -2,7 +2,11 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class JonSnow extends DrawCard {
-    setupCardAbilities() {
+    // Jon Snow (25071)
+    // No attachments except Direwolf.
+    // Interrupt: When claim is applied for a [military] challenge, either: standing characters, or
+    // kneeling characters must be chosen for claim during this challenge, if able.
+    setupCardAbilities(ability) {
         this.interrupt({
             when: {
                 onClaimApplied: (event) =>
@@ -14,29 +18,27 @@ class JonSnow extends DrawCard {
                 'Standing Characters': {
                     message:
                         '{player} chooses standing characters to be satisfied for claim, if able',
-                    gameAction: this.mustChooseClaimGameAction(false)
+                    gameAction: mustChooseAsClaim(ability, false)
                 },
                 'Kneeling Characters': {
                     message:
                         '{player} chooses kneeling characters to be satisfied for claim, if able',
-                    gameAction: this.mustChooseClaimGameAction(true)
+                    gameAction: mustChooseAsClaim(ability, true)
                 }
             }
         });
     }
+}
 
-    mustChooseClaimGameAction(kneeled) {
-        return GameActions.genericHandler(() => {
-            const affectedChars = this.game.allCards.filter(
-                (card) => card.getType() === 'character' && card.kneeled === kneeled
-            );
-            this.untilEndOfChallenge((ability) => ({
-                targetController: 'any',
-                match: affectedChars,
-                effect: ability.effects.mustChooseAsClaim()
-            }));
-        });
-    }
+function mustChooseAsClaim(ability, kneeled) {
+    return GameActions.lastingEffect((context) => ({
+        duration: 'untilEndOfChallenge',
+        targetController: 'any',
+        match: context.game.allCards.filter(
+            (card) => card.getType() === 'character' && card.kneeled === kneeled
+        ),
+        effect: ability.effects.mustChooseAsClaim()
+    }));
 }
 
 JonSnow.code = '25071';

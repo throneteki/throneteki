@@ -1,34 +1,27 @@
 import PlotCard from '../../plotcard.js';
-import ChallengeTypes from '../../ChallengeTypes.js';
+import GameActions from '../../GameActions/index.js';
 
 class ParleyAtStormsEnd extends PlotCard {
-    setupCardAbilities() {
+    // Parley at Storm's End (14046)
+    // When Revealed: Name a challenge type. Until you reveal a new plot card, challenges of that
+    // type cannot be initiated.
+    setupCardAbilities(ability) {
         this.whenRevealed({
-            handler: (context) => {
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: 'Select a challenge type',
-                        buttons: ChallengeTypes.asButtons({ method: 'setChallengeType' })
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.chooseChallengeType({
+                message: '{player} uses {source} to prevent {challengeType} challenges',
+                gameAction: (challengeType) =>
+                    GameActions.lastingEffect((context) => ({
+                        duration: 'custom',
+                        until: {
+                            onCardEntersPlay: (event) =>
+                                event.card.getType() === 'plot' &&
+                                event.card.controller === context.player
+                        },
+                        targetController: 'any',
+                        effect: ability.effects.cannotInitiateChallengeType(challengeType)
+                    }))
+            })
         });
-    }
-
-    setChallengeType(player, challengeType) {
-        this.game.addMessage('{0} uses {1} to prevent {2} challenges', player, this, challengeType);
-
-        this.lastingEffect((ability) => ({
-            until: {
-                onCardEntersPlay: (event) =>
-                    event.card.getType() === 'plot' && event.card.controller === player
-            },
-            targetController: 'any',
-            effect: ability.effects.cannotInitiateChallengeType(challengeType)
-        }));
-
-        return true;
     }
 }
 

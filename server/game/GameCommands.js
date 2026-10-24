@@ -84,6 +84,10 @@ class GameCommands {
         return this.game.toggleKeywordSetting(playerName, settingName, !!toggle);
     }
 
+    toggleManualMode(playerName) {
+        return this.game.toggleManualMode(playerName);
+    }
+
     toggleMuteSpectators(playerName) {
         return this.game.toggleMuteSpectators(playerName);
     }

@@ -2,12 +2,12 @@ import KeepOrMulliganPrompt from '../../../../server/game/gamesteps/setup/keepor
 
 describe('the KeepOrMulliganPrompt', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'raiseEvent']);
-        this.playerSpy = jasmine.createSpyObj('player', [
-            'drawCardsToHand',
-            'resetDrawDeck',
-            'shuffleDrawDeck'
-        ]);
+        this.gameSpy = { addMessage: vi.fn(), raiseEvent: vi.fn() };
+        this.playerSpy = {
+            drawCardsToHand: vi.fn(),
+            resetDrawDeck: vi.fn(),
+            shuffleDrawDeck: vi.fn()
+        };
         this.prompt = new KeepOrMulliganPrompt(this.gameSpy);
     });
 
@@ -26,7 +26,7 @@ describe('the KeepOrMulliganPrompt', function () {
             it('should raise the onPlayerKeepHandOrMerged event', function () {
                 expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith(
                     'onPlayerKeepHandOrMulligan',
-                    jasmine.objectContaining({ player: this.playerSpy, choice: 'keep' })
+                    expect.objectContaining({ player: this.playerSpy, choice: 'keep' })
                 );
             });
         });
@@ -45,7 +45,7 @@ describe('the KeepOrMulliganPrompt', function () {
             it('should raise the onPlayerKeepHandOrMerged event', function () {
                 expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith(
                     'onPlayerKeepHandOrMulligan',
-                    jasmine.objectContaining({ player: this.playerSpy, choice: 'mulligan' })
+                    expect.objectContaining({ player: this.playerSpy, choice: 'mulligan' })
                 );
             });
         });

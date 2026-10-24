@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class TheAgeOfHeroes extends PlotCard {
+    // The Age of Heroes (26119)
+    // Reaction: After the challenges phase begins, kneel your faction card to search your deck for
+    // a Legacy or Valyrian Steel attachment, reveal it, and add it to your hand (you may put it
+    // into play instead if it is a Tapestry attachment). Shuffle your deck.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

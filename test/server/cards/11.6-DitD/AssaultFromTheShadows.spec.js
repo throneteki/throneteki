@@ -1,118 +1,86 @@
 describe('Assault from the Shadows', function () {
-    integration(function () {
-        describe('when putting a non-Shadow card into shadows', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('stark', [
-                    'Assault from the Shadows',
-                    'A Noble Cause',
-                    'Hedge Knight'
-                ]);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.character = this.player1.findCardByName('Hedge Knight', 'hand');
-                this.completeSetup();
-
-                this.selectFirstPlayer(this.player1);
-
-                this.player1.clickMenu('Assault from the Shadows', 'Put card into shadows');
-                this.player1.clickCard(this.character);
-
-                // Attempt to bring the card out of shadows
-                this.player1.clickCard(this.character);
-            });
-
-            it('allows the card to be brought out of shadows', function () {
-                expect(this.character.location).toBe('play area');
-            });
-
-            it('costs the printed cost of the card', function () {
-                // 5 gold from plot - 1 gold from agenda - 2 gold printed cost
-                expect(this.player1Object.gold).toBe(2);
-            });
+    it('reduces only your plot gold by one and grants a non-shadow card its printed shadow cost', function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: { agenda: 'Assault from the Shadows', hand: ['Hedge Knight', 'The Roseroad'] },
+            player2: { hand: ['House Maester'] }
         });
+        expect(this.player1Object.activePlot.getIncome()).toBe(4);
+        expect(this.player2Object.activePlot.getIncome()).toBe(5);
+        expect(this.player1Object.gold).toBe(4);
+        this.player1.clickCard(this.assaultFromTheShadows);
+        expect(this.player1).toBeAbleToSelect(this.hedgeKnight);
+        expect(this.player1).toBeAbleToSelect(this.theRoseroad);
+        expect(this.player1).not.toBeAbleToSelect(this.houseMaester);
+        this.player1.clickCard(this.hedgeKnight);
+        expect(this.hedgeKnight.location).toBe('shadows');
+        expect(this.hedgeKnight.tokens.shadow).toBe(1);
+        expect(this.game.cardVisibility.isVisible(this.hedgeKnight, this.player2Object)).toBe(
+            false
+        );
+        this.player1.clickCard(this.hedgeKnight);
+        expect(this.hedgeKnight.location).toBe('play area');
+        expect(this.hedgeKnight.isShadow()).toBe(false);
+        expect(this.player1Object.gold).toBe(2);
+        expect(this.player1.actionUnavailableReason(this.assaultFromTheShadows)).toBe('cost');
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-        describe('when putting limited cards into shadows', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('stark', [
-                    'Assault from the Shadows',
-                    'A Noble Cause',
-                    'The Roseroad',
-                    'The Roseroad'
-                ]);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                [this.location1, this.location2] = this.player1.filterCardsByName(
-                    'The Roseroad',
-                    'hand'
-                );
-                this.completeSetup();
-
-                this.selectFirstPlayer(this.player1);
-
-                let agenda = this.player1.findCardByName('Assault from the Shadows');
-                this.player1.clickMenu(agenda, 'Put card into shadows');
-                this.player1.clickCard(this.location2);
-
-                // Marshal a limited card
-                this.player1.clickCard(this.location1);
-
-                // Attempt to bring out the shadowed limited card
-                this.player1.clickCard(this.location2);
-            });
-
-            it('allows the limited card to be brought out of shadows, bypassing the limit', function () {
-                expect(this.location2.location).toBe('play area');
-            });
+    it('lets a limited card come out of shadows after a limited card was marshaled', function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: { agenda: 'Assault from the Shadows', hand: ['The Roseroad', 'The Roseroad'] }
         });
+        const roads = this.player1Object.hand.filter((card) => card.name === 'The Roseroad');
+        this.player1.clickCard(this.assaultFromTheShadows);
+        this.player1.clickCard(roads[1]);
+        this.player1.clickCard(roads[0]);
+        this.player1.clickCard(roads[1]);
+        expect(roads[0].location).toBe('play area');
+        expect(roads[1].location).toBe('play area');
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-        describe("when playing The Hand's Judgment from shadows", function () {
-            // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/40072-ruling-assault-from-the-shadows/
-            // Assault from the Shadows grants Hand's Judgment and other X cost
-            // cards "Shadow (0)" because undefined values default to 0. This
-            // allows Hand's Judgment to trigger for 0 gold regardless of the
-            // cancelled event's cost.
-            beforeEach(function () {
-                const deck = this.buildDeck('stark', [
-                    'Assault from the Shadows',
-                    'A Noble Cause',
-                    'Varys (Core)',
-                    '"The Last of the Giants"',
-                    "The Hand's Judgment"
-                ]);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.judgment = this.player1.findCardByName("The Hand's Judgment", 'hand');
-                this.completeSetup();
-
-                this.selectFirstPlayer(this.player1);
-
-                this.player1.clickMenu('Assault from the Shadows', 'Put card into shadows');
-                this.player1.clickCard(this.judgment);
-                this.player1.clickPrompt('Done');
-
-                this.player2.clickCard('"The Last of the Giants"', 'hand');
-                this.player2.clickCard('Varys', 'hand');
-            });
-
-            it('allows the player to trigger Judgment', function () {
-                expect(this.player1).toAllowAbilityTrigger(this.judgment);
-            });
-
-            it('costs 0 gold to trigger Judgment', function () {
-                this.player1.triggerAbility(this.judgment);
-
-                // 5 gold from plot - 1 gold from agenda
-                expect(this.player1Object.gold).toBe(4);
-            });
+    it('preserves a printed shadow cost instead of replacing it with printed cost', function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: { agenda: 'Assault from the Shadows', hand: ['Ser Jorah Mormont (LMHR)'] }
         });
+        this.player1.clickCard(this.assaultFromTheShadows);
+        this.player1.clickCard(this.serJorahMormont);
+        expect(this.serJorahMormont.getShadowCost()).toBe(4);
+        this.player1.clickCard(this.serJorahMormont);
+        expect(this.serJorahMormont.location).toBe('play area');
+        expect(this.player1Object.gold).toBe(0);
+        expect(this.player1).isReadyToTakeAction();
+    });
+
+    it('grants Hands Judgment shadow zero and cancels a cost-two event for zero gold', function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: { agenda: 'Assault from the Shadows', hand: ["The Hand's Judgment"] },
+            player2: { hand: ['"The Last of the Giants"', 'Varys (Core)'] }
+        });
+        this.player1.clickCard(this.assaultFromTheShadows);
+        this.player1.clickCard(this.theHandsJudgment);
+        expect(this.theHandsJudgment.getShadowCost()).toBe(0);
+        this.player1.clickPrompt('Done');
+        this.player2.clickCard(this.theLastOfTheGiants);
+        this.player2.clickCard(this.varys);
+        expect(this.player1).toAllowAbilityTrigger("The Hand's Judgment");
+        this.player1.triggerAbility("The Hand's Judgment");
+        expect(this.varys.location).toBe('hand');
+        expect(this.theHandsJudgment.location).toBe('discard pile');
+        expect(this.player1Object.gold).toBe(4);
+        expect(this.player2).isReadyToTakeAction();
+    });
+
+    it('cannot put a hand card into shadows outside marshaling', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { agenda: 'Assault from the Shadows', hand: ['Hedge Knight'] }
+        });
+        expect(this.player1.actionUnavailableReason(this.assaultFromTheShadows)).toBe('phase');
+        expect(this.player1).isReadyToTakeAction();
     });
 });

@@ -1,11 +1,16 @@
 import DrawCard from '../../drawcard.js';
 
 class Ward extends DrawCard {
+    // Ward (17126)
+    // Unique character with printed cost 4 or lower only. Terminal.
+    // Take control of attached character.
+    // Attached character gains prized 1 (prized 2 instead if attached character's printed cost is 3
+    // or higher).
     setupCardAbilities(ability) {
         this.attachmentRestriction({ unique: true, printedCostOrLower: 4 });
 
         this.whileAttached({
-            effect: ability.effects.takeControl(() => this.controller)
+            effect: ability.effects.takeControl((context) => context.source.controller)
         });
 
         this.whileAttached({

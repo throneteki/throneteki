@@ -15,6 +15,10 @@ class DiscardAtRandom extends GameAction {
         );
     }
 
+    logsOwnMessage() {
+        return true;
+    }
+
     createEvent({
         amount = 1,
         player,

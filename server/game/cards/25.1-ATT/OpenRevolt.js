@@ -3,6 +3,10 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class OpenRevolt extends PlotCard {
+    // Open Revolt (25020)
+    // Interrupt: When the challenges phase ends, if you have not lost an [intrigue] challenge this
+    // phase, gain 2 power for your faction. (4 power instead if you have 3 or more Scheme plot
+    // cards removed from the game.)
     setupCardAbilities() {
         this.tracker = ChallengeTracker.forPhase(this.game);
 
@@ -14,9 +18,12 @@ class OpenRevolt extends PlotCard {
                 : 2;
         this.interrupt({
             when: {
-                onPhaseEnded: (event) =>
+                onPhaseEnded: (event, context) =>
                     event.phase === 'challenge' &&
-                    this.tracker.count({ challengeType: 'intrigue', loser: this.controller }) === 0
+                    context.source.tracker.count({
+                        challengeType: 'intrigue',
+                        loser: context.source.controller
+                    }) === 0
             },
             message: {
                 format: '{player} uses {source} to gain {amount} power',

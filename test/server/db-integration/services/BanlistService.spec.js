@@ -16,7 +16,7 @@ describe('Postgres BanlistService', function () {
         });
 
         expect(added).toEqual({
-            _id: jasmine.any(String),
+            _id: expect.any(String),
             ip: '203.0.113.10',
             user: 'Admin',
             added: new Date('2026-01-01T00:00:00Z')
@@ -42,8 +42,8 @@ describe('Postgres BanlistService', function () {
     it('should refuse a duplicate ip', async function () {
         await this.service.addBanlistEntry({ ip: '203.0.113.10', user: 'Admin' });
 
-        await expectAsync(
+        await expect(
             this.service.addBanlistEntry({ ip: '203.0.113.10', user: 'Admin' })
-        ).toBeRejectedWithError('Error occured adding banlist entry');
+        ).rejects.toThrow('Error occured adding banlist entry');
     });
 });

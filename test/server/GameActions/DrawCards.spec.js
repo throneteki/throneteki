@@ -2,12 +2,8 @@ import DrawCards from '../../../server/game/GameActions/DrawCards.js';
 
 describe('DrawCards', function () {
     beforeEach(function () {
-        this.playerSpy = jasmine.createSpyObj('player', [
-            'canDraw',
-            'getNumCardsToDraw',
-            'placeCardInPile'
-        ]);
-        this.playerSpy.getNumCardsToDraw.and.returnValue(1);
+        this.playerSpy = { canDraw: vi.fn(), getNumCardsToDraw: vi.fn(), placeCardInPile: vi.fn() };
+        this.playerSpy.getNumCardsToDraw.mockReturnValue(1);
         this.playerSpy.drawDeck = ['card1', 'card2'];
         this.playerSpy.drawnCards = 0;
         this.props = { player: this.playerSpy, amount: 2 };
@@ -16,7 +12,7 @@ describe('DrawCards', function () {
     describe('allow()', function () {
         describe('when the player can draw cards', function () {
             beforeEach(function () {
-                this.playerSpy.getNumCardsToDraw.and.returnValue(1);
+                this.playerSpy.getNumCardsToDraw.mockReturnValue(1);
             });
 
             it('returns true', function () {
@@ -26,7 +22,7 @@ describe('DrawCards', function () {
 
         describe('when the player cannot draw cards', function () {
             beforeEach(function () {
-                this.playerSpy.getNumCardsToDraw.and.returnValue(0);
+                this.playerSpy.getNumCardsToDraw.mockReturnValue(0);
             });
 
             it('returns false', function () {
@@ -81,7 +77,7 @@ describe('DrawCards', function () {
 
             it('attaches individual drawn event', function () {
                 expect(this.event.attachedEvents[0]).toEqual(
-                    jasmine.objectContaining({
+                    expect.objectContaining({
                         name: 'onCardDrawn',
                         card: 'card1'
                     })

@@ -1,53 +1,54 @@
 import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
+function buildAggregate(card) {
+    return {
+        type: card.getType(),
+        controller: card.controller
+    };
+}
+
 class WymanManderly extends DrawCard {
+    // Wyman Manderly (11021)
+    // Action: Sacrifice a character.
+    // Reaction: After 1 or more characters you control are sacrificed or killed, stand Wyman
+    // Manderly and draw 1 card. (Limit 3 times per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Sacrifice a character',
             target: {
                 type: 'select',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
+                    card.controller === context.player &&
                     card.getType() === 'character' &&
                     GameActions.sacrificeCard({ card }).allow()
             },
             message: '{player} uses {source} to sacrifice {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.sacrificeCard((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.sacrificeCard((context) => ({ card: context.target }))
         });
         this.reaction({
             when: {
                 onSacrificed: {
-                    aggregateBy: (event) => this.buildAggregate(event.cardStateWhenSacrificed),
-                    condition: (aggregate) =>
-                        aggregate.type === 'character' && aggregate.controller === this.controller
+                    aggregateBy: (event) => buildAggregate(event.cardStateWhenSacrificed),
+                    condition: (aggregate, events, context) =>
+                        aggregate.type === 'character' &&
+                        aggregate.controller === context.source.controller
                 },
                 onCharacterKilled: {
-                    aggregateBy: (event) => this.buildAggregate(event.cardStateWhenKilled),
-                    condition: (aggregate) =>
-                        aggregate.type === 'character' && aggregate.controller === this.controller
+                    aggregateBy: (event) => buildAggregate(event.cardStateWhenKilled),
+                    condition: (aggregate, events, context) =>
+                        aggregate.type === 'character' &&
+                        aggregate.controller === context.source.controller
                 }
             },
             limit: ability.limit.perRound(3),
-            message: '{player} uses {source} to {gameAction}',
+            message: '{player} uses {source} and {gameAction}',
             gameAction: GameActions.simultaneously([
                 GameActions.standCard({ card: this }),
                 GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
             ])
         });
-    }
-
-    buildAggregate(card) {
-        return {
-            type: card.getType(),
-            controller: card.controller
-        };
     }
 }
 

@@ -1,90 +1,31 @@
 import { Tokens } from '../../../../server/game/Constants/index.js';
 
 describe('Haldon Halfmaester', function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck1 = this.buildDeck('tyrell', [
-                'Marching Orders',
-                'Haldon Halfmaester',
-                'Aegon Targaryen (TSC)',
-                'Bribery (R)',
-                'Hedge Knight',
-                'Hedge Knight'
-            ]);
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck1);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.haldon = this.player1.findCardByName('Haldon Halfmaester');
-            this.aegon = this.player1.findCardByName('Aegon Targaryen');
-            [this.hedge1, this.hedge2] = this.player1.filterCardsByName('Hedge Knight', 'hand');
-            this.event = this.player1.findCardByName('Bribery');
-            this.player1.clickCard(this.hedge1);
-            this.player1.clickCard(this.haldon);
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player1);
-            this.completeMarshalPhase();
+    function setup(topCard) {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { inPlay: ['Haldon Halfmaester', 'Hedge Knight'], drawDeck: [topCard] }
         });
+        this.unopposedChallenge(this.player1, 'Power', this.haldonHalfmaester);
+        this.player1.triggerAbility('Haldon Halfmaester');
+    }
 
-        describe('after you win a challenge with Haldon Halfmaester', function () {
-            beforeEach(function () {
-                this.player1.clickPrompt('Power');
-                this.player1.clickCard(this.haldon);
-                this.player1.clickPrompt('Done');
-                this.skipActionWindow();
-                this.player2.clickPrompt('Done');
-            });
+    it('places 1 gold on a card with the same cardtype as the revealed card', function () {
+        setup.call(this, 'Castle Guard');
+        expect(this.player1).toHavePrompt('Select card to gain 1 gold');
+        this.player1.clickCard(this.hedgeKnight);
+        expect(this.hedgeKnight.tokens[Tokens.gold]).toBe(1);
+    });
 
-            describe('and the top card is a character', function () {
-                beforeEach(function () {
-                    this.player1.dragCard(this.hedge2, 'draw deck');
-                    expect(this.hedge2.location).toBe('draw deck');
-                    this.skipActionWindow();
-                });
+    it('draws the revealed card if it is an event', function () {
+        setup.call(this, 'Bribery (R)');
+        expect(this.bribery.location).toBe('hand');
+    });
 
-                it('it should place 1 gold on a character', function () {
-                    expect(this.player1).toHavePrompt('Any reactions?');
-                    this.player1.clickCard(this.haldon);
-                    expect(this.player1).toHavePrompt('Select card to gain 1 gold');
-                    expect(this.hedge1.hasToken(Tokens.gold)).toBe(false);
-                    this.player1.clickCard(this.hedge1);
-                    expect(this.hedge1.hasToken(Tokens.gold)).toBe(true);
-                });
-            });
-
-            describe('and the top card is an event', function () {
-                beforeEach(function () {
-                    this.player1.dragCard(this.event, 'draw deck');
-                    expect(this.event.location).toBe('draw deck');
-                    this.skipActionWindow();
-                });
-
-                it('it should draw the event', function () {
-                    expect(this.player1).toHavePrompt('Any reactions?');
-                    this.player1.clickCard(this.haldon);
-                    expect(this.event.location).toBe('hand');
-                });
-            });
-
-            describe('and the top card is a Aegon Targaryen', function () {
-                beforeEach(function () {
-                    this.player1.dragCard(this.aegon, 'draw deck');
-                    expect(this.aegon.location).toBe('draw deck');
-                    this.skipActionWindow();
-                });
-
-                it('it should place 1 gold on a character', function () {
-                    expect(this.player1).toHavePrompt('Any reactions?');
-                    this.player1.clickCard(this.haldon);
-                    expect(this.player1).toHavePrompt('Select card to gain 1 gold');
-                    expect(this.hedge1.hasToken(Tokens.gold)).toBe(false);
-                    this.player1.clickCard(this.hedge1);
-                    expect(this.hedge1.hasToken(Tokens.gold)).toBe(true);
-                    expect(this.aegon.location).toBe('play area');
-                });
-            });
-        });
+    it('puts the revealed card into play if it is Aegon Targaryen', function () {
+        setup.call(this, 'Aegon Targaryen (TSC)');
+        this.player1.clickCard(this.hedgeKnight);
+        expect(this.hedgeKnight.tokens[Tokens.gold]).toBe(1);
+        expect(this.aegonTargaryen.location).toBe('play area');
     });
 });

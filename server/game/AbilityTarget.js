@@ -1,5 +1,6 @@
 import AbilityTargetMessages from './AbilityTargetMessages.js';
 import AbilityChoiceSelection from './AbilityChoiceSelection.js';
+import CardMatcher from './CardMatcher.js';
 import CardSelector from './CardSelector.js';
 import Messages from './Messages/index.js';
 import { flatMap } from '../Array.js';
@@ -35,6 +36,23 @@ class AbilityTarget {
             : [];
     }
 
+    legalCards(context) {
+        const players = this.getChoosingPlayers(context);
+        if (players.some((player) => !player)) {
+            return null;
+        }
+
+        const selector = CardSelector.for({ context, ...this.properties });
+        const choosingPlayer = context.choosingPlayer;
+        const byPlayer = new Map();
+        for (const player of players) {
+            context.choosingPlayer = player;
+            byPlayer.set(player, selector.getEligibleTargets(context));
+        }
+        context.choosingPlayer = choosingPlayer;
+        return byPlayer;
+    }
+
     canResolve(context) {
         const selector = CardSelector.for({ context, ...this.properties });
         const players = this.getChoosingPlayers(context);
@@ -51,13 +69,13 @@ class AbilityTarget {
 
     buildPlayerSelection(context) {
         // Creating the selector once the target is being selected for effects such as keywords with a changing target amount
-        this.selector = CardSelector.for({ context, ...this.properties });
-        let eligibleCards = this.selector.getEligibleTargets(context);
-        let requiresValidation = this.selector.requiresTargetValidation(context);
+        const selector = this.createSelector(context);
+        let eligibleCards = selector.getEligibleTargets(context);
+        let requiresValidation = selector.requiresTargetValidation(context);
         let subResults = this.subTargets.map((subTarget) =>
             subTarget.buildPlayerSelection(context)
         );
-        return new AbilityChoiceSelection({
+        const selection = new AbilityChoiceSelection({
             choosingPlayer: context.choosingPlayer,
             eligibleChoices: eligibleCards,
             requiresValidation: requiresValidation,
@@ -66,6 +84,8 @@ class AbilityTarget {
 
             name: this.name
         });
+        selection.selector = selector;
+        return selection;
     }
 
     resolve(context) {
@@ -115,6 +135,32 @@ class AbilityTarget {
         });
     }
 
+    createSelector(context) {
+        const byPlayer = context.legalTargetsAtInitiation?.get(this);
+        if (!byPlayer) {
+            return CardSelector.for({ context, ...this.properties });
+        }
+
+        const legal = new Set(byPlayer.get(context.choosingPlayer) || []);
+        const matches = CardMatcher.createMatcher(this.properties.cardCondition || (() => true));
+        return CardSelector.for({
+            context,
+            ...this.properties,
+            cardCondition: (card, cardContext) => legal.has(card) && matches(card, cardContext)
+        });
+    }
+
+    hasSingleChooser() {
+        return (
+            typeof this.choosingPlayer !== 'function' &&
+            !['each', 'eachOpponent'].includes(this.choosingPlayer)
+        );
+    }
+
+    isAnyNumber() {
+        return this.properties.mode === 'unlimited' || this.properties.numCards === 0;
+    }
+
     getChoosingPlayers(context) {
         if (typeof this.choosingPlayer === 'function') {
             return context.game
@@ -140,10 +186,21 @@ class AbilityTarget {
     resolveAction(result, context) {
         context.choosingPlayer = result.choosingPlayer;
         context.currentTargetSelection = result;
+        const selector = result.selector || this.createSelector(context);
 
         let unableToSelect =
-            !this.selector.hasEnoughTargets(context) ||
-            (this.selector.optional && result.hasNoChoices());
+            !selector.hasEnoughTargets(context) || (selector.optional && result.hasNoChoices());
+        const snapshotted = context.legalTargetsAtInitiation?.has(this);
+        if (
+            snapshotted &&
+            !this.ifAble &&
+            !selector.optional &&
+            !selector.hasEnoughTargets(context)
+        ) {
+            result.unsuccessful = true;
+            result.resolve([]);
+            return;
+        }
         if (this.ifAble && unableToSelect) {
             this.messages.outputUnable(context.game, context);
             result.reject();
@@ -157,9 +214,13 @@ class AbilityTarget {
         let promptProperties = {
             context: context,
             source: context.source,
-            selector: this.selector,
+            selector,
             onSelect: (player, card) => {
                 result.resolve(card);
+                // A later target's condition can depend on this choice, such as "another character".
+                if (context.targets && this.hasSingleChooser()) {
+                    context.targets[this.name] = card;
+                }
                 if (!card || card.length === 0) {
                     this.messages.outputNoneSelected(context.game, context);
                 } else {
@@ -168,7 +229,12 @@ class AbilityTarget {
                 return true;
             },
             onCancel: () => {
-                if (this.selector.rejectAllowed(context)) {
+                if (this.isAnyNumber()) {
+                    result.unsuccessful = true;
+                    result.resolve([]);
+                    return true;
+                }
+                if (selector.rejectAllowed(context)) {
                     result.reject();
                 } else {
                     result.cancel();

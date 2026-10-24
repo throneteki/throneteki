@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class StormlandsFiefdom extends DrawCard {
+    // Stormlands Fiefdom (11009)
+    // Action: Kneel Stormlands Fiefdom to move 1 power from a character or location to its owner's
+    // faction card.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.action({
             title: 'Move a power',
@@ -11,16 +16,13 @@ class StormlandsFiefdom extends DrawCard {
                     (card.getType() === 'character' || card.getType() === 'location') &&
                     card.getPower() > 0
             },
-            handler: (context) => {
-                this.game.movePower(context.target, context.target.owner.faction, 1);
-
-                this.game.addMessage(
-                    "{0} kneels {1} to move 1 power from {2} to its owner's faction card",
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                "{player} kneels {source} to move 1 power from {target} to its owner's faction card",
+            gameAction: GameActions.movePower((context) => ({
+                from: context.target,
+                to: context.target.owner.faction,
+                amount: 1
+            }))
         });
 
         this.plotModifiers({

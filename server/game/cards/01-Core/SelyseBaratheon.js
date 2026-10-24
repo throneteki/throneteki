@@ -1,6 +1,10 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SelyseBaratheon extends DrawCard {
+    // Selyse Baratheon (01049)
+    // Challenges Action: Pay 1 gold to choose a [baratheon] character. Until the end of the phase,
+    // that character gains an [intrigue] icon.
     setupCardAbilities(ability) {
         this.action({
             title: 'Pay 1 gold to give an intrigue icon to a character',
@@ -12,19 +16,12 @@ class SelyseBaratheon extends DrawCard {
                     card.isFaction('baratheon') &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to give {2} an {3} icon',
-                    context.player,
-                    this,
-                    context.target,
-                    'intrigue'
-                );
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.addIcon('intrigue')
-                }));
-            }
+            message: '{player} uses {source} to give {target} an intrigue icon',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.addIcon('intrigue')
+            }))
         });
     }
 }

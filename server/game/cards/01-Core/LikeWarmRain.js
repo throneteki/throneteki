@@ -1,13 +1,17 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LikeWarmRain extends DrawCard {
+    // Like Warm Rain (01158)
+    // Reaction: After you lose an [intrigue] challenge as the defending player, kneel a Direwolf
+    // character to choose and kill an attacking character. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    this.controller === event.challenge.loser &&
+                afterChallenge: (event, context) =>
+                    context.source.controller === event.challenge.loser &&
                     event.challenge.challengeType === 'intrigue' &&
-                    event.challenge.defendingPlayer === this.controller
+                    event.challenge.defendingPlayer === context.source.controller
             },
             max: ability.limit.perChallenge(1),
             cost: ability.costs.kneel(
@@ -17,16 +21,8 @@ class LikeWarmRain extends DrawCard {
                 cardCondition: (card) => card.location === 'play area' && card.isAttacking(),
                 gameAction: 'kill'
             },
-            handler: (context) => {
-                context.target.owner.killCharacter(context.target);
-                this.game.addMessage(
-                    '{0} plays {1} and kneels {2} to kill {3}',
-                    context.player,
-                    context.source,
-                    context.costs.kneel,
-                    context.target
-                );
-            }
+            message: '{player} plays {source} and kneels {costs.kneel} to kill {target}',
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 }

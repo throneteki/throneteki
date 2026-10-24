@@ -13,6 +13,21 @@ function hasTrait(card, trait) {
     return card.traits.some((t) => t.toLowerCase() === trait.toLowerCase());
 }
 
+function differentTitles(cardQuantities) {
+    return new Set(cardQuantities.map((cardQuantity) => cardQuantity.card.name)).size;
+}
+
+function copiesByTitle(cardQuantities) {
+    const counts = new Map();
+    for (const cardQuantity of cardQuantities) {
+        counts.set(
+            cardQuantity.card.name,
+            (counts.get(cardQuantity.card.name) || 0) + cardQuantity.count
+        );
+    }
+    return [...counts.values()];
+}
+
 function rulesForBanner(faction, factionName) {
     return {
         mayInclude: (card) => card.faction === faction && !card.loyal && card.type !== 'plot',
@@ -157,14 +172,14 @@ const agendaRules = {
         rules: [
             {
                 message: 'Must contain 7 or more different Kingsguard characters',
-                condition: (deck) => {
-                    const kingsguardChars = deck.drawCards.filter(
-                        (cardQuantity) =>
-                            cardQuantity.card.type === 'character' &&
-                            hasTrait(cardQuantity.card, 'Kingsguard')
-                    );
-                    return kingsguardChars.length >= 7;
-                }
+                condition: (deck) =>
+                    differentTitles(
+                        deck.drawCards.filter(
+                            (cardQuantity) =>
+                                cardQuantity.card.type === 'character' &&
+                                hasTrait(cardQuantity.card, 'Kingsguard')
+                        )
+                    ) >= 7
             }
         ]
     },
@@ -257,13 +272,12 @@ const agendaRules = {
         rules: [
             {
                 message: 'Cannot include more than 1 copy of each attachment',
-                condition: (deck) => {
-                    const allCards = deck.drawCards.concat(deck.plotCards);
-                    const attachments = allCards.filter(
-                        (cardQuantity) => cardQuantity.card.type === 'attachment'
-                    );
-                    return attachments.every((attachment) => attachment.count <= 1);
-                }
+                condition: (deck) =>
+                    copiesByTitle(
+                        deck.drawCards.filter(
+                            (cardQuantity) => cardQuantity.card.type === 'attachment'
+                        )
+                    ).every((count) => count <= 1)
             }
         ]
     },
@@ -314,14 +328,19 @@ const agendaRules = {
             {
                 message: 'Cannot contain more than 3 different cards from any faction',
                 condition: (deck) => {
-                    const factionCounts = new Map();
-                    for (const cardQuantity of deck.drawCards) {
-                        if (cardQuantity.card.faction !== 'neutral') {
-                            let count = factionCounts.get(cardQuantity.card.faction) || 0;
-                            factionCounts.set(cardQuantity.card.faction, count + 1);
-                        }
-                    }
-                    return Array.from(factionCounts.values()).every((count) => count <= 3);
+                    const factions = new Set(
+                        deck.drawCards
+                            .map((cardQuantity) => cardQuantity.card.faction)
+                            .filter((faction) => faction !== 'neutral')
+                    );
+                    return [...factions].every(
+                        (faction) =>
+                            differentTitles(
+                                deck.drawCards.filter(
+                                    (cardQuantity) => cardQuantity.card.faction === faction
+                                )
+                            ) <= 3
+                    );
                 }
             }
         ]
@@ -334,8 +353,12 @@ const agendaRules = {
             {
                 message: 'Must contain 7 or more different Small Council characters',
                 condition: (deck) =>
-                    deck.countDrawCards(
-                        (card) => card.type === 'character' && hasTrait(card, 'Small Council')
+                    differentTitles(
+                        deck.drawCards.filter(
+                            (cardQuantity) =>
+                                cardQuantity.card.type === 'character' &&
+                                hasTrait(cardQuantity.card, 'Small Council')
+                        )
                     ) >= 7
             }
         ]
@@ -346,14 +369,14 @@ const agendaRules = {
         rules: [
             {
                 message: 'Cannot include more than 1 copy of each non-limited location',
-                condition: (deck) => {
-                    const locations = deck.drawCards.filter(
-                        (cardQuantity) =>
-                            cardQuantity.card.type === 'location' &&
-                            !hasKeyword(cardQuantity.card, /Limited/)
-                    );
-                    return locations.every((location) => location.count <= 1);
-                }
+                condition: (deck) =>
+                    copiesByTitle(
+                        deck.drawCards.filter(
+                            (cardQuantity) =>
+                                cardQuantity.card.type === 'location' &&
+                                !hasKeyword(cardQuantity.card, /Limited/)
+                        )
+                    ).every((count) => count <= 1)
             }
         ]
     },

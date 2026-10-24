@@ -1,5 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import classNames from 'classnames';
+import { useSelector } from 'react-redux';
 import { useDraggable } from '@dnd-kit/core';
 import CardMenu from './CardMenu';
 import CardCounters from './CardCounters';
@@ -7,12 +8,17 @@ import SquishableCardPanel from './SquishableCardPanel';
 
 import { ItemTypes } from '../../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationCircle, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { useUniqueId } from '@dnd-kit/utilities';
 import CardHoverable from '../Images/CardHoverable';
 import CardImage from '../Images/CardImage';
 import { cardClass, standardiseCardSize } from '../../util';
 import { Tooltip } from '@heroui/react';
+import { getActionRequirementReason } from './actionRequirementReasons';
+
+// Opening one card menu closes any other that is open.
+const cardMenus = new EventTarget();
+let nextMenuId = 0;
 
 const Card = ({
     card,
@@ -31,6 +37,35 @@ const Card = ({
     cardStackIndex = 200
 }) => {
     const [showMenu, setShowMenu] = useState(false);
+    const menuIdRef = useRef(null);
+    const cardRef = useRef(null);
+    if (menuIdRef.current === null) {
+        menuIdRef.current = ++nextMenuId;
+    }
+
+    useEffect(() => {
+        if (!showMenu) {
+            return;
+        }
+
+        const onOtherMenuOpened = (event) => {
+            if (event.detail !== menuIdRef.current) {
+                setShowMenu(false);
+            }
+        };
+        const onDocumentMouseDown = (event) => {
+            if (!cardRef.current?.contains(event.target)) {
+                setShowMenu(false);
+            }
+        };
+
+        cardMenus.addEventListener('open', onOtherMenuOpened);
+        document.addEventListener('mousedown', onDocumentMouseDown);
+        return () => {
+            cardMenus.removeEventListener('open', onOtherMenuOpened);
+            document.removeEventListener('mousedown', onDocumentMouseDown);
+        };
+    }, [showMenu]);
 
     const key = `card-${card.uuid}-${source}`;
 
@@ -56,8 +91,10 @@ const Card = ({
 
     const standardisedSize = standardiseCardSize(size);
 
+    const manualMode = useSelector((state) => state.lobby.currentGame?.manualMode);
     const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
         id: useUniqueId(key),
+        disabled: !manualMode,
         data: { type: ItemTypes.CARD, card, orientation, source, key: key }
     });
 
@@ -97,6 +134,9 @@ const Card = ({
             event.stopPropagation();
 
             if (shouldShowMenu()) {
+                if (!showMenu) {
+                    cardMenus.dispatchEvent(new CustomEvent('open', { detail: menuIdRef.current }));
+                }
                 setShowMenu(!showMenu);
                 return;
             }
@@ -270,6 +310,9 @@ const Card = ({
         if (card.selectable) {
             return 'shadow-[0_0_8px_4px] shadow-slate-300';
         }
+        if (card.canPlay) {
+            return 'shadow-[0_0_8px_3px] shadow-green-500';
+        }
         if (card.inChallenge) {
             return 'shadow-[0_0_1px_2px] shadow-red-500';
         }
@@ -308,10 +351,19 @@ const Card = ({
             ),
             getHighlightClass(),
             {
-                'grayscale brightness-75': card.unselectable
+                'grayscale brightness-75': card.unselectable,
+                'brightness-75 saturate-75':
+                    card.canPlay === false && !card.selected && !card.selectable
             }
         );
         const isFaceup = forceFaceup || (!card.facedown && card.code);
+        const availabilityMessages = [
+            ...(card.unavailableActions || []),
+            ...(card.unavailableTriggers || []).map((entry) => ({
+                ...entry,
+                title: `Last response: ${entry.title} (round ${entry.round}, ${entry.phase})`
+            }))
+        ];
         const imageCode = isFaceup
             ? card.code
             : source === 'shadows'
@@ -348,7 +400,7 @@ const Card = ({
             className
         );
         return (
-            <div className={wrapperClass}>
+            <div className={wrapperClass} ref={cardRef}>
                 {disableHover ? (
                     image
                 ) : (
@@ -361,6 +413,37 @@ const Card = ({
                     </CardHoverable>
                 )}
                 {showMenu && <CardMenu menu={getMenu()} onMenuItemClick={handleMenuItemClick} />}
+                {isFaceup && availabilityMessages.length > 0 && (
+                    <div className='absolute bottom-1 right-1 z-[200]'>
+                        <Tooltip
+                            content={
+                                <div className='max-w-64 space-y-1 text-xs'>
+                                    {availabilityMessages.map((action, index) => (
+                                        <div key={index}>
+                                            <span className='font-semibold'>{action.title}: </span>
+                                            {getActionRequirementReason(action.reason)}
+                                        </div>
+                                    ))}
+                                </div>
+                            }
+                            showArrow={true}
+                        >
+                            <button
+                                type='button'
+                                className='rounded-full bg-content1 px-1 text-foreground shadow'
+                                aria-label={availabilityMessages
+                                    .map(
+                                        (action) =>
+                                            `${action.title}: ${getActionRequirementReason(action.reason)}`
+                                    )
+                                    .join(' ')}
+                                onClick={(event) => event.stopPropagation()}
+                            >
+                                <FontAwesomeIcon icon={faInfoCircle} />
+                            </button>
+                        </Tooltip>
+                    </div>
+                )}
                 {getCardOrder()}
             </div>
         );

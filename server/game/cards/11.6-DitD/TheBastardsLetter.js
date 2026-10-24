@@ -1,12 +1,18 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheBastardsLetter extends DrawCard {
+    // The Bastard's Letter (11102)
+    // Shadow (3).
+    // Reaction: After an opponent initiates a [military] challenge against you, stand any number of
+    // characters you control with a [military] icon. If you win the challenge, kill each attacking
+    // character.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: (event) =>
+                onChallengeInitiated: (event, context) =>
                     event.challenge.isMatch({
-                        initiatedAgainstPlayer: this.controller,
+                        initiatedAgainstPlayer: context.player,
                         initiatedChallengeType: 'military'
                     })
             },
@@ -14,35 +20,33 @@ class TheBastardsLetter extends DrawCard {
                 type: 'select',
                 mode: 'unlimited',
                 optional: true,
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.controller &&
-                    card.hasIcon('military') &&
-                    card.kneeled,
+                    card.controller === context.player &&
+                    card.hasIcon('military'),
                 gameAction: 'stand'
             },
-            handler: (context) => {
-                let message =
-                    context.target.length === 0 ? '{0} plays {1}' : '{0} plays {1} to stand {2}';
-                this.game.addMessage(message, context.player, this, context.target);
-
-                for (let card of context.target) {
-                    context.player.standCard(card);
-                }
-
-                this.game.once('afterChallenge', (event) => this.killAttackingCharacters(event));
-            }
+            message: '{player} plays {source} to stand {target}',
+            gameAction: GameActions.simultaneously([
+                GameActions.simultaneously((context) =>
+                    context.target.map((card) => GameActions.standCard({ card }))
+                ),
+                GameActions.delayedEffect({
+                    duration: 'untilEndOfChallenge',
+                    when: {
+                        afterChallenge: (event, context) =>
+                            event.challenge.winner === context.player
+                    },
+                    message: {
+                        format: '{player} uses {source} to kill {attackers}',
+                        args: { attackers: (context) => context.event.challenge.attackers }
+                    },
+                    gameAction: GameActions.simultaneously((context) =>
+                        context.event.challenge.attackers.map((card) => GameActions.kill({ card }))
+                    )
+                })
+            ])
         });
-    }
-
-    killAttackingCharacters(event) {
-        if (event.challenge.winner !== this.controller) {
-            return;
-        }
-
-        let attackers = event.challenge.attackers;
-        this.game.addMessage('{0} uses {1} to kill {2}', this.controller, this, attackers);
-        this.game.killCharacters(attackers);
     }
 }
 

@@ -17,7 +17,7 @@ class ChooseTitlePrompt extends BaseStep {
             return false;
         }
 
-        this.titlePool.announceTitles(this.selections);
+        this.titlePool.placeSelections(this.selections);
     }
 
     promptForTitle(player) {
@@ -40,7 +40,6 @@ class ChooseTitlePrompt extends BaseStep {
             return false;
         }
 
-        this.titlePool.chooseFromPool(player, title);
         this.remainingTitles = this.remainingTitles.filter((t) => t !== title);
         this.selections.push({ player: player, title: title });
         this.game.addMessage('{0} has selected their title', player);

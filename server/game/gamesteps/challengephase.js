@@ -126,6 +126,7 @@ class ChallengePhase extends Phase {
         this.game.currentChallenge = null;
         this.game.currentChallengeStep = null;
         this.game.raiseEvent('onChallengeFinished', { challenge: challenge });
+        this.game.queueSimpleStep(() => this.game.finishEndingDuration('untilEndOfChallenge'));
     }
 
     completeChallenges(player) {

@@ -1,30 +1,29 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheSwordInTheDarkness extends DrawCard {
-    setupCardAbilities() {
+    // The Sword in the Darkness (01140)
+    // Play only during a challenge in which you control a participating [thenightswatch] character.
+    // Reaction: After you win a challenge by 5 or more STR as the defending player, the losing
+    // opponent cannot initiate challenges against you this round.
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    event.challenge.defendingPlayer === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    event.challenge.defendingPlayer === context.source.controller &&
                     event.challenge.strengthDifference >= 5 &&
-                    this.hasNightsWatchParticipant()
+                    context.source.hasNightsWatchParticipant()
             },
-            handler: (context) => {
-                let opponent = context.event.challenge.loser;
-
-                this.game.addMessage(
-                    '{0} plays {1} to prevent {2} from initiating any more challenges this round',
-                    this.controller,
-                    this,
-                    opponent
-                );
-
-                this.untilEndOfRound((ability) => ({
-                    targetController: opponent,
-                    effect: ability.effects.cannotInitiateChallengeAgainst(this.controller)
-                }));
-            }
+            message: {
+                format: '{player} plays {source} to prevent {opponent} from initiating any more challenges this round',
+                args: { opponent: (context) => context.event.challenge.loser }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfRound',
+                targetController: context.event.challenge.loser,
+                effect: ability.effects.cannotInitiateChallengeAgainst(context.player)
+            }))
         });
     }
 

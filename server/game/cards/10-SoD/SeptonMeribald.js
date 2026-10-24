@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SeptonMeribald extends DrawCard {
+    // Septon Meribald (10040)
+    // Action: Kneel Septon Meribald to choose and stand up to 3 characters with printed STR 1 or
+    // lower. (Limit once per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand up to 3 characters',
@@ -16,11 +20,9 @@ class SeptonMeribald extends DrawCard {
                 gameAction: 'stand'
             },
             message: '{player} kneels {source} to stand {target}',
-            handler: (context) => {
-                for (let card of context.target) {
-                    card.controller.standCard(card);
-                }
-            },
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) => GameActions.standCard({ card }))
+            ),
             limit: ability.limit.perRound(1)
         });
     }

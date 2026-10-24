@@ -1,6 +1,10 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class DragonstoneProselyte extends DrawCard {
+    // Dragonstone Proselyte (27021)
+    // Challenges Action: Kneel Dragonstone Proselyte to choose a character with STR 3 or lower.
+    // Until the end of the round, that character cannot stand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Prevent character from standing',
@@ -14,12 +18,11 @@ class DragonstoneProselyte extends DrawCard {
             },
             message:
                 '{player} kneels {costs.kneel} to prevent {target} from standing until the end of the round',
-            handler: (context) => {
-                this.untilEndOfRound((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.cannotBeStood()
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfRound',
+                match: context.target,
+                effect: ability.effects.cannotBeStood()
+            }))
         });
     }
 }

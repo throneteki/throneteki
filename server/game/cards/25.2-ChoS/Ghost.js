@@ -2,12 +2,17 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Ghost extends DrawCard {
+    // Ghost (25031)
+    // No attachments.
+    // Reaction: After you win a challenge in which you control an attacking Direwolf character,
+    // draw 1 card.
+    // Interrupt: When Jon Snow would be killed, sacrifice Ghost to save him.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.controller.anyCardsInPlay(
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
+                    context.player.anyCardsInPlay(
                         (card) =>
                             card.isAttacking() &&
                             card.hasTrait('Direwolf') &&
@@ -29,9 +34,7 @@ class Ghost extends DrawCard {
                 format: '{player} sacrifices {costs.sacrifice} to save {card}',
                 args: { card: (context) => context.event.card }
             },
-            handler: (context) => {
-                context.event.saveCard();
-            }
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 }

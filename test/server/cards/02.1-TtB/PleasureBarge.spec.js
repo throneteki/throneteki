@@ -1,65 +1,43 @@
 describe('Pleasure Barge', function () {
-    integration(function () {
-        describe('gold modifier', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('Tyrell', ['A Noble Cause', 'Pleasure Barge']);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.player1.clickCard('Pleasure Barge', 'hand');
-
-                this.completeSetup();
-
-                this.selectFirstPlayer(this.player1);
-            });
-
-            it('reduces gold properly', function () {
-                // 5 gold from plot - 1 gold from Pleasure Barge
-                expect(this.player1Object.gold).toBe(4);
-            });
+    it('reduces your income by 1', function () {
+        this.setupTest({
+            phase: 'plot',
+            player1: { plotDeck: ['A Noble Cause'], inPlay: ['Pleasure Barge'] }
         });
+        this.player1.selectPlot('A Noble Cause');
+        this.player2.selectPlot('Filler Plot');
+        this.selectFirstPlayer(this.player1);
+        expect(this.player1Object.gold).toBe(4);
+    });
 
-        describe('immunity vs card effects', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('Tyrell', [
-                    'A Noble Cause',
-                    'Political Disaster',
-                    'Pleasure Barge',
-                    'The Roseroad',
-                    'Highgarden (Core)'
-                ]);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.pleasureBarge = this.player2.findCardByName('Pleasure Barge', 'hand');
-
-                this.player2.clickCard(this.pleasureBarge);
-                this.player2.clickCard('The Roseroad', 'hand');
-                this.player2.clickCard('Highgarden', 'hand');
-
-                this.completeSetup();
-
-                this.player1.selectPlot('Political Disaster');
-                this.player2.selectPlot('A Noble Cause');
-
-                this.selectFirstPlayer(this.player2);
-
-                // Select locations for Political Disaster
-                this.player2.clickCard('The Roseroad', 'play area');
-                this.player2.clickCard('Highgarden', 'play area');
-                this.player2.clickPrompt('Done');
-            });
-
-            it('is not affected by card effects', function () {
-                // Pleasure Barge is immune to all card effects, which means that
-                // even though it wasn't chosen to be kept for Political Disaster,
-                // it should not be discarded from play.
-                expect(this.pleasureBarge.location).toBe('play area');
-            });
+    it('draws 3 cards after you marshal it if you have not drawn this phase', function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                hand: ['Pleasure Barge'],
+                drawDeck: ['Hedge Knight', 'Castle Guard', 'The Roseroad'],
+                gold: 10
+            }
         });
+        this.player1.clickCard(this.pleasureBarge);
+        this.player1.triggerAbility('Pleasure Barge');
+        expect(this.hedgeKnight.location).toBe('hand');
+        expect(this.castleGuard.location).toBe('hand');
+        expect(this.theRoseroad.location).toBe('hand');
+    });
+
+    it('is immune to card effects', function () {
+        this.setupTest({
+            phase: 'plot',
+            player1: { plotDeck: ['Political Disaster'] },
+            player2: { inPlay: ['Pleasure Barge', 'The Roseroad', 'Highgarden (Core)'] }
+        });
+        this.player1.selectPlot('Political Disaster');
+        this.player2.selectPlot('Filler Plot');
+        this.selectFirstPlayer(this.player2);
+        this.player2.clickCard(this.theRoseroad);
+        this.player2.clickCard(this.highgarden);
+        this.player2.clickPrompt('Done');
+        expect(this.pleasureBarge.location).toBe('play area');
     });
 });

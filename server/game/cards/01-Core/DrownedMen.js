@@ -1,10 +1,15 @@
 import DrawCard from '../../drawcard.js';
 
 class DrownedMen extends DrawCard {
+    // Drowned Men (01073)
+    // No attachments.
+    // Drowned Men gets +1 STR for each Warship location you control.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: (card) => card === this,
-            effect: ability.effects.dynamicStrength(() => this.calculateStrength())
+            match: (card, context) => card === context.source,
+            effect: ability.effects.dynamicStrength((card, context) =>
+                context.source.calculateStrength()
+            )
         });
     }
 

@@ -2,11 +2,15 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Benjicot extends DrawCard {
+    // Benjicot (23027)
+    // Forced Reaction: After Benjicot stands, reveal the bottom card of each player's deck. Add
+    // each revealed card that shares a Trait with Benjicot to its owner's hand, and discard the
+    // others.
     setupCardAbilities() {
         this.forcedReaction({
             when: {
                 onCardStood: (event, context) =>
-                    event.card === this &&
+                    event.card === context.source &&
                     context.game.getPlayers().every((player) => player.drawDeck.length > 0)
             },
             message:
@@ -18,7 +22,7 @@ class Benjicot extends DrawCard {
             })).then({
                 message: '{player} {gameAction}',
                 gameAction: GameActions.simultaneously((context) =>
-                    this.buildGameActions(context.parentContext.revealed)
+                    context.source.buildGameActions(context.parentContext.revealed)
                 )
             })
         });

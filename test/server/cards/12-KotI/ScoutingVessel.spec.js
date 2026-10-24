@@ -1,141 +1,60 @@
 describe('Scouting Vessel', function () {
-    integration(function () {
-        describe('normal usage', function () {
-            beforeEach(function () {
-                const deck1 = this.buildDeck('greyjoy', [
-                    'Sneak Attack',
-                    "Black Wind's Crew",
-                    "Euron Crow's Eye (Core)",
-                    'Scouting Vessel'
-                ]);
-                const deck2 = this.buildDeck('tyrell', [
-                    'Sneak Attack',
-                    { name: 'The Kingsroad', count: 20 }
-                ]);
-                this.player1.selectDeck(deck1);
-                this.player2.selectDeck(deck2);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.pillager = this.player1.findCardByName("Black Wind's Crew", 'hand');
-                this.euron = this.player1.findCardByName("Euron Crow's Eye", 'hand');
-                this.vessel = this.player1.findCardByName('Scouting Vessel', 'hand');
-
-                this.player1.dragCard(this.pillager, 'play area');
-                this.player1.clickCard(this.euron);
-                this.player1.clickCard(this.vessel);
-
-                this.completeSetup();
-                this.selectFirstPlayer(this.player1);
-
-                this.completeMarshalPhase();
-            });
-
-            describe('when pillaging with no abilities', function () {
-                beforeEach(function () {
-                    this.unopposedChallenge(this.player1, 'Military', this.pillager);
-                    this.player1.clickPrompt('Apply Claim');
-                    // No characters for military claim
-                    this.player2.clickPrompt('Done');
-
-                    this.player1.triggerAbility(this.vessel);
-                });
-
-                it('discards 3 cards for pillage instead of 1', function () {
-                    expect(this.player2Object.discardPile.length).toBe(3);
-                });
-            });
-
-            describe('when pillaging with an abilities', function () {
-                beforeEach(function () {
-                    this.unopposedChallenge(this.player1, 'Military', this.euron);
-                    this.player1.clickPrompt('Apply Claim');
-                    // No characters for military claim
-                    this.player2.clickPrompt('Done');
-
-                    this.player1.triggerAbility(this.vessel);
-                });
-
-                it('triggers for all 3 cards discarded', function () {
-                    let kingsroads = this.player2.filterCardsByName(
-                        'The Kingsroad',
-                        'discard pile'
-                    );
-
-                    expect(kingsroads.length).toBe(3);
-
-                    for (let card of kingsroads) {
-                        this.player1.triggerAbility(this.euron);
-                        // Choose card associated with the "discard" event we're triggering
-                        this.player1.clickCard(card);
-                        // Choose the card to put into play
-                        this.player1.clickCard(card);
-
-                        expect(card).toBeControlledBy(this.player1);
-                        expect(card.location).toBe('play area');
-                    }
-                });
-            });
+    function pillage(context, vessels = 1) {
+        context.setupTest({
+            phase: 'challenge',
+            player1: {
+                faction: 'greyjoy',
+                inPlay: ["Black Wind's Crew", ...Array(vessels).fill('Scouting Vessel')]
+            },
+            player2: {
+                drawDeck: Array(8).fill('Winterfell Steward')
+            }
         });
 
-        describe('chaining Scouting Vessels', function () {
-            // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/40152-ruling-scouting-vessel/?p=332470
-            // If you have two Scouting Vessels, you can use the first to cause
-            // 3 cards to be discarded, then use a second Scouting Vessel to
-            // replace the discard on one of those 3 cards, for a total of 5
-            // cards discarded.
-            beforeEach(function () {
-                const deck1 = this.buildDeck('greyjoy', [
-                    'Sneak Attack',
-                    "Black Wind's Crew",
-                    'Scouting Vessel',
-                    'Scouting Vessel',
-                    'Scouting Vessel'
-                ]);
-                const deck2 = this.buildDeck('tyrell', [
-                    'Sneak Attack',
-                    { name: 'The Kingsroad', count: 20 }
-                ]);
-                this.player1.selectDeck(deck1);
-                this.player2.selectDeck(deck2);
-                this.startGame();
-                this.keepStartingHands();
+        context.vessels = context.player1.filterCardsByName('Scouting Vessel', 'play area');
+        context.unopposedChallenge(context.player1, 'Military', context.blackWindsCrew);
+    }
 
-                this.pillager = this.player1.findCardByName("Black Wind's Crew", 'hand');
-                [this.vessel1, this.vessel2, this.vessel3] = this.player1.filterCardsByName(
-                    'Scouting Vessel',
-                    'hand'
-                );
+    describe('when a character you control discards a card using pillage', function () {
+        beforeEach(function () {
+            pillage(this);
+        });
 
-                this.player1.clickCard(this.pillager);
-                this.player1.clickCard(this.vessel1);
-                this.player1.clickCard(this.vessel2);
-                this.player1.clickCard(this.vessel3);
+        it('kneels and sacrifices itself to discard 3 cards instead', function () {
+            this.player1.triggerAbility(this.scoutingVessel);
 
-                this.completeSetup();
-                this.selectFirstPlayer(this.player1);
+            expect(this.player2Object.discardPile).toHaveLength(3);
+            expect(this.scoutingVessel.location).toBe('discard pile');
+            expect(this.game.getPlainTextLog()).toContain(
+                'player1 kneels and sacrifices Scouting Vessel to discard 3 cards with pillage instead of 1'
+            );
+            expect(this.player1).isReadyToTakeAction();
+        });
 
-                this.completeMarshalPhase();
+        it('can be declined', function () {
+            this.player1.clickPrompt('Pass');
 
-                this.unopposedChallenge(this.player1, 'Military', this.pillager);
-                this.player1.clickPrompt('Apply Claim');
-                // No characters for military claim
-                this.player2.clickPrompt('Done');
+            expect(this.player2Object.discardPile).toHaveLength(1);
+            expect(this.scoutingVessel.location).toBe('play area');
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 
-                this.player1.triggerAbility(this.vessel1);
-            });
+    describe('with more than one Scouting Vessel', function () {
+        beforeEach(function () {
+            pillage(this, 3);
+            this.player1.triggerAbility(this.vessels[0]);
+        });
 
-            it('allows other Scouting Vessels to be triggered', function () {
-                expect(this.player1).toAllowAbilityTrigger(this.vessel2);
-                expect(this.player1).toAllowAbilityTrigger(this.vessel3);
-            });
+        // Each further Scouting Vessel replaces the discard of one of those cards with 3 more.
+        it('lets each one replace one more discard', function () {
+            expect(this.player1).toAllowAbilityTrigger(this.vessels[1]);
 
-            it('discards the correct amount when triggering multiple vessels', function () {
-                this.player1.triggerAbility(this.vessel2);
-                this.player1.triggerAbility(this.vessel3);
+            this.player1.triggerAbility(this.vessels[1]);
+            this.player1.triggerAbility(this.vessels[2]);
 
-                expect(this.player2Object.discardPile.length).toBe(7);
-            });
+            expect(this.player2Object.discardPile).toHaveLength(7);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

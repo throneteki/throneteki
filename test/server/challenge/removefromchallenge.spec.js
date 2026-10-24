@@ -4,16 +4,16 @@ import DrawCard from '../../../server/game/drawcard.js';
 
 describe('Challenge', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', [
-            'applyGameAction',
-            'on',
-            'raiseEvent',
-            'resolveGameAction'
-        ]);
-        this.gameSpy.applyGameAction.and.callFake((type, card, handler) => {
+        this.gameSpy = {
+            applyGameAction: vi.fn(),
+            on: vi.fn(),
+            raiseEvent: vi.fn(),
+            resolveGameAction: vi.fn()
+        };
+        this.gameSpy.applyGameAction.mockImplementation((type, card, handler) => {
             handler(card);
         });
-        this.gameSpy.resolveGameAction.and.callFake((action) => {
+        this.gameSpy.resolveGameAction.mockImplementation((action) => {
             const event = action.createEvent(action.propertyFactory);
             event.handler(event);
         });
@@ -32,9 +32,9 @@ describe('Challenge', function () {
         );
 
         this.attackerCard = new DrawCard(this.attackingPlayer, {});
-        spyOn(this.attackerCard, 'getStrength').and.returnValue(5);
+        vi.spyOn(this.attackerCard, 'getStrength').mockReturnValue(5);
         this.defenderCard = new DrawCard(this.defendingPlayer, {});
-        spyOn(this.defenderCard, 'getStrength').and.returnValue(3);
+        vi.spyOn(this.defenderCard, 'getStrength').mockReturnValue(3);
 
         this.challenge = new Challenge(this.gameSpy, {
             attackingPlayer: this.attackingPlayer,

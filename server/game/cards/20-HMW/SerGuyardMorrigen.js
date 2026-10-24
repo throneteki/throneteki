@@ -3,80 +3,54 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class SerGuyardMorrigen extends DrawCard {
+    // Ser Guyard Morrigen (20037)
+    // Bestow (1).
+    // Each Rainbow Guard character you control with 1 or more gold gains an [intrigue] icon.
+    // Reaction: After a Summer plot card is revealed, place 1 gold from the treasury on, either: a
+    // Knight character, or each Rainbow Guard character you control. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: (card) =>
+            match: (card, context) =>
                 card.getType() === 'character' &&
                 card.hasToken(Tokens.gold) &&
                 card.hasTrait('Rainbow Guard') &&
-                card.controller === this.controller,
+                card.controller === context.source.controller,
             effect: ability.effects.addIcon('intrigue')
         });
-
         this.reaction({
             when: {
                 onPlotsRevealed: (event) => event.plots.some((plot) => plot.hasTrait('Summer'))
             },
             limit: ability.limit.perPhase(1),
-            handler: (context) => {
-                this.context = context;
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: 'Knight or Rainbow Guard?',
-                        buttons: [
-                            { text: 'Knight', method: 'knight' },
-                            { text: 'Rainbow Guard', method: 'rainbowguard' }
-                        ]
+            gameAction: GameActions.choose({
+                title: 'Knight or Rainbow Guard?',
+                choices: {
+                    Knight: {
+                        message: '{player} uses {source} to have a Knight character gain 1 gold',
+                        gameAction: GameActions.chooseCards({
+                            cardCondition: (card) =>
+                                card.location === 'play area' &&
+                                card.getType() === 'character' &&
+                                card.hasTrait('Knight'),
+                            gameAction: (card) =>
+                                GameActions.placeToken({ card, token: Tokens.gold })
+                        })
                     },
-                    source: this
-                });
-            }
+                    'Rainbow Guard': {
+                        message: '{player} uses {source} to have each Rainbow Guard gain 1 gold',
+                        gameAction: GameActions.simultaneously((context) =>
+                            context.player
+                                .filterCardsInPlay(
+                                    (card) =>
+                                        card.hasTrait('Rainbow Guard') &&
+                                        card.getType() === 'character'
+                                )
+                                .map((card) => GameActions.placeToken({ card, token: Tokens.gold }))
+                        )
+                    }
+                }
+            })
         });
-    }
-
-    knight(player) {
-        this.game.promptForSelect(player, {
-            source: this,
-            cardCondition: (card) =>
-                card.location === 'play area' &&
-                card.getType() === 'character' &&
-                card.hasTrait('Knight'),
-            onSelect: (player, card) => this.onKnightSelected(player, card),
-            onCancel: (player) => this.onKnightCanceled(player)
-        });
-
-        return true;
-    }
-
-    onKnightSelected(player, card) {
-        this.game.resolveGameAction(
-            GameActions.placeToken(() => ({ card: card, token: Tokens.gold })),
-            this.context
-        );
-        this.game.addMessage('{0} uses {1} to have {2} gain 1 gold', player, this, card);
-        return true;
-    }
-
-    onKnightCanceled(player) {
-        this.game.addAlert('danger', '{0} cancels the resolution of {1}', player, this);
-        return true;
-    }
-
-    rainbowguard(player) {
-        let rainbow = player.filterCardsInPlay(
-            (card) => card.hasTrait('Rainbow Guard') && card.getType() === 'character'
-        );
-
-        for (let card of rainbow) {
-            this.game.resolveGameAction(
-                GameActions.placeToken(() => ({ card: card, token: Tokens.gold })),
-                this.context
-            );
-        }
-
-        this.game.addMessage('{0} uses {1} to have each Rainbow Guard gain 1 gold', player, this);
-
-        return true;
     }
 }
 
