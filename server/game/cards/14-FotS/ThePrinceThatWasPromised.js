@@ -2,12 +2,6 @@ import AgendaCard from '../../agendacard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ThePrinceThatWasPromised extends AgendaCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
-
-        this.registerEvents(['onDecksPrepared']);
-    }
-
     // The Prince that was Promised (14045)
     // After all agendas are announced, name a unique character.
     // Other characters you control cannot gain power.
@@ -15,33 +9,45 @@ class ThePrinceThatWasPromised extends AgendaCard {
     // either: stand the named character and draw a card; or, search your deck, discard pile, and
     // dead pile for the named character, reveal it, add it to your hand, and shuffle your deck.
     setupCardAbilities(ability) {
+        this.afterAgendasAnnounced({
+            gameAction: GameActions.nameCard({
+                title: 'Name a unique character',
+                match: (cardData) => cardData.type === 'character' && cardData.unique,
+                remember: true,
+                message: '{player} names {cardName} for {source}'
+            })
+        });
         this.persistentEffect({
-            match: (card) =>
+            match: (card, context) =>
                 card.getType() === 'character' &&
-                card.controller === this.controller &&
-                card.name !== this.selectedCardName,
+                card.controller === context.source.controller &&
+                card.name.toLowerCase() !== context.source.namedCard?.toLowerCase(),
             effect: ability.effects.cannotGainPower()
         });
 
         this.reaction({
             when: {
-                afterChallenge: (event) => this.hasWonBy5(event)
+                afterChallenge: (event, context) =>
+                    event.challenge.challengeType === 'power' &&
+                    event.challenge.winner === context.player &&
+                    event.challenge.strengthDifference >= 5
             },
             cost: ability.costs.kneelFactionCard(),
             message: {
                 format: '{player} uses {source} and kneels their faction card to either stand {namedCharacter} and draw, or search for them',
-                args: { namedCharacter: () => this.selectedCardName }
+                args: { namedCharacter: (context) => context.source.namedCard }
             },
             choices: {
                 'Stand and draw': {
                     message: '{player} chooses, and {gameAction}',
                     gameAction: GameActions.simultaneously((context) => {
-                        let actions = this.getThePromised(context.player)
-                            ? [
-                                  GameActions.standCard((context) => ({
-                                      card: this.getThePromised(context.player)
-                                  }))
-                              ]
+                        const namedCharacter = context.player.filterCardsInPlay(
+                            (card) =>
+                                card.getType() === 'character' &&
+                                card.name.toLowerCase() === context.source.namedCard.toLowerCase()
+                        )[0];
+                        const actions = namedCharacter
+                            ? [GameActions.standCard({ card: namedCharacter })]
                             : [];
                         actions.push(
                             GameActions.drawCards((context) => ({
@@ -57,7 +63,8 @@ class ThePrinceThatWasPromised extends AgendaCard {
                         title: 'Select a character',
                         match: {
                             type: 'character',
-                            condition: (card) => card.name === this.selectedCardName
+                            condition: (card, context) =>
+                                card.name.toLowerCase() === context.source.namedCard.toLowerCase()
                         },
                         location: ['draw deck', 'discard pile', 'dead pile'],
                         message:
@@ -69,35 +76,6 @@ class ThePrinceThatWasPromised extends AgendaCard {
                 }
             }
         });
-    }
-
-    hasWonBy5(event) {
-        return (
-            event.challenge.challengeType === 'power' &&
-            event.challenge.winner === this.controller &&
-            event.challenge.strengthDifference >= 5
-        );
-    }
-
-    getThePromised(player) {
-        return player.filterCardsInPlay(
-            (card) => card.getType() === 'character' && card.name === this.selectedCardName
-        )[0];
-    }
-
-    onDecksPrepared() {
-        this.game.promptForCardName({
-            title: 'Name a unique character',
-            player: this.controller,
-            match: (cardData) => cardData.type === 'character' && cardData.unique,
-            onSelect: (player, cardName) => this.selectCardName(player, cardName),
-            source: this
-        });
-    }
-
-    selectCardName(player, cardName) {
-        this.game.addMessage('{0} names {1} for {2}', player, cardName, this);
-        this.selectedCardName = cardName;
     }
 }
 

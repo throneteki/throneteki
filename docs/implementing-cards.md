@@ -1298,3 +1298,17 @@ As valid selections are already presented to the user via visual clues, targetin
 - **Good**: Select a card
 
 - **Good**: Select an attachment or location
+
+### Naming cards and factions during agenda setup
+
+Use `afterAgendasAnnounced` for an agenda's setup instruction, so the engine resolves it
+before drawing the starting hands. `GameActions.nameCard` validates the entered title against
+the card database. Set `remember: true` to retain the valid choice as `context.source.namedCard`
+for the agenda's later abilities; the default keeps the choice only on `context.namedCard`.
+
+`GameActions.nameFaction({ count: 2 })` requires two distinct factions (the default count is 1),
+logs the announcement, and retains their faction codes as `context.source.namedFactions`.
+Neutral is not a faction choice. The choices do not reveal the contents of either deck.
+
+Cost reducer match predicates receive `(card, context)`, where `context.source` is the card
+providing the reducer. Use that context when matching the current controller's faction.

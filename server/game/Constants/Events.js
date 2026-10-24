@@ -289,6 +289,7 @@ export const Events = Object.freeze({
         }
     },
     onTraitNamed: { params: { player: 'Player' }, optional: { trait: 'string' } },
+    onFactionsNamed: { params: { player: 'Player' }, optional: { factions: 'string[]' } },
     onUnopposedGain: { params: { challenge: 'Challenge' } },
     onWhenRevealedInitiated: { params: { plot: 'PlotCard', player: 'Player' } }
 });

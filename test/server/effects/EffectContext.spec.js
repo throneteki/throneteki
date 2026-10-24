@@ -7,6 +7,16 @@ describe('effect callbacks', function () {
         this.card = { uuid: '1', controller: 'player', keywordSources: [] };
     });
 
+    it('passes the effect context to cost reducer predicates', function () {
+        const player = { addCostReducer: vi.fn() };
+        const match = vi.fn((_card, context) => context.source === this.source);
+        const effect = Effects.reduceCost({ playingTypes: 'marshal', match, amount: 1 });
+        effect.apply(player, this.context);
+        const reducer = player.addCostReducer.mock.calls[0][0];
+        expect(reducer.canReduce('marshal', this.card)).toBe(true);
+        expect(match).toHaveBeenCalledWith(this.card, this.context);
+    });
+
     for (const [name, playingType] of [
         ['canPlay', 'play'],
         ['canMarshal', 'marshal'],

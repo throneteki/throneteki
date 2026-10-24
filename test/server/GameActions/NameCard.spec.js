@@ -57,4 +57,18 @@ describe('NameCard', function () {
         expect(gameAction.createEvent).toHaveBeenCalledWith(this.context);
         expect(attach).toHaveBeenCalledWith(child);
     });
+
+    it('can remember a valid name on the source for later abilities', function () {
+        const select = this.prompt({ remember: true });
+        expect(select(this.player, 'Unknown')).toBe(false);
+        expect(this.context.source.namedCard).toBeUndefined();
+        expect(select(this.player, 'A Character')).toBe(true);
+        expect(this.context.source.namedCard).toBe('A Character');
+    });
+
+    it('leaves the source name unchanged unless remembering is requested', function () {
+        const select = this.prompt();
+        select(this.player, 'A Character');
+        expect(this.context.source.namedCard).toBeUndefined();
+    });
 });

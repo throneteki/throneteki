@@ -1466,7 +1466,12 @@ const Effects = {
             targetType: 'player',
             apply: function (player, context) {
                 context.reducers = context.reducers || [];
-                var reducer = new CostReducer(context.game, context.source, properties);
+                var reducer = new CostReducer(context.game, context.source, {
+                    ...properties,
+                    ...(properties.match && {
+                        match: (card) => properties.match(card, context)
+                    })
+                });
                 context.reducers.push(reducer);
                 player.addCostReducer(reducer);
             },

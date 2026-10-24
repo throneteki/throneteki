@@ -2,7 +2,14 @@ import AbilityMessage from '../AbilityMessage.js';
 import GameAction from './GameAction.js';
 
 class NameCard extends GameAction {
-    constructor({ player, title = 'Name a card', match = () => true, message, gameAction }) {
+    constructor({
+        player,
+        title = 'Name a card',
+        match = () => true,
+        message,
+        gameAction,
+        remember = false
+    }) {
         super('nameCard');
 
         this.playerFunc = player || ((context) => context.player);
@@ -12,6 +19,7 @@ class NameCard extends GameAction {
             cardName: (context) => context.namedCard
         });
         this.gameAction = gameAction;
+        this.remember = remember;
     }
 
     allow() {
@@ -35,6 +43,9 @@ class NameCard extends GameAction {
                         }
 
                         context.namedCard = cardName;
+                        if (this.remember) {
+                            context.source.namedCard = cardName;
+                        }
                         event.cardName = cardName;
                         this.abilityMessage.output(context.game, context);
                         if (this.gameAction && this.gameAction.allow(context)) {
