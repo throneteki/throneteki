@@ -34,8 +34,14 @@ describe('House of the Undying', function () {
     it("returns each of them to its owner's dead pile at the end of the phase", function () {
         this.player1.clickPrompt('Done');
         this.player2.clickPrompt('Done');
+        expect(this.player2).toBeAbleToSelect(this.hedgeKnight);
+        expect(this.player2).toBeAbleToSelect(this.winterfellSteward);
+        this.player2.clickCard(this.hedgeKnight);
+        this.player2.clickCard(this.winterfellSteward);
+        this.player2.clickPrompt('Done');
         expect(this.hedgeKnight.location).toBe('dead pile');
         expect(this.winterfellSteward.location).toBe('dead pile');
         expect(this.player2Object.deadPile).toHaveLength(4);
+        expect(this.player1).isReadyToTakeAction();
     });
 });

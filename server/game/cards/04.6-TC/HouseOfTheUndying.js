@@ -25,13 +25,24 @@ class HouseOfTheUndying extends DrawCard {
             gameAction: GameActions.simultaneously((context) =>
                 eligibleCharacters(context.opponent).flatMap((card) => [
                     GameActions.putIntoPlay({ player: context.player, card }),
-                    GameActions.lastingEffect(() => ({
-                        duration: 'atEndOfPhase',
-                        match: card,
-                        condition: () => ['play area', 'duplicate'].includes(card.location),
-                        targetLocation: 'any',
-                        effect: ability.effects.moveToDeadPileIfStillInPlay()
-                    }))
+                    GameActions.delayedEffect(() => {
+                        return {
+                            duration: 'untilTriggered',
+                            group: context,
+                            groupTitle: 'Return characters to the dead pile',
+                            title: card.name,
+                            when: { onAtEndOfPhase: () => true },
+                            until: { onCardLeftPlay: (event) => event.card === card },
+                            gameAction: GameActions.ifCondition({
+                                condition: () => ['play area', 'duplicate'].includes(card.location),
+                                thenAction: {
+                                    message:
+                                        '{player} resolves the delayed effect from {source}: {gameAction}',
+                                    gameAction: GameActions.placeInDeadPile({ card })
+                                }
+                            })
+                        };
+                    })
                 ])
             )
         });

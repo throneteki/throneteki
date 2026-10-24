@@ -7,7 +7,7 @@ class AegonTargaryen extends DrawCard {
     // Reaction: After Aegon Targaryen enters play, search your deck for an Army or Mercenary
     // character, put it into play, and shuffle your deck. At the end of the phase, if that card is
     // still in play, return it to your hand.
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.reaction({
             when: {
                 onCardEntersPlay: (event, context) => event.card === context.source
@@ -22,14 +22,26 @@ class AegonTargaryen extends DrawCard {
                 gameAction: GameActions.putIntoPlay((context) => ({
                     card: context.searchTarget
                 })).then({
-                    gameAction: GameActions.lastingEffect((context) => ({
-                        duration: 'atEndOfPhase',
-                        match: context.event.card,
-                        condition: () =>
-                            ['play area', 'duplicate'].includes(context.event.card.location),
-                        targetLocation: 'any',
-                        effect: ability.effects.returnToHandIfStillInPlay(true)
-                    }))
+                    gameAction: GameActions.delayedEffect((context) => {
+                        const card = context.event.card;
+                        return {
+                            duration: 'untilTriggered',
+                            title: card.name,
+                            when: { onAtEndOfPhase: () => true },
+                            until: { onCardLeftPlay: (event) => event.card === card },
+                            gameAction: GameActions.ifCondition({
+                                condition: () => ['play area', 'duplicate'].includes(card.location),
+                                thenAction: {
+                                    message:
+                                        '{player} resolves the delayed effect from {source}: {gameAction}',
+                                    gameAction: GameActions.returnCardToHand({
+                                        card,
+                                        allowSave: true
+                                    })
+                                }
+                            })
+                        };
+                    })
                 })
             })
         });

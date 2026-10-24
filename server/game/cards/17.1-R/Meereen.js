@@ -13,16 +13,36 @@ class Meereen extends DrawCard {
             message:
                 '{player} kneels {source} and discards 1 card from their hand to place their hand facedown under {source}',
             gameAction: GameActions.simultaneously([
-                GameActions.lastingEffect((context) => ({
-                    duration: 'custom',
-                    until: {
-                        onCardLeftPlay: (event) => event.card === context.source,
-                        onPhaseEnded: () => true
-                    },
-                    targetController: 'any',
-                    match: (player) => player === context.player,
-                    effect: ability.effects.removeCardsFromHand()
-                }))
+                GameActions.simultaneously((context) =>
+                    context.player.hand.map((card) =>
+                        GameActions.placeCardUnderneath({
+                            card,
+                            player: context.player,
+                            parentCard: context.source,
+                            facedown: true
+                        })
+                    )
+                ),
+                GameActions.delayedEffect((context) => {
+                    const player = context.player;
+                    const source = context.source;
+                    return {
+                        duration: 'untilTriggered',
+                        title: `Return cards to ${player.name}`,
+                        when: {
+                            onAtEndOfPhase: () => true,
+                            onCardLeftPlay: (event) => event.card === source
+                        },
+                        gameAction: GameActions.simultaneously(() => [
+                            ...player.hand.map((card) => GameActions.discardCard({ card })),
+                            ...source.underneath
+                                .filter((card) => card.owner === player)
+                                .map((card) => GameActions.addToHand({ card }))
+                        ]),
+                        message:
+                            '{player} discards their hand and returns their cards from under {source}'
+                    };
+                })
             ]).then({
                 message: 'Then {player} draws 3 cards',
                 gameAction: GameActions.drawCards((context) => ({

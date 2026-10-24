@@ -1,3 +1,4 @@
+import DelayedEffect from './DelayedEffect.js';
 import EventEmitter from 'events';
 import AttachmentValidityCheck from './AttachmentValidityCheck.js';
 import StateChecks from './StateChecks.js';
@@ -472,6 +473,14 @@ class Game extends EventEmitter {
             .getConcurrentEvents()
             .filter((concurrentEvent) => !concurrentEvent.cancelled);
         const triggered = this.effectEngine.takeDelayedEffectsTriggeredBy(events);
+        const delayedGroups = new Map();
+        for (const item of triggered) {
+            const key = item.delayedEffect.group || item.delayedEffect;
+            if (!delayedGroups.has(key)) {
+                delayedGroups.set(key, []);
+            }
+            delayedGroups.get(key).push(item);
+        }
         this.effectEngine.expireDelayedEffectsBy(events);
         const eventChecks = this.allCards
             .flatMap((card) => card.abilities.eventChecks || [])
@@ -482,11 +491,13 @@ class Game extends EventEmitter {
             );
         this.queueStep(
             new ChooseResolutionOrder(this, [
-                ...triggered.map(({ delayedEffect, event: triggeringEvent }) => ({
-                    player: delayedEffect.context.player,
-                    source: delayedEffect.context.source,
-                    canResolve: () => delayedEffect.canResolve(triggeringEvent),
-                    resolve: () => delayedEffect.resolve(triggeringEvent)
+                ...[...delayedGroups.values()].map((group) => ({
+                    player: group[0].delayedEffect.context.player,
+                    source: group[0].delayedEffect.context.source,
+                    title: group[0].delayedEffect.groupTitle || group[0].delayedEffect.title,
+                    canResolve: () =>
+                        group.some(({ delayedEffect, event }) => delayedEffect.canResolve(event)),
+                    resolve: () => DelayedEffect.resolveGroup(group)
                 })),
                 ...eventChecks.map((context) => ({
                     player: context.player,
@@ -1405,6 +1416,9 @@ class Game extends EventEmitter {
      * routine validity & game over checks.
      */
     refreshGameState() {
+        if (this.effectEngine.revealingPlots) {
+            return;
+        }
         this.effectEngine.recalculateDirtyTargets();
         this.effectEngine.reapplyStateDependentEffects();
         this.attachmentValidityCheck.enforceValidity();

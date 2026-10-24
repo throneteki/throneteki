@@ -1,13 +1,14 @@
 # Engine status
 
-Written 2026-10-20 so the next session can continue without the previous conversation. The plan is
+Updated 2026-10-24 so the next session can continue without the previous conversation. The plan is
 [engine-roadmap.md](engine-roadmap.md). The rules map is
 [framework-coverage.md](framework-coverage.md). Read both before changing `server/game`.
 
-The work is committed on `feature/engine-test-framework`. Do not push or open a pull request unless asked.
+The card conversions are committed on `feature/engine-test-framework` through `ab6d2a14d`.
+The 24 October engine follow-up is in the working tree. Do not push or open a pull request unless asked.
 
-Last full server run, 2026-10-21: `npx vitest run test/server` from the repo root. 458 files,
-4756 passed, 13 skipped. Re-run it after any further engine change.
+Last full run, 2026-10-24: `npm test` from the repo root. 2,201 files passed,
+7,107 tests passed, 13 skipped. Re-run it after any further engine change.
 Do not pipe vitest through `grep` or `tail`. On PowerShell, chain with `; if ($LASTEXITCODE -eq 0)`.
 
 ## Where the work is
@@ -18,8 +19,10 @@ roadmap says to hold the verified-deck check until the gate is met. That hold is
 and it should not be added. `ManualMode.decideAtStart` already turns manual mode off for a verified
 deck.
 
-The framework batch that was in progress is implemented. Card migration of the remaining cards is
-the ongoing work, and it was not part of this batch.
+All 1,962 implemented card codes are verified. The 24 October engine follow-up migrates the
+remaining generic card callbacks and end-timing effects, removes the permissive ability-handler
+fallback, enforces plot-choice dependencies, and batches strength changes. The wider framework
+gaps below remain separate from per-card verification.
 
 ## Done, with specs
 
@@ -66,9 +69,10 @@ the ongoing work, and it was not part of this batch.
   `CardStat` already does. Take-control effects are not a conflict either: the FAQ entry Multiple
   "Take Control" Effects says control follows the most recent one and reverts to the next most
   recent when it ends, which is what `controllerStack` does.
-  [MultipleTakeControl.spec.js](../test/server/gamesteps/MultipleTakeControl.spec.js). Legacy
-  `atEndOfPhase` effects still resolve in a fixed order; they get
-  the prompt when they move to `GameActions.delayedEffect`.
+  [MultipleTakeControl.spec.js](../test/server/gamesteps/MultipleTakeControl.spec.js).
+  All end-timing card callbacks now use `GameActions.delayedEffect`, including both Meereen
+  printings. Titles identify pending instructions, and grouped card actions from one delayed
+  instruction resolve simultaneously.
 - "If X leaves play" clauses after an ability (Jaqen H'ghar, Arya Stark (LMHR), Hornvale, The
   Great Pyramid) are delayed effects with `duration: 'untilTriggered'`, created by each resolution
   and acting only on what it placed (Rules Reference: Delayed Effects). They are not triggered
@@ -114,8 +118,8 @@ the ongoing work, and it was not part of this batch.
   it.
 - "After all agendas are announced" is `this.afterAgendasAnnounced`
   (`server/game/AgendaSetupAbility.js`), resolved by the setup phase before setup hands are drawn,
-  in first-player order. The House With the Red Door uses it; The Prince that was Promised and
-  Armed to the Teeth still use `registerEvents('onDecksPrepared')`. Only setup placements
+  through the simultaneous-resolution order prompt. The House With the Red Door, The Prince
+  that was Promised, and Armed to the Teeth use it. Only setup placements
   (`playingType: 'setup'`, including dragging a card into play during setup) enter play facedown,
   and a mulligan only shuffles the hand back, so cards put into play before it stay.
   [Setup.spec.js](../test/server/gamesteps/Setup.spec.js).
@@ -146,6 +150,22 @@ the ongoing work, and it was not part of this batch.
 
 The coverage list exists and is the phase 6 checkbox for that item. Its open rows are the
 remaining framework gaps.
+
+## Engine follow-up, 24 October 2026
+
+- Removal, dead-pile placement, and variable gold-token costs use game actions.
+- Stealth, assault, intimidate, and duplicate saves no longer use ability handlers. Deferred
+  initiation actions preserve challenge-redirection timing.
+- Ability handlers and function choices are rejected. Explicit test callback actions require a
+  predicate. The card checker rejects `genericHandler`, closing a gap in the earlier check.
+- All old end-timing card effects and expiry helpers are removed. Delayed effects resolve in
+  first-player order and expire when the affected card leaves play.
+- Bloodraven enforces opponent-first plot selection and immutable choices. Independent choices,
+  dependency chains, and cycles are covered by `PlotSelectionOrder.spec.js` and
+  `PlotSelectionDependencies.spec.js`.
+- Strength notifications are batched across simultaneous effect changes and plot replacement.
+  Set-strength expiry checks burn, overlapping burn sources remain independent, and strength
+  sorting/reverse cancellation are removed. See `SimultaneousStrength.spec.js`.
 
 ## What is left
 

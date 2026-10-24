@@ -288,7 +288,12 @@ export const Events = Object.freeze({
             source: 'BaseCard'
         }
     },
+    onChallengeInitiationActionQueued: {
+        params: { challenge: 'Challenge', source: 'DrawCard', card: 'DrawCard' }
+    },
     onTraitNamed: { params: { player: 'Player' }, optional: { trait: 'string' } },
+    onChoiceDeclined: { params: { player: 'Player' } },
+    onRevealedCardsAcknowledged: { params: { player: 'Player', cards: 'DrawCard[]' } },
     onFactionsNamed: { params: { player: 'Player' }, optional: { factions: 'string[]' } },
     onUnopposedGain: { params: { challenge: 'Challenge' } },
     onWhenRevealedInitiated: { params: { plot: 'PlotCard', player: 'Player' } }

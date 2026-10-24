@@ -6,7 +6,7 @@ class CatelynStark extends DrawCard {
     // Action: During an [intrigue] or [power] challenge in which you are the defending player, put
     // Catelyn Stark into play from your hand knelt, participating as a defender. At the end of the
     // phase, if Catelyn Stark is still in play, return her to your hand.
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.action({
             title: 'Add as a defender',
             location: 'hand',
@@ -23,12 +23,26 @@ class CatelynStark extends DrawCard {
             })).then({
                 gameAction: GameActions.simultaneously([
                     GameActions.addToChallenge((context) => ({ card: context.source })),
-                    GameActions.lastingEffect((context) => ({
-                        duration: 'atEndOfPhase',
-                        match: context.source,
-                        condition: () => context.source.location === 'play area',
-                        effect: ability.effects.returnToHandIfStillInPlay(true)
-                    }))
+                    GameActions.delayedEffect((context) => {
+                        const card = context.source;
+                        return {
+                            duration: 'untilTriggered',
+                            title: card.name,
+                            when: { onAtEndOfPhase: () => true },
+                            until: { onCardLeftPlay: (event) => event.card === card },
+                            gameAction: GameActions.ifCondition({
+                                condition: () => ['play area', 'duplicate'].includes(card.location),
+                                thenAction: {
+                                    message:
+                                        '{player} resolves the delayed effect from {source}: {gameAction}',
+                                    gameAction: GameActions.returnCardToHand({
+                                        card,
+                                        allowSave: true
+                                    })
+                                }
+                            })
+                        };
+                    })
                 ])
             })
         });

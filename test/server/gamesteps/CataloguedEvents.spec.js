@@ -1,9 +1,13 @@
+import GameActions from '../../../server/game/GameActions/index.js';
 describe('catalogued events', function () {
     function watchFor(context, eventName) {
         context.seen = [];
         context.houseMaester.reaction({
             when: { [eventName]: () => true },
-            handler: (abilityContext) => context.seen.push(abilityContext.event)
+            gameAction: GameActions.genericHandler(
+                (abilityContext) => context.seen.push(abilityContext.event),
+                () => true
+            )
         });
         context.houseMaester.abilities.reactions.at(-1).registerEvents();
     }

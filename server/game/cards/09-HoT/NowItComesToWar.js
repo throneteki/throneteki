@@ -25,7 +25,7 @@ class NowItComesToWar extends PlotCard {
                     },
                     No: {
                         message: '{choosingPlayer} chooses to apply normal claim using {source}',
-                        gameAction: GameActions.genericHandler(() => true)
+                        gameAction: GameActions.decline()
                     }
                 }
             })

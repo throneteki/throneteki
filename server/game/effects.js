@@ -10,7 +10,7 @@ import CannotRestriction from './cannotrestriction.js';
 import ChallengeRestriction from './ChallengeRestriction.js';
 import ImmunityRestriction from './immunityrestriction.js';
 import GoldSource from './GoldSource.js';
-import { Flags, Tokens } from './Constants/index.js';
+import { Flags } from './Constants/index.js';
 import ForcedChallenge from './ForcedChallenge.js';
 import PowerAsGoldSource from './PowerAsGoldSource.js';
 
@@ -285,8 +285,7 @@ const Effects = {
             },
             unapply: function (card, context) {
                 card.removeStrengthModifier(context.effect, false);
-            },
-            order: value >= 0 ? 0 : 1000
+            }
         };
     },
     setStrength: function (value) {
@@ -612,11 +611,11 @@ const Effects = {
         };
     },
     burn: {
-        apply: function (card) {
-            card.setIsBurning(true);
+        apply: function (card, context) {
+            card.setIsBurning(true, context.effect);
         },
-        unapply: function (card) {
-            card.setIsBurning(false);
+        unapply: function (card, context) {
+            card.setIsBurning(false, context.effect);
         }
     },
     killByStrength: function (value) {
@@ -626,11 +625,11 @@ const Effects = {
         return [Effects.burn, Effects.dynamicDecreaseStrength(calculate)];
     },
     shadowBurn: {
-        apply: function (card) {
-            card.setIsShadowBurning(true);
+        apply: function (card, context) {
+            card.setIsShadowBurning(true, context.effect);
         },
-        unapply: function (card) {
-            card.setIsShadowBurning(false);
+        unapply: function (card, context) {
+            card.setIsShadowBurning(false, context.effect);
         }
     },
     putInShadowsByStrength: function (value) {
@@ -652,29 +651,7 @@ const Effects = {
             card.clearBlank(Flags.blanks.full);
         }
     },
-    poison: {
-        apply: function (card, context) {
-            card.modifyToken(Tokens.poison, 1);
-            context.game.addMessage(
-                '{0} uses {1} to place 1 poison token on {2}',
-                context.source.controller,
-                context.source,
-                card
-            );
-        },
-        unapply: function (card, context) {
-            if (card.location === 'play area' && card.hasToken(Tokens.poison)) {
-                card.modifyToken(Tokens.poison, -1);
-                card.controller.killCharacter(card);
-                context.game.addMessage(
-                    '{0} uses {1} to kill {2} at the end of the phase',
-                    context.source.controller,
-                    context.source,
-                    card
-                );
-            }
-        }
-    },
+
     gainAmbush: function (costModifier = 0) {
         return {
             apply: function (card) {
@@ -697,51 +674,7 @@ const Effects = {
             }
         };
     },
-    discardIfStillInPlay: function (allowSave = false) {
-        return {
-            apply: function (card, context) {
-                context.discardIfStillInPlay = context.discardIfStillInPlay || [];
-                context.discardIfStillInPlay.push(card);
-            },
-            unapply: function (card, context) {
-                if (
-                    ['play area', 'duplicate'].includes(card.location) &&
-                    context.discardIfStillInPlay.includes(card)
-                ) {
-                    context.discardIfStillInPlay = context.discardIfStillInPlay.filter(
-                        (c) => c !== card
-                    );
-                    card.controller.discardCard(card, allowSave);
-                    context.game.addMessage(
-                        '{0} discards {1} at the end of the phase because of {2}',
-                        context.source.controller,
-                        card,
-                        context.source
-                    );
-                }
-            }
-        };
-    },
-    killIfStillInPlay: function (allowSave = false) {
-        return {
-            apply: function (card, context) {
-                context.killIfStillInPlay = context.killIfStillInPlay || [];
-                context.killIfStillInPlay.push(card);
-            },
-            unapply: function (card, context) {
-                if (card.location === 'play area' && context.killIfStillInPlay.includes(card)) {
-                    context.killIfStillInPlay = context.killIfStillInPlay.filter((c) => c !== card);
-                    card.controller.killCharacter(card, allowSave);
-                    context.game.addMessage(
-                        '{0} kills {1} at the end of the phase because of {2}',
-                        context.source.controller,
-                        card,
-                        context.source
-                    );
-                }
-            }
-        };
-    },
+
     killIf: function (condition) {
         return {
             apply: function (card, context) {
@@ -772,165 +705,7 @@ const Effects = {
             isStateDependent: true
         };
     },
-    moveToDeadPileIfStillInPlay: function () {
-        return {
-            apply: function (card, context) {
-                context.moveToDeadPileIfStillInPlay = context.moveToDeadPileIfStillInPlay || [];
-                context.moveToDeadPileIfStillInPlay.push(card);
-            },
-            unapply: function (card, context) {
-                if (
-                    ['play area', 'duplicate'].includes(card.location) &&
-                    context.moveToDeadPileIfStillInPlay.includes(card)
-                ) {
-                    context.moveToDeadPileIfStillInPlay =
-                        context.moveToDeadPileIfStillInPlay.filter((c) => c !== card);
-                    card.owner.moveCard(card, 'dead pile');
-                    context.game.addMessage(
-                        "{0} moves {1} to its owner's dead pile at the end of the phase because of {2}",
-                        context.source.controller,
-                        card,
-                        context.source
-                    );
-                }
-            }
-        };
-    },
-    moveToBottomOfDeckIfStillInPlay: function (allowSave = true) {
-        return {
-            apply: function (card, context) {
-                context.moveToBottomOfDeckIfStillInPlay =
-                    context.moveToBottomOfDeckIfStillInPlay || [];
-                context.moveToBottomOfDeckIfStillInPlay.push(card);
-            },
-            unapply: function (card, context) {
-                if (
-                    ['play area', 'duplicate'].includes(card.location) &&
-                    context.moveToBottomOfDeckIfStillInPlay.includes(card)
-                ) {
-                    context.moveToBottomOfDeckIfStillInPlay =
-                        context.moveToBottomOfDeckIfStillInPlay.filter((c) => c !== card);
-                    context.game.resolveGameAction(
-                        GameActions.returnCardToDeck({ card, allowSave, bottom: true })
-                    );
-                    context.game.addMessage(
-                        "{0} places {1} on the bottom of its owner's deck at the end of the phase because of {2}",
-                        context.source.controller,
-                        card,
-                        context.source
-                    );
-                }
-            }
-        };
-    },
-    returnToHandIfStillInPlay: function (allowSave = false, duration = 'phase') {
-        return {
-            apply: function (card, context) {
-                context.returnToHandIfStillInPlay = context.returnToHandIfStillInPlay || [];
-                context.returnToHandIfStillInPlay.push(card);
-            },
-            unapply: function (card, context) {
-                if (
-                    ['play area', 'duplicate'].includes(card.location) &&
-                    context.returnToHandIfStillInPlay.includes(card)
-                ) {
-                    context.returnToHandIfStillInPlay = context.returnToHandIfStillInPlay.filter(
-                        (c) => c !== card
-                    );
-                    card.controller.returnCardToHand(card, allowSave);
-                    context.game.addMessage(
-                        '{0} returns {1} to hand at the end of the {2} because of {3}',
-                        context.source.controller,
-                        card,
-                        duration,
-                        context.source
-                    );
-                }
-            }
-        };
-    },
-    returnToHandIfStillInPlayAndNotAttachedToCardByTitle: function (
-        parentCardTitle,
-        allowSave = false,
-        duration = 'phase'
-    ) {
-        return {
-            apply: function (card, context) {
-                context.returnToHandIfStillInPlay = context.returnToHandIfStillInPlay || [];
-                context.returnToHandIfStillInPlay.push(card);
-            },
-            unapply: function (card, context) {
-                if (
-                    ['play area', 'duplicate'].includes(card.location) &&
-                    context.returnToHandIfStillInPlay.includes(card)
-                ) {
-                    context.returnToHandIfStillInPlay = context.returnToHandIfStillInPlay.filter(
-                        (c) => c !== card
-                    );
-                    if ((card.parent && card.parent.name !== parentCardTitle) || !card.parent) {
-                        card.controller.returnCardToHand(card, allowSave);
-                        context.game.addMessage(
-                            '{0} returns {1} to hand at the end of the {2} because of {3}',
-                            context.source.controller,
-                            card,
-                            duration,
-                            context.source
-                        );
-                    }
-                }
-            }
-        };
-    },
-    shuffleIntoDeckIfStillInPlay: function (allowSave = true) {
-        return {
-            apply: function (card, context) {
-                context.shuffleIntoDeckIfStillInPlay = context.shuffleIntoDeckIfStillInPlay || [];
-                context.shuffleIntoDeckIfStillInPlay.push(card);
-            },
-            unapply: function (card, context) {
-                if (
-                    ['play area', 'duplicate'].includes(card.location) &&
-                    context.shuffleIntoDeckIfStillInPlay.includes(card)
-                ) {
-                    context.shuffleIntoDeckIfStillInPlay =
-                        context.shuffleIntoDeckIfStillInPlay.filter((c) => c !== card);
-                    context.game.resolveGameAction(
-                        GameActions.shuffleIntoDeck({ cards: [card], allowSave })
-                    );
-                    context.game.addMessage(
-                        '{0} shuffles {1} into their deck at the end of the phase because of {2}',
-                        card.owner,
-                        card,
-                        context.source
-                    );
-                }
-            }
-        };
-    },
-    removeFromGameIfStillInPlay: function (allowSave = true) {
-        return {
-            apply: function (card, context) {
-                context.removeFromGameIfStillInPlay = context.removeFromGameIfStillInPlay || [];
-                context.removeFromGameIfStillInPlay.push(card);
-            },
-            unapply: function (card, context) {
-                if (
-                    ['play area', 'duplicate'].includes(card.location) &&
-                    context.removeFromGameIfStillInPlay.includes(card)
-                ) {
-                    context.removeFromGameIfStillInPlay =
-                        context.removeFromGameIfStillInPlay.filter((c) => c !== card);
-                    context.game.resolveGameAction(GameActions.removeFromGame({ card, allowSave }));
-                    context.game.addMessage(
-                        '{0} removes {1} from the game at the end of the phase because of {2}',
-                        card.owner,
-                        card,
-                        context.source
-                    );
-                }
-            }
-        };
-    },
+
     removeFromGame: function () {
         return {
             apply: function (card, context) {
@@ -1686,11 +1461,6 @@ const Effects = {
         return {
             targetType: 'player',
             apply: function (player, context) {
-                // TODO: Update this to actually wait for targeted player to choose their plot first, then allow you to choose. This will require
-                //       some updates to account for the loop scenario (eg. PlayerA > PlayerB > PlayerC > PlayerA), which is ruled to allow first
-                //       player to choose the order of simultaneous resolution. This could be part of a wider update to ensure first player chooses
-                //       the priority of delayed persistent effects happening simultaneously (eg. multiple "at end of phase, discard X" at once).
-                //       For now, this will allow the players to choose at the same time, and they can simply wait to see the choice.
                 player.mustShowPlotSelection.push(opponent);
                 // Only add visibility rule if it previously would not have been active
                 if (player.mustShowPlotSelection.length === 1) {
@@ -1867,39 +1637,6 @@ const Effects = {
         };
     },
     cannotRevealPlot: modifyPlayerFlagEffect(Flags.player.cannotRevealPlot),
-    //Meereen only effect
-    removeCardsFromHand: function () {
-        return {
-            targetType: 'player',
-            apply: function (player, context) {
-                context.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        player.hand.map((card) =>
-                            GameActions.placeCardUnderneath({
-                                card,
-                                player,
-                                parentCard: context.source,
-                                facedown: true
-                            })
-                        )
-                    )
-                );
-            },
-            unapply: function (player, context) {
-                player.discardCards(player.hand);
-                for (const card of context.source.underneath.filter(
-                    (card) => card.owner === player
-                )) {
-                    player.moveCard(card, 'hand');
-                }
-                context.game.addMessage(
-                    '{0} discards their hand and returns each card under {1} to their hand',
-                    player,
-                    context.source
-                );
-            }
-        };
-    },
     placeCardUnderneath: function (unapplyFunc = null) {
         return {
             apply: function (card, context) {

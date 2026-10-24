@@ -6,7 +6,7 @@ class TywinsWhisperer extends DrawCard {
     // Reaction: After a character with printed cost 2 or lower is returned to an opponent's hand,
     // put Tywin's Whisperer into play from your hand. Until the end of the phase, it gains a
     // [power] icon and stealth.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 onCardReturnedToHand: (event, context) =>
@@ -18,15 +18,14 @@ class TywinsWhisperer extends DrawCard {
                 '{player} uses {source} to put {source} into play from their hand, and have it gain a power icon and stealth until the end of the phase',
             gameAction: GameActions.simultaneously([
                 GameActions.putIntoPlay({ card: this }),
-                GameActions.genericHandler((context) => {
-                    context.source.untilEndOfPhase((ability) => ({
-                        match: context.source,
-                        effect: [
-                            ability.effects.addIcon('power'),
-                            ability.effects.addKeyword('stealth')
-                        ]
-                    }));
-                })
+                GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfPhase',
+                    match: context.source,
+                    effect: [
+                        ability.effects.addIcon('power'),
+                        ability.effects.addKeyword('stealth')
+                    ]
+                }))
             ])
         });
     }

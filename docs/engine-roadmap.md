@@ -55,7 +55,8 @@ What already matches the Rules Reference:
   return to hand, decking is checked continuously.
 - `GameActions` (`allow` / `createEvent` / `.then()`) is the right foundation to build on.
 
-What stops the engine being trusted:
+Historical starting problems (19 October 2026). The counts and API gaps below describe that
+baseline; [engine-status.md](engine-status.md) records the current state and remaining work:
 
 | Problem                                                                                                                                                   | Where                                                                                                                                               |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -365,7 +366,7 @@ on every card in the format having one.
   when a player is the one repeating an ability. Cards stay in play.
 - Migrate one stat at a time: strength (already part way there), icons, traits, keywords, dominance
   strength, blank, control.
-- Removes the `order: 0/1000` and reverse-cancel workarounds.
+- Removes the `order: 0/1000` and reverse-cancel workarounds. _Done on 2026-10-24: strength changes are batched across application, expiry, and plot replacement; set-strength expiry checks burn._
 - Conflicting constant abilities and lasting effects are ordered by the first player, once, when
   they would first apply. A new conflict lets the first player choose again (Rulings and
   Clarifications v4.0, 1.6, and the Rules Reference: Priority of Simultaneous Resolution). _Done_

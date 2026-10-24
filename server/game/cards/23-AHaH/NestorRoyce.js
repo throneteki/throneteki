@@ -1,20 +1,18 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
-function gainKeyword(source, keyword) {
-    source.untilEndOfChallenge((ability) => ({
-        match: source,
-        effect: ability.effects.addKeyword(keyword)
-    }));
-    return true;
-}
-
 class NestorRoyce extends DrawCard {
     // Nestor Royce (23023)
     // Reaction: After you win a challenge in which Nestor Royce is participating, kneel a neutral
     // location with printed cost 1 or higher to have him gain intimidate or renown until the end of
     // the challenge.
     setupCardAbilities(ability) {
+        const gainKeyword = (keyword) =>
+            GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.source,
+                effect: ability.effects.addKeyword(keyword)
+            }));
         this.reaction({
             when: {
                 afterChallenge: (event, context) =>
@@ -35,12 +33,8 @@ class NestorRoyce extends DrawCard {
                     args: { keyword: (context) => context.selectedChoice.text.toLowerCase() }
                 },
                 choices: {
-                    Renown: GameActions.genericHandler((context) =>
-                        gainKeyword(context.source, context.selectedChoice.text.toLowerCase())
-                    ),
-                    Intimidate: GameActions.genericHandler((context) =>
-                        gainKeyword(context.source, context.selectedChoice.text.toLowerCase())
-                    )
+                    Renown: gainKeyword('renown'),
+                    Intimidate: gainKeyword('intimidate')
                 }
             })
         });

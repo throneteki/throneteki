@@ -16,12 +16,11 @@ class AgentOfTheCitadel extends DrawCard {
             cost: ability.costs.revealSpecific((context) => context.player.drawDeck[0]),
             message:
                 '{player} uses {source} and reveals the top card of their deck to reduce the cost of the next card they bring out of shadows this phase by 2',
-            gameAction: GameActions.genericHandler((context) => {
-                context.source.untilEndOfPhase((ability) => ({
-                    targetController: 'current',
-                    effect: ability.effects.reduceNextOutOfShadowsCardCost(2)
-                }));
-            })
+            gameAction: GameActions.lastingEffect(() => ({
+                duration: 'untilEndOfPhase',
+                targetController: 'current',
+                effect: ability.effects.reduceNextOutOfShadowsCardCost(2)
+            }))
         });
     }
 }

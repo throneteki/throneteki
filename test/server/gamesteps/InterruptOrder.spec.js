@@ -1,3 +1,4 @@
+import GameActions from '../../../server/game/GameActions/index.js';
 describe('interrupt order', function () {
     beforeEach(function () {
         this.setupTest({
@@ -11,16 +12,25 @@ describe('interrupt order', function () {
         const when = { onCharacterKilled: (event) => event.card === this.hedgeKnight };
         this.houseMaester.interrupt({
             when,
-            handler: () => this.order.push('interrupt')
+            gameAction: GameActions.genericHandler(
+                () => this.order.push('interrupt'),
+                () => true
+            )
         });
         this.houseMaester.forcedInterrupt({
             when,
-            handler: () => this.order.push('forced')
+            gameAction: GameActions.genericHandler(
+                () => this.order.push('forced'),
+                () => true
+            )
         });
         this.houseMaester.interrupt({
             would: true,
             when,
-            handler: () => this.order.push('would')
+            gameAction: GameActions.genericHandler(
+                () => this.order.push('would'),
+                () => true
+            )
         });
         for (const ability of this.houseMaester.abilities.reactions.slice(-3)) {
             ability.registerEvents();

@@ -20,6 +20,7 @@ import ChooseIcon from './ChooseIcon.js';
 import DetermineDominance from './DetermineDominance.js';
 import DiscardAtRandom from './DiscardAtRandom.js';
 import DiscardCard from './DiscardCard.js';
+import DeclineChoice from './DeclineChoice.js';
 import DiscardToken from './DiscardToken.js';
 import DiscardTopCards from './DiscardTopCards.js';
 import DiscardPower from './DiscardPower.js';
@@ -49,10 +50,12 @@ import PayGold from './PayGold.js';
 import PlaceAsDuplicate from './PlaceAsDuplicate.js';
 import MarshalAsDuplicate from './MarshalAsDuplicate.js';
 import PlaceCard from './PlaceCard.js';
+import PlaceInDeadPile from './PlaceInDeadPile.js';
 import PlaceCardUnderneath from './PlaceCardUnderneath.js';
 import PlaceToken from './PlaceToken.js';
 import PutIntoShadows from './PutIntoShadows.js';
 import PutIntoPlay from './PutIntoPlay.js';
+import QueueChallengeAction from './QueueChallengeAction.js';
 import RemoveFromChallenge from './RemoveFromChallenge.js';
 import RemoveFromGame from './RemoveFromGame.js';
 import ReplaceEvent from './ReplaceEvent.js';
@@ -97,6 +100,7 @@ const GameActions = {
     determineDominance: (props) => new AbilityAdapter(DetermineDominance, props),
     discardAtRandom: (props) => new AbilityAdapter(DiscardAtRandom, props),
     discardCard: (props) => new AbilityAdapter(DiscardCard, props),
+    decline: () => DeclineChoice,
     discardToken: (props) => new AbilityAdapter(DiscardToken, props),
     discardTopCards: (props) => new AbilityAdapter(DiscardTopCards, props),
     discardPower: (props) => new AbilityAdapter(DiscardPower, props),
@@ -107,7 +111,8 @@ const GameActions = {
     gainGold: (props) => new AbilityAdapter(GainGold, props),
     gainIcon: (props) => new AbilityAdapter(GainIcon, props),
     gainPower: (props) => new AbilityAdapter(GainPower, props),
-    genericHandler: (handler) => new HandlerGameActionWrapper({ handler }),
+    genericHandler: (handler, canChangeGameState) =>
+        new HandlerGameActionWrapper({ handler, canChangeGameState }),
     ifCondition: (props) => new IfGameAction(props),
     initiateWhenRevealed: (props) => new AbilityAdapter(InitiateWhenRevealed, props),
     kill: (props) => new AbilityAdapter(Kill, props),
@@ -127,9 +132,11 @@ const GameActions = {
     placeAsDuplicate: (props) => new AbilityAdapter(PlaceAsDuplicate, props),
     marshalAsDuplicate: (props) => new AbilityAdapter(MarshalAsDuplicate, props),
     placeCard: (props) => new AbilityAdapter(PlaceCard, props),
+    placeInDeadPile: (props) => new AbilityAdapter(PlaceInDeadPile, props),
     placeCardUnderneath: (props) => new AbilityAdapter(PlaceCardUnderneath, props),
     placeToken: (props) => new AbilityAdapter(PlaceToken, props),
     putIntoPlay: (props) => new AbilityAdapter(PutIntoPlay, props),
+    queueChallengeAction: (props) => new AbilityAdapter(QueueChallengeAction, props),
     putIntoShadows: (props) => new AbilityAdapter(PutIntoShadows, props),
     removeFromChallenge: (props) => new AbilityAdapter(RemoveFromChallenge, props),
     removeFromGame: (props) => new AbilityAdapter(RemoveFromGame, props),

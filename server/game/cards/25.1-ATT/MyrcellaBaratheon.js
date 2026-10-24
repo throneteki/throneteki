@@ -20,15 +20,14 @@ class MyrcellaBaratheon extends DrawCard {
                     format: 'Then, {player} may initiate an additional intrigue challenge this phase against {opponent}',
                     args: { opponent: (context) => context.parentContext.event.challenge.loser }
                 },
-                gameAction: GameActions.genericHandler((context) => {
-                    context.source.untilEndOfPhase((ability) => ({
-                        targetController: 'current',
-                        effect: ability.effects.mayInitiateAdditionalChallenge(
-                            'intrigue',
-                            (opponent) => opponent === context.parentContext.event.challenge.loser
-                        )
-                    }));
-                })
+                gameAction: GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfPhase',
+                    targetController: 'current',
+                    effect: ability.effects.mayInitiateAdditionalChallenge(
+                        'intrigue',
+                        (opponent) => opponent === context.parentContext.event.challenge.loser
+                    )
+                }))
             })
         });
     }

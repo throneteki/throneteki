@@ -30,13 +30,26 @@ class WombOfTheWorld extends DrawCard {
                                 format: '{player} puts {card} into play',
                                 args: { card: () => card }
                             },
-                            gameAction: GameActions.lastingEffect(() => ({
-                                duration: 'atEndOfPhase',
-                                match: card,
-                                condition: () => ['play area', 'duplicate'].includes(card.location),
-                                targetLocation: 'any',
-                                effect: ability.effects.returnToHandIfStillInPlay(true)
-                            }))
+                            gameAction: GameActions.delayedEffect(() => {
+                                return {
+                                    duration: 'untilTriggered',
+                                    title: card.name,
+                                    when: { onAtEndOfPhase: () => true },
+                                    until: { onCardLeftPlay: (event) => event.card === card },
+                                    gameAction: GameActions.ifCondition({
+                                        condition: () =>
+                                            ['play area', 'duplicate'].includes(card.location),
+                                        thenAction: {
+                                            message:
+                                                '{player} resolves the delayed effect from {source}: {gameAction}',
+                                            gameAction: GameActions.returnCardToHand({
+                                                card,
+                                                allowSave: true
+                                            })
+                                        }
+                                    })
+                                };
+                            })
                         })
                 })
             })).then({

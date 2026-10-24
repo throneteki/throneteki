@@ -43,13 +43,26 @@ class INeverBetAgainstMyFamily extends DrawCard {
                     ...(context.parentContext.chosenCards || [])
                         .filter((card) => card.location === 'play area')
                         .map((card) =>
-                            GameActions.lastingEffect(() => ({
-                                duration: 'atEndOfPhase',
-                                match: card,
-                                condition: () => ['play area', 'duplicate'].includes(card.location),
-                                targetLocation: 'any',
-                                effect: ability.effects.discardIfStillInPlay(false)
-                            }))
+                            GameActions.delayedEffect(() => {
+                                return {
+                                    duration: 'untilTriggered',
+                                    title: card.name,
+                                    when: { onAtEndOfPhase: () => true },
+                                    until: { onCardLeftPlay: (event) => event.card === card },
+                                    gameAction: GameActions.ifCondition({
+                                        condition: () =>
+                                            ['play area', 'duplicate'].includes(card.location),
+                                        thenAction: {
+                                            message:
+                                                '{player} resolves the delayed effect from {source}: {gameAction}',
+                                            gameAction: GameActions.discardCard({
+                                                card,
+                                                allowSave: false
+                                            })
+                                        }
+                                    })
+                                };
+                            })
                         )
                 ])
             })

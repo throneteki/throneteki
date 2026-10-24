@@ -7,7 +7,7 @@ class Qyburn extends DrawCard {
     // Reaction: After Qyburn comes out of shadows, choose a non-Army character in an opponent's
     // dead pile and put it into play under your control. At the end of the phase, if that card is
     // still in play, remove it from the game (cannot be saved).
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.reaction({
             when: {
                 onCardOutOfShadows: (event, context) => event.card === context.source
@@ -28,13 +28,23 @@ class Qyburn extends DrawCard {
                     card: context.target,
                     player: context.player
                 })),
-                GameActions.lastingEffect((context) => ({
-                    duration: 'atEndOfPhase',
-                    match: context.target,
-                    condition: () => ['play area', 'duplicate'].includes(context.target.location),
-                    targetLocation: 'any',
-                    effect: ability.effects.removeFromGameIfStillInPlay(false)
-                }))
+                GameActions.delayedEffect((context) => {
+                    const card = context.target;
+                    return {
+                        duration: 'untilTriggered',
+                        title: card.name,
+                        when: { onAtEndOfPhase: () => true },
+                        until: { onCardLeftPlay: (event) => event.card === card },
+                        gameAction: GameActions.ifCondition({
+                            condition: () => ['play area', 'duplicate'].includes(card.location),
+                            thenAction: {
+                                message:
+                                    '{player} resolves the delayed effect from {source}: {gameAction}',
+                                gameAction: GameActions.removeFromGame({ card, allowSave: false })
+                            }
+                        })
+                    };
+                })
             ])
         });
     }

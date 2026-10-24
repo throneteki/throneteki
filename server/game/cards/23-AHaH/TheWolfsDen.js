@@ -25,18 +25,17 @@ class TheWolfsDen extends DrawCard {
                 gameAction: GameActions.simultaneously([
                     GameActions.placeToken((context) => ({
                         card: context.event.card,
-                        tokens: Tokens.shadow
+                        token: Tokens.shadow
                     })),
-                    GameActions.genericHandler((context) => {
-                        context.source.lastingEffect((ability) => ({
-                            condition: () => context.event.card.location === 'shadows',
-                            targetLocation: 'any',
-                            match: context.event.card,
-                            effect: ability.effects.addKeyword(
-                                `Shadow (${context.event.card.translateXValue(context.event.card.getPrintedCost())})`
-                            )
-                        }));
-                    })
+                    GameActions.lastingEffect((context) => ({
+                        duration: 'custom',
+                        condition: () => context.event.card.location === 'shadows',
+                        targetLocation: 'any',
+                        match: context.event.card,
+                        effect: ability.effects.addKeyword(
+                            `Shadow (${context.event.card.translateXValue(context.event.card.getPrintedCost())})`
+                        )
+                    }))
                 ])
             })
         });

@@ -23,9 +23,7 @@ class SerAndrewEstermont extends DrawCard {
                 args: { character: (context) => context.event.card }
             },
             gameAction: GameActions.simultaneously([
-                GameActions.genericHandler((context) => {
-                    context.event.saveCard();
-                }),
+                GameActions.saveCard((context) => ({ event: context.event })),
                 GameActions.gainPower((context) => ({ card: context.event.card }))
             ])
         });

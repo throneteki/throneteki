@@ -23,12 +23,26 @@ class WinterfellCrypt extends DrawCard {
                     card.getPrintedStrength() <= context.event.card.getPrintedStrength()
             },
             message: '{player} sacrifices {source} to choose {target}',
-            gameAction: GameActions.lastingEffect((context) => ({
-                duration: 'atEndOfPhase',
-                match: context.target,
-                condition: () => ['play area', 'duplicate'].includes(context.target.location),
-                effect: ability.effects.shuffleIntoDeckIfStillInPlay()
-            }))
+            gameAction: GameActions.delayedEffect((context) => {
+                const card = context.target;
+                return {
+                    duration: 'untilTriggered',
+                    title: card.name,
+                    when: { onAtEndOfPhase: () => true },
+                    until: { onCardLeftPlay: (event) => event.card === card },
+                    gameAction: GameActions.ifCondition({
+                        condition: () => ['play area', 'duplicate'].includes(card.location),
+                        thenAction: {
+                            message:
+                                '{player} resolves the delayed effect from {source}: {gameAction}',
+                            gameAction: GameActions.shuffleIntoDeck({
+                                cards: [card],
+                                allowSave: true
+                            })
+                        }
+                    })
+                };
+            })
         });
     }
 

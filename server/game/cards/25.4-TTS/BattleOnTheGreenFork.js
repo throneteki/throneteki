@@ -15,12 +15,11 @@ class BattleOnTheGreenFork extends PlotCard {
             limit: ability.limit.perPhase(3),
             message:
                 '{player} uses {source} to raise the claim on {source} by 1 until the end of the phase',
-            gameAction: GameActions.genericHandler((context) => {
-                context.source.untilEndOfPhase((ability) => ({
-                    match: context.source,
-                    effect: ability.effects.modifyClaim(1)
-                }));
-            })
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.source,
+                effect: ability.effects.modifyClaim(1)
+            }))
         });
     }
 }

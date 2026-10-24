@@ -20,9 +20,7 @@ class TakeToTheSky extends DrawCard {
                 args: { card: (context) => context.event.card }
             },
             gameAction: GameActions.simultaneously((context) => [
-                GameActions.genericHandler(() => {
-                    context.event.saveCard();
-                }),
+                GameActions.saveCard((context) => ({ event: context.event, remediesBurn: true })),
                 GameActions.returnCardToHand({
                     card: context.event.card
                 })

@@ -1,3 +1,4 @@
+import GameActions from '../../../server/game/GameActions/index.js';
 import CardForcedReaction from '../../../server/game/cardforcedreaction.js';
 import Event from '../../../server/game/event.js';
 
@@ -30,7 +31,7 @@ describe('CardForcedReaction', function () {
             when: {
                 onSomething: vi.fn()
             },
-            handler: vi.fn()
+            gameAction: GameActions.genericHandler(vi.fn(), () => true)
         };
 
         this.properties.when.onSomething.mockReturnValue(true);
@@ -292,7 +293,10 @@ describe('CardForcedReaction', function () {
                         condition: () => true
                     }
                 },
-                handler: () => true
+                gameAction: GameActions.genericHandler(
+                    () => true,
+                    () => true
+                )
             };
             this.reaction = this.createReaction();
             this.reaction.registerEvents();
@@ -331,7 +335,10 @@ describe('CardForcedReaction', function () {
                         condition: () => true
                     }
                 },
-                handler: () => true
+                gameAction: GameActions.genericHandler(
+                    () => true,
+                    () => true
+                )
             };
             this.reaction = this.createReaction();
         });

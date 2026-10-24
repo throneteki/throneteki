@@ -1,3 +1,4 @@
+import GameActions from '../../../server/game/GameActions/index.js';
 import ThenAbilityAction from '../../../server/game/GameActions/ThenAbilityAction.js';
 import ThenClauseAbility from '../../../server/game/ThenClauseAbility.js';
 
@@ -17,7 +18,13 @@ describe('ThenAbilityAction', function () {
 
     describe('when passed a properties object', function () {
         beforeEach(function () {
-            this.abilityProps = { props: 'internal', handler: () => true };
+            this.abilityProps = {
+                props: 'internal',
+                gameAction: GameActions.genericHandler(
+                    () => true,
+                    () => true
+                )
+            };
             this.action = new ThenAbilityAction(this.internalActionSpy, this.abilityProps);
         });
 

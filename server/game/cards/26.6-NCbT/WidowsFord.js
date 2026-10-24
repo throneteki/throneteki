@@ -8,7 +8,7 @@ class WidowsFord extends DrawCard {
     // Reaction: After an attachment or location enters your discard pile, place it in shadows with
     // a shadow token on it. While that card is in shadows, it gains shadow (X). X is its printed
     // cost.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 onCardPlaced: (event, context) =>
@@ -27,16 +27,15 @@ class WidowsFord extends DrawCard {
             })).then((context) => ({
                 gameAction: GameActions.simultaneously([
                     GameActions.placeToken({ card: context.event.card, token: Tokens.shadow }),
-                    GameActions.genericHandler(() => {
-                        context.source.lastingEffect((ability) => ({
-                            condition: () => context.event.card.location === 'shadows',
-                            targetLocation: 'any',
-                            match: context.event.card,
-                            effect: ability.effects.addKeyword(
-                                `Shadow (${context.event.card.translateXValue(context.event.card.getPrintedCost())})`
-                            )
-                        }));
-                    })
+                    GameActions.lastingEffect((context) => ({
+                        duration: 'custom',
+                        condition: () => context.event.card.location === 'shadows',
+                        targetLocation: 'any',
+                        match: context.event.card,
+                        effect: ability.effects.addKeyword(
+                            `Shadow (${context.event.card.translateXValue(context.event.card.getPrintedCost())})`
+                        )
+                    }))
                 ])
             }))
         });

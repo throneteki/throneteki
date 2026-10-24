@@ -30,14 +30,23 @@ class WarlockOfQarth extends DrawCard {
                     match: context.event.card,
                     effect: ability.effects.addKeyword('insight')
                 })),
-                GameActions.lastingEffect((context) => ({
-                    duration: 'atEndOfPhase',
-                    match: context.event.card,
-                    condition: () =>
-                        ['play area', 'duplicate'].includes(context.event.card.location),
-                    targetLocation: 'any',
-                    effect: ability.effects.moveToDeadPileIfStillInPlay()
-                }))
+                GameActions.delayedEffect((context) => {
+                    const card = context.event.card;
+                    return {
+                        duration: 'untilTriggered',
+                        title: card.name,
+                        when: { onAtEndOfPhase: () => true },
+                        until: { onCardLeftPlay: (event) => event.card === card },
+                        gameAction: GameActions.ifCondition({
+                            condition: () => ['play area', 'duplicate'].includes(card.location),
+                            thenAction: {
+                                message:
+                                    '{player} resolves the delayed effect from {source}: {gameAction}',
+                                gameAction: GameActions.placeInDeadPile({ card })
+                            }
+                        })
+                    };
+                })
             ])
         });
     }

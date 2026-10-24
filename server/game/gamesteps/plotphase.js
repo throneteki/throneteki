@@ -27,6 +27,7 @@ class PlotPhase extends Phase {
     }
 
     startPlotPhase() {
+        this.plotSelectionFirstPlayer = this.game.getFirstPlayer();
         for (const player of this.game.getPlayers()) {
             player.resetForStartOfRound();
         }
@@ -49,7 +50,7 @@ class PlotPhase extends Phase {
                 (player) => !player.mustRevealPlot && !player.hasFlag(Flags.player.cannotRevealPlot)
             );
         this.game.raiseEvent('onChoosePlot', { players: choosingPlayers }, () => {
-            this.game.queueStep(new SelectPlotPrompt(this.game));
+            this.game.queueStep(new SelectPlotPrompt(this.game, this.plotSelectionFirstPlayer));
         });
     }
 

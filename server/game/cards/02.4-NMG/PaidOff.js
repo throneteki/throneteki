@@ -64,7 +64,7 @@ function remainsKneeled(payer) {
                 parent: (context) => context.source.parent
             }
         },
-        gameAction: GameActions.genericHandler(() => true)
+        gameAction: GameActions.decline()
     };
 }
 

@@ -1,9 +1,13 @@
+import GameActions from '../../../server/game/GameActions/index.js';
 describe('duplicates', function () {
     function watchDupes(context) {
         context.seen = [];
         context.houseMaester.reaction({
             when: { onDupeEntersPlay: () => true },
-            handler: (abilityContext) => context.seen.push(abilityContext.event)
+            gameAction: GameActions.genericHandler(
+                (abilityContext) => context.seen.push(abilityContext.event),
+                () => true
+            )
         });
         context.houseMaester.abilities.reactions.at(-1).registerEvents();
     }

@@ -1,7 +1,6 @@
 import GameAction from './GameAction.js';
 import AbilityChoicePrompt from '../gamesteps/AbilityChoicePrompt.js';
 import AbilityMessage from '../AbilityMessage.js';
-import HandlerGameActionWrapper from './HandlerGameActionWrapper.js';
 
 // The context can inherit its properties from a prototype (see BaseAbility.allowsTarget), which
 // spreading it would drop.
@@ -104,9 +103,8 @@ class ChooseGameAction extends GameAction {
     }
 
     buildGameAction(action) {
-        // Supporting legacy Choices as handlers
         if (typeof action === 'function') {
-            return new HandlerGameActionWrapper({ handler: action });
+            throw new Error('Use a gameAction for each choice instead of a function');
         }
         // Supporting properties-based choice
         if (action.gameAction) {

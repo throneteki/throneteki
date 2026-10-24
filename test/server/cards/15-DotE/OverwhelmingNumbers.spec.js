@@ -40,5 +40,6 @@ describe('Overwhelming Numbers', function () {
         this.skipActionWindow();
         expect(this.fromHand.location).toBe('hand');
         expect(this.khalDrogo.location).toBe('hand');
+        expect(this.player1).isReadyToTakeAction();
     });
 });

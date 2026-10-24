@@ -46,15 +46,14 @@ class TheEyrie extends DrawCard {
                 format: "{player} kneels {source} to have it contribute {amount} STR to {player}'s side of the challenge",
                 args: { amount: (context) => calculateAmount(context.source) }
             },
-            gameAction: GameActions.genericHandler((context) => {
-                context.source.untilEndOfChallenge((ability) => ({
-                    targetController: 'current',
-                    effect: ability.effects.contributeStrength(
-                        context.source,
-                        calculateAmount(context.source)
-                    )
-                }));
-            })
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                targetController: 'current',
+                effect: ability.effects.contributeStrength(
+                    context.source,
+                    calculateAmount(context.source)
+                )
+            }))
         });
     }
 }

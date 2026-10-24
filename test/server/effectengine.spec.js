@@ -1,3 +1,4 @@
+import Effect from '../../server/game/effect.js';
 import EffectEngine from '../../server/game/effectengine.js';
 
 describe('EffectEngine', function () {
@@ -50,6 +51,15 @@ describe('EffectEngine', function () {
         this.effectSpy.targetLocation = 'play area';
 
         this.engine = new EffectEngine(this.gameSpy);
+    });
+
+    it('does not report expiry as applying a card effect because a zero change was reapplied', function () {
+        const card = { getStrength: () => 3, raiseStrengthChangeEvent: vi.fn() };
+        this.engine.beginEffectChanges();
+        this.engine.recordStrengthChange(card, 1, false);
+        this.engine.recordStrengthChange(card, 0, true);
+        this.engine.endEffectChanges();
+        expect(card.raiseStrengthChangeEvent).toHaveBeenCalledWith(1, false);
     });
 
     describe('add()', function () {
@@ -310,40 +320,14 @@ describe('EffectEngine', function () {
         });
     });
 
-    describe('onAtEndOfPhase()', function () {
-        beforeEach(function () {
-            this.engine.effects = [this.effectSpy];
-        });
-
-        describe('when an effect has atEndOfPhase duration', function () {
-            beforeEach(function () {
-                this.effectSpy.duration = 'atEndOfPhase';
-                this.engine.onAtEndOfPhase({});
+    describe('obsolete end-timing effects', function () {
+        for (const duration of ['atEndOfPhase', 'atEndOfChallenge', 'atEndOfRound']) {
+            it(`requires delayedEffect for ${duration}`, function () {
+                expect(() => new Effect(this.gameSpy, {}, { duration, effect: {} })).toThrow(
+                    'delayedEffect'
+                );
             });
-
-            it('should cancel the effect', function () {
-                expect(this.effectSpy.cancel).toHaveBeenCalled();
-            });
-
-            it('should remove the effect from the list', function () {
-                expect(this.engine.effects).not.toContain(this.effectSpy);
-            });
-        });
-
-        describe('when an effect has a non-atEndOfPhase duration', function () {
-            beforeEach(function () {
-                this.effectSpy.duration = 'persistent';
-                this.engine.onAtEndOfPhase({});
-            });
-
-            it('should not cancel the effect', function () {
-                expect(this.effectSpy.cancel).not.toHaveBeenCalled();
-            });
-
-            it('should not remove the effect from the list', function () {
-                expect(this.engine.effects).toContain(this.effectSpy);
-            });
-        });
+        }
     });
 
     describe('onRoundEnded()', function () {

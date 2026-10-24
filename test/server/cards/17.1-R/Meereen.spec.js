@@ -34,6 +34,7 @@ describe('Meereen (R)', function () {
             this.player1.clickMenu(this.meereen, 'Place hand facedown and draw 3');
             this.player1.clickCard(this.player1Object.hand[0]);
             this.completeMarshalPhase();
+            this.player1.clickPrompt('player1 - Meereen: Return cards to player1');
             this.player1.clickPrompt('Done');
             this.player1.clickPrompt('Done');
             expect(this.player1Object.hand.length).toBe(0);
@@ -95,6 +96,7 @@ describe('Meereen (R)', function () {
             this.player2.clickMenu(this.meereen, 'Place hand facedown and draw 3');
             this.player2.clickCard(this.theKingsroad);
             this.player2.clickPrompt('Done');
+            this.player1.clickPrompt('player1 - Meereen: Return cards to player1');
             this.player1.clickPrompt('Done');
             this.player2.clickPrompt('Done');
         });

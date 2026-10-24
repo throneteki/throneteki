@@ -5,7 +5,7 @@ class WakingTheDragon extends DrawCard {
     // Waking the Dragon (01178)
     // Action: Choose and stand a unique [targaryen] character you control. At the end of the phase,
     // if that character is still in play, return it to your hand.
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.action({
             title: 'Stand a character',
             target: {
@@ -19,13 +19,23 @@ class WakingTheDragon extends DrawCard {
             message: '{player} plays {source} to stand {target}',
             gameAction: GameActions.simultaneously([
                 GameActions.standCard((context) => ({ card: context.target })),
-                GameActions.lastingEffect((context) => ({
-                    duration: 'atEndOfPhase',
-                    match: context.target,
-                    targetLocation: 'any',
-                    condition: () => ['play area', 'duplicate'].includes(context.target.location),
-                    effect: ability.effects.returnToHandIfStillInPlay(true)
-                }))
+                GameActions.delayedEffect((context) => {
+                    const card = context.target;
+                    return {
+                        duration: 'untilTriggered',
+                        title: card.name,
+                        when: { onAtEndOfPhase: () => true },
+                        until: { onCardLeftPlay: (event) => event.card === card },
+                        gameAction: GameActions.ifCondition({
+                            condition: () => ['play area', 'duplicate'].includes(card.location),
+                            thenAction: {
+                                message:
+                                    '{player} resolves the delayed effect from {source}: {gameAction}',
+                                gameAction: GameActions.returnCardToHand({ card, allowSave: true })
+                            }
+                        })
+                    };
+                })
             ])
         });
     }

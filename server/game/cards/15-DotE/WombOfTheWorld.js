@@ -22,12 +22,26 @@ class WombOfTheWorld extends DrawCard {
                         card.isMatch({ trait: 'Dothraki', type: 'character' }),
                     gameAction: (card, context) =>
                         GameActions.putIntoPlay({ card, player: context.player }).then({
-                            gameAction: GameActions.lastingEffect(() => ({
-                                duration: 'atEndOfPhase',
-                                match: card,
-                                condition: () => card.location === 'play area',
-                                effect: ability.effects.returnToHandIfStillInPlay(true)
-                            }))
+                            gameAction: GameActions.delayedEffect(() => {
+                                return {
+                                    duration: 'untilTriggered',
+                                    title: card.name,
+                                    when: { onAtEndOfPhase: () => true },
+                                    until: { onCardLeftPlay: (event) => event.card === card },
+                                    gameAction: GameActions.ifCondition({
+                                        condition: () =>
+                                            ['play area', 'duplicate'].includes(card.location),
+                                        thenAction: {
+                                            message:
+                                                '{player} resolves the delayed effect from {source}: {gameAction}',
+                                            gameAction: GameActions.returnCardToHand({
+                                                card,
+                                                allowSave: true
+                                            })
+                                        }
+                                    })
+                                };
+                            })
                         })
                 })
             })).then({

@@ -1,3 +1,4 @@
+import GameActions from '../../../server/game/GameActions/index.js';
 import CardReaction from '../../../server/game/cardreaction.js';
 import Event from '../../../server/game/event.js';
 
@@ -13,7 +14,6 @@ describe('CardReaction', function () {
             resolveGameAction: vi.fn()
         };
         this.cardSpy = {
-            getPrintedType: vi.fn(),
             getPrintedType: vi.fn(),
             isAnyBlank: vi.fn(),
             createSnapshot: vi.fn()
@@ -31,7 +31,7 @@ describe('CardReaction', function () {
             when: {
                 onSomething: vi.fn()
             },
-            handler: vi.fn()
+            gameAction: GameActions.genericHandler(vi.fn(), () => true)
         };
 
         this.properties.when.onSomething.mockReturnValue(true);
@@ -363,7 +363,7 @@ describe('CardReaction', function () {
                 when: {
                     onSomething: () => true
                 },
-                handler: vi.fn()
+                gameAction: GameActions.genericHandler(vi.fn(), () => true)
             };
             this.reaction = this.createReaction();
             this.reaction.executeHandler(this.context);
@@ -388,7 +388,10 @@ describe('CardReaction', function () {
                         condition: () => true
                     }
                 },
-                handler: () => true
+                gameAction: GameActions.genericHandler(
+                    () => true,
+                    () => true
+                )
             };
             this.reaction = this.createReaction();
             this.reaction.registerEvents();
@@ -421,7 +424,10 @@ describe('CardReaction', function () {
                         condition: () => true
                     }
                 },
-                handler: () => true
+                gameAction: GameActions.genericHandler(
+                    () => true,
+                    () => true
+                )
             };
             this.reaction = this.createReaction();
         });

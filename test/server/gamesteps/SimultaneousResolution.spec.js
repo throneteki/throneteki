@@ -21,7 +21,10 @@ describe('priority of simultaneous resolution', function () {
                     new DelayedEffect({
                         context: new AbilityContext({ game: this.game, player, source }),
                         when: { onCardEntersPlay: (event) => event.card === this.hedgeKnight },
-                        gameAction: GameActions.genericHandler(() => this.order.push(source.name))
+                        gameAction: GameActions.genericHandler(
+                            () => this.order.push(source.name),
+                            () => true
+                        )
                     })
                 );
             }

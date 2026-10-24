@@ -19,9 +19,7 @@ class KingsLandingSepton extends DrawCard {
                 format: "{player} uses {source} and returns {source} to their hand to cancel {character}'s ability",
                 args: { character: (context) => context.event.source }
             },
-            gameAction: GameActions.genericHandler((context) => {
-                context.event.cancel();
-            })
+            gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
         });
     }
 }

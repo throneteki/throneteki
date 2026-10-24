@@ -1,3 +1,4 @@
+import { Tokens } from '../../Constants/index.js';
 import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
@@ -24,11 +25,33 @@ class TearsOfLys extends DrawCard {
                     card.getType() === 'character' &&
                     !card.hasIcon('intrigue')
             },
-            gameAction: GameActions.lastingEffect((context) => ({
-                duration: 'atEndOfPhase',
-                match: context.target,
-                effect: ability.effects.poison
-            }))
+            gameAction: GameActions.simultaneously([
+                GameActions.placeToken((context) => ({
+                    card: context.target,
+                    token: Tokens.poison
+                })),
+                GameActions.delayedEffect((context) => {
+                    const card = context.target;
+                    return {
+                        duration: 'untilTriggered',
+                        title: card.name,
+                        when: { onAtEndOfPhase: () => true },
+                        until: { onCardLeftPlay: (event) => event.card === card },
+                        gameAction: GameActions.ifCondition({
+                            condition: () =>
+                                card.location === 'play area' && card.hasToken(Tokens.poison),
+                            thenAction: {
+                                message:
+                                    '{player} resolves the delayed effect from {source}: {gameAction}',
+                                gameAction: GameActions.simultaneously([
+                                    GameActions.discardToken({ card, token: Tokens.poison }),
+                                    GameActions.kill({ card })
+                                ])
+                            }
+                        })
+                    };
+                })
+            ])
         });
     }
 }

@@ -28,13 +28,23 @@ class DothrakiSea extends DrawCard {
                     player: context.target.controller,
                     card: context.target
                 })),
-                GameActions.lastingEffect((context) => ({
-                    duration: 'atEndOfPhase',
-                    match: context.target,
-                    condition: () => ['play area', 'duplicate'].includes(context.target.location),
-                    targetLocation: 'any',
-                    effect: ability.effects.returnToHandIfStillInPlay()
-                }))
+                GameActions.delayedEffect((context) => {
+                    const card = context.target;
+                    return {
+                        duration: 'untilTriggered',
+                        title: card.name,
+                        when: { onAtEndOfPhase: () => true },
+                        until: { onCardLeftPlay: (event) => event.card === card },
+                        gameAction: GameActions.ifCondition({
+                            condition: () => ['play area', 'duplicate'].includes(card.location),
+                            thenAction: {
+                                message:
+                                    '{player} resolves the delayed effect from {source}: {gameAction}',
+                                gameAction: GameActions.returnCardToHand({ card, allowSave: false })
+                            }
+                        })
+                    };
+                })
             ])
         });
     }

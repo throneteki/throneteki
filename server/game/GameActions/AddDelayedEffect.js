@@ -14,7 +14,9 @@ class AddDelayedEffect extends GameAction {
 
     createEvent(context) {
         return this.event('onDelayedEffectAdded', { source: context.source }, () => {
-            context.game.addDelayedEffect(new DelayedEffect({ ...this.properties, context }));
+            const properties =
+                typeof this.properties === 'function' ? this.properties(context) : this.properties;
+            context.game.addDelayedEffect(new DelayedEffect({ ...properties, context }));
         });
     }
 }

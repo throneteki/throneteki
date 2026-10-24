@@ -79,7 +79,8 @@ function existingBlock(lines, bounds) {
 }
 
 export function withComment(source, comment) {
-    const lines = source.split('\n');
+    const newline = source.includes('\r\n') ? '\r\n' : '\n';
+    const lines = source.split(/\r?\n/);
     const bounds = classBounds(lines);
     if (!bounds) {
         return source;
@@ -88,7 +89,7 @@ export function withComment(source, comment) {
     const block = existingBlock(lines, bounds);
     if (block) {
         lines.splice(block.start, block.end - block.start + 1, ...comment);
-        return lines.join('\n');
+        return lines.join(newline);
     }
 
     if (comment.length === 0) {
@@ -100,7 +101,7 @@ export function withComment(source, comment) {
             index > bounds.start && index < bounds.end && /^ {4}setupCardAbilities\(/.test(line)
     );
     lines.splice(setup === -1 ? bounds.start + 1 : setup, 0, ...comment);
-    return lines.join('\n');
+    return lines.join(newline);
 }
 
 export function cardTextProblems({ write = false } = {}) {

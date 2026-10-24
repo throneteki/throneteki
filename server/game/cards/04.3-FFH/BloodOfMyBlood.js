@@ -5,7 +5,7 @@ class BloodOfMyBlood extends DrawCard {
     // Blood of My Blood (04054)
     // Challenges Action: Search your deck for a Bloodrider character and put it into play. Shuffle
     // your deck. At the end of the phase, if that card is still in play, return it to your hand.
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.action({
             title: 'Search deck for Bloodrider',
             phase: 'challenge',
@@ -18,14 +18,26 @@ class BloodOfMyBlood extends DrawCard {
                 gameAction: GameActions.putIntoPlay((context) => ({
                     card: context.searchTarget
                 })).then({
-                    gameAction: GameActions.lastingEffect((context) => ({
-                        duration: 'atEndOfPhase',
-                        match: context.event.card,
-                        condition: () =>
-                            ['play area', 'duplicate'].includes(context.event.card.location),
-                        targetLocation: 'any',
-                        effect: ability.effects.returnToHandIfStillInPlay(true)
-                    }))
+                    gameAction: GameActions.delayedEffect((context) => {
+                        const card = context.event.card;
+                        return {
+                            duration: 'untilTriggered',
+                            title: card.name,
+                            when: { onAtEndOfPhase: () => true },
+                            until: { onCardLeftPlay: (event) => event.card === card },
+                            gameAction: GameActions.ifCondition({
+                                condition: () => ['play area', 'duplicate'].includes(card.location),
+                                thenAction: {
+                                    message:
+                                        '{player} resolves the delayed effect from {source}: {gameAction}',
+                                    gameAction: GameActions.returnCardToHand({
+                                        card,
+                                        allowSave: true
+                                    })
+                                }
+                            })
+                        };
+                    })
                 })
             })
         });

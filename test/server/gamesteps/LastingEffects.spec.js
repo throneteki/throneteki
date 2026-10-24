@@ -58,29 +58,35 @@ describe('lasting effects', function () {
                 when: {
                     onPhaseEnded: (event) => event.phase === 'marshal'
                 },
-                handler: (context) => {
-                    this.order.push(
-                        this.hedgeKnight.hasTrait('Army') ? 'interrupt' : 'interrupt-gone'
-                    );
-                    context.game.addEffect(this.hedgeKnight, {
-                        duration: 'untilEndOfPhase',
-                        match: this.hedgeKnight,
-                        effect: effects.addTrait('Lord')
-                    });
-                    this.order.push(
-                        this.hedgeKnight.hasTrait('Lord') ? 'late-applied' : 'late-expired'
-                    );
-                }
+                gameAction: GameActions.genericHandler(
+                    (context) => {
+                        this.order.push(
+                            this.hedgeKnight.hasTrait('Army') ? 'interrupt' : 'interrupt-gone'
+                        );
+                        context.game.addEffect(this.hedgeKnight, {
+                            duration: 'untilEndOfPhase',
+                            match: this.hedgeKnight,
+                            effect: effects.addTrait('Lord')
+                        });
+                        this.order.push(
+                            this.hedgeKnight.hasTrait('Lord') ? 'late-applied' : 'late-expired'
+                        );
+                    },
+                    () => true
+                )
             });
             this.hedgeKnight.reaction({
                 when: {
                     onPhaseEnded: (event) => event.phase === 'marshal'
                 },
-                handler: () => {
-                    this.order.push(
-                        this.hedgeKnight.hasTrait('Army') ? 'reaction-active' : 'reaction'
-                    );
-                }
+                gameAction: GameActions.genericHandler(
+                    () => {
+                        this.order.push(
+                            this.hedgeKnight.hasTrait('Army') ? 'reaction-active' : 'reaction'
+                        );
+                    },
+                    () => true
+                )
             });
             this.hedgeKnight.abilities.reactions.forEach((ability) => ability.registerEvents());
 

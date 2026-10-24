@@ -28,12 +28,23 @@ class TheLastOfTheGiants extends DrawCard {
                     match: context.target,
                     effect: ability.effects.addKeyword('Intimidate')
                 })),
-                GameActions.lastingEffect((context) => ({
-                    duration: 'atEndOfPhase',
-                    match: context.target,
-                    condition: () => 'play area' === context.target.location,
-                    effect: ability.effects.killIfStillInPlay(false)
-                }))
+                GameActions.delayedEffect((context) => {
+                    const card = context.target;
+                    return {
+                        duration: 'untilTriggered',
+                        title: card.name,
+                        when: { onAtEndOfPhase: () => true },
+                        until: { onCardLeftPlay: (event) => event.card === card },
+                        gameAction: GameActions.ifCondition({
+                            condition: () => ['play area', 'duplicate'].includes(card.location),
+                            thenAction: {
+                                message:
+                                    '{player} resolves the delayed effect from {source}: {gameAction}',
+                                gameAction: GameActions.kill({ card, allowSave: false })
+                            }
+                        })
+                    };
+                })
             ])
         });
     }

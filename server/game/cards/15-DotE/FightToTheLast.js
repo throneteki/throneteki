@@ -28,12 +28,23 @@ class FightToTheLast extends DrawCard {
                 })),
                 GameActions.saveCard((context) => ({ event: context.event, remediesBurn: true })),
                 GameActions.standCard((context) => ({ card: context.event.card })),
-                GameActions.lastingEffect((context) => ({
-                    duration: 'atEndOfPhase',
-                    match: context.event.card,
-                    condition: () => context.event.card.location === 'play area',
-                    effect: ability.effects.killIfStillInPlay(false)
-                }))
+                GameActions.delayedEffect((context) => {
+                    const card = context.event.card;
+                    return {
+                        duration: 'untilTriggered',
+                        title: card.name,
+                        when: { onAtEndOfPhase: () => true },
+                        until: { onCardLeftPlay: (event) => event.card === card },
+                        gameAction: GameActions.ifCondition({
+                            condition: () => ['play area', 'duplicate'].includes(card.location),
+                            thenAction: {
+                                message:
+                                    '{player} resolves the delayed effect from {source}: {gameAction}',
+                                gameAction: GameActions.kill({ card, allowSave: false })
+                            }
+                        })
+                    };
+                })
             ])
         });
     }

@@ -5,7 +5,7 @@ class HearMeRoar extends DrawCard {
     // Hear Me Roar! (01100)
     // Action: Put a [lannister] character into play from your hand. At the end of the phase, if
     // that card is still in play, discard it from play (cannot be saved).
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.action({
             title: 'Put character into play',
             target: {
@@ -22,13 +22,23 @@ class HearMeRoar extends DrawCard {
                     player: context.player,
                     card: context.target
                 })),
-                GameActions.lastingEffect((context) => ({
-                    duration: 'atEndOfPhase',
-                    match: context.target,
-                    condition: () => ['play area', 'duplicate'].includes(context.target.location),
-                    targetLocation: 'any',
-                    effect: ability.effects.discardIfStillInPlay(false)
-                }))
+                GameActions.delayedEffect((context) => {
+                    const card = context.target;
+                    return {
+                        duration: 'untilTriggered',
+                        title: card.name,
+                        when: { onAtEndOfPhase: () => true },
+                        until: { onCardLeftPlay: (event) => event.card === card },
+                        gameAction: GameActions.ifCondition({
+                            condition: () => ['play area', 'duplicate'].includes(card.location),
+                            thenAction: {
+                                message:
+                                    '{player} resolves the delayed effect from {source}: {gameAction}',
+                                gameAction: GameActions.discardCard({ card, allowSave: false })
+                            }
+                        })
+                    };
+                })
             ])
         });
     }

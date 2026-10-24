@@ -100,7 +100,7 @@ class PlayerInteractionWrapper {
             plot = this.findCardByName(plot, 'plot deck');
         }
 
-        this.player.selectedPlot = plot;
+        this.clickCard(plot);
         this.clickPrompt('Done');
     }
 

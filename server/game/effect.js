@@ -35,6 +35,11 @@ import { flatten } from '../Array.js';
  */
 class Effect {
     constructor(game, source, properties) {
+        if (properties.duration?.startsWith('atEndOf')) {
+            throw new Error(
+                'Use GameActions.delayedEffect for actions at the end of a timing period'
+            );
+        }
         this.game = game;
         this.source = source;
         this.match = properties.match || (() => true);
@@ -324,10 +329,6 @@ class Effect {
             this.effect.unapply(target, this.context);
             this.effect.apply(target, this.context);
         };
-    }
-
-    get order() {
-        return this.effect.order || 0;
     }
 }
 

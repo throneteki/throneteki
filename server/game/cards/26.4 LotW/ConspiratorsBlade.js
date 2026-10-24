@@ -23,12 +23,11 @@ class ConspiratorsBlade extends DrawCard {
             },
             message:
                 '{player} uses {source} to reduce the cost of the next card they bring out of shadows this phase by 2',
-            gameAction: GameActions.genericHandler((context) => {
-                context.source.untilEndOfPhase((ability) => ({
-                    targetController: 'current',
-                    effect: ability.effects.reduceNextOutOfShadowsCardCost(2)
-                }));
-            })
+            gameAction: GameActions.lastingEffect(() => ({
+                duration: 'untilEndOfPhase',
+                targetController: 'current',
+                effect: ability.effects.reduceNextOutOfShadowsCardCost(2)
+            }))
         });
     }
 }

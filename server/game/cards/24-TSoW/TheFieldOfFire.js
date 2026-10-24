@@ -15,20 +15,19 @@ class TheFieldOfFire extends DrawCard {
                 args: { reduction: (context) => context.source.getReductionAmount(context.player) }
             },
             max: ability.limit.perPhase(1),
-            gameAction: GameActions.genericHandler((context) => {
-                context.source.untilEndOfPhase((ability) => ({
-                    match: context.game.filterCardsInPlay(
-                        (card) =>
-                            card.getType() === 'character' &&
-                            !card.hasTrait('Dragon') &&
-                            card.attachments.length === 0
-                    ),
-                    targetController: 'any',
-                    effect: ability.effects.modifyStrength(
-                        context.source.getReductionAmount(context.player)
-                    )
-                }));
-            })
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.game.filterCardsInPlay(
+                    (card) =>
+                        card.getType() === 'character' &&
+                        !card.hasTrait('Dragon') &&
+                        card.attachments.length === 0
+                ),
+                targetController: 'any',
+                effect: ability.effects.modifyStrength(
+                    context.source.getReductionAmount(context.player)
+                )
+            }))
         });
     }
 

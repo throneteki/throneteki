@@ -34,12 +34,28 @@ class OverwhelmingNumbers extends DrawCard {
                     GameActions.putIntoPlay({ card, player: context.player, kneeled: true }).then({
                         gameAction: GameActions.simultaneously([
                             GameActions.addToChallenge({ card }),
-                            GameActions.lastingEffect(() => ({
-                                duration: 'atEndOfChallenge',
-                                match: card,
-                                condition: () => card.location === 'play area',
-                                effect: ability.effects.returnToHandIfStillInPlay(true, 'challenge')
-                            }))
+                            GameActions.delayedEffect(() => {
+                                return {
+                                    duration: 'untilTriggered',
+                                    group: context,
+                                    groupTitle: 'Return Dothraki characters to hand',
+                                    title: card.name,
+                                    when: { onAtEndOfChallenge: () => true },
+                                    until: { onCardLeftPlay: (event) => event.card === card },
+                                    gameAction: GameActions.ifCondition({
+                                        condition: () =>
+                                            ['play area', 'duplicate'].includes(card.location),
+                                        thenAction: {
+                                            message:
+                                                '{player} resolves the delayed effect from {source}: {gameAction}',
+                                            gameAction: GameActions.returnCardToHand({
+                                                card,
+                                                allowSave: true
+                                            })
+                                        }
+                                    })
+                                };
+                            })
                         ])
                     })
                 )

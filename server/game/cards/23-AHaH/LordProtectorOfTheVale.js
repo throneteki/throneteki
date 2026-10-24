@@ -35,12 +35,11 @@ class LordProtectorOfTheVale extends DrawCard {
                     str: (context) => context.source.parent.getStrength()
                 }
             },
-            gameAction: GameActions.genericHandler((context) => {
-                context.source.untilEndOfChallenge((ability) => ({
-                    targetController: 'current',
-                    effect: ability.effects.contributeCharacterStrength(context.source.parent)
-                }));
-            })
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                targetController: 'current',
+                effect: ability.effects.contributeCharacterStrength(context.source.parent)
+            }))
         });
     }
 }

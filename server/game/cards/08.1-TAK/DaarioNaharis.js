@@ -7,7 +7,7 @@ class DaarioNaharis extends DrawCard {
     // Reaction: After you win a challenge in which Daario Naharis is attacking, choose another
     // Ally, Companion, or Mercenary character. Stand that character and take control of it until
     // the end of the phase.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: (event, context) =>
@@ -24,14 +24,13 @@ class DaarioNaharis extends DrawCard {
             },
             message:
                 '{player} uses {source} to stand and take control of {target} until the end of the phase',
-            gameAction: GameActions.simultaneously((context) => [
+            gameAction: GameActions.simultaneously(() => [
                 GameActions.standCard((context) => ({ card: context.target })),
-                GameActions.genericHandler((context) => {
-                    context.source.untilEndOfPhase((ability) => ({
-                        match: context.target,
-                        effect: ability.effects.takeControl(context.player)
-                    }));
-                })
+                GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfPhase',
+                    match: context.target,
+                    effect: ability.effects.takeControl(context.player)
+                }))
             ])
         });
     }

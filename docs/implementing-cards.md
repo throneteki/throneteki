@@ -274,49 +274,49 @@ effect preserves whether that allowance has been used.
 
 ### Lasting effects
 
-Unlike persistent effects, lasting effects are typically applied during an action, reaction or interrupt and expire after a specified period of time. Because lasting effects can be applied almost anywhere, each method takes a factory function that provides the `ability` object and should return the effect properties. The properties returned when applying these effects are identical to those of persistent effects, but additional methods are provided to apply them immediately with the correct duration.
-
-**Important: These should not be used within setupCardAbilities, only within handler code for actions and triggered abilities.**
-
-To apply an effect to last until the end of the current challenge, use `untilEndOfChallenge`:
+Lasting effects are declared through `GameActions.lastingEffect`. The property factory receives
+an ability context; the `ability` DSL comes from `setupCardAbilities(ability)`. Set the duration
+explicitly to `untilEndOfChallenge`, `untilEndOfPhase`, `untilEndOfRound`, or `custom`.
 
 ```javascript
-// Until the end of the challenge, the character this is attached to gains +3 STR
-this.untilEndOfChallenge((ability) => ({
-    match: (card) => card === this.parent,
+GameActions.lastingEffect((context) => ({
+    duration: 'untilEndOfChallenge',
+    match: context.source.parent,
     effect: ability.effects.modifyStrength(3)
 }));
 ```
 
-To apply an effect to last until the end of the current phase, use `untilEndOfPhase`:
+For an action that happens **at** the end of a phase, use `GameActions.delayedEffect`.
+The old `atEndOfPhase`, `atEndOfChallenge`, and `atEndOfRound` effect durations and helpers
+have been removed. A delayed effect participates in first-player ordering, rather than running
+as a side effect of undoing a stat modifier:
 
 ```javascript
-// Until the end of the phase, the current player can initiate an additional power challenge.
-this.untilEndOfPhase((ability) => ({
-    targetController: 'current',
-    effect: ability.effects.mayInitiateAdditionalChallenge('power')
-}));
+GameActions.delayedEffect((context) => {
+    const card = context.target;
+    return {
+        duration: 'untilTriggered',
+        title: card.name,
+        when: { onAtEndOfPhase: () => true },
+        until: { onCardLeftPlay: (event) => event.card === card },
+        gameAction: GameActions.ifCondition({
+            condition: () => card.location === 'play area',
+            thenAction: GameActions.discardCard({ card, allowSave: false })
+        })
+    };
+});
 ```
 
-To apply an effect that will expire 'at the end of the phase', use `atEndOfPhase`:
+The property factory runs once when the delayed effect is created. Capture the affected card
+there, rather than reading a later ability context's target. The optional `title` distinguishes
+multiple pending effects from the same source. Leave-play expiry prevents the effect from
+applying to a card that leaves and reenters play.
 
-```javascript
-// At the end of the phase, if card is still in play discard it from play (cannot be saved)
-this.atEndOfPhase((ability) => ({
-    match: card,
-    effect: ability.effects.discardIfStillInPlay(false)
-}));
-```
+When one delayed instruction affects several cards, per-card tracking can share a `group` token
+and a `groupTitle`. Use the original resolution context as the group token. The engine presents
+one ordering choice for that instruction and resolves its surviving card actions simultaneously.
+Independent uses of an ability have different contexts and remain separate choices.
 
-To apply an effect to last until the end of the round, use `untilEndOfRound`:
-
-```javascript
-/// Until the end of the round, add the 'Winter' trait to the specified plot card.
-this.untilEndOfRound((ability) => ({
-    match: plotCard,
-    effect: ability.effects.addTrait('Winter')
-}));
-```
 
 #### Lasting effects as game actions
 
@@ -620,80 +620,36 @@ Actions are abilities provided by the card text that players may trigger during 
 
 #### Declaring an action
 
-When declaring an action, use the `action` method and provide it with a `title` and a `handler` property. The title is what will be displayed in the menu players see when clicking on the card. The handler is a function to be called when the player chooses to trigger the action. The handler receives a context object as its only parameter which contains the `player` executing the action, and the `source` card that triggered the ability.
+Declare an action with a title and a game action. The game-action factory receives `context.player`,
+`context.source`, and any resolved targets. Handler properties are rejected.
 
 ```javascript
-class SealOfTheHand extends DrawCard {
-    setupCardAbilities(ability) {
-        this.action({
-            title: 'Stand attached character',
-            handler: (context) => {
-                // Code to stand the parent card
-            }
-        });
-    }
-}
+this.action({
+    title: 'Stand attached character',
+    cost: ability.costs.kneelSelf(),
+    gameAction: GameActions.standCard((context) => ({ card: context.source.parent }))
+});
 ```
 
 #### Ability messages
 
-The `message` property adds the ability's message to the game log outside of the `handler` function. The engine logs it when the ability's effects resolve, after any cancels (Treachery, The Hand's Judgment, etc.), so the log doesn't claim effects that never happened:
-
-- For an ability with a declarative `gameAction`, the message is logged after the game action's handler runs. `{gameAction}` in the message describes what actually happened: parts that were cancelled, saved or prevented are left out, and amounts are the amounts applied (e.g. gold actually gained).
-- For an ability with a `handler` or `choices`, the message is logged as its effects begin.
-- If something else is logged first, the log shows a plain "{player} uses/plays {source}" line while the ability can still be cancelled or its effect prevented, and the full message once its effects have begun. A cancelled ability, or one whose only target was saved, only gets the plain line.
-
-Prefer `{gameAction}` over spelling the effect out in the format, so the message stays accurate.
-
-An ability with a declarative `gameAction` and no `message` gets a default one, built from what resolved and the cards paid as costs:
-
-- `player1 uses Littlefinger and draws 2 cards`
-- `player1 kneels Grey Wind and kills Eddard Stark`, when the source paid a cost
-- `player1 plays Nightmares, kneels their faction card, and blanks Robb Stark`
-
-Leave `message` out when the default says what the card does. Game actions that prompt and log their own lines (`search`, `choose`, `ifCondition`, `may`, `nameTrait`, `nameCard`, `discardAtRandom`) don't get a default, and neither do abilities with a `handler`. If nothing resolved, only the plain "{player} uses/plays {source}" line is logged.
-
-The `message` property can be just a string if there are no additional arguments. `{player}` will be replaced with the player initiating the ability, `{source}` will be replaced with the card associated with the ability, and `{target}` will be replaced with the target for the ability (if any):
+The engine builds a default message from the resolved game action and paid costs. Cancelled,
+saved, and prevented parts are omitted. Override wording with a declarative `message` template:
 
 ```javascript
 this.action({
-    // ...
-    message: '{player} kneels {source} to stand {target}',
-    handler: () => {
-        // ...
-    }
+    title: 'Stand attached character',
+    cost: ability.costs.kneelSelf(),
+    message: '{player} kneels {source} and {gameAction}',
+    gameAction: GameActions.standCard((context) => ({ card: context.source.parent }))
 });
 ```
 
-When you have additional parameters needed for the message, the `message` property can be an object with a `format` sub-property for the message format, and an `args` sub-property for the additional arguments. The keys of the `args` sub-property correspond to the replacement name, and the values correspond to a function that takes the `context` object and returns the appropriate argument value:
-
-```javascript
-this.action({
-    // ...
-    message: {
-        format: "{player} uses {source} to put {target} into play from {targetOwner}'s discard pile.",
-        args: {
-            targetOwner: (context) => context.target.owner
-        }
-    },
-    handler: () => {
-        // ...
-    }
-});
-```
-
-Finally, you can pass a function to the `message` property that will be executed:
-
-```javascript
-this.action({
-    // ...
-    message: (context) =>
-        this.game.addMessage('{0} uses {1} to kill {2}', context.player, this, context.target),
-    handler: () => {
-        // ...
-    }
-});
-```
+`{player}`, `{source}`, and `{target}` come from the context. Additional arguments use
+`message: { format, args }`, with each argument a context function. Prefer `{gameAction}` to
+wording that could claim a prevented effect happened. Prompting actions such as `search`,
+`choose`, `ifCondition`, `may`, `nameCard`, and `nameTrait` log their own messages. A cancelled
+ability only gets the plain uses/plays line.
 
 #### Checking ability restrictions
 
@@ -765,51 +721,31 @@ this.action({
 });
 ```
 
-The card that was chosen will be set on the `target` property of the context object passed to the handler.
+The chosen card is `context.target`. For multiple targets, name each target and give it its own
+game action. Each selection is then filtered by what its action can affect:
 
 ```javascript
 this.action({
-    // ...
-    handler: (context) => {
-        this.game.addMessage('{0} uses {1} to stand {2}', context.player, this, context.target);
-        this.controller.standCard(context.target);
-    }
-});
-```
-
-Some card abilities require multiple targets. These may be specified using the `targets` property. Each sub key under `targets` is the name that will be given to the chosen card, and the value is the prompt properties.
-
-```javascript
-this.action({
-    title: 'Kneel this card to modify the strength of two characters',
+    title: 'Modify the strength of two characters',
     targets: {
         toLower: {
-            activePromptTitle: 'Select a character to get -1 STR',
-            cardCondition: (card) => isCharacterInPlay(card)
+            cardCondition: (card) =>
+                card.location === 'play area' && card.getType() === 'character',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.targets.toLower,
+                effect: ability.effects.modifyStrength(-1)
+            }))
         },
         toRaise: {
-            activePromptTitle: 'Select a character to get +1 STR',
-            cardCondition: (card) => isCharacterInPlay(card)
+            cardCondition: (card) =>
+                card.location === 'play area' && card.getType() === 'character',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.targets.toRaise,
+                effect: ability.effects.modifyStrength(1)
+            }))
         }
-    }
-    // ...
-});
-```
-
-Once all targets are chosen, they will be set using their specified name under the `targets` property on the handler context object.
-
-```javascript
-this.action({
-    // ...
-    handler: (context) => {
-        this.untilEndOfPhase((ability) => ({
-            match: context.targets.toLower,
-            effect: ability.effects.modifyStrength(-1)
-        }));
-        this.untilEndOfPhase((ability) => ({
-            match: context.targets.toRaise,
-            effect: ability.effects.modifyStrength(1)
-        }));
     }
 });
 ```
@@ -911,22 +847,10 @@ this.action({
 
 #### Cancelling an action
 
-If after checking play requirements and paying costs an action needs to be cancelled for some reason, simply return `false` from the handler. **Note**: This should be very rare.
-
-```javascript
-this.action({
-    title: 'Do something',
-    handler: () => {
-        if (!this.canDoIt()) {
-            return false;
-        }
-
-        // normal handler code
-    }
-});
-```
-
-If an action is cancelled in this manner, it is not counted towards any 'limit X per challenge/phase/round' requirements.
+Use `GameActions.cancelEffects({ event })` from a qualifying interrupt. A cancellation after
+initiation keeps costs paid and counts towards limits. Conditions and game-action eligibility
+prevent an unavailable action from initiating; returning a boolean from an ability handler is
+not an API for cancellation.
 
 #### Limiting an action to a specific phase
 
@@ -966,127 +890,84 @@ this.action({
 
 ### Triggered abilities
 
-Triggered abilities include all card abilities that have **Interrupt**, **Forced Interrupt**, **Reaction**, **Forced Reaction**, or **When Revealed**. For full documentation of properties, see `/server/game/promptedtriggeredability.js` and `/server/game/forcedtriggeredability.js`. Here are some common scenarios:
+Reactions, interrupts, forced abilities, and When Revealed abilities declare game actions just
+like actions. `when` predicates receive `(event, context)` and must have no side effects.
+[Constants/Events.js](../server/game/Constants/Events.js) lists the supported events and parameters.
 
 #### Defining the triggering condition
-
-Each triggered ability has an associated triggering condition. This is done using the `when` property. This should be an object whose sub-property is the name of the event, and whose value is a function called with the event and the ability context. When the function returns `true`, the ability will be executed. The events and the parameters each one carries are listed in [server/game/Constants/Events.js](../server/game/Constants/Events.js); outside production, listening for an event that isn't listed throws.
-
-```javascript
-this.interrupt({
-    when: {
-        // when the challenges phase ends and the card is not kneeled
-        onPhaseEnded: (event, context) => event.phase === 'challenge' && !context.source.kneeled
-    },
-    handler: () => {
-        // handler code.
-    }
-});
-```
-
-In rare cases, there may be multiple triggering conditions for the same ability. For example, WotN Catelyn Stark gains power whenever a character is killed OR sacrificed. In these cases, just defined an additional event on the `when` object.
 
 ```javascript
 this.reaction({
     when: {
-        onSacrificed: (event) => isStarkCharacter(event.card),
-        onCharacterKilled: (event) => isStarkCharacter(event.card)
+        afterChallenge: (event, context) =>
+            event.challenge.winner === context.player && context.source.isParticipating()
     },
-    handler: () => {
-        // gain power
-    }
+    gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
 });
 ```
 
-There may also be scenarios where the triggering conditions need to be aggregated or grouped to determine whether the ability should be executed. For example, The Warden of the West draws a number of cards which are discarded simultaneously from an opponent's hand or deck. In these cases, you can `aggregateBy` within the event defined in the `when` object, with the triggering condition passed to the `condition` function. When that function returns `true` the ability will be executed, and all valid events will be accessible within `context.events`.
+A `when` object can name several events. For grouped events, use `aggregateBy` and a `condition`
+inside the event definition. Matching events are available as `context.events`:
 
 ```javascript
 this.reaction({
     when: {
         onCardDiscarded: {
-            // Aggregate by the controller of the discarded cards, and the location they were discarded in
-            aggregateBy: (event, context) => ({
+            aggregateBy: (event) => ({
                 controller: event.cardStateWhenDiscarded.controller,
                 location: event.cardStateWhenDiscarded.location
             }),
-            // Check if this ability should trigger using the aggregate details defined above
-            condition: (aggregate, events, context) =>
-                aggregate.controller !== this.controller &&
+            condition: (aggregate, _events, context) =>
+                aggregate.controller !== context.player &&
                 ['hand', 'draw deck'].includes(aggregate.location)
         }
     },
-    handler: (context) => {
-        // Draw context.events.length worth of cards
-    }
+    gameAction: GameActions.drawCards((context) => ({
+        player: context.player,
+        amount: context.events.length
+    }))
 });
 ```
 
 #### Forced reactions and interrupts
 
-Forced reactions and interrupts do not provide the player with a choice - unless cancelled, the provided `handler` method will always be executed.
-
-To declare a forced reaction, use the `forcedReaction` method:
+Use `forcedReaction` or `forcedInterrupt` for mandatory triggered text. Their effects still use
+`gameAction`. Constant text that resolves when an event occurs uses `eventCheck`; an ongoing
+condition uses `stateCheck`.
 
 ```javascript
-// After you lose an unopposed challenge, kneel The Wall.
 this.forcedReaction({
     when: {
-        // lost an unopposed challenge
+        afterChallenge: (event, context) =>
+            event.challenge.loser === context.player && event.challenge.isUnopposed()
     },
-    handler: () => {
-        // kneel the Wall.
-    }
-});
-```
-
-To declare a forced interrupt, use the `forcedInterrupt` method.
-
-```javascript
-// When a phase ends in which Gold Cloaks entered play using ambush, discard it from play (cannot be saved)
-this.forcedInterrupt({
-    when: {
-        // the card entered play via ambush
-    },
-    handler: () => {
-        // discard the card
-    }
+    gameAction: GameActions.kneelCard((context) => ({ card: context.source }))
 });
 ```
 
 #### Cancelling or replacing events with interrupts
 
-Some cards (primarily saving cards) allow the player to cancel an effect. The `handler` method is always passed a `context` object that allows the handler to cancel the `event` within it. Such abilities must also be passed `canCancel: true` in the declaration.
+Saves and cancels declare `canCancel: true`. Use `saveCard` for a save and `cancelEffects` for a
+cancel. An interrupt that says ?would? and is not a save/cancel declares `would: true`.
 
 ```javascript
 this.interrupt({
-    when: {
-        // attached character would be killed + allowed to save
-    },
     canCancel: true,
-    handler: (context) => {
-        context.event.cancel();
-        // sacrifice the Bodyguard
-    }
+    when: {
+        onCharacterKilled: (event, context) =>
+            event.card === context.source.parent && event.allowSave
+    },
+    cost: ability.costs.sacrificeSelf(),
+    gameAction: GameActions.saveCard((context) => ({ event: context.event }))
 });
 ```
 
-An interrupt whose trigger says "would" and that is not a save or cancel declares `would: true`,
-so it is offered before forced interrupts (Rules Reference: Triggering Condition). The
-[wouldInterrupts.spec.js](../test/server/tools/wouldInterrupts.spec.js) check fails if a card's
-declarations don't match its text.
-
-When the text says "instead", the event still happens but its effect is replaced. Use
-`GameActions.replaceEvent` with the game action that happens instead. The ability is only offered
-when the replacement could change the game state.
+?Instead? leaves the event in place and replaces its effect:
 
 ```javascript
 this.interrupt({
-    when: {
-        onCardDiscarded: (event) => event.card === this
-    },
     location: ['hand', 'draw deck'],
-    message:
-        '{player} uses {source} to put {source} into play instead of placing it in their discard pile',
+    when: { onCardDiscarded: (event, context) => event.card === context.source },
     gameAction: GameActions.replaceEvent((context) => ({
         event: context.event,
         replacement: GameActions.putIntoPlay({ card: context.source })
@@ -1094,112 +975,33 @@ this.interrupt({
 });
 ```
 
-When only the event's amount changes ("discard 3 cards instead"), use
-`GameActions.changeEventAmount({ event, amount })`, as Scouting Vessel does.
+Use `changeEventAmount` when only an event's amount changes.
 
 #### Yes / no reactions and interrupts
 
-Most reactions and interrupt are a yes / no choice on whether the player wants to activate the ability or not. For these, it's only necessary to provide a `when` event listener and the `handler` method, similar to forced reactions and interrupts.
-
-To declare a reaction, use the `reaction` method.
-
-```javascript
-this.reaction({
-    when: {
-        // triggering event condition
-    }
-    handler: () => {
-        // code to implement the ability
-    }
-});
-```
-
-To declare an interrupt, use the `interrupt` method.
-
-```javascript
-this.interrupt({
-    when: {
-        // triggering event condition
-    }
-    handler: () => {
-        // code to implement the ability
-    }
-});
-```
+Optional `reaction` and `interrupt` abilities automatically let the player decline to trigger.
+Use `GameActions.may` when an optional choice is part of resolving an effect.
 
 #### Multiple choice reactions and interrupts
 
-A few cards provide reactions or interrupts that have more than a yes or no choice. For example, the Great Kraken can be used to draw a card, gain power, or declined. In these cases, instead of sending a `handler` method, a `choices` object may be provided. Each property under the `choices` object will be used as the prompt button text, while the value will be the function to be executed if the player chooses that option. The option to decline / cancel the ability is provided automatically and does not need to be added to the `choices` object.
+A `choices` object maps button labels to game actions or `{ gameAction, message, condition }`
+objects. Functions that perform an effect are rejected.
 
 ```javascript
 this.reaction({
-    when: {
-        // unopposed win
-    },
+    when: { afterChallenge: (event, context) => event.challenge.winner === context.player },
     choices: {
-        'Draw 1 card': () => {
-            // code to draw a card
-        },
-        'Gain 1 power': () => {
-            // code to gain 1 power
-        }
+        'Draw 1 card': GameActions.drawCards((context) => ({ player: context.player, amount: 1 })),
+        'Gain 1 power': GameActions.gainPower((context) => ({ card: context.player.faction }))
     }
 });
 ```
 
 #### Paying additional costs for reactions and interrupts
 
-Some abilities have an additional cost, such as kneeling the card. In these cases, specify the `cost` parameter. The ability will check if the cost can be paid. If it can't, the ability will not prompt the player. If it can, costs will be paid automatically and then the ability will execute.
-
-For a full list of costs, look at `/server/game/costs.js`.
-
-```javascript
-this.interrupt({
-    when: {
-        // condition for the Wall.
-    }
-    // This card must be knelt as a cost for the action.
-    cost: ability.costs.kneelSelf(),
-    handler: () => {
-        // Gain 2 power for your faction.
-    }
-});
-```
-
-If a card has multiple costs, an array of cost objects may be sent using the `cost` property.
-
-```javascript
-this.reaction({
-    when {
-        // condition for Ghaston Grey
-    }
-    // This card must be knelt AND sacrificed as a cost for the action.
-    cost: [
-        ability.costs.kneelSelf(),
-        ability.costs.sacrificeSelf()
-    ],
-    handler: () => {
-        // Choose and return an attacking character to your opponent's hand.
-    }
-});
-```
-
-#### Limiting the number of uses
-
-Some abilities have text limiting the number of times they may be used in a given period. You can pass an optional `limit` property using one of the duration-specific ability limiters.
-
-```javascript
-this.reaction({
-    when: {
-        // the attached character gains power
-    },
-    // limit once per phase
-    limit: ability.limit.perPhase(1),
-    handler: () => {
-        // stand the attached character
-    }
-});
-```
+Use the same `cost` and `limit` properties as actions. Several costs form an array and must all
+be payable before initiation. See [costs.js](../server/game/costs.js). `ability.limit.perChallenge`,
+`perPhase`, and `perRound` define limits at their respective timing scopes.
 
 #### Abilities outside of play
 
@@ -1230,13 +1032,11 @@ this.reaction({
 
 #### When revealed abilities
 
-When implementing plot cards that have a **When Revealed** ability, use the `whenRevealed` method. It will automatically listen to the correct event for you and all that must be provided is a `handler` method.
+Use `whenRevealed` and declare a game action; the engine supplies the reveal trigger.
 
 ```javascript
 this.whenRevealed({
-    handler: () => {
-        // code to implement the ability
-    }
+    gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 2 }))
 });
 ```
 
@@ -1312,3 +1112,29 @@ Neutral is not a faction choice. The choices do not reveal the contents of eithe
 
 Cost reducer match predicates receive `(card, context)`, where `context.source` is the card
 providing the reducer. Use that context when matching the current controller's faction.
+
+### Engine modernization (24 October 2026)
+
+Abilities and choices accept declarative game actions. An ability's `handler` property and
+function-valued choice actions are rejected. `GameActions.genericHandler` is reserved for
+engine test fixtures and requires an explicit game-state predicate; card rules prohibit it in
+card implementations. Use `GameActions.decline()` for a choice that explicitly declines an
+optional effect. It is only available within a choice or an ability continuation.
+
+Removal costs, placement in the dead pile from hand, and variable gold-token payments now raise
+their game-action events and participate in cost-prevention tracking. Removal costs cannot be saved. `GameActions.placeInDeadPile({ card })` handles instructions to
+place a character there without killing or discarding it, including leave-play consequences
+for its attachments and duplicates.
+
+Stealth and assault queue their declared game actions until challenge redirection is complete.
+Intimidate and duplicate saves declare their game actions directly.
+
+Strength modifiers are computed by `CardStat`. Simultaneous application and expiry coalesce
+strength-change notifications, including old and new plot effects during a plot reveal. Burn is
+checked against the resulting state; there is no positive/negative sorting or reverse-expiry
+workaround. Multiple burn sources are tracked independently.
+
+Plot selection follows advance-information dependencies. Independent players choose together;
+a viewer waits for the player whose plot they can inspect. The first player breaks dependency
+cycles. Confirmed choices cannot be changed, and plot selection in tests uses the same click and
+Done flow as the client. These rules follow the [Bloodraven FAQ](https://thronesdb.com/card/25017).

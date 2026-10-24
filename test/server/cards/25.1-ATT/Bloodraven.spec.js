@@ -14,9 +14,10 @@ describe('Bloodraven (ATT)', function () {
         expect(this.game.isCardVisible(this.aNobleCause, this.player1Object)).toBe(true);
     });
 
-    it('does not show it to an opponent who did not use Bloodraven', function () {
-        this.player1.selectPlot('Filler Plot');
-        expect(this.game.isCardVisible(this.player1Object.selectedPlot, this.player2Object)).toBe(
+    it("does not expose the viewer's unrevealed plots to the chosen opponent", function () {
+        // The viewer chooses after the chosen opponent (Bloodraven FAQ, 31 January 2024).
+        expect(this.player1).toHavePrompt('Waiting to look at chosen plots');
+        expect(this.game.isCardVisible(this.player1Object.plotDeck[0], this.player2Object)).toBe(
             false
         );
     });

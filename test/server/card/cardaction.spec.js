@@ -1,3 +1,4 @@
+import GameActions from '../../../server/game/GameActions/index.js';
 import CardAction from '../../../server/game/cardaction.js';
 
 describe('CardAction', function () {
@@ -39,7 +40,7 @@ describe('CardAction', function () {
 
         this.properties = {
             title: 'Do the thing',
-            handler: this.handlerSpy
+            gameAction: GameActions.genericHandler(this.handlerSpy, () => true)
         };
     });
 
@@ -67,18 +68,18 @@ describe('CardAction', function () {
                 });
             });
 
-            describe('when passed a handler directly', function () {
+            describe('when passed an explicit callback game action', function () {
                 beforeEach(function () {
                     this.properties = {
                         title: 'Do the thing',
-                        handler: vi.fn()
+                        gameAction: GameActions.genericHandler(vi.fn(), () => true)
                     };
                     this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
                 });
 
-                it('should convert the handler to a game action', function () {
+                it('should resolve the supplied game action', function () {
                     this.action.gameAction.createEvent(this.context).executeHandler();
-                    expect(this.properties.handler).toHaveBeenCalledWith(this.context);
+                    expect(this.properties.gameAction.handler).toHaveBeenCalledWith(this.context);
                 });
             });
         });
@@ -480,7 +481,7 @@ describe('CardAction', function () {
                 arg: 'arg'
             };
             this.handler = vi.fn();
-            this.properties.handler = this.handler;
+            this.properties.gameAction = GameActions.genericHandler(this.handler, () => true);
             this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
             this.action.executeHandler(this.context);
         });

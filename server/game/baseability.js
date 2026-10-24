@@ -169,7 +169,7 @@ class BaseAbility {
         }
 
         if (properties.handler) {
-            return new HandlerGameActionWrapper({ handler: properties.handler });
+            throw new Error('Use a declarative gameAction instead of an ability handler');
         }
 
         return null;

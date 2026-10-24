@@ -27,9 +27,12 @@ describe('ability resolution', function () {
                         !card.kneeled,
                     gameAction: 'kill'
                 },
-                handler: (context) => {
-                    this.chosen = context.target;
-                }
+                gameAction: GameActions.genericHandler(
+                    (context) => {
+                        this.chosen = context.target;
+                    },
+                    () => true
+                )
             });
         });
 
@@ -73,9 +76,12 @@ describe('ability resolution', function () {
                         card === this.hedgeKnight && card.location === 'play area',
                     gameAction: 'kneel'
                 },
-                handler: () => {
-                    this.resolved = true;
-                }
+                gameAction: GameActions.genericHandler(
+                    () => {
+                        this.resolved = true;
+                    },
+                    () => true
+                )
             });
         });
 
@@ -107,9 +113,12 @@ describe('ability resolution', function () {
                     mode: 'unlimited',
                     cardCondition: (card) => card.getType() === 'character'
                 },
-                handler: () => {
-                    this.resolved = true;
-                }
+                gameAction: GameActions.genericHandler(
+                    () => {
+                        this.resolved = true;
+                    },
+                    () => true
+                )
             });
         });
 
@@ -150,18 +159,24 @@ describe('ability resolution', function () {
                         );
                     }
                 },
-                handler: () => {
-                    this.resolved = true;
-                }
+                gameAction: GameActions.genericHandler(
+                    () => {
+                        this.resolved = true;
+                    },
+                    () => true
+                )
             });
             this.houseMaester.interrupt({
                 when: {
                     onCardKneeled: (event) =>
                         event.card === this.hedgeKnight && event.reason === 'cost'
                 },
-                handler: (context) => {
-                    context.event.cancel();
-                }
+                gameAction: GameActions.genericHandler(
+                    (context) => {
+                        context.event.cancel();
+                    },
+                    () => true
+                )
             });
             this.houseMaester.abilities.reactions.at(-1).registerEvents();
         });

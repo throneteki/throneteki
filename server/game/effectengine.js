@@ -1,4 +1,4 @@
-import { partition, sortBy } from '../Array.js';
+import { partition } from '../Array.js';
 import EventRegistrar from './eventregistrar.js';
 
 class EffectEngine {
@@ -11,10 +11,7 @@ class EffectEngine {
             'onCardBlankToggled',
             'onChallengeFinished',
             'onPhaseEnded',
-            'onAtEndOfChallenge',
-            'onAtEndOfPhase',
-            'onRoundEnded',
-            'onAtEndOfRound'
+            'onRoundEnded'
         ]);
         this.effects = [];
         this.delayedEffects = [];
@@ -32,7 +29,6 @@ class EffectEngine {
         }
 
         this.effects.push(effect);
-        this.effects = sortBy(this.effects, (effect) => effect.order);
         effect.addTargets(this.getTargets());
         if (effect.duration === 'custom') {
             this.registerCustomDurationEvents(effect);
@@ -40,10 +36,48 @@ class EffectEngine {
     }
 
     addSimultaneous(effects) {
-        let sortedEffects = sortBy(effects, (effect) => effect.order);
-        for (let effect of sortedEffects) {
-            this.add(effect);
+        this.withEffectChanges(() => {
+            for (const effect of effects) {
+                this.add(effect);
+            }
+        });
+    }
+
+    withEffectChanges(callback) {
+        if (this.strengthChanges) {
+            return callback();
         }
+        this.beginEffectChanges();
+        try {
+            return callback();
+        } finally {
+            this.endEffectChanges();
+        }
+    }
+
+    beginEffectChanges() {
+        this.strengthChanges = new Map();
+    }
+
+    endEffectChanges() {
+        const changes = this.strengthChanges;
+        this.strengthChanges = undefined;
+        for (const [card, change] of changes) {
+            const amount = card.getStrength() - change.before;
+            card.raiseStrengthChangeEvent(amount, amount * change.applyingDelta > 0);
+        }
+    }
+
+    recordStrengthChange(card, amount, applying) {
+        if (!this.strengthChanges) {
+            return false;
+        }
+        const previous = this.strengthChanges.get(card);
+        this.strengthChanges.set(card, {
+            before: previous ? previous.before : card.getStrength() - amount,
+            applyingDelta: (previous?.applyingDelta || 0) + (applying ? amount : 0)
+        });
+        return true;
     }
 
     getTargets() {
@@ -76,15 +110,17 @@ class EffectEngine {
         }
 
         this.game.queueSimpleStep(() => {
-            for (let card of dirtyCards) {
-                card.clearDirty();
-            }
+            return this.withEffectChanges(() => {
+                for (let card of dirtyCards) {
+                    card.clearDirty();
+                }
 
-            for (let effect of this.effects) {
-                effect.clearInvalidTargets();
-                effect.addTargets(dirtyCards);
-                effect.updateAppliedTargets();
-            }
+                for (let effect of this.effects) {
+                    effect.clearInvalidTargets();
+                    effect.addTargets(dirtyCards);
+                    effect.updateAppliedTargets();
+                }
+            });
         });
     }
 
@@ -99,69 +135,79 @@ class EffectEngine {
         }
 
         this.game.queueSimpleStep(() => {
-            this.effectsBeingRecalculated = this.effectsBeingRecalculated.concat(needsRecalc);
+            return this.withEffectChanges(() => {
+                this.effectsBeingRecalculated = this.effectsBeingRecalculated.concat(needsRecalc);
 
-            for (let effect of needsRecalc) {
-                if (this.effects.includes(effect)) {
-                    if (effect.hasEnded()) {
-                        effect.cancel();
-                        this.effects = this.effects.filter((e) => e !== effect);
-                    } else {
-                        effect.reapply(this.getTargets());
+                for (let effect of needsRecalc) {
+                    if (this.effects.includes(effect)) {
+                        if (effect.hasEnded()) {
+                            effect.cancel();
+                            this.effects = this.effects.filter((e) => e !== effect);
+                        } else {
+                            effect.reapply(this.getTargets());
+                        }
                     }
                 }
-            }
+            });
         });
 
         this.game.queueSimpleStep(() => {
-            this.effectsBeingRecalculated = this.effectsBeingRecalculated.filter(
-                (effect) => !needsRecalc.includes(effect)
-            );
+            return this.withEffectChanges(() => {
+                this.effectsBeingRecalculated = this.effectsBeingRecalculated.filter(
+                    (effect) => !needsRecalc.includes(effect)
+                );
+            });
         });
     }
 
     onCardMoved(event) {
-        this.unapplyAndRemove(
-            (effect) =>
-                effect.duration === 'persistent' &&
-                effect.source === event.card &&
-                !event.facedownChanged &&
-                (effect.location === event.originalLocation ||
-                    (event.parentChanged && effect.location !== 'any'))
-        );
-        for (let effect of this.effects) {
-            effect.clearInvalidTargets();
-            effect.addTargets([event.card]);
-            effect.updateAppliedTargets();
-        }
+        return this.withEffectChanges(() => {
+            this.unapplyAndRemove(
+                (effect) =>
+                    effect.duration === 'persistent' &&
+                    effect.source === event.card &&
+                    !event.facedownChanged &&
+                    (effect.location === event.originalLocation ||
+                        (event.parentChanged && effect.location !== 'any'))
+            );
+            for (let effect of this.effects) {
+                effect.clearInvalidTargets();
+                effect.addTargets([event.card]);
+                effect.updateAppliedTargets();
+            }
+        });
     }
 
     onCardTakenControl(event) {
-        let card = event.card;
-        for (let effect of this.effects) {
-            effect.clearInvalidTargets();
-            if (effect.duration === 'persistent' && effect.source === card) {
-                // Since the controllers have changed, explicitly cancel the
-                // effect for existing targets and then recalculate effects for
-                // the new controller from scratch.
-                effect.addTargets(this.getTargets());
-            } else {
-                effect.addTargets([card]);
-            }
+        return this.withEffectChanges(() => {
+            let card = event.card;
+            for (let effect of this.effects) {
+                effect.clearInvalidTargets();
+                if (effect.duration === 'persistent' && effect.source === card) {
+                    // Since the controllers have changed, explicitly cancel the
+                    // effect for existing targets and then recalculate effects for
+                    // the new controller from scratch.
+                    effect.addTargets(this.getTargets());
+                } else {
+                    effect.addTargets([card]);
+                }
 
-            effect.updateAppliedTargets();
-        }
+                effect.updateAppliedTargets();
+            }
+        });
     }
 
     onCardBlankToggled(event) {
-        let { card, isBlank } = event;
-        let targets = this.getTargets();
-        let matchingEffects = this.effects.filter(
-            (effect) => effect.duration === 'persistent' && effect.source === card
-        );
-        for (let effect of matchingEffects) {
-            effect.setActive(!isBlank, targets);
-        }
+        return this.withEffectChanges(() => {
+            let { card, isBlank } = event;
+            let targets = this.getTargets();
+            let matchingEffects = this.effects.filter(
+                (effect) => effect.duration === 'persistent' && effect.source === card
+            );
+            for (let effect of matchingEffects) {
+                effect.setActive(!isBlank, targets);
+            }
+        });
     }
 
     onChallengeFinished() {
@@ -172,14 +218,6 @@ class EffectEngine {
     onPhaseEnded() {
         this.unapplyAndRemove((effect) => effect.duration === 'untilEndOfPhase');
         this.expireDelayedEffects('untilEndOfPhase');
-    }
-
-    onAtEndOfChallenge() {
-        this.unapplyAndRemove((effect) => effect.duration === 'atEndOfChallenge');
-    }
-
-    onAtEndOfPhase() {
-        this.unapplyAndRemove((effect) => effect.duration === 'atEndOfPhase');
     }
 
     onRoundEnded() {
@@ -214,16 +252,16 @@ class EffectEngine {
         );
     }
 
-    onAtEndOfRound() {
-        this.unapplyAndRemove((effect) => effect.duration === 'atEndOfRound');
-    }
-
     activatePersistentEffects() {
-        let targets = this.getTargets();
-        let persistentEffects = this.effects.filter((effect) => effect.duration === 'persistent');
-        for (let effect of persistentEffects) {
-            effect.setActive(!effect.source?.isAnyBlank?.(), targets);
-        }
+        return this.withEffectChanges(() => {
+            let targets = this.getTargets();
+            let persistentEffects = this.effects.filter(
+                (effect) => effect.duration === 'persistent'
+            );
+            for (let effect of persistentEffects) {
+                effect.setActive(!effect.source?.isAnyBlank?.(), targets);
+            }
+        });
     }
 
     registerCustomDurationEvents(effect) {
@@ -270,11 +308,11 @@ class EffectEngine {
     unapplyAndRemove(match) {
         var [matchingEffects, remainingEffects] = partition(this.effects, match);
 
-        // Explicitly cancel effects in reverse order that they were applied so
-        // that problems with STR reduction and burn are avoided.
-        for (let effect of matchingEffects.reverse()) {
-            effect.cancel();
-        }
+        this.withEffectChanges(() => {
+            for (const effect of matchingEffects) {
+                effect.cancel();
+            }
+        });
 
         this.effects = remainingEffects;
     }

@@ -22,17 +22,34 @@ class TheWhiteShadows extends PlotCard {
                     player: context.player,
                     card: context.event.card
                 })),
-                GameActions.lastingEffect((context) => ({
-                    duration: 'atEndOfPhase',
-                    match: context.event.card,
-                    condition: () =>
-                        ['play area', 'duplicate'].includes(context.event.card.location),
-                    targetLocation: 'any',
-                    effect: [
-                        ability.effects.fullBlank,
-                        ability.effects.moveToDeadPileIfStillInPlay()
-                    ]
-                }))
+                GameActions.simultaneously([
+                    GameActions.lastingEffect((context) => ({
+                        duration: 'custom',
+                        until: { onCardLeftPlay: (event) => event.card === context.event.card },
+                        match: context.event.card,
+                        condition: () =>
+                            ['play area', 'duplicate'].includes(context.event.card.location),
+                        targetLocation: 'any',
+                        effect: [ability.effects.fullBlank]
+                    })),
+                    GameActions.delayedEffect((context) => {
+                        const card = context.event.card;
+                        return {
+                            duration: 'untilTriggered',
+                            title: card.name,
+                            when: { onAtEndOfPhase: () => true },
+                            until: { onCardLeftPlay: (event) => event.card === card },
+                            gameAction: GameActions.ifCondition({
+                                condition: () => ['play area', 'duplicate'].includes(card.location),
+                                thenAction: {
+                                    message:
+                                        '{player} resolves the delayed effect from {source}: {gameAction}',
+                                    gameAction: GameActions.placeInDeadPile({ card })
+                                }
+                            })
+                        };
+                    })
+                ])
             ])
         });
     }

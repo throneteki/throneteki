@@ -8,7 +8,7 @@ class OneTwoThree extends DrawCard {
     // - return it to its owner's hand.
     // - place it in shadows.
     // - have it gain insight until the end of the phase.
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: (event, context) =>
@@ -39,12 +39,11 @@ class OneTwoThree extends DrawCard {
                 'Gain insight': {
                     message:
                         '{player} plays {source} to have {target} gain insight until the end of the phase',
-                    gameAction: GameActions.genericHandler((context) => {
-                        context.source.untilEndOfPhase((ability) => ({
-                            match: context.target,
-                            effect: ability.effects.addKeyword('insight')
-                        }));
-                    })
+                    gameAction: GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
+                        match: context.target,
+                        effect: ability.effects.addKeyword('insight')
+                    }))
                 }
             }
         });

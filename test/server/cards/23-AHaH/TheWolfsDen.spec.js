@@ -21,6 +21,8 @@ describe("The Wolf's Den (AHaH)", function () {
 
         expect(this.theWolfsDen.kneeled).toBe(true);
         expect(bottom.location).toBe('shadows');
+        expect(bottom.tokens.shadow).toBe(1);
+        expect(bottom.getShadowCost()).toBe(bottom.getPrintedCost());
         expect(this.player2).isReadyToTakeAction();
     });
 });

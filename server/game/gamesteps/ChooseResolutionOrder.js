@@ -27,7 +27,7 @@ class ChooseResolutionOrder extends BaseStep {
             activePrompt: {
                 menuTitle: 'Choose which effect resolves next',
                 buttons: this.choices.map((choice) => ({
-                    text: `${choice.player.name} - ${choice.source.name}`,
+                    text: `${choice.player.name} - ${choice.source.name}${choice.title ? `: ${choice.title}` : ''}`,
                     method: 'chooseEffect',
                     arg: choice.id,
                     card: choice.source
