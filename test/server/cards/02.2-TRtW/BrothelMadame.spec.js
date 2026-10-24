@@ -25,15 +25,15 @@ describe('Brothel Madame', function () {
         beforeEach(function () {
             setup(this);
             this.completeMarshalPhase();
-            this.gold = [this.player1Object.gold, this.player2Object.gold];
+            this.goldBefore = [this.player1Object.gold, this.player2Object.gold];
             this.player1.triggerAbility('Brothel Madame');
             this.player2.clickPrompt('Yes');
             this.player1.clickPrompt('Done');
         });
 
         it('gives you their gold', function () {
-            expect(this.player1Object.gold).toBe(this.gold[0] + 1);
-            expect(this.player2Object.gold).toBe(this.gold[1] - 1);
+            expect(this.player1Object.gold).toBe(this.goldBefore[0] + 1);
+            expect(this.player2Object.gold).toBe(this.goldBefore[1] - 1);
         });
 
         it('lets them initiate military challenges', function () {
