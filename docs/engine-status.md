@@ -5,12 +5,12 @@ Updated 2026-10-24 so the next session can continue without the previous convers
 [framework-coverage.md](framework-coverage.md). Read both before changing `server/game`.
 
 The card conversions are committed on `feature/engine-test-framework` through `ab6d2a14d`.
-The 24 October engine follow-up is committed as `f3131201e`. The later gold-action and
-client-explanation changes are in the working tree. Do not push or open a pull request unless asked.
+Engine follow-ups are committed through `b774443b3` (`f3131201e` and
+`b774443b3`). Do not push or open a pull request unless asked.
 
 Last full run, 2026-10-24: `npm test` from the repo root. 2,201 files passed,
-7,107 tests passed, 13 skipped. That run covers the committed engine follow-up, not the later
-working-tree changes. No new test run has been made for those changes.
+7,107 tests passed, 13 skipped. That run covers `f3131201e`; the later follow-up in `b774443b3`
+has passed ESLint and `git diff --check` but has not had a test run.
 Do not pipe vitest through `grep` or `tail`. On PowerShell, chain with `; if ($LASTEXITCODE -eq 0)`.
 
 ## Where the work is
