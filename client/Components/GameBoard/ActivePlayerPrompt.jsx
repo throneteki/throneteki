@@ -156,6 +156,8 @@ const ActivePlayerPrompt = ({
                     );
                 case 'response-delay':
                     return <ResponseDelay key='response-delay' duration={control.duration} />;
+                case 'action-delay':
+                    return <ResponseDelay key='action-delay' duration={control.duration} />;
                 case 'select-from-values':
                     return (
                         <SelectFromValuesLookup
@@ -177,6 +179,8 @@ const ActivePlayerPrompt = ({
     // who really can.
     if (controls && controls.some((control) => control.type === 'response-delay')) {
         promptText = 'Keeping your hand hidden';
+    } else if (controls && controls.some((control) => control.type === 'action-delay')) {
+        promptText = 'Action window';
     }
 
     const promptTextElement = [];

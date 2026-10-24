@@ -2,6 +2,7 @@ import BaseStep from './basestep.js';
 import Event from '../event.js';
 import GamePipeline from '../gamepipeline.js';
 import SimpleStep from './simplestep.js';
+import GameActions from '../GameActions/index.js';
 
 class AbilityResolver extends BaseStep {
     constructor(game, ability, context) {
@@ -138,7 +139,20 @@ class AbilityResolver extends BaseStep {
         this.costPrevented = true;
         const source = this.context.source;
         if (source.location === 'being played') {
-            source.owner.moveCard(source, this.context.originalLocation || 'hand');
+            const parentCard = this.context.originalParent;
+            const action =
+                this.context.originalLocation === 'underneath' && parentCard
+                    ? GameActions.placeCardUnderneath({
+                          card: source,
+                          parentCard,
+                          player: source.owner,
+                          facedown: this.context.originalFacedown
+                      })
+                    : GameActions.placeCard({
+                          card: source,
+                          location: this.context.originalLocation || 'hand'
+                      });
+            this.game.resolveGameAction(action);
         }
 
         this.game.addMessage(
@@ -317,9 +331,11 @@ class AbilityResolver extends BaseStep {
         // ability instead.
         if (this.ability.isPlayableEventAbility()) {
             if (this.context.source.location === 'being played') {
-                this.context.source.owner.moveCard(
-                    this.context.source,
-                    this.context.source.eventPlacementLocation
+                this.game.resolveGameAction(
+                    GameActions.placeCard({
+                        card: this.context.source,
+                        location: this.context.source.eventPlacementLocation
+                    })
                 );
             }
 

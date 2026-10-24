@@ -16,7 +16,6 @@ class DrawCard extends BaseCard {
         this.attachments = [];
         this.childCards = [];
         this.strength = new CardStat(this.getPrintedStrength());
-        this.dominanceStrengthModifier = 0;
         this.kneeled = false;
         this.inChallenge = false;
         this.isContributing = false;
@@ -42,6 +41,7 @@ class DrawCard extends BaseCard {
         clone.parent = this.parent;
         clone.power = this.power;
         clone.strength = this.strength.clone();
+        clone.dominanceStrengthModifiers = this.dominanceStrengthModifiers.clone();
         clone.tokens = Object.assign({}, this.tokens);
         clone.traits = this.traits.clone();
 
@@ -300,10 +300,6 @@ class DrawCard extends BaseCard {
         }
 
         return this.strength.calculate(boostValue);
-    }
-
-    modifyDominanceStrength(amount) {
-        this.dominanceStrengthModifier += amount;
     }
 
     getDominanceStrength() {

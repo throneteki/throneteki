@@ -273,6 +273,9 @@ export const Events = Object.freeze({
     },
     onTargetsChosen: { params: { ability: 'BaseAbility', targets: 'ResolvedTargets' } },
     onTitlesEnteredPlay: { params: { titles: 'TitleCard[]' } },
+    onTitlesReturnedToPool: { params: { titles: 'TitleCard[]' } },
+    onSetupCardsRevealed: { params: { cards: 'DrawCard[]' } },
+    onRoundReset: { params: { players: 'Player[]' } },
     onTokenDiscarded: {
         params: { amount: 'number', card: 'BaseCard', desiredAmount: 'number', token: 'string' }
     },

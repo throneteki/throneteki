@@ -1,4 +1,5 @@
 import shuffle from 'lodash.shuffle';
+import SelectTitles from './GameActions/SelectTitles.js';
 
 const titles = [
     (await import('./cards/titles/CrownRegent.js')).default,
@@ -45,18 +46,7 @@ class TitlePool {
     }
 
     placeSelections(selections) {
-        this.game.raiseEvent(
-            'onTitlesEnteredPlay',
-            { titles: selections.map((selection) => selection.title) },
-            () => {
-                for (const selection of selections) {
-                    this.chooseFromPool(selection.player, selection.title);
-                    selection.title.facedown = false;
-                }
-
-                this.announceTitles(selections);
-            }
-        );
+        return this.game.resolveGameAction(SelectTitles, { pool: this, selections });
     }
 
     chooseFromPool(player, card) {

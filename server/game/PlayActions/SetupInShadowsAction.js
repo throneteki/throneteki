@@ -11,6 +11,10 @@ class SetupInShadowsAction extends BaseAbility {
         this.title = 'Setup in shadows';
     }
 
+    isRelevant({ game, player, source }) {
+        return game.currentPhase === 'setup' && source.isShadow() && player.hand.includes(source);
+    }
+
     getUnmetRequirement(context) {
         if (context.game.currentPhase !== 'setup') {
             return Requirements.phase;

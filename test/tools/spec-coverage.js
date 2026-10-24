@@ -18,7 +18,8 @@
 import { execFileSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import { loadImplementations, repoRoot, specStyleProblems } from './cardIndex.js';
+import { loadCardData, loadImplementations, repoRoot, specStyleProblems } from './cardIndex.js';
+import { formatCoverage } from './formatCoverage.js';
 
 const args = process.argv.slice(2);
 const implementations = loadImplementations();
@@ -133,6 +134,38 @@ if (args[0] === '--write-verified' || args[0] === '--check-verified') {
     }
 
     console.log(`server/game/verifiedCards.json lists all ${codes.length} verified cards.`);
+    process.exit(0);
+}
+
+if (args.includes('--formats')) {
+    const packsRoot = path.join(repoRoot, 'throneteki-json-data/packs');
+    const packs = fs
+        .readdirSync(packsRoot)
+        .filter((file) => file.endsWith('.json'))
+        .map((file) => JSON.parse(fs.readFileSync(path.join(packsRoot, file), 'utf8')));
+    const formats = formatCoverage({
+        cards: loadCardData(),
+        packs,
+        lists: JSON.parse(
+            fs.readFileSync(
+                path.join(repoRoot, 'throneteki-json-data/restricted-list.json'),
+                'utf8'
+            )
+        ),
+        implementations,
+        verifiedCodes: new Set(implementations.filter(isVerified).flatMap((item) => item.codes))
+    });
+    if (args.includes('--json')) {
+        console.log(JSON.stringify({ formats }, null, 2));
+    } else {
+        const width = Math.max('Format'.length, ...formats.map((format) => format.name.length));
+        console.log(`${'Format'.padEnd(width)}  Specs  Verified  No text  Cards  Playable`);
+        for (const format of formats) {
+            console.log(
+                `${format.name.padEnd(width)}  ${String(format.specs).padStart(5)}  ${String(format.verified).padStart(8)}  ${String(format.noText).padStart(7)}  ${String(format.total).padStart(5)}  ${percentage(format.playable, format.total).padStart(8)}`
+            );
+        }
+    }
     process.exit(0);
 }
 

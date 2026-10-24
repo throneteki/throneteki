@@ -2,10 +2,9 @@
 
 ## Goal
 
-Today every game runs with what is effectively manual mode switched on: chat commands, drag and drop,
-the stat buttons and click-to-kneel are always available, because the engine is not yet trusted to
-follow the rules for every card. The goal is to reach the point where a game can run with manual
-mode off, as keyteki does, because the engine can be shown to be correct.
+Games whose decks contain only verified cards already start with manual mode off. The remaining
+work is to close the framework gaps and complete the strict-window rollout so the engine can be
+trusted to enforce the rules throughout a game.
 
 Trust is earned per card, by tests:
 
@@ -25,17 +24,17 @@ Trust is earned per card, by tests:
       game listeners or `promptForSelect` (the `npm run card-rules` counts for that file are zero).
     - [verifiedCards.json](../server/game/verifiedCards.json) is built from this bar, and CI checks
       it is current.
-- A game starts with manual mode **off** when both decks are verified and the phase 6 gate is met.
+- A game starts with manual mode **off** when both decks are verified.
   Turning it on requires the opponent's consent and is recorded in the game stats.
 - Every other game keeps today's behaviour.
 
 As coverage grows, more games switch over automatically. Progress is a number we can watch, not a
 judgement call.
 
-Verified cards do not measure the framework. Phase 6 does not switch the default until the framework
-rules named in phases 1, 2, 4 and 5 are each covered by an engine spec, and until the wider framework
-list in phase 6 is in place. [engine-status.md](engine-status.md) is where the current work and the
-remaining gaps are written down.
+Verified cards do not measure the framework. The framework gate in phase 6 remains open even though
+verified decks already start with manual mode off. Do not add a hold to that existing behaviour.
+[engine-status.md](engine-status.md) records the current work and remaining gaps; the state-change
+inventory is [engine-state-changes.md](engine-state-changes.md).
 
 The rules authority is the [Rules Reference](https://thronesdb.com/rulesreference). Card text takes
 precedence over the Rules Reference where they conflict.
@@ -89,7 +88,10 @@ The phases overlap. Phase 0 comes first because everything else relies on it; ca
 - [x] Add a declarative `setupTest` that builds the board state and reaches the requested phase through
       the real game flow ([test/helpers/setupTest.js](../test/helpers/setupTest.js)).
 - [x] Coverage report: implemented cards against specs, per pack (`npm run spec:coverage`). CI fails a
-      pull request that adds or changes a card file without a spec. Per-format coverage is still to do.
+      pull request that adds or changes a card file without a spec. The current follow-up adds
+      `npm run spec:coverage -- --formats` (or `--formats --json`) for active format/variant pools,
+      excluding banned cards, unreleased packs, and draft-only packs outside draft. It distinguishes
+      verified cards from no-text cards. The reporter shares legality compilation with the server.
 - [x] `npm run spec:new -- <code>` scaffolds a spec with the card text from `throneteki-json-data`.
 - [x] Telemetry: every manual control records the cards it touched, the ability being resolved and
       the last three card abilities initiated, in the acting player's game stats
@@ -127,16 +129,14 @@ LIMIT 50;
    there are no card targets. String target actions (`gameAction: 'kill'`) only name the action
    checked for immunity and can't be used to filter, because the rest of the effect may still
    affect the card. Ser Gerris Drinkwater is the first card migrated to per-target actions.
-2. **Game state check for triggered abilities.** _Done for abilities that declare a game action:_
+2. **Game state check for triggered abilities.** _Done for converted cards:_
    `canResolve` rules them out when the action could not change the game state, and offers only
-   targets and players it could affect. Abilities with a `handler` (841 triggered abilities and
-   498 actions on 2026-10-19) can't be checked; rather than adding a hint that could drift from the
-   handler, they are migrated to game actions in phase 5. Lasting effects have a game action,
+   targets and players it could affect. All 1,962 implemented card codes are verified, with no
+   card handlers or direct game listeners remaining. Lasting effects have a game action,
    `GameActions.lastingEffect`, and "if X happens later" text has `GameActions.delayedEffect`
    ([DelayedEffect.js](../server/game/DelayedEffect.js),
-   [DelayedEffects.spec.js](../test/server/DelayedEffects.spec.js)). 20 cards still listen for
-   game events directly; `npm run card-rules` counts them (`game-listener`) and they move to
-   delayed effects in phase 5.
+   [DelayedEffects.spec.js](../test/server/DelayedEffects.spec.js)). End-timing effects now use
+   delayed actions, including grouped simultaneous resolution and first-player ordering.
 3. **One way to change state.** _The ratchet is in place: `npm run card-rules` (run in CI) fails
    if a card file uses more legacy helpers, direct state writes, `addMessage` or `promptForSelect`
    than its baseline (on 2026-10-19: 578, 5, 1,207 and 115 uses in 1,065 files). The faction card
@@ -147,13 +147,11 @@ LIMIT 50;
    event afterwards._ Still to do: every state change goes through a `GameAction`. Manual corrections
    (`changeStat`, `/power`, `/token`) stay plain corrections that raise no events, so fixing a
    mistake doesn't trigger reactions; they are recorded as manual actions instead. Terminal
-   conditions are part of the same work (Rulings and Clarifications v4.0, 3.1, and the Rules
-   Reference under Save). Burn opens a kill that can be saved, then kills again with no save if
-   the character is still in play at 0 STR
-   ([Burn.spec.js](../test/server/gamesteps/Burn.spec.js)). A duplicate cannot save that kill. A
-   save that removes the 0 STR leaves the character in play. Still to do: refusing a save that
-   could not remedy the condition, rather than letting it resolve and then applying the second
-   kill, and the first player ordering kills that happen together.
+   conditions are covered by [Burn.spec.js](../test/server/gamesteps/Burn.spec.js) and
+   [StateChecks.spec.js](../test/server/gamesteps/StateChecks.spec.js): ineffective saves are
+   refused, a save that remedies burn can resolve, and the first player orders simultaneous
+   state checks. Remaining state-change paths are listed in
+   [engine-state-changes.md](engine-state-changes.md).
 4. **Simultaneity.** _Done._ The standing phase stands every player's cards, faction cards
    included, as one event. When a card leaves play, by a game action or the legacy
    `player.moveCard`, its attachments and duplicates are removed in the same event window, and
@@ -177,8 +175,11 @@ LIMIT 50;
    `'limit'`, `'cost'`, `'target'`, `'noEffect'`, ...) or undefined; `meetsRequirements` and
    `canResolve` wrap it. Specs assert why an action is unavailable with
    `this.player1.actionUnavailableReason(card)`, and card menu items carry a `disabledReason`.
-   Still to do: the client showing the reason, and reasons for triggered abilities that are not
-   offered.
+   The current follow-up displays readable reasons in card menus and an information tooltip on
+   visible cards, including when manual mode is off. Standard play actions now expose relevant
+   marshaling, ambush, setup, and shadows failures. Triggered windows privately record failures
+   when a matching response cannot resolve; the tooltip identifies their round and phase.
+   A condition that never matched is not recorded as a failed response. This follow-up is untested.
 7. **Ability resolution.** _Done._ From the Rules Reference (Costs, Target, Triggering Condition)
    and Rulings and Clarifications v4.0 (3.3), locked in
    [AbilityResolution.spec.js](../test/server/gamesteps/AbilityResolution.spec.js):
@@ -291,9 +292,11 @@ _Implemented today, behind the "Strict action windows" game option
 ([actionwindow.js](../server/game/gamesteps/actionwindow.js),
 [StrictActionWindows.spec.js](../test/server/gamesteps/StrictActionWindows.spec.js)): a player is
 prompted if they have any action they can take, including one on a card in play, or have set the
-window as a stop; they get a fake wait if a card they could hold might give them one
-(`PossibleResponders.couldAct`); they are skipped otherwise. The next step is the auto-pass above
-for visible actions, then feedback on how long the pauses feel. An action is refused with the `window` reason, whether or not strict windows are on, while an
+window as a stop; they get a timed wait for a playable action on a public card or if a card they
+could hold might give them one (`PossibleResponders.couldAct`); they are skipped otherwise. Public
+card actions remain clickable during the timed wait, then the window advances if unused. This
+completes the auto-pass step; feedback on how the pauses feel is still needed before changing the
+default. An action is refused with the `window` reason, whether or not strict windows are on, while an
 action window is open and it is not that player's turn, and throughout the marshaling phase except
 during that player's own turn in the window. When strict windows are off and no window is open,
 outside marshaling, actions are still allowed. That is what lets `setupTest` play events during a
@@ -334,8 +337,10 @@ An ability with a declarative game action and no `message` gets a default one bu
 resolved and the cards paid as costs ("player1 kneels Grey Wind and kills Eddard Stark"), and the
 common game actions all describe themselves
 ([DefaultAbilityMessages.spec.js](../test/server/DefaultAbilityMessages.spec.js)). Migrated cards
-drop their `message` where the default says what they do. Still to do: translation, where the
-text is still built from English formats._
+drop their `message` where the default says what they do. The follow-up stores a safe structured
+template and argument snapshot beside each rendered message and alert. Still to do: add locale
+catalogs and render those records through a translation service; English formats remain the source
+text._
 
 Keyteki builds an ability's message before it resolves, so the log can claim things that did not
 happen: a kill that was cancelled, a card that was saved, an amount that was capped. Instead:
@@ -366,6 +371,9 @@ on every card in the format having one.
   when a player is the one repeating an ability. Cards stay in play.
 - Migrate one stat at a time: strength (already part way there), icons, traits, keywords, dominance
   strength, blank, control.
+  _The current follow-up computes keyword values from registrations and dominance strength from
+  modifiers keyed by effect. Snapshots retain both dominance registrations and keyword trigger
+  modifiers. This does not complete fixed-point recalculation or control-effect migration._
 - Removes the `order: 0/1000` and reverse-cancel workarounds. _Done on 2026-10-24: strength changes are batched across application, expiry, and plot replacement; set-strength expiry checks burn._
 - Conflicting constant abilities and lasting effects are ordered by the first player, once, when
   they would first apply. A new conflict lets the first player choose again (Rulings and
@@ -392,8 +400,8 @@ on every card in the format having one.
   same sequence ends a challenge or a round: interrupts to the end, then "until the end" and
   "during" abilities expire (that moment is the end), then "at the end" delayed effects resolve,
   then reactions to the end. _Done_ for the expiry order
-  ([LastingEffects.spec.js](../test/server/gamesteps/LastingEffects.spec.js)). First-player order
-  for effects created together is the open item above.
+  ([LastingEffects.spec.js](../test/server/gamesteps/LastingEffects.spec.js)). Delayed effects
+  created together now use first-player ordering, with simultaneous instructions grouped.
 - A card that loses all of an attribute has none of it while the effect lasts, including attributes
   another effect would give it (Rulings and Clarifications v4.0, 2.9). `losesAllTraits` is a flag
   that makes `hasTrait` and `getTraits` return nothing
@@ -422,51 +430,23 @@ This engine work comes before migrating cards in bulk, so each card is only rewr
 - `GameActions.switch`. Both sides of a switch have to exist or the ability does not resolve (Rules
   Reference: Switch). _Done ([SwitchCards.spec.js](../test/server/GameActions/SwitchCards.spec.js));
   Ser Gerris Drinkwater uses it. The Reader's Septon, Sorrowful Man, Samwell Tarly and The
-  Conclave move to it as they are migrated._
+  Conclave are also verified._
 
-Order comes from published ThronesDB lists that are still legal in Standard v2.1 joust. On
-2026-10-20, the lists published from 2025-10-20 to 2026-10-20 were 487, of which 166
-were 60-card, 7-plot lists with no Standard v2.1 banned card, and 153 were unique. None is fully
-verified. The median list has 31 unverified cards, and those lists between them use 1,168 distinct
-unverified cards.
+All 1,962 implemented card codes are verified as of 24 October 2026. The final five agendas
+were committed in `ab6d2a14d`; engine cleanup and the remaining generic callbacks and end-timing
+migrations were committed in `f3131201e`. No card-conversion queue remains.
 
-Taking the most common remaining card each time finishes no list in the first 200 cards, and 13 of
-153 (8.5%) after 400. The cards shared by the most lists are still first, because every later list
-needs them:
-
-| Card                | Code  | Lists |
-| ------------------- | ----- | ----: |
-| The Kingsroad       | 01039 |   100 |
-| The Roseroad        | 01040 |    89 |
-| Gates of the Moon   | 08038 |    45 |
-| Late Summer Feast   | 06020 |    43 |
-| Nightmares          | 02099 |    41 |
-| Marched to the Wall | 01015 |    39 |
-| You Win Or You Die  | 08120 |    38 |
-| Milk of the Poppy   | 01035 |    38 |
-
-_The eight cards above are verified. Marched to the Wall uses a per-target game action on an
-each-player target, which now resolves once for every player's selection; 24 cards use
-each-player targets, mostly with handlers, and can move to it._
-
-After those, finish one archetype outright. The shortest published list is Stark Fealty,
-"Characters" ([decklist 16711](https://thronesdb.com/decklist/view/16711)), at 20 unverified cards.
-_Done on 2026-10-21: every card in it is verified (Tumblestone Knight has no text), and a mirror
-starts with manual mode off
-([PlayableDecks.spec.js](../test/server/decks/PlayableDecks.spec.js))._
-The three easiest Stark lists together are 39 cards, the smallest such union of any faction (the
-others run from 49 to 77). A mirror of a finished list is the first game that starts with manual
-mode off, once the phase 6 gate is met. Refresh this order when the restricted list changes.
-
-- A verified card that turns up in manual-mode telemetry is a priority bug.
+New or changed cards must continue to meet the verification bar. A verified card that turns up
+in manual-mode telemetry is a priority bug. Deck scenarios in `PlayableDecks.spec.js` remain
+useful integration coverage, rather than a way to choose the next migration batch.
 
 ### Phase 6: switching the default
 
 _Started. [ManualMode.js](../server/game/ManualMode.js) is a game flag. A game starts with it off
 when every card in every deck is verified (listed in
 [verifiedCards.json](../server/game/verifiedCards.json), generated by
-`npm run spec:coverage -- --write-verified` and checked in CI), or has no text. That check is held
-until the gate below is met. With it off,
+`npm run spec:coverage -- --write-verified` and checked in CI), or has no text. The framework gate
+below remains open; do not add a hold to this check. With it off,
 chat commands (except `/cancel-prompt`, `/manual` and the clock and rematch commands), drag and
 drop, click-to-kneel, stat changes, shuffling and looking at the deck are refused without a
 message, and the client hides the controls for them and does not let cards be dragged. `/manual`
@@ -480,8 +460,8 @@ actions whenever manual mode is off and no window is open; make strict action wi
 after the auto-pass trial has had feedback; and "report a problem"
 with a saved game state for the scenario runner._
 
-**Gate.** The verified-deck check already turns manual mode off. Hold that check until all of the
-following hold. This is the bar for switching the default, on top of both decks being verified.
+**Gate.** This is the remaining framework readiness bar. Verified decks already start with manual
+mode off; the gate does not disable that check.
 
 - The framework items in phases 1, 2, 4 and 5 are done, and each has an engine spec.
 - [x] Claim follows the Rules Reference in that game (Appendix I, step 4.2.4: if the attacker won,
@@ -501,7 +481,7 @@ following hold. This is the bar for switching the default, on top of both decks 
 
 - Manual mode becomes a game flag. Chat commands, `changeStat`, drag and drop and click-to-kneel
   require it. With manual mode off, actions outside action windows are refused.
-- Games where both decks are fully verified, and the gate above is met, start with manual mode off.
+- Games where both decks are fully verified already start with manual mode off.
   Enabling it needs the opponent's consent and is recorded.
 - `/cancel-prompt` and a "report a problem" action stay available. Using either records the cards
   involved and the game state, ready to load in the scenario runner.

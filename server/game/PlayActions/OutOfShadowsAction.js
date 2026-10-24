@@ -15,6 +15,15 @@ class OutOfShadowsAction extends BaseAbility {
         return true;
     }
 
+    isRelevant({ game, player, source }) {
+        return (
+            game.currentPhase !== 'setup' &&
+            source.getType() !== 'event' &&
+            source.isShadow() &&
+            player.isCardInPlayableLocation(source, 'outOfShadows')
+        );
+    }
+
     getUnmetRequirement(context) {
         if (!context.source.isShadow() || context.source.getType() === 'event') {
             return Requirements.condition;

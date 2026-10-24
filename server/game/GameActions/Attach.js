@@ -53,7 +53,9 @@ class Attach extends GameAction {
         playingType = 'play',
         facedown = false,
         asAttachment,
-        context
+        context,
+        kneeled,
+        xValue
     }) {
         player = player || attachment.controller;
         const originalLocation = attachment.location;
@@ -69,7 +71,8 @@ class Attach extends GameAction {
                     player,
                     card: attachment,
                     originalLocation,
-                    type: 'dupe'
+                    type: 'dupe',
+                    xValue
                 })
             );
         }
@@ -80,6 +83,9 @@ class Attach extends GameAction {
             event.attachment.moveTo('play area', event.target);
             event.attachment.facedown = facedown;
             event.attachment.takeControl(player);
+            if (kneeled !== undefined) {
+                event.attachment.kneeled = kneeled;
+            }
             event.target.attachments.push(event.attachment);
 
             if (asAttachment) {
@@ -113,7 +119,13 @@ class Attach extends GameAction {
         }
 
         events.push(
-            ...this.outOfShadowsEvents({ player, card: attachment, originalLocation, type: 'card' })
+            ...this.outOfShadowsEvents({
+                player,
+                card: attachment,
+                originalLocation,
+                type: 'card',
+                xValue
+            })
         );
 
         return this.atomic(...events);
@@ -159,12 +171,12 @@ class Attach extends GameAction {
         }
     }
 
-    outOfShadowsEvents({ player, card, originalLocation, type }) {
+    outOfShadowsEvents({ player, card, originalLocation, type, xValue }) {
         if (originalLocation !== 'shadows') {
             return [];
         }
 
-        return [this.event('onCardOutOfShadows', { player, card, type })];
+        return [this.event('onCardOutOfShadows', { player, card, type, xValue })];
     }
 }
 

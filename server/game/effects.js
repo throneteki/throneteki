@@ -314,11 +314,11 @@ const Effects = {
     },
     modifyDominanceStrength: function (value) {
         return {
-            apply: function (card) {
-                card.modifyDominanceStrength(value);
+            apply: function (card, context) {
+                card.dominanceStrengthModifiers.set(context.effect, value);
             },
-            unapply: function (card) {
-                card.modifyDominanceStrength(-value);
+            unapply: function (card, context) {
+                card.dominanceStrengthModifiers.remove(context.effect);
             }
         };
     },
@@ -719,7 +719,9 @@ const Effects = {
                     if (originalLocation === 'play area') {
                         card.owner.putIntoPlay(card, 'play', { isEffectExpiration: true });
                     } else {
-                        card.owner.moveCard(card, originalLocation);
+                        context.game.resolveGameAction(
+                            GameActions.placeCard({ card, location: originalLocation })
+                        );
                     }
                     context.game.addMessage(
                         '{0} is put into play because of {1}',

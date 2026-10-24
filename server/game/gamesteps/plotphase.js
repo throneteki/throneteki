@@ -5,6 +5,7 @@ import RevealPlots from './revealplots.js';
 import ChooseTitlePrompt from './plot/ChooseTitlePrompt.js';
 import ActionWindow from './actionwindow.js';
 import { Flags } from '../Constants/index.js';
+import ResetRound from '../GameActions/ResetRound.js';
 
 class PlotPhase extends Phase {
     constructor(game) {
@@ -28,9 +29,7 @@ class PlotPhase extends Phase {
 
     startPlotPhase() {
         this.plotSelectionFirstPlayer = this.game.getFirstPlayer();
-        for (const player of this.game.getPlayers()) {
-            player.resetForStartOfRound();
-        }
+        this.game.resolveGameAction(ResetRound, { players: this.game.getPlayers() });
     }
 
     announceForcedPlotSelection() {

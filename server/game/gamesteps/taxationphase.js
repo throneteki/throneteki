@@ -4,6 +4,7 @@ import DiscardToReservePrompt from './taxation/DiscardToReservePrompt.js';
 import ActionWindow from './actionwindow.js';
 import GameActions from '../GameActions/index.js';
 import { Flags } from '../Constants/index.js';
+import ReturnTitles from '../GameActions/ReturnTitles.js';
 
 class TaxationPhase extends Phase {
     constructor(game) {
@@ -55,9 +56,10 @@ class TaxationPhase extends Phase {
             return;
         }
 
-        for (const player of this.game.getPlayers()) {
-            this.game.titlePool.returnToPool(player, player.title);
-        }
+        this.game.resolveGameAction(ReturnTitles, {
+            pool: this.game.titlePool,
+            players: this.game.getPlayers()
+        });
     }
 }
 

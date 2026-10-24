@@ -9,9 +9,9 @@ class TransferGold extends GameAction {
         super('transferGold');
     }
 
-    message({ from, to, amount = 1, context }) {
+    message({ from, to, amount = 1, context, activePlayer }) {
         return Message.fragment('moves {amount} gold from {from} to {to}', {
-            amount: this.availableAmount({ from, amount, context }),
+            amount: this.availableAmount({ from, amount, context, activePlayer }),
             from,
             to
         });
@@ -27,31 +27,33 @@ class TransferGold extends GameAction {
             : '';
     }
 
-    canChangeGameState({ from, to, amount = 1, context }) {
-        return !!to && from !== to && this.availableAmount({ from, amount, context }) > 0;
+    canChangeGameState({ from, to, amount = 1, context, activePlayer }) {
+        return (
+            !!to && from !== to && this.availableAmount({ from, amount, context, activePlayer }) > 0
+        );
     }
 
-    availableAmount({ from, amount, context }) {
+    availableAmount({ from, amount, context, activePlayer }) {
         if (amount <= 0) {
             return 0;
         }
 
         if (isPlayer(from)) {
-            const activePlayer = context && context.player;
+            activePlayer = activePlayer || (context && context.player);
             return Math.min(from.getSpendableGold({ player: from, activePlayer }), amount);
         }
 
         return Math.min(from.gold, amount);
     }
 
-    createEvent({ from, to, amount = 1, context }) {
-        const activePlayer = context && context.player;
+    createEvent({ from, to, amount = 1, context, activePlayer }) {
+        activePlayer = activePlayer || (context && context.player);
         return this.event(
             'onGoldTransferred',
             {
                 source: from,
                 target: to,
-                amount: this.availableAmount({ from, amount, context })
+                amount: this.availableAmount({ from, amount, context, activePlayer })
             },
             (event) => {
                 if (isPlayer(event.source)) {

@@ -13,6 +13,15 @@ class MarshalDuplicateAction extends BaseAbility {
         return true;
     }
 
+    isRelevant({ game, player, source }) {
+        return (
+            game.currentPhase !== 'setup' &&
+            source.getType() !== 'event' &&
+            player.canDuplicate(source) &&
+            player.isCardInPlayableLocation(source, 'marshal')
+        );
+    }
+
     getUnmetRequirement(context) {
         const { game, player, source } = context;
 

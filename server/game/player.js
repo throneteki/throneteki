@@ -4,11 +4,8 @@ import Spectator from './spectator.js';
 import CardMatcher from './CardMatcher.js';
 import DrawCard from './drawcard.js';
 import Deck from './Deck.js';
-import AtomicEvent from './AtomicEvent.js';
-import Event from './event.js';
 import AbilityContext from './AbilityContext.js';
 import AttachmentPrompt from './gamesteps/attachmentprompt.js';
-import BestowPrompt from './gamesteps/bestowprompt.js';
 import AllowedChallenges from './AllowedChallenges.js';
 import PlayableLocation from './playablelocation.js';
 import PlayActionPrompt from './gamesteps/playactionprompt.js';
@@ -20,6 +17,7 @@ import RemoveFromGame from './GameActions/RemoveFromGame.js';
 import SacrificeCard from './GameActions/SacrificeCard.js';
 import MoveCardEventGenerator from './GameActions/MoveCardEventGenerator.js';
 import PutIntoPlay from './GameActions/PutIntoPlay.js';
+import RecyclePlots from './GameActions/RecyclePlots.js';
 import ChessClock from './ChessClock.js';
 import { DrawPhaseCards, Flags, SetupGold } from './Constants/index.js';
 
@@ -341,10 +339,18 @@ class Player extends Spectator {
     }
 
     moveFromTopToBottomOfDrawDeck(number) {
-        while (number > 0) {
-            this.moveCard(this.drawDeck[0], 'draw deck', { bottom: true });
-
-            number--;
+        const cards = this.drawDeck.slice(0, Math.max(0, number));
+        for (const card of cards) {
+            this.game.queueSimpleStep(() =>
+                this.game.resolveGameAction(
+                    GameActions.placeCard({
+                        card,
+                        location: 'draw deck',
+                        bottom: true,
+                        orderable: false
+                    })
+                )
+            );
         }
     }
 
@@ -663,72 +669,14 @@ class Player extends Spectator {
     }
 
     putIntoPlay(card, playingType = 'play', options = {}) {
-        if (!options.force && !this.canPutIntoPlay(card, playingType, options)) {
-            return;
-        }
-
-        var dupeCard = this.getDuplicateInPlay(card);
-
-        if (card.getPrintedType() === 'attachment' && playingType !== 'setup' && !dupeCard) {
-            this.promptForAttachment(card, playingType, options.attachmentTargets);
-            return;
-        }
-
-        let needsShadowEvent = card.location === 'shadows';
-
-        if (dupeCard && playingType !== 'setup') {
-            this.game.resolveEvent(
-                PutIntoPlay.createEvent({ player: this, card, playingType, dupeIsValid: true })
-            );
-        } else {
-            // Attachments placed in setup should not be considered to be 'played',
-            // as it will cause then to double their effects when attached later.
-            let isSetupAttachment =
-                playingType === 'setup' && card.getPrintedType() === 'attachment';
-
-            let originalLocation = card.location;
-
-            let originalFacedownState = card.facedown;
-            card.facedown = playingType === 'setup';
-            card.new = true;
-            this.moveCard(card, 'play area', {
-                isDupe: !!dupeCard,
-                wasFacedown: originalFacedownState
-            });
-            card.takeControl(this);
-            card.kneeled =
-                (playingType !== 'setup' && !!card.hasFlag(Flags.card.entersPlayKneeled)) ||
-                !!options.kneeled;
-
-            if (!dupeCard && !isSetupAttachment) {
-                card.applyPersistentEffects();
-            }
-
-            this.game.queueSimpleStep(() => {
-                if (this.game.currentPhase !== 'setup' && card.isBestow()) {
-                    this.game.queueStep(new BestowPrompt(this.game, this, card));
-                }
-            });
-
-            let event = new Event('onCardEntersPlay', {
-                card: card,
-                playingType: playingType,
-                originalLocation: originalLocation
-            });
-
-            if (needsShadowEvent) {
-                event.addChildEvent(
-                    new Event('onCardOutOfShadows', {
-                        player: this,
-                        card: card,
-                        type: 'card',
-                        xValue: options.xValue
-                    })
-                );
-            }
-
+        const props = { ...options, player: this, card, playingType, dupeIsValid: true };
+        if (options.force) {
+            const event = PutIntoPlay.createEvent(props);
             this.game.resolveEvent(event);
+            return event;
         }
+
+        return this.game.resolveGameAction(PutIntoPlay, props);
     }
 
     flipSetupCardsFaceUp() {
@@ -779,18 +727,7 @@ class Player extends Spectator {
     }
 
     recyclePlots() {
-        const plots = this.plotDeck.filter(
-            (plot) =>
-                !plot.hasFlag(Flags.card.notConsideredToBeInPlotDeck) &&
-                !plot.hasFlag(Flags.card.notConsideredWhenRecyclingPlots)
-        );
-        if (plots.length === 0) {
-            for (const plot of this.plotDiscard) {
-                this.moveCard(plot, 'plot deck');
-            }
-
-            this.game.raiseEvent('onPlotsRecycled', { player: this });
-        }
+        return this.game.resolveGameAction(RecyclePlots, { player: this });
     }
 
     hasUnmappedAttachments() {
@@ -812,66 +749,19 @@ class Player extends Spectator {
         );
     }
 
-    attach(controller, attachment, card, playingType, facedown = false) {
-        if (!card || !attachment) {
-            return;
-        }
-
-        let originalLocation = attachment.location;
-
-        attachment.owner.removeCardFromPile(attachment);
-
-        if (!facedown) {
-            let dupeCard = this.getDuplicateInPlay(attachment);
-            if (dupeCard && dupeCard.controller === attachment.controller) {
-                dupeCard.addDuplicate(attachment);
-                if (originalLocation === 'shadows') {
-                    this.game.raiseEvent('onCardOutOfShadows', {
-                        player: this,
-                        card: card,
-                        type: 'dupe'
-                    });
-                }
-                return;
-            }
-        }
-
-        attachment.moveTo('play area', card);
-        attachment.facedown = facedown;
-        attachment.takeControl(controller);
-        card.attachments.push(attachment);
-
-        this.game.queueSimpleStep(() => {
-            attachment.applyPersistentEffects();
-        });
-
-        this.game.queueSimpleStep(() => {
-            if (this.game.currentPhase !== 'setup' && attachment.isBestow()) {
-                this.game.queueStep(new BestowPrompt(this.game, controller, attachment));
-            }
-        });
-
-        let event = new AtomicEvent();
-        event.addChildEvent(new Event('onCardAttached', { attachment: attachment, target: card }));
-
-        if (originalLocation !== 'play area' && !attachment.facedown) {
-            event.addChildEvent(
-                new Event('onCardEntersPlay', {
-                    card: attachment,
-                    playingType: playingType,
-                    originalLocation: originalLocation
-                })
-            );
-        }
-
-        if (originalLocation === 'shadows') {
-            event.addChildEvent(
-                new Event('onCardOutOfShadows', { player: this, card: attachment, type: 'card' })
-            );
-        }
-
-        this.game.resolveEvent(event);
-        this.game.addMessage('{0} attaches {1} to {2}', controller, attachment, card);
+    attach(controller, attachment, card, playingType, facedown = false, options = {}) {
+        return this.game.resolveGameAction(
+            GameActions.attach({
+                ...options,
+                player: controller,
+                attachment,
+                target: card,
+                playingType,
+                facedown
+            }).thenExecute(() => {
+                this.game.addMessage('{0} attaches {1} to {2}', controller, attachment, card);
+            })
+        );
     }
 
     setDrawDeckVisibility(value) {
@@ -1064,16 +954,9 @@ class Player extends Spectator {
     }
 
     removeAttachment(attachment, allowSave = true) {
-        attachment.isBeingRemoved = true;
-        if (attachment.isTerminal()) {
-            attachment.owner.moveCard(attachment, 'discard pile', { allowSave: allowSave }, () => {
-                attachment.isBeingRemoved = false;
-            });
-        } else {
-            attachment.owner.moveCard(attachment, 'hand', { allowSave: allowSave }, () => {
-                attachment.isBeingRemoved = false;
-            });
-        }
+        const event = MoveCardEventGenerator.createRemoveAttachmentEvent(attachment, { allowSave });
+        this.game.resolveEvent(event);
+        return event;
     }
 
     selectDeck(deck) {

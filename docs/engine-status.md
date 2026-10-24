@@ -5,19 +5,20 @@ Updated 2026-10-24 so the next session can continue without the previous convers
 [framework-coverage.md](framework-coverage.md). Read both before changing `server/game`.
 
 The card conversions are committed on `feature/engine-test-framework` through `ab6d2a14d`.
-The 24 October engine follow-up is in the working tree. Do not push or open a pull request unless asked.
+The 24 October engine follow-up is committed as `f3131201e`. The later gold-action and
+client-explanation changes are in the working tree. Do not push or open a pull request unless asked.
 
 Last full run, 2026-10-24: `npm test` from the repo root. 2,201 files passed,
-7,107 tests passed, 13 skipped. Re-run it after any further engine change.
+7,107 tests passed, 13 skipped. That run covers the committed engine follow-up, not the later
+working-tree changes. No new test run has been made for those changes.
 Do not pipe vitest through `grep` or `tail`. On PowerShell, chain with `; if ($LASTEXITCODE -eq 0)`.
 
 ## Where the work is
 
 The goal is a game that can start with manual mode off. A game already does that when every card in
 both decks is verified. The phase 6 gate is not met, so that is not yet the default we trust. The
-roadmap says to hold the verified-deck check until the gate is met. That hold is not in the code,
-and it should not be added. `ManualMode.decideAtStart` already turns manual mode off for a verified
-deck.
+roadmap now records that existing behaviour separately from the framework readiness gate.
+Do not add a hold. `ManualMode.decideAtStart` already turns manual mode off for a verified deck.
 
 All 1,962 implemented card codes are verified. The 24 October engine follow-up migrates the
 remaining generic card callbacks and end-timing effects, removes the permissive ability-handler
@@ -169,33 +170,52 @@ remaining framework gaps.
 
 ## What is left
 
-The phase 6 checkbox "framework items in phases 1, 2, 4 and 5 are done" is still open. These are
-the gaps, in the order they block that checkbox. Ask before implementing a rules reading that is
-not already decided.
+The phase 6 framework gate remains open. Card verification is complete; the remaining work is:
 
-1. Every state change goes through a `GameAction`. Manual corrections (`changeStat`, `/power`,
-   `/token`) stay plain corrections and raise no events.
-2. The client showing why an action is unavailable. Server reasons already exist.
+1. Complete the state-change conversions in [engine-state-changes.md](engine-state-changes.md).
+   This audit distinguishes action-backed helpers from actual bypasses and low-level operations.
+2. Validate the client explanations now added for card actions, standard plays, and matching
+   responses that could not resolve. Readable reasons appear in menus and information tooltips,
+   including with manual mode off. This UI follow-up has not had a new test run.
+3. Finish the computed-effect work, stability/oscillation handling, and optional-loop shortcuts
+   described in phase 4. Removing strength-order workarounds does not finish that phase.
+4. Finish translation-ready logs (phase 3) and reporting a problem with saved game state (phase 6).
+   Per-format coverage reporting is implemented in this follow-up, pending validation.
+5. Complete the strict-window trial and gather feedback before changing the default.
 
-These are decided and should stay as they are until someone asks:
+These decisions remain in force:
 
-- Strict action windows stay behind the game option. Auto-pass for visible actions is the next
-  trial, then feedback, then making the option the default. Do not flip the default.
+- Strict action windows stay behind the game option. Do not flip the default before the
+  auto-pass trial has had feedback.
 - Full refusal of actions when no window is open, outside marshaling, waits until strict windows
   are the default.
 - Do not add a hold that stops verified decks starting with manual mode off.
+- Manual corrections (`changeStat`, `/power`, `/token`) stay plain corrections and raise no events.
+- Ask before implementing a rules reading that is not already decided.
 
-After the framework gaps, or alongside them when a gap is blocked on a ruling, continue phase 5.
-The eight shared neutrals in the roadmap table are verified, and so is Stark Fealty,
-[decklist 16711](https://thronesdb.com/decklist/view/16711): a mirror starts with manual mode off
-([PlayableDecks.spec.js](../test/server/decks/PlayableDecks.spec.js)), as are Stark Fealty
-[decklists 16272](https://thronesdb.com/decklist/view/16272) and
-[16651](https://thronesdb.com/decklist/view/16651), and Stark The House With the Red Door
-[decklist 16273](https://thronesdb.com/decklist/view/16273). On 2026-10-21, of 233 legal unique
-Standard v2.1 joust lists published in the last year, the next closest is
-[16389](https://thronesdb.com/decklist/view/16389) (Stark Fealty), at 9 unverified cards: The
-First Snow of Winter, Winter Festival, House Manderly Knight, Northern Keep, White Harbor, Winter
-Reserves, Shadow of the North, The Stranger and Crannogmen. Add each finished list to `PlayableDecks.spec.js`.
+## Follow-up after the engine commit
+
+- Gold payment, transfer, and treasury-return compatibility helpers now delegate to actions.
+  Payment retains its playing type and active player when selecting gold sources.
+- Power gains now name the action explicitly; the previous helper already delegated indirectly.
+- Visible card actions expose unmet requirements only to players allowed to use those actions.
+  Hidden-card summaries and spectator summaries do not include this information.
+- The client translates the reason codes into readable text and exposes it in manual mode off
+  through a separate information tooltip, without restoring manual controls.
+- Card entry, attachments, saves, setup completion, round resets, plot recycling, first-player
+  selection, and melee title transitions now use action handlers. See the state-change inventory.
+- Keyword values are computed on query; dominance modifiers are registered by effect. Snapshots
+  copy dominance registrations and keyword trigger modifiers.
+- Standard plays expose relevant failure reasons. Matching triggered responses that cannot
+  resolve record private diagnostics, labeled with their original round and phase.
+- `npm run spec:coverage -- --formats` reports active format/variant pools; `--formats --json`
+  includes missing card codes. Legality compilation is shared with `CardService`.
+- Game messages, alerts, and lobby chat now retain safe structured templates and display argument
+  snapshots beside the legacy rendered fragments. This prepares the log boundary for localization;
+  locale catalogs and a translating renderer remain outstanding. This follow-up has not been tested.
+- Strict action windows now auto-advance after the response delay when a player has an unused action
+  on a public card. The card remains clickable during the wait. This is still opt-in and needs real
+  game feedback before any default change; this follow-up has not been tested.
 
 ## Do not reapply
 

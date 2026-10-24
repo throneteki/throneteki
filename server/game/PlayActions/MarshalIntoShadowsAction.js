@@ -17,6 +17,14 @@ class MarshalIntoShadowsAction extends BaseAbility {
         return true;
     }
 
+    isRelevant({ game, player, source }) {
+        return (
+            game.currentPhase !== 'setup' &&
+            source.isShadow() &&
+            player.isCardInPlayableLocation(source, 'marshalIntoShadows')
+        );
+    }
+
     getUnmetRequirement(context) {
         const { game, player, source } = context;
 

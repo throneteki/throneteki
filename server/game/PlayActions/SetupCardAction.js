@@ -11,6 +11,14 @@ class SetupCardAction extends BaseAbility {
         this.title = 'Setup';
     }
 
+    isRelevant({ game, player, source }) {
+        return (
+            game.currentPhase === 'setup' &&
+            source.getType() !== 'event' &&
+            player.hand.includes(source)
+        );
+    }
+
     getUnmetRequirement(context) {
         if (context.game.currentPhase !== 'setup') {
             return Requirements.phase;

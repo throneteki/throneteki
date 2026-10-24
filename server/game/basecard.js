@@ -18,6 +18,7 @@ import EventCheckAbility from './EventCheckAbility.js';
 import XValueDefinition from './XValueDefinition.js';
 import { Flags, Tokens } from './Constants/index.js';
 import StackProperty from './PropertyTypes/StackProperty.js';
+import ModifierProperty from './PropertyTypes/ModifierProperty.js';
 
 const ValidKeywords = [
     'ambush',
@@ -63,6 +64,7 @@ class BaseCard {
         this.traits = new ReferenceCountedSetProperty();
         this.controllerStack = new StackProperty(this.owner);
         this.loyalStack = new StackProperty(!!this.cardData.loyal);
+        this.dominanceStrengthModifiers = new ModifierProperty();
         this.eventsForRegistration = [];
         this.keywordSources = [];
 
@@ -309,6 +311,7 @@ class BaseCard {
 
         clone.controllerStack = this.controllerStack.clone();
         clone.loyalStack = this.loyalStack.clone();
+        clone.dominanceStrengthModifiers = this.dominanceStrengthModifiers.clone();
         clone.factions = this.factions.clone();
         clone.flags = this.flags.clone();
         clone.location = this.location;
@@ -353,6 +356,18 @@ class BaseCard {
 
     get controller() {
         return this.controllerStack.get();
+    }
+
+    get dominanceStrengthModifier() {
+        return this.dominanceStrengthModifiers.value;
+    }
+
+    set dominanceStrengthModifier(value) {
+        this.dominanceStrengthModifiers.set('manual', value);
+    }
+
+    modifyDominanceStrength(amount) {
+        this.dominanceStrengthModifiers.add(amount);
     }
 
     takeControl(controller, source) {
@@ -618,6 +633,45 @@ class BaseCard {
         });
 
         return menuActionPairs.map(([action, index]) => action.getMenuItem(index, player));
+    }
+
+    getUnavailableActions(player) {
+        if (player.isSpectator()) {
+            return undefined;
+        }
+
+        const actions = this.abilities.actions
+            .filter(
+                (action) =>
+                    action.allowPlayer(player) &&
+                    (this.getPrintedType() === 'event'
+                        ? player.isCardInPlayableLocation(this, 'play')
+                        : action.location === this.location)
+            )
+            .map((action) => ({
+                title: action.title,
+                reason: action.getUnmetRequirement(action.createContext(player))
+            }))
+            .filter((action) => !!action.reason);
+
+        if (this.controller === player) {
+            for (const action of this.getPlayActions()) {
+                const context = new AbilityContext({ game: this.game, player, source: this });
+                if (!action.isRelevant?.(context)) {
+                    continue;
+                }
+                const reason =
+                    action.getUnmetRequirement(context) ||
+                    (this.game.currentPhase !== 'setup' &&
+                        this.game.getActionTimingRequirement(player)) ||
+                    action.getResolutionFailure(context, { checkGameAction: false });
+                if (reason) {
+                    actions.push({ title: action.title, reason });
+                }
+            }
+        }
+
+        return actions.length > 0 ? actions : undefined;
     }
 
     isCopyOf(card) {
@@ -891,6 +945,10 @@ class BaseCard {
             facedown: this.facedown,
             factionStatus: this.getFactionStatus(),
             menu: this.game.manualMode.enabled ? this.getMenu(activePlayer) : undefined,
+            unavailableActions: this.getUnavailableActions(activePlayer),
+            unavailableTriggers: activePlayer.isSpectator()
+                ? undefined
+                : this.game.getUnavailableAbilityReasons?.(this, activePlayer),
             name: this.cardData.label,
             new: this.new,
             power: this.power,

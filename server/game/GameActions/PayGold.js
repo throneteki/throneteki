@@ -11,16 +11,15 @@ class PayGold extends GameAction {
         return Message.fragment('pays {amount} gold', { amount });
     }
 
-    canChangeGameState({ player, amount, context }) {
-        const activePlayer = (context && context.player) || player;
+    canChangeGameState({ player, amount, context, activePlayer, playingType = 'ability' }) {
+        activePlayer = activePlayer || (context && context.player) || player;
         return (
-            amount > 0 &&
-            player.getSpendableGold({ player, activePlayer, playingType: 'ability' }) >= amount
+            amount > 0 && player.getSpendableGold({ player, activePlayer, playingType }) >= amount
         );
     }
 
-    createEvent({ player, amount, context }) {
-        const activePlayer = (context && context.player) || player;
+    createEvent({ player, amount, context, activePlayer, playingType = 'ability' }) {
+        activePlayer = activePlayer || (context && context.player) || player;
         return this.event('onGoldPaid', { player, amount }, (event) => {
             event.player.game.queueStep(
                 new ChooseGoldSourceAmounts(
@@ -29,7 +28,7 @@ class PayGold extends GameAction {
                         amount: event.amount,
                         player: event.player,
                         activePlayer,
-                        playingType: 'ability'
+                        playingType
                     },
                     () => true
                 )

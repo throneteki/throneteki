@@ -5,7 +5,8 @@ import ChooseResolutionOrder from './ChooseResolutionOrder.js';
 import KeepOrMulliganPrompt from './setup/keepormulliganprompt.js';
 import SetupCardsPrompt from './setup/setupcardsprompt.js';
 import CheckAttachmentsPrompt from './setup/checkattachmentsprompt.js';
-import TextHelper from '../TextHelper.js';
+import RevealSetupCards from '../GameActions/RevealSetupCards.js';
+import FinishSetup from '../GameActions/FinishSetup.js';
 import { StartingHandSize } from '../Constants/index.js';
 
 class SetupPhase extends Phase {
@@ -99,21 +100,7 @@ class SetupPhase extends Phase {
     }
 
     announceSetupCards() {
-        for (const player of this.game.getPlayers()) {
-            let cardsInShadow = player.shadows.length;
-            let cards = player.cardsInPlay.filter((card) => card.facedown);
-            player.flipSetupCardsFaceUp();
-
-            if (cardsInShadow > 0) {
-                cards.push(`${TextHelper.count(cardsInShadow, 'card')} into shadows`);
-            }
-
-            if (cards.length === 0) {
-                this.game.addMessage('{0} does not set up any cards', player);
-            } else {
-                this.game.addMessage('{0} sets up {1}', player, cards);
-            }
-        }
+        this.game.resolveGameAction(RevealSetupCards, { game: this.game });
     }
 
     setupDone() {
@@ -124,9 +111,8 @@ class SetupPhase extends Phase {
             }
 
             this.game.returnGoldToTreasury({ player: player, amount: player.gold });
-            player.revealSetupCards();
         }
-        this.game.raiseEvent('onSetupFinished');
+        this.game.resolveGameAction(FinishSetup, { game: this.game });
     }
 }
 

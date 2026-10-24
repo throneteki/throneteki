@@ -3,22 +3,15 @@ import ReferenceCountedSetProperty from './ReferenceCountedSetProperty.js';
 class KeywordsProperty {
     constructor() {
         this.data = new ReferenceCountedSetProperty();
-        this.requiredAttachmentTraits = [];
-        this.ambushCosts = [];
-        this.bestowMaxes = [];
-        this.shadowCosts = [];
-        this.prizedValues = [];
         this.triggerAmountModifiers = new Map();
     }
 
     add(value) {
         this.data.add(value);
-        this.recalculateValues();
     }
 
     remove(value) {
         this.data.remove(value);
-        this.recalculateValues();
     }
 
     contains(value) {
@@ -40,7 +33,7 @@ class KeywordsProperty {
     clone() {
         let cloned = new KeywordsProperty();
         cloned.data = this.data.clone();
-        cloned.recalculateValues();
+        cloned.triggerAmountModifiers = new Map(this.triggerAmountModifiers);
         return cloned;
     }
 
@@ -64,20 +57,43 @@ class KeywordsProperty {
         return this.prizedValue || 0;
     }
 
-    recalculateValues() {
-        this.requiredAttachmentTraits = this.parseAttachmentTraits();
-        this.ambushCosts = this.parseNumericValues('ambush');
-        this.bestowMaxes = this.parseNumericValues('bestow');
-        this.shadowCosts = this.parseNumericValues('shadow');
-        this.prizedValues = this.parseNumericValues('prized');
-        this.ambushCost = this.safeReduce(this.ambushCosts, Math.min);
-        this.bestowMax = this.safeReduce(this.bestowMaxes, Math.max);
+    get requiredAttachmentTraits() {
+        return this.parseAttachmentTraits();
+    }
+
+    get ambushCosts() {
+        return this.parseNumericValues('ambush');
+    }
+
+    get bestowMaxes() {
+        return this.parseNumericValues('bestow');
+    }
+
+    get shadowCosts() {
+        return this.parseNumericValues('shadow');
+    }
+
+    get prizedValues() {
+        return this.parseNumericValues('prized');
+    }
+
+    get ambushCost() {
+        return this.safeReduce(this.ambushCosts, Math.min);
+    }
+
+    get bestowMax() {
+        return this.safeReduce(this.bestowMaxes, Math.max);
+    }
+
+    get shadowCost() {
         // A printed Shadow (X) always takes priority over any granted shadows amounts,
         // as the X value is likely required to interact with the card itself
-        this.shadowCost = this.shadowCosts.includes('X')
-            ? 'X'
-            : this.safeReduce(this.shadowCosts, Math.min);
-        this.prizedValue = this.prizedValues.reduce((sum, value) => sum + value, 0);
+        const costs = this.shadowCosts;
+        return costs.includes('X') ? 'X' : this.safeReduce(costs, Math.min);
+    }
+
+    get prizedValue() {
+        return this.prizedValues.reduce((sum, value) => sum + value, 0);
     }
 
     parseAttachmentTraits() {

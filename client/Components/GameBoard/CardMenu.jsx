@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useRef } from 'react';
 import classNames from 'classnames';
+import { getActionRequirementReason } from './actionRequirementReasons';
 
 const CardMenu = ({ menu, onMenuItemClick }) => {
     const ref = useRef(null);
@@ -32,7 +33,7 @@ const CardMenu = ({ menu, onMenuItemClick }) => {
                     key={index}
                     type='button'
                     disabled={!!menuItem.disabled}
-                    title={menuItem.disabledReason}
+                    title={getActionRequirementReason(menuItem.disabledReason)}
                     className={classNames(
                         'rounded border border-default-200 bg-default-100 px-2 py-1 text-left text-foreground',
                         {
@@ -44,6 +45,11 @@ const CardMenu = ({ menu, onMenuItemClick }) => {
                     onClick={() => onMenuItemClick && onMenuItemClick(menuItem)}
                 >
                     {menuItem.text}
+                    {menuItem.disabled && menuItem.disabledReason && (
+                        <span className='mt-1 block text-[10px] font-normal'>
+                            {getActionRequirementReason(menuItem.disabledReason)}
+                        </span>
+                    )}
                 </button>
             ))}
         </div>

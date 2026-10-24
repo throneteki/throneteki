@@ -15,6 +15,15 @@ class AmbushCardAction extends BaseAbility {
         return true;
     }
 
+    isRelevant({ game, player, source }) {
+        return (
+            game.currentPhase !== 'setup' &&
+            source.getType() !== 'event' &&
+            source.isAmbush() &&
+            player.isCardInPlayableLocation(source, 'ambush')
+        );
+    }
+
     getUnmetRequirement(context) {
         if (context.game.currentPhase !== 'challenge') {
             return Requirements.phase;

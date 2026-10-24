@@ -190,7 +190,11 @@ const Costs = {
                 context.originalLocation = context.source.location;
                 // For events being played from underneath another card
                 context.originalParent = context.source.parent;
-                context.source.controller.moveCard(context.source, 'being played');
+                context.originalFacedown = context.source.facedown;
+                context.game.resolveGameAction(
+                    GameActions.placeCard({ card: context.source, location: 'being played' }),
+                    context
+                );
             }
         };
     },

@@ -1,5 +1,6 @@
 import GameAction from './GameAction.js';
 import Message from '../Message.js';
+import RecordSave from './RecordSave.js';
 
 class SaveCard extends GameAction {
     constructor() {
@@ -22,14 +23,7 @@ class SaveCard extends GameAction {
     }
 
     createEvent({ event }) {
-        return this.event('onCardSaved', { card: event.card }, (saveEvent) => {
-            saveEvent.card.markAsSaved();
-            if (typeof event.removeCard === 'function') {
-                event.removeCard(saveEvent.card);
-            } else {
-                event.cancel();
-            }
-        });
+        return RecordSave.createEvent({ card: event.card, event });
     }
 }
 

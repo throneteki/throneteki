@@ -33,7 +33,6 @@ import NullEvent from './NullEvent.js';
 import AtomicEvent from './AtomicEvent.js';
 import GroupedCardEvent from './GroupedCardEvent.js';
 import SimultaneousEvents from './SimultaneousEvents.js';
-import ChooseGoldSourceAmounts from './gamesteps/ChooseGoldSourceAmounts.js';
 import DropCommand from './ServerCommands/DropCommand.js';
 import CardVisibility from './CardVisibility.js';
 import GameStats from './GameStats.js';
@@ -41,6 +40,7 @@ import ManualActions from './ManualActions.js';
 import ManualMode from './ManualMode.js';
 import PlainTextGameChatFormatter from './PlainTextGameChatFormatter.js';
 import GameActions from './GameActions/index.js';
+import RecordSave from './GameActions/RecordSave.js';
 import EndRound from './GameActions/EndRound.js';
 import TakeControl from './GameActions/TakeControl.js';
 import TimeLimit from './timeLimit.js';
@@ -79,6 +79,7 @@ class Game extends EventEmitter {
         // Structured entries for abilities, alongside the chat messages. Kept on the server: they
         // hold card references regardless of what each player can see.
         this.logEntries = [];
+        this.unavailableAbilityReasons = new Map();
         this.attachmentValidityCheck = new AttachmentValidityCheck(this);
         this.stateChecks = new StateChecks(this);
         this.effectEngine = new EffectEngine(this);
@@ -316,6 +317,33 @@ class Game extends EventEmitter {
         });
     }
 
+    recordUnavailableAbility(ability, context, reason) {
+        this.unavailableAbilityReasons.delete(ability);
+        if (!reason || !context.player || !ability.card) {
+            return;
+        }
+        this.unavailableAbilityReasons.set(ability, {
+            player: context.player,
+            card: ability.card,
+            title: ability.title || ability.card.name,
+            reason,
+            phase: this.currentPhase,
+            round: this.round
+        });
+        if (this.unavailableAbilityReasons.size > 200) {
+            this.unavailableAbilityReasons.delete(
+                this.unavailableAbilityReasons.keys().next().value
+            );
+        }
+    }
+
+    getUnavailableAbilityReasons(card, player) {
+        const reasons = [...this.unavailableAbilityReasons.values()]
+            .filter((entry) => entry.card === card && entry.player === player)
+            .map(({ title, reason, phase, round }) => ({ title, reason, phase, round }));
+        return reasons.length > 0 ? reasons : undefined;
+    }
+
     get messages() {
         return this.gameChat.messages;
     }
@@ -390,10 +418,7 @@ class Game extends EventEmitter {
     }
 
     setFirstPlayer(firstPlayer) {
-        for (const player of this.getAllPlayers()) {
-            player.firstPlayer = player === firstPlayer;
-        }
-        this.raiseEvent('onFirstPlayerDetermined', { player: firstPlayer });
+        return this.resolveGameAction(GameActions.setFirstPlayer({ player: firstPlayer }));
     }
 
     getOpponents(player) {
@@ -728,7 +753,9 @@ class Game extends EventEmitter {
             return;
         }
 
-        player.faction.modifyPower(power);
+        return this.resolveGameAction(
+            GameActions.gainPower({ card: player.faction, amount: power })
+        );
     }
 
     addGold(player, amount) {
@@ -775,7 +802,12 @@ class Game extends EventEmitter {
             spendParams
         );
 
-        this.queueStep(new ChooseGoldSourceAmounts(this, spendParams, callback));
+        if (spendParams.amount <= 0) {
+            this.queueSimpleStep(callback);
+            return;
+        }
+
+        return this.resolveGameAction(GameActions.payGold(spendParams)).thenExecute(callback);
     }
 
     /**
@@ -791,35 +823,9 @@ class Game extends EventEmitter {
      * The target object to which gold is being moved
      */
     transferGold(transferParams) {
-        let { from, to, amount } = transferParams;
-        let appliedGold = Math.min(from.gold, amount);
-
-        if (from.getGameElementType() === 'player') {
-            let activePlayer =
-                transferParams.activePlayer ||
-                (this.currentAbilityContext && this.currentAbilityContext.player);
-            appliedGold = Math.min(
-                from.getSpendableGold({ player: from, activePlayer: activePlayer }),
-                amount
-            );
-            this.spendGold(
-                { amount: appliedGold, player: from, activePlayer: activePlayer },
-                () => {
-                    to.modifyGold(appliedGold);
-                    this.raiseEvent('onGoldTransferred', {
-                        source: from,
-                        target: to,
-                        amount: appliedGold
-                    });
-                }
-            );
-            return;
-        }
-
-        from.modifyGold(-appliedGold);
-        to.modifyGold(appliedGold);
-
-        this.raiseEvent('onGoldTransferred', { source: from, target: to, amount: appliedGold });
+        return this.resolveGameAction(
+            GameActions.transferGold({ ...transferParams, context: this.currentAbilityContext })
+        );
     }
 
     /**
@@ -830,10 +836,7 @@ class Game extends EventEmitter {
      * @param {number} params.amount The amount of gold being returned
      */
     returnGoldToTreasury(params) {
-        let { player, amount } = params;
-        let appliedAmount = Math.min(player.gold, amount);
-
-        player.modifyGold(-appliedAmount);
+        return this.resolveGameAction(GameActions.returnGoldToTreasury(params));
     }
 
     recordResults(winners, reason, finishedAt) {
@@ -1446,7 +1449,7 @@ class Game extends EventEmitter {
         let player = card.controller;
         let dupe = card.dupes.find((dupe) => dupe.owner === card.controller);
         if (card.canBeSaved() && dupe) {
-            dupe.owner.discardCard(dupe, false);
+            this.resolveGameAction(GameActions.discardCard({ card: dupe, allowSave: false }));
             this.saveCard(card);
             this.addMessage('{0} discards a duplicate to save {1}', player, card);
             return true;
@@ -1456,8 +1459,7 @@ class Game extends EventEmitter {
     }
 
     saveCard(card) {
-        card.markAsSaved();
-        this.raiseEvent('onCardSaved', { card: card });
+        return this.resolveGameAction(RecordSave, { card });
     }
 
     discardFromPlay(cards, options = { allowSave: true }, callback = () => true) {
