@@ -1794,12 +1794,24 @@ class Game extends EventEmitter {
                 phase: this.currentPhase,
                 firstPlayer: this.getPlayersInFirstPlayerOrder()[0]?.name,
                 currentChallenge: this.currentChallenge && {
-                    type: this.currentChallenge.challengeType,
-                    attackingPlayer: this.currentChallenge.attackingPlayer?.name,
-                    defendingPlayer: this.currentChallenge.defendingPlayer?.name,
+                    ...this.getChallengeSummary(this.currentChallenge),
+                    stage: this.getChallengeStage(this.currentChallenge),
+                    currentType: this.currentChallenge.challengeType,
+                    declaredAttackers: this.currentChallenge.declaredAttackers.map(
+                        (card) => card.uuid
+                    ),
                     attackers: this.currentChallenge.attackers?.map((card) => card.uuid),
+                    declaredDefenders: this.currentChallenge.declaredDefenders.map(
+                        (card) => card.uuid
+                    ),
                     defenders: this.currentChallenge.defenders?.map((card) => card.uuid)
-                }
+                },
+                earlierChallenges:
+                    this.currentPhase === 'challenge'
+                        ? this.getEarlierChallenges().map((challenge) =>
+                              this.getChallengeSummary(challenge)
+                          )
+                        : []
             },
             reporter,
             players: playerStates,
@@ -1807,6 +1819,38 @@ class Game extends EventEmitter {
             messages: this.gameChat.messages.slice(-100),
             pipeline: this.pipeline.getDebugInfo()
         };
+    }
+
+    getChallengeSummary(challenge) {
+        return {
+            type: challenge.initiatedChallengeType,
+            attackingPlayer: challenge.attackingPlayer?.name,
+            defendingPlayer: challenge.isSinglePlayer
+                ? undefined
+                : challenge.initiatedAgainstPlayer?.name
+        };
+    }
+
+    getChallengeStage(challenge) {
+        if (challenge.winnerDetermined) {
+            return 'winnerDetermined';
+        }
+        if (challenge.defendersDeclared) {
+            return 'defendersDeclared';
+        }
+        return challenge.isInitiated ? 'attackersDeclared' : 'declaringAttackers';
+    }
+
+    getEarlierChallenges() {
+        const challenges = new Set();
+        for (const player of this.getPlayers()) {
+            for (const allowance of player.challenges.allowedChallenges) {
+                if (allowance.used && allowance.challenge !== this.currentChallenge) {
+                    challenges.add(allowance.challenge);
+                }
+            }
+        }
+        return [...challenges].filter((challenge) => challenge);
     }
 
     getSaveState() {

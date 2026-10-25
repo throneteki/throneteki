@@ -182,8 +182,9 @@ The phase 6 framework gate remains open. Card verification is complete; the rema
    conversions, icon and control registrations, and settling effects until nothing changes are
    done.
 3. Finish translation-ready logs (phase 3) and exact problem-report restoration (phase 6). Problem
-   reports now persist in PostgreSQL and the scenario runner rebuilds the board and phase;
-   restoring an arbitrary open prompt or in-progress challenge remains open.
+   reports now persist in PostgreSQL and the scenario runner rebuilds the board, the phase and
+   a challenge in progress ([ChallengeRestore.spec.js](../test/server/devtools/ChallengeRestore.spec.js));
+   restoring an arbitrary open prompt remains open.
    Per-format coverage reporting is implemented in this follow-up, pending validation.
 4. Complete the strict-window trial and gather feedback before changing the default.
 

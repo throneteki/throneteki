@@ -104,18 +104,75 @@ class ChallengePhase extends Phase {
             return;
         }
 
-        let challenge = new Challenge(this.game, {
-            attackingPlayer: attackingPlayer,
-            defendingPlayer: defendingPlayer,
-            challengeType: challengeType,
-            number: this.tracker.count({ attackingPlayer }) + 1,
-            totalNumber: this.tracker.count({}) + 1
-        });
+        let challenge = this.createChallenge(attackingPlayer, defendingPlayer, challengeType);
         this.game.currentChallenge = challenge;
         this.game.currentChallengeStep = new ChallengeFlow(this.game, challenge);
         this.game.queueStep(this.game.currentChallengeStep);
         this.game.queueSimpleStep(() => this.cleanupChallenge());
         this.game.queueSimpleStep(() => this.promptForChallenge());
+    }
+
+    /**
+     * Records a challenge that was initiated earlier in the phase, for a game restored from a
+     * problem report. Nothing triggers: only the trackers and each player's used challenges see it.
+     */
+    restoreFinishedChallenge({ attackingPlayer, defendingPlayer, challengeType }) {
+        const challenge = this.createChallenge(attackingPlayer, defendingPlayer, challengeType);
+        challenge.initiateChallenge();
+        this.game.emit('onChallengeInitiated', { challenge });
+        challenge.finish();
+    }
+
+    /**
+     * Replaces the prompt to choose a challenge with a challenge restored from a problem report,
+     * resuming at the action window after attackers or defenders were declared. Nothing triggers
+     * while it is rebuilt.
+     */
+    restoreChallenge({
+        attackingPlayer,
+        defendingPlayer,
+        challengeType,
+        currentType = challengeType,
+        declaredAttackers,
+        attackers,
+        declaredDefenders,
+        defenders,
+        resumeAt
+    }) {
+        this.pipeline.cancelStep();
+        const index = this.remainingPlayers.indexOf(attackingPlayer);
+        if (index > 0) {
+            this.remainingPlayers.splice(0, index);
+        }
+
+        const challenge = this.createChallenge(attackingPlayer, defendingPlayer, challengeType);
+        challenge.initiateChallenge();
+        this.game.emit('onChallengeInitiated', { challenge });
+        challenge.challengeType = currentType;
+        challenge.declareAttackers(declaredAttackers);
+        challenge.addAttackers(attackers.filter((card) => !declaredAttackers.includes(card)));
+        if (resumeAt === 'defendersDeclared') {
+            challenge.declareDefenders(declaredDefenders);
+            challenge.addDefenders(defenders.filter((card) => !declaredDefenders.includes(card)));
+            challenge.defendersDeclared = true;
+        }
+
+        this.game.currentChallenge = challenge;
+        this.game.currentChallengeStep = new ChallengeFlow(this.game, challenge, { resumeAt });
+        this.game.queueStep(this.game.currentChallengeStep);
+        this.game.queueSimpleStep(() => this.cleanupChallenge());
+        this.game.queueSimpleStep(() => this.promptForChallenge());
+        this.game.effectEngine.reapplyStateDependentEffects();
+    }
+
+    createChallenge(attackingPlayer, defendingPlayer, challengeType) {
+        return new Challenge(this.game, {
+            attackingPlayer,
+            defendingPlayer,
+            challengeType,
+            number: this.tracker.count({ attackingPlayer }) + 1,
+            totalNumber: this.tracker.count({}) + 1
+        });
     }
 
     cleanupChallenge() {

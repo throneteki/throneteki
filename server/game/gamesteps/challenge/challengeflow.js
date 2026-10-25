@@ -11,7 +11,11 @@ import DeclareDefenders from '../../GameActions/DeclareDefenders.js';
 import { Flags } from '../../Constants/index.js';
 
 class ChallengeFlow extends BaseStep {
-    constructor(game, challenge) {
+    /**
+     * `resumeAt` names the action window ('attackersDeclared' or 'defendersDeclared') to start
+     * from, for a challenge restored from a problem report whose earlier steps already happened.
+     */
+    constructor(game, challenge, { resumeAt } = {}) {
         super(game);
         this.challenge = challenge;
         this.pipeline = new GamePipeline();
@@ -36,6 +40,17 @@ class ChallengeFlow extends BaseStep {
             () => new ResolutionKeywordsWindow(this.game, this.challenge),
             new SimpleStep(this.game, () => this.atEndOfChallenge())
         ]);
+
+        if (resumeAt) {
+            const steps = this.pipeline.pipeline;
+            const index = steps.findIndex(
+                (step) => step instanceof ActionWindow && step.windowName === resumeAt
+            );
+            if (index < 0) {
+                throw new Error(`A challenge cannot resume at '${resumeAt}'`);
+            }
+            this.pipeline.initialise(steps.slice(index));
+        }
     }
 
     resetCards() {
@@ -161,6 +176,8 @@ class ChallengeFlow extends BaseStep {
     }
 
     declareDefenders() {
+        this.challenge.defendersDeclared = true;
+
         if (this.challenge.declareDefendersFirst) {
             this.game.addMessage(
                 '{0} cannot declare defenders after attackers are declared for this challenge',

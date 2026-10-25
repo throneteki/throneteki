@@ -488,9 +488,11 @@ mode off; the gate does not disable that check.
   Enabling it needs the opponent's consent and is recorded.
 - `/cancel-prompt` and a "report a problem" action stay available. Both now save a JSON snapshot
   with the cards, zones, phase, log, challenge details, and pipeline description in PostgreSQL for
-  30 days. The scenario runner rebuilds the board and phase by report ID; restoring an arbitrary
-  open prompt or active challenge pipeline remains open.
-- When manual mode is turned on, ask which card misbehaved, so manual mode doubles as bug reporting.
+  30 days. The scenario runner rebuilds the board and phase by report ID, the challenges already made
+  that phase, and a challenge in progress from the action window after attackers or defenders
+  were declared. Restoring an arbitrary open prompt remains open.
+- Turning manual mode on is recorded. It no longer asks which card misbehaved; players report
+  problems with the report action instead.
 
 ## Decisions
 

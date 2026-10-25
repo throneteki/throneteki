@@ -272,7 +272,74 @@ async function runProblemReport(reportId, options) {
     context.setupTest(problemReportSetup(report));
     context.game.scenario = `report:${reportId}`;
     context.game.round = report.game.round || context.game.round;
+    restoreChallenges(context, report);
     return { game: context.game, name: `Problem report ${report.id}`, stoppedAtBreak: true };
+}
+
+const ChallengeResumePoints = {
+    attackersDeclared: 'attackersDeclared',
+    defendersDeclared: 'defendersDeclared',
+    winnerDetermined: 'defendersDeclared'
+};
+
+function restoreChallenges(context, report) {
+    const { game } = context;
+    const phase = game.pipeline.getCurrentStep();
+    if (report.game?.phase !== 'challenge' || !phase?.restoreChallenge) {
+        return;
+    }
+
+    const players = report.players.map((player, index) => context[`player${index + 1}Object`]);
+    const playerFor = (name) => players[report.players.findIndex((player) => player.name === name)];
+    const cardsById = mapCardsInPlay(report, players);
+    const cards = (ids) => (ids || []).map((id) => cardsById.get(id)).filter(Boolean);
+    const summary = (challenge) => ({
+        attackingPlayer: playerFor(challenge.attackingPlayer),
+        defendingPlayer: challenge.defendingPlayer ? playerFor(challenge.defendingPlayer) : null,
+        challengeType: challenge.type
+    });
+
+    for (const challenge of report.game.earlierChallenges || []) {
+        phase.restoreFinishedChallenge(summary(challenge));
+    }
+
+    const challenge = report.game.currentChallenge;
+    const resumeAt = challenge && ChallengeResumePoints[challenge.stage];
+    if (resumeAt) {
+        phase.restoreChallenge({
+            ...summary(challenge),
+            currentType: challenge.currentType,
+            declaredAttackers: cards(challenge.declaredAttackers),
+            attackers: cards(challenge.attackers),
+            declaredDefenders: cards(challenge.declaredDefenders),
+            defenders: cards(challenge.defenders),
+            resumeAt
+        });
+        game.addAlert(
+            'info',
+            'Restored the {0} challenge at the action window after {1} were declared',
+            challenge.currentType || challenge.type,
+            resumeAt === 'attackersDeclared' ? 'attackers' : 'defenders'
+        );
+    }
+
+    game.continue();
+}
+
+function mapCardsInPlay(report, players) {
+    const cardsById = new Map(report.cards.map((card) => [card.id, card]));
+    const result = new Map();
+    report.players.forEach((reportPlayer, index) => {
+        const available = [...players[index].cardsInPlay];
+        for (const id of reportPlayer.cardsInPlay || []) {
+            const name = cardsById.get(id)?.name;
+            const match = available.findIndex((card) => card.name === name);
+            if (match >= 0) {
+                result.set(id, available.splice(match, 1)[0]);
+            }
+        }
+    });
+    return result;
 }
 
 export async function runScenario(scenario, options) {

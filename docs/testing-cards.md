@@ -382,8 +382,11 @@ path, using the ID shown in the in-game confirmation. The game has as many playe
 router over Redis; the router stores them in PostgreSQL for 30 days, so any game-node pod can load
 one. Players only need to include the report ID when filing an issue through the Help page.
 `/cancel-prompt` saves a report automatically before clearing the prompt. The runner rebuilds the
-board and phase from the report; the stored snapshot retains the original prompt and challenge
-details for diagnosis.
+board and phase from the report, with the challenges already made that phase. A challenge in
+progress resumes at the action window after its attackers were declared, or after its defenders
+were declared if they were (also when the report was taken later in the challenge). Nothing
+triggers while it is rebuilt. Other open prompts are not restored; the stored snapshot keeps them
+for diagnosis.
 
 The part after `#` picks the test: a case-insensitive part of its name (the describe and it labels
 joined with spaces). Without it, the first test in the file is used. The test's hooks and body run
