@@ -34,6 +34,55 @@ function cannotEffect(type) {
     };
 }
 
+function iconEffect(getIcons, gameAction) {
+    const appliedIcons = (context) => (context.appliedIcons ??= new Map());
+    const canChange = (card, context) =>
+        card.getType() === 'character' &&
+        card.location === 'play area' &&
+        card.allowGameAction(gameAction, {
+            game: context.game,
+            source: context.source,
+            resolutionStage: 'effect'
+        });
+    const change = (card, icon, applying) =>
+        gameAction === 'gainIcon'
+            ? card.addIconByEffect(icon, applying)
+            : card.removeIconByEffect(icon, applying);
+    const revert = (card, icon) =>
+        gameAction === 'gainIcon'
+            ? card.removeIconByEffect(icon, false)
+            : card.addIconByEffect(icon, false);
+    const desiredIcons = (card, context) =>
+        canChange(card, context) ? [...new Set(getIcons(card, context))] : [];
+
+    return {
+        apply: function (card, context) {
+            const icons = desiredIcons(card, context);
+            for (const icon of icons) {
+                change(card, icon, true);
+            }
+            appliedIcons(context).set(card, icons);
+        },
+        reapply: function (card, context) {
+            const current = appliedIcons(context).get(card) || [];
+            const icons = desiredIcons(card, context);
+            for (const icon of current.filter((icon) => !icons.includes(icon))) {
+                revert(card, icon);
+            }
+            for (const icon of icons.filter((icon) => !current.includes(icon))) {
+                change(card, icon, true);
+            }
+            appliedIcons(context).set(card, icons);
+        },
+        unapply: function (card, context) {
+            for (const icon of appliedIcons(context).get(card) || []) {
+                revert(card, icon);
+            }
+            appliedIcons(context).delete(card);
+        }
+    };
+}
+
 function losesAspectEffect(aspect) {
     return modifyFlagEffect(aspect, { handler: (target) => target.markAsDirty() });
 }
@@ -412,78 +461,16 @@ const Effects = {
         Flags.challengeOptions.ignoresAssaultLocationCost
     ),
     addIcon: function (icon) {
-        return {
-            apply: function (card, context) {
-                context.game.resolveGameAction(
-                    GameActions.gainIcon({ card, icon, applying: true })
-                );
-            },
-            unapply: function (card, context) {
-                context.game.resolveGameAction(
-                    GameActions.loseIcon({ card, icon, applying: false })
-                );
-            }
-        };
+        return iconEffect(() => [icon], 'gainIcon');
     },
     dynamicIcons: function (iconsFunc) {
         return {
-            apply: function (card, context) {
-                context.dynamicIcons = context.dynamicIcons || {};
-                context.dynamicIcons[card.uuid] = iconsFunc(card, context) || [];
-                context.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        context.dynamicIcons[card.uuid].map((icon) =>
-                            GameActions.gainIcon({ card, icon, applying: true })
-                        )
-                    )
-                );
-            },
-            reapply: function (card, context) {
-                let currentIcons = context.dynamicIcons[card.uuid];
-                context.dynamicIcons[card.uuid] = iconsFunc(card, context);
-
-                let iconsGained = context.dynamicIcons[card.uuid].filter(
-                    (icon) => !currentIcons.includes(icon)
-                );
-                let iconsLost = currentIcons.filter(
-                    (icon) => !context.dynamicIcons[card.uuid].includes(icon)
-                );
-
-                let actions = iconsGained.map((icon) =>
-                    GameActions.gainIcon({ card, icon, applying: true })
-                );
-                actions = actions.concat(
-                    iconsLost.map((icon) => GameActions.loseIcon({ card, icon, applying: false }))
-                );
-
-                context.game.resolveGameAction(GameActions.simultaneously(actions));
-            },
-            unapply: function (card, context) {
-                context.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        context.dynamicIcons[card.uuid].map((icon) =>
-                            GameActions.loseIcon({ card, icon, applying: false })
-                        )
-                    )
-                );
-                delete context.dynamicIcons[card.uuid];
-            },
+            ...iconEffect((card, context) => iconsFunc(card, context) || [], 'gainIcon'),
             isStateDependent: true
         };
     },
     removeIcon: function (icon) {
-        return {
-            apply: function (card, context) {
-                context.game.resolveGameAction(
-                    GameActions.loseIcon({ card, icon, applying: true })
-                );
-            },
-            unapply: function (card, context) {
-                context.game.resolveGameAction(
-                    GameActions.gainIcon({ card, icon, applying: false })
-                );
-            }
-        };
+        return iconEffect(() => [icon], 'loseIcon');
     },
     addKeyword: function (keyword) {
         return {

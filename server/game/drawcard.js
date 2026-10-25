@@ -350,6 +350,31 @@ class DrawCard extends BaseCard {
         this.icons.remove(icon);
     }
 
+    addIconByEffect(icon, applying) {
+        const hadIcon = this.hasIcon(icon);
+        this.icons.add(icon);
+        this.raiseIconChangeEvent(icon, hadIcon, applying);
+    }
+
+    removeIconByEffect(icon, applying) {
+        const hadIcon = this.hasIcon(icon);
+        this.icons.remove(icon);
+        this.raiseIconChangeEvent(icon, hadIcon, applying);
+    }
+
+    raiseIconChangeEvent(icon, hadIcon, applying) {
+        if (this.game.effectEngine?.recordIconChange(this, icon, hadIcon, applying)) {
+            return;
+        }
+        if (hadIcon !== this.hasIcon(icon)) {
+            this.game.raiseEvent(hadIcon ? 'onIconLost' : 'onIconGained', {
+                card: this,
+                icon,
+                applying
+            });
+        }
+    }
+
     /**
      * Defines restrictions on what cards this attachment can be placed on.
      */

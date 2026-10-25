@@ -57,15 +57,44 @@ class EffectEngine {
 
     beginEffectChanges() {
         this.strengthChanges = new Map();
+        this.iconChanges = new Map();
     }
 
     endEffectChanges() {
         const changes = this.strengthChanges;
+        const iconChanges = this.iconChanges;
         this.strengthChanges = undefined;
+        this.iconChanges = undefined;
         for (const [card, change] of changes) {
             const amount = card.getStrength() - change.before;
             card.raiseStrengthChangeEvent(amount, amount * change.applyingDelta > 0);
         }
+        for (const { card, icon, hadIcon, applyingGain, applyingLoss } of iconChanges.values()) {
+            card.raiseIconChangeEvent(icon, hadIcon, hadIcon ? applyingLoss : applyingGain);
+        }
+    }
+
+    recordIconChange(card, icon, hadIcon, applying) {
+        if (!this.iconChanges) {
+            return false;
+        }
+        const key = `${card.uuid}:${icon}`;
+        const change = this.iconChanges.get(key) || {
+            card,
+            icon,
+            hadIcon,
+            applyingGain: false,
+            applyingLoss: false
+        };
+        if (applying && card.hasIcon(icon) !== hadIcon) {
+            if (hadIcon) {
+                change.applyingLoss = true;
+            } else {
+                change.applyingGain = true;
+            }
+        }
+        this.iconChanges.set(key, change);
+        return true;
     }
 
     recordStrengthChange(card, amount, applying) {
