@@ -5,6 +5,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { matchCardByNameAndPack } from './cardutil.js';
+import { Factions } from '../../server/services/DeckService.js';
 
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
@@ -51,7 +52,7 @@ class DeckBuilder {
         }
 
         return {
-            faction: { value: faction },
+            faction: Factions.find((entry) => entry.value === faction) || { value: faction },
             agenda: agenda,
             bannerCards: bannerCards,
             drawCards: allCards.filter((cardCount) =>
