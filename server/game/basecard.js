@@ -202,9 +202,7 @@ class BaseCard {
                 })
             );
             copy.events = null;
-            copy.playerFunc = ability.customPlayerFunc
-                ? ability.playerFunc
-                : () => this.controller;
+            copy.playerFunc = ability.customPlayerFunc ? ability.playerFunc : () => this.controller;
         } else {
             copy.events = new EventRegistrar(this.game, copy);
             copy.activationContexts = [];
