@@ -58,9 +58,6 @@ describe('manual mode', function () {
 
             expect(this.game.manualMode.enabled).toBe(true);
             expect(this.player2).not.toHavePromptButton('Allow');
-            expect(this.player1).not.toHavePrompt(
-                "Select the card that isn't working, if there is one"
-            );
         });
 
         describe('and a player asks to turn it on', function () {
@@ -90,27 +87,18 @@ describe('manual mode', function () {
                     this.player2.clickPrompt('Allow');
                 });
 
-                it('turns on, and asks which card is not working', function () {
+                it('turns on without asking which card is not working', function () {
                     expect(this.game.manualMode.enabled).toBe(true);
-                    expect(this.player1).toHavePrompt(
-                        "Select the card that isn't working, if there is one"
-                    );
-                });
-
-                it('records the request with the card the player picks', function () {
-                    this.player1.clickCard(this.houseMaester);
-
-                    expect(this.game.stats.forPlayer(this.player1.player).manualActions).toEqual([
-                        expect.objectContaining({
-                            action: 'manualModeEnabled',
-                            cards: [{ code: '03041', name: 'House Maester' }]
-                        })
-                    ]);
                     expect(this.player1).isReadyToTakeAction();
                 });
 
+                it('records the request', function () {
+                    expect(this.game.stats.forPlayer(this.player1.player).manualActions).toEqual([
+                        expect.objectContaining({ action: 'manualModeEnabled' })
+                    ]);
+                });
+
                 it('allows manual actions', function () {
-                    this.player1.clickPrompt('Done');
                     this.player1.clickCard(this.houseMaester);
 
                     expect(this.houseMaester.kneeled).toBe(true);
