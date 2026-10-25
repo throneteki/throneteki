@@ -256,6 +256,7 @@ async function runProblemReport(reportId, options) {
     const flowOptions = {
         users: options.users?.slice(0, numOfPlayers),
         numOfPlayers,
+        maxPlayers: Math.max(numOfPlayers, 2),
         router: options.router,
         gameId: options.gameId,
         gameFormat: report.game?.format || 'joust',
