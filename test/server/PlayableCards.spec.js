@@ -37,3 +37,26 @@ describe('playable card state', function () {
         expect(canPlay(this, this.player2, this.player2, this.winterfellSteward)).toBe(true);
     });
 });
+
+describe('playable card state when choosing a challenge', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                inPlay: ['Hedge Knight'],
+                hand: ['Winterfell Steward']
+            }
+        });
+        this.handCanPlay = (card) =>
+            this.game
+                .getState(this.player1.player.name)
+                .players[
+                    this.player1.player.name
+                ].cardPiles.hand.find((summary) => summary.uuid === card.uuid)?.canPlay;
+    });
+
+    it('marks the cards a player cannot use now', function () {
+        expect(this.player1).toHavePromptButton('Military');
+        expect(this.handCanPlay(this.winterfellSteward)).toBe(false);
+    });
+});

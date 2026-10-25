@@ -1371,7 +1371,8 @@ class Game extends EventEmitter {
     canTakeActionsNow(player) {
         return (
             !player.isSpectator() &&
-            this.isActionTimingOpenFor(player) &&
+            !this.hasOpenInterruptOrReactionWindow() &&
+            !this.getActionTimingRequirement(player) &&
             player.promptState.isActivePrompt &&
             !player.promptState.selectCard
         );
