@@ -51,11 +51,12 @@ class ChallengeFlow extends BaseStep {
     }
 
     announceChallenge() {
-        let defendersFirstMessage = this.challenge.declareDefendersFirst
-            ? ', with defenders being declared before they declare attackers'
-            : '';
+        if (!this.challenge.declareDefendersFirst) {
+            return;
+        }
+
         this.game.addMessage(
-            '{0} is initiating a {1} challenge' + defendersFirstMessage,
+            '{0} is initiating a {1} challenge, with defenders being declared before they declare attackers',
             this.challenge.attackingPlayer,
             this.challenge.challengeType
         );
@@ -87,7 +88,7 @@ class ChallengeFlow extends BaseStep {
 
     chooseAttackers(attackers) {
         if (attackers.length === 0) {
-            this.cancelChallenge();
+            this.challenge.cancelChallenge({ silent: true });
             return;
         }
 

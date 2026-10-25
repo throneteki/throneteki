@@ -315,11 +315,15 @@ class Challenge {
         this.isInitiated = false;
     }
 
-    cancelChallenge() {
+    cancelChallenge({ silent = false } = {}) {
         this.cancelled = true;
         this.isInitiated = false;
 
         this.resetCards();
+
+        if (silent) {
+            return;
+        }
 
         this.game.addMessage(
             "{0}'s {1} challenge is cancelled",
