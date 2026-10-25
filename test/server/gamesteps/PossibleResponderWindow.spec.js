@@ -67,6 +67,7 @@ describe('cancel windows for a player without the timer', function () {
             it('shows them the same window, with nothing to choose', function () {
                 expect(this.player2).toHavePrompt(WindowTitle);
                 expect(this.player2).toHavePromptButton('Skip');
+                expect(this.player2).toHavePromptButton('Wait');
                 expect(this.player2.player.promptState.controls).toContainEqual(
                     expect.objectContaining({
                         type: 'response-delay',
@@ -96,6 +97,23 @@ describe('cancel windows for a player without the timer', function () {
                 expect(this.lannisportMerchant.location).toBe('play area');
 
                 this.scheduled[0].callback();
+
+                expect(this.lannisportMerchant.location).toBe('play area');
+                expect(this.player1).isReadyToTakeAction();
+            });
+
+            it('lets them wait for an explicit pass instead of timing out', function () {
+                this.player2.clickPrompt('Wait');
+
+                expect(this.player2).toHavePromptButton('Pass');
+                expect(this.player2).not.toHavePromptButton('Skip');
+
+                this.scheduled[0].callback();
+
+                expect(this.lannisportMerchant.location).toBe('hand');
+                expect(this.player2).toHavePrompt(WindowTitle);
+
+                this.player2.clickPrompt('Pass');
 
                 expect(this.lannisportMerchant.location).toBe('play area');
                 expect(this.player1).isReadyToTakeAction();

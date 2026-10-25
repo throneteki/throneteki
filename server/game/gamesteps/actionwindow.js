@@ -93,7 +93,7 @@ class ActionWindow extends PlayerOrderPrompt {
         };
 
         if (this.offer && this.offer.player === player && this.offer.type === 'wait') {
-            prompt.controls = [{ type: 'response-delay', duration: this.offer.delay }];
+            prompt.controls = [{ type: 'action-delay', duration: this.offer.delay }];
         }
 
         return prompt;

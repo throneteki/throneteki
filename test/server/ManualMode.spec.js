@@ -51,6 +51,18 @@ describe('manual mode', function () {
             expect(this.player2).toHavePromptButton('Refuse');
         });
 
+        it('can be turned on without opponent approval after the game ends', function () {
+            this.game.gameOverHandler.isGameOver = true;
+
+            this.game.manualMode.request(this.player1.player);
+
+            expect(this.game.manualMode.enabled).toBe(true);
+            expect(this.player2).not.toHavePromptButton('Allow');
+            expect(this.player1).not.toHavePrompt(
+                "Select the card that isn't working, if there is one"
+            );
+        });
+
         describe('and a player asks to turn it on', function () {
             beforeEach(function () {
                 this.player1.sendChat('/manual');

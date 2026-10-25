@@ -58,7 +58,7 @@ describe('strict action windows', function () {
             expect(this.player2).toHavePrompt('Initiate an action');
             expect(this.player2.player.promptState.controls).toContainEqual(
                 expect.objectContaining({
-                    type: 'response-delay',
+                    type: 'action-delay',
                     duration: this.scheduled[0].delay
                 })
             );

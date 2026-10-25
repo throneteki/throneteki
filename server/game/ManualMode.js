@@ -51,6 +51,11 @@ class ManualMode {
     }
 
     request(player) {
+        if (this.game.isGameOver) {
+            this.toggle(player);
+            return;
+        }
+
         const opponents = this.game.getPlayers().filter((other) => other !== player);
         if (opponents.length === 0) {
             this.toggle(player);
@@ -79,7 +84,7 @@ class ManualMode {
             this.enabled ? 'manualModeEnabled' : 'manualModeDisabled'
         );
 
-        if (this.enabled) {
+        if (this.enabled && !this.game.isGameOver) {
             this.game.promptForSelect(player, {
                 activePromptTitle: "Select the card that isn't working, if there is one",
                 waitingPromptTitle: 'Waiting for opponent to turn manual mode on',

@@ -178,9 +178,10 @@ const ActivePlayerPrompt = ({
     // A wait shown to every player who might be able to respond, so their opponents can't tell
     // who really can.
     if (controls && controls.some((control) => control.type === 'response-delay')) {
-        promptText = 'Keeping your hand hidden';
+        promptText =
+            'Some cards can react to what just happened. Play one now, choose Wait to keep this window open, or Skip to continue.';
     } else if (controls && controls.some((control) => control.type === 'action-delay')) {
-        promptText = 'Action window';
+        promptText = 'You can take an action now, or pass to continue.';
     }
 
     const promptTextElement = [];
