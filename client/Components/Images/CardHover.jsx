@@ -105,9 +105,22 @@ const CardHover = ({ children, size = '3x-large' }) => {
                                 disableSkeleton={true}
                             />
                             {!isLoading && notes?.length > 0 && (
-                                <div className='mt-1 max-w-80 space-y-1 rounded-md bg-content1/90 p-2 text-xs text-foreground shadow'>
+                                <div className='mt-1.5 overflow-hidden rounded-lg border border-default-300 bg-content1/95 shadow-lg shadow-black/60'>
                                     {notes.map((note, index) => (
-                                        <div key={index}>{note}</div>
+                                        <div
+                                            key={index}
+                                            className='border-l-3 border-l-warning px-3 py-2 [&+&]:border-t [&+&]:border-t-default-200'
+                                        >
+                                            <div className='text-[10px] font-semibold uppercase tracking-wider text-warning'>
+                                                {note.label}
+                                            </div>
+                                            <div className='text-sm font-semibold leading-snug text-foreground'>
+                                                {note.title}
+                                            </div>
+                                            <div className='text-xs leading-snug text-default-500'>
+                                                {note.reason}
+                                            </div>
+                                        </div>
                                     ))}
                                 </div>
                             )}

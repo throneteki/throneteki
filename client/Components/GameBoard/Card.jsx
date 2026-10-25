@@ -358,9 +358,21 @@ const Card = ({
         );
         const isFaceup = forceFaceup || (!card.facedown && card.code);
         const availabilityNotes = isFaceup
-            ? [...(card.unavailableActions || []), ...(card.unavailableTriggers || [])]
-                  .filter((action) => isNotableRequirement(action.reason))
-                  .map((action) => `${action.title}: ${getActionRequirementReason(action.reason)}`)
+            ? [
+                  ...(card.unavailableActions || []).map((action) => ({
+                      ...action,
+                      label: 'Unavailable'
+                  })),
+                  ...(card.unavailableTriggers || []).map((trigger) => ({
+                      ...trigger,
+                      label: 'Did not resolve'
+                  }))
+              ]
+                  .filter((note) => isNotableRequirement(note.reason))
+                  .map((note) => ({
+                      ...note,
+                      reason: getActionRequirementReason(note.reason)
+                  }))
             : [];
         const imageCode = isFaceup
             ? card.code

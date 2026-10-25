@@ -349,7 +349,7 @@ class Game extends EventEmitter {
                     entry.round === this.round &&
                     entry.phase === this.currentPhase
             )
-            .map(({ title, reason }) => ({ title: `Last response: ${title}`, reason }));
+            .map(({ title, reason }) => ({ title, reason }));
         return reasons.length > 0 ? reasons : undefined;
     }
 
