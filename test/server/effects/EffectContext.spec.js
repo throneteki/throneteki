@@ -98,21 +98,21 @@ describe('effect callbacks', function () {
 
     describe('takeControl', function () {
         it('passes the effect context to the controller function', function () {
-            const newController = { name: 'new controller' };
-            const takeControlByEffect = vi.fn();
+            const newController = { name: 'new controller', canControl: () => true };
             this.source.controller = newController;
-            this.context.game = { takeControlByEffect, addMessage: () => {} };
+            this.card.location = 'play area';
+            this.card.allowGameAction = () => true;
+            this.card.takeControl = vi.fn();
+            this.context.game = {
+                effectEngine: { changeControlByEffect: (card, source, change) => change() },
+                addMessage: () => {}
+            };
             this.context.effect = {};
             const effect = Effects.takeControl((context) => context.source.controller);
 
             effect.apply(this.card, this.context);
 
-            expect(takeControlByEffect).toHaveBeenCalledWith(
-                newController,
-                this.card,
-                this.source,
-                this.context.effect
-            );
+            expect(this.card.takeControl).toHaveBeenCalledWith(newController, this.context.effect);
         });
     });
 

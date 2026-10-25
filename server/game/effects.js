@@ -5,6 +5,7 @@ import CardTextDefinition from './CardTextDefinition.js';
 import { ValueContribution, CharacterStrengthContribution } from './ChallengeContributions.js';
 import CostReducer from './costreducer.js';
 import GameActions from './GameActions/index.js';
+import TakeControl from './GameActions/TakeControl.js';
 import PlayableLocation from './playablelocation.js';
 import CannotRestriction from './cannotrestriction.js';
 import ChallengeRestriction from './ChallengeRestriction.js';
@@ -749,13 +750,21 @@ const Effects = {
     takeControl: function (newController) {
         return {
             apply: function (card, context) {
-                let finalController =
+                const player =
                     typeof newController === 'function' ? newController(context) : newController;
-                context.game.takeControlByEffect(
-                    finalController,
-                    card,
-                    context.source,
-                    context.effect
+                if (
+                    !TakeControl.canChangeGameState({ player, card }) ||
+                    !card.allowGameAction('takeControl', {
+                        game: context.game,
+                        source: context.source,
+                        resolutionStage: 'effect'
+                    })
+                ) {
+                    return;
+                }
+                (context.controlledCards ??= new Set()).add(card);
+                context.game.effectEngine.changeControlByEffect(card, context.source, () =>
+                    card.takeControl(player, context.effect)
                 );
                 context.game.addMessage(
                     '{0} uses {1} to take control of {2}',
@@ -765,7 +774,12 @@ const Effects = {
                 );
             },
             unapply: function (card, context) {
-                context.game.revertControl(card, context.source, context.effect);
+                if (!context.controlledCards?.delete(card) || card.location !== 'play area') {
+                    return;
+                }
+                context.game.effectEngine.changeControlByEffect(card, context.source, () =>
+                    card.revertControl(context.effect)
+                );
             }
         };
     },

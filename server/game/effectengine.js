@@ -1,5 +1,6 @@
 import { partition } from '../Array.js';
 import EventRegistrar from './eventregistrar.js';
+import TakeControl from './GameActions/TakeControl.js';
 
 class EffectEngine {
     constructor(game) {
@@ -58,19 +59,35 @@ class EffectEngine {
     beginEffectChanges() {
         this.strengthChanges = new Map();
         this.iconChanges = new Map();
+        this.controlChanges = new Map();
     }
 
     endEffectChanges() {
         const changes = this.strengthChanges;
         const iconChanges = this.iconChanges;
+        const controlChanges = this.controlChanges;
         this.strengthChanges = undefined;
         this.iconChanges = undefined;
+        this.controlChanges = undefined;
+        for (const [card, { oldController, source }] of controlChanges) {
+            TakeControl.applyControlChange(card, oldController, source);
+        }
         for (const [card, change] of changes) {
             const amount = card.getStrength() - change.before;
             card.raiseStrengthChangeEvent(amount, amount * change.applyingDelta > 0);
         }
         for (const { card, icon, hadIcon, applyingGain, applyingLoss } of iconChanges.values()) {
             card.raiseIconChangeEvent(icon, hadIcon, hadIcon ? applyingLoss : applyingGain);
+        }
+    }
+
+    changeControlByEffect(card, source, change) {
+        const oldController = card.controller;
+        change();
+        if (!this.controlChanges) {
+            TakeControl.applyControlChange(card, oldController, source);
+        } else if (!this.controlChanges.has(card)) {
+            this.controlChanges.set(card, { oldController, source });
         }
     }
 

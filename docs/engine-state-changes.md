@@ -23,15 +23,10 @@ full suite passes.
 
 ## Remaining effect-model work
 
-`Game.takeControlByEffect`, `changeController`, and `revertControl` still maintain effect-driven
-control synchronously. The controller stack is computed from registrations, and the event follows
-the change. Queuing these transitions as ordinary take-control actions would change constant-effect
-timing and most-recent-effect precedence. Finish this with the computed-effect and stability work,
-rather than replacing the calls mechanically.
-
-The same stability work must account for icon effects that queue gain/loss actions. Repeatedly
-reapplying every effect in a tight loop would enqueue transitions before earlier transitions have
-resolved. Fixed-point recalculation and oscillation handling remain open.
+Take-control and icon effects register on the card as they apply and queue nothing. Once the
+effects settle, `TakeControl.applyControlChange` moves each card whose controller actually changed
+and raises one `onCardTakenControl`, and each icon gained or lost on balance raises one
+`onIconGained` or `onIconLost`. Fixed-point recalculation and oscillation handling remain open.
 
 ## Operations below the action boundary
 
