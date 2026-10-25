@@ -15,9 +15,9 @@ function parseUsers(usernames) {
         .split(',')
         .map((name) => name.trim())
         .filter(Boolean);
-    if (names.length !== 2) {
+    if (names.length < 1 || names.length > 2) {
         throw new Error(
-            'Set SCENARIO_USERS to the two accounts that will play, e.g. SCENARIO_USERS=alice,bob'
+            'Set SCENARIO_USERS to the accounts that will play, e.g. SCENARIO_USERS=alice,bob'
         );
     }
     return names.map((username) => Settings.getUserWithDefaultsSet({ username }));

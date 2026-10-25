@@ -236,6 +236,14 @@ function problemReportSetup(report) {
     return setup;
 }
 
+function requireUsers(users, count) {
+    if (users && users.length < count) {
+        throw new Error(
+            `This scenario has ${count} players; set SCENARIO_USERS to ${count} accounts`
+        );
+    }
+}
+
 async function runProblemReport(reportId, options) {
     const report = await (
         options.problemReportService || ServiceFactory.problemReportService()
@@ -243,8 +251,11 @@ async function runProblemReport(reportId, options) {
     if (!report) {
         throw new Error(`Problem report "${reportId}" was not found or has expired`);
     }
+    const numOfPlayers = report.players.length;
+    requireUsers(options.users, numOfPlayers);
     const flowOptions = {
-        users: options.users,
+        users: options.users?.slice(0, numOfPlayers),
+        numOfPlayers,
         router: options.router,
         gameId: options.gameId,
         gameFormat: report.game?.format || 'joust',
@@ -268,6 +279,7 @@ export async function runScenario(scenario, options) {
     if (scenario.startsWith('report:')) {
         return runProblemReport(scenario.slice('report:'.length), options);
     }
+    requireUsers(options.users, 2);
     const [specPath, fragment] = scenario.split('#');
     const flowOptions = {
         users: options.users,

@@ -377,7 +377,8 @@ reproduce a bug or try a card in the browser.
 3. Log in as either account; the lobby hands you straight to the game.
 
 For maintainers reproducing a submitted report, set `SCENARIO` to `report:<id>` instead of a spec
-path, using the ID shown in the in-game confirmation. The game node sends reports to the lobby
+path, using the ID shown in the in-game confirmation. The game has as many players as the reported one, so
+`SCENARIO_USERS` names one account for a solo game. The game node sends reports to the lobby
 router over Redis; the router stores them in PostgreSQL for 30 days, so any game-node pod can load
 one. Players only need to include the report ID when filing an issue through the Help page.
 `/cancel-prompt` saves a report automatically before clearing the prompt. The runner rebuilds the

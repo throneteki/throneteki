@@ -69,6 +69,23 @@ describe('scenario runner', function () {
         expect(game.allCards.find((card) => card.name === 'Tumblestone Knight').kneeled).toBe(true);
     });
 
+    it('loads a problem report with as many players as the reported game', async function () {
+        const { game: source } = await runScenario(`${breakPath}#stops part way`, {
+            users,
+            logger: silentLogger
+        });
+        const report = source.getProblemReport('alice');
+        report.players = report.players.slice(0, 1);
+        const problemReportService = { getById: vi.fn().mockResolvedValue(report) };
+        const { game } = await runScenario(`report:${report.id}`, {
+            users,
+            logger: silentLogger,
+            problemReportService
+        });
+
+        expect(game.getPlayers().map((player) => player.name)).toEqual(['alice']);
+    });
+
     it('ignores assertions in the test', async function () {
         const { game, error } = await runScenario(`${breakPath}#ignores assertions`, {
             users,
