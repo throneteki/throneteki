@@ -175,8 +175,10 @@ The phase 6 framework gate remains open. Card verification is complete; the rema
 1. Complete the state-change conversions in [engine-state-changes.md](engine-state-changes.md).
    This audit distinguishes action-backed helpers from actual bypasses and low-level operations.
 2. Validate the client explanations now added for card actions, standard plays, and matching
-   responses that could not resolve. Readable reasons appear in menus and information tooltips,
-   including with manual mode off. This UI follow-up has not had a new test run.
+   responses that could not resolve. Readable reasons appear in menus and under the card's hover
+   preview, including with manual mode off. Self-evident reasons (window, phase, location,
+   player, trigger, blank, facedown) are not shown, and failed responses are shown only during
+   the phase they happened in. This UI follow-up has not had a new test run.
 3. Finish the computed-effect work, stability/oscillation handling, and optional-loop shortcuts
    described in phase 4. Removing strength-order workarounds does not finish that phase.
 4. Finish translation-ready logs (phase 3) and exact problem-report restoration (phase 6). Problem

@@ -8,13 +8,13 @@ import SquishableCardPanel from './SquishableCardPanel';
 
 import { ItemTypes } from '../../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationCircle, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { useUniqueId } from '@dnd-kit/utilities';
 import CardHoverable from '../Images/CardHoverable';
 import CardImage from '../Images/CardImage';
 import { cardClass, standardiseCardSize } from '../../util';
 import { Tooltip } from '@heroui/react';
-import { getActionRequirementReason } from './actionRequirementReasons';
+import { getActionRequirementReason, isNotableRequirement } from './actionRequirementReasons';
 
 // Opening one card menu closes any other that is open.
 const cardMenus = new EventTarget();
@@ -357,13 +357,11 @@ const Card = ({
             }
         );
         const isFaceup = forceFaceup || (!card.facedown && card.code);
-        const availabilityMessages = [
-            ...(card.unavailableActions || []),
-            ...(card.unavailableTriggers || []).map((entry) => ({
-                ...entry,
-                title: `Last response: ${entry.title} (round ${entry.round}, ${entry.phase})`
-            }))
-        ];
+        const availabilityNotes = isFaceup
+            ? [...(card.unavailableActions || []), ...(card.unavailableTriggers || [])]
+                  .filter((action) => isNotableRequirement(action.reason))
+                  .map((action) => `${action.title}: ${getActionRequirementReason(action.reason)}`)
+            : [];
         const imageCode = isFaceup
             ? card.code
             : source === 'shadows'
@@ -406,6 +404,7 @@ const Card = ({
                 ) : (
                     <CardHoverable
                         code={card.code}
+                        notes={availabilityNotes}
                         isDisabled={isDragging || showMenu}
                         touchDelay={250}
                     >
@@ -413,37 +412,6 @@ const Card = ({
                     </CardHoverable>
                 )}
                 {showMenu && <CardMenu menu={getMenu()} onMenuItemClick={handleMenuItemClick} />}
-                {isFaceup && availabilityMessages.length > 0 && (
-                    <div className='absolute bottom-1 right-1 z-[200]'>
-                        <Tooltip
-                            content={
-                                <div className='max-w-64 space-y-1 text-xs'>
-                                    {availabilityMessages.map((action, index) => (
-                                        <div key={index}>
-                                            <span className='font-semibold'>{action.title}: </span>
-                                            {getActionRequirementReason(action.reason)}
-                                        </div>
-                                    ))}
-                                </div>
-                            }
-                            showArrow={true}
-                        >
-                            <button
-                                type='button'
-                                className='rounded-full bg-content1 px-1 text-foreground shadow'
-                                aria-label={availabilityMessages
-                                    .map(
-                                        (action) =>
-                                            `${action.title}: ${getActionRequirementReason(action.reason)}`
-                                    )
-                                    .join(' ')}
-                                onClick={(event) => event.stopPropagation()}
-                            >
-                                <FontAwesomeIcon icon={faInfoCircle} />
-                            </button>
-                        </Tooltip>
-                    </div>
-                )}
                 {getCardOrder()}
             </div>
         );

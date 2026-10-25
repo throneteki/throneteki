@@ -12,6 +12,7 @@ const CardHover = ({ children, size = '3x-large' }) => {
 
     const [type, setType] = useState(null);
     const [code, setCode] = useState(null);
+    const [notes, setNotes] = useState(null);
 
     const [isLoading, setIsLoading] = useState(false);
     const [imageSize, setImageSize] = useState({});
@@ -78,7 +79,7 @@ const CardHover = ({ children, size = '3x-large' }) => {
     });
 
     return (
-        <CardHoverContext.Provider value={{ type, setType, code, setCode }}>
+        <CardHoverContext.Provider value={{ type, setType, code, setCode, setNotes }}>
             <div
                 onPointerMove={mousePosHandler}
                 onPointerEnter={mousePosHandler}
@@ -90,20 +91,27 @@ const CardHover = ({ children, size = '3x-large' }) => {
                 createPortal(
                     <div ref={wrapperRef} className='fixed z-10 pointer-events-none'>
                         {isLoading && <Spinner ref={spinnerRef} size='lg' color='white' />}
-                        <CardImage
-                            ref={imageCallback}
-                            className={imageClassName}
-                            size={size}
-                            code={code}
-                            orientation={orientation}
-                            onLoad={(e) => {
-                                setOrientation(
-                                    e.target.width > e.target.height ? 'horizontal' : 'vertical'
-                                );
-                                setIsLoading(false);
-                            }}
-                            disableSkeleton={true}
-                        />
+                        <div ref={imageCallback} className={imageClassName}>
+                            <CardImage
+                                size={size}
+                                code={code}
+                                orientation={orientation}
+                                onLoad={(e) => {
+                                    setOrientation(
+                                        e.target.width > e.target.height ? 'horizontal' : 'vertical'
+                                    );
+                                    setIsLoading(false);
+                                }}
+                                disableSkeleton={true}
+                            />
+                            {!isLoading && notes?.length > 0 && (
+                                <div className='mt-1 max-w-80 space-y-1 rounded-md bg-content1/90 p-2 text-xs text-foreground shadow'>
+                                    {notes.map((note, index) => (
+                                        <div key={index}>{note}</div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>,
                     document.querySelector('[data-overlay-container="true"]')
                 )}

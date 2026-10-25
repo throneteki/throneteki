@@ -342,8 +342,14 @@ class Game extends EventEmitter {
 
     getUnavailableAbilityReasons(card, player) {
         const reasons = [...this.unavailableAbilityReasons.values()]
-            .filter((entry) => entry.card === card && entry.player === player)
-            .map(({ title, reason, phase, round }) => ({ title, reason, phase, round }));
+            .filter(
+                (entry) =>
+                    entry.card === card &&
+                    entry.player === player &&
+                    entry.round === this.round &&
+                    entry.phase === this.currentPhase
+            )
+            .map(({ title, reason }) => ({ title: `Last response: ${title}`, reason }));
         return reasons.length > 0 ? reasons : undefined;
     }
 

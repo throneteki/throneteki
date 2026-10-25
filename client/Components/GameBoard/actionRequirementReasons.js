@@ -15,7 +15,19 @@ const actionRequirementReasons = {
     window: 'It is not your opportunity to take an action.'
 };
 
+const selfEvidentReasons = new Set([
+    'blank',
+    'facedown',
+    'location',
+    'phase',
+    'player',
+    'trigger',
+    'window'
+]);
+
 export const getActionRequirementReason = (reason) =>
     reason
         ? actionRequirementReasons[reason] || 'This action is currently unavailable.'
         : undefined;
+
+export const isNotableRequirement = (reason) => !!reason && !selfEvidentReasons.has(reason);
