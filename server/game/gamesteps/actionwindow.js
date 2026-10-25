@@ -42,7 +42,7 @@ class ActionWindow extends PlayerOrderPrompt {
             }
 
             this.offer = { player, type };
-            if (type === 'wait' || type === 'visible-wait') {
+            if (type === 'wait') {
                 this.passAfterDelay(this.offer);
             }
             return;
@@ -54,15 +54,7 @@ class ActionWindow extends PlayerOrderPrompt {
             return 'skip';
         }
 
-        if (player.promptedActionWindows[this.windowName]) {
-            return 'prompt';
-        }
-
-        if (this.hasAvailablePublicAction(player)) {
-            return 'visible-wait';
-        }
-
-        if (this.hasAvailableAction(player)) {
+        if (player.promptedActionWindows[this.windowName] || this.hasAvailableAction(player)) {
             return 'prompt';
         }
 
@@ -75,22 +67,6 @@ class ActionWindow extends PlayerOrderPrompt {
 
     hasAvailableAction(player) {
         return this.game.allCards.some((card) => {
-            try {
-                return card.hasUsableAction(player);
-            } catch (error) {
-                this.game.reportError(error);
-                return true;
-            }
-        });
-    }
-
-    hasAvailablePublicAction(player) {
-        const publicLocations = ['active plot', 'faction', 'play area', 'revealed plots', 'title'];
-        return this.game.allCards.some((card) => {
-            if (!publicLocations.includes(card.location)) {
-                return false;
-            }
-
             try {
                 return card.hasUsableAction(player);
             } catch (error) {
@@ -116,12 +92,8 @@ class ActionWindow extends PlayerOrderPrompt {
             promptTitle: this.title
         };
 
-        if (this.offer && this.offer.player === player) {
-            if (this.offer.type === 'wait') {
-                prompt.controls = [{ type: 'response-delay', duration: this.offer.delay }];
-            } else if (this.offer.type === 'visible-wait') {
-                prompt.controls = [{ type: 'action-delay', duration: this.offer.delay }];
-            }
+        if (this.offer && this.offer.player === player && this.offer.type === 'wait') {
+            prompt.controls = [{ type: 'response-delay', duration: this.offer.delay }];
         }
 
         return prompt;

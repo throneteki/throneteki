@@ -179,7 +179,9 @@ The phase 6 framework gate remains open. Card verification is complete; the rema
    including with manual mode off. This UI follow-up has not had a new test run.
 3. Finish the computed-effect work, stability/oscillation handling, and optional-loop shortcuts
    described in phase 4. Removing strength-order workarounds does not finish that phase.
-4. Finish translation-ready logs (phase 3) and reporting a problem with saved game state (phase 6).
+4. Finish translation-ready logs (phase 3) and exact problem-report restoration (phase 6). Problem
+   reports now persist in PostgreSQL and the scenario runner rebuilds the board and phase;
+   restoring an arbitrary open prompt or in-progress challenge remains open.
    Per-format coverage reporting is implemented in this follow-up, pending validation.
 5. Complete the strict-window trial and gather feedback before changing the default.
 

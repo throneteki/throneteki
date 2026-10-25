@@ -48,6 +48,14 @@ class GameCommands {
         return this.game.concede(playerName);
     }
 
+    reportProblem(playerName) {
+        if (!this.game.getPlayerByName(playerName)) {
+            return;
+        }
+
+        return this.game.getProblemReport(playerName);
+    }
+
     drop(playerName, cardId, source, target) {
         return this.game.drop(playerName, cardId, source, target);
     }

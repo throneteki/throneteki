@@ -30,11 +30,20 @@ const PhaseOrder = ['setup', 'plot', 'marshal', 'challenge'];
 const CompletePhase = {
     marshal: 'completeMarshalPhase'
 };
-const ZoneKeys = ['hand', 'drawDeck', 'drawDeckBottom', 'discard', 'deadPile', 'shadows'];
+const ZoneKeys = [
+    'hand',
+    'drawDeck',
+    'drawDeckBottom',
+    'discard',
+    'deadPile',
+    'shadows',
+    'outOfGame'
+];
 const ZoneLocations = {
     discard: 'discard pile',
     deadPile: 'dead pile',
-    shadows: 'shadows'
+    shadows: 'shadows',
+    outOfGame: 'out of game'
 };
 
 export function cardReferenceName(name) {
@@ -189,7 +198,7 @@ function arrangeSetupZones(claims, options) {
             player.placeCardInPile({ card, location: 'draw deck', bottom: true });
         }
 
-        for (const zone of ['discard', 'deadPile', 'shadows']) {
+        for (const zone of ['discard', 'deadPile', 'shadows', 'outOfGame']) {
             assigned[key][zone] = asArray(own[zone]).map((name) => {
                 const card = claims[key].claim(name);
                 player.moveCard(card, ZoneLocations[zone]);
@@ -254,6 +263,10 @@ function findOwnedCard(player, name, locations) {
 }
 
 function applyCardState(card, spec) {
+    if (spec.facedown !== undefined) {
+        card.facedown = spec.facedown;
+    }
+
     if (spec.kneeling) {
         card.kneeled = true;
     }

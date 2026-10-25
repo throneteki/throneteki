@@ -54,6 +54,7 @@ import DisconnectHandler from './GameHandlers/DisconnectHandler.js';
 import { Flags, Requirements } from './Constants/index.js';
 import { EventValidator } from './EventValidator.js';
 import PossibleResponders from './PossibleResponders.js';
+import { randomUUID } from 'crypto';
 
 const MinResponseDelay = 1000;
 const MaxResponseDelay = 3000;
@@ -1492,26 +1493,26 @@ class Game extends EventEmitter {
      * Changes control for a lasting effect. Effects apply outside the event pipeline, so the
      * change happens at once and `onCardTakenControl` is raised afterwards.
      */
-    takeControlByEffect(player, card, source) {
+    takeControlByEffect(player, card, source, controlEffect = source) {
         if (!TakeControl.canChangeGameState({ player, card })) {
             return;
         }
 
         this.applyGameAction('takeControl', card, (card) => {
             const oldController = card.controller;
-            this.changeController(player, card, source);
+            this.changeController(player, card, source, controlEffect);
             this.raiseControlChangedEvent(card, oldController, source);
         });
     }
 
-    changeController(newController, card, source) {
+    changeController(newController, card, source, controlEffect = source) {
         const oldController = card.controller;
 
         if (card.parent) {
-            card.takeControl(newController, source);
+            card.takeControl(newController, controlEffect);
         } else {
             oldController.removeCardFromPile(card);
-            card.takeControl(newController, source);
+            card.takeControl(newController, controlEffect);
             newController.cardsInPlay.push(card);
         }
 
@@ -1529,14 +1530,14 @@ class Game extends EventEmitter {
         this.removeFromChallengeOnControlChange(card);
     }
 
-    revertControl(card, source) {
+    revertControl(card, source, controlEffect = source) {
         if (card.location !== 'play area') {
             return;
         }
 
         const oldController = card.controller;
         card.controller.removeCardFromPile(card);
-        card.revertControl(source);
+        card.revertControl(controlEffect);
         card.controller.cardsInPlay.push(card);
 
         this.removeFromChallengeOnControlChange(card);
@@ -1752,6 +1753,74 @@ class Game extends EventEmitter {
         if (this.useGameTimeLimit) {
             this.timeLimit.togglePause();
         }
+    }
+
+    getProblemReport(reporter) {
+        const players = this.getAllPlayers();
+        const cards = this.allCards.map((card) => ({
+            id: card.uuid,
+            code: card.cardData.code,
+            name: card.name,
+            packCode: card.cardData.packCode,
+            owner: card.owner?.name,
+            controller: card.controller?.name,
+            location: card.location,
+            parent: card.parent?.uuid,
+            facedown: !!card.facedown,
+            kneeled: !!card.kneeled,
+            power: card.power,
+            gold: card.gold,
+            tokens: { ...card.tokens }
+        }));
+        const playerStates = players.map((player, index) => ({
+            name: player.name,
+            seat: index + 1,
+            faction: player.faction.code,
+            gold: player.gold,
+            power: player.faction.getPower(),
+            standing: player.standing,
+            eliminated: player.eliminated,
+            activePlot: player.activePlot?.uuid,
+            plotDeck: player.plotDeck.map((card) => card.uuid),
+            usedPlots: player.plotDiscard.map((card) => card.uuid),
+            cardsInPlay: player.cardsInPlay.map((card) => card.uuid),
+            hand: player.hand.map((card) => card.uuid),
+            drawDeck: player.drawDeck.map((card) => card.uuid),
+            discardPile: player.discardPile.map((card) => card.uuid),
+            deadPile: player.deadPile.map((card) => card.uuid),
+            shadows: player.shadows.map((card) => card.uuid),
+            outOfGame: player.outOfGamePile.map((card) => card.uuid),
+            agendas: (player.agendas || []).map((card) => card.uuid)
+        }));
+
+        return {
+            schemaVersion: 1,
+            id: randomUUID(),
+            createdAt: new Date().toISOString(),
+            game: {
+                id: this.id,
+                name: this.name,
+                format: this.gameFormat,
+                variant: this.gameVariant,
+                manualMode: this.manualMode.enabled,
+                strictActionWindows: this.strictActionWindows,
+                round: this.round,
+                phase: this.currentPhase,
+                firstPlayer: this.getPlayersInFirstPlayerOrder()[0]?.name,
+                currentChallenge: this.currentChallenge && {
+                    type: this.currentChallenge.challengeType,
+                    attackingPlayer: this.currentChallenge.attackingPlayer?.name,
+                    defendingPlayer: this.currentChallenge.defendingPlayer?.name,
+                    attackers: this.currentChallenge.attackers?.map((card) => card.uuid),
+                    defenders: this.currentChallenge.defenders?.map((card) => card.uuid)
+                }
+            },
+            reporter,
+            players: playerStates,
+            cards,
+            messages: this.gameChat.messages.slice(-100),
+            pipeline: this.pipeline.getDebugInfo()
+        };
     }
 
     getSaveState() {

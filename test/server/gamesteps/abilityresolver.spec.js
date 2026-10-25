@@ -1,4 +1,5 @@
 import AbilityResolver from '../../../server/game/gamesteps/abilityresolver.js';
+import { executeTestEvent, resolveGameAction } from '../../helpers/gameactiontesthelper.js';
 
 describe('AbilityResolver', function () {
     beforeEach(function () {
@@ -8,9 +9,12 @@ describe('AbilityResolver', function () {
             popAbilityContext: vi.fn(),
             pushAbilityContext: vi.fn(),
             raiseEvent: vi.fn(),
-            resolveEvent: vi.fn(),
+            resolveEvent: vi.fn((event) => executeTestEvent(event)),
             reportError: vi.fn()
         };
+        this.game.resolveGameAction = vi.fn((action, props) =>
+            resolveGameAction(this.game, action, props)
+        );
         this.game.raiseEvent.mockImplementation((name, params, handler) => {
             if (handler) {
                 handler(params);
@@ -36,7 +40,10 @@ describe('AbilityResolver', function () {
         this.ability.isCardAbility.mockReturnValue(true);
         this.ability.resolveCosts.mockReturnValue([]);
         this.ability.resolveTargets.mockReturnValue([]);
-        this.player = { moveCard: vi.fn() };
+        this.player = {
+            moveCard: vi.fn(),
+            placeCardInPile: vi.fn(({ card, location }) => this.player.moveCard(card, location))
+        };
         this.source = { createSnapshot: vi.fn(), getType: vi.fn() };
         this.source.owner = this.player;
         let targets = {

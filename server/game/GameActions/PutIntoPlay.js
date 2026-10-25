@@ -38,7 +38,7 @@ class PutIntoPlay extends GameAction {
         player = player || card.controller;
         const targets = attachmentTargets || (() => true);
         return (
-            card.location !== 'play area' &&
+            (card.location !== 'play area' || (card.facedown && !!card.parent)) &&
             player.canPutIntoPlay(card, playingType, { attachmentTargets, isEffectExpiration }) &&
             (playingType === 'setup' ||
                 !!player.getDuplicateInPlay(card) ||

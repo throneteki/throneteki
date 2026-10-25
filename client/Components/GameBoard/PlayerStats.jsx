@@ -3,11 +3,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     sendChangeStatMessage,
     sendToggleManualModeMessage,
+    sendReportProblemMessage,
     sendToggleMuteSpectatorsMessage
 } from '../../redux/reducers/game';
 import { Avatar, Badge, Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCogs, faComment, faEye, faEyeSlash, faWrench } from '@fortawesome/free-solid-svg-icons';
+import {
+    faBug,
+    faCogs,
+    faComment,
+    faEye,
+    faEyeSlash,
+    faWrench
+} from '@fortawesome/free-solid-svg-icons';
 import StatContainer from './StatContainer';
 import StatDisplay from './StatDisplay';
 import classNames from 'classnames';
@@ -136,6 +144,13 @@ const PlayerStats = ({
                                         : 'Ask to turn manual mode on',
                                     'Manual Mode',
                                     currentGame.manualMode
+                                )}
+                            {isMe &&
+                                getStatButton(
+                                    () => dispatch(sendReportProblemMessage()),
+                                    faBug,
+                                    'Report a problem with this game',
+                                    'Report Problem'
                                 )}
                             <StatContainer>
                                 <Badge

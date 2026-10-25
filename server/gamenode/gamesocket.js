@@ -128,6 +128,12 @@ class GameSocket extends EventEmitter {
             case 'CARDDATA':
                 this.emit('onCardData', message.arg);
                 break;
+            case 'PROBLEMREPORTSAVED':
+                this.emit('onProblemReportSaved', message.arg.gameId, message.arg.reportId);
+                break;
+            case 'PROBLEMREPORTFAILED':
+                this.emit('onProblemReportFailed', message.arg.gameId);
+                break;
             case 'LOBBYHELLO':
                 this.emit('onGameSync', this.onGameSync.bind(this));
                 break;

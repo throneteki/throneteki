@@ -1,8 +1,16 @@
 import Player from '../../../server/game/player.js';
+import { executeTestEvent, resolveGameAction } from '../../helpers/gameactiontesthelper.js';
 
 describe('Player', function () {
     beforeEach(function () {
-        this.gameSpy = { on: vi.fn(), raiseEvent: vi.fn() };
+        this.gameSpy = {
+            on: vi.fn(),
+            raiseEvent: vi.fn(),
+            resolveEvent: vi.fn((event) => executeTestEvent(event))
+        };
+        this.gameSpy.resolveGameAction = vi.fn((action, props) =>
+            resolveGameAction(this.gameSpy, action, props)
+        );
 
         this.player = new Player('1', { username: 'Player 1', settings: {} }, true, this.gameSpy);
         this.player.initialise();

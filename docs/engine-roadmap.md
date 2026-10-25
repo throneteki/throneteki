@@ -483,8 +483,10 @@ mode off; the gate does not disable that check.
   require it. With manual mode off, actions outside action windows are refused.
 - Games where both decks are fully verified already start with manual mode off.
   Enabling it needs the opponent's consent and is recorded.
-- `/cancel-prompt` and a "report a problem" action stay available. Using either records the cards
-  involved and the game state, ready to load in the scenario runner.
+- `/cancel-prompt` and a "report a problem" action stay available. Both now save a JSON snapshot
+  with the cards, zones, phase, log, challenge details, and pipeline description in PostgreSQL for
+  30 days. The scenario runner rebuilds the board and phase by report ID; restoring an arbitrary
+  open prompt or active challenge pipeline remains open.
 - When manual mode is turned on, ask which card misbehaved, so manual mode doubles as bug reporting.
 
 ## Decisions

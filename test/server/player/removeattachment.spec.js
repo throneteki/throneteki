@@ -1,5 +1,6 @@
 import Player from '../../../server/game/player.js';
 import DrawCard from '../../../server/game/drawcard.js';
+import { executeTestEvent, resolveGameAction } from '../../helpers/gameactiontesthelper.js';
 
 describe('Player', function () {
     beforeEach(function () {
@@ -7,8 +8,11 @@ describe('Player', function () {
             addMessage: vi.fn(),
             queueSimpleStep: vi.fn(),
             raiseEvent: vi.fn(),
-            resolveEvent: vi.fn()
+            resolveEvent: vi.fn((event) => executeTestEvent(event))
         };
+        this.gameSpy.resolveGameAction = vi.fn((action, props) =>
+            resolveGameAction(this.gameSpy, action, props)
+        );
         this.gameSpy.queueSimpleStep.mockImplementation((step) => step());
         this.player = new Player('1', { username: 'Player 1', settings: {} }, true, this.gameSpy);
         this.player.deck = {};

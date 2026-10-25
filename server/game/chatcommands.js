@@ -463,6 +463,7 @@ class ChatCommands {
     }
 
     cancelPrompt(player) {
+        this.game.emit('problemReportRequested', this.game.getProblemReport(player.name));
         this.game.addAlert(
             'danger',
             '{0} uses the /cancel-prompt to skip the current step.',

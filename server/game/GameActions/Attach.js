@@ -12,7 +12,14 @@ class Attach extends GameAction {
         return Message.fragment('attaches {attachment} to {target}', { attachment, target });
     }
 
-    canChangeGameState({ player, attachment, target, facedown = false, asAttachment }) {
+    canChangeGameState({
+        player,
+        attachment,
+        target,
+        playingType = 'play',
+        facedown = false,
+        asAttachment
+    }) {
         if (!attachment) {
             return false;
         }
@@ -22,9 +29,11 @@ class Attach extends GameAction {
         return (
             !!target &&
             target.location === 'play area' &&
-            attachment.parent !== target &&
+            (attachment.parent !== target || (attachment.facedown && !facedown)) &&
             // A facedown attachment has no restrictions of its own, but the target's still apply.
-            (facedown ? target.allowAttachment(candidate) : player.canAttach(candidate, target))
+            (facedown || playingType === 'setup'
+                ? target.allowAttachment(candidate)
+                : player.canAttach(candidate, target))
         );
     }
 

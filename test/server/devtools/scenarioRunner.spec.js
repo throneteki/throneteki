@@ -49,6 +49,26 @@ describe('scenario runner', function () {
         expect(card('Bastard in Hiding').kneeled).toBe(false);
     });
 
+    it('loads a saved problem report into a new scenario game', async function () {
+        const { game: source } = await runScenario(`${breakPath}#stops part way`, {
+            users,
+            logger: silentLogger
+        });
+        const report = source.getProblemReport('alice');
+        const problemReportService = { getById: vi.fn().mockResolvedValue(report) };
+        const { game, name, error } = await runScenario(`report:${report.id}`, {
+            users,
+            logger: silentLogger,
+            problemReportService
+        });
+
+        expect(error).toBeUndefined();
+        expect(problemReportService.getById).toHaveBeenCalledWith(report.id);
+        expect(name).toContain('Problem report');
+        expect(game.currentPhase).toBe('marshal');
+        expect(game.allCards.find((card) => card.name === 'Tumblestone Knight').kneeled).toBe(true);
+    });
+
     it('ignores assertions in the test', async function () {
         const { game, error } = await runScenario(`${breakPath}#ignores assertions`, {
             users,

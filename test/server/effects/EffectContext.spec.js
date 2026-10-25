@@ -102,11 +102,17 @@ describe('effect callbacks', function () {
             const takeControlByEffect = vi.fn();
             this.source.controller = newController;
             this.context.game = { takeControlByEffect, addMessage: () => {} };
+            this.context.effect = {};
             const effect = Effects.takeControl((context) => context.source.controller);
 
             effect.apply(this.card, this.context);
 
-            expect(takeControlByEffect).toHaveBeenCalledWith(newController, this.card, this.source);
+            expect(takeControlByEffect).toHaveBeenCalledWith(
+                newController,
+                this.card,
+                this.source,
+                this.context.effect
+            );
         });
     });
 

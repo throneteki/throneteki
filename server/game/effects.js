@@ -762,7 +762,12 @@ const Effects = {
             apply: function (card, context) {
                 let finalController =
                     typeof newController === 'function' ? newController(context) : newController;
-                context.game.takeControlByEffect(finalController, card, context.source);
+                context.game.takeControlByEffect(
+                    finalController,
+                    card,
+                    context.source,
+                    context.effect
+                );
                 context.game.addMessage(
                     '{0} uses {1} to take control of {2}',
                     context.source.controller,
@@ -771,7 +776,7 @@ const Effects = {
                 );
             },
             unapply: function (card, context) {
-                context.game.revertControl(card, context.source);
+                context.game.revertControl(card, context.source, context.effect);
             }
         };
     },

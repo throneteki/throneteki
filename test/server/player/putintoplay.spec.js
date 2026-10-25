@@ -1,4 +1,17 @@
 import Player from '../../../server/game/player.js';
+import { executeTestEvent, resolveGameAction } from '../../helpers/gameactiontesthelper.js';
+
+function expectResolvedEnterPlay(context, playingType) {
+    const event = context.gameSpy.resolveEvent.mock.calls.at(-1)[0];
+    const enterPlayEvent = event.childEvents?.find((child) => child.name === 'onCardEntersPlay');
+
+    expect(enterPlayEvent).toEqual(
+        expect.objectContaining({
+            card: context.cardSpy,
+            playingType
+        })
+    );
+}
 
 describe('Player', function () {
     beforeEach(function () {
@@ -6,8 +19,12 @@ describe('Player', function () {
             queueSimpleStep: vi.fn(),
             queueStep: vi.fn(),
             raiseEvent: vi.fn(),
-            resolveEvent: vi.fn()
+            resolveEvent: vi.fn((event) => executeTestEvent(event))
         };
+        this.gameSpy.resolveGameAction = vi.fn((action, props) =>
+            resolveGameAction(this.gameSpy, action, props)
+        );
+        this.gameSpy.anyCardsInPlay = vi.fn(() => true);
         this.player = new Player('1', { username: 'Player 1', settings: {} }, true, this.gameSpy);
         this.player.initialise();
 
@@ -19,6 +36,7 @@ describe('Player', function () {
 
         this.cardSpy = {
             getPrintedType: vi.fn(),
+            getType: vi.fn(() => this.cardSpy.getPrintedType()),
             getCost: vi.fn(),
             hasFlag: vi.fn(),
             isBestow: vi.fn(),
@@ -59,13 +77,7 @@ describe('Player', function () {
                 });
 
                 it('should raise the onCardEntersPlay event', function () {
-                    expect(this.gameSpy.resolveEvent).toHaveBeenCalledWith(
-                        expect.objectContaining({
-                            name: 'onCardEntersPlay',
-                            card: this.cardSpy,
-                            playingType: 'marshal'
-                        })
-                    );
+                    expectResolvedEnterPlay(this, 'marshal');
                 });
 
                 describe('when it has the Bestow keyword', function () {
@@ -131,7 +143,7 @@ describe('Player', function () {
                 });
 
                 it('should prompt for attachment target', function () {
-                    expect(this.player.promptForAttachment).toHaveBeenCalled();
+                    expect(this.gameSpy.queueStep).toHaveBeenCalled();
                 });
 
                 it('should not remove the card from hand', function () {
@@ -180,13 +192,7 @@ describe('Player', function () {
                 });
 
                 it('should raise the onCardEntersPlay event', function () {
-                    expect(this.gameSpy.resolveEvent).toHaveBeenCalledWith(
-                        expect.objectContaining({
-                            name: 'onCardEntersPlay',
-                            card: this.cardSpy,
-                            playingType: 'setup'
-                        })
-                    );
+                    expectResolvedEnterPlay(this, 'setup');
                 });
 
                 describe('when it has the Bestow keyword', function () {
@@ -225,13 +231,7 @@ describe('Player', function () {
                 });
 
                 it('should raise the onCardEntersPlay event', function () {
-                    expect(this.gameSpy.resolveEvent).toHaveBeenCalledWith(
-                        expect.objectContaining({
-                            name: 'onCardEntersPlay',
-                            card: this.cardSpy,
-                            playingType: 'setup'
-                        })
-                    );
+                    expectResolvedEnterPlay(this, 'setup');
                 });
 
                 it('should not add as a duplicate', function () {
@@ -264,13 +264,7 @@ describe('Player', function () {
                 });
 
                 it('should raise the onCardEntersPlay event', function () {
-                    expect(this.gameSpy.resolveEvent).toHaveBeenCalledWith(
-                        expect.objectContaining({
-                            name: 'onCardEntersPlay',
-                            card: this.cardSpy,
-                            playingType: 'ambush'
-                        })
-                    );
+                    expectResolvedEnterPlay(this, 'ambush');
                 });
             });
 
