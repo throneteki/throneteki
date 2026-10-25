@@ -47,15 +47,10 @@ describe('Dorne (SoD)', function () {
 
     it('applies the printed restriction on intrigue losses', function () {
         lose(this, 'Intrigue');
-        if (true) {
-            expect(this.player1).toAllowAbilityTrigger('Dorne');
-            this.player1.triggerAbility('Dorne');
-            this.player1.clickCard(this.hedgeKnight);
-            expect(this.hedgeKnight.location).toBe('hand');
-        } else {
-            expect(this.player1).not.toAllowAbilityTrigger('Dorne');
-            expect(this.hedgeKnight.location).toBe('draw deck');
-        }
+        expect(this.player1).toAllowAbilityTrigger('Dorne');
+        this.player1.triggerAbility('Dorne');
+        this.player1.clickCard(this.hedgeKnight);
+        expect(this.hedgeKnight.location).toBe('hand');
         expect(this.player1).isReadyToTakeAction();
     });
 

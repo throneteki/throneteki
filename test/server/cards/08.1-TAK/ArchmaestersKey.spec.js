@@ -22,10 +22,7 @@ describe("Archmaester's Key", function () {
         this.player1.clickCard(this.tumblestoneKnight);
         this.player1.clickPrompt('Done');
         expect(this.player1.actionUnavailableReason(key)).toBe(undefined);
-        this.player1.clickMenu(
-            key,
-            "Play an event from an opponent's discard pile"
-        );
+        this.player1.clickMenu(key, "Play an event from an opponent's discard pile");
         expect(this.player1).toBeAbleToSelect(this.nightmares);
         this.player1.clickCard(this.nightmares);
         expect(this.player2.actionUnavailableReason(this.nightmares)).toBe('location');
@@ -36,7 +33,9 @@ describe("Archmaester's Key", function () {
         this.player1.clickCard(this.bastardInHiding);
 
         expect(this.nightmares.location).toBe('draw deck');
-        expect(this.player2Object.drawDeck[this.player2Object.drawDeck.length - 1]).toBe(this.nightmares);
+        expect(this.player2Object.drawDeck[this.player2Object.drawDeck.length - 1]).toBe(
+            this.nightmares
+        );
         expect(this.player1Object.drawDeck).not.toContain(this.nightmares);
         this.player1.clickPrompt('Pass');
         expect(this.player1).isReadyToTakeAction();

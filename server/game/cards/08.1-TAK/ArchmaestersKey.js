@@ -11,7 +11,7 @@ class ArchmaestersKey extends DrawCard {
         this.attachmentRestriction({ trait: 'Maester' });
 
         this.action({
-            title: 'Play an event from an opponent\'s discard pile',
+            title: "Play an event from an opponent's discard pile",
             cost: ability.costs.kneelParent(),
             limit: ability.limit.perPhase(1),
             target: {

@@ -10,8 +10,7 @@ class SerDavenLannister extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPowerGained: (event, context) =>
-                    event.card === context.source
+                onCardPowerGained: (event, context) => event.card === context.source
             },
             message:
                 '{player} uses {source} to have each opponent choose and discard 1 card from their hand',

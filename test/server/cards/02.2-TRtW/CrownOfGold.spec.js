@@ -4,7 +4,10 @@ describe('Crown of Gold (TRtW)', function () {
             this.setupTest({
                 player1: {
                     inPlay: [
-                        { card: 'Ser Jaime Lannister (Core)', attachments: ['Crown of Gold (TRtW)'] }
+                        {
+                            card: 'Ser Jaime Lannister (Core)',
+                            attachments: ['Crown of Gold (TRtW)']
+                        }
                     ]
                 }
             });

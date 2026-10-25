@@ -1,25 +1,25 @@
 # Engine state changes
 
 Audit date: 24 October 2026. Card conversion is complete. This inventory concerns framework
-and compatibility helpers outside `server/game/cards`. The changes below are in the working tree
-and have not had a new test run. The previous full-suite result covers commit `f3131201e`.
+and compatibility helpers outside `server/game/cards`. The changes below are committed and the
+full suite passes.
 
 ## Converted
 
-| Area | Action path |
-| --- | --- |
-| Gold | `Game.spendGold`, `transferGold`, and `returnGoldToTreasury` delegate to their actions. Payments preserve playing type and active player. Zero payments queue the completion callback without an event. |
-| Power | `Game.addPower` explicitly delegates to `gainPower`; `BaseCard.modifyPower` already delegated to gain/discard actions. |
-| Saves | Internal `RecordSave` owns `markAsSaved` and `onCardSaved`. `SaveCard` delegates to it with the pending event. Automatic duplicate saves consume the duplicate through an action and retain cancellation before the would-interrupt window. `Event` and `GroupedCardEvent` use the compatibility wrapper. |
-| Card entry | `Player.putIntoPlay` delegates to `PutIntoPlay`, preserving the existing manual-force path. `PutIntoPlayCost` uses actions. Entry retains setup, duplicates, bestow, play type, and shadows X values. |
-| Attachments | `Player.attach` delegates to `Attach`; the entry action queues the attachment prompt directly. The prompt carries play type, kneeling, and shadows X value. |
-| Event-card staging | Playing, restoring after prevented costs, and disposing of events use placement actions. Disposal is placement rather than a discard effect. Underneath restoration records the original parent and facedown state. |
-| Plot recycling | `RecyclePlots` moves used plots in the `onPlotsRecycled` handler and respects recycling restrictions. |
-| Setup | `RevealSetupCards` reveals and announces setup cards. `FinishSetup` consolidates duplicates inside `onSetupFinished`. |
-| Round resets | `ResetRound` owns the plot-phase reset, preserving the previous first player for dependent plot selection. |
-| First player | The compatibility helper delegates to `SetFirstPlayer`. |
-| Melee titles | `SelectTitles` places all selected titles together; `ReturnTitles` returns all assigned titles together. |
-| Remaining gameplay movement | Effect-expiry restoration and top-to-bottom deck movement use placement actions. Attachment removal uses the shared leave-play event generator. |
+| Area                        | Action path                                                                                                                                                                                                                                                                                               |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Gold                        | `Game.spendGold`, `transferGold`, and `returnGoldToTreasury` delegate to their actions. Payments preserve playing type and active player. Zero payments queue the completion callback without an event.                                                                                                   |
+| Power                       | `Game.addPower` explicitly delegates to `gainPower`; `BaseCard.modifyPower` already delegated to gain/discard actions.                                                                                                                                                                                    |
+| Saves                       | Internal `RecordSave` owns `markAsSaved` and `onCardSaved`. `SaveCard` delegates to it with the pending event. Automatic duplicate saves consume the duplicate through an action and retain cancellation before the would-interrupt window. `Event` and `GroupedCardEvent` use the compatibility wrapper. |
+| Card entry                  | `Player.putIntoPlay` delegates to `PutIntoPlay`, preserving the existing manual-force path. `PutIntoPlayCost` uses actions. Entry retains setup, duplicates, bestow, play type, and shadows X values.                                                                                                     |
+| Attachments                 | `Player.attach` delegates to `Attach`; the entry action queues the attachment prompt directly. The prompt carries play type, kneeling, and shadows X value.                                                                                                                                               |
+| Event-card staging          | Playing, restoring after prevented costs, and disposing of events use placement actions. Disposal is placement rather than a discard effect. Underneath restoration records the original parent and facedown state.                                                                                       |
+| Plot recycling              | `RecyclePlots` moves used plots in the `onPlotsRecycled` handler and respects recycling restrictions.                                                                                                                                                                                                     |
+| Setup                       | `RevealSetupCards` reveals and announces setup cards. `FinishSetup` consolidates duplicates inside `onSetupFinished`.                                                                                                                                                                                     |
+| Round resets                | `ResetRound` owns the plot-phase reset, preserving the previous first player for dependent plot selection.                                                                                                                                                                                                |
+| First player                | The compatibility helper delegates to `SetFirstPlayer`.                                                                                                                                                                                                                                                   |
+| Melee titles                | `SelectTitles` places all selected titles together; `ReturnTitles` returns all assigned titles together.                                                                                                                                                                                                  |
+| Remaining gameplay movement | Effect-expiry restoration and top-to-bottom deck movement use placement actions. Attachment removal uses the shared leave-play event generator.                                                                                                                                                           |
 
 ## Remaining effect-model work
 

@@ -19,7 +19,7 @@ class DoubleDealing extends PlotCard {
                     card !== card.controller.activePlot &&
                     card.controller !== context.player
             },
-            message: '{player} uses {source} to copy {target}\'s text box',
+            message: "{player} uses {source} to copy {target}'s text box",
             gameAction: GameActions.copyPlotTextBox((context) => ({
                 source: context.source,
                 target: context.target
