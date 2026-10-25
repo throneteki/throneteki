@@ -305,12 +305,9 @@ const Card = ({
     // Need to get classes in priority, as tailwind is not consistent in CSS priority
     const getHighlightClass = () => {
         if (card.selected) {
-            return 'shadow-[0_0_2px_4px] shadow-green-400';
+            return 'shadow-[0_0_0_3px] shadow-sky-400';
         }
-        if (card.selectable) {
-            return 'shadow-[0_0_8px_4px] shadow-slate-300';
-        }
-        if (card.canPlay) {
+        if (card.selectable || card.canPlay) {
             return 'shadow-[0_0_8px_3px] shadow-green-500';
         }
         if (card.inChallenge) {
@@ -351,9 +348,9 @@ const Card = ({
             ),
             getHighlightClass(),
             {
-                'grayscale brightness-75': card.unselectable,
-                'brightness-75 saturate-75':
-                    card.canPlay === false && !card.selected && !card.selectable
+                'brightness-75 saturate-50':
+                    card.unselectable ||
+                    (card.canPlay === false && !card.selected && !card.selectable)
             }
         );
         const isFaceup = forceFaceup || (!card.facedown && card.code);
