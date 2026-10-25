@@ -4,6 +4,7 @@ describe('MarshalCardAction', function () {
     beforeEach(function () {
         this.gameSpy = {
             addMessage: vi.fn(),
+            getActionTimingRequirement: vi.fn(),
             on: vi.fn(),
             raiseEvent: vi.fn(),
             removeListener: vi.fn()

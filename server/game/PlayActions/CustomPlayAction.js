@@ -10,6 +10,13 @@ class CustomPlayAction extends BaseAbility {
     }
 
     getUnmetRequirement(context) {
+        if (context.game.currentPhase !== 'setup') {
+            const timingRequirement = context.game.getActionTimingRequirement(context.player);
+            if (timingRequirement) {
+                return timingRequirement;
+            }
+        }
+
         return this.condition(context) ? undefined : Requirements.condition;
     }
 

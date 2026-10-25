@@ -32,6 +32,11 @@ class MarshalIntoShadowsAction extends BaseAbility {
             return Requirements.phase;
         }
 
+        const timingRequirement = game.getActionTimingRequirement(player);
+        if (timingRequirement) {
+            return timingRequirement;
+        }
+
         if (!source.isShadow()) {
             return Requirements.condition;
         }

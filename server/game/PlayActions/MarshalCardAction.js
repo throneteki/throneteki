@@ -31,6 +31,11 @@ class MarshalCardAction extends BaseAbility {
             return Requirements.phase;
         }
 
+        const timingRequirement = game.getActionTimingRequirement(player);
+        if (timingRequirement) {
+            return timingRequirement;
+        }
+
         if (source.getType() === 'event' || player.canDuplicate(source)) {
             return Requirements.condition;
         }

@@ -25,6 +25,11 @@ class OutOfShadowsAction extends BaseAbility {
     }
 
     getUnmetRequirement(context) {
+        const timingRequirement = context.game.getActionTimingRequirement(context.player);
+        if (timingRequirement) {
+            return timingRequirement;
+        }
+
         if (!context.source.isShadow() || context.source.getType() === 'event') {
             return Requirements.condition;
         }
