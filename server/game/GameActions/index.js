@@ -12,6 +12,7 @@ import ChangeChallengeType from './ChangeChallengeType.js';
 import ChangeEventAmount from './ChangeEventAmount.js';
 import ChangeEventCard from './ChangeEventCard.js';
 import ChangeAbilityTarget from './ChangeAbilityTarget.js';
+import CopyPlotTextBox from './CopyPlotTextBox.js';
 import CheckReserve from './CheckReserve.js';
 import ChooseCards from './ChooseCards.js';
 import ChooseGameAction from './ChooseGameAction.js';
@@ -91,6 +92,7 @@ const GameActions = {
     changeEventAmount: (props) => new AbilityAdapter(ChangeEventAmount, props),
     changeEventCard: (props) => new AbilityAdapter(ChangeEventCard, props),
     changeAbilityTarget: (props) => new AbilityAdapter(ChangeAbilityTarget, props),
+    copyPlotTextBox: (props) => new AbilityAdapter(CopyPlotTextBox, props),
     checkReserve: (props) => new AbilityAdapter(CheckReserve, props),
     choose: (props) => new ChooseGameAction(props),
     chooseChallengeType: (props) => new ChooseChallengeType(props),

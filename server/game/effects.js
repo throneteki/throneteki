@@ -664,13 +664,15 @@ const Effects = {
             }
         };
     },
-    setEventPlacementLocation: function (location) {
+    setEventPlacementLocation: function (location, bottom = false) {
         return {
             apply: function (card) {
                 card.eventPlacementLocation = location;
+                card.eventPlacementBottom = bottom;
             },
             unapply: function (card) {
                 card.eventPlacementLocation = 'discard pile';
+                card.eventPlacementBottom = false;
             }
         };
     },

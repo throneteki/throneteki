@@ -42,6 +42,7 @@ class Effect {
         }
         this.game = game;
         this.source = source;
+        this.copiedTextBoxId = properties.copiedTextBoxId;
         this.match = properties.match || (() => true);
         this.duration = properties.duration;
         this.until = properties.until || {};

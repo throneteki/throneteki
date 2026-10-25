@@ -163,6 +163,16 @@ describe('AbilityResolver', function () {
                 );
             });
 
+            it('should place the card at the bottom when requested', function () {
+                this.source.eventPlacementBottom = true;
+                this.resolver.continue();
+                expect(this.player.placeCardInPile).toHaveBeenCalledWith({
+                    card: this.source,
+                    location: 'event placement location',
+                    bottom: true
+                });
+            });
+
             it('should raise the onCardPlayed event', function () {
                 this.resolver.continue();
                 expect(this.game.resolveEvent).toHaveBeenCalledWith(

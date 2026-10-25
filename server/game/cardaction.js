@@ -101,7 +101,12 @@ class CardAction extends BaseAbility {
     }
 
     allowPlayer(player) {
-        return this.card.controller === player || this.anyPlayer;
+        return (
+            this.card.controller === player ||
+            this.anyPlayer ||
+            (this.card.getPrintedType() === 'event' &&
+                player.isCardInPlayableLocation(this.card, 'play'))
+        );
     }
 
     createContext(player) {
@@ -115,7 +120,9 @@ class CardAction extends BaseAbility {
 
     getUnmetRequirement(context) {
         if (
-            (this.phase !== 'any' && this.phase !== this.game.currentPhase) ||
+            (this.phase !== 'any' &&
+                this.phase !== this.game.currentPhase &&
+                this.phase !== this.game.currentActionWindow?.windowName) ||
             this.game.currentPhase === 'setup'
         ) {
             return Requirements.phase;

@@ -23,6 +23,7 @@ class DrawCard extends BaseCard {
         this.saved = false;
         this.minCost = 0;
         this.eventPlacementLocation = 'discard pile';
+        this.eventPlacementBottom = false;
     }
 
     createSnapshot() {

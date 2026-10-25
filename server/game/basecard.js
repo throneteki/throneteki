@@ -67,6 +67,9 @@ class BaseCard {
         this.dominanceStrengthModifiers = new ModifierProperty();
         this.eventsForRegistration = [];
         this.keywordSources = [];
+        this.copiedTextBoxId = undefined;
+        this.copiedTextBoxActions = [];
+        this.copiedTextBoxReactions = [];
 
         this.power = 0;
         this.tokens = {};
@@ -144,7 +147,8 @@ class BaseCard {
                     condition: () => !this.hasFlag(Flags.plotModifiers.cannotProvide(statName)),
                     match: (card) => card.controller.activePlot === card,
                     targetController: 'current',
-                    effect: plotStatEffects[statName](value)
+                    effect: plotStatEffects[statName](value),
+                    plotModifier: true
                 });
             }
             return printed;
@@ -155,6 +159,88 @@ class BaseCard {
         var action = new CardAction(this.game, this, properties);
         this.abilities.actions.push(action);
         return action;
+    }
+
+    copyTextBoxFrom(card) {
+        this.clearCopiedTextBox();
+        const copyId = uuid.v1();
+        this.copiedTextBoxId = copyId;
+        this.copiedTextBoxActions = card.abilities.actions.map((ability) =>
+            this.cloneCopiedAbility(ability)
+        );
+        this.copiedTextBoxReactions = card.abilities.reactions
+            .filter((ability) => !ability.isWhenRevealedAbility?.())
+            .map((ability) => this.cloneCopiedAbility(ability));
+        this.abilities.actions.push(...this.copiedTextBoxActions);
+        this.abilities.reactions.push(...this.copiedTextBoxReactions);
+        for (const ability of [...this.copiedTextBoxActions, ...this.copiedTextBoxReactions]) {
+            if (ability.isEventListeningLocation?.(this.location)) {
+                ability.registerEvents();
+            }
+        }
+
+        for (const effect of card.abilities.persistentEffects) {
+            if (effect.plotModifier) {
+                continue;
+            }
+            this.game.addEffect(this, {
+                ...effect,
+                location: 'active plot',
+                copiedTextBoxId: copyId
+            });
+        }
+    }
+
+    cloneCopiedAbility(ability) {
+        const copy = Object.assign(Object.create(Object.getPrototypeOf(ability)), ability, {
+            card: this
+        });
+        if (Array.isArray(ability.abilityTriggers)) {
+            copy.abilityTriggers = ability.abilityTriggers.map((trigger) =>
+                Object.assign(Object.create(Object.getPrototypeOf(trigger)), trigger, {
+                    ability: copy
+                })
+            );
+            copy.events = null;
+            copy.playerFunc = ability.customPlayerFunc
+                ? ability.playerFunc
+                : () => this.controller;
+        } else {
+            copy.events = new EventRegistrar(this.game, copy);
+            copy.activationContexts = [];
+        }
+        for (const property of ['limit', 'max']) {
+            if (copy[property]) {
+                const limit = Object.assign(
+                    Object.create(Object.getPrototypeOf(copy[property])),
+                    copy[property],
+                    { useCount: 0 }
+                );
+                if (limit.eventName) {
+                    limit.resetHandler = () => limit.reset();
+                }
+                copy[property] = limit;
+            }
+        }
+        return copy;
+    }
+
+    clearCopiedTextBox() {
+        if (!this.copiedTextBoxId) {
+            return;
+        }
+        this.abilities.actions = this.abilities.actions.filter(
+            (ability) => !this.copiedTextBoxActions.includes(ability)
+        );
+        this.abilities.reactions = this.abilities.reactions.filter(
+            (ability) => !this.copiedTextBoxReactions.includes(ability)
+        );
+        this.game.effectEngine.unapplyAndRemove(
+            (effect) => effect.copiedTextBoxId === this.copiedTextBoxId
+        );
+        this.copiedTextBoxActions = [];
+        this.copiedTextBoxReactions = [];
+        this.copiedTextBoxId = undefined;
     }
 
     reaction(properties) {
@@ -600,6 +686,10 @@ class BaseCard {
                 reaction.unregisterEvents();
                 this.game.clearAbilityResolution(reaction);
             }
+        }
+
+        if (originalLocation === 'active plot' && targetLocation !== 'active plot') {
+            this.clearCopiedTextBox();
         }
 
         if (targetLocation !== 'play area') {

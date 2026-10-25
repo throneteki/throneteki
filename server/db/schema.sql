@@ -12,6 +12,18 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
+--
+
+-- *not* creating schema, since initdb creates it
+
+--
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON SCHEMA public IS '';
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -258,17 +270,6 @@ CREATE TABLE public.games (
 );
 
 --
--- Name: problem_reports; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.problem_reports (
-    id uuid NOT NULL,
-    report jsonb NOT NULL,
-    created_at timestamp with time zone DEFAULT now() NOT NULL,
-    expires_at timestamp with time zone DEFAULT (now() + '30 days'::interval) NOT NULL
-);
-
---
 -- Name: games_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -383,6 +384,17 @@ CREATE SEQUENCE public.pgmigrations_id_seq
 --
 
 ALTER SEQUENCE public.pgmigrations_id_seq OWNED BY public.pgmigrations.id;
+
+--
+-- Name: problem_reports; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.problem_reports (
+    id uuid NOT NULL,
+    report jsonb NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    expires_at timestamp with time zone DEFAULT (now() + '30 days'::interval) NOT NULL
+);
 
 --
 -- Name: refresh_tokens; Type: TABLE; Schema: public; Owner: -
@@ -675,13 +687,6 @@ ALTER TABLE ONLY public.news
     ADD CONSTRAINT news_pkey PRIMARY KEY (id);
 
 --
--- Name: problem_reports problem_reports_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.problem_reports
-    ADD CONSTRAINT problem_reports_pkey PRIMARY KEY (id);
-
---
 -- Name: packs packs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -694,6 +699,13 @@ ALTER TABLE ONLY public.packs
 
 ALTER TABLE ONLY public.pgmigrations
     ADD CONSTRAINT pgmigrations_pkey PRIMARY KEY (id);
+
+--
+-- Name: problem_reports problem_reports_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.problem_reports
+    ADD CONSTRAINT problem_reports_pkey PRIMARY KEY (id);
 
 --
 -- Name: refresh_tokens refresh_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -
@@ -792,12 +804,6 @@ CREATE INDEX game_players_user_id_idx ON public.game_players USING btree (user_i
 CREATE INDEX games_started_at_idx ON public.games USING btree (started_at);
 
 --
--- Name: problem_reports_expires_at_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX problem_reports_expires_at_idx ON public.problem_reports USING btree (expires_at);
-
---
 -- Name: messages_posted_at_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -808,6 +814,12 @@ CREATE INDEX messages_posted_at_idx ON public.messages USING btree (posted_at DE
 --
 
 CREATE INDEX news_published_at_idx ON public.news USING btree (published_at DESC);
+
+--
+-- Name: problem_reports_expires_at_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX problem_reports_expires_at_idx ON public.problem_reports USING btree (expires_at);
 
 --
 -- Name: refresh_tokens_ip_idx; Type: INDEX; Schema: public; Owner: -

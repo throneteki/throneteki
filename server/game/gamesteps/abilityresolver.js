@@ -334,7 +334,8 @@ class AbilityResolver extends BaseStep {
                 this.game.resolveGameAction(
                     GameActions.placeCard({
                         card: this.context.source,
-                        location: this.context.source.eventPlacementLocation
+                        location: this.context.source.eventPlacementLocation,
+                        bottom: this.context.source.eventPlacementBottom
                     })
                 );
             }

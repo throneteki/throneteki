@@ -14,6 +14,7 @@ class TriggeredAbility extends BaseAbility {
         this.max = properties.max;
         this.abilityTriggers = this.buildAbilityTriggers(properties.when);
         this.playerFunc = properties.player || (() => this.card.controller);
+        this.customPlayerFunc = !!properties.player;
         this.eventType = eventType;
         this.location = this.buildLocation(card, properties.location);
 
