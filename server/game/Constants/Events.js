@@ -317,6 +317,7 @@ export const Notifications = Object.freeze([
     'whenrevealed',
     'onGameOver',
     'onPlayerEliminated',
+    'problemReportRequested',
     // Never raised; a limit that resets on it lasts for the whole game.
     'onGameEnded',
     'sendGameState'

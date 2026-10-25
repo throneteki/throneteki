@@ -30,6 +30,7 @@ describe('EventValidator', function () {
 
         it('accepts notifications and internal events', function () {
             expect(() => this.validator.checkListener('onGameOver')).not.toThrow();
+            expect(() => this.validator.checkListener('problemReportRequested')).not.toThrow();
             expect(() => this.validator.checkListener('reaction')).not.toThrow();
             expect(() => this.validator.checkListener('__PLACEHOLDER_EVENT__')).not.toThrow();
         });
