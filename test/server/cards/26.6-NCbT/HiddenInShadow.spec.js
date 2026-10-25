@@ -29,6 +29,7 @@ describe('Hidden in Shadow', function () {
             });
 
             this.player1.clickCard(this.shadowPolitics);
+            this.player1.clickPrompt('Discard a card from shadows');
             this.player1.clickCard(this.hiddenInShadow);
             this.player1.triggerAbility(this.hiddenInShadow);
         });

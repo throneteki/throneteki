@@ -23,7 +23,6 @@ class DoranMartell extends DrawCard {
             gameAction: GameActions.lookAtDeck((context) => ({
                 player: context.player,
                 lookingAt: context.player,
-                // TODO: Add 'whileLooking' option & select instead of choosing with 'then'
                 amount: 2
             })).then({
                 gameAction: GameActions.choose({

@@ -10,17 +10,12 @@ class ArianneMartell extends DrawCard {
         this.action({
             title: 'Return character to hand',
             phase: 'challenge',
-            //TODO: This should ideally use the snapshot functionality instead
-            condition: (context) => {
-                context.source.strengthWhenInitiated = context.source.getStrength();
-                return true;
-            },
             cost: ability.costs.returnSelfToHand(),
             target: {
                 cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.getStrength() < context.source.strengthWhenInitiated
+                    card.getStrength() < context.cardStateWhenInitiated.getStrength()
             },
             message: {
                 format: "{player} returns {source} to their hand to return {target} to {owner}'s hand",

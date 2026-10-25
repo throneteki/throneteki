@@ -8,11 +8,14 @@ function withChoosingPlayer(context, choosingPlayer) {
 }
 
 class MayGameAction extends GameAction {
-    constructor({ player, gameAction, message, title }) {
+    constructor({ player, gameAction, message, declineMessage, title }) {
         super('may');
         this.player = player || ((context) => context.player);
         this.gameAction = gameAction;
         this.abilityMessage = AbilityMessage.create(message, this.specialArgs());
+        this.declineMessage = declineMessage
+            ? AbilityMessage.create(declineMessage, this.specialArgs())
+            : undefined;
         this.title = title;
     }
 
@@ -56,6 +59,11 @@ class MayGameAction extends GameAction {
                         event.thenAttachEvent(this.gameAction.createEvent(tempContext));
                     }
                     return true;
+                },
+                noHandler: () => {
+                    if (this.declineMessage) {
+                        this.declineMessage.output(tempContext.game, tempContext);
+                    }
                 }
             });
             handler.prompt({

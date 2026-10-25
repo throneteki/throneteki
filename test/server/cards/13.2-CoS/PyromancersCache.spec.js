@@ -18,6 +18,7 @@ describe("Pyromancer's Cache", function () {
         this.player1.clickCard(this.heartTreeGrove);
 
         expect(this.heartTreeGrove.isAnyBlank()).toBe(true);
+        expect(this.heartTreeGrove.hasTrait('Old Gods')).toBe(true);
 
         this.player1.clickCard(this.heartTreeGrove);
 

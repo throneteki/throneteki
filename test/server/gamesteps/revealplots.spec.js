@@ -6,7 +6,14 @@ describe('RevealPlots', function () {
             addMessage: vi.fn(),
             getPlayers: vi.fn(),
             raiseEvent: vi.fn(),
-            queueStep: vi.fn()
+            queueStep: vi.fn(),
+            chooseTieWinnerController: vi.fn((type, callback) => {
+                const flag =
+                    type === 'initiative'
+                        ? 'choosesWinnerForInitiativeTies'
+                        : 'choosesWinnerForDominanceTies';
+                callback(this.gameSpy.getPlayers().find((player) => player[flag]));
+            })
         };
         this.phase = new RevealPlots(this.gameSpy, []);
     });

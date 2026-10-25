@@ -1162,13 +1162,15 @@ const Effects = {
         return {
             targetType: 'player',
             apply: function (player, context) {
+                player.choosesWinnerForInitiativeTiesSources.add(context.effect);
                 player.choosesWinnerForInitiativeTies = true;
-                for (let opponent of context.game.getOpponents(player)) {
-                    delete opponent.choosesWinnerForInitiativeTies;
-                }
+                context.game.tieWinnerChooserChanged('initiative');
             },
-            unapply: function (player) {
-                delete player.choosesWinnerForInitiativeTies;
+            unapply: function (player, context) {
+                player.choosesWinnerForInitiativeTiesSources.delete(context.effect);
+                player.choosesWinnerForInitiativeTies =
+                    player.choosesWinnerForInitiativeTiesSources.size > 0;
+                context.game.tieWinnerChooserChanged('initiative');
             }
         };
     },
@@ -1176,13 +1178,15 @@ const Effects = {
         return {
             targetType: 'player',
             apply: function (player, context) {
+                player.choosesWinnerForDominanceTiesSources.add(context.effect);
                 player.choosesWinnerForDominanceTies = true;
-                for (let opponent of context.game.getOpponents(player)) {
-                    delete opponent.choosesWinnerForDominanceTies;
-                }
+                context.game.tieWinnerChooserChanged('dominance');
             },
-            unapply: function (player) {
-                delete player.choosesWinnerForDominanceTies;
+            unapply: function (player, context) {
+                player.choosesWinnerForDominanceTiesSources.delete(context.effect);
+                player.choosesWinnerForDominanceTies =
+                    player.choosesWinnerForDominanceTiesSources.size > 0;
+                context.game.tieWinnerChooserChanged('dominance');
             }
         };
     },
@@ -1386,6 +1390,17 @@ const Effects = {
                 delete context.dynamicUsedPlots[player.name];
             },
             isStateDependent: true
+        };
+    },
+    modifyUsedPlots: function (amount) {
+        return {
+            targetType: 'player',
+            apply: function (player) {
+                player.modifyUsedPlots(amount);
+            },
+            unapply: function (player) {
+                player.modifyUsedPlots(-amount);
+            }
         };
     },
     dynamicUsedPlotsWithTrait: function (calculate, trait) {

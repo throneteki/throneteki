@@ -107,10 +107,12 @@ class RevealPlots extends BaseStep {
         result.initiativeTied = result.potentialWinners.length > 1;
 
         if (result.initiativeTied) {
-            let choosingPlayer = this.game
-                .getPlayers()
-                .find((player) => player.choosesWinnerForInitiativeTies);
-            if (choosingPlayer) {
+            this.game.chooseTieWinnerController('initiative', (choosingPlayer) => {
+                if (!choosingPlayer) {
+                    this.determineTieWinner(result);
+                    return;
+                }
+
                 let prompt = new ChoosePlayerPrompt(this.game, choosingPlayer, {
                     condition: (player) =>
                         result.potentialWinners.map((pw) => pw.player).includes(player),
@@ -131,9 +133,7 @@ class RevealPlots extends BaseStep {
                 });
 
                 this.game.queueStep(prompt);
-            } else {
-                this.determineTieWinner(result);
-            }
+            });
         } else {
             this.determineWinner(result);
         }

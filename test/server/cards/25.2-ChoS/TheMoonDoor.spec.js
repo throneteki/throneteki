@@ -39,4 +39,24 @@ describe('The Moon Door (ChoS)', function () {
         this.player1.clickPrompt('Pass');
         expect(this.player1).isReadyToTakeAction();
     });
+
+    it('lets the first player choose which controller resolves ties when both players control one', function () {
+        this.setupTest({
+            phase: 'plot',
+            player1: { plot: 'Filler Plot', inPlay: ['The Moon Door (ChoS)'] },
+            player2: { plot: 'Filler Plot', inPlay: ['The Moon Door (ChoS)'] }
+        });
+        this.player1.selectPlot('Filler Plot');
+        this.player2.selectPlot('Filler Plot');
+
+        expect(this.player1).toHavePrompt('Choose which player chooses tie winners');
+        this.player1.clickPrompt('player2');
+        expect(this.player2).toHavePrompt('Choose player to win initiative');
+        this.player2.clickPrompt('player2');
+
+        expect(this.game.tieWinnerChooserSelections.initiative.player).toBe(this.player2Object);
+        this.selectFirstPlayer(this.player2);
+        this.completeMarshalPhase();
+        expect(this.player2).isReadyToTakeAction();
+    });
 });

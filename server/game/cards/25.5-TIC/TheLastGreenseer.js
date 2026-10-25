@@ -23,11 +23,10 @@ class TheLastGreenseer extends PlotCard {
                 const plots = [context.target, context.source];
                 return plots.map((plot, index) => {
                     const stats = getBaseStats(plots[1 - index]);
-                    // TODO: These should not be listening on the reaction variant, however there is a problem
-                    // with base events being raised under `thenAttachEvent` scenarios.
                     return GameActions.lastingEffect(() => ({
                         duration: 'custom',
                         until: {
+                            onCardLeftPlay: (event) => plots.includes(event.card),
                             'onCardLeftPlay:reaction': (event) => plots.includes(event.card)
                         },
                         match: plot,

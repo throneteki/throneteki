@@ -15,6 +15,23 @@ describe('AbilityLimit', function () {
         });
     });
 
+    it('evaluates a function-based maximum against the current context', function () {
+        const dynamicLimit = AbilityLimit.repeatable(
+            (context) => context.game.getOpponents(context.player).length,
+            'onEventForReset'
+        );
+        const context = {
+            player: {},
+            game: { getOpponents: vi.fn().mockReturnValue([{}, {}]) }
+        };
+        dynamicLimit.increment();
+        dynamicLimit.increment();
+
+        expect(dynamicLimit.isAtMax(context)).toBe(true);
+        context.game.getOpponents.mockReturnValue([{}, {}, {}]);
+        expect(dynamicLimit.isAtMax(context)).toBe(false);
+    });
+
     describe('isAtMax', function () {
         describe('when below the max', function () {
             beforeEach(function () {

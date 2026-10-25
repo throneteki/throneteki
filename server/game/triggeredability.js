@@ -97,11 +97,11 @@ class TriggeredAbility extends BaseAbility {
             return Requirements.cannotTrigger;
         }
 
-        if (this.limit && this.limit.isAtMax()) {
+        if (this.limit && this.limit.isAtMax(context)) {
             return Requirements.limit;
         }
 
-        if (this.max && context.player.isAbilityAtMax(context.source.name)) {
+        if (this.max && context.player.isAbilityAtMax(context.source.name, context)) {
             return Requirements.limit;
         }
 

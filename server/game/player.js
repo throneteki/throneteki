@@ -85,6 +85,8 @@ class Player extends Spectator {
         }
 
         this.mustShowPlotSelection = [];
+        this.choosesWinnerForInitiativeTiesSources = new Set();
+        this.choosesWinnerForDominanceTiesSources = new Set();
     }
 
     createDefaultPlayableLocations() {
@@ -525,14 +527,14 @@ class Player extends Spectator {
         limit.registerEvents(this.game);
     }
 
-    isAbilityAtMax(cardName) {
+    isAbilityAtMax(cardName, context) {
         let limit = this.abilityMaxByTitle[cardName];
 
         if (!limit) {
             return false;
         }
 
-        return limit.isAtMax();
+        return limit.isAtMax(context);
     }
 
     incrementAbilityMax(cardName) {

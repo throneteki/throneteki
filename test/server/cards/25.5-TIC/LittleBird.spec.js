@@ -14,4 +14,16 @@ describe('Little Bird (TIC)', function () {
         expect(this.player2Object.hand).toHaveLength(1);
         expect(this.player1).isReadyToTakeAction();
     });
+
+    it('logs when a player declines to draw', function () {
+        this.player1.clickPrompt('Done');
+        this.player1.clickPrompt('No');
+        this.player2.clickPrompt('No');
+
+        expect(this.player1Object.hand).toHaveLength(0);
+        expect(this.player2Object.hand).toHaveLength(0);
+        expect(this.game.getPlainTextLog()).toContain('player1 chooses not to draw a card');
+        expect(this.game.getPlainTextLog()).toContain('player2 chooses not to draw a card');
+        expect(this.player1).isReadyToTakeAction();
+    });
 });

@@ -9,7 +9,9 @@ class BreakingTies extends PlotCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Return character/location to hand',
-            limit: ability.limit.perRound(1), //TODO make it limit X when meelee gets implemented
+            limit: ability.limit.perRound(
+                (context) => context.game.getOpponents(context.player).length
+            ),
             cost: ability.costs.shuffleCardIntoDeck(
                 (card) => card.isLoyal() && card.getType() === 'character' && !card.kneeled
             ),

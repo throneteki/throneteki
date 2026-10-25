@@ -137,6 +137,8 @@ class Game extends EventEmitter {
         this.manualMode = new ManualMode(this, options.manualMode ?? details.manualMode ?? 'auto');
         this.strictActionWindows = !!(options.strictActionWindows ?? details.strictActionWindows);
         this.winnerOfDominanceInLastRound = undefined;
+        this.tieWinnerChooserRevisions = { initiative: 0, dominance: 0 };
+        this.tieWinnerChooserSelections = {};
         this.triggerOnLosing = {};
         this.prizedKeywordListener = new PrizedKeywordListener(this);
         this.muteSpectators = details.muteSpectators;
@@ -416,6 +418,52 @@ class Game extends EventEmitter {
         return this.getPlayers().find((p) => {
             return p.firstPlayer;
         });
+    }
+
+    tieWinnerChooserChanged(tieType) {
+        this.tieWinnerChooserRevisions[tieType]++;
+        delete this.tieWinnerChooserSelections[tieType];
+    }
+
+    chooseTieWinnerController(tieType, callback) {
+        const choosingFlag =
+            tieType === 'initiative'
+                ? 'choosesWinnerForInitiativeTies'
+                : 'choosesWinnerForDominanceTies';
+        const candidates = this.getPlayersInFirstPlayerOrder().filter(
+            (player) => player[choosingFlag]
+        );
+
+        if (candidates.length === 0) {
+            callback(undefined);
+            return;
+        }
+
+        if (candidates.length === 1) {
+            callback(candidates[0]);
+            return;
+        }
+
+        const selection = this.tieWinnerChooserSelections[tieType];
+        const revision = this.tieWinnerChooserRevisions[tieType];
+        if (selection?.revision === revision && candidates.includes(selection.player)) {
+            callback(selection.player);
+            return;
+        }
+
+        const firstPlayer = this.getFirstPlayer() || this.getPlayersInFirstPlayerOrder()[0];
+        this.queueStep(
+            new ChoosePlayerPrompt(this, firstPlayer, {
+                condition: (player) => candidates.includes(player),
+                activePromptTitle: 'Choose which player chooses tie winners',
+                waitingPromptTitle: 'Waiting for first player to choose a tie winner',
+                onSelect: (player) => {
+                    this.tieWinnerChooserSelections[tieType] = { revision, player };
+                    callback(player);
+                },
+                onCancel: () => callback(undefined)
+            })
+        );
     }
 
     setFirstPlayer(firstPlayer) {

@@ -29,6 +29,7 @@ class ChooseCards extends GameAction {
         optional = false,
         title = 'Select a card',
         revealTargets = false,
+        singleController = false,
         gameAction
     }) {
         super('chooseCards');
@@ -43,6 +44,7 @@ class ChooseCards extends GameAction {
         this.optional = optional;
         this.titleFunc = typeof title === 'function' ? title : () => title;
         this.revealTargets = revealTargets;
+        this.singleController = singleController;
         this.gameActionFactory = gameAction;
     }
 
@@ -103,6 +105,7 @@ class ChooseCards extends GameAction {
             optional: this.optional,
             numCards: this.mode === 'exactly' ? Math.min(numCards, choosable.length) : numCards,
             multiSelect: true,
+            singleController: this.singleController,
             cardType: AllCardTypes,
             cardCondition: (card) => choosable.includes(card),
             revealTargets: this.revealTargets,

@@ -9,8 +9,7 @@ class LonelyHills extends DrawCard {
             condition: (context) =>
                 !context.source.kneeled && context.source.controller.plotDeck.length > 1,
             targetController: 'current',
-            // TODO: Non-dynamic used plots effect
-            effect: ability.effects.dynamicUsedPlots(() => -1)
+            effect: ability.effects.modifyUsedPlots(-1)
         });
     }
 }

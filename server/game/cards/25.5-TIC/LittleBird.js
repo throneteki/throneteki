@@ -22,12 +22,12 @@ class LittleBird extends DrawCard {
                 amount: 1
             })).then({
                 gameAction: GameActions.simultaneously((context) =>
-                    // TODO: Add a 'decline message' to GameActions.may
                     context.game.getPlayersInFirstPlayerOrder().map((player) =>
                         GameActions.may({
                             player,
                             title: (context) => 'Draw 1 card from ' + context.source.name + '?',
                             message: '{choosingPlayer} chooses to draw 1 card',
+                            declineMessage: '{choosingPlayer} chooses not to draw a card',
                             gameAction: GameActions.drawCards((context) => ({
                                 player: context.choosingPlayer,
                                 amount: 1

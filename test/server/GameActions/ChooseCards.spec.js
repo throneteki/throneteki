@@ -6,9 +6,14 @@ describe('chooseCards game action', function () {
         this.setupTest({
             phase: 'challenge',
             player1: {
-                inPlay: ['Tumblestone Knight', { card: 'House Dayne Knight', kneeling: true }]
+                inPlay: ['Tumblestone Knight', { card: 'House Dayne Knight', kneeling: true }],
+                discard: ['Hedge Knight']
             },
-            player2: { faction: 'martell', inPlay: ['Bastard in Hiding', 'Palace Spearman'] }
+            player2: {
+                faction: 'martell',
+                inPlay: ['Bastard in Hiding', 'Palace Spearman'],
+                discard: ['Castle Guard']
+            }
         });
 
         this.context = new AbilityContext({
@@ -194,6 +199,30 @@ describe('chooseCards game action', function () {
         candidate.opponent = this.player2Object;
 
         expect(action.allow(candidate)).toBe(true);
+    });
+
+    it('can restrict a multi-card choice to one controller', function () {
+        this.game.resolveGameAction(
+            GameActions.chooseCards({
+                mode: 'upTo',
+                numCards: 5,
+                singleController: true,
+                cardCondition: (card) => card.location === 'discard pile',
+                gameAction: (card) => GameActions.removeFromGame({ card })
+            }),
+            this.context
+        );
+        this.game.continue();
+
+        expect(this.player1).toBeAbleToSelect(this.hedgeKnight);
+        expect(this.player1).toBeAbleToSelect(this.castleGuard);
+        this.player1.clickCard(this.hedgeKnight);
+        expect(this.player1).not.toBeAbleToSelect(this.castleGuard);
+        this.player1.clickPrompt('Done');
+
+        expect(this.hedgeKnight.location).toBe('out of game');
+        expect(this.castleGuard.location).toBe('discard pile');
+        expect(this.player1).isReadyToTakeAction();
     });
 });
 

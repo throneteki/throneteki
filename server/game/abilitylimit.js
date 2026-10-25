@@ -8,8 +8,9 @@ class FixedAbilityLimit {
         return false;
     }
 
-    isAtMax() {
-        return this.useCount >= this.max;
+    isAtMax(context) {
+        const max = this.max instanceof Function ? this.max(context) : this.max;
+        return this.useCount >= max;
     }
 
     increment() {
