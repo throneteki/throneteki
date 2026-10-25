@@ -172,20 +172,20 @@ remaining framework gaps.
 
 The phase 6 framework gate remains open. Card verification is complete; the remaining work is:
 
-1. Complete the state-change conversions in [engine-state-changes.md](engine-state-changes.md).
-   This audit distinguishes action-backed helpers from actual bypasses and low-level operations.
-2. Validate the client explanations now added for card actions, standard plays, and matching
+1. Validate the client explanations now added for card actions, standard plays, and matching
    responses that could not resolve. Readable reasons appear in menus and under the card's hover
    preview, including with manual mode off. Self-evident reasons (window, phase, location,
    player, trigger, blank, facedown) are not shown, and failed responses are shown only during
    the phase they happened in. This UI follow-up has not had a new test run.
-3. Finish the computed-effect work, stability/oscillation handling, and optional-loop shortcuts
-   described in phase 4. Removing strength-order workarounds does not finish that phase.
-4. Finish translation-ready logs (phase 3) and exact problem-report restoration (phase 6). Problem
+2. Add the optional-loop shortcut from phase 4: when a player repeats an optional ability in a
+   loop, let them name a number of repetitions and resolve them at once. State-change
+   conversions, icon and control registrations, and settling effects until nothing changes are
+   done.
+3. Finish translation-ready logs (phase 3) and exact problem-report restoration (phase 6). Problem
    reports now persist in PostgreSQL and the scenario runner rebuilds the board and phase;
    restoring an arbitrary open prompt or in-progress challenge remains open.
    Per-format coverage reporting is implemented in this follow-up, pending validation.
-5. Complete the strict-window trial and gather feedback before changing the default.
+4. Complete the strict-window trial and gather feedback before changing the default.
 
 These decisions remain in force:
 

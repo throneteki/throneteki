@@ -2,6 +2,8 @@ import { partition } from '../Array.js';
 import EventRegistrar from './eventregistrar.js';
 import TakeControl from './GameActions/TakeControl.js';
 
+const MaxSettlePasses = 10;
+
 class EffectEngine {
     constructor(game) {
         this.game = game;
@@ -18,6 +20,7 @@ class EffectEngine {
         this.delayedEffects = [];
         this.customDurationEvents = [];
         this.effectsBeingRecalculated = [];
+        this.reportedUnsettled = new Set();
     }
 
     add(effect) {
@@ -148,26 +151,116 @@ class EffectEngine {
         return validTargets.concat(this.game.getPlayers()).concat([this.game]);
     }
 
-    recalculateDirtyTargets() {
-        let dirtyCards = this.game.allCards.filter((card) => card.isDirty);
-
-        if (dirtyCards.length === 0) {
+    /**
+     * Recalculates effects until the game state stops changing, then raises the strength, icon
+     * and control events for the net changes. Effects that keep switching each other are left as
+     * they are after the last pass, and reported.
+     */
+    settle() {
+        const needsRecalc = this.effects.filter(
+            (effect) => effect.isStateDependent && !this.effectsBeingRecalculated.includes(effect)
+        );
+        if (needsRecalc.length === 0 && !this.game.allCards.some((card) => card.isDirty)) {
             return;
         }
 
         this.game.queueSimpleStep(() => {
             return this.withEffectChanges(() => {
-                for (let card of dirtyCards) {
-                    card.clearDirty();
-                }
+                this.effectsBeingRecalculated = this.effectsBeingRecalculated.concat(needsRecalc);
+                let previous = this.getSettleState();
 
-                for (let effect of this.effects) {
-                    effect.clearInvalidTargets();
-                    effect.addTargets(dirtyCards);
-                    effect.updateAppliedTargets();
+                for (let pass = 0; pass < MaxSettlePasses; ++pass) {
+                    this.recalculateDirtyCards();
+                    this.reapplyEffects(needsRecalc);
+                    const current = this.getSettleState();
+                    if (current.key === previous.key) {
+                        return;
+                    }
+                    if (pass === MaxSettlePasses - 1) {
+                        this.reportUnsettledEffects(previous, current);
+                    }
+                    previous = current;
                 }
             });
         });
+
+        this.game.queueSimpleStep(() => {
+            this.effectsBeingRecalculated = this.effectsBeingRecalculated.filter(
+                (effect) => !needsRecalc.includes(effect)
+            );
+        });
+    }
+
+    recalculateDirtyCards() {
+        const dirtyCards = this.game.allCards.filter((card) => card.isDirty);
+        if (dirtyCards.length === 0) {
+            return;
+        }
+
+        for (const card of dirtyCards) {
+            card.clearDirty();
+        }
+
+        for (const effect of this.effects) {
+            effect.clearInvalidTargets();
+            effect.addTargets(dirtyCards);
+            effect.updateAppliedTargets();
+        }
+    }
+
+    reapplyEffects(effects) {
+        for (const effect of effects) {
+            if (!this.effects.includes(effect)) {
+                continue;
+            }
+            if (effect.hasEnded()) {
+                effect.cancel();
+                this.effects = this.effects.filter((e) => e !== effect);
+            } else {
+                effect.reapply(this.getTargets());
+            }
+        }
+    }
+
+    getSettleState() {
+        const effectTargets = this.effects.map((effect) =>
+            [...(effect.appliedTargets || [])].map((target) => target.uuid || target.name).join(',')
+        );
+        const cards = this.game.allCards
+            .filter((card) => card.location === 'play area')
+            .map((card) =>
+                [
+                    card.uuid,
+                    card.controller.name,
+                    card.getStrength?.(),
+                    card.getIcons?.().join(),
+                    card.getTraits().join(),
+                    card.getKeywords().join(),
+                    card.isAnyBlank()
+                ].join('|')
+            );
+        return { effectTargets, key: effectTargets.concat(cards).join(';') };
+    }
+
+    reportUnsettledEffects(previous, current) {
+        const sources = new Set(
+            this.effects
+                .filter(
+                    (effect, index) =>
+                        previous.effectTargets[index] !== current.effectTargets[index]
+                )
+                .map((effect) => effect.source)
+        );
+        const key = [...sources].map((source) => source.uuid).join();
+        if (this.reportedUnsettled.has(key)) {
+            return;
+        }
+        this.reportedUnsettled.add(key);
+        this.game.addAlert(
+            'danger',
+            'The effects of {0} keep switching each other on and off, so they are left as they are',
+            [...sources]
+        );
     }
 
     reapplyStateDependentEffects() {
@@ -183,17 +276,7 @@ class EffectEngine {
         this.game.queueSimpleStep(() => {
             return this.withEffectChanges(() => {
                 this.effectsBeingRecalculated = this.effectsBeingRecalculated.concat(needsRecalc);
-
-                for (let effect of needsRecalc) {
-                    if (this.effects.includes(effect)) {
-                        if (effect.hasEnded()) {
-                            effect.cancel();
-                            this.effects = this.effects.filter((e) => e !== effect);
-                        } else {
-                            effect.reapply(this.getTargets());
-                        }
-                    }
-                }
+                this.reapplyEffects(needsRecalc);
             });
         });
 

@@ -26,7 +26,9 @@ full suite passes.
 Take-control and icon effects register on the card as they apply and queue nothing. Once the
 effects settle, `TakeControl.applyControlChange` moves each card whose controller actually changed
 and raises one `onCardTakenControl`, and each icon gained or lost on balance raises one
-`onIconGained` or `onIconLost`. Fixed-point recalculation and oscillation handling remain open.
+`onIconGained` or `onIconLost`. After each event window `EffectEngine.settle` recalculates until
+nothing changes, so these events report net changes only
+([SettleEffects.spec.js](../test/server/effects/SettleEffects.spec.js)).
 
 ## Operations below the action boundary
 

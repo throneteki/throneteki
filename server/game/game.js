@@ -1481,8 +1481,7 @@ class Game extends EventEmitter {
         if (this.effectEngine.revealingPlots) {
             return;
         }
-        this.effectEngine.recalculateDirtyTargets();
-        this.effectEngine.reapplyStateDependentEffects();
+        this.effectEngine.settle();
         this.attachmentValidityCheck.enforceValidity();
         this.stateChecks.enforce();
         this.gameOverHandler.checkConditions();

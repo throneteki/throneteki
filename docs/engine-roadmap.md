@@ -373,7 +373,10 @@ on every card in the format having one.
   strength, blank, control.
   _The current follow-up computes keyword values from registrations and dominance strength from
   modifiers keyed by effect. Snapshots retain both dominance registrations and keyword trigger
-  modifiers. This does not complete fixed-point recalculation or control-effect migration._
+  modifiers. Icons and control are registrations; their events are raised for net changes once
+  the effects settle. `EffectEngine.settle` recalculates until nothing changes, stops after 10
+  passes, and reports the effects that keep switching, once
+  ([SettleEffects.spec.js](../test/server/effects/SettleEffects.spec.js))._
 - Removes the `order: 0/1000` and reverse-cancel workarounds. _Done on 2026-10-24: strength changes are batched across application, expiry, and plot replacement; set-strength expiry checks burn._
 - Conflicting constant abilities and lasting effects are ordered by the first player, once, when
   they would first apply. A new conflict lets the first player choose again (Rulings and
