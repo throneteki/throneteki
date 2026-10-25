@@ -60,3 +60,37 @@ describe('playable card state when choosing a challenge', function () {
         expect(this.handCanPlay(this.winterfellSteward)).toBe(false);
     });
 });
+
+describe('actions taken while choosing a challenge', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                gold: 0,
+                inPlay: ['Grey Wind (Core)', 'Tumblestone Knight'],
+                hand: ['Nightmares']
+            },
+            player2: { inPlay: ['Samwell Tarly (Core)', 'Bastard in Hiding'] }
+        });
+        this.player1.clickMenu(this.greyWind, 'Kneel Grey Wind to kill a character');
+    });
+
+    it('does not explain why cards are unavailable while a target is chosen', function () {
+        const nightmares = () =>
+            this.game
+                .getState(this.player1.player.name)
+                .players[
+                    this.player1.player.name
+                ].cardPiles.hand.find((card) => card.uuid === this.nightmares.uuid);
+        expect(nightmares().unavailableActions).toBeUndefined();
+        this.player1.clickCard(this.samwellTarly);
+        expect(nightmares().unavailableActions).toEqual([
+            { title: 'Blank a character or location', reason: 'cost' }
+        ]);
+    });
+
+    it('does not warn that the action was outside an action window', function () {
+        this.player1.clickCard(this.samwellTarly);
+        expect(this.game.getPlainTextLog()).not.toContain('outside of an action window');
+    });
+});

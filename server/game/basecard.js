@@ -1026,6 +1026,7 @@ class BaseCard {
             return { facedown: true, uuid: this.uuid, tokens: this.tokens, ...selectionState };
         }
 
+        const selectingCards = !!activePlayer.promptState?.selectCard;
         let state = {
             canPlay: this.getCanPlayState(activePlayer),
             code: this.cardData.code,
@@ -1033,10 +1034,13 @@ class BaseCard {
             facedown: this.facedown,
             factionStatus: this.getFactionStatus(),
             menu: this.game.manualMode.enabled ? this.getMenu(activePlayer) : undefined,
-            unavailableActions: this.getUnavailableActions(activePlayer),
-            unavailableTriggers: activePlayer.isSpectator()
+            unavailableActions: selectingCards
                 ? undefined
-                : this.game.getUnavailableAbilityReasons?.(this, activePlayer),
+                : this.getUnavailableActions(activePlayer),
+            unavailableTriggers:
+                activePlayer.isSpectator() || selectingCards
+                    ? undefined
+                    : this.game.getUnavailableAbilityReasons?.(this, activePlayer),
             name: this.cardData.label,
             new: this.new,
             power: this.power,

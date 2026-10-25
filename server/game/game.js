@@ -1256,7 +1256,10 @@ class Game extends EventEmitter {
                 );
             }
             this.currentActionWindow.markActionAsTaken(context.player);
-        } else if (this.currentPhase !== 'marshal' || this.hasOpenInterruptOrReactionWindow()) {
+        } else if (
+            this.hasOpenInterruptOrReactionWindow() ||
+            (this.strictActionWindows && this.currentPhase !== 'marshal')
+        ) {
             this.manualActions.record(context.player, 'actionOutsideWindow', {
                 cards: [context.source]
             });
