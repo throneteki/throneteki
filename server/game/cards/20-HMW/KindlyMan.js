@@ -7,7 +7,7 @@ const TokenTypes = Tokens.list().filter((token) => token !== 'gold' && token !==
 const chooseToken = (createAction) =>
     GameActions.choose({
         title: 'Select token',
-        message: '{player} uses {source} to {gameAction}',
+        message: '{player} uses {source} and {gameAction}',
         choices: (context) =>
             Object.fromEntries(
                 TokenTypes.map((token) => [token, createAction({ card: context.target, token })])

@@ -47,7 +47,9 @@ describe('Obella Sand killed for claim satisfied after the challenges', function
         this.player2.clickCard(this.obellaSand);
         this.player2.triggerAbility(this.obellaSand);
 
-        expect(this.game.getPlainTextLog()).toContain('1 power from House Stark to House Martell');
+        expect(this.game.getPlainTextLog()).toContain(
+            'player2 uses Obella Sand and moves 1 power from House Stark to House Martell'
+        );
         expect(this.player2Object.faction.power).toBe(1);
         expect(this.obellaSand.location).toBe('draw deck');
     });

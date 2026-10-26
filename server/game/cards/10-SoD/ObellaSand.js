@@ -14,7 +14,7 @@ class ObellaSand extends DrawCard {
                 onCardDiscarded: (event, context) => event.card === context.source && event.isClaim
             },
             location: ['dead pile', 'discard pile'],
-            message: '{player} uses {source} to {gameAction}',
+            message: '{player} uses {source} and {gameAction}',
             gameAction: GameActions.simultaneously([
                 GameActions.movePower((context) => ({
                     from: context.event.claimWinner.faction,

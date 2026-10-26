@@ -23,7 +23,7 @@ class StormsEnd extends DrawCard {
                     ].includes(context.player)
             },
             cost: ability.costs.kneelSelf(),
-            message: '{player} kneels {source} to {gameAction}',
+            message: '{player} kneels {source} and {gameAction}',
             gameAction: GameActions.changeChallengeType((context) => ({
                 challenge: context.event.challenge,
                 challengeType: 'power'

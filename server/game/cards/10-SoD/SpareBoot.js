@@ -18,7 +18,7 @@ class SpareBoot extends DrawCard {
                     card.parent &&
                     card.parent.controller === context.player
             },
-            message: '{player} uses {source} to {gameAction}',
+            message: '{player} uses {source} and {gameAction}',
             gameAction: GameActions.simultaneously([
                 GameActions.standCard((context) => ({ card: context.target })),
                 GameActions.attach((context) => ({

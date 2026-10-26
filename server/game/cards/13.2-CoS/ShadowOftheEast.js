@@ -14,7 +14,7 @@ class ShadowOfTheEast extends DrawCard {
                 cardCondition: (card) =>
                     card.location === 'play area' && card.getType() === 'attachment'
             },
-            message: '{player} plays {source} to {gameAction}',
+            message: '{player} plays {source} and {gameAction}',
             gameAction: GameActions.simultaneously([
                 GameActions.discardCard((context) => ({ card: context.target })),
                 GameActions.ifCondition({

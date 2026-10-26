@@ -49,7 +49,7 @@ class AryaStark extends DrawCard {
             when: {
                 onCharacterKilled: (event) => event.cardStateWhenKilled.hasToken(Tokens.prayer)
             },
-            message: '{player} uses {source} to {gameAction}',
+            message: '{player} uses {source} and {gameAction}',
             gameAction: GameActions.simultaneously([
                 GameActions.standCard((context) => ({ card: context.source })),
                 GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))

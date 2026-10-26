@@ -17,7 +17,7 @@ class ShadowOfTheThrone extends DrawCard {
                     card.location === 'play area' && card.getType() === 'location' && !card.kneeled,
                 gameAction: 'kneel'
             },
-            message: '{player} plays {source} to {gameAction}',
+            message: '{player} plays {source} and {gameAction}',
             gameAction: GameActions.simultaneously((context) => [
                 ...context.target.map((card) => GameActions.kneelCard({ card })),
                 GameActions.ifCondition({

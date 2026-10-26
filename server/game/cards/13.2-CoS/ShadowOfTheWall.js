@@ -16,7 +16,7 @@ class ShadowOfTheWall extends DrawCard {
                     card.getType() === 'character' &&
                     card.getNumberOfIcons() <= 1
             },
-            message: '{player} plays {source} to {gameAction}',
+            message: '{player} plays {source} and {gameAction}',
             gameAction: GameActions.simultaneously([
                 GameActions.standCard((context) => ({ card: context.target })),
                 GameActions.ifCondition({

@@ -11,7 +11,7 @@ class HizdahrZoLoraq extends DrawCard {
             cost: ability.costs.discardFromHand(),
             limit: ability.limit.perPhase(1),
             message:
-                '{player} uses {source} and discards {costs.discardFromHand} from to their hand to reduce the next card they marshal, ambush or bring out of shadows by 3',
+                '{player} uses {source} and discards {costs.discardFromHand} from their hand to reduce the next card they marshal, ambush or bring out of shadows by 3',
             gameAction: GameActions.lastingEffect((context) => ({
                 duration: 'untilEndOfPhase',
                 targetController: 'current',
