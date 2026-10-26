@@ -1,10 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import cards from './cards/index.js';
 import ManualModePrompt from './gamesteps/ManualModePrompt.js';
-
-const VerifiedCodes = new Set(
-    JSON.parse(fs.readFileSync(path.join(import.meta.dirname, 'verifiedCards.json'), 'utf8'))
-);
 
 /**
  * Whether players can use manual actions: chat commands that change the game, dragging cards,
@@ -14,7 +9,7 @@ const VerifiedCodes = new Set(
  */
 class ManualMode {
     static isVerified(cardData) {
-        return VerifiedCodes.has(cardData.code) || !(cardData.text || '').trim();
+        return !!cards[cardData.code] || !(cardData.text || '').trim();
     }
 
     constructor(game, setting = 'auto') {

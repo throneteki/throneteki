@@ -8,9 +8,6 @@ import AgendaSetupAbility from '../../server/game/AgendaSetupAbility.js';
 import StateCheckAbility from '../../server/game/StateCheckAbility.js';
 
 const repoRoot = path.join(import.meta.dirname, '../..');
-const verifiedCodes = new Set(
-    JSON.parse(fs.readFileSync(path.join(repoRoot, 'server/game/verifiedCards.json'), 'utf8'))
-);
 
 const state = (globalThis.__abilityCoverage ??= {
     patched: false,
@@ -126,7 +123,7 @@ function specCardCodes(specPath) {
 }
 
 export function uncoveredAbilities(specPath) {
-    const codes = specCardCodes(specPath).filter((code) => verifiedCodes.has(code));
+    const codes = specCardCodes(specPath);
     const problems = [];
 
     for (const code of codes) {
@@ -168,7 +165,7 @@ export function install() {
         const problems = uncoveredAbilities(specPath);
         if (problems.length > 0) {
             throw new Error(
-                `This card is in verifiedCards.json, so its spec must resolve every ability:\n  ${problems.join('\n  ')}`
+                `A card's spec must resolve every ability on the card:\n  ${problems.join('\n  ')}`
             );
         }
     });

@@ -1,19 +1,18 @@
 # Testing guide
 
-Every implemented card needs a spec. A card only counts as verified (see
-[docs/engine.md](../docs/engine.md)) when all of these hold:
+Every implemented card must be verified (see [docs/engine.md](../docs/engine.md)), which means
+all of these hold:
 
 - The spec uses `setupTest`, passes, and follows this guide. `setupTest` games run with manual mode
   off and throw if the test uses a manual action (a chat command, dragging a card, clicking a card
   that has nothing to use, changing a stat). A spec that uses `integration(`, `buildDeck`,
   `moveCard`, `dragCard`, mocks, or assigns `kneeled`, `power` or `gold` can never verify a card.
 - The spec resolves every ability on the card: every action, triggered ability and persistent
-  effect. For a card in `verifiedCards.json`, the run fails if any of them never resolves (or never
-  applies) during its spec.
+  effect. The run fails if any of them never resolves (or never applies) during its spec.
 - The card file has no `handler` and no `card-rules` violations.
 
-`npm run spec:coverage -- --write-verified` checks the spec's style and the implementation. Don't
-carry an old spec over: if a verified card's spec is old-style, rewrite it with `setupTest`.
+`npm run spec:coverage -- --check-verified` checks the spec's style and the implementation for
+every card, and CI runs it.
 
 The full reference, with examples, is [docs/testing-cards.md](../docs/testing-cards.md).
 
@@ -30,9 +29,6 @@ The full reference, with examples, is [docs/testing-cards.md](../docs/testing-ca
 When a run fails, read the full output rather than piping it through `grep` or `tail`.
 
 ## Writing card specs
-
-After adding a card spec, run `npm run spec:coverage -- --write-verified` and commit the updated
-`server/game/verifiedCards.json`. CI fails if it is out of date.
 
 - One file per card: `test/server/cards/<pack>/<CardName>.spec.js`, matching the card's
   implementation path. Example: [Confiscation.spec.js](server/cards/01-Core/Confiscation.spec.js).

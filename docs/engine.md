@@ -11,21 +11,21 @@ Reference disagree, the engine is wrong.
 
 ## Manual mode and verified cards
 
-A card is **verified** when all of these hold:
+Every implemented card is **verified**, which means all of these hold:
 
 - Its spec uses `setupTest` and runs with manual mode off, with no manual action (chat commands,
   dragging cards, click-to-kneel, stat changes) and no harness shortcut once the test is under way
   (`moveCard`, `buildDeck`, `integration(`, mocks, assigning `kneeled`, `power` or `gold`).
 - The spec resolves every ability on the card: every action, triggered ability and persistent
-  effect. For a verified card the run fails if one never resolves, or a persistent effect never
-  applies, during its spec ([abilityCoverage.js](../test/helpers/abilityCoverage.js)).
+  effect. The run fails if one never resolves, or a persistent effect never applies, during the
+  card's spec ([abilityCoverage.js](../test/helpers/abilityCoverage.js)).
 - The implementation has no `handler` and passes `npm run card-rules`.
 
-`npm run spec:coverage -- --write-verified` writes the verified codes to
-[verifiedCards.json](../server/game/verifiedCards.json), and CI checks that the list is current.
+CI fails a pull request that adds or changes a card that is not verified
+(`npm run spec:coverage -- --check-verified`), so a card can only be implemented once it is.
 
 [ManualMode.js](../server/game/ManualMode.js) is a game flag. A game starts with manual mode off
-when every card in every deck is verified or has no text. With it off:
+when every card in every deck is implemented or has no text. With it off:
 
 - chat commands (except `/cancel-prompt`, `/manual`, the clock and rematch commands), drag and
   drop, click-to-kneel, stat changes, shuffling and looking at the deck are refused without a

@@ -55,15 +55,13 @@ Games run with manual mode off when every card is verified, so the engine has to
 
 ## Tests
 
-- Every card that is added or changed needs a spec. A card only counts as verified when that spec
-  uses `setupTest`, has no manual actions or harness shortcuts, and resolves every ability on the
-  card, and the implementation has no `handler` and no `card-rules` violations. Old specs are
-  rewritten, never carried over. See [docs/engine.md](docs/engine.md). CI fails a
-  pull request that changes a card file without a spec.
+- Every implemented card must be verified: its spec uses `setupTest`, has no manual actions or
+  harness shortcuts, and resolves every ability on the card, and the implementation has no
+  `handler` and no `card-rules` violations. See [docs/engine.md](docs/engine.md). CI fails a pull
+  request with a card that isn't (`npm run spec:coverage -- --check-verified`).
 - Run a single spec with `npx vitest run test/server/cards/<pack>/<Card>.spec.js`.
-- After adding a card spec, run `npm run spec:coverage -- --write-verified` and commit
-  `server/game/verifiedCards.json`. Games where every card is verified start with manual mode
-  off, and CI checks the list is current.
+- Games where every card is implemented start with manual mode off, so a card is only added once
+  its spec meets that bar.
 - Don't change existing tests unless asked. If a test looks wrong against the card text or the
   Rules Reference, explain why and ask first. The exception is an assertion that contradicts text
   you can quote from the card, the Rules Reference or a ThronesDB FAQ entry: correct only that assertion, quote the text

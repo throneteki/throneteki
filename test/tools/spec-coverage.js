@@ -8,12 +8,10 @@
 //   node test/tools/spec-coverage.js --changed <base>
 //       card files added or changed since <base> (e.g. origin/master) that have no spec;
 //       exits with 1 if there are any, for CI
-//   node test/tools/spec-coverage.js --write-verified
-//       writes verified card codes to server/game/verifiedCards.json, which decides whether a
-//       game starts with manual mode off. A card is verified when it has a spec and its
-//       implementation has no handler and no card-rules violations (docs/engine.md)
 //   node test/tools/spec-coverage.js --check-verified
-//       exits with 1 if server/game/verifiedCards.json is out of date, for CI
+//       exits with 1 if any implemented card is not verified, for CI. A card is verified when its
+//       spec follows the conventions and its implementation has no handler; card-rules and the
+//       ability coverage check in the test run cover the rest (docs/engine.md)
 
 import { execFileSync } from 'child_process';
 import fs from 'fs';
@@ -103,29 +101,25 @@ if (args[0] === '--changed') {
     process.exit(0);
 }
 
-if (args[0] === '--write-verified' || args[0] === '--check-verified') {
-    const verifiedPath = path.join(repoRoot, 'server/game/verifiedCards.json');
-    const codes = implementations
-        .filter((implementation) => isVerified(implementation))
-        .flatMap((implementation) => implementation.codes)
-        .sort();
-    const contents = JSON.stringify(codes, null, 4) + '\n';
+if (args[0] === '--check-verified') {
+    const unverified = implementations.filter((implementation) => !isVerified(implementation));
 
-    if (args[0] === '--write-verified') {
-        fs.writeFileSync(verifiedPath, contents);
-        console.log(`Wrote ${codes.length} verified card codes to server/game/verifiedCards.json.`);
-        process.exit(0);
-    }
-
-    const current = fs.existsSync(verifiedPath) ? fs.readFileSync(verifiedPath, 'utf8') : '';
-    if (current !== contents) {
+    if (unverified.length > 0) {
         console.error(
-            'server/game/verifiedCards.json is out of date. Run "npm run spec:coverage -- --write-verified".'
+            'Every implemented card must be verified. These are not (see docs/engine.md):'
         );
+        for (const implementation of unverified) {
+            const reason = !implementation.hasSpec
+                ? 'no spec'
+                : !isDeclarative(implementation)
+                  ? 'the implementation has a handler'
+                  : 'the spec uses a manual action, a harness shortcut or the old test style';
+            console.error(`  ${implementation.implementationPath}: ${reason}`);
+        }
         process.exit(1);
     }
 
-    console.log(`server/game/verifiedCards.json lists all ${codes.length} verified cards.`);
+    console.log(`All ${implementations.length} implemented card files are verified.`);
     process.exit(0);
 }
 
