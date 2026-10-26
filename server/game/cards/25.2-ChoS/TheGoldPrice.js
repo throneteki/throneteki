@@ -19,7 +19,8 @@ class TheGoldPrice extends AgendaCard {
                     event.card.getType() === 'character' &&
                     event.card.owner !== context.player &&
                     event.originalLocation === 'hand' &&
-                    event.isRandom
+                    event.isRandom &&
+                    event.card.location === 'discard pile'
             },
             message: {
                 format: '{player} uses {source} to put {card} into play under their control',

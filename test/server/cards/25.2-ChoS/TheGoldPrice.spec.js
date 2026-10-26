@@ -60,3 +60,33 @@ describe('The Gold Price', function () {
         });
     });
 });
+
+describe('The Gold Price after the discarded character has left the discard pile', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player2',
+            player1: {
+                agenda: 'The Gold Price',
+                plot: 'A Feast for Crows',
+                inPlay: ['Courtesan of the Rose'],
+                gold: 5
+            },
+            player2: {
+                inPlay: [{ card: 'Ser Addam Marbrand (FH)', tokens: { gold: 1 } }],
+                hand: ['Hedge Knight'],
+                gold: 0
+            }
+        });
+        this.player2.clickPrompt('Done');
+        this.unopposedChallenge(this.player1, 'Intrigue', this.courtesanOfTheRose);
+        this.player2.triggerAbility(this.serAddamMarbrand);
+    });
+
+    it('cannot put it into play from hand', function () {
+        expect(this.hedgeKnight.location).toBe('hand');
+        expect(this.player1).not.toAllowAbilityTrigger(this.theGoldPrice);
+        expect(this.hedgeKnight.location).toBe('hand');
+        expect(this.player1).isReadyToTakeAction();
+    });
+});
