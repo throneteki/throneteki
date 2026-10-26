@@ -21,6 +21,11 @@ class MaxStatCardSelector extends BaseCardSelector {
         return this.cardStat(card) + currentStatSum > this.maxStat(context);
     }
 
+    // A card with a stat of 0 can still be added once the total reaches the maximum.
+    canAddToSelection(selectedCards, card, numPlayers, context) {
+        return !this.wouldExceedLimit(selectedCards, card, context);
+    }
+
     hasReachedLimit(selectedCards, numPlayers, context) {
         let currentStatSum = selectedCards.reduce((sum, c) => sum + this.cardStat(c), 0);
         return currentStatSum >= this.maxStat(context);

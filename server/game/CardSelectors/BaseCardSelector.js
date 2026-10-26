@@ -159,6 +159,18 @@ class BaseCardSelector {
     }
 
     /**
+     * Returns whether another card can be added to the currently selected cards without going
+     * over the selector's limit.
+     * @param {BaseCard[]} selectedCards
+     * @param {BaseCard} card
+     * @param {integer} numPlayers
+     * @returns {boolean}
+     */
+    canAddToSelection(selectedCards, card, numPlayers, context) {
+        return !this.hasReachedLimit(selectedCards, numPlayers, context);
+    }
+
+    /**
      * Takes an array of cards and returns them in the proper format to send to
      * onSelect handlers for the prompt. By default, it just returns the array.
      * @param {BaseCard[]} cards

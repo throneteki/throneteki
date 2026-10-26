@@ -180,7 +180,12 @@ class SelectCardPrompt extends UiPrompt {
             this.selector.canTarget(card, this.context, this.selectedCards) &&
             this.selector.checkForSingleController(this.selectedCards, card) &&
             (this.selector.wouldExceedLimit(this.selectedCards, card, this.context) ||
-                this.selector.hasReachedLimit(this.selectedCards, this.numPlayers, this.context))
+                !this.selector.canAddToSelection(
+                    this.selectedCards,
+                    card,
+                    this.numPlayers,
+                    this.context
+                ))
         );
     }
 
@@ -202,7 +207,12 @@ class SelectCardPrompt extends UiPrompt {
 
     selectCard(card) {
         if (
-            this.selector.hasReachedLimit(this.selectedCards, this.numPlayers, this.context) &&
+            !this.selector.canAddToSelection(
+                this.selectedCards,
+                card,
+                this.numPlayers,
+                this.context
+            ) &&
             !this.selectedCards.includes(card)
         ) {
             return false;

@@ -29,3 +29,25 @@ describe('Shadow of the Throne', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('Shadow of the Throne with a 0 cost location', function () {
+    it('can still choose it once the total printed cost reaches 3', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { faction: 'baratheon', shadows: ['Shadow of the Throne'], gold: 1 },
+            player2: { inPlay: ["The God's Eye", 'The Roseroad', 'The Kingsroad'] }
+        });
+        this.player1.clickCard(this.shadowOfTheThrone);
+        this.player1.clickCard(this.theGodsEye);
+
+        expect(this.player1).toBeAbleToSelect(this.theRoseroad);
+        expect(this.player1).not.toBeAbleToSelect(this.theKingsroad);
+
+        this.player1.clickCard(this.theRoseroad);
+        this.player1.clickPrompt('Done');
+
+        expect(this.theGodsEye.kneeled).toBe(true);
+        expect(this.theRoseroad.kneeled).toBe(true);
+        expect(this.theKingsroad.kneeled).toBe(false);
+    });
+});
