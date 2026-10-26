@@ -16,12 +16,13 @@ class Kill extends GameAction {
         return card.location === 'play area' && card.getType() === 'character';
     }
 
-    createEvent({ card, player, allowSave = true, isBurn = false }) {
+    createEvent({ card, player, allowSave = true, isBurn = false, isClaim = false }) {
         const params = {
             card,
             player: player || card.controller,
             allowSave,
             isBurn,
+            isClaim,
             snapshotName: 'cardStateWhenKilled'
         };
         const event = this.event('onCharacterKilled', params, (event) => {

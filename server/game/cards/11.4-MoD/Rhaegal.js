@@ -9,7 +9,7 @@ class Rhaegal extends DrawCard {
         this.reaction({
             when: {
                 onCharacterKilled: (event, context) =>
-                    !context.game.claim.isApplying &&
+                    !event.isClaim &&
                     event.card.controller !== context.source.controller &&
                     context.source.kneeled
             },

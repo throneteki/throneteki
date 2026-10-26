@@ -1,14 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
-function isApplyingClaim(source, type) {
-    return (
-        source.game.currentChallenge &&
-        source.game.claim.isApplying &&
-        source.game.claim.type === type
-    );
-}
-
 function controlsFewerCharacters(source) {
     return (
         source.controller.getNumberOfCardsInPlay({ type: 'character' }) <
@@ -28,7 +20,8 @@ class Retribution extends DrawCard {
             when: {
                 onCharacterKilled: (event, context) =>
                     event.card.controller === context.source.controller &&
-                    isApplyingClaim(context.source, 'military') &&
+                    event.isClaim &&
+                    !!context.game.currentChallenge &&
                     controlsFewerCharacters(context.source)
             },
             target: {

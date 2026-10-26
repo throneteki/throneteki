@@ -25,7 +25,7 @@ class Rakharo extends DrawCard {
                     context.game.isDuringChallenge({
                         attackingPlayer: context.source.controller
                     }) &&
-                    context.game.claim.isApplying &&
+                    event.isClaim &&
                     context.source.allowGameAction('gainPower')
             },
             message: '{player} gains 1 power on {source}',

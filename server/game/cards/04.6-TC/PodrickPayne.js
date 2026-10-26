@@ -12,8 +12,7 @@ class PodrickPayne extends DrawCard {
             location: 'hand',
             when: {
                 onCharacterKilled: (event, context) =>
-                    context.game.claim.isApplying &&
-                    context.game.claim.type === 'military' &&
+                    event.isClaim &&
                     event.allowSave &&
                     event.card.canBeSaved() &&
                     event.card.controller === context.player

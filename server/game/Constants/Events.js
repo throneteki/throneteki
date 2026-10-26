@@ -192,6 +192,7 @@ export const Events = Object.freeze({
             allowSave: 'boolean',
             card: 'DrawCard',
             isBurn: 'boolean',
+            isClaim: 'boolean',
             player: 'Player',
             snapshotName: 'string'
         }

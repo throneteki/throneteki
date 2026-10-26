@@ -86,7 +86,7 @@ class FulfillMilitaryClaim extends BaseStep {
 
         this.game.resolveGameAction(
             GameActions.simultaneously(
-                cards.map((card) => GameActions.kill({ card, allowSave: true }))
+                cards.map((card) => GameActions.kill({ card, allowSave: true, isClaim: true }))
             )
         );
 

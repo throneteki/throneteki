@@ -10,7 +10,7 @@ class MothersMen extends DrawCard {
         this.reaction({
             when: {
                 onCharacterKilled: (event, context) =>
-                    !context.game.claim.isApplying &&
+                    !event.isClaim &&
                     event.card.controller !== context.player &&
                     context.player.canPutIntoPlay(context.source)
             },

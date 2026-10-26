@@ -13,7 +13,7 @@ class ObellaSand extends DrawCard {
         this.reaction({
             when: {
                 onCharacterKilled: (event, context) =>
-                    event.card === context.source && isApplyingClaim(context.game, 'military'),
+                    event.card === context.source && event.isClaim,
                 onCardDiscarded: (event, context) =>
                     event.card === context.source && isApplyingClaim(context.game, 'intrigue')
             },
