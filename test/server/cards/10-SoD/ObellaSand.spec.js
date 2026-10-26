@@ -31,3 +31,24 @@ describe('Obella Sand', function () {
         expect(this.player2Object.faction.power).toBe(1);
     });
 });
+
+describe('Obella Sand killed for claim satisfied after the challenges', function () {
+    it("moves power from the player whose claim it was (Maester Aemon's controller)", function () {
+        this.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player2',
+            player1: { power: 2, inPlay: ['Maester Aemon (WotW)'] },
+            player2: { faction: 'martell', inPlay: ['Obella Sand'] }
+        });
+        this.player2.clickPrompt('Done');
+        this.player1.clickPrompt('Done');
+        this.player1.triggerAbility('Maester Aemon');
+        this.player1.clickPrompt('Military');
+        this.player2.clickCard(this.obellaSand);
+        this.player2.triggerAbility(this.obellaSand);
+
+        expect(this.game.getPlainTextLog()).toContain('1 power from House Stark to House Martell');
+        expect(this.player2Object.faction.power).toBe(1);
+        expect(this.obellaSand.location).toBe('draw deck');
+    });
+});

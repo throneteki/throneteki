@@ -52,7 +52,7 @@ class MoveCardEventGenerator {
         allowSave = true,
         isPillage = false,
         isRandom = false,
-        isClaim = false,
+        claimWinner,
         source,
         orderable,
         destination = 'discard pile'
@@ -63,11 +63,14 @@ class MoveCardEventGenerator {
             originalLocation: card.location,
             isPillage: !!isPillage,
             isRandom: !!isRandom,
-            isClaim: !!isClaim,
+            isClaim: !!claimWinner,
             source: source,
             snapshotName: 'cardStateWhenDiscarded',
             destination
         };
+        if (claimWinner) {
+            params.claimWinner = claimWinner;
+        }
         const discardEvent = this.event('onCardDiscarded', params, (event) => {
             event.thenAttachEvent(
                 this.createPlaceCardEvent({

@@ -2,9 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import BaseStep from '../basestep.js';
 
 class FulfillMilitaryClaim extends BaseStep {
-    constructor(game, player, claim, event) {
+    constructor(game, player, claim, event, claimWinner) {
         super(game);
         this.event = event;
+        this.claimWinner = claimWinner;
         this.player = player;
         this.claim = claim;
         this.forcedClaim = [];
@@ -86,7 +87,9 @@ class FulfillMilitaryClaim extends BaseStep {
         this.game.addMessage('{0} chooses {1} for claim', this.player, cards);
 
         const kill = GameActions.simultaneously(
-            cards.map((card) => GameActions.kill({ card, allowSave: true, isClaim: true }))
+            cards.map((card) =>
+                GameActions.kill({ card, allowSave: true, claimWinner: this.claimWinner })
+            )
         );
         if (kill.allow()) {
             this.event.thenAttachEvent(kill.createEvent());

@@ -17,7 +17,7 @@ class ObellaSand extends DrawCard {
             message: '{player} uses {source} to {gameAction}',
             gameAction: GameActions.simultaneously([
                 GameActions.movePower((context) => ({
-                    from: context.game.currentChallenge.winner.faction,
+                    from: context.event.claimWinner.faction,
                     to: context.player.faction,
                     amount: 1
                 })),

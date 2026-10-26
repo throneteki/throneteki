@@ -22,17 +22,16 @@ class FalsePlans extends DrawCard {
                 onCardDiscarded: (event, context) =>
                     event.card === context.source &&
                     event.isClaim &&
-                    !!context.game.currentChallenge &&
-                    context.game.currentChallenge.winner !== context.player
+                    event.claimWinner !== context.player
             },
             ignoreEventCosts: true,
             location: 'discard pile',
             message: {
                 format: '{player} uses {source} to have {opponent} discard 2 cards at random',
-                args: { opponent: (context) => context.game.currentChallenge.winner }
+                args: { opponent: (context) => context.event.claimWinner }
             },
             gameAction: GameActions.discardAtRandom((context) => ({
-                player: context.game.currentChallenge.winner,
+                player: context.event.claimWinner,
                 amount: 2
             }))
         });

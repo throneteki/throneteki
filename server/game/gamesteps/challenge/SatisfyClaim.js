@@ -52,7 +52,8 @@ class SatisfyClaim extends BaseStep {
                         this.game,
                         claimRecipient,
                         this.claim.value,
-                        this.event
+                        this.event,
+                        this.claim.winner
                     )
                 );
                 break;
@@ -68,7 +69,11 @@ class SatisfyClaim extends BaseStep {
                         amount: this.claim.value,
                         player: claimRecipient,
                         discardEvent: (card) =>
-                            DiscardCard.createEvent({ card, allowSave: false, isClaim: true })
+                            DiscardCard.createEvent({
+                                card,
+                                allowSave: false,
+                                claimWinner: this.claim.winner
+                            })
                     })
                 );
                 break;

@@ -54,7 +54,8 @@ export const Events = Object.freeze({
             originalLocation: 'string',
             snapshotName: 'string',
             source: 'BaseCard'
-        }
+        },
+        optional: { claimWinner: 'Player' }
     },
     onCardDrawn: {
         params: { card: 'DrawCard', player: 'Player', reason: 'string', source: 'BaseCard' }
@@ -196,7 +197,8 @@ export const Events = Object.freeze({
             isClaim: 'boolean',
             player: 'Player',
             snapshotName: 'string'
-        }
+        },
+        optional: { claimWinner: 'Player' }
     },
     onChoosePlot: { params: { players: 'Player[]' } },
     onChoose: { params: {} },
