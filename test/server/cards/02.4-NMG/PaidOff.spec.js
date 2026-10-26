@@ -37,3 +37,22 @@ describe('Paid Off', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('Paid Off with no opponent character', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { hand: ['Paid Off'], inPlay: ['Courtesan of the Rose'] },
+            player2: {}
+        });
+        this.startingGold = this.player1Object.gold;
+    });
+
+    it('cannot be ambushed', function () {
+        this.player1.clickCard(this.paidOff);
+
+        expect(this.paidOff.location).toBe('hand');
+        expect(this.player1Object.gold).toBe(this.startingGold);
+        expect(this.player1).isReadyToTakeAction();
+    });
+});

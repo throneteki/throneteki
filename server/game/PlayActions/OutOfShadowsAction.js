@@ -2,6 +2,7 @@ import BaseAbility from '../baseability.js';
 import Costs from '../costs.js';
 import Message from '../Message.js';
 import { Requirements } from '../Constants/index.js';
+import PutIntoPlay from '../GameActions/PutIntoPlay.js';
 
 class OutOfShadowsAction extends BaseAbility {
     constructor() {
@@ -40,6 +41,17 @@ class OutOfShadowsAction extends BaseAbility {
 
         if (!context.player.canPutIntoPlay(context.source, 'outOfShadows')) {
             return Requirements.restriction;
+        }
+
+        if (
+            context.source.getType() === 'attachment' &&
+            !PutIntoPlay.canChangeGameState({
+                player: context.player,
+                card: context.source,
+                playingType: 'outOfShadows'
+            })
+        ) {
+            return Requirements.target;
         }
 
         return undefined;

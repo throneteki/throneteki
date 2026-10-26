@@ -1,6 +1,7 @@
 import BaseAbility from '../baseability.js';
 import Costs from '../costs.js';
 import { Requirements } from '../Constants/index.js';
+import PutIntoPlay from '../GameActions/PutIntoPlay.js';
 
 class MarshalCardAction extends BaseAbility {
     constructor() {
@@ -46,6 +47,17 @@ class MarshalCardAction extends BaseAbility {
 
         if (!player.allowMarshal || !player.canPutIntoPlay(source, 'marshal')) {
             return Requirements.restriction;
+        }
+
+        if (
+            source.getType() === 'attachment' &&
+            !PutIntoPlay.canChangeGameState({
+                player: player,
+                card: source,
+                playingType: 'marshal'
+            })
+        ) {
+            return Requirements.target;
         }
 
         return undefined;

@@ -24,3 +24,27 @@ describe('Attainted', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('Attainted with no opponent character', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                hand: ['Attainted'],
+                inPlay: ['Grand Maester Pycelle (Core)']
+            },
+            player2: {}
+        });
+        this.startingGold = this.player1Object.gold;
+    });
+
+    it('cannot be marshaled', function () {
+        expect(this.player1).not.toBeAbleToSelect(this.attainted);
+
+        this.player1.clickCard(this.attainted);
+
+        expect(this.attainted.location).toBe('hand');
+        expect(this.player1Object.gold).toBe(this.startingGold);
+        expect(this.player1).isReadyToTakeAction();
+    });
+});
