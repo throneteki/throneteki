@@ -60,6 +60,7 @@ class MarshalDuplicateAction extends BaseAbility {
             player: context.player,
             type: 'dupe'
         };
+        context.player.markUsedReducers('marshalDuplicate', context.source);
         context.game.raiseEvent('onCardMarshalled', params, () => {
             context.game.addMessage(
                 this.getMessageFormat(params),

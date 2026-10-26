@@ -124,3 +124,34 @@ describe('Queen of Meereen', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('Queen of Meereen when a duplicate is marshaled', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                inPlay: [
+                    { card: 'Sansa Stark (WotN)', attachments: ['Queen of Meereen'] },
+                    'Khal Drogo (Core)'
+                ],
+                hand: ['Khal Drogo (Core)', 'The Roseroad', 'Hedge Knight'],
+                gold: 2
+            }
+        });
+        this.dupe = this.player1.findCardByName('Khal Drogo (Core)', 'hand');
+        this.player1.clickCard(this.queenOfMeereen);
+        this.player1.clickCard(this.theRoseroad);
+        this.player1.clickPrompt('Done');
+        this.player1.clickCard(this.dupe);
+    });
+
+    it('uses up the reduction, as a duplicate is the next card you marshal', function () {
+        expect(this.khalDrogo.dupes).toContain(this.dupe);
+
+        this.player1.clickCard(this.hedgeKnight);
+
+        expect(this.hedgeKnight.location).toBe('play area');
+        expect(this.player1Object.gold).toBe(0);
+        expect(this.player1).isReadyToTakeAction();
+    });
+});
