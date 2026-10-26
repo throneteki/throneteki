@@ -19,17 +19,21 @@ class RubyOfRhllor extends DrawCard {
             },
             gameAction: GameActions.nameCard({
                 message: {
-                    format: "{player} uses {source} to name {cardName}, reveal {loser}'s hand as {hand} and discard each card with that name",
-                    args: {
-                        loser: (context) => context.event.challenge.loser,
-                        hand: (context) => context.event.challenge.loser.hand
-                    }
+                    format: '{player} uses {source} to name {cardName} and have {loser} reveal their hand and discard each card with that name',
+                    args: { loser: (context) => context.event.challenge.loser }
                 },
-                gameAction: GameActions.simultaneously((context) =>
-                    context.event.challenge.loser.hand
-                        .filter((card) => card.name === context.namedCard)
-                        .map((card) => GameActions.discardCard({ card }))
-                )
+                gameAction: GameActions.revealCards((context) => ({
+                    cards: [...context.event.challenge.loser.hand],
+                    player: context.event.challenge.loser,
+                    whileRevealed: GameActions.simultaneously((context) =>
+                        context.revealed
+                            .filter(
+                                (card) =>
+                                    card.location === 'hand' && card.name === context.namedCard
+                            )
+                            .map((card) => GameActions.discardCard({ card }))
+                    )
+                }))
             })
         });
     }
