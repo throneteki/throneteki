@@ -251,6 +251,12 @@ These decisions remain in force:
   Highgarden Courtier can choose between them (#1570). A single change still uses `raiseEvent`.
 - A facedown card ignores its printed attachment restrictions only while facedown in play, so a
   card marshaled from underneath a location keeps them (#3270).
+- Initiating a challenge is atomic: STR changes from the challenge's first effect recalculation
+  until attackers are declared and knelt are raised as one batch afterwards (`beginInitiation` /
+  `endInitiation` in `challengeflow.js`, #1570). Declaration restrictions still apply while
+  attackers are chosen, because the effects themselves are applied as before.
+- Hand of the King counts the opponent a power challenge was initiated against, not the one a
+  redirect moved it to (#3785).
 - A forced plot (The Crow is a Tricksy Bird) is forced only while it is still in the plot deck
   (`player.getForcedPlot()`, #2461).
 - A challenge abandoned before it is initiated returns to choosing a challenge without another

@@ -24,6 +24,7 @@ class ChallengeFlow extends BaseStep {
         this.pipeline.initialise(
             this.trackFlowSteps([
                 new SimpleStep(this.game, () => this.resetCards()),
+                new SimpleStep(this.game, () => this.beginInitiation()),
                 new SimpleStep(this.game, () => this.recalculateEffects()),
                 new SimpleStep(this.game, () => this.announceChallenge()),
                 new SimpleStep(this.game, () => this.preAttackersPromptForDefenders()),
@@ -31,6 +32,7 @@ class ChallengeFlow extends BaseStep {
                 new SimpleStep(this.game, () => this.recalculateEffects()),
                 () => this.trackFlowStep(new InitiatingKeywordsWindow(this.game, this.challenge)),
                 new SimpleStep(this.game, () => this.initiateChallenge()),
+                new SimpleStep(this.game, () => this.endInitiation()),
                 new ActionWindow(this.game, 'After attackers declared', 'attackersDeclared'),
                 new SimpleStep(this.game, () => this.promptForDefenders()),
                 new SimpleStep(this.game, () => this.declareDefenders()),
@@ -70,6 +72,22 @@ class ChallengeFlow extends BaseStep {
 
     resetCards() {
         this.challenge.resetCards();
+    }
+
+    // Initiating a challenge is atomic (Rules Reference), so STR changes from effects that start
+    // with the challenge are raised once attackers are declared and knelt, not while they are chosen.
+    beginInitiation() {
+        if (!this.game.effectEngine.strengthChanges) {
+            this.game.effectEngine.beginEffectChanges();
+            this.batchingInitiation = true;
+        }
+    }
+
+    endInitiation() {
+        if (this.batchingInitiation) {
+            this.batchingInitiation = false;
+            this.game.effectEngine.endEffectChanges();
+        }
     }
 
     recalculateEffects() {
@@ -326,6 +344,7 @@ class ChallengeFlow extends BaseStep {
 
     continue() {
         if (this.challenge.cancelled) {
+            this.endInitiation();
             // The rest of the challenge is skipped, but whatever ended it (an event and the reactions
             // to it) still finishes resolving.
             this.pipeline.pipeline = this.pipeline.pipeline.filter(
@@ -341,6 +360,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     cancelChallengeResolution() {
+        this.endInitiation();
         this.challenge.cancelChallenge();
         this.pipeline.clear();
     }

@@ -175,3 +175,23 @@ describe('Highgarden Courtier when several characters gain STR at once', functio
         expect(this.highgardenCourtier.kneeled).toBe(true);
     });
 });
+
+describe('Highgarden Courtier with a character that gains STR during the challenge', function () {
+    it('can stand it after it kneels as an attacker, since initiating the challenge is atomic', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                faction: 'tyrell',
+                inPlay: ['Ser Colen of Greenpools', 'Highgarden Courtier']
+            }
+        });
+        this.player1.clickPrompt('Power');
+        this.player1.clickCard(this.serColenOfGreenpools);
+        this.player1.clickPrompt('Done');
+        this.player1.triggerAbility(this.highgardenCourtier);
+
+        expect(this.serColenOfGreenpools.kneeled).toBe(false);
+        expect(this.serColenOfGreenpools.isAttacking()).toBe(true);
+        expect(this.highgardenCourtier.kneeled).toBe(true);
+    });
+});
