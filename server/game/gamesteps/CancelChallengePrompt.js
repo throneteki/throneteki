@@ -52,6 +52,7 @@ class CancelChallengePrompt extends AllPlayerPrompt {
             '{0} cancels the current challenge. Manually stand any knelt characters and work around any abilities already used',
             this.requestingPlayer
         );
+        this.challenge.removedByCommand = true;
         for (let player of this.game.getPlayers()) {
             player.untrackChallenge(this.challenge);
         }

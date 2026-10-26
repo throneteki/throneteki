@@ -22,20 +22,25 @@ export class ChallengeTracker {
         this.challenges = [];
     }
 
+    // A challenge cancelled with /cancel-challenge no longer counts as initiated.
+    get trackedChallenges() {
+        return this.challenges.filter((challenge) => !challenge.removedByCommand);
+    }
+
     filter(...matchers) {
-        return this.challenges.filter((challenge) => {
+        return this.trackedChallenges.filter((challenge) => {
             return matchers.some((matcher) => challenge.isMatch(matcher));
         });
     }
 
     some(...matchers) {
-        return this.challenges.some((challenge) => {
+        return this.trackedChallenges.some((challenge) => {
             return matchers.some((matcher) => challenge.isMatch(matcher));
         });
     }
 
     count(...matchers) {
-        return this.challenges.reduce((count, challenge) => {
+        return this.trackedChallenges.reduce((count, challenge) => {
             if (matchers.some((matcher) => challenge.isMatch(matcher))) {
                 return count + 1;
             }

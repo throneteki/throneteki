@@ -118,3 +118,27 @@ describe('ManualActions', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('/cancel-challenge', function () {
+    it('does not count the cancelled challenge towards later challenge numbers', function () {
+        this.setupTest({
+            phase: 'challenge',
+            gameOptions: { manualMode: true },
+            player1: {
+                agenda: 'The Lord of the Crossing',
+                inPlay: ['Tumblestone Knight', 'Bastard in Hiding']
+            },
+            player2: { inPlay: ['Winterfell Steward'] }
+        });
+        this.player1.clickPrompt('Military');
+        this.player1.clickCard(this.tumblestoneKnight);
+        this.player1.clickPrompt('Done');
+        this.player1.sendChat('/cancel-challenge');
+        this.player2.clickPrompt('Yes');
+        this.player1.clickPrompt('Military');
+        this.player1.clickCard(this.bastardInHiding);
+        this.player1.clickPrompt('Done');
+
+        expect(this.game.currentChallenge.number).toBe(1);
+    });
+});
