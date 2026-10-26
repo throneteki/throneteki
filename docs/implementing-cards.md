@@ -1126,16 +1126,16 @@ Neutral is not a faction choice. The choices do not reveal the contents of eithe
 Cost reducer match predicates receive `(card, context)`, where `context.source` is the card
 providing the reducer. Use that context when matching the current controller's faction.
 
-### Engine modernization (24 October 2026)
+### Handlers and engine-only actions
 
-Abilities and choices accept declarative game actions. An ability's `handler` property and
+Abilities and choices take declarative game actions. An ability's `handler` property and
 function-valued choice actions are rejected. `GameActions.genericHandler` is reserved for
 engine test fixtures and requires an explicit game-state predicate; card rules prohibit it in
 card implementations. Use `GameActions.decline()` for a choice that explicitly declines an
 optional effect. It is only available within a choice or an ability continuation.
 
-Removal costs, placement in the dead pile from hand, and variable gold-token payments now raise
-their game-action events and participate in cost-prevention tracking. Removal costs cannot be saved. `GameActions.placeInDeadPile({ card })` handles instructions to
+Removal costs, placement in the dead pile from hand, and variable gold-token payments raise their
+game-action events and take part in cost-prevention tracking. Removal costs cannot be saved. `GameActions.placeInDeadPile({ card })` handles instructions to
 place a character there without killing or discarding it, including leave-play consequences
 for its attachments and duplicates.
 

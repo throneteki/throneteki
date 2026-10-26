@@ -1,18 +1,13 @@
 /* eslint no-console: 0 */
 
-// Counts uses of patterns that card code should no longer use (see server/game/cards/CLAUDE.md)
-// and compares them with a checked-in baseline, so the counts can only go down.
+// Fails if a card file uses a pattern that card code must not use (see server/game/cards/CLAUDE.md).
 //
-//   node test/tools/card-rules.js            fails if any file has more uses than its baseline
-//   node test/tools/card-rules.js --update   rewrites the baseline after counts have gone down
+//   node test/tools/card-rules.js            fails if any card file uses one
 //   node test/tools/card-rules.js --report   totals per rule
 
-import fs from 'fs';
 import path from 'path';
 import { loadESLint } from 'eslint';
 import { repoRoot } from './cardIndex.js';
-
-const baselineFile = path.join(repoRoot, 'test/tools/card-rules-baseline.json');
 
 import { Rules } from './cardRuleDefinitions.js';
 
@@ -53,18 +48,9 @@ async function countUses() {
     return counts;
 }
 
-function sorted(counts) {
-    return Object.fromEntries(
-        Object.keys(counts)
-            .sort()
-            .map((file) => [file, counts[file]])
-    );
-}
-
 const counts = await countUses();
-const mode = process.argv[2];
 
-if (mode === '--report') {
+if (process.argv[2] === '--report') {
     const totals = {};
     for (const fileCounts of Object.values(counts)) {
         for (const [rule, count] of Object.entries(fileCounts)) {
@@ -78,55 +64,16 @@ if (mode === '--report') {
     process.exit(0);
 }
 
-const baseline = fs.existsSync(baselineFile)
-    ? JSON.parse(fs.readFileSync(baselineFile, 'utf8'))
-    : {};
-
-if (mode === '--update') {
-    const increased = Object.entries(counts).filter(([file, fileCounts]) =>
-        Object.entries(fileCounts).some(([rule, count]) => count > (baseline[file]?.[rule] || 0))
-    );
-    if (increased.length > 0 && !process.argv.includes('--allow-increase')) {
-        console.error('Not updating: these files have more uses than their baseline:');
-        for (const [file] of increased) {
-            console.error(`  ${file}`);
-        }
-        process.exit(1);
-    }
-    fs.writeFileSync(baselineFile, JSON.stringify(sorted(counts), null, 4) + '\n');
-    console.log(`Baseline updated: ${Object.keys(counts).length} files`);
-    process.exit(0);
-}
-
-const problems = [];
-let improved = 0;
-for (const [file, fileCounts] of Object.entries(counts)) {
-    for (const [rule, count] of Object.entries(fileCounts)) {
-        const allowed = baseline[file]?.[rule] || 0;
-        if (count > allowed) {
-            problems.push(`  ${file}: ${rule} ${allowed} -> ${count} (${Rules[rule].message})`);
-        }
-    }
-}
-for (const [file, fileCounts] of Object.entries(baseline)) {
-    for (const [rule, allowed] of Object.entries(fileCounts)) {
-        if ((counts[file]?.[rule] || 0) < allowed) {
-            improved++;
-        }
-    }
-}
+const problems = Object.entries(counts).flatMap(([file, fileCounts]) =>
+    Object.entries(fileCounts).map(
+        ([rule, count]) => `  ${file}: ${rule} x${count} (${Rules[rule].message})`
+    )
+);
 
 if (problems.length > 0) {
-    console.error(
-        'Card code uses patterns that are being phased out (server/game/cards/CLAUDE.md):'
-    );
+    console.error('Card code uses patterns that cards must not use (server/game/cards/CLAUDE.md):');
     console.error(problems.join('\n'));
     process.exit(1);
 }
 
-if (improved > 0) {
-    console.log(
-        `${improved} counts are below the baseline; run "node test/tools/card-rules.js --update" to lock them in.`
-    );
-}
-console.log('No card file uses more phased-out patterns than its baseline.');
+console.log('No card file uses a pattern that cards must not use.');

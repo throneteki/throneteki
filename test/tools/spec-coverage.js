@@ -11,7 +11,7 @@
 //   node test/tools/spec-coverage.js --write-verified
 //       writes verified card codes to server/game/verifiedCards.json, which decides whether a
 //       game starts with manual mode off. A card is verified when it has a spec and its
-//       implementation has no handler and no card-rules violations (docs/engine-roadmap.md)
+//       implementation has no handler and no card-rules violations (docs/engine.md)
 //   node test/tools/spec-coverage.js --check-verified
 //       exits with 1 if server/game/verifiedCards.json is out of date, for CI
 
@@ -23,19 +23,11 @@ import { formatCoverage } from './formatCoverage.js';
 
 const args = process.argv.slice(2);
 const implementations = loadImplementations();
-const rulesBaseline = JSON.parse(
-    fs.readFileSync(path.join(repoRoot, 'test/tools/card-rules-baseline.json'), 'utf8')
-);
 
+// card-rules (run in CI) refuses any phased-out pattern in a card file, so only handlers are left
+// to check here.
 function isDeclarative(implementation) {
-    if (implementation.hasHandler) {
-        return false;
-    }
-
-    return [implementation.implementationPath, ...implementation.baseFiles].every((file) => {
-        const counts = rulesBaseline[file];
-        return !counts || Object.values(counts).every((count) => count === 0);
-    });
+    return !implementation.hasHandler;
 }
 
 function specFollowsConventions(implementation) {

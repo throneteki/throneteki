@@ -1,7 +1,7 @@
 # Testing guide
 
 Every implemented card needs a spec. A card only counts as verified (see
-[docs/engine-roadmap.md](../docs/engine-roadmap.md)) when all of these hold:
+[docs/engine.md](../docs/engine.md)) when all of these hold:
 
 - The spec uses `setupTest`, passes, and follows this guide. `setupTest` games run with manual mode
   off and throw if the test uses a manual action (a chat command, dragging a card, clicking a card

@@ -23,9 +23,9 @@ Online implementation of A Game of Thrones: The Card Game (Second Edition).
 
 ## Guides
 
-- [Engine roadmap](docs/engine-roadmap.md): the plan for running games with manual mode off. Read
-  it before changing anything under `server/game` other than a single card.
-- [Engine status](docs/engine-status.md): where that work is, what is left, and what not to reapply.
+- [Engine reference](docs/engine.md): how the engine applies the rules, verified cards and manual
+  mode, and the decisions and open work. Read it before changing anything under `server/game`
+  other than a single card.
 - [Engine guide](server/game/CLAUDE.md): architecture and rules for engine changes.
 - [Card guide](server/game/cards/CLAUDE.md): rules for implementing cards.
 - [Testing guide](test/CLAUDE.md): rules for specs. Reference: [docs/testing-cards.md](docs/testing-cards.md).
@@ -41,9 +41,9 @@ Online implementation of A Game of Thrones: The Card Game (Second Edition).
 - Look up a card with `npm run card -- <code or name>` rather than relying on its name or memory.
   ThronesDB card pages (`https://thronesdb.com/card/<code>`) have rulings and FAQ entries.
 
-## Engine direction
+## Engine principles
 
-We are working towards games that can run with manual mode off. In short:
+Games run with manual mode off when every card is verified, so the engine has to enforce the rules:
 
 - Every state change goes through a `GameAction` (`server/game/GameActions`) so it raises events
   that interrupts and reactions can see. Don't change card or player state directly, and don't add
@@ -58,7 +58,7 @@ We are working towards games that can run with manual mode off. In short:
 - Every card that is added or changed needs a spec. A card only counts as verified when that spec
   uses `setupTest`, has no manual actions or harness shortcuts, and resolves every ability on the
   card, and the implementation has no `handler` and no `card-rules` violations. Old specs are
-  rewritten, never carried over. See [docs/engine-roadmap.md](docs/engine-roadmap.md). CI fails a
+  rewritten, never carried over. See [docs/engine.md](docs/engine.md). CI fails a
   pull request that changes a card file without a spec.
 - Run a single spec with `npx vitest run test/server/cards/<pack>/<Card>.spec.js`.
 - After adding a card spec, run `npm run spec:coverage -- --write-verified` and commit
@@ -71,9 +71,9 @@ We are working towards games that can run with manual mode off. In short:
 
 ## Existing code
 
-When copying patterns from existing cards or specs, prefer the most recently written ones. Older
-cards often predate `GameActions` and use patterns the guides now rule out, such as handlers that
-change state directly and `addMessage` calls.
+When copying patterns from existing specs, prefer `setupTest` specs. Some engine specs still use
+the older `integration(...)` style, which runs with manual mode on and is not a pattern for new
+specs.
 
 ## Version control
 

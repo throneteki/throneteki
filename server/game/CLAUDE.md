@@ -1,6 +1,6 @@
 # Game engine
 
-Read [docs/engine-roadmap.md](../../docs/engine-roadmap.md) before changing anything here. Card
+Read [docs/engine.md](../../docs/engine.md) before changing anything here. Card
 rules are in [cards/CLAUDE.md](cards/CLAUDE.md).
 
 ## Architecture
@@ -39,8 +39,8 @@ rules are in [cards/CLAUDE.md](cards/CLAUDE.md).
   can see them. Don't add new legacy helpers on `Player` or `Game`.
 - Don't add manual-mode style escape hatches (`force: true`, chat commands, direct state writes)
   to make something work.
-- Decisions about prompting players must only use information visible to their opponents (phase 2
-  of the roadmap).
+- Decisions about prompting players must only use information visible to their opponents (see
+  "Windows and hidden information" in the engine reference).
 - Prefer putting a guard or rule in the engine once over repeating it in every card.
 - Add or update specs in `test/server` (outside `test/server/cards`) for every engine change, and
   run the whole suite afterwards, not just the affected specs.

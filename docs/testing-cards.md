@@ -130,8 +130,15 @@ Things to know:
   before the mulligan. Answer it in `beforeMulligan`, where the agendas and each player's `deck`
   cards are already named; `setupTest` throws if that prompt is left open or there is no
   `beforeMulligan`. The setup then continues as normal, to any phase.
-- Only joust is supported. For melee, use the older `integration({ gameFormat: 'melee' }, ...)`
-  style for now.
+- `gameFormat: 'melee'` plays with three players (`player1` to `player3`). Each player selects a
+  title in the plot phase, as in a real game.
+- `usedPlots` puts plots in a player's used pile, for abilities that need a previous plot.
+- `setupTest` refreshes the game state after placing cards, so state checks resolve before the
+  test starts: Esgred and Asha Greyjoy both `inPlay` leaves Esgred in the discard pile.
+- Game options such as `strictActionWindows` go in `gameOptions`. Setting them after a window has
+  opened does not put skipped players back.
+- `gameOptions: { manualMode: true }` allows chat commands, for specs of manual controls only. A
+  spec that uses it cannot verify a card.
 
 ### Recommended filler cards
 
@@ -331,7 +338,10 @@ expect(this.player1).not.toAllowAbilityTrigger(this.card);
 ### Different board states
 
 Use separate `describe` blocks with their own `setupTest` rather than changing state mid-test, and
-don't call `setupTest` again in a nested `describe`.
+don't call `setupTest` again in a nested `describe`. Calling `setupTest` twice in one test leaves
+the card references pointing at the first game's cards.
+
+For burn, use a real burn (Dracarys! on a defender), not a hand-set STR modifier.
 
 ## Running and debugging
 
