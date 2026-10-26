@@ -12,7 +12,7 @@ class SerTalbertSerry extends DrawCard {
                 onCardAbilityInitiated: (event, context) =>
                     event.ability.isTriggeredAbility() &&
                     event.source.getType() === 'location' &&
-                    event.source.controller !== context.source.controller &&
+                    event.player !== context.source.controller &&
                     !event.ability.isForcedAbility()
             },
             limit: ability.limit.perPhase(3),

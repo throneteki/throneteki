@@ -65,3 +65,26 @@ describe('Harrenhal (TTWDFL)', function () {
         });
     });
 });
+
+describe("Harrenhal (TTWDFL) when an opponent uses your character's ability", function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: { inPlay: ['Harrenhal (TTWDFL)', 'House Maester', 'Bronn (CoW)'] },
+            player2: { gold: 1 }
+        });
+        this.player1.clickPrompt('Done');
+        this.player2.clickCard(this.bronn);
+    });
+
+    it('kills a character you own and control to cancel the ability', function () {
+        expect(this.player1).toAllowAbilityTrigger(this.harrenhal);
+
+        this.player1.triggerAbility(this.harrenhal);
+        this.player1.clickCard(this.houseMaester);
+
+        expect(this.houseMaester.location).toBe('dead pile');
+        expect(this.bronn.controller).toBe(this.player1Object);
+        expect(this.player2).isReadyToTakeAction();
+    });
+});

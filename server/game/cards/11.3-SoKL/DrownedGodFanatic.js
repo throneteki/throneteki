@@ -25,7 +25,7 @@ class DrownedGodFanatic extends DrawCard {
                 onCardAbilityInitiated: (event, context) =>
                     event.source.getType() === 'character' &&
                     event.ability.isTriggeredAbility() &&
-                    event.source.controller !== context.player
+                    event.player !== context.player
             },
             location: 'hand',
             cost: ability.costs.placeSelfInDeadPileFromHand(),

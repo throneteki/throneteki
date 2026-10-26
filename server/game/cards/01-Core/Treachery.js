@@ -20,8 +20,7 @@ class Treachery extends DrawCard {
                     ) &&
                     event.ability.isTriggeredAbility() &&
                     ['character', 'location', 'attachment'].includes(event.source.getType()) &&
-                    (event.ability.isForcedAbility() ||
-                        event.source.controller !== context.source.controller)
+                    (event.ability.isForcedAbility() || event.player !== context.source.controller)
             },
             message: {
                 format: '{player} plays {source} to cancel {eventSource}',

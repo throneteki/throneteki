@@ -12,7 +12,7 @@ class NoCrownButTruth extends DrawCard {
                 onCardAbilityInitiated: (event, context) =>
                     event.source.getType() === 'character' &&
                     event.ability.isTriggeredAbility() &&
-                    (event.ability.isForcedAbility() || event.source.controller !== context.player)
+                    (event.ability.isForcedAbility() || event.player !== context.player)
             },
             cost: ability.costs.kill((card) => card.hasTrait('maester')),
             message: {

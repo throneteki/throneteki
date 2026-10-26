@@ -17,7 +17,7 @@ class PrivilegedPosition extends DrawCard {
                     !context.source.hasLostPowerChallenge() &&
                     event.ability.isTriggeredAbility() &&
                     ['event', 'location'].includes(event.source.getType()) &&
-                    event.source.controller !== context.source.controller
+                    event.player !== context.source.controller
             },
             message: {
                 format: '{player} plays {source} to cancel {eventSource}',

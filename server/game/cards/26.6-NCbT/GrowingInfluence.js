@@ -10,15 +10,15 @@ class GrowingInfluence extends DrawCard {
             canCancel: true,
             when: {
                 onCardAbilityInitiated: (event, context) =>
-                    event.source.controller !== context.source.controller &&
+                    event.player !== context.source.controller &&
                     ['character', 'location'].includes(event.source.getType()) &&
                     event.ability.isTriggeredAbility()
             },
-            cost: ability.costs.giveGold(1, (context) => context.event.source.controller),
+            cost: ability.costs.giveGold(1, (context) => context.event.player),
             message: {
                 format: '{player} plays {source} and gives {opponent} 1 gold to cancel {card}',
                 args: {
-                    opponent: (context) => context.event.source.controller,
+                    opponent: (context) => context.event.player,
                     card: (context) => context.event.source
                 }
             },

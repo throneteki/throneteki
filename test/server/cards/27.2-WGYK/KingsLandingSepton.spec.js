@@ -90,3 +90,25 @@ describe("King's Landing Septon", function () {
         });
     });
 });
+
+describe("King's Landing Septon when an opponent uses your character's ability", function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: { faction: 'lannister', inPlay: ["King's Landing Septon", 'Bronn (CoW)'] },
+            player2: { gold: 1 }
+        });
+        this.player1.clickPrompt('Done');
+        this.player2.clickCard(this.bronn);
+    });
+
+    it('returns to your hand to cancel it', function () {
+        expect(this.player1).toAllowAbilityTrigger(this.kingsLandingSepton);
+
+        this.player1.triggerAbility(this.kingsLandingSepton);
+
+        expect(this.kingsLandingSepton.location).toBe('hand');
+        expect(this.bronn.controller).toBe(this.player1Object);
+        expect(this.player2).isReadyToTakeAction();
+    });
+});

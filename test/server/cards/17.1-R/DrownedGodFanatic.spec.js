@@ -27,3 +27,25 @@ describe('Drowned God Fanatic (R)', function () {
         expect(this.player2Object.hand.length).toBe(0);
     });
 });
+
+describe("Drowned God Fanatic (R) when an opponent uses your character's ability", function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: { hand: ['Drowned God Fanatic (R)'], inPlay: ['Bronn (CoW)'] },
+            player2: { gold: 1 }
+        });
+        this.player1.clickPrompt('Done');
+        this.player2.clickCard(this.bronn);
+    });
+
+    it('is discarded from your hand to cancel it', function () {
+        expect(this.player1).toAllowAbilityTrigger(this.drownedGodFanatic);
+
+        this.player1.triggerAbility(this.drownedGodFanatic);
+
+        expect(this.drownedGodFanatic.location).toBe('discard pile');
+        expect(this.bronn.controller).toBe(this.player1Object);
+        expect(this.player2).isReadyToTakeAction();
+    });
+});

@@ -32,7 +32,7 @@ class CastleBlack extends DrawCard {
                 onCardAbilityInitiated: (event, context) =>
                     event.ability.isTriggeredAbility() &&
                     event.source.getType() === 'location' &&
-                    event.source.controller !== context.source.controller
+                    event.player !== context.source.controller
             },
             cost: ability.costs.kneelSelf(),
             message: {

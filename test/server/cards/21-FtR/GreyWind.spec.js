@@ -34,3 +34,31 @@ describe('Grey Wind (FtR)', function () {
         expect(this.player1Object.gold).toBe(5);
     });
 });
+
+describe("Grey Wind (FtR) when an opponent uses your character's ability", function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                inPlay: [
+                    { card: 'Robb Stark (Core)', attachments: ['Grey Wind (FtR)'] },
+                    'Bronn (CoW)'
+                ]
+            },
+            player2: { gold: 1 }
+        });
+        this.player1.clickPrompt('Done');
+        this.player2.clickCard(this.bronn);
+    });
+
+    it('returns a Direwolf card to your hand to cancel the ability', function () {
+        expect(this.player1).toAllowAbilityTrigger(this.greyWind);
+
+        this.player1.triggerAbility(this.greyWind);
+        this.player1.clickCard(this.greyWind);
+
+        expect(this.greyWind.location).toBe('hand');
+        expect(this.bronn.controller).toBe(this.player1Object);
+        expect(this.player2).isReadyToTakeAction();
+    });
+});

@@ -14,8 +14,7 @@ class PrincesLoyalist extends DrawCard {
                 onCardAbilityInitiated: (event, context) =>
                     event.ability.isTriggeredAbility() &&
                     event.source.getType() === 'character' &&
-                    (event.ability.isForcedAbility() ||
-                        event.source.controller !== context.source.controller)
+                    (event.ability.isForcedAbility() || event.player !== context.source.controller)
             },
             cost: ability.costs.payGold(2),
             message: {

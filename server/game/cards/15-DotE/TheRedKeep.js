@@ -14,7 +14,7 @@ class TheRedKeep extends DrawCard {
                 onCardAbilityInitiated: (event, context) =>
                     event.ability.isTriggeredAbility() &&
                     ['character', 'location', 'attachment'].includes(event.source.getType()) &&
-                    event.source.controller !== context.source.controller
+                    event.player !== context.source.controller
             },
             message: {
                 format: '{player} kneels {source} to cancel {eventSource}',

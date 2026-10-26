@@ -17,7 +17,7 @@ class AlchemistsGuildhall extends DrawCard {
                     event.source.getType() === 'character' &&
                     event.ability.isTriggeredAbility() &&
                     (event.ability.isForcedAbility() ||
-                        event.source.controller !== context.source.controller) &&
+                        event.player !== context.source.controller) &&
                     !event.source.isShadow()
             },
             cost: [ability.costs.kneelSelf(), ability.costs.putSelfIntoShadows()],

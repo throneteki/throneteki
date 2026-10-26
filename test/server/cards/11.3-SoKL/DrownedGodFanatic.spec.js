@@ -26,3 +26,25 @@ describe('Drowned God Fanatic (SoKL)', function () {
         expect(this.player2Object.hand.length).toBe(0);
     });
 });
+
+describe("Drowned God Fanatic (SoKL) when an opponent uses your character's ability", function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: { hand: ['Drowned God Fanatic (SoKL)'], inPlay: ['Bronn (CoW)'] },
+            player2: { gold: 1 }
+        });
+        this.player1.clickPrompt('Done');
+        this.player2.clickCard(this.bronn);
+    });
+
+    it('is placed in your dead pile to cancel it', function () {
+        expect(this.player1).toAllowAbilityTrigger(this.drownedGodFanatic);
+
+        this.player1.triggerAbility(this.drownedGodFanatic);
+
+        expect(this.drownedGodFanatic.location).toBe('dead pile');
+        expect(this.bronn.controller).toBe(this.player1Object);
+        expect(this.player2).isReadyToTakeAction();
+    });
+});

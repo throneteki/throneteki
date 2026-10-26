@@ -10,14 +10,14 @@ class HeCallsItThinking extends DrawCard {
             canCancel: true,
             when: {
                 onCardAbilityInitiated: (event, context) =>
-                    event.source.controller !== context.player &&
+                    event.player !== context.player &&
                     !['agenda', 'plot'].includes(event.source.getType()) &&
                     event.ability.isTriggeredAbility()
             },
             gameAction: GameActions.ifCondition({
-                condition: (context) => context.event.source.controller.gold >= 1,
+                condition: (context) => context.event.player.gold >= 1,
                 thenAction: GameActions.choose({
-                    player: (context) => context.event.source.controller,
+                    player: (context) => context.event.player,
                     title: 'Pay 1 gold to prevent "He Calls It Thinking"',
                     choices: {
                         Yes: {
@@ -26,7 +26,7 @@ class HeCallsItThinking extends DrawCard {
                                 args: { eventSource: (context) => context.event.source }
                             },
                             gameAction: GameActions.returnGoldToTreasury((context) => ({
-                                player: context.event.source.controller,
+                                player: context.event.player,
                                 amount: 1
                             }))
                         },

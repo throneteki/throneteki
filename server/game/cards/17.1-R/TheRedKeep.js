@@ -13,7 +13,7 @@ class TheRedKeep extends DrawCard {
                 onCardAbilityInitiated: (event, context) =>
                     event.ability.isTriggeredAbility() &&
                     ['character', 'location', 'attachment'].includes(event.source.getType()) &&
-                    event.source.controller !== context.source.controller
+                    event.player !== context.source.controller
             },
             cost: [ability.costs.kneelSelf(), ability.costs.payGold(1)],
             message: {

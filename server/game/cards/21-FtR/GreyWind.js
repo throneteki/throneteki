@@ -20,7 +20,7 @@ class GreyWind extends DrawCard {
                 onCardAbilityInitiated: (event, context) =>
                     event.source.getType() === 'character' &&
                     event.ability.isTriggeredAbility() &&
-                    (event.ability.isForcedAbility() || event.source.controller !== context.player)
+                    (event.ability.isForcedAbility() || event.player !== context.player)
             },
             cost: ability.costs.returnToHand((card) => card.hasTrait('Direwolf')),
             limit: ability.limit.perPhase(1),

@@ -14,8 +14,7 @@ class BeggingBrother extends DrawCard {
                 onCardAbilityInitiated: (event, context) =>
                     event.source.getType() === 'character' &&
                     event.ability.isTriggeredAbility() &&
-                    (event.ability.isForcedAbility() ||
-                        event.source.controller !== context.source.controller)
+                    (event.ability.isForcedAbility() || event.player !== context.source.controller)
             },
             cost: ability.costs.discardGold(),
             message: {

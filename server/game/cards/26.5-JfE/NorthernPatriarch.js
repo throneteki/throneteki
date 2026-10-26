@@ -20,26 +20,26 @@ class NorthernPatriarch extends DrawCard {
             canCancel: true,
             when: {
                 onCardAbilityInitiated: (event, context) =>
-                    event.source.controller !== context.player && event.source.getType() === 'event'
+                    event.player !== context.player && event.source.getType() === 'event'
             },
             message: {
                 format: '{player} uses {source} to cancel {event} unless {opponent} moves 1 power from a card they control to {source}',
                 args: {
                     event: (context) => context.event.source,
-                    opponent: (context) => context.event.source.controller
+                    opponent: (context) => context.event.player
                 }
             },
             gameAction: GameActions.ifCondition({
-                condition: (context) => hasPowerToMove(context.event.source.controller),
+                condition: (context) => hasPowerToMove(context.event.player),
                 thenAction: GameActions.choose({
-                    player: (context) => context.event.source.controller,
+                    player: (context) => context.event.player,
                     title: 'Move 1 power to prevent the cancel?',
                     choices: {
                         'Move 1 power': GameActions.chooseCards({
-                            player: (context) => context.event.source.controller,
+                            player: (context) => context.event.player,
                             title: 'Select a card to move power from',
                             cardCondition: (card, context) =>
-                                card.controller === context.event.source.controller &&
+                                card.controller === context.event.player &&
                                 card.power > 0 &&
                                 ['play area', 'faction', 'active plot'].includes(card.location),
                             gameAction: (card, context) =>

@@ -64,3 +64,27 @@ describe('Begging Brother', function () {
         });
     });
 });
+
+describe("Begging Brother when an opponent uses your character's ability", function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                inPlay: [{ card: 'Begging Brother', tokens: { gold: 2 } }, 'Bronn (CoW)']
+            },
+            player2: { gold: 1 }
+        });
+        this.player1.clickPrompt('Done');
+        this.player2.clickCard(this.bronn);
+    });
+
+    it('discards 1 gold from itself to cancel the ability', function () {
+        expect(this.player1).toAllowAbilityTrigger(this.beggingBrother);
+
+        this.player1.triggerAbility(this.beggingBrother);
+
+        expect(this.beggingBrother.gold).toBe(1);
+        expect(this.bronn.controller).toBe(this.player1Object);
+        expect(this.player2).isReadyToTakeAction();
+    });
+});

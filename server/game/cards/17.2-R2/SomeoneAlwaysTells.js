@@ -11,7 +11,7 @@ class SomeoneAlwaysTells extends DrawCard {
             cost: ability.costs.kneelFactionCard(),
             when: {
                 onCardAbilityInitiated: (event, context) =>
-                    event.source.controller !== context.source.controller &&
+                    event.player !== context.source.controller &&
                     (event.source.getType() === 'event' ||
                         (event.source.getType() === 'plot' &&
                             event.ability.isWhenRevealedAbility()))

@@ -10,7 +10,7 @@ class KingsLandingSepton extends DrawCard {
             canCancel: true,
             when: {
                 onCardAbilityInitiated: (event, context) =>
-                    event.source.controller !== context.player &&
+                    event.player !== context.player &&
                     event.ability.isTriggeredAbility() &&
                     ['character', 'location', 'attachment'].includes(event.source.getType())
             },
