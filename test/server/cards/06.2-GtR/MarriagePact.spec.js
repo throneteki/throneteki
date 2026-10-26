@@ -54,3 +54,57 @@ describe('Marriage Pact', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('Marriage Pact on your own character', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                inPlay: ['Tumblestone Knight', 'Winterfell Steward'],
+                hand: ['Marriage Pact']
+            },
+            player2: { inPlay: ['Castle Guard'] }
+        });
+        this.player1.clickCard(this.marriagePact);
+        this.player1.clickCard(this.tumblestoneKnight);
+        this.completeMarshalPhase();
+    });
+
+    it('lets the attached character attack for you', function () {
+        this.player1.clickPrompt('Power');
+
+        expect(this.player1).toBeAbleToSelect(this.tumblestoneKnight);
+        expect(this.player1).toBeAbleToSelect(this.winterfellSteward);
+
+        this.player1.clickCard(this.tumblestoneKnight);
+        this.player1.clickPrompt('Done');
+        this.skipActionWindow();
+
+        expect(this.game.currentChallenge.isAttacking(this.tumblestoneKnight)).toBe(true);
+
+        this.player2.clickPrompt('Done');
+        this.skipActionWindow();
+
+        expect(this.player1).isReadyToTakeAction();
+    });
+
+    it('lets the attached character defend for you', function () {
+        this.player1.clickPrompt('Done');
+        this.player2.clickPrompt('Power');
+        this.player2.clickCard(this.castleGuard);
+        this.player2.clickPrompt('Done');
+        this.skipActionWindow();
+
+        expect(this.player1).toBeAbleToSelect(this.tumblestoneKnight);
+        expect(this.player1).toBeAbleToSelect(this.winterfellSteward);
+
+        this.player1.clickCard(this.tumblestoneKnight);
+        this.player1.clickPrompt('Done');
+
+        expect(this.game.currentChallenge.isDefending(this.tumblestoneKnight)).toBe(true);
+
+        this.skipActionWindow();
+
+        expect(this.player2).isReadyToTakeAction();
+    });
+});

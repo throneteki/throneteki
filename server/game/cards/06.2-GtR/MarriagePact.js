@@ -8,6 +8,7 @@ class MarriagePact extends DrawCard {
     // Forced Interrupt: When attached character leaves play, sacrifice a character you control.
     setupCardAbilities(ability) {
         this.whileAttached({
+            condition: (context) => isChallengeAgainst(context),
             effect: ability.effects.cannotParticipate()
         });
 
@@ -25,6 +26,18 @@ class MarriagePact extends DrawCard {
             gameAction: GameActions.sacrificeCard((context) => ({ card: context.target }))
         });
     }
+}
+
+function isChallengeAgainst(context) {
+    const challenge = context.game.currentChallenge;
+    const pactController = context.source.controller;
+    const attachedController = context.source.parent?.controller;
+    if (!challenge || !attachedController || attachedController === pactController) {
+        return false;
+    }
+
+    const sides = [challenge.attackingPlayer, challenge.defendingPlayer];
+    return sides.includes(pactController) && sides.includes(attachedController);
 }
 
 MarriagePact.code = '06022';
