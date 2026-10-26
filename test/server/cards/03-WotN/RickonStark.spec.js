@@ -84,3 +84,44 @@ describe('Rickon Stark', function () {
         });
     });
 });
+
+describe('Rickon Stark against a card with search in only one of its abilities', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player2',
+            player1: { inPlay: ['Rickon Stark'] },
+            player2: {
+                agenda: { card: 'Sea of Blood (R)', tokens: { blood: 1 } },
+                inPlay: ['Balon Greyjoy (Core)']
+            }
+        });
+    });
+
+    it('cannot cancel the ability without the word search', function () {
+        this.player2.clickCard(this.seaOfBlood);
+
+        expect(this.player1).not.toAllowAbilityTrigger(this.rickonStark);
+        expect(this.seaOfBlood.hasToken('blood')).toBe(false);
+        expect(this.rickonStark.location).toBe('play area');
+        expect(this.player2).isReadyToTakeAction();
+    });
+
+    it('can cancel the ability with the word search', function () {
+        this.player2.clickPrompt('Military');
+        this.player2.clickCard(this.balonGreyjoy);
+        this.player2.clickPrompt('Done');
+        this.skipActionWindow();
+        this.player1.clickPrompt('Done');
+        this.skipActionWindow();
+        this.player2.triggerAbility(this.seaOfBlood);
+
+        expect(this.player1).toAllowAbilityTrigger(this.rickonStark);
+
+        this.player1.triggerAbility(this.rickonStark);
+
+        expect(this.rickonStark.location).toBe('discard pile');
+        expect(this.seaOfBlood.tokens.blood).toBe(1);
+        expect(this.player2).isReadyToTakeAction();
+    });
+});
