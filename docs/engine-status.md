@@ -247,6 +247,15 @@ These decisions remain in force:
   that event, still resolve (#3078).
 - Card selectors decide whether a card can be added with `canAddToSelection`; a max-stat selector
   still accepts a 0 stat card at its limit (#2624).
+- STR changes from one batch of effects are raised as one simultaneous event, so a reaction such as
+  Highgarden Courtier can choose between them (#1570). A single change still uses `raiseEvent`.
+- A facedown card ignores its printed attachment restrictions only while facedown in play, so a
+  card marshaled from underneath a location keeps them (#3270).
+- A forced plot (The Crow is a Tricksy Bird) is forced only while it is still in the plot deck
+  (`player.getForcedPlot()`, #2461).
+- A challenge abandoned before it is initiated returns to choosing a challenge without another
+  action window (#2225). A challenge cancelled with `/cancel-challenge` no longer counts in
+  challenge trackers (#3182).
 
 ## Do not reapply
 

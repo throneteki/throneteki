@@ -983,8 +983,10 @@ A kill made to satisfy [military] claim has `event.isClaim` set, and so does a d
 satisfy [intrigue] claim. A burn kill has `event.isBurn`. Use `event.isClaim` for text such as
 "killed for [military] claim" or "discarded for [intrigue] claim", rather than checking whether
 claim is being applied: other kills can happen while claim is applied (Podrick Payne's kill, for
-example), and they are kills by a card effect. Reactions to claim's kills, discards and power moves
-share a window with reactions to claim being applied, after `claim.isApplying` has been reset.
+example), and they are kills by a card effect. These events also carry `event.claimWinner`, the
+player whose claim it is: use it for "the winning opponent", since claim can be satisfied outside a
+challenge (Maester Aemon (WotW)). Reactions to claim's kills, discards and power moves share a
+window with reactions to claim being applied, after `claim.isApplying` has been reset.
 
 #### Yes / no reactions and interrupts
 
