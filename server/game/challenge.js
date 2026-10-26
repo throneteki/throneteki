@@ -15,6 +15,7 @@ class Challenge {
         this.defendingPlayer = properties.defendingPlayer || this.singlePlayerDefender();
         this.initiatedAgainstPlayer = this.defendingPlayer;
         this.isInitiated = properties.isInitiated || false;
+        this.wasInitiated = this.isInitiated;
         this.initiatedChallengeType = properties.challengeType;
         this.challengeType = properties.challengeType;
         this.number = properties.number;
@@ -58,6 +59,7 @@ class Challenge {
         this.attackingPlayer.trackChallenge(this);
         this.defendingPlayer.trackChallenge(this);
         this.isInitiated = true;
+        this.wasInitiated = true;
     }
 
     redirectChallengeTo(player) {

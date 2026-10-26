@@ -25,12 +25,16 @@ class ChallengePhase extends Phase {
         }
     }
 
-    promptForChallenge() {
+    // A challenge abandoned before it was initiated (no attackers, or no opponent chosen) returns
+    // to choosing a challenge without a new action window.
+    promptForChallenge({ actionWindow = true } = {}) {
         if (this.remainingPlayers.length === 0) {
             return true;
         }
 
-        this.game.queueStep(new ActionWindow(this.game, 'Before challenge', 'challengeBegin'));
+        if (actionWindow) {
+            this.game.queueStep(new ActionWindow(this.game, 'Before challenge', 'challengeBegin'));
+        }
 
         const currentPlayer = this.remainingPlayers[0];
         const buttons = ChallengeTypes.asButtons((challengeType) => ({
@@ -91,7 +95,7 @@ class ChallengePhase extends Phase {
                 this.initiateChallenge(attackingPlayer, opponent, challengeType);
             },
             onCancel: () => {
-                this.promptForChallenge();
+                this.promptForChallenge({ actionWindow: false });
             }
         });
 
@@ -109,7 +113,9 @@ class ChallengePhase extends Phase {
         this.game.currentChallengeStep = new ChallengeFlow(this.game, challenge);
         this.game.queueStep(this.game.currentChallengeStep);
         this.game.queueSimpleStep(() => this.cleanupChallenge());
-        this.game.queueSimpleStep(() => this.promptForChallenge());
+        this.game.queueSimpleStep(() =>
+            this.promptForChallenge({ actionWindow: challenge.wasInitiated })
+        );
     }
 
     /**

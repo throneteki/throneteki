@@ -155,3 +155,21 @@ describe('strict action windows', function () {
         });
     });
 });
+
+describe('A challenge abandoned before attackers are declared', function () {
+    it('returns to choosing a challenge without another action window', function () {
+        this.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player1',
+            player1: { inPlay: ['Hedge Knight'] },
+            player2: { inPlay: ['Castle Guard'] }
+        });
+        this.player1.togglePromptedActionWindow('challengeBegin', true);
+        this.player2.togglePromptedActionWindow('challengeBegin', true);
+        this.player1.clickPrompt('Military');
+        this.player1.clickPrompt('Done');
+
+        expect(this.player1).toHavePromptButton('Military');
+        expect(this.player2).toHavePrompt('Waiting for opponent to initiate challenge');
+    });
+});
