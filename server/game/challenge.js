@@ -25,6 +25,7 @@ class Challenge {
         this.defenders = [];
         this.declaredDefenders = [];
         this.defenderStrength = 0;
+        this.participated = new Set();
         this.challengeContributions = new ChallengeContributions();
         this.initiationActions = [];
         this.events = new EventRegistrar(game, this);
@@ -104,7 +105,12 @@ class Challenge {
         for (let card of cards) {
             card.inChallenge = true;
             card.markAsDirty();
+            this.participated.add(card);
         }
+    }
+
+    hasParticipated(card) {
+        return this.participated.has(card);
     }
 
     isDeclared(card) {
