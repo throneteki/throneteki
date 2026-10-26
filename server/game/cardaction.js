@@ -218,12 +218,12 @@ class CardAction extends BaseAbility {
         return this.card.getPrintedType() === 'event' && this.location === 'hand';
     }
 
-    incrementLimit() {
+    incrementLimit(player) {
         if (this.location !== this.card.location) {
             return;
         }
 
-        super.incrementLimit();
+        super.incrementLimit(player);
     }
 
     hasMax() {

@@ -400,9 +400,9 @@ class BaseAbility {
     /**
      * Increments the usage of the ability toward its limit, if it has one.
      */
-    incrementLimit() {
+    incrementLimit(player) {
         if (this.limit) {
-            this.limit.increment();
+            this.limit.increment(player);
         }
     }
 

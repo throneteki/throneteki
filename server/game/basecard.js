@@ -212,7 +212,7 @@ class BaseCard {
                 const limit = Object.assign(
                     Object.create(Object.getPrototypeOf(copy[property])),
                     copy[property],
-                    { useCount: 0 }
+                    { useCounts: new Map() }
                 );
                 if (limit.eventName) {
                     limit.resetHandler = () => limit.reset();
