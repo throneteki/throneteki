@@ -69,7 +69,8 @@ class PutIntoPlay extends GameAction {
                         event.card,
                         playingType,
                         attachmentTargets,
-                        { kneeled, xValue }
+                        { kneeled, xValue },
+                        event
                     )
                 );
             });

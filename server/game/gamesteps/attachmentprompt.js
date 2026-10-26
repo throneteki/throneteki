@@ -1,8 +1,10 @@
 import UiPrompt from './uiprompt.js';
+import GameActions from '../GameActions/index.js';
 
 class AttachmentPrompt extends UiPrompt {
-    constructor(game, player, attachmentCard, playingType, targets, options = {}) {
+    constructor(game, player, attachmentCard, playingType, targets, options = {}, event) {
         super(game);
+        this.event = event;
         this.player = player;
         this.attachmentCard = attachmentCard;
         this.playingType = playingType;
@@ -18,6 +20,11 @@ class AttachmentPrompt extends UiPrompt {
                 this.setupRestriction(card) &&
                 this.targets(card),
             onSelect: (player, card) => {
+                if (this.event) {
+                    this.attachToEvent(player, card);
+                    return true;
+                }
+
                 let targetPlayer = card.controller;
                 targetPlayer.attach(
                     player,
@@ -30,6 +37,27 @@ class AttachmentPrompt extends UiPrompt {
                 return true;
             }
         });
+    }
+
+    attachToEvent(player, card) {
+        this.event.thenAttachEvent(
+            GameActions.attach({
+                ...this.options,
+                player,
+                attachment: this.attachmentCard,
+                target: card,
+                playingType: this.playingType
+            })
+                .createEvent()
+                .thenExecute(() => {
+                    this.game.addMessage(
+                        '{0} attaches {1} to {2}',
+                        player,
+                        this.attachmentCard,
+                        card
+                    );
+                })
+        );
     }
 
     setupRestriction(card) {
