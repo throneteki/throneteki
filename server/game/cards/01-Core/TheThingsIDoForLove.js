@@ -31,7 +31,7 @@ class TheThingsIDoForLove extends DrawCard {
                     card.getType() === 'character' &&
                     (context.xValue !== undefined
                         ? card.getPrintedCost() <= context.xValue
-                        : card.getPrintedCost() <= context.player.getSpendableGold())
+                        : card.getPrintedCost() <= getMaximumXValue(context))
             },
             message: {
                 format: "{player} plays {source}, kneels their faction card and pays {costs.gold} gold to return {target} to {owner}'s hand",
@@ -40,6 +40,13 @@ class TheThingsIDoForLove extends DrawCard {
             gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
+}
+
+function getMaximumXValue(context) {
+    return (
+        context.player.getSpendableGold({ playingType: 'play' }) +
+        context.player.getCostReduction('play', context.source)
+    );
 }
 
 function getMinimumCharCost(context) {

@@ -64,3 +64,31 @@ describe('The Things I Do For Love restrictions', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('The Things I Do For Love with a cost reduction', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                faction: 'lannister',
+                inPlay: ['Cersei Lannister (Core)', 'Tourney Grounds'],
+                hand: ['The Things I Do For Love'],
+                gold: 5
+            },
+            player2: { inPlay: ['Robb Stark (Core)'] }
+        });
+        this.player1.clickCard(this.tourneyGrounds);
+    });
+
+    it('can choose a character whose cost is only affordable with the reduction', function () {
+        this.player1.clickCard(this.theThingsIDoForLove);
+
+        expect(this.player1).toBeAbleToSelect(this.robbStark);
+
+        this.player1.clickCard(this.robbStark);
+
+        expect(this.robbStark.location).toBe('hand');
+        expect(this.player1Object.gold).toBe(0);
+        expect(this.player1).isReadyToTakeAction();
+    });
+});
