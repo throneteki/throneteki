@@ -222,6 +222,23 @@ These decisions remain in force:
   on a public card. The card remains clickable during the wait. This is still opt-in and needs real
   game feedback before any default change; this follow-up has not been tested.
 
+## GitHub issue fixes, 26 October 2026
+
+- Ability limits are counted per player (Rules Reference: Limits and Maxima). A use recorded
+  without a player still counts for everyone. [AbilityLimitsPerPlayer.spec.js](../test/server/AbilityLimitsPerPlayer.spec.js).
+- Kills made to satisfy military claim set `isClaim` on `onCharacterKilled`; cards that say "killed
+  for [military] claim" or "killed by a card effect" read it instead of `claim.isApplying`.
+  [ClaimKill.spec.js](../test/server/gamesteps/ClaimKill.spec.js).
+- A challenge records every character that took part, however it joined, and
+  `ParticipationTracker` asks each challenge this phase.
+  [ParticipationTracker.spec.js](../test/server/EventTrackers/ParticipationTracker.spec.js).
+- Tokens can be placed on faction cards and duplicates, which are in play.
+- Outside setup, a facedown card in play has no title, traits or faction of its own (Rules
+  Reference: Facedown Cards). Uniqueness and duplicate checks for the card being played use the
+  printed title. [FacedownCards.spec.js](../test/server/FacedownCards.spec.js).
+- Cancels of "an opponent's" ability compare the player who initiated it, not the controller of
+  its card (FAQ 2.7: "you" is the player triggering an ability any player may trigger).
+
 ## Do not reapply
 
 These were tried and reverted, or left alone on purpose.
