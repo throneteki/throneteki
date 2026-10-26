@@ -7,7 +7,7 @@ export function lookupCardByName({ cardName, cards, packs }) {
         return;
     }
 
-    const shortName = match[1].trim().toLowerCase();
+    const shortName = normaliseName(match[1]);
     let packName = match[3] && match[3].trim().toLowerCase();
     let pack =
         packName &&
@@ -17,15 +17,24 @@ export function lookupCardByName({ cardName, cards, packs }) {
 
     let matchingCards = cards.filter((card) => {
         if (pack) {
-            return pack.code === card.packCode && card.name.toLowerCase() === shortName;
+            return pack.code === card.packCode && normaliseName(card.name) === shortName;
         }
 
-        return card.name.toLowerCase() === shortName;
+        return normaliseName(card.name) === shortName;
     });
 
     matchingCards.sort((a, b) => compareCardByReleaseDate(a, b, packs));
 
     return matchingCards[0];
+}
+
+// Other deck sites (CardgameDB) use typographic quotes, such as \u2019 for an apostrophe.
+function normaliseName(name) {
+    return name
+        .trim()
+        .replace(/[\u2018\u2019\u02bc]/g, "'")
+        .replace(/[\u201c\u201d]/g, '"')
+        .toLowerCase();
 }
 
 function compareCardByReleaseDate(a, b, packs) {
