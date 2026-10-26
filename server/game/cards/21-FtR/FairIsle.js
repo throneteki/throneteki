@@ -41,7 +41,7 @@ class FairIsle extends DrawCard {
                         onAtEndOfPhase: () => true
                     },
                     message: {
-                        format: 'Then {opponent} draws 2 cards for {source}',
+                        format: 'Then {opponent} {gameAction} for {source}',
                         args: { opponent: (context) => context.opponent }
                     },
                     gameAction: GameActions.drawCards((context) => ({

@@ -21,3 +21,23 @@ describe('Fair Isle', function () {
         expect(this.castleGuard.location).toBe('hand');
     });
 });
+
+describe('Fair Isle with The High Sparrow', function () {
+    it('reports the number of cards actually drawn', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { inPlay: ['Fair Isle', 'The High Sparrow'] },
+            player2: { hand: ['Hedge Knight', 'Tumblestone Knight'] }
+        });
+        this.player1.clickCard(this.fairIsle);
+        this.player2.clickCard(this.hedgeKnight);
+        this.player2.clickCard(this.tumblestoneKnight);
+        this.player2.clickPrompt('Done');
+        this.player2.clickPrompt('Done');
+        this.player1.clickPrompt('Done');
+        this.player2.clickPrompt('Done');
+
+        expect(this.player2Object.hand.length).toBe(1);
+        expect(this.game.getPlainTextLog()).toContain('Then player2 draws 1 card for Fair Isle');
+    });
+});

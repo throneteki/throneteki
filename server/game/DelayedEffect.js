@@ -62,7 +62,8 @@ class DelayedEffect {
 
     createContext(event) {
         return Object.assign(Object.create(Object.getPrototypeOf(this.context)), this.context, {
-            event
+            event,
+            gameAction: this.gameAction
         });
     }
 
