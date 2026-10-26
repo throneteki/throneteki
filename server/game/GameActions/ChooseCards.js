@@ -131,9 +131,18 @@ class ChooseCards extends GameAction {
             cards.map((card) => this.gameActionFactory(card, choosingContext))
         );
         const resolution = action.createEvent(choosingContext);
+        const messages = resolution.actions.map((cardAction) =>
+            cardAction.message(choosingContext)
+        );
 
         resolution.thenExecute(() => {
-            const result = action.resultMessage(choosingContext, resolution);
+            const result = resolution.actions
+                .map((cardAction, index) =>
+                    cardAction.resultMessage(choosingContext, resolution.childEvents[index])
+                        ? messages[index]
+                        : ''
+                )
+                .filter((message) => !!message && (!Array.isArray(message) || message.length > 0));
             if (result.length > 0) {
                 context.game.addMessage('{0} {1}', player, result);
             }

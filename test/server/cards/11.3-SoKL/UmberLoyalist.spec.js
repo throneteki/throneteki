@@ -75,3 +75,29 @@ describe('Umber Loyalist', function () {
         });
     });
 });
+
+describe('Umber Loyalist discard message', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player2',
+            player1: {
+                hand: ['Hedge Knight', 'Tumblestone Knight'],
+                inPlay: ['Umber Loyalist']
+            },
+            player2: { inPlay: ['Bastard in Hiding'] }
+        });
+        this.unopposedChallenge(this.player2, 'Military', this.bastardInHiding);
+        this.player1.clickCard(this.umberLoyalist);
+        this.player1.clickCard(this.hedgeKnight);
+        this.player1.clickCard(this.tumblestoneKnight);
+        this.player1.clickPrompt('Done');
+        this.player1.clickPrompt('Done');
+    });
+
+    it('names the hand the cards were discarded from', function () {
+        expect(this.game.getPlainTextLog()).toContain(
+            "player1 discards Hedge Knight from player1's hand and discards Tumblestone Knight from player1's hand"
+        );
+    });
+});
