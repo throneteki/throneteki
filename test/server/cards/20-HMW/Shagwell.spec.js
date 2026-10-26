@@ -64,3 +64,26 @@ describe('Shagwell', function () {
         });
     });
 });
+
+describe('Shagwell with a character made a Fool', function () {
+    it('gives it the keywords of characters with gold', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                inPlay: [
+                    { card: 'Shagwell (HMW)', gold: 1 },
+                    { card: 'Arya Stark (Core)', gold: 1 },
+                    { card: 'Kindly Man', gold: 1 }
+                ],
+                hand: ['"Florian and Jonquil" (BtB)'],
+                gold: 1
+            }
+        });
+        this.player1.clickCard(this.florianAndJonquil);
+        this.player1.clickCard(this.kindlyMan);
+
+        expect(this.kindlyMan.hasTrait('Fool')).toBe(true);
+        expect(this.kindlyMan.hasKeyword('stealth')).toBe(true);
+        expect(this.shagwell.hasKeyword('renown')).toBe(true);
+    });
+});

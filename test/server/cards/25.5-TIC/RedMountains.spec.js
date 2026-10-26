@@ -104,3 +104,19 @@ describe('Red Mountains', function () {
         });
     });
 });
+
+describe('Red Mountains when the opponent cannot initiate a military challenge', function () {
+    it('lets them initiate other challenges or pass', function () {
+        this.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player1',
+            player1: { faction: 'martell', inPlay: ['Red Mountains', 'Hedge Knight'] },
+            player2: { plot: 'A Game of Thrones', inPlay: ['Steward at the Wall'] }
+        });
+        this.player1.clickCard(this.redMountains);
+        this.player1.clickPrompt('Done');
+
+        expect(this.player2).toHavePromptButton('Intrigue');
+        expect(this.player2).toHavePromptButton('Done');
+    });
+});

@@ -28,3 +28,31 @@ describe('Nothing Burns Like The Cold', function () {
         expect(this.theRoseroad.location).toBe('play area');
     });
 });
+
+describe('Nothing Burns Like The Cold choices', function () {
+    it('has each player make all of their choices before the next player', function () {
+        this.setupTest({
+            phase: 'plot',
+            player1: {
+                plotDeck: ['Nothing Burns Like The Cold'],
+                inPlay: [
+                    { card: 'Hedge Knight', attachments: ['Little Bird (Core)'] },
+                    'The Iron Bank (TAK)'
+                ]
+            },
+            player2: {
+                inPlay: [
+                    { card: 'Castle Guard', attachments: ['Noble Lineage'] },
+                    'Sunspear (Core)'
+                ]
+            }
+        });
+        this.player1.selectPlot('Nothing Burns Like The Cold');
+        this.player2.selectPlot('Filler Plot');
+        this.selectFirstPlayer(this.player1);
+        this.player1.clickCard(this.littleBird);
+
+        expect(this.player1).toHavePrompt('Select a location');
+        expect(this.player2).not.toHavePrompt('Select an attachment');
+    });
+});
