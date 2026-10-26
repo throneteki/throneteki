@@ -17,7 +17,7 @@ describe('a facedown card in play', function () {
         expect(this.facedownCard.parent).toBe(this.jinglebell);
         expect(this.facedownCard.facedown).toBe(true);
 
-        expect(this.facedownCard.name).toBeUndefined();
+        expect(this.facedownCard.name).toBe('');
         expect(this.facedownCard.hasTrait('Lord')).toBe(false);
         expect(this.facedownCard.hasTrait('House Tully')).toBe(false);
         expect(this.facedownCard.hasTrait('Weapon')).toBe(true);

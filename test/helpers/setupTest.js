@@ -363,7 +363,7 @@ function resolveBeforeMulligan(options, players, registry) {
         ].filter(Boolean);
 
         for (const card of named) {
-            const name = cardReferenceName(card.name);
+            const name = cardReferenceName(card.cardData.name);
             if (!(name in registry)) {
                 registry[name] = card;
             }
@@ -471,7 +471,7 @@ export function applySetupTest(options, ctx) {
         ].filter(Boolean);
 
         for (const card of named) {
-            const name = cardReferenceName(card.name);
+            const name = cardReferenceName(card.cardData.name);
             if (!(name in registry)) {
                 registry[name] = card;
             }

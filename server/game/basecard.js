@@ -499,7 +499,7 @@ class BaseCard {
     }
 
     get name() {
-        return this.isFacedownInPlay() ? undefined : this.cardData.name;
+        return this.isFacedownInPlay() ? '' : this.cardData.name;
     }
 
     // A facedown card in play has no attributes of its own, only those granted by the ability that
