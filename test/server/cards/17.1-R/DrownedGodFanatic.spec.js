@@ -49,3 +49,26 @@ describe("Drowned God Fanatic (R) when an opponent uses your character's ability
         expect(this.player2).isReadyToTakeAction();
     });
 });
+
+describe('Drowned God Fanatic (R) with Ser Meryn Trant', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { inPlay: ['Ser Meryn Trant (DotE)', 'Maester Luwin'] },
+            player2: { faction: 'greyjoy', hand: ['Drowned God Fanatic (R)'] }
+        });
+        this.unopposedChallenge(this.player1, 'Intrigue', this.maesterLuwin);
+        this.player1.triggerAbility('Ser Meryn Trant');
+        this.player2.triggerAbility('Drowned God Fanatic');
+        this.player1.triggerAbility('Ser Meryn Trant');
+    });
+
+    it('cannot be discarded again to cancel Ser Meryn Trant while it is already paying that cost', function () {
+        expect(this.player2).not.toHavePromptButton('Pass');
+        expect(this.drownedGodFanatic.location).toBe('out of game');
+        expect(this.game.getPlainTextLog()).toContain(
+            'player2 discards Drowned God Fanatic from their hand to cancel Ser Meryn Trant'
+        );
+        expect(this.player1).isReadyToTakeAction();
+    });
+});

@@ -226,9 +226,25 @@ class BaseAbility {
      * @returns {Boolean}
      */
     canPayCosts(context) {
+        if (this.isPayingCostsAlready(context)) {
+            return false;
+        }
+
         context.payingPlayer = this.payingPlayer(context);
         return this.executeWithTemporaryContext(context, 'cost', () =>
             this.cost.every((cost) => cost.canPay(context))
+        );
+    }
+
+    // The same card can't pay the same costs again in a sequence nested inside paying them, which
+    // would otherwise loop (rules team ruling on Drowned God Fanatic and Ser Meryn Trant).
+    isPayingCostsAlready(context) {
+        return (context.game?.abilityContextStack || []).some(
+            (other) =>
+                other !== context &&
+                other.ability === this &&
+                other.source === context.source &&
+                other.resolutionStage === 'cost'
         );
     }
 

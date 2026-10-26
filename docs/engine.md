@@ -281,6 +281,20 @@ Rules readings and design choices that stand until changed:
 - Meereen names the player who used it and returns only cards that player owns.
 - A FAQ entry about one card is covered by that card's spec. Glossary entries that name a card
   type, zone, icon or printed statistic are covered by ordinary play.
+- A card that is already leaving play or being discarded can be chosen again to leave play or to
+  pay a cost, and that new move triggers interrupts again (rules team ruling): Maester Kerwin can
+  kill himself to save another character while Valar Morghulis is killing him.
+- Marriage Pact can sacrifice the character it is attached to while that character is already
+  leaving play only while the loop still changes something: after that character's own
+  leave-play forced interrupts have resolved, and while one of them would still have an effect.
+  On your own Umber Loyalist this discards your whole hand before the Loyalist leaves play
+  (suggested by the rules team; there is no FAQ entry).
+- The same card can't pay the same costs again in a sequence nested inside paying them, so Drowned
+  God Fanatic can't be discarded again to cancel Ser Meryn Trant while it is already being
+  discarded to pay that cost (`BaseAbility.isPayingCostsAlready`; proposed by the rules team as a
+  FAQ entry).
+- Marshaling a duplicate uses up a reducer for the next card you marshal (Hizdahr zo Loraq, Queen
+  of Meereen), but not one for the next character or other restricted card (rules team ruling).
 - Ask before implementing a rules reading that is not already decided.
 
 ## Open work
@@ -290,10 +304,7 @@ Rules readings and design choices that stand until changed:
 - There is no prompt for the infinite-loop shortcut (naming a number of repetitions).
 - Logs are translation-ready but there are no locale catalogs or translating renderer.
 - A problem report cannot restore an arbitrary open prompt.
-- Open rulings: whether a card that is already leaving play or being discarded can be moved again
-  or pay a cost (Marriage Pact on your own Umber Loyalist, Drowned God Fanatic with Ser Meryn
-  Trant, Maester Kerwin under Valar Morghulis); whether marshaling a duplicate uses up Hizdahr zo
-  Loraq's reduction; whether The White Shadows' effects apply to Craster.
+- Open ruling: whether The White Shadows' effects apply to Craster.
 
 ## Pitfalls
 

@@ -22,3 +22,25 @@ describe('Maester Kerwin', function () {
         expect(this.player2).isReadyToTakeAction();
     });
 });
+
+describe('Maester Kerwin under Valar Morghulis', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'plot',
+            player1: { inPlay: ['Maester Kerwin', 'Hedge Knight'] },
+            player2: { plotDeck: ['Valar Morghulis'] }
+        });
+        this.player1.selectPlot('Filler Plot');
+        this.player2.selectPlot('Valar Morghulis');
+        this.selectFirstPlayer(this.player1);
+        this.player1.triggerAbility(this.maesterKerwin);
+    });
+
+    it('can kill himself to save another character, although he is already being killed', function () {
+        expect(this.maesterKerwin.location).toBe('dead pile');
+        expect(this.hedgeKnight.location).toBe('play area');
+        expect(this.game.getPlainTextLog()).toContain(
+            'player1 kills Maester Kerwin to save Hedge Knight'
+        );
+    });
+});

@@ -137,3 +137,68 @@ describe('Marriage Pact under Valar Morghulis', function () {
         expect(this.tumblestoneKnight.location).toBe('dead pile');
     });
 });
+
+describe('Marriage Pact on your own Umber Loyalist', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player2',
+            player1: {
+                inPlay: [{ card: 'Umber Loyalist', attachments: ['Marriage Pact'] }],
+                hand: [
+                    'Hedge Knight',
+                    'Tumblestone Knight',
+                    'House Maester',
+                    'Winterfell Steward',
+                    'Castle Guard'
+                ]
+            },
+            player2: { inPlay: ['Burned Men'] }
+        });
+        this.unopposedChallenge(this.player2, 'Military', this.burnedMen);
+        this.player1.clickCard(this.umberLoyalist);
+    });
+
+    it('sacrifices it again after each discard, until your hand is empty', function () {
+        for (const cards of [
+            [this.hedgeKnight, this.tumblestoneKnight],
+            [this.houseMaester, this.winterfellSteward],
+            [this.castleGuard]
+        ]) {
+            expect(this.player1).toHavePrompt('Select 2 cards to discard');
+            for (const card of cards) {
+                this.player1.clickCard(card);
+            }
+            this.player1.clickPrompt('Done');
+            if (cards.length === 2) {
+                this.player1.clickPrompt('Done');
+                expect(this.player1).toHavePrompt('Select a character');
+                this.player1.clickCard(this.umberLoyalist);
+            }
+        }
+
+        expect(this.player1Object.hand).toHaveLength(0);
+        expect(this.umberLoyalist.location).toBe('discard pile');
+        expect(this.marriagePact.location).toBe('discard pile');
+        expect(this.player2).isReadyToTakeAction();
+    });
+});
+
+describe('Marriage Pact on your own only character', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player2',
+            player1: { inPlay: [{ card: 'Hedge Knight', attachments: ['Marriage Pact'] }] },
+            player2: { inPlay: ['Burned Men'] }
+        });
+        this.unopposedChallenge(this.player2, 'Military', this.burnedMen);
+        this.player1.clickCard(this.hedgeKnight);
+    });
+
+    it('does not sacrifice it again when that would change nothing', function () {
+        expect(this.hedgeKnight.location).toBe('dead pile');
+        expect(this.marriagePact.location).toBe('discard pile');
+        expect(this.player2).isReadyToTakeAction();
+    });
+});
