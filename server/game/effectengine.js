@@ -1,6 +1,8 @@
 import { partition } from '../Array.js';
 import EventRegistrar from './eventregistrar.js';
 import TakeControl from './GameActions/TakeControl.js';
+import SimultaneousEvents from './SimultaneousEvents.js';
+import EventWindow from './gamesteps/eventwindow.js';
 
 const MaxSettlePasses = 10;
 
@@ -75,12 +77,29 @@ class EffectEngine {
         for (const [card, { oldController, source }] of controlChanges) {
             TakeControl.applyControlChange(card, oldController, source);
         }
-        for (const [card, change] of changes) {
-            const amount = card.getStrength() - change.before;
-            card.raiseStrengthChangeEvent(amount, amount * change.applyingDelta > 0);
-        }
+        this.raiseStrengthChanges(changes);
         for (const { card, icon, hadIcon, applyingGain, applyingLoss } of iconChanges.values()) {
             card.raiseIconChangeEvent(icon, hadIcon, hadIcon ? applyingLoss : applyingGain);
+        }
+    }
+
+    // STR changes from one batch of effects are simultaneous, so their reactions share a window.
+    raiseStrengthChanges(changes) {
+        const strengthChanges = [...changes].map(([card, change]) => {
+            const amount = card.getStrength() - change.before;
+            return { card, amount, applying: amount * change.applyingDelta > 0 };
+        });
+        if (strengthChanges.length === 1) {
+            const [{ card, amount, applying }] = strengthChanges;
+            card.raiseStrengthChangeEvent(amount, applying);
+            return;
+        }
+        if (strengthChanges.length > 1) {
+            const event = new SimultaneousEvents();
+            for (const { card, amount, applying } of strengthChanges) {
+                event.addChildEvent(card.createStrengthChangeEvent(amount, applying));
+            }
+            this.game.queueStep(new EventWindow(this.game, event));
         }
     }
 

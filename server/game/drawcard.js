@@ -5,6 +5,7 @@ import StandardPlayActions from './PlayActions/StandardActions.js';
 import CardStat from './cardStat.js';
 import { Flags } from './Constants/index.js';
 import GameActions from './GameActions/index.js';
+import Event from './event.js';
 
 const Icons = ['military', 'intrigue', 'power'];
 
@@ -271,12 +272,13 @@ class DrawCard extends BaseCard {
         if (this.game.effectEngine?.recordStrengthChange(this, amount, applying)) {
             return;
         }
-        let params = {
-            card: this,
-            amount: amount,
-            applying: applying
-        };
-        this.game.raiseEvent('onCardStrengthChanged', params, () => {
+        this.game.raiseEvent('onCardStrengthChanged', { card: this, amount, applying }, () => {
+            this.checkBurnEffects();
+        });
+    }
+
+    createStrengthChangeEvent(amount, applying) {
+        return new Event('onCardStrengthChanged', { card: this, amount, applying }, () => {
             this.checkBurnEffects();
         });
     }
@@ -407,7 +409,9 @@ class DrawCard extends BaseCard {
             return undefined;
         }
         let restrictions =
-            (this.isAnyBlank() || this.facedown ? undefined : this.attachmentRestrictions) || [];
+            (this.isAnyBlank() || this.isFacedownInPlay()
+                ? undefined
+                : this.attachmentRestrictions) || [];
         let additional = this.additionalAttachmentRestrictions || [];
 
         restrictions = restrictions.concat(additional);

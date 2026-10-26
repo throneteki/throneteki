@@ -142,3 +142,36 @@ describe('Highgarden Courtier', function () {
         });
     });
 });
+
+describe('Highgarden Courtier when several characters gain STR at once', function () {
+    it('lets you choose which of them to stand', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                faction: 'tyrell',
+                inPlay: [
+                    { card: 'Horn Hill (TBWB)', gold: 1 },
+                    'Highgarden Courtier',
+                    'Garden Caretaker',
+                    'Ser Colen of Greenpools'
+                ]
+            }
+        });
+        this.player1.clickPrompt('Power');
+        this.player1.clickCard(this.gardenCaretaker);
+        this.player1.clickCard(this.serColenOfGreenpools);
+        this.player1.clickPrompt('Done');
+        this.player1.clickCard(this.hornHill);
+        this.player1.clickCard(this.highgardenCourtier);
+
+        expect(this.player1).toHavePrompt('Choose triggering card for Highgarden Courtier');
+        expect(this.player1).toBeAbleToSelect(this.gardenCaretaker);
+        expect(this.player1).toBeAbleToSelect(this.serColenOfGreenpools);
+
+        this.player1.clickCard(this.serColenOfGreenpools);
+
+        expect(this.serColenOfGreenpools.kneeled).toBe(false);
+        expect(this.gardenCaretaker.kneeled).toBe(true);
+        expect(this.highgardenCourtier.kneeled).toBe(true);
+    });
+});
