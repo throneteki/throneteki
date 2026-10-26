@@ -9,7 +9,9 @@ class BrienneOfTarth extends DrawCard {
         this.persistentEffect({
             condition: (context) =>
                 context.source.controller.anyCardsInPlay(
-                    (card) => card.hasTrait('King') || card.name === 'Catelyn Stark'
+                    (card) =>
+                        card.getType() === 'character' &&
+                        (card.hasTrait('King') || card.name === 'Catelyn Stark')
                 ),
             match: this,
             effect: ability.effects.doesNotKneelAsDefender()
