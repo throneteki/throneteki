@@ -2,8 +2,13 @@ import { Tokens } from '../../Constants/Tokens.js';
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
+const inPlayLocations = ['play area', 'active plot', 'faction', 'duplicate'];
+const inPlayCardTypes = ['attachment', 'character', 'faction', 'location', 'plot'];
+
 function getSTR(source) {
-    return source.game.getNumberOfCardsInPlay((card) => card.tokens[Tokens.gold] >= 1);
+    return source.game.allCards.filter(
+        (card) => inPlayLocations.includes(card.location) && card.tokens[Tokens.gold] >= 1
+    ).length;
 }
 
 class AshemarkCouncilor extends DrawCard {
@@ -25,8 +30,9 @@ class AshemarkCouncilor extends DrawCard {
                 mode: 'upTo',
                 numCards: 3,
                 activePromptTitle: 'Select up to 3 cards',
+                cardType: inPlayCardTypes,
                 cardCondition: (card) =>
-                    card.location === 'play area' &&
+                    inPlayLocations.includes(card.location) &&
                     (!card.tokens[Tokens.gold] || card.tokens[Tokens.gold] === 0)
             },
             message: '{player} uses {source} to have {target} gain 1 gold',

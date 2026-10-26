@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
+const inPlayLocations = ['play area', 'active plot', 'faction', 'duplicate'];
+const inPlayCardTypes = ['attachment', 'character', 'faction', 'location', 'plot'];
+
 class SerHarysSwyft extends DrawCard {
     // Ser Harys Swyft (18006)
     // Action: Move 1 gold from your gold pool to a card without gold. (Limit twice per round.)
@@ -12,8 +15,9 @@ class SerHarysSwyft extends DrawCard {
             limit: ability.limit.perRound(2),
             target: {
                 type: 'select',
+                cardType: inPlayCardTypes,
                 cardCondition: (card) =>
-                    card.location === 'play area' && !card.hasToken(Tokens.gold)
+                    inPlayLocations.includes(card.location) && !card.hasToken(Tokens.gold)
             },
             message: '{player} uses {source} to move 1 gold from their gold pool to {target}',
             gameAction: GameActions.transferGold((context) => ({

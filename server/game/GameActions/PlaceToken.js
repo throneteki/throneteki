@@ -16,8 +16,15 @@ class PlaceToken extends GameAction {
 
     canChangeGameState({ card, amount = 1 }) {
         return (
-            ['active plot', 'agenda', 'play area', 'shadows', 'title'].includes(card.location) &&
-            amount > 0
+            [
+                'active plot',
+                'agenda',
+                'duplicate',
+                'faction',
+                'play area',
+                'shadows',
+                'title'
+            ].includes(card.location) && amount > 0
         );
     }
 
