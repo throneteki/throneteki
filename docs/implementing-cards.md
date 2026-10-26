@@ -317,7 +317,6 @@ and a `groupTitle`. Use the original resolution context as the group token. The 
 one ordering choice for that instruction and resolves its surviving card actions simultaneously.
 Independent uses of an ability have different contexts and remain separate choices.
 
-
 #### Lasting effects as game actions
 
 `GameActions.lastingEffect` applies a lasting effect as part of an ability's `gameAction`, so it
@@ -548,7 +547,7 @@ override `canAttach`.
 (Lady Marya's "Location only"). For a facedown attachment (`facedown: true`), the text lasts only
 while it stays facedown, and only the target's restrictions ("No attachments except Weapon")
 apply, since a facedown card has none of its own. Outside setup, a facedown card in play has no
-title (`name` is undefined), traits or faction of its own, only what the attaching ability grants
+title (`name` is empty), traits or faction of its own, only what the attaching ability grants
 (Rules Reference: Facedown Cards). The engine's own uniqueness and duplicate checks, and
 `isCopyOf`, still use the printed title, because playing the card turns it faceup.
 
@@ -980,10 +979,12 @@ this.interrupt({
 
 Use `changeEventAmount` when only an event's amount changes.
 
-A kill made to satisfy [military] claim has `event.isClaim` set, and a burn kill has
-`event.isBurn`. Use `event.isClaim` for text such as "killed for [military] claim", rather than
-checking whether claim is being applied: other kills can happen while claim is applied (Podrick
-Payne's kill, for example), and they are kills by a card effect.
+A kill made to satisfy [military] claim has `event.isClaim` set, and so does a discard made to
+satisfy [intrigue] claim. A burn kill has `event.isBurn`. Use `event.isClaim` for text such as
+"killed for [military] claim" or "discarded for [intrigue] claim", rather than checking whether
+claim is being applied: other kills can happen while claim is applied (Podrick Payne's kill, for
+example), and they are kills by a card effect. Reactions to claim's kills, discards and power moves
+share a window with reactions to claim being applied, after `claim.isApplying` has been reset.
 
 #### Yes / no reactions and interrupts
 

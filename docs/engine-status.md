@@ -238,6 +238,15 @@ These decisions remain in force:
   printed title. [FacedownCards.spec.js](../test/server/FacedownCards.spec.js).
 - Cancels of "an opponent's" ability compare the player who initiated it, not the controller of
   its card (FAQ 2.7: "you" is the player triggering an ability any player may trigger).
+- Claim's kills, discards and power moves are attached to the `onClaimApplied` event, so their
+  reactions share one window with reactions to claim being applied (#2963). Discards for intrigue
+  claim set `isClaim` on `onCardDiscarded`. The window is titled after the claim's effects.
+- An attachment put into play by `putIntoPlay` attaches inside the event that put it into play,
+  so a search finishes and shuffles before reactions to the attachment (#2980).
+- A cancelled challenge drops only its own steps, so the event that cancelled it, and reactions to
+  that event, still resolve (#3078).
+- Card selectors decide whether a card can be added with `canAddToSelection`; a max-stat selector
+  still accepts a 0 stat card at its limit (#2624).
 
 ## Do not reapply
 
