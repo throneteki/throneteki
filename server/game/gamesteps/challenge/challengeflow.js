@@ -19,27 +19,30 @@ class ChallengeFlow extends BaseStep {
         super(game);
         this.challenge = challenge;
         this.pipeline = new GamePipeline();
+        this.flowSteps = new Set();
 
-        this.pipeline.initialise([
-            new SimpleStep(this.game, () => this.resetCards()),
-            new SimpleStep(this.game, () => this.recalculateEffects()),
-            new SimpleStep(this.game, () => this.announceChallenge()),
-            new SimpleStep(this.game, () => this.preAttackersPromptForDefenders()),
-            new SimpleStep(this.game, () => this.promptForAttackers()),
-            new SimpleStep(this.game, () => this.recalculateEffects()),
-            () => new InitiatingKeywordsWindow(this.game, this.challenge),
-            new SimpleStep(this.game, () => this.initiateChallenge()),
-            new ActionWindow(this.game, 'After attackers declared', 'attackersDeclared'),
-            new SimpleStep(this.game, () => this.promptForDefenders()),
-            new SimpleStep(this.game, () => this.declareDefenders()),
-            new SimpleStep(this.game, () => this.announceDefenderStrength()),
-            new ActionWindow(this.game, 'After defenders declared', 'defendersDeclared'),
-            new SimpleStep(this.game, () => this.determineWinner()),
-            new SimpleStep(this.game, () => this.challengeBonusPower()),
-            new SimpleStep(this.game, () => this.beforeClaim()),
-            () => new ResolutionKeywordsWindow(this.game, this.challenge),
-            new SimpleStep(this.game, () => this.atEndOfChallenge())
-        ]);
+        this.pipeline.initialise(
+            this.trackFlowSteps([
+                new SimpleStep(this.game, () => this.resetCards()),
+                new SimpleStep(this.game, () => this.recalculateEffects()),
+                new SimpleStep(this.game, () => this.announceChallenge()),
+                new SimpleStep(this.game, () => this.preAttackersPromptForDefenders()),
+                new SimpleStep(this.game, () => this.promptForAttackers()),
+                new SimpleStep(this.game, () => this.recalculateEffects()),
+                () => this.trackFlowStep(new InitiatingKeywordsWindow(this.game, this.challenge)),
+                new SimpleStep(this.game, () => this.initiateChallenge()),
+                new ActionWindow(this.game, 'After attackers declared', 'attackersDeclared'),
+                new SimpleStep(this.game, () => this.promptForDefenders()),
+                new SimpleStep(this.game, () => this.declareDefenders()),
+                new SimpleStep(this.game, () => this.announceDefenderStrength()),
+                new ActionWindow(this.game, 'After defenders declared', 'defendersDeclared'),
+                new SimpleStep(this.game, () => this.determineWinner()),
+                new SimpleStep(this.game, () => this.challengeBonusPower()),
+                new SimpleStep(this.game, () => this.beforeClaim()),
+                () => this.trackFlowStep(new ResolutionKeywordsWindow(this.game, this.challenge)),
+                new SimpleStep(this.game, () => this.atEndOfChallenge())
+            ])
+        );
 
         if (resumeAt) {
             const steps = this.pipeline.pipeline;
@@ -51,6 +54,18 @@ class ChallengeFlow extends BaseStep {
             }
             this.pipeline.initialise(steps.slice(index));
         }
+    }
+
+    trackFlowSteps(steps) {
+        for (const step of steps) {
+            this.trackFlowStep(step);
+        }
+        return steps;
+    }
+
+    trackFlowStep(step) {
+        this.flowSteps.add(step);
+        return step;
     }
 
     resetCards() {
@@ -310,7 +325,15 @@ class ChallengeFlow extends BaseStep {
     }
 
     continue() {
-        return this.challenge.cancelled || this.pipeline.continue();
+        if (this.challenge.cancelled) {
+            // The rest of the challenge is skipped, but whatever ended it (an event and the reactions
+            // to it) still finishes resolving.
+            this.pipeline.pipeline = this.pipeline.pipeline.filter(
+                (step) => !this.flowSteps.has(step)
+            );
+        }
+
+        return this.pipeline.continue();
     }
 
     cancelChallenge() {

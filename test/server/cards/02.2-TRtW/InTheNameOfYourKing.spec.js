@@ -29,3 +29,29 @@ describe('In the Name of Your King!', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('In the Name of Your King! with Dark Wings, Dark Words', function () {
+    it('lets reactions to it resolve after it ends the challenge', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { inPlay: ['Tumblestone Knight'] },
+            player2: {
+                faction: 'baratheon',
+                agenda: 'Dark Wings, Dark Words',
+                hand: ['In the Name of Your King!'],
+                drawDeck: ['Hedge Knight'],
+                gold: 1
+            }
+        });
+        this.player1.clickPrompt('Military');
+        this.player1.clickCard(this.tumblestoneKnight);
+        this.player1.clickPrompt('Done');
+        this.player1.clickPrompt('Pass');
+        this.player2.clickCard(this.inTheNameOfYourKing);
+        this.player2.triggerAbility(this.darkWingsDarkWords);
+
+        expect(this.hedgeKnight.location).toBe('hand');
+        expect(this.game.currentChallenge).toBeFalsy();
+        expect(this.player1).isReadyToTakeAction();
+    });
+});
