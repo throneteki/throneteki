@@ -18,3 +18,27 @@ describe("Hotah's Axe", function () {
         expect(this.player1Object.gold).toBe(0);
     });
 });
+
+describe("Hotah's Axe after Desert Raider enters play", function () {
+    it('waits until Desert Raider has taken its icon', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                faction: 'martell',
+                deadPile: ['Desert Raider (KotI)'],
+                hand: ["Hotah's Axe"],
+                gold: 5
+            },
+            player2: { inPlay: ['Courtesan of the Rose'] }
+        });
+        this.player1.clickPrompt('Done');
+        this.unopposedChallenge(this.player2, 'Power', this.courtesanOfTheRose);
+        this.player1.triggerAbility('Desert Raider');
+        this.player1.clickCard(this.courtesanOfTheRose);
+        this.player1.clickPrompt('Power');
+        this.player1.triggerAbility("Hotah's Axe");
+
+        expect(this.desertRaider.hasIcon('power')).toBe(true);
+        expect(this.hotahsAxe.parent).toBe(this.desertRaider);
+    });
+});

@@ -49,3 +49,20 @@ describe('Arya Stark (TFM)', function () {
         });
     });
 });
+
+describe('Arya Stark (TFM) returned to hand with other characters', function () {
+    it('stops a duplicate saving a character returned at the same time', function () {
+        this.setupTest({
+            phase: 'plot',
+            player1: { plotDeck: ['The First Snow of Winter'], inPlay: ['Arya Stark (TFM)'] },
+            player2: { inPlay: [{ card: 'Bran Stark (Core)', dupes: 1 }] }
+        });
+        this.player1.selectPlot('The First Snow of Winter');
+        this.player2.selectPlot('Filler Plot');
+        this.selectFirstPlayer(this.player1);
+        this.completeMarshalPhase();
+
+        expect(this.aryaStark.location).toBe('hand');
+        expect(this.branStark.location).toBe('hand');
+    });
+});

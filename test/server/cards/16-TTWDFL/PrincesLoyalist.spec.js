@@ -46,3 +46,19 @@ describe("Prince's Loyalist when an opponent uses your character's ability", fun
         expect(this.player2).isReadyToTakeAction();
     });
 });
+
+describe("Prince's Loyalist killed with an opponent's character", function () {
+    it('gives prized power only after the opponent loses the power on their character', function () {
+        this.setupTest({
+            phase: 'plot',
+            player1: { plotDeck: ['Valar Morghulis'], inPlay: ["Prince's Loyalist"] },
+            player2: { power: 13, inPlay: [{ card: 'Hedge Knight', power: 1 }] }
+        });
+        this.player1.selectPlot('Valar Morghulis');
+        this.player2.selectPlot('Filler Plot');
+        this.selectFirstPlayer(this.player1);
+
+        expect(this.game.winner).toBeUndefined();
+        expect(this.player2Object.getTotalPower()).toBe(14);
+    });
+});

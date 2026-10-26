@@ -24,3 +24,30 @@ describe('Alester Florent', function () {
         expect(this.castleGuard.kneeled).toBe(true);
     });
 });
+
+describe('Alester Florent under Valar Dohaeris', function () {
+    it("counts another R'hllor character leaving play at the same time", function () {
+        this.setupTest({
+            phase: 'plot',
+            player1: {
+                plotDeck: ['Valar Dohaeris'],
+                inPlay: ['Alester Florent', 'Acolyte of the Shadow (ChoS)', 'Hedge Knight']
+            },
+            player2: { inPlay: ['Castle Guard'] }
+        });
+        this.player1.selectPlot('Valar Dohaeris');
+        this.player2.selectPlot('Filler Plot');
+        this.selectFirstPlayer(this.player1);
+        this.player1.clickCard(this.hedgeKnight);
+        this.player1.clickPrompt('Done');
+        this.player2.clickCard(this.castleGuard);
+        this.player2.clickPrompt('Done');
+        this.player1.triggerAbility(this.alesterFlorent);
+        this.player1.clickCard(this.castleGuard);
+        this.player1.clickPrompt('Done');
+
+        expect(this.castleGuard.kneeled).toBe(true);
+        expect(this.alesterFlorent.location).toBe('draw deck');
+        expect(this.acolyteOfTheShadow.location).toBe('draw deck');
+    });
+});

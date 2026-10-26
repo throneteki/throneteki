@@ -108,3 +108,32 @@ describe('Marriage Pact on your own character', function () {
         expect(this.player2).isReadyToTakeAction();
     });
 });
+
+describe('Marriage Pact under Valar Morghulis', function () {
+    it('lets you sacrifice a character that is also being killed', function () {
+        this.setupTest({
+            phase: 'plot',
+            player1: {
+                plotDeck: ['Valar Morghulis'],
+                inPlay: [
+                    {
+                        card: 'Tumblestone Knight',
+                        attachments: [{ card: 'Marriage Pact', owner: 'player2' }]
+                    }
+                ]
+            },
+            player2: { inPlay: ['Castle Guard', 'Hedge Knight'] }
+        });
+        this.player1.selectPlot('Valar Morghulis');
+        this.player2.selectPlot('Filler Plot');
+        this.selectFirstPlayer(this.player1);
+
+        expect(this.player2).toBeAbleToSelect(this.castleGuard);
+
+        this.player2.clickCard(this.castleGuard);
+
+        expect(this.castleGuard.location).toBe('discard pile');
+        expect(this.hedgeKnight.location).toBe('dead pile');
+        expect(this.tumblestoneKnight.location).toBe('dead pile');
+    });
+});

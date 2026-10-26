@@ -24,3 +24,31 @@ describe('Skagos (IDP)', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('Skagos putting Umber Loyalist into play', function () {
+    function reverseNamedCards(cards) {
+        const named = cards.filter((card) => card.name !== 'House Maester');
+        return [...named.reverse(), ...cards.filter((card) => !named.includes(card))];
+    }
+
+    it('shuffles the deck before Umber Loyalist draws', function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                inPlay: ['Skagos (IDP)', 'Umber Loyalist'],
+                drawDeck: ['Umber Loyalist', 'Hedge Knight', 'Castle Guard', 'Winterfell Steward']
+            }
+        });
+        const inDeck = this.player1Object.drawDeck[0];
+        this.player1.mockShuffle(reverseNamedCards);
+        this.player1.clickCard(this.skagos);
+        this.player1.clickCard(this.player1.findCardByName('Umber Loyalist', 'play area'));
+        this.player1.clickCard(inDeck);
+        this.player1.triggerAbility('Umber Loyalist');
+
+        expect(this.winterfellSteward.location).toBe('hand');
+        expect(this.castleGuard.location).toBe('hand');
+        expect(this.hedgeKnight.location).toBe('draw deck');
+        expect(this.player1).isReadyToTakeAction();
+    });
+});
