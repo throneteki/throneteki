@@ -34,7 +34,7 @@ class PlotPhase extends Phase {
 
     announceForcedPlotSelection() {
         for (const player of this.game.getPlayers()) {
-            if (player.mustRevealPlot) {
+            if (player.mustRevealPlot && player.getForcedPlot()) {
                 this.game.addMessage('{0} is forced to select a plot', player);
             } else if (player.hasFlag(Flags.player.cannotRevealPlot)) {
                 this.game.addMessage('{0} cannot reveal a new plot', player);
@@ -46,7 +46,9 @@ class PlotPhase extends Phase {
         let choosingPlayers = this.game
             .getPlayers()
             .filter(
-                (player) => !player.mustRevealPlot && !player.hasFlag(Flags.player.cannotRevealPlot)
+                (player) =>
+                    !(player.mustRevealPlot && player.getForcedPlot()) &&
+                    !player.hasFlag(Flags.player.cannotRevealPlot)
             );
         this.game.raiseEvent('onChoosePlot', { players: choosingPlayers }, () => {
             this.game.queueStep(new SelectPlotPrompt(this.game, this.plotSelectionFirstPlayer));

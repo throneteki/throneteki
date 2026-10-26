@@ -224,6 +224,11 @@ class Player extends Spectator {
         );
     }
 
+    // A plot the player must reveal next is only forced while it is still in their plot deck.
+    getForcedPlot() {
+        return this.getPlots().includes(this.mustRevealPlot) ? this.mustRevealPlot : undefined;
+    }
+
     getHandCount() {
         return Math.max(0, this.hand.length + this.handCountModifier);
     }

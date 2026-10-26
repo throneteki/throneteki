@@ -27,8 +27,9 @@ class SelectPlotPrompt extends AllPlayerPrompt {
         if (!this.canChoose(player)) {
             return false;
         }
-        if (player.mustRevealPlot) {
-            player.selectedPlot = player.mustRevealPlot;
+        const forcedPlot = player.mustRevealPlot && player.getForcedPlot();
+        if (forcedPlot) {
+            player.selectedPlot = forcedPlot;
             player.clearSelectableCards();
         } else if (!player.selectedPlot) {
             const selectable = player.getSelectableCards();

@@ -24,3 +24,43 @@ describe('The Crow is a Tricksy Bird', function () {
         expect(this.player2Object.activePlot).toBe(this.tradingWithThePentoshi);
     });
 });
+
+describe('The Crow is a Tricksy Bird when the chosen plot leaves the plot deck', function () {
+    it('no longer forces that plot', function () {
+        this.setupTest({
+            phase: 'plot',
+            player1: {
+                faction: 'thenightswatch',
+                hand: ['The Crow is a Tricksy Bird'],
+                plotDeck: ['A Song of Summer', 'A Feast for Crows'],
+                gold: 2
+            },
+            player2: {
+                faction: 'martell',
+                usedPlots: ['Sneak Attack'],
+                plotDeck: ['A Noble Cause', 'You Win Or You Die', 'Trading with the Pentoshi'],
+                shadows: ['Ser Gerris Drinkwater']
+            }
+        });
+        this.player1.togglePromptedActionWindow('plot', true);
+        this.player1.selectPlot('A Song of Summer');
+        this.player2.selectPlot('A Noble Cause');
+        this.selectFirstPlayer(this.player1);
+        this.player1.clickCard(this.theCrowIsATricksyBird);
+        this.player1.clickCard(this.youWinOrYouDie);
+        this.player2.clickPrompt('Pass');
+        this.player1.clickPrompt('Pass');
+        this.player1.clickPrompt('Done');
+        this.player2.clickCard(this.serGerrisDrinkwater);
+        this.player2.triggerAbility(this.serGerrisDrinkwater);
+        this.player2.clickCard(this.youWinOrYouDie);
+        this.player2.clickCard(this.sneakAttack);
+        this.player2.clickPrompt('Done');
+        this.completeChallengesPhase();
+        this.player1.selectPlot('A Feast for Crows');
+        this.player2.selectPlot('Trading with the Pentoshi');
+
+        expect(this.youWinOrYouDie.location).toBe('revealed plots');
+        expect(this.player2Object.activePlot).toBe(this.tradingWithThePentoshi);
+    });
+});
