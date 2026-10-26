@@ -21,6 +21,12 @@ import RecyclePlots from './GameActions/RecyclePlots.js';
 import ChessClock from './ChessClock.js';
 import { DrawPhaseCards, Flags, SetupGold } from './Constants/index.js';
 
+// A card being played may still be facedown (under a Fool), where its title is hidden from other
+// cards, but uniqueness depends on the title it will have once faceup.
+function printedTitle(card) {
+    return card.cardData ? card.cardData.name : card.name;
+}
+
 class Player extends Spectator {
     constructor(id, user, owner, game, seatNo) {
         super(id, user);
@@ -166,7 +172,7 @@ class Player extends Spectator {
                 playCard.location === 'play area' &&
                 (this.game.currentPhase === 'setup' || !playCard.facedown) &&
                 playCard !== card &&
-                (playCard.code === card.code || playCard.name === card.name) &&
+                (playCard.code === card.code || playCard.name === printedTitle(card)) &&
                 playCard.owner === this
         );
     }
@@ -546,7 +552,7 @@ class Player extends Spectator {
     }
 
     isCharacterDead(card) {
-        return card.isUnique() && this.deadPile.some((c) => c.name === card.name);
+        return card.isUnique() && this.deadPile.some((c) => c.name === printedTitle(card));
     }
 
     playCard(card) {
@@ -637,13 +643,17 @@ class Player extends Spectator {
 
         if (owner === this) {
             let controlsAnOpponentsCopy = this.anyCardsInPlay(
-                (c) => c.name === card.name && c.owner !== this && !c.facedown
+                (c) => c.name === printedTitle(card) && c.owner !== this && !c.facedown
             );
             let opponentControlsOurCopy = this.game.getPlayers().some((player) => {
                 return (
                     player !== this &&
                     player.anyCardsInPlay(
-                        (c) => c.name === card.name && c.owner === this && c !== card && !c.facedown
+                        (c) =>
+                            c.name === printedTitle(card) &&
+                            c.owner === this &&
+                            c !== card &&
+                            !c.facedown
                     )
                 );
             });
@@ -655,9 +665,11 @@ class Player extends Spectator {
             return false;
         }
 
-        let controlsACopy = this.anyCardsInPlay((c) => c.name === card.name && !c.facedown);
+        let controlsACopy = this.anyCardsInPlay(
+            (c) => c.name === printedTitle(card) && !c.facedown
+        );
         let opponentControlsACopy = owner.anyCardsInPlay(
-            (c) => c.name === card.name && c !== card && !c.facedown
+            (c) => c.name === printedTitle(card) && c !== card && !c.facedown
         );
 
         return !controlsACopy && !opponentControlsACopy;
@@ -666,7 +678,8 @@ class Player extends Spectator {
     canResurrect(card) {
         return (
             this.deadPile.includes(card) &&
-            (!card.isUnique() || this.deadPile.filter((c) => c.name === card.name).length === 1)
+            (!card.isUnique() ||
+                this.deadPile.filter((c) => c.name === printedTitle(card)).length === 1)
         );
     }
 
@@ -698,7 +711,7 @@ class Player extends Spectator {
                 continue;
             }
 
-            let duplicate = processedCards.find((c) => c.name === card.name);
+            let duplicate = processedCards.find((c) => c.name === printedTitle(card));
 
             if (duplicate) {
                 duplicate.addDuplicate(card);

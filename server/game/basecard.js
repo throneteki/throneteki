@@ -57,7 +57,6 @@ class BaseCard {
 
         this.uuid = uuid.v1();
         this.code = cardData.code;
-        this.name = cardData.name;
         this.facedown = false;
         this.keywords = new KeywordsProperty();
         this.flags = new ReferenceCountedSetProperty();
@@ -499,12 +498,35 @@ class BaseCard {
         return this.keywords.getTriggerModifier(keyword);
     }
 
+    get name() {
+        return this.isFacedownInPlay() ? undefined : this.cardData.name;
+    }
+
+    // A facedown card in play has no attributes of its own, only those granted by the ability that
+    // put it into play (Rules Reference: Facedown Cards). Setup cards are facedown until revealed.
+    isFacedownInPlay() {
+        return (
+            !!this.facedown && this.location === 'play area' && this.game.currentPhase !== 'setup'
+        );
+    }
+
+    hasAttribute(property, value, printedValues = []) {
+        if (!this.isFacedownInPlay()) {
+            return property.contains(value);
+        }
+
+        const printed = printedValues.some(
+            (printedValue) => printedValue && printedValue.toLowerCase() === value.toLowerCase()
+        );
+        return property.getCountForReference(value) > (printed ? 1 : 0);
+    }
+
     hasTrait(trait) {
         if (this.hasFlag(Flags.losesAspect.traits)) {
             return false;
         }
 
-        return !this.isFullBlank() && this.traits.contains(trait);
+        return !this.isFullBlank() && this.hasAttribute(this.traits, trait, this.cardData.traits);
     }
 
     isFaction(faction) {
@@ -516,12 +538,14 @@ class BaseCard {
 
         if (normalizedFaction === 'neutral') {
             return ValidFactions.every(
-                (f) => !this.factions.contains(f) || this.hasFlag(Flags.losesAspect.faction(f))
+                (f) =>
+                    !this.hasAttribute(this.factions, f, [this.cardData.faction]) ||
+                    this.hasFlag(Flags.losesAspect.faction(f))
             );
         }
 
         return (
-            this.factions.contains(normalizedFaction) &&
+            this.hasAttribute(this.factions, normalizedFaction, [this.cardData.faction]) &&
             !this.hasFlag(Flags.losesAspect.faction(normalizedFaction))
         );
     }
@@ -763,7 +787,7 @@ class BaseCard {
     }
 
     isCopyOf(card) {
-        return this.name === card.name;
+        return this.cardData.name === card.cardData.name;
     }
 
     isUnique() {
@@ -883,7 +907,9 @@ class BaseCard {
             return [];
         }
 
-        return this.traits.getValues();
+        return this.traits
+            .getValues()
+            .filter((trait) => this.hasAttribute(this.traits, trait, this.cardData.traits));
     }
 
     addFaction(faction) {
