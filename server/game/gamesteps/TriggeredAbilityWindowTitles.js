@@ -4,7 +4,7 @@ const EventToTitle = {
     onCardPowerGained: (event) => `${event.card.name} gaining power`,
     onCardPowerMoved: (event) => `power moved from ${event.source.name} to ${event.target.name}`,
     onCardReturnedToHand: (event) => `${event.card.name} being returned to hand`,
-    onClaimApplied: () => 'to claim effects being applied',
+    onClaimApplied: () => 'claim effects being applied',
     onCharacterKilled: {
         single: (event) => `${event.card.name} being killed`,
         simultaneous: () => 'characters being killed'
@@ -28,8 +28,19 @@ const AbilityTypeToWord = {
     whenrevealed: 'when revealed'
 };
 
+// Name the kills, discards or power moves of a claim, which share its window, rather than the claim.
+function withClaimEffects(events) {
+    if (events.length !== 1 || events[0].name !== 'onClaimApplied') {
+        return events;
+    }
+
+    const effects = events[0].childEvents.flatMap((event) => event.getPrimaryEvents());
+    return effects.length > 0 ? effects : events;
+}
+
 const AbilityWindowTitles = {
     getTitle: function (abilityType, events) {
+        events = withClaimEffects(events);
         const abilityWord = AbilityTypeToWord[abilityType] || abilityType;
         const event = events[0];
         let eventTitle = EventToTitle[event.name];

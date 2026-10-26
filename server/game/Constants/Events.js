@@ -48,6 +48,7 @@ export const Events = Object.freeze({
             allowSave: 'boolean',
             card: 'DrawCard',
             destination: 'string',
+            isClaim: 'boolean',
             isPillage: 'boolean',
             isRandom: 'boolean',
             originalLocation: 'string',

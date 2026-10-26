@@ -1,9 +1,6 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
-const isApplyingClaim = (game, type) =>
-    !!game.currentChallenge && game.claim.isApplying && game.claim.type === type;
-
 class ObellaSand extends DrawCard {
     // Obella Sand (10010)
     // Reaction: After Obella Sand is discarded for [intrigue] claim or killed for [military] claim,
@@ -14,8 +11,7 @@ class ObellaSand extends DrawCard {
             when: {
                 onCharacterKilled: (event, context) =>
                     event.card === context.source && event.isClaim,
-                onCardDiscarded: (event, context) =>
-                    event.card === context.source && isApplyingClaim(context.game, 'intrigue')
+                onCardDiscarded: (event, context) => event.card === context.source && event.isClaim
             },
             location: ['dead pile', 'discard pile'],
             message: '{player} uses {source} to {gameAction}',

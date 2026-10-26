@@ -1,11 +1,16 @@
 import BaseStep from '../basestep.js';
 import FulfillMilitaryClaim from './fulfillmilitaryclaim.js';
 import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
+import DiscardCard from '../../GameActions/DiscardCard.js';
 
 class SatisfyClaim extends BaseStep {
-    constructor(game, claim) {
+    // Claim's kills, discards and power moves are attached to the claim event, so that reactions to
+    // them share a window with reactions to claim being applied.
+    constructor(game, claim, event) {
         super(game);
         this.claim = claim;
+        this.event = event;
     }
 
     continue() {
@@ -23,7 +28,7 @@ class SatisfyClaim extends BaseStep {
             this.processClaimAgainstPlayer(claimRecipient);
         }
 
-        this.game.queueSimpleStep(() => {
+        this.event.thenExecute(() => {
             this.game.claim = {
                 isApplying: false,
                 type: undefined
@@ -43,7 +48,12 @@ class SatisfyClaim extends BaseStep {
                     TextHelper.count(this.claim.value, 'character')
                 );
                 this.game.queueStep(
-                    new FulfillMilitaryClaim(this.game, claimRecipient, this.claim.value)
+                    new FulfillMilitaryClaim(
+                        this.game,
+                        claimRecipient,
+                        this.claim.value,
+                        this.event
+                    )
                 );
                 break;
             case 'intrigue':
@@ -53,7 +63,14 @@ class SatisfyClaim extends BaseStep {
                     claimRecipient,
                     TextHelper.count(this.claim.value, 'card')
                 );
-                claimRecipient.discardAtRandom(this.claim.value);
+                this.attachGameAction(
+                    GameActions.discardAtRandom({
+                        amount: this.claim.value,
+                        player: claimRecipient,
+                        discardEvent: (card) =>
+                            DiscardCard.createEvent({ card, allowSave: false, isClaim: true })
+                    })
+                );
                 break;
             case 'power': {
                 let appliedPower = Math.min(claimRecipient.faction.power, this.claim.value);
@@ -65,13 +82,21 @@ class SatisfyClaim extends BaseStep {
                     appliedPower,
                     this.claim.winner
                 );
-                this.game.movePower(
-                    claimRecipient.faction,
-                    this.claim.winner.faction,
-                    this.claim.value
+                this.attachGameAction(
+                    GameActions.movePower({
+                        from: claimRecipient.faction,
+                        to: this.claim.winner.faction,
+                        amount: this.claim.value
+                    })
                 );
                 break;
             }
+        }
+    }
+
+    attachGameAction(gameAction) {
+        if (gameAction.allow()) {
+            this.event.thenAttachEvent(gameAction.createEvent());
         }
     }
 }

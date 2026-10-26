@@ -11,8 +11,8 @@ class SatisfyClaimAction extends GameAction {
     }
 
     createEvent({ claim, game }) {
-        return this.event('__PLACEHOLDER_EVENT__', {}, () => {
-            game.queueStep(new SatisfyClaim(game, claim));
+        return this.event('__PLACEHOLDER_EVENT__', {}, (event) => {
+            game.queueStep(new SatisfyClaim(game, claim, event));
         });
     }
 }

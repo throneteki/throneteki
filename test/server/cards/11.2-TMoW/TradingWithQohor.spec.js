@@ -78,3 +78,34 @@ describe('Trading With Qohor', function () {
         });
     });
 });
+
+describe('Trading With Qohor and reactions to claim kills', function () {
+    it('shares a window with reactions to the characters killed for claim', function () {
+        this.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player1',
+            player1: {
+                agenda: 'Trading With Qohor',
+                inPlay: [{ card: 'Hedge Knight', attachments: ['Little Bird (Core)'] }],
+                drawDeck: ['Milk of the Poppy']
+            },
+            player2: {
+                inPlay: ['Margaery Tyrell (AMAF)', 'Eddard Stark (Core)'],
+                drawDeck: ['Robert Baratheon (Core)']
+            }
+        });
+        this.unopposedChallenge(this.player1, 'Military', this.hedgeKnight);
+        this.player2.clickCard(this.eddardStark);
+
+        expect(this.player1).toHavePrompt('Any reactions to Eddard Stark being killed?');
+
+        this.player1.triggerAbility('Trading With Qohor');
+        this.player1.clickCard(this.littleBird);
+        this.player1.clickCard(this.milkOfThePoppy);
+        this.player1.clickCard(this.margaeryTyrell);
+
+        expect(this.margaeryTyrell.attachments).toContain(this.milkOfThePoppy);
+        expect(this.player2).not.toAllowAbilityTrigger('Margaery Tyrell');
+        expect(this.robertBaratheon.location).toBe('draw deck');
+    });
+});

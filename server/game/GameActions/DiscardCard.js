@@ -53,6 +53,7 @@ class DiscardCard extends GameAction {
         allowSave = true,
         isPillage = false,
         isRandom = false,
+        isClaim = false,
         source,
         orderable,
         destination = 'discard pile'
@@ -63,6 +64,7 @@ class DiscardCard extends GameAction {
             isPillage,
             source,
             isRandom,
+            isClaim,
             orderable,
             destination
         });

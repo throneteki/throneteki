@@ -52,6 +52,7 @@ class MoveCardEventGenerator {
         allowSave = true,
         isPillage = false,
         isRandom = false,
+        isClaim = false,
         source,
         orderable,
         destination = 'discard pile'
@@ -62,6 +63,7 @@ class MoveCardEventGenerator {
             originalLocation: card.location,
             isPillage: !!isPillage,
             isRandom: !!isRandom,
+            isClaim: !!isClaim,
             source: source,
             snapshotName: 'cardStateWhenDiscarded',
             destination

@@ -21,8 +21,7 @@ class FalsePlans extends DrawCard {
             when: {
                 onCardDiscarded: (event, context) =>
                     event.card === context.source &&
-                    context.game.claim.isApplying &&
-                    context.game.claim.type === 'intrigue' &&
+                    event.isClaim &&
                     !!context.game.currentChallenge &&
                     context.game.currentChallenge.winner !== context.player
             },
