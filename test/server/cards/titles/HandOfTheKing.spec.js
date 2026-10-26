@@ -69,3 +69,35 @@ describe('Hand of the King', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('Hand of the King after a redirected power challenge', function () {
+    it('counts the challenge against the opponent it was initiated against', function () {
+        this.setupTest({
+            gameFormat: 'melee',
+            phase: 'plot',
+            player1: { inPlay: ['Bastard in Hiding', 'Shireen Baratheon (Core)'] },
+            player2: { inPlay: ['Tumblestone Knight'] },
+            player3: { inPlay: ['Winterfell Steward'] }
+        });
+        for (const player of [this.player1, this.player2, this.player3])
+            player.selectPlot('Filler Plot');
+        this.selectFirstPlayer(this.player1);
+        this.player1.selectTitle('Hand of the King');
+        this.player2.selectTitle('Crown Regent');
+        this.player3.selectTitle('Master of Coin');
+        this.completeMarshalPhase();
+        this.player1.clickPrompt('Power');
+        this.player1.clickPrompt('player2');
+        this.player1.clickCard(this.bastardInHiding);
+        this.player1.clickPrompt('Done');
+        this.player2.triggerAbility('Crown Regent');
+        this.player1.clickPrompt('player3');
+        this.skipActionWindow();
+        this.player3.clickPrompt('Done');
+        this.skipActionWindow();
+        this.player1.clickPrompt('Power');
+
+        expect(this.player1).toHaveDisabledPromptButton('player2');
+        expect(this.player1).toHavePromptButton('player3');
+    });
+});

@@ -35,7 +35,7 @@ class HandOfTheKing extends TitleCard {
 
 function allowOpponent(tracker, player, opponent) {
     const challenges = tracker.filter({ attackingPlayer: player, challengeType: 'power' });
-    const opponents = new Set(challenges.map((challenge) => challenge.defendingPlayer));
+    const opponents = new Set(challenges.map((challenge) => challenge.initiatedAgainstPlayer));
     return opponents.size > 0 && (opponents.size > 1 || !opponents.has(opponent));
 }
 
