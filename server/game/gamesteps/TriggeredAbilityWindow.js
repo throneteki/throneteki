@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import BaseAbilityWindow from './BaseAbilityWindow.js';
 import CancelTimer from './CancelTimer.js';
 import SelectCardPrompt from './selectcardprompt.js';
@@ -79,7 +78,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             cardCondition: () => false,
             cardType: ['agenda', 'attachment', 'character', 'event', 'location', 'plot', 'title'],
             additionalControls: [
-                { type: 'response-delay', duration: delay },
+                this.getResponseDelayControl(delay),
                 ...this.getAdditionalPromptControls(player)
             ],
             additionalButtons: [
@@ -94,6 +93,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
                 if (arg === 'wait') {
                     waitForPass = true;
                     prompt.properties.doneButtonText = 'Pass';
+                    this.removeTimer(prompt);
                     return false;
                 }
 
@@ -130,8 +130,11 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             .map((choice) => choice.card);
 
         let unclickableCards = cardsForPlayer.filter((card) => card.location === 'draw deck');
+        const timed = this.cancelTimer.isEnabled(player);
+        const delay = timed ? player.getWindowTimerDelay() : undefined;
+        let timerStopped = false;
 
-        this.game.promptForSelect(player, {
+        const prompt = this.game.promptForSelect(player, {
             activePromptTitle: TriggeredAbilityWindowTitles.getTitle(
                 this.abilityType,
                 this.event.getPrimaryEvents()
@@ -140,11 +143,20 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             cardCondition: (card) => cardsForPlayer.includes(card),
             cardType: ['agenda', 'attachment', 'character', 'event', 'location', 'plot', 'title'],
             additionalButtons: this.getButtons(player, unclickableCards),
-            additionalControls: this.getAdditionalPromptControls(player),
+            additionalControls: [
+                ...(timed ? [this.getResponseDelayControl(delay)] : []),
+                ...this.getAdditionalPromptControls(player)
+            ],
             doneButtonText: 'Pass',
             onSelect: (player, card) => this.chooseCardToTrigger(player, card),
             onCancel: () => this.pass(),
             onMenuCommand: (player, arg) => {
+                if (arg === 'stopTimer') {
+                    timerStopped = true;
+                    this.removeTimer(prompt);
+                    return false;
+                }
+
                 if (arg === 'pass') {
                     this.pass();
                 } else if (arg === 'passAndPauseForRound') {
@@ -159,7 +171,32 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             }
         });
 
+        if (timed) {
+            this.game.afterDelay(delay, () => {
+                if (!prompt.isComplete() && !timerStopped) {
+                    prompt.onMenuCommand(player, 'pass');
+                }
+            });
+        }
+
         this.forceWindowPerPlayer[player.name] = false;
+    }
+
+    getResponseDelayControl(delay) {
+        return {
+            type: 'response-delay',
+            duration: delay,
+            abilityWord: TriggeredAbilityWindowTitles.getAbilityWord(this.abilityType)
+        };
+    }
+
+    removeTimer(prompt) {
+        prompt.properties.additionalControls = prompt.properties.additionalControls.filter(
+            (control) => control.type !== 'response-delay'
+        );
+        prompt.properties.additionalButtons = prompt.properties.additionalButtons.filter(
+            (button) => !['stopTimer', 'wait'].includes(button.arg)
+        );
     }
 
     getButtons(player, unclickableCards) {
@@ -168,11 +205,9 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         });
 
         if (this.cancelTimer.isEnabled(player)) {
-            buttons.push({ timer: true, arg: 'pass', id: uuid.v1() });
-            buttons.push({ text: 'I need more time', timerCancel: true });
+            buttons.push({ text: 'I need more time', arg: 'stopTimer' });
             buttons.push({
                 text: "Don't ask again until end of round",
-                timerCancel: true,
                 arg: 'passAndPauseForRound'
             });
         }

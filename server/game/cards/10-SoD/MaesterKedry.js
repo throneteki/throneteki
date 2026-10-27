@@ -8,10 +8,11 @@ class MaesterKedry extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce next event by 2',
+            clickToActivate: true,
             cost: ability.costs.kneelSelf(),
             message:
                 '{player} kneels {source} to reduce the cost of the next event they play this phase by 2',
-            gameAction: GameActions.lastingEffect((context) => ({
+            gameAction: GameActions.lastingEffect(() => ({
                 duration: 'untilEndOfPhase',
                 targetController: 'current',
                 effect: ability.effects.reduceNextPlayedCardCost(2)

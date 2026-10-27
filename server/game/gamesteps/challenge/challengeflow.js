@@ -118,7 +118,9 @@ class ChallengeFlow extends BaseStep {
             mustBeDeclaredOption: Flags.challengeOptions.mustBeDeclaredAsAttacker,
             limitsProperty: 'attackerLimits',
             activePromptTitle: 'Select challenge attackers',
-            waitingPromptTitle: 'Waiting for opponent to select attackers',
+            waitingPromptTitle: this.challenge.declareDefendersFirst
+                ? 'Waiting for opponent to select attackers'
+                : 'Waiting for opponent to initiate challenge',
             messages: {
                 autoDeclareSingular: '{0} is automatically declared as an attacker',
                 autoDeclarePlural: '{0} are automatically declared as attackers',

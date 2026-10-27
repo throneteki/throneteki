@@ -9,12 +9,13 @@ class BrightWaterKnight extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce Knight character',
+            clickToActivate: true,
             phase: 'marshal',
             limit: ability.limit.perPhase(1),
             cost: ability.costs.discardGold(),
             message:
                 '{player} discards 1 gold from {source} to reduce the next knight character they marshal this phase by 2',
-            gameAction: GameActions.lastingEffect((context) => ({
+            gameAction: GameActions.lastingEffect(() => ({
                 duration: 'untilEndOfPhase',
                 effect: ability.effects.reduceNextMarshalledCardCost(
                     2,

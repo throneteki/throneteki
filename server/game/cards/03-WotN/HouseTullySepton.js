@@ -8,12 +8,13 @@ class HouseTullySepton extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce next marshalled character',
+            clickToActivate: true,
             phase: 'marshal',
             limit: ability.limit.perPhase(1),
             cost: ability.costs.discardPower(1, (card) => card.getType() === 'character'),
             message:
                 '{player} uses {source} and discards a power from {costs.discardPower} to reduce the cost of the next House Tully or The Seven character they marshal this phase by 2',
-            gameAction: GameActions.lastingEffect((context) => ({
+            gameAction: GameActions.lastingEffect(() => ({
                 duration: 'untilEndOfPhase',
                 effect: ability.effects.reduceNextMarshalledCardCost(
                     2,

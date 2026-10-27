@@ -2,6 +2,7 @@ import {
     compileLegalityLists,
     setActiveLegalityLists
 } from '../../deck-helper/compileLegalityLists.js';
+import { needsImplementation } from '../../server/game/needsImplementation.js';
 
 const deckCardTypes = new Set(['agenda', 'attachment', 'character', 'event', 'location', 'plot']);
 
@@ -36,7 +37,7 @@ export function formatCoverage({
                     (list.format === 'draft' || !['ToJ', 'VDS'].includes(card.packCode)) &&
                     !banned.has(card.code)
             );
-            const noText = (card) => !(card.text || '').trim();
+            const noCode = (card) => !needsImplementation(card);
             return {
                 id: list._id,
                 name: list.name,
@@ -47,11 +48,11 @@ export function formatCoverage({
                 implemented: pool.filter((card) => implemented.has(card.code)).length,
                 specs: pool.filter((card) => withSpecs.has(card.code)).length,
                 verified: pool.filter((card) => verifiedCodes.has(card.code)).length,
-                noText: pool.filter(noText).length,
-                playable: pool.filter((card) => verifiedCodes.has(card.code) || noText(card))
+                noCode: pool.filter(noCode).length,
+                playable: pool.filter((card) => verifiedCodes.has(card.code) || noCode(card))
                     .length,
                 missing: pool
-                    .filter((card) => !verifiedCodes.has(card.code) && !noText(card))
+                    .filter((card) => !verifiedCodes.has(card.code) && !noCode(card))
                     .map((card) => card.code)
                     .sort()
             };

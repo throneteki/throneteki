@@ -13,13 +13,13 @@ class TheSevenPointedStar extends DrawCard {
 
         this.action({
             title: 'Reduce cost',
+            clickToActivate: true,
             phase: 'marshal',
             cost: ability.costs.kneelParent(),
             message:
                 '{player} uses {source} and kneels {costs.kneel} to reduce the cost of the next The Seven card by 2',
             gameAction: GameActions.lastingEffect((context) => ({
                 duration: 'untilEndOfPhase',
-                condition: () => !context.abilityDeactivated,
                 targetController: 'current',
                 match: (player) => player === context.player,
                 effect: ability.effects.reduceNextMarshalledCardCost(2, (card) =>

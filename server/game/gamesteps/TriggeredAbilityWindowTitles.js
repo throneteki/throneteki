@@ -39,6 +39,10 @@ function withClaimEffects(events) {
 }
 
 const AbilityWindowTitles = {
+    getAbilityWord: function (abilityType) {
+        return AbilityTypeToWord[abilityType] || abilityType;
+    },
+
     getTitle: function (abilityType, events) {
         events = withClaimEffects(events);
         const abilityWord = AbilityTypeToWord[abilityType] || abilityType;

@@ -177,11 +177,12 @@ const ActivePlayerPrompt = ({
 
     // A wait shown to every player who might be able to respond, so their opponents can't tell
     // who really can.
-    if (controls && controls.some((control) => control.type === 'response-delay')) {
-        promptText =
-            'Some cards can react to what just happened. Play one now, choose Wait to keep this window open, or Skip to continue.';
+    const responseDelay = controls && controls.find((control) => control.type === 'response-delay');
+    if (responseDelay) {
+        const word = responseDelay.abilityWord || 'response';
+        promptText = `Play ${/^[aeiou]/.test(word) ? 'an' : 'a'} ${word}?`;
     } else if (controls && controls.some((control) => control.type === 'action-delay')) {
-        promptText = 'You can take an action now, or pass to continue.';
+        promptText = 'Take an action?';
     }
 
     const promptTextElement = [];

@@ -71,6 +71,16 @@ describe('manual mode', function () {
                 expect(this.game.manualMode.enabled).toBe(false);
             });
 
+            it('asks only once when they ask again before the opponent answers', function () {
+                this.player1.sendChat('/manual');
+                this.player1.sendChat('/manual');
+                this.player2.clickPrompt('Refuse');
+
+                expect(this.player2).not.toHavePromptButton('Allow');
+                expect(this.game.manualMode.enabled).toBe(false);
+                expect(this.player1).isReadyToTakeAction();
+            });
+
             describe('and the opponent refuses', function () {
                 beforeEach(function () {
                     this.player2.clickPrompt('Refuse');
@@ -103,7 +113,36 @@ describe('manual mode', function () {
 
                     expect(this.houseMaester.kneeled).toBe(true);
                 });
+
+                it('can be turned off by either player without asking', function () {
+                    this.player2.sendChat('/manual');
+
+                    expect(this.game.manualMode.enabled).toBe(false);
+                    expect(this.player1).not.toHavePromptButton('Allow');
+                    expect(this.player1).isReadyToTakeAction();
+                });
+
+                it('can be asked for again once it has been answered', function () {
+                    this.player1.sendChat('/manual');
+                    this.player1.sendChat('/manual');
+
+                    expect(this.game.manualMode.enabled).toBe(false);
+                    expect(this.player2).toHavePromptButton('Allow');
+                });
             });
+        });
+    });
+
+    describe('when the only cards without a card file need none', function () {
+        beforeEach(function () {
+            setup(this, {
+                agenda: 'Banner of the Dragon',
+                hand: ['Burned Men', 'Undercity Spymaster']
+            });
+        });
+
+        it('starts off', function () {
+            expect(this.game.manualMode.enabled).toBe(false);
         });
     });
 
@@ -122,6 +161,12 @@ describe('manual mode', function () {
 
         it('starts on', function () {
             expect(this.game.manualMode.enabled).toBe(true);
+        });
+
+        it('names the cards that are not verified', function () {
+            expect(this.game.getPlainTextLog()).toContain(
+                'Manual mode is on because these cards are not verified: Lady-in-Waiting'
+            );
         });
     });
 });

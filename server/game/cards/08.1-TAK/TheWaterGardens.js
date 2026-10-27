@@ -17,7 +17,6 @@ class TheWaterGardens extends DrawCard {
             },
             gameAction: GameActions.lastingEffect((context) => ({
                 duration: 'untilEndOfPhase',
-                condition: () => !context.abilityDeactivated,
                 targetController: 'current',
                 effect: ability.effects.reduceNextMarshalledPlayedOrAmbushedCardCost(
                     context.player.getNumberOfUsedPlots(),

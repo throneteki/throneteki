@@ -16,7 +16,6 @@ class OceanRoad extends DrawCard {
                 '{player} uses {source} to reduce the cost of the next neutral or out of faction card by 1',
             gameAction: GameActions.lastingEffect((context) => ({
                 duration: 'untilEndOfPhase',
-                condition: () => !context.abilityDeactivated,
                 targetController: 'current',
                 effect: ability.effects.reduceNextMarshalledCardCost(
                     1,

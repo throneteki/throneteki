@@ -9,11 +9,12 @@ class TheBastardOfGodsgrace extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce play / ambush cost by 2',
+            clickToActivate: true,
             phase: 'challenge',
             cost: ability.costs.discardPowerFromSelf(),
             message:
                 '{player} discards a power from {source} to reduce the cost of the next card played or ambushed this phase by 2',
-            gameAction: GameActions.lastingEffect((context) => ({
+            gameAction: GameActions.lastingEffect(() => ({
                 duration: 'untilEndOfPhase',
                 effect: ability.effects.reduceNextAmbushedOrPlayedCardCost(2)
             }))

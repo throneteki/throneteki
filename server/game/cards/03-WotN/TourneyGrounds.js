@@ -11,9 +11,8 @@ class TourneyGrounds extends DrawCard {
             cost: ability.costs.kneelSelf(),
             message:
                 '{player} kneels {source} to reduce the cost of the next event they play this phase by 1',
-            gameAction: GameActions.lastingEffect((context) => ({
+            gameAction: GameActions.lastingEffect(() => ({
                 duration: 'untilEndOfPhase',
-                condition: () => !context.abilityDeactivated,
                 targetController: 'current',
                 effect: ability.effects.reduceNextPlayedCardCost(
                     1,

@@ -1,15 +1,16 @@
 import cards from './cards/index.js';
 import ManualModePrompt from './gamesteps/ManualModePrompt.js';
+import { needsImplementation } from './needsImplementation.js';
 
 /**
  * Whether players can use manual actions: chat commands that change the game, dragging cards,
  * clicking cards to kneel or stand them, changing stats. A game starts with manual mode off when
  * every card in every deck is verified (see docs/engine.md); turning it on then needs every opponent to
- * agree.
+ * agree, and turning it off does not.
  */
 class ManualMode {
     static isVerified(cardData) {
-        return !!cards[cardData.code] || !(cardData.text || '').trim();
+        return !!cards[cardData.code] || !needsImplementation(cardData);
     }
 
     constructor(game, setting = 'auto') {
@@ -23,13 +24,24 @@ class ManualMode {
             return;
         }
 
-        this.enabled = !this.game
-            .getPlayers()
-            .every((player) =>
-                player.preparedDeck.allCards.every((card) => this.isVerifiedCard(card))
-            );
+        const unverified = new Map();
+        for (const player of this.game.getPlayers()) {
+            for (const card of player.preparedDeck.allCards) {
+                if (!this.isVerifiedCard(card) && !unverified.has(card.cardData.code)) {
+                    unverified.set(card.cardData.code, card);
+                }
+            }
+        }
 
-        if (!this.enabled) {
+        this.enabled = unverified.size > 0;
+
+        if (this.enabled) {
+            this.game.addAlert(
+                'info',
+                'Manual mode is on because these cards are not verified: {0}',
+                [...unverified.values()]
+            );
+        } else {
             this.game.addAlert(
                 'info',
                 'Every card in this game is verified, so manual mode is off'
@@ -46,8 +58,12 @@ class ManualMode {
     }
 
     request(player) {
-        if (this.game.isGameOver) {
+        if (this.enabled || this.game.isGameOver) {
             this.toggle(player);
+            return;
+        }
+
+        if (this.pendingRequest && !this.pendingRequest.isComplete()) {
             return;
         }
 
@@ -57,17 +73,9 @@ class ManualMode {
             return;
         }
 
-        this.game.addAlert(
-            'info',
-            '{0} asks to turn manual mode {1}',
-            player,
-            this.enabled ? 'off' : 'on'
-        );
-        this.game.queueStep(
-            new ManualModePrompt(this.game, player, this.enabled ? 'off' : 'on', () =>
-                this.toggle(player)
-            )
-        );
+        this.game.addAlert('info', '{0} asks to turn manual mode on', player);
+        this.pendingRequest = new ManualModePrompt(this.game, player, () => this.toggle(player));
+        this.game.queueStep(this.pendingRequest);
     }
 
     toggle(player) {

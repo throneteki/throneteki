@@ -12,7 +12,7 @@ describe('Fealty', function () {
 
     describe('when used', function () {
         beforeEach(function () {
-            this.player1.clickMenu(this.fealty, 'Kneel your faction card');
+            this.player1.clickCard(this.fealty);
         });
 
         it('kneels your faction card', function () {

@@ -25,7 +25,10 @@ CI fails a pull request that adds or changes a card that is not verified
 (`npm run spec:coverage -- --check-verified`), so a card can only be implemented once it is.
 
 [ManualMode.js](../server/game/ManualMode.js) is a game flag. A game starts with manual mode off
-when every card in every deck is implemented or has no text. With it off:
+when every card in every deck is implemented or needs no card file
+([needsImplementation.js](../server/game/needsImplementation.js)): it has no text, its text is
+only keywords, or it is an agenda whose text is only deckbuilding rules that
+[AgendaRules.js](../deck-helper/AgendaRules.js) enforces. With it off:
 
 - chat commands (except `/cancel-prompt`, `/manual`, the clock and rematch commands), drag and
   drop, click-to-kneel, stat changes, shuffling and looking at the deck are refused without a
@@ -35,11 +38,12 @@ when every card in every deck is implemented or has no text. With it off:
   `GameActions.chooseCards`) cannot be skipped.
 
 `/manual` or the Manual Mode button asks every opponent. If they all agree, manual mode turns on,
-and that is recorded in the game stats. Every manual control records the cards it touched, the
-ability being resolved and the last three abilities initiated (`stats.manualActions`, see
-[ManualActions.js](../server/game/ManualActions.js)). Manual corrections (`changeStat`, `/power`,
-`/token`) are plain corrections and raise no game events, so fixing a mistake doesn't trigger
-reactions.
+and that is recorded in the game stats. While a request is waiting for an answer, asking again
+does nothing. Turning manual mode off needs no agreement. Every manual control records the cards
+it touched, the ability being resolved and the last three abilities initiated
+(`stats.manualActions`, see [ManualActions.js](../server/game/ManualActions.js)). Manual
+corrections (`changeStat`, `/power`, `/token`) are plain corrections and raise no game events, so
+fixing a mistake doesn't trigger reactions.
 
 ## Events
 
@@ -222,6 +226,13 @@ cancel such as The Hand's Judgment.
   ([TriggeredAbilityWindow.js](../server/game/gamesteps/TriggeredAbilityWindow.js)). They see
   "Keeping your hand hidden" with a Skip button; their opponent sees an ordinary wait. Players using
   the cancel timer keep the timer prompt.
+- The cancel timer runs on the server: it passes for the player after their profile's window timer
+  unless they choose "I need more time", and shows the same progress bar as the wait above.
+- A choice made before anything is initiated (confirming a card action, choosing how to play a
+  card, choosing attackers) leaves the opponent's prompt as it was, so it doesn't reveal which card
+  or challenge is being considered
+  ([menuprompt.js](../server/game/gamesteps/menuprompt.js) `beforeInitiation`, and the attacker
+  prompt in [challengeflow.js](../server/game/gamesteps/challenge/challengeflow.js)).
 - "Don't ask again until end of round" means the player is not offered the windows the cancel
   timer covers until the next round, even when they hold a legal cancel.
 - A player can always set a window as a stop. That doesn't depend on their hand, so it leaks

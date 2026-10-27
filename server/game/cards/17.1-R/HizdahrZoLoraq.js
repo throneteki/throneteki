@@ -8,11 +8,12 @@ class HizdahrZoLoraq extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce next marshal/ambush/out of shadows cost',
+            clickToActivate: true,
             cost: ability.costs.discardFromHand((card) => card.getType() === 'character'),
             limit: ability.limit.perRound(1),
             message:
                 '{player} uses {source} and discards {costs.discardFromHand} from their hand to reduce the next card they marshal, ambush or bring out of shadows by 3',
-            gameAction: GameActions.lastingEffect((context) => ({
+            gameAction: GameActions.lastingEffect(() => ({
                 duration: 'untilEndOfPhase',
                 targetController: 'current',
                 effect: ability.effects.reduceNextMarshalledAmbushedOrOutOfShadowsCardCost(3)

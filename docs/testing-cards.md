@@ -316,6 +316,11 @@ this.player1.clickMenu(this.card, 'Menu item text'); // menu actions
 this.player1.clickCard(this.card); // actions activated by clicking the card
 ```
 
+In a game, clicking a card with a usable action opens a menu with a Cancel button, so a stray
+click can be backed out: "Use <card name>?" when the card has a single usable action, which
+`clickCard` confirms for you, and "Choose an action" when it has several, where you choose one
+with `clickPrompt`. Cost reducers (`clickToActivate`) are used straight away, without a menu.
+
 When an action shouldn't be available, assert the reason with `actionUnavailableReason` rather
 than only checking that nothing happened: it shows the action failed for the right reason, not
 because, say, a target was missing. Pass the action's title when the card has more than one.

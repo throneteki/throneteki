@@ -14,9 +14,8 @@ class GreatHall extends DrawCard {
             cost: ability.costs.kneelSelf(),
             message:
                 '{player} kneels {source} to reduce the cost of the next unique character by 1 (by 2 if it has cost of 6 or more)',
-            gameAction: GameActions.lastingEffect((context) => ({
+            gameAction: GameActions.lastingEffect(() => ({
                 duration: 'untilEndOfPhase',
-                condition: () => !context.abilityDeactivated,
                 targetController: 'current',
                 effect: ability.effects.reduceNextMarshalledCardCost(
                     (card) => (card.getPrintedCost() >= 6 ? 2 : 1),

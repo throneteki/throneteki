@@ -22,7 +22,8 @@ class PlayActionPrompt extends BaseStep {
                 buttons: buttons
             },
             source: this.context.source,
-            hideSourceFromOpponents: true
+            hideSourceFromOpponents: true,
+            beforeInitiation: true
         });
     }
 

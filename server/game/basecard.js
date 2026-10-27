@@ -20,7 +20,7 @@ import { Flags, Tokens } from './Constants/index.js';
 import StackProperty from './PropertyTypes/StackProperty.js';
 import ModifierProperty from './PropertyTypes/ModifierProperty.js';
 
-const ValidKeywords = [
+export const ValidKeywords = [
     'ambush',
     'assault',
     'bestow',

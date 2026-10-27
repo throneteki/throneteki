@@ -9,6 +9,7 @@ import AttachmentPrompt from './gamesteps/attachmentprompt.js';
 import AllowedChallenges from './AllowedChallenges.js';
 import PlayableLocation from './playablelocation.js';
 import PlayActionPrompt from './gamesteps/playactionprompt.js';
+import Settings from '../settings.js';
 import MinMaxProperty from './PropertyTypes/MinMaxProperty.js';
 import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
 import GoldSource from './GoldSource.js';
@@ -1270,6 +1271,10 @@ class Player extends Spectator {
 
     isTimerEnabled() {
         return !this.noTimer && this.user.settings.windowTimer !== 0;
+    }
+
+    getWindowTimerDelay() {
+        return (this.user.settings.windowTimer ?? Settings.defaultSettings.windowTimer) * 1000;
     }
 
     addSecondsToClock(seconds) {

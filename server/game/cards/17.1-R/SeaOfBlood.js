@@ -13,6 +13,7 @@ class SeaOfBlood extends AgendaCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce next event by 2',
+            clickToActivate: true,
             cost: ability.costs.discardTokenFromSelf(Tokens.blood),
             message:
                 '{player} discards 1 blood token from {source} to reduce the cost of the next event they play this phase by 2',

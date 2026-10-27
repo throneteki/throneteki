@@ -145,10 +145,10 @@ if (args.includes('--formats')) {
         console.log(JSON.stringify({ formats }, null, 2));
     } else {
         const width = Math.max('Format'.length, ...formats.map((format) => format.name.length));
-        console.log(`${'Format'.padEnd(width)}  Specs  Verified  No text  Cards  Playable`);
+        console.log(`${'Format'.padEnd(width)}  Specs  Verified  No code  Cards  Playable`);
         for (const format of formats) {
             console.log(
-                `${format.name.padEnd(width)}  ${String(format.specs).padStart(5)}  ${String(format.verified).padStart(8)}  ${String(format.noText).padStart(7)}  ${String(format.total).padStart(5)}  ${percentage(format.playable, format.total).padStart(8)}`
+                `${format.name.padEnd(width)}  ${String(format.specs).padStart(5)}  ${String(format.verified).padStart(8)}  ${String(format.noCode).padStart(7)}  ${String(format.total).padStart(5)}  ${percentage(format.playable, format.total).padStart(8)}`
             );
         }
     }

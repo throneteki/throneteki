@@ -15,9 +15,8 @@ function reducerAbility(card, ability, { kind, matches }) {
                 amount: () => card.reduceBy
             }
         },
-        gameAction: GameActions.lastingEffect((context) => ({
+        gameAction: GameActions.lastingEffect(() => ({
             duration: 'untilEndOfPhase',
-            condition: () => !context.abilityDeactivated,
             targetController: 'current',
             effect: ability.effects.reduceNextMarshalledCardCost(card.reduceBy, (target) =>
                 matches(target, card)

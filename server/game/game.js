@@ -654,10 +654,6 @@ class Game extends EventEmitter {
             return false;
         }
 
-        if (usable.length === 1) {
-            return usable[0].action.execute(player, usable[0].index);
-        }
-
         const handlers = { cancel: () => true };
         const buttons = usable.map(({ action, index }) => {
             const method = `action${index}`;
@@ -670,10 +666,11 @@ class Game extends EventEmitter {
 
         this.promptWithMenu(player, handlers, {
             activePrompt: {
-                menuTitle: 'Choose an action',
+                menuTitle: usable.length === 1 ? `Use ${card.name}?` : 'Choose an action',
                 buttons: [...buttons, { text: 'Cancel', method: 'cancel' }]
             },
-            source: card
+            source: card,
+            beforeInitiation: true
         });
         return true;
     }
@@ -1079,7 +1076,9 @@ class Game extends EventEmitter {
     }
 
     promptForSelect(player, properties) {
-        this.queueStep(new SelectCardPrompt(this, player, properties));
+        const prompt = new SelectCardPrompt(this, player, properties);
+        this.queueStep(prompt);
+        return prompt;
     }
 
     promptForOpponentChoice(
@@ -1288,6 +1287,10 @@ class Game extends EventEmitter {
         this.abilityContextStack.pop();
     }
 
+    isResolvingAbility() {
+        return this.abilityContextStack.some((context) => context.resolutionStage !== 'framework');
+    }
+
     resolveAbility(ability, context) {
         this.queueStep(new AbilityResolver(this, ability, context));
     }
@@ -1382,7 +1385,15 @@ class Game extends EventEmitter {
     }
 
     getActionTimingRequirement(player) {
-        if (this.manualMode.enabled || this.isActionTimingOpenFor(player)) {
+        if (this.manualMode.enabled) {
+            return undefined;
+        }
+
+        if (this.isResolvingAbility()) {
+            return Requirements.window;
+        }
+
+        if (this.isActionTimingOpenFor(player)) {
             return undefined;
         }
 

@@ -13,9 +13,8 @@ class BuilderAtTheWall extends DrawCard {
             cost: ability.costs.kneelSelf(),
             message:
                 '{player} kneels {source} to reduce the cost of the next thenightswatch attachment or location by 1',
-            gameAction: GameActions.lastingEffect((context) => ({
+            gameAction: GameActions.lastingEffect(() => ({
                 duration: 'untilEndOfPhase',
-                condition: () => !context.abilityDeactivated,
                 targetController: 'current',
                 effect: ability.effects.reduceNextMarshalledCardCost(
                     1,

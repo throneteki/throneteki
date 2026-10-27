@@ -9,7 +9,7 @@ describe('Sea of Blood (R)', function () {
                 gold: 0
             }
         });
-        this.player1.clickMenu(this.seaOfBlood, 'Reduce next event by 2');
+        this.player1.clickCard(this.seaOfBlood);
         expect(this.seaOfBlood.tokens.blood).toBeUndefined();
         this.player1.clickCard(this.everyCaptainIsAKing);
         expect(this.everyCaptainIsAKing.location).toBe('discard pile');

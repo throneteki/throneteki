@@ -29,7 +29,12 @@ import { Requirements } from './Constants/index.js';
  * anyPlayer    - boolean indicating that the action may be executed by a player
  *                other than the card's controller. Defaults to false.
  * clickToActivate - boolean that indicates the action should be activated when
- *                   the card is clicked.
+ *                   the card is clicked, without a confirmation menu. Use it for actions
+ *                   that reduce a cost. Clicking the card again after it was used
+ *                   refunds its costs and ends the lasting effects it created.
+ * undoable     - boolean, defaulting to true, that indicates a click-to-activate action
+ *                can be undone that way. Set it to false when the action does more than
+ *                create lasting effects, such as discarding cards.
  */
 class CardAction extends BaseAbility {
     constructor(game, card, properties) {
@@ -49,6 +54,7 @@ class CardAction extends BaseAbility {
         this.anyPlayer = properties.anyPlayer || false;
         this.condition = properties.condition;
         this.clickToActivate = !!properties.clickToActivate;
+        this.undoable = properties.undoable ?? true;
         this.location =
             properties.location || DefaultLocationForType[card.getPrintedType()] || 'play area';
         this.events = new EventRegistrar(game, this);
@@ -231,7 +237,7 @@ class CardAction extends BaseAbility {
     }
 
     deactivate(player) {
-        if (this.activationContexts.length === 0) {
+        if (!this.undoable || this.activationContexts.length === 0) {
             return false;
         }
 

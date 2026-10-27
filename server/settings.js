@@ -58,5 +58,6 @@ function getUserWithDefaultsSet(user) {
 }
 
 export default {
+    defaultSettings,
     getUserWithDefaultsSet: getUserWithDefaultsSet
 };

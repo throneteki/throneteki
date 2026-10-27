@@ -201,6 +201,17 @@ class PlayerInteractionWrapper {
         this.game.cardClicked(this.player.name, card.uuid);
         this.game.continue();
         this.checkUnserializableGameState();
+
+        // A card with a single usable action asks for confirmation first. Card specs treat the
+        // click as using it; test/server/CardActionClick.spec.js covers the confirmation itself.
+        const prompt = this.currentPrompt();
+        if (
+            prompt.menuTitle === `Use ${card.name}?` &&
+            prompt.buttons.length === 2 &&
+            prompt.buttons[1].text === 'Cancel'
+        ) {
+            this.clickPrompt(prompt.buttons[0].text);
+        }
     }
 
     clickMenu(card, menuText) {

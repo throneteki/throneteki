@@ -9,20 +9,64 @@ describe('clicking a card with an action', function () {
     describe('when the card has one usable action', function () {
         beforeEach(function () {
             this.setupTest({
-                phase: 'marshal',
+                phase: 'challenge',
                 player1: {
-                    inPlay: ['The Kingsroad']
+                    inPlay: ['Gates of Winterfell'],
+                    drawDeck: ['Winterfell Steward']
                 }
             });
         });
 
         it('sends no menu while manual mode is off', function () {
-            expect(summary(this, this.theKingsroad).menu).toBeUndefined();
+            expect(summary(this, this.gatesOfWinterfell).menu).toBeUndefined();
         });
 
-        it('uses that action', function () {
-            this.player1.clickCard(this.theKingsroad);
+        describe('and the player clicks it', function () {
+            beforeEach(function () {
+                this.game.cardClicked(this.player1.name, this.gatesOfWinterfell.uuid);
+                this.game.continue();
+            });
 
+            it('asks for confirmation before using it', function () {
+                expect(this.player1).toHavePrompt('Use Gates of Winterfell?');
+                expect(this.player1).toHavePromptButton('Reveal top card of deck');
+                expect(this.player1).toHavePromptButton('Cancel');
+                expect(this.gatesOfWinterfell.kneeled).toBe(false);
+                expect(this.winterfellSteward.location).toBe('draw deck');
+            });
+
+            it('uses the action once confirmed', function () {
+                this.player1.clickPrompt('Reveal top card of deck');
+
+                expect(this.gatesOfWinterfell.kneeled).toBe(true);
+                expect(this.winterfellSteward.location).toBe('hand');
+                expect(this.player1).isReadyToTakeAction();
+            });
+
+            it('can be cancelled', function () {
+                this.player1.clickPrompt('Cancel');
+
+                expect(this.gatesOfWinterfell.kneeled).toBe(false);
+                expect(this.winterfellSteward.location).toBe('draw deck');
+                expect(this.player1).isReadyToTakeAction();
+            });
+        });
+    });
+
+    describe('when the card is a cost reducer', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    inPlay: ['The Kingsroad']
+                }
+            });
+
+            this.game.cardClicked(this.player1.name, this.theKingsroad.uuid);
+            this.game.continue();
+        });
+
+        it('uses it without asking', function () {
             expect(this.theKingsroad.location).toBe('discard pile');
             expect(this.player1).isReadyToTakeAction();
         });

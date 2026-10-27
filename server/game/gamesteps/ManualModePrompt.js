@@ -1,11 +1,10 @@
 import AllPlayerPrompt from './allplayerprompt.js';
 
 class ManualModePrompt extends AllPlayerPrompt {
-    constructor(game, requestingPlayer, direction, onAgreed) {
+    constructor(game, requestingPlayer, onAgreed) {
         super(game);
 
         this.requestingPlayer = requestingPlayer;
-        this.direction = direction;
         this.onAgreed = onAgreed;
         this.completedPlayers = new Set([requestingPlayer]);
         this.refused = false;
@@ -17,7 +16,7 @@ class ManualModePrompt extends AllPlayerPrompt {
 
     activePrompt() {
         return {
-            menuTitle: `${this.requestingPlayer.name} asks to turn manual mode ${this.direction}. Allow?`,
+            menuTitle: `${this.requestingPlayer.name} asks to turn manual mode on. Allow?`,
             buttons: [
                 { arg: 'yes', text: 'Allow' },
                 { arg: 'no', text: 'Refuse' }

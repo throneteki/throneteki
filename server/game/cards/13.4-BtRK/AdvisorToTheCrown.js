@@ -11,9 +11,8 @@ class AdvisorToTheCrown extends DrawCard {
             clickToActivate: true,
             cost: ability.costs.kneelSelf(),
             message: '{player} uses {source} to reduce the cost of the next Maester character by 1',
-            gameAction: GameActions.lastingEffect((context) => ({
+            gameAction: GameActions.lastingEffect(() => ({
                 duration: 'untilEndOfPhase',
-                condition: () => !context.abilityDeactivated,
                 targetController: 'current',
                 effect: ability.effects.reduceNextMarshalledCardCost(
                     1,

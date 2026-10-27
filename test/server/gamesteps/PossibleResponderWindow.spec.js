@@ -79,6 +79,12 @@ describe('cancel windows for a player without the timer', function () {
                 expect(this.lannisportMerchant.location).toBe('hand');
             });
 
+            it('names the kind of ability the window is for', function () {
+                expect(this.player2.player.promptState.controls).toContainEqual(
+                    expect.objectContaining({ type: 'response-delay', abilityWord: 'interrupt' })
+                );
+            });
+
             it('passes for them after a short random delay', function () {
                 expect(this.scheduled).toHaveLength(1);
                 expect(this.scheduled[0].delay).toBeGreaterThanOrEqual(1000);
@@ -195,7 +201,7 @@ describe('cancel windows for a player without the timer', function () {
 
         it('shows the timer prompt as before', function () {
             expect(this.player2).toHavePromptButton("Don't ask again until end of round");
-            expect(this.scheduled).toHaveLength(0);
+            expect(this.scheduled.map((item) => item.delay)).toEqual([10000]);
         });
     });
 });

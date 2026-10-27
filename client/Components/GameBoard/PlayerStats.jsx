@@ -140,7 +140,7 @@ const PlayerStats = ({
                                     () => dispatch(sendToggleManualModeMessage()),
                                     faWrench,
                                     currentGame.manualMode
-                                        ? 'Ask to turn manual mode off'
+                                        ? 'Turn manual mode off'
                                         : 'Ask to turn manual mode on',
                                     'Manual Mode',
                                     currentGame.manualMode

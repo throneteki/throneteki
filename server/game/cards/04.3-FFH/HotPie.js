@@ -8,13 +8,14 @@ class HotPie extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce next marshalled character',
+            clickToActivate: true,
             phase: 'marshal',
             cost: ability.costs.kneel(
                 (card) => card.hasTrait('Companion') && card.getType() === 'character'
             ),
             message:
                 '{player} uses {source} and kneels {costs.kneel} to reduce the cost of the next unique character they marshal this phase by 1',
-            gameAction: GameActions.lastingEffect((context) => ({
+            gameAction: GameActions.lastingEffect(() => ({
                 duration: 'untilEndOfPhase',
                 effect: ability.effects.reduceNextMarshalledCardCost(
                     1,

@@ -15,6 +15,8 @@ class QueenOfMeereen extends DrawCard {
         });
         this.action({
             title: 'Discard to reduce',
+            clickToActivate: true,
+            undoable: false,
             cost: ability.costs.kneelSelf(),
             condition: (context) => context.player.hand.length > 0,
             target: {
