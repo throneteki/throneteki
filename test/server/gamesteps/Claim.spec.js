@@ -17,7 +17,7 @@ describe('claim', function () {
             this.unopposedChallenge(this.player1, 'Military', this.hedgeKnight);
 
             expect(this.player2).toHavePrompt('Select 1 character to fulfill military claim');
-            this.player2.clickPrompt('Done');
+            expect(this.player2).not.toHavePromptButton('Done');
 
             expect(this.player2).toHavePrompt('Select 1 character to fulfill military claim');
             expect(this.tumblestoneKnight.location).toBe('play area');
@@ -105,8 +105,7 @@ describe('claim', function () {
 
             expect(this.player2).toHavePrompt('Select 2 characters to fulfill military claim');
             expect(this.player2).not.toBeAbleToSelect(this.balerion);
-
-            this.player2.clickPrompt('Done');
+            expect(this.player2).not.toHavePromptButton('Done');
 
             expect(this.tumblestoneKnight.location).toBe('play area');
 

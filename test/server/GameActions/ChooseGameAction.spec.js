@@ -32,8 +32,15 @@ describe('choose game action', function () {
         };
     });
 
-    it('lets the player cancel the choice by default', function () {
+    it('does not let the player cancel the choice once the ability is resolving', function () {
         this.choose();
+
+        expect(this.player1).not.toHavePromptButton('Cancel');
+        expect(this.player1).not.toHavePromptButton('Done');
+    });
+
+    it('lets the player decline the choice when it has a decline message', function () {
+        this.choose({ cancelMessage: '{choosingPlayer} declines' });
 
         this.player1.clickPrompt('Done');
         expect(this.player1Object.gold).toBe(3);

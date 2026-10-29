@@ -6,6 +6,7 @@ class StealthKeyword extends ChallengeKeywordAbility {
     constructor() {
         super('Stealth', {
             target: {
+                declinable: true,
                 activePromptTitle: (context) => this.defaultTargetPromptTitle(context),
                 numCards: (context) => this.getTriggerAmount(context),
                 cardCondition: (card, context) =>

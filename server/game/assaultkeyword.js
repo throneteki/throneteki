@@ -6,6 +6,7 @@ class AssaultKeyword extends ChallengeKeywordAbility {
     constructor() {
         super('Assault', {
             target: {
+                declinable: true,
                 activePromptTitle: (context) => this.defaultTargetPromptTitle(context),
                 numCards: (context) => this.getTriggerAmount(context),
                 optional: true,

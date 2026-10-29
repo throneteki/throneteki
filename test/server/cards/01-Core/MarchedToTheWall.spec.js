@@ -28,6 +28,11 @@ describe('Marched to the Wall', function () {
             expect(this.player1).isReadyToTakeAction();
         });
 
+        it('does not let a player who controls a character decline to choose', function () {
+            expect(this.player1).not.toHavePromptButton('Cancel');
+            expect(this.player1).not.toHavePromptButton('Done');
+        });
+
         it('discards the chosen characters, which cannot be saved', function () {
             this.player1.clickCard(this.winterfellSteward);
             this.player2.clickCard(this.robbStark);

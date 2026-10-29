@@ -35,7 +35,7 @@ describe('Qyburn (SAT)', function () {
         ]) {
             expect(this.player1).not.toBeAbleToSelect(card);
         }
-        this.player1.clickPrompt('Done');
+        expect(this.player1).not.toHavePromptButton('Done');
         expect(this.player1).toBeAbleToSelect(this.theRoseroad);
         this.player1.clickCard(this.theRoseroad);
         expect(this.theRoseroad.location).toBe('discard pile');

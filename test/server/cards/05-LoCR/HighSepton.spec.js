@@ -26,10 +26,6 @@ describe('High Septon', function () {
             expect(this.houseTullySepton.location).toBe('dead pile');
             expect(this.highSepton.location).toBe('play area');
         });
-
-        it('does not crash when target resolution is cancelled', function () {
-            expect(() => this.player2.clickPrompt('Done')).not.toThrow();
-        });
     });
 
     it('cannot redirect an ability that does not target', function () {

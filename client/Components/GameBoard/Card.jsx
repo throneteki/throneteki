@@ -348,7 +348,7 @@ const Card = ({
             ),
             getHighlightClass(),
             {
-                'brightness-75 saturate-50':
+                'brightness-[.85] saturate-[.75]':
                     card.unselectable ||
                     (card.canPlay === false && !card.selected && !card.selectable)
             }

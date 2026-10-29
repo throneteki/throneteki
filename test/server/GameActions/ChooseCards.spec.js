@@ -83,7 +83,7 @@ describe('chooseCards game action', function () {
         });
 
         it('does not let a player skip the choice', function () {
-            this.player1.clickPrompt('Done');
+            expect(this.player1).not.toHavePromptButton('Done');
 
             expect(this.player1).toHavePrompt('Select a character to kneel');
         });

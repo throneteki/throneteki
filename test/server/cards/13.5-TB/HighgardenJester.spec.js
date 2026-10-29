@@ -52,7 +52,7 @@ describe('Highgarden Jester', function () {
             expect(this.player1).not.toBeAbleToSelect(this.highgardenJester);
             expect(this.player1).not.toBeAbleToSelect(this.serDontosHollard);
             expect(this.player1).not.toBeAbleToSelect(this.tumblestoneKnight);
-            this.player1.clickPrompt('Done');
+            expect(this.player1).not.toHavePromptButton('Done');
             expect(this.player1).toBeAbleToSelect(this.hedgeKnight);
             this.player1.clickCard(this.hedgeKnight);
             expect(this.player1Object.drawDeck[0]).toBe(this.hedgeKnight);

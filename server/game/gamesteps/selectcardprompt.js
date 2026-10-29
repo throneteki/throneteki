@@ -37,7 +37,10 @@ import CardSelector from '../CardSelector.js';
  * onCancel           - a callback that is called when the player clicks the
  *                      done button without selecting any cards.
  * canCancel          - when false, Done with nothing selected leaves the prompt
- *                      open. Defaults to allowing that cancel.
+ *                      open unless manual mode is on. Defaults to allowing that
+ *                      cancel.
+ * cancelsWhenEmpty   - when true, Done with nothing selected cancels rather than
+ *                      choosing nothing, so the button reads Cancel then.
  * source             - what is at the origin of the user prompt, usually a card;
  *                      used to provide a default waitingPromptTitle, if missing
  * gameAction         - a string representing the game action to be checked on
@@ -136,11 +139,35 @@ class SelectCardPrompt extends UiPrompt {
             menuTitle:
                 this.activePromptTitleFunc(this.context) ||
                 this.selector.defaultActivePromptTitle(),
-            buttons: this.properties.additionalButtons.concat([
-                { text: this.properties.doneButtonText || 'Done', arg: 'done' }
-            ]),
+            buttons: this.properties.additionalButtons.concat([this.getDoneButton()]),
             controls: this.properties.additionalControls,
             promptTitle: this.properties.source ? this.properties.source.name : undefined
+        };
+    }
+
+    canCancel() {
+        return this.properties.canCancel !== false || !!this.game.manualMode?.enabled;
+    }
+
+    getDoneButton() {
+        if (!this.properties.cancelsWhenEmpty || this.selectedCards.length > 0) {
+            const hasEnough = this.selector.hasEnoughSelected(
+                this.selectedCards,
+                this.numPlayers,
+                this.context
+            );
+            return {
+                text: this.properties.doneButtonText || 'Done',
+                arg: 'done',
+                disabled: !hasEnough && (this.selectedCards.length > 0 || !this.canCancel())
+            };
+        }
+
+        return {
+            text: 'Cancel',
+            arg: 'done',
+            cancel: true,
+            disabled: !this.canCancel()
         };
     }
 
@@ -269,7 +296,7 @@ class SelectCardPrompt extends UiPrompt {
 
         if (this.selector.hasEnoughSelected(this.selectedCards, this.numPlayers, this.context)) {
             this.fireOnSelect();
-        } else if (this.selectedCards.length === 0 && this.properties.canCancel !== false) {
+        } else if (this.selectedCards.length === 0 && this.canCancel()) {
             this.properties.onCancel(player);
             this.complete();
         }

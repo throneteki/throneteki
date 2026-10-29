@@ -1,11 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Progress } from '@heroui/react';
 
-const ResponseDelay = ({ duration }) => {
+const ResponseDelay = ({ duration, paused }) => {
     const startTime = useRef(Date.now());
     const [remaining, setRemaining] = useState(100);
 
     useEffect(() => {
+        if (paused) {
+            return;
+        }
+
         let frame;
         const tick = () => {
             const elapsed = Date.now() - startTime.current;
@@ -17,11 +21,19 @@ const ResponseDelay = ({ duration }) => {
 
         frame = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(frame);
-    }, [duration]);
+    }, [duration, paused]);
 
     return (
         <div className='mx-2 my-1'>
-            <Progress aria-label='Response delay' size='sm' value={remaining} disableAnimation />
+            <Progress
+                aria-label='Response delay'
+                label={paused ? 'Paused' : 'Passing automatically'}
+                classNames={{ label: 'text-xs md:text-small italic' }}
+                size='sm'
+                color={paused ? 'default' : 'warning'}
+                value={remaining}
+                disableAnimation
+            />
         </div>
     );
 };

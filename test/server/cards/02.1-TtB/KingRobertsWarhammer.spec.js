@@ -60,13 +60,10 @@ describe("King Robert's Warhammer", function () {
         expect(this.player1).isReadyToTakeAction();
     });
 
-    it('does not sacrifice itself when you cancel without choosing a character to kneel', function () {
+    it('cannot be cancelled once triggered', function () {
         this.unopposedChallenge(this.player1, 'Power', this.houseMaester);
         this.player1.triggerAbility("King Robert's Warhammer");
-        this.player1.clickPrompt('Done');
+        expect(this.player1).not.toHavePromptButton('Cancel');
         expect(this.kingRobertsWarhammer.location).toBe('play area');
-        expect(this.bastardInHiding.kneeled).toBe(false);
-        expect(this.lannisportMerchant.kneeled).toBe(false);
-        expect(this.player1).isReadyToTakeAction();
     });
 });

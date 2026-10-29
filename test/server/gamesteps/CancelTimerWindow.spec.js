@@ -51,7 +51,7 @@ describe('cancel windows for a player with the timer', function () {
 
             expect(this.player2).toHavePrompt('Any interrupts to the effects of Hear Me Roar!?');
             expect(this.player2).not.toHavePromptButton('I need more time');
-            expect(delayControl(this)).toBeUndefined();
+            expect(delayControl(this)).toEqual(expect.objectContaining({ paused: true }));
             expect(this.lannisportMerchant.location).toBe('hand');
         });
 

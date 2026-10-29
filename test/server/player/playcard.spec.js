@@ -20,7 +20,7 @@ describe('Player', function () {
                 canPayCosts: vi.fn(),
                 canResolveTargets: vi.fn()
             };
-            this.cardSpy = { getPlayActions: vi.fn() };
+            this.cardSpy = { getPlayActions: vi.fn(), getPrintedType: () => 'character' };
 
             this.player.hand.push(this.cardSpy);
             this.cardSpy.location = 'hand';

@@ -31,7 +31,7 @@ describe('Shadow keyword', function () {
             it('should cost 2 gold to be setup in shadows', function () {
                 this.player1.clickPrompt('Setup in shadows');
 
-                expect(this.player1Object.gold).toBe(6);
+                expect(this.player1Object.currentPrompt().promptTitle).toBe('6 gold left');
             });
         });
 

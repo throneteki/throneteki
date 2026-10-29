@@ -191,8 +191,11 @@ class AbilityTarget {
         let unableToSelect =
             !selector.hasEnoughTargets(context) || (selector.optional && result.hasNoChoices());
         const snapshotted = context.legalTargetsAtInitiation?.has(this);
+        const manualMode = !!context.game.manualMode?.enabled;
+        const cancelsWhenEmpty =
+            !this.properties.declinable && !this.isAnyNumber() && !selector.optional;
         if (
-            snapshotted &&
+            (snapshotted || !manualMode) &&
             !this.ifAble &&
             !selector.optional &&
             !selector.hasEnoughTargets(context)
@@ -215,6 +218,8 @@ class AbilityTarget {
             context: context,
             source: context.source,
             selector,
+            canCancel: !cancelsWhenEmpty,
+            cancelsWhenEmpty,
             onSelect: (player, card) => {
                 result.resolve(card);
                 // A later target's condition can depend on this choice, such as "another character".

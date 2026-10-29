@@ -21,6 +21,13 @@ describe('ChooseIcon', function () {
         ]);
     });
 
+    it('shows each challenge icon on its button', function () {
+        const action = new ChooseIcon({ gameAction: this.gameAction });
+        const choices = action.createChoices(action.choicesFunc({}));
+
+        expect(choices.map((choice) => choice.icon)).toEqual(['military', 'intrigue', 'power']);
+    });
+
     it('only offers the icons listed in icons', function () {
         const action = new ChooseIcon({
             icons: ['intrigue', 'power'],

@@ -96,4 +96,85 @@ describe('setup', function () {
             });
         });
     });
+
+    describe('placing setup cards', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'setup',
+                player1: {
+                    hand: [
+                        'Eddard Stark (Core)',
+                        'Northern Refugee',
+                        'Valyrian Steel Dagger',
+                        'Hedge Knight'
+                    ]
+                }
+            });
+        });
+
+        it('does not pay for setup cards until setup is done', function () {
+            this.player1.clickCard(this.eddardStark);
+
+            expect(this.eddardStark.location).toBe('play area');
+            expect(this.player1Object.gold).toBe(8);
+            expect(this.player1Object.currentPrompt().promptTitle).toBe('1 gold left');
+        });
+
+        it('does not allow more than 8 gold of setup cards', function () {
+            this.player1.clickCard(this.eddardStark);
+            this.player1.clickCard(this.hedgeKnight);
+
+            expect(this.hedgeKnight.location).toBe('hand');
+        });
+
+        it('returns a setup card to hand when it is clicked before setup is done', function () {
+            this.player1.clickCard(this.eddardStark);
+            this.player1.clickCard(this.eddardStark);
+
+            expect(this.eddardStark.location).toBe('hand');
+            expect(this.player1Object.currentPrompt().promptTitle).toBe('8 gold left');
+
+            this.player1.clickCard(this.hedgeKnight);
+            this.player1.clickCard(this.northernRefugee);
+
+            expect(this.hedgeKnight.location).toBe('play area');
+            expect(this.northernRefugee.location).toBe('play area');
+        });
+
+        it('does not log anything until setup is done', function () {
+            const log = this.game.getPlainTextLog();
+
+            this.player1.clickCard(this.eddardStark);
+            this.player1.clickCard(this.eddardStark);
+            this.player1.clickCard(this.northernRefugee);
+
+            expect(this.game.getPlainTextLog()).toBe(log);
+        });
+
+        it('does not allow setup cards to change once setup is done', function () {
+            this.player1.clickCard(this.northernRefugee);
+            this.player1.clickPrompt('Done');
+
+            this.player1.clickCard(this.northernRefugee);
+            this.player1.clickCard(this.hedgeKnight);
+
+            expect(this.northernRefugee.location).toBe('play area');
+            expect(this.hedgeKnight.location).toBe('hand');
+        });
+
+        it('does not allow setup to finish with an attachment that has no target', function () {
+            this.player1.clickCard(this.valyrianSteelDagger);
+
+            expect(this.player1).not.toHavePromptButton('Done');
+
+            this.player1.clickCard(this.northernRefugee);
+            this.completeSetup();
+            this.player1.clickCard(this.valyrianSteelDagger);
+            this.player1.clickCard(this.northernRefugee);
+            this.player1.clickPrompt('Done');
+
+            expect(this.northernRefugee.attachments).toContain(this.valyrianSteelDagger);
+            expect(this.player1).toHavePrompt('Select a plot');
+        });
+    });
 });

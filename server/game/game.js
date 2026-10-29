@@ -331,7 +331,8 @@ class Game extends EventEmitter {
             title: ability.title || ability.card.name,
             reason,
             phase: this.currentPhase,
-            round: this.round
+            round: this.round,
+            challenge: this.currentChallenge || undefined
         });
         if (this.unavailableAbilityReasons.size > 200) {
             this.unavailableAbilityReasons.delete(
@@ -347,7 +348,8 @@ class Game extends EventEmitter {
                     entry.card === card &&
                     entry.player === player &&
                     entry.round === this.round &&
-                    entry.phase === this.currentPhase
+                    entry.phase === this.currentPhase &&
+                    entry.challenge === (this.currentChallenge || undefined)
             )
             .map(({ title, reason }) => ({ title, reason }));
         return reasons.length > 0 ? reasons : undefined;
@@ -667,7 +669,7 @@ class Game extends EventEmitter {
         this.promptWithMenu(player, handlers, {
             activePrompt: {
                 menuTitle: usable.length === 1 ? `Use ${card.name}?` : 'Choose an action',
-                buttons: [...buttons, { text: 'Cancel', method: 'cancel' }]
+                buttons: [...buttons, { text: 'Cancel', method: 'cancel', cancel: true }]
             },
             source: card,
             beforeInitiation: true
@@ -1389,7 +1391,7 @@ class Game extends EventEmitter {
             return undefined;
         }
 
-        if (this.isResolvingAbility()) {
+        if (this.isResolvingAbility() || this.hasOpenInterruptOrReactionWindow()) {
             return Requirements.window;
         }
 

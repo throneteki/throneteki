@@ -32,7 +32,7 @@ describe('No Song So Sweet', function () {
             });
             this.goldBefore = this.player1Object.gold;
             this.player1.clickCard(this.lordRenlysRide);
-            this.player1.clickPrompt(this.player1.currentPrompt().buttons[0].text);
+            this.player1.clickCard(this.tumblestoneKnight);
             this.player1.triggerAbility(this.noSongSoSweet);
         });
 

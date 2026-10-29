@@ -197,6 +197,11 @@ Text without a trigger has its own constructs:
   Agenda abilities "after all agendas are announced" (`this.afterAgendasAnnounced`) resolve before
   setup hands are drawn. A mulligan only shuffles the hand back, so cards those abilities put into
   play stay.
+- Setup cards aren't paid for until the player clicks Done. Until then, clicking a setup card
+  returns it to hand, and placing a card only checks it fits the setup gold and the Limited count
+  of what is already placed. Done is refused while the cards cost more than the setup gold or an
+  attachment has no eligible card of that player's to attach to (Rules Reference: Setup), unless
+  manual mode is on.
 - Only setup placements enter play facedown. Outside setup, a facedown card in play has no title,
   traits or faction of its own, only what the effect that placed it grants (Rules Reference:
   Facedown Cards); uniqueness checks for the card being played use its printed title. A facedown
@@ -224,10 +229,12 @@ cancel such as The Hand's Judgment.
 - In a triggered window, a player who could respond from a hidden zone but has nothing is shown the
   same window with nothing to choose, and it passes for them after a random 1 to 3 seconds
   ([TriggeredAbilityWindow.js](../server/game/gamesteps/TriggeredAbilityWindow.js)). They see
-  "Keeping your hand hidden" with a Skip button; their opponent sees an ordinary wait. Players using
-  the cancel timer keep the timer prompt.
+  window's question with a progress bar and Wait and Skip buttons; their opponent sees an ordinary
+  wait. Wait pauses the bar and leaves the window open until they pass. Players using the cancel
+  timer keep the timer prompt.
 - The cancel timer runs on the server: it passes for the player after their profile's window timer
-  unless they choose "I need more time", and shows the same progress bar as the wait above.
+  unless they choose "I need more time", and shows the same progress bar as the wait above. "I need
+  more time" pauses the bar.
 - A choice made before anything is initiated (confirming a card action, choosing how to play a
   card, choosing attackers) leaves the opponent's prompt as it was, so it doesn't reveal which card
   or challenge is being considered
@@ -248,7 +255,8 @@ cancel such as The Hand's Judgment.
   I, 3.2).
 - An action is refused with the `window` reason, whether or not strict windows are on, while a
   window is open and it is not that player's turn, and during marshaling except on that player's
-  turn. With strict windows off, outside marshaling and with no window open, actions are allowed.
+  turn, and always while an interrupt or reaction window is open. With strict windows off, outside
+  marshaling and with no window open, actions are allowed.
 
 Trigger checks (`when`, `condition`, cost `canPay`) therefore have no side effects, work on a card
 that is not in the game, and keep nothing on the card instance between the check and resolution.
@@ -278,6 +286,12 @@ attackers or defenders were declared, from a report ID or a spec
 
 Rules readings and design choices that stand until changed:
 
+- Outside manual mode an ability can't be cancelled once it is resolving (Rules Reference:
+  Initiating Abilities). Prompts before that point (confirming a card action or an event played
+  from hand, choosing how to play a card, choosing cost cards) keep Cancel; target, player and choice prompts during resolution
+  don't. A choice is still declinable when the text says "may": keyword targets (stealth,
+  intimidate, assault) are `declinable`, and a `GameActions.choose` with a `cancelMessage` keeps its
+  skip button.
 - Fake waits cover every prompted window (cancels, interrupts, reactions) and last a random 1 to 3
   seconds.
 - Strict action windows stay opt-in until the auto-pass behaviour has had feedback from real games.

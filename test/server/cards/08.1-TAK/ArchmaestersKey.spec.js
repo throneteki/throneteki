@@ -21,12 +21,14 @@ describe("Archmaester's Key", function () {
         this.player1.clickPrompt('Military');
         this.player1.clickCard(this.tumblestoneKnight);
         this.player1.clickPrompt('Done');
+        this.player1.clickPrompt('Pass');
         expect(this.player1.actionUnavailableReason(key)).toBe(undefined);
         this.player1.clickMenu(key, "Play an event from an opponent's discard pile");
         expect(this.player1).toBeAbleToSelect(this.nightmares);
         this.player1.clickCard(this.nightmares);
         expect(this.player2.actionUnavailableReason(this.nightmares)).toBe('location');
 
+        this.player2.clickPrompt('Pass');
         this.player1.clickCard(this.nightmares);
         expect(this.player1).toBeAbleToSelect(this.bastardInHiding);
         expect(this.nightmares.eventPlacementLocation).toBe('draw deck');
@@ -37,7 +39,6 @@ describe("Archmaester's Key", function () {
             this.nightmares
         );
         expect(this.player1Object.drawDeck).not.toContain(this.nightmares);
-        this.player1.clickPrompt('Pass');
-        expect(this.player1).isReadyToTakeAction();
+        expect(this.player2).isReadyToTakeAction();
     });
 });

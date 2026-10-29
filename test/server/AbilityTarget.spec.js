@@ -6,7 +6,8 @@ describe('AbilityTarget', function () {
             addMessage: vi.fn(),
             getPlayersInFirstPlayerOrder: vi.fn(),
             promptForSelect: vi.fn(),
-            queueSimpleStep: vi.fn()
+            queueSimpleStep: vi.fn(),
+            manualMode: { enabled: true }
         };
         this.gameSpy.queueSimpleStep.mockImplementation((func) => func());
         this.card1 = { allowGameAction: vi.fn(), getType: vi.fn() };
@@ -96,6 +97,8 @@ describe('AbilityTarget', function () {
                     target: 1,
                     onSelect: expect.any(Function),
                     onCancel: expect.any(Function),
+                    canCancel: false,
+                    cancelsWhenEmpty: true,
                     selector: expect.any(Object),
                     context: this.context
                 });
@@ -239,6 +242,8 @@ describe('AbilityTarget', function () {
                             target: 1,
                             onSelect: expect.any(Function),
                             onCancel: expect.any(Function),
+                            canCancel: false,
+                            cancelsWhenEmpty: true,
                             selector: expect.any(Object),
                             context: this.context
                         })
@@ -370,6 +375,8 @@ describe('AbilityTarget', function () {
                     target: 1,
                     onSelect: expect.any(Function),
                     onCancel: expect.any(Function),
+                    canCancel: false,
+                    cancelsWhenEmpty: true,
                     selector: expect.any(Object),
                     context: this.context
                 });
@@ -378,6 +385,8 @@ describe('AbilityTarget', function () {
                     target: 1,
                     onSelect: expect.any(Function),
                     onCancel: expect.any(Function),
+                    canCancel: false,
+                    cancelsWhenEmpty: true,
                     selector: expect.any(Object),
                     context: this.context
                 });

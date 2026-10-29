@@ -424,6 +424,10 @@ export function applySetupTest(options, ctx) {
 
     const hosts = placeInPlay(flow.game, claims, specsByPlayer);
     const assigned = arrangeSetupZones(claims, options);
+    for (const key of playerKeys) {
+        const player = players[key].player;
+        player.setupGold += player.getSetupPlacement().cost;
+    }
     flow.game.continue();
 
     if (phase !== 'setup') {

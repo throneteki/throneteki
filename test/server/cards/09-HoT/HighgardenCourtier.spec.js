@@ -161,6 +161,7 @@ describe('Highgarden Courtier when several characters gain STR at once', functio
         this.player1.clickCard(this.gardenCaretaker);
         this.player1.clickCard(this.serColenOfGreenpools);
         this.player1.clickPrompt('Done');
+        this.player1.clickPrompt('Pass');
         this.player1.clickCard(this.hornHill);
         this.player1.clickCard(this.highgardenCourtier);
 

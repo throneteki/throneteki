@@ -17,8 +17,7 @@ describe('standing restrictions', function () {
 
     it('make the player choose which characters stand, and cannot be skipped', function () {
         expect(this.player1).toHavePrompt('Select 2 cards to stand');
-
-        this.player1.clickPrompt('Done');
+        expect(this.player1).not.toHavePromptButton('Done');
 
         expect(this.player1).toHavePrompt('Select 2 cards to stand');
 

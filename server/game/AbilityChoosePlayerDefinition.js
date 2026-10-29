@@ -92,6 +92,7 @@ class AbilityChoosePlayerDefinition {
             activePromptTitle: this.activePromptTitle,
             waitingPromptTitle: this.waitingPromptTitle,
             source: context.source,
+            cancelable: context.game.manualMode.enabled,
             onSelect: (chosenPlayer) => {
                 context[this.contextKey()] = chosenPlayer;
                 result.resolve(chosenPlayer);

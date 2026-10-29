@@ -84,7 +84,8 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             additionalButtons: [
                 {
                     text: 'Wait',
-                    arg: 'wait'
+                    arg: 'wait',
+                    pausesTimer: true
                 }
             ],
             doneButtonText: 'Skip',
@@ -93,7 +94,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
                 if (arg === 'wait') {
                     waitForPass = true;
                     prompt.properties.doneButtonText = 'Pass';
-                    this.removeTimer(prompt);
+                    this.pauseTimer(prompt);
                     return false;
                 }
 
@@ -153,7 +154,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             onMenuCommand: (player, arg) => {
                 if (arg === 'stopTimer') {
                     timerStopped = true;
-                    this.removeTimer(prompt);
+                    this.pauseTimer(prompt);
                     return false;
                 }
 
@@ -190,9 +191,10 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         };
     }
 
-    removeTimer(prompt) {
-        prompt.properties.additionalControls = prompt.properties.additionalControls.filter(
-            (control) => control.type !== 'response-delay'
+    pauseTimer(prompt) {
+        prompt.properties.additionalControls = prompt.properties.additionalControls.map(
+            (control) =>
+                control.type === 'response-delay' ? { ...control, paused: true } : control
         );
         prompt.properties.additionalButtons = prompt.properties.additionalButtons.filter(
             (button) => !['stopTimer', 'wait'].includes(button.arg)
@@ -205,7 +207,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         });
 
         if (this.cancelTimer.isEnabled(player)) {
-            buttons.push({ text: 'I need more time', arg: 'stopTimer' });
+            buttons.push({ text: 'I need more time', arg: 'stopTimer', pausesTimer: true });
             buttons.push({
                 text: "Don't ask again until end of round",
                 arg: 'passAndPauseForRound'

@@ -15,9 +15,10 @@ class ChooseIcon extends ChooseGameAction {
             choices: Object.fromEntries(
                 ChallengeTypes.all
                     .filter(({ value }) => icons.includes(value))
-                    .map(({ text, value }) => [
+                    .map(({ text, value, icon }) => [
                         text,
                         {
+                            icon,
                             message: ChooseIcon.messageFor(message, value),
                             gameAction: gameAction(value)
                         }

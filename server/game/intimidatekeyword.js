@@ -5,6 +5,7 @@ class IntimidateKeyword extends ChallengeKeywordAbility {
     constructor() {
         super('Intimidate', {
             target: {
+                declinable: true,
                 activePromptTitle: (context) => this.targetPromptTitle(context),
                 numCards: (context) => this.getTriggerAmount(context),
                 cardCondition: (card, context) =>

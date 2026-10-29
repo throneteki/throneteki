@@ -1,12 +1,10 @@
 import BaseAbility from '../baseability.js';
-import Costs from '../costs.js';
 import { Requirements } from '../Constants/index.js';
 
 class SetupInShadowsAction extends BaseAbility {
     constructor() {
         super({
-            abilitySourceType: 'game',
-            cost: [Costs.payGold(2)]
+            abilitySourceType: 'game'
         });
         this.title = 'Setup in shadows';
     }
@@ -20,7 +18,7 @@ class SetupInShadowsAction extends BaseAbility {
             return Requirements.phase;
         }
 
-        if (!context.player.readyToStart) {
+        if (!context.player.readyToStart || context.player.setup) {
             return Requirements.player;
         }
 
@@ -30,6 +28,11 @@ class SetupInShadowsAction extends BaseAbility {
 
         if (context.source.location !== 'hand') {
             return Requirements.location;
+        }
+
+        const placement = context.player.getSetupPlacement({ inShadows: [context.source] });
+        if (placement.cost > context.player.setupGold) {
+            return Requirements.cost;
         }
 
         return undefined;

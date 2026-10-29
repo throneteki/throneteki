@@ -247,7 +247,8 @@ describe('BaseAbility', function () {
             this.gameSpy = {
                 queueSimpleStep: vi.fn(),
                 promptForSelect: vi.fn(),
-                addAlert: vi.fn()
+                addAlert: vi.fn(),
+                manualMode: { enabled: true }
             };
             this.gameSpy.queueSimpleStep.mockImplementation((func) => func());
             this.gameSpy.allCards = [];

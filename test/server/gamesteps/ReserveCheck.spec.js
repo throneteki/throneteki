@@ -21,11 +21,7 @@ describe('the reserve check', function () {
                 'Select 1 cards to discard down to reserve (top first)'
             );
 
-            this.player1.clickPrompt('Done');
-
-            expect(this.player1).toHavePrompt(
-                'Select 1 cards to discard down to reserve (top first)'
-            );
+            expect(this.player1).not.toHavePromptButton('Done');
             expect(this.game.getPlainTextLog()).not.toContain('continues without meeting reserve');
         });
 

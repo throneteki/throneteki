@@ -89,9 +89,11 @@ class ChooseGameAction extends GameAction {
                     ? AbilityMessage.create(action.message, this.specialArgs())
                     : this.defaultMessage;
             let card = action.gameAction && action.card;
+            let icon = action.gameAction && action.icon;
 
             choices.push({
                 text: text,
+                icon: icon,
                 gameAction: gameAction,
                 condition: condition,
                 message: message,

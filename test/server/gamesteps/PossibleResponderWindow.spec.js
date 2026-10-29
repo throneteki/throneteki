@@ -113,6 +113,9 @@ describe('cancel windows for a player without the timer', function () {
 
                 expect(this.player2).toHavePromptButton('Pass');
                 expect(this.player2).not.toHavePromptButton('Skip');
+                expect(this.player2.player.promptState.controls).toContainEqual(
+                    expect.objectContaining({ type: 'response-delay', paused: true })
+                );
 
                 this.scheduled[0].callback();
 

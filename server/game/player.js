@@ -584,7 +584,8 @@ class Player extends Spectator {
             return false;
         }
 
-        if (playActions.length === 1) {
+        const confirm = card.getPrintedType() === 'event' && !this.game.manualMode.enabled;
+        if (playActions.length === 1 && !confirm) {
             this.game.resolveAbility(playActions[0], context);
         } else {
             this.game.queueStep(new PlayActionPrompt(this.game, this, playActions, context));
@@ -749,6 +750,47 @@ class Player extends Spectator {
 
     recyclePlots() {
         return this.game.resolveGameAction(RecyclePlots, { player: this });
+    }
+
+    getSetupCards() {
+        return [...this.cardsInPlay.filter((card) => card.facedown), ...this.shadows];
+    }
+
+    getSetupPlacement({ inPlay = [], inShadows = [] } = {}) {
+        const placement = {
+            cost: (this.shadows.length + inShadows.length) * 2,
+            limited: 0,
+            attachments: []
+        };
+        const titles = new Set();
+
+        for (const card of [...this.cardsInPlay, ...inPlay]) {
+            const isDuplicate = card.isUnique() && titles.has(printedTitle(card));
+            titles.add(printedTitle(card));
+
+            if (!card.facedown && !inPlay.includes(card)) {
+                continue;
+            }
+
+            if (card.isLimited()) {
+                placement.limited += 1;
+            }
+
+            if (!isDuplicate) {
+                placement.cost += card.getPrintedCost();
+                if (card.getType() === 'attachment') {
+                    placement.attachments.push(card);
+                }
+            }
+        }
+
+        return placement;
+    }
+
+    getSetupAttachmentsWithoutTarget() {
+        return this.getSetupPlacement().attachments.filter(
+            (attachment) => !this.cardsInPlay.some((card) => this.canAttach(attachment, card))
+        );
     }
 
     hasUnmappedAttachments() {

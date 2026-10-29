@@ -1,12 +1,10 @@
 import BaseAbility from '../baseability.js';
-import Costs from '../costs.js';
 import { Requirements } from '../Constants/index.js';
 
 class SetupCardAction extends BaseAbility {
     constructor() {
         super({
-            abilitySourceType: 'game',
-            cost: [Costs.payPrintedGoldCost(), Costs.playLimited()]
+            abilitySourceType: 'game'
         });
         this.title = 'Setup';
     }
@@ -24,7 +22,7 @@ class SetupCardAction extends BaseAbility {
             return Requirements.phase;
         }
 
-        if (!context.player.readyToStart) {
+        if (!context.player.readyToStart || context.player.setup) {
             return Requirements.player;
         }
 
@@ -34,6 +32,14 @@ class SetupCardAction extends BaseAbility {
 
         if (!context.player.hand.includes(context.source)) {
             return Requirements.location;
+        }
+
+        const placement = context.player.getSetupPlacement({ inPlay: [context.source] });
+        if (
+            placement.cost > context.player.setupGold ||
+            placement.limited > context.player.maxLimited
+        ) {
+            return Requirements.cost;
         }
 
         return undefined;

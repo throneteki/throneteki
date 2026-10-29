@@ -3,7 +3,12 @@ import SetupCardAction from '../../../server/game/PlayActions/SetupCardAction.js
 describe('SetupCardAction', function () {
     beforeEach(function () {
         this.gameSpy = { on: vi.fn(), removeListener: vi.fn() };
-        this.playerSpy = { putIntoPlay: vi.fn() };
+        this.playerSpy = {
+            putIntoPlay: vi.fn(),
+            getSetupPlacement: vi.fn().mockReturnValue({ cost: 0, limited: 0 }),
+            setupGold: 8,
+            maxLimited: 1
+        };
         this.cardSpy = { getType: vi.fn() };
         this.context = {
             game: this.gameSpy,

@@ -18,8 +18,9 @@ class AbilityChoicePrompt extends BaseStep {
         this.choosingPlayer = choosingPlayer || this.context.choosingPlayer;
         this.title = title;
         this.choices = choices;
+        this.declinable = cancelable && !!cancelMessage;
         this.cancelable = cancelable;
-        this.cancelText = cancelText || 'Done';
+        this.cancelText = cancelText || (this.declinable ? 'Done' : 'Cancel');
         this.cancelMessage = AbilityMessage.create(
             cancelMessage || {
                 format: '{choosingPlayer} cancels the resolution of {source} (costs were still paid)',
@@ -47,14 +48,19 @@ class AbilityChoicePrompt extends BaseStep {
             return {
                 text: choice.text,
                 arg: choice.text,
+                icon: choice.icon,
                 method: 'chooseAbilityChoice',
                 disabled: () =>
                     !choice.gameAction.allow(this.context) || !choice.condition(this.context)
             };
         });
 
-        if (this.cancelable) {
-            buttons.push({ text: this.cancelText, method: 'skipResolution' });
+        if (this.canCancel()) {
+            buttons.push({
+                text: this.cancelText,
+                method: 'skipResolution',
+                cancel: !this.declinable
+            });
         }
 
         this.game.promptWithMenu(this.choosingPlayer, this, {
@@ -79,7 +85,15 @@ class AbilityChoicePrompt extends BaseStep {
         return true;
     }
 
+    canCancel() {
+        return this.cancelable && (this.declinable || !!this.game.manualMode?.enabled);
+    }
+
     skipResolution() {
+        if (!this.canCancel()) {
+            return false;
+        }
+
         this.cancelMessage.output(this.game, this.context);
         return true;
     }

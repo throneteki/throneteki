@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import AbilityTargeting from './AbilityTargeting';
 import AbilityTimer from './AbilityTimer';
@@ -24,6 +24,7 @@ const ActivePlayerPrompt = ({
     promptText
 }) => {
     const { data: cards, isLoading } = useGetCardsQuery();
+    const [pausedPromptId, setPausedPromptId] = useState();
 
     const handleButtonClick = useCallback(
         (event, button) => {
@@ -38,6 +39,10 @@ const ActivePlayerPrompt = ({
                     'noopener,noreferrer'
                 );
                 return;
+            }
+
+            if (button.pausesTimer) {
+                setPausedPromptId(button.promptId);
             }
 
             if (onButtonClick) {
@@ -86,7 +91,7 @@ const ActivePlayerPrompt = ({
                 const buttonRet = (
                     <Button
                         type='button'
-                        color='primary'
+                        color={button.cancel ? 'default' : 'primary'}
                         className='text-wrap text-xs h-8 md:h-full md:min-h-10 md:text-small'
                         onPress={clickCallback}
                         isDisabled={button.disabled}
@@ -155,9 +160,14 @@ const ActivePlayerPrompt = ({
                         />
                     );
                 case 'response-delay':
-                    return <ResponseDelay key='response-delay' duration={control.duration} />;
                 case 'action-delay':
-                    return <ResponseDelay key='action-delay' duration={control.duration} />;
+                    return (
+                        <ResponseDelay
+                            key={`${control.type}-${control.promptId}`}
+                            duration={control.duration}
+                            paused={control.paused || control.promptId === pausedPromptId}
+                        />
+                    );
                 case 'select-from-values':
                     return (
                         <SelectFromValuesLookup
@@ -173,7 +183,7 @@ const ActivePlayerPrompt = ({
                     );
             }
         });
-    }, [controls, cards, handleLookupValueSelected]);
+    }, [controls, cards, handleLookupValueSelected, pausedPromptId]);
 
     // A wait shown to every player who might be able to respond, so their opponents can't tell
     // who really can.
