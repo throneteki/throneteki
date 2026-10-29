@@ -1379,6 +1379,7 @@ class Game extends EventEmitter {
     canTakeActionsNow(player) {
         return (
             !player.isSpectator() &&
+            (this.currentPhase !== 'setup' || !!player.readyToStart) &&
             !this.hasOpenInterruptOrReactionWindow() &&
             !this.getActionTimingRequirement(player) &&
             player.promptState.isActivePrompt &&

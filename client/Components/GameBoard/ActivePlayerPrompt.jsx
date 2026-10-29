@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import AbilityTargeting from './AbilityTargeting';
 import AbilityTimer from './AbilityTimer';
@@ -26,9 +26,23 @@ const ActivePlayerPrompt = ({
     const { data: cards, isLoading } = useGetCardsQuery();
     const [pausedPromptId, setPausedPromptId] = useState();
 
+    // Ignore a press that lands just after the buttons change, such as one meant for a window
+    // that closed under the cursor.
+    const buttonsShownAt = useRef(0);
+    const buttonsKey = (buttons || [])
+        .map((button) => `${button.promptId}:${button.text}`)
+        .join('|');
+    useEffect(() => {
+        buttonsShownAt.current = Date.now();
+    }, [buttonsKey]);
+    const isFreshPress = () => Date.now() - buttonsShownAt.current < 300;
+
     const handleButtonClick = useCallback(
         (event, button) => {
             //     stopAbilityTimer();
+            if (isFreshPress()) {
+                return;
+            }
 
             let googleFormMatcher =
                 button.arg && button.arg.toString().match(/^googleForm:(?<formId>.+)$/);
@@ -55,6 +69,9 @@ const ActivePlayerPrompt = ({
     const handleCancelTimerClick = useCallback(
         (event, button) => {
             //      stopAbilityTimer();
+            if (isFreshPress()) {
+                return;
+            }
 
             if (button.method || button.arg) {
                 onButtonClick(button);

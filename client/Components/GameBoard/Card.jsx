@@ -124,7 +124,9 @@ const Card = ({
     }, [card.menu, menu]);
 
     const shouldShowMenu = useCallback(
-        () => getMenu().some((item) => item.command !== 'click') && isAllowedMenuSource(),
+        () =>
+            getMenu().some((item) => item.command !== 'click' && !item.disabled) &&
+            isAllowedMenuSource(),
         [getMenu, isAllowedMenuSource]
     );
 

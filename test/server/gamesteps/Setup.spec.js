@@ -72,6 +72,26 @@ describe('setup', function () {
         });
     });
 
+    describe('while deciding whether to keep the starting hand', function () {
+        integration(function () {
+            beforeEach(function () {
+                const deck = this.buildDeck('stark', ['A Noble Cause', 'Winterfell Steward']);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+            });
+
+            it('does not mark which cards can be set up', function () {
+                const state = this.game.getState(this.player1.player.name);
+                const hand = state.players[this.player1.player.name].cardPiles.hand;
+
+                expect(this.player1).toHavePrompt('Keep Starting Hand?');
+                expect(hand.length).toBeGreaterThan(0);
+                expect(hand.every((card) => card.canPlay === undefined)).toBe(true);
+            });
+        });
+    });
+
     describe('a mulligan', function () {
         integration(function () {
             beforeEach(function () {
