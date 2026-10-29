@@ -207,9 +207,9 @@ const ActivePlayerPrompt = ({
     const responseDelay = controls && controls.find((control) => control.type === 'response-delay');
     if (responseDelay) {
         const word = responseDelay.abilityWord || 'response';
-        promptText = `Play ${/^[aeiou]/.test(word) ? 'an' : 'a'} ${word}?`;
+        promptText = `Any ${word}s?`;
     } else if (controls && controls.some((control) => control.type === 'action-delay')) {
-        promptText = 'Take an action?';
+        promptText = 'Any actions?';
     }
 
     const promptTextElement = [];
