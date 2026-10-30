@@ -140,8 +140,8 @@ const PlayerStats = ({
                                     () => dispatch(sendToggleManualModeMessage()),
                                     faWrench,
                                     currentGame.manualMode
-                                        ? 'Turn manual mode off'
-                                        : 'Ask to turn manual mode on',
+                                        ? 'Manual mode is on: the rules are not fully enforced, and players can change the game by hand. Click to turn it off.'
+                                        : 'Manual mode is off: the game enforces the rules, and manual changes are disabled. Click to ask your opponent to turn it on.',
                                     'Manual Mode',
                                     currentGame.manualMode
                                 )}

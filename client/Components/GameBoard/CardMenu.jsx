@@ -24,7 +24,7 @@ const CardMenu = ({ menu, onMenuItemClick }) => {
     return (
         <div
             ref={ref}
-            className='absolute top-0 left-full z-[300] ml-1 flex w-48 flex-col gap-1 rounded-md border border-default-300 bg-content1 p-1 text-xs shadow-lg shadow-black/60'
+            className='absolute top-0 left-full z-[300] ml-1 flex w-48 flex-col gap-1 rounded-md border border-default-300 bg-content1 p-1 text-tiny shadow-lg shadow-black/60'
             onMouseDown={(event) => event.stopPropagation()}
             onClick={(event) => event.stopPropagation()}
         >

@@ -140,6 +140,34 @@ describe('setup', function () {
             expect(this.player1Object.currentPrompt().promptTitle).toBe('1 gold left');
         });
 
+        it('shows the gold left on the gold stat to the player setting up, but not to the opponent', function () {
+            const gold = (viewer) =>
+                this.game.getState(viewer.name).players[this.player1.name].stats.gold;
+
+            expect(gold(this.player1)).toBe(8);
+
+            this.player1.clickCard(this.eddardStark);
+
+            expect(gold(this.player1)).toBe(1);
+            expect(gold(this.player2)).toBe(0);
+
+            this.player1.clickCard(this.eddardStark);
+
+            expect(gold(this.player1)).toBe(8);
+        });
+
+        it('does not take setup cards off the gold stat twice once they are paid for', function () {
+            this.player1.clickCard(this.eddardStark);
+            this.player1.clickPrompt('Done');
+
+            expect(this.player1).toHavePrompt('Waiting for opponent to finish setup');
+            expect(this.eddardStark.facedown).toBe(true);
+            expect(this.player1Object.gold).toBe(1);
+            expect(
+                this.game.getState(this.player1.name).players[this.player1.name].stats.gold
+            ).toBe(1);
+        });
+
         it('does not allow more than 8 gold of setup cards', function () {
             this.player1.clickCard(this.eddardStark);
             this.player1.clickCard(this.hedgeKnight);

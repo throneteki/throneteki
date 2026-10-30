@@ -44,7 +44,7 @@ class ManualMode {
         } else {
             this.game.addAlert(
                 'info',
-                'Every card in this game is verified, so manual mode is off'
+                'Rules enforcement is on: the game applies the rules and cards for you. If something goes wrong, the Manual Mode button asks your opponent to allow manual changes, and Report Problem lets us know'
             );
         }
     }

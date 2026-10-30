@@ -1295,11 +1295,23 @@ class Player extends Spectator {
         return 'player';
     }
 
+    getDisplayedGold(isActivePlayer) {
+        if (this.game.currentPhase !== 'setup') {
+            return this.gold;
+        }
+
+        if (!isActivePlayer) {
+            return 0;
+        }
+
+        return this.setup ? this.gold : Math.max(this.gold - this.getSetupPlacement().cost, 0);
+    }
+
     getStats(isActivePlayer) {
         return {
             claim: this.getClaim(),
             initiative: this.getInitiative(),
-            gold: !isActivePlayer && this.game.currentPhase === 'setup' ? 0 : this.gold,
+            gold: this.getDisplayedGold(isActivePlayer),
             reserve: this.getReserve(),
             totalPower: this.getTotalPower()
         };

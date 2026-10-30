@@ -199,8 +199,8 @@ Text without a trigger has its own constructs:
   play stay.
 - Setup cards aren't paid for until the player clicks Done. Until then, clicking a setup card
   returns it to hand, and placing a card only checks it fits the setup gold and the Limited count
-  of what is already placed. Done is refused while the cards cost more than the setup gold or an
-  attachment has no eligible card of that player's to attach to (Rules Reference: Setup), unless
+  of what is already placed. The gold stat shows the player what will be left, and shows
+  opponents 0. Done is refused while the cards cost more than the setup gold or an attachment has no eligible card of that player's to attach to (Rules Reference: Setup), unless
   manual mode is on.
 - Only setup placements enter play facedown. Outside setup, a facedown card in play has no title,
   traits or faction of its own, only what the effect that placed it grants (Rules Reference:

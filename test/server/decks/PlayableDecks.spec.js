@@ -193,9 +193,7 @@ for (const deckList of Decks) {
 
             it('starts with manual mode off', function () {
                 expect(this.game.manualMode.enabled).toBe(false);
-                expect(this.game.getPlainTextLog()).toContain(
-                    'Every card in this game is verified, so manual mode is off'
-                );
+                expect(this.game.getPlainTextLog()).toContain('Rules enforcement is on');
             });
 
             it('plays a round without manual mode', function () {
