@@ -8,10 +8,9 @@ class SetupCardsPrompt extends AllPlayerPrompt {
 
     activePrompt(player) {
         const problem = this.getProblem(player);
-        const goldLeft = player.setupGold - player.getSetupPlacement().cost;
         return {
             menuTitle: 'Select setup cards',
-            promptTitle: problem || `${goldLeft} gold left`,
+            promptTitle: problem,
             buttons: [{ arg: 'setupdone', text: 'Done', disabled: !!problem }]
         };
     }

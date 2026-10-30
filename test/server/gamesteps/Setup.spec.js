@@ -137,7 +137,7 @@ describe('setup', function () {
 
             expect(this.eddardStark.location).toBe('play area');
             expect(this.player1Object.gold).toBe(8);
-            expect(this.player1Object.currentPrompt().promptTitle).toBe('1 gold left');
+            expect(this.player1Object.getStats(true).gold).toBe(1);
         });
 
         it('shows the gold left on the gold stat to the player setting up, but not to the opponent', function () {
@@ -180,7 +180,7 @@ describe('setup', function () {
             this.player1.clickCard(this.eddardStark);
 
             expect(this.eddardStark.location).toBe('hand');
-            expect(this.player1Object.currentPrompt().promptTitle).toBe('8 gold left');
+            expect(this.player1Object.getStats(true).gold).toBe(8);
 
             this.player1.clickCard(this.hedgeKnight);
             this.player1.clickCard(this.northernRefugee);

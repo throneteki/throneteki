@@ -30,7 +30,7 @@ describe('setup phase', function () {
                 expect(this.roseroad.location).toBe('play area');
                 expect(this.ned1.location).toBe('play area');
                 expect(this.arya.location).toBe('hand');
-                expect(this.player1Object.currentPrompt().promptTitle).toBe('1 gold left');
+                expect(this.player1Object.getStats(true).gold).toBe(1);
             });
 
             it('should not trigger any enters play abilities', function () {
@@ -58,7 +58,7 @@ describe('setup phase', function () {
                 it('should allow the same card to be set up as a dupe for free', function () {
                     this.player1.clickCard(this.ned2);
 
-                    expect(this.player1Object.currentPrompt().promptTitle).toBe('1 gold left');
+                    expect(this.player1Object.getStats(true).gold).toBe(1);
 
                     this.completeSetup();
 
@@ -69,7 +69,7 @@ describe('setup phase', function () {
                 it('should allow a card with the same name to be set up as a dupe for free', function () {
                     this.player1.clickCard(this.wotnNed);
 
-                    expect(this.player1Object.currentPrompt().promptTitle).toBe('1 gold left');
+                    expect(this.player1Object.getStats(true).gold).toBe(1);
 
                     this.completeSetup();
 
@@ -259,7 +259,7 @@ describe('setup phase', function () {
             it('should not reduce cards during setup', function () {
                 this.player1.clickCard(this.character);
 
-                expect(this.player1Object.currentPrompt().promptTitle).toBe('1 gold left');
+                expect(this.player1Object.getStats(true).gold).toBe(1);
             });
         });
     });
