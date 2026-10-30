@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class MaesterLuwin extends DrawCard {
+    // Maester Luwin (02003)
+    // While you control:
+    // - Robb Stark, he gains insight.
+    // - Jon Snow, he gains stealth.
+    // - Bran Stark, he gains: "immune to opponents' plot effects."
+    // - Rickon Stark, he gains pillage.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Robb Stark',
@@ -15,7 +21,8 @@ class MaesterLuwin extends DrawCard {
         this.persistentEffect({
             match: (card) => card.name === 'Bran Stark',
             effect: ability.effects.immuneTo(
-                (card) => card.controller !== this.controller && card.getType() === 'plot'
+                (card, arg, context) =>
+                    card.controller !== context.source.controller && card.getType() === 'plot'
             )
         });
 

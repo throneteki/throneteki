@@ -2,6 +2,8 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheWhiteSwords extends PlotCard {
+    // The White Swords (15048)
+    // When Revealed: You may put a Kingsguard character into play from your hand or discard pile.
     setupCardAbilities() {
         this.whenRevealed({
             target: {
@@ -17,15 +19,10 @@ class TheWhiteSwords extends PlotCard {
                 format: '{player} uses {source} to put {target} into play from their {originalLocation}',
                 args: { originalLocation: (context) => context.target.location }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoPlay((context) => ({
-                        player: context.player,
-                        card: context.target
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 }

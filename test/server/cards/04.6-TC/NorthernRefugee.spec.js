@@ -1,44 +1,26 @@
 describe('Northern Refugee', function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck = this.buildDeck('greyjoy', [
-                'A Storm of Swords',
-                'Winter Festival',
-                'Northern Refugee'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-            this.completeSetup();
+    function setup(context, opponentPlot) {
+        context.setupTest({
+            phase: 'marshal',
+            player1: { gold: 2, hand: ['Northern Refugee'] },
+            player2: { plot: opponentPlot }
         });
+        context.player1.clickCard(context.northernRefugee);
+    }
 
-        describe('when there is no Winter plot out', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('A Storm of Swords');
-                this.player2.selectPlot('A Storm of Swords');
-                this.selectFirstPlayer(this.player1);
+    it('costs 1 less to marshal while a Winter plot is revealed', function () {
+        setup(this, 'The Winds of Winter');
 
-                this.player1.clickCard('Northern Refugee', 'hand');
-            });
+        expect(this.northernRefugee.location).toBe('play area');
+        expect(this.player1Object.gold).toBe(1);
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-            it('should cost 2 gold to marshal', function () {
-                expect(this.player1Object.gold).toBe(1);
-            });
-        });
+    it('costs its printed cost while no Winter plot is revealed', function () {
+        setup(this, 'A Noble Cause');
 
-        describe('when there is a Winter plot out', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('A Storm of Swords');
-                this.player2.selectPlot('Winter Festival');
-                this.selectFirstPlayer(this.player1);
-
-                this.player1.clickCard('Northern Refugee', 'hand');
-            });
-
-            it('should cost 1 gold to marshal', function () {
-                expect(this.player1Object.gold).toBe(2);
-            });
-        });
+        expect(this.northernRefugee.location).toBe('play area');
+        expect(this.player1Object.gold).toBe(0);
+        expect(this.player1).isReadyToTakeAction();
     });
 });

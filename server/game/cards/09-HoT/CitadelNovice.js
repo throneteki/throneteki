@@ -2,13 +2,16 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class CitadelNovice extends DrawCard {
+    // Citadel Novice (09041)
+    // Reaction: After Citadel Novice is knelt, reveal the top card of your deck. If it is an
+    // attachment or a Maester character, draw it. (Limit once per phase.)
     setupCardAbilities(ability) {
         const isAttachmentOrMaester = (card) =>
             card.isMatch({ type: 'attachment' }) ||
             card.isMatch({ type: 'character', trait: 'Maester' });
         this.reaction({
             when: {
-                onCardKneeled: (event) => event.card === this
+                onCardKneeled: (event, context) => event.card === context.source
             },
             limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to reveal the top card of their deck',

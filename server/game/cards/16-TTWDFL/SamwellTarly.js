@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SamwellTarly extends DrawCard {
+    // Samwell Tarly (16009)
+    // No attachments except Raven.
+    // Action: Kneel Samwell Tarly to look at the top 4 cards of your deck. Switch one of those
+    // cards with a card in your hand, if able. Then, place the remaining cards on top of your deck
+    // in any order.
     setupCardAbilities(ability) {
         this.action({
             title: 'Look at top 4 cards',
@@ -27,26 +32,15 @@ class SamwellTarly extends DrawCard {
                             cardCondition: { location: 'hand', controller: 'current' }
                         }
                     },
-                    handler: (thenContext) => {
-                        if (thenContext.targets.cardInHand) {
-                            this.game.addMessage(
-                                '{0} swaps a card from hand with a card in their deck',
-                                thenContext.player
-                            );
-                            this.game.resolveGameAction(
-                                GameActions.simultaneously([
-                                    GameActions.placeCard({
-                                        card: thenContext.targets.cardInHand,
-                                        location: 'draw deck'
-                                    }),
-                                    GameActions.placeCard({
-                                        card: thenContext.targets.cardInDeck,
-                                        location: 'hand'
-                                    })
-                                ])
-                            );
+                    gameAction: GameActions.ifCondition({
+                        condition: (context) => !!context.targets.cardInHand,
+                        thenAction: {
+                            message: '{player} swaps a card from hand with a card in their deck',
+                            gameAction: GameActions.switch((context) => ({
+                                cards: [context.targets.cardInDeck, context.targets.cardInHand]
+                            }))
                         }
-                    }
+                    })
                 })
                 .then({
                     message: 'Then, {player} reorders the top cards of their deck',

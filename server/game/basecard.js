@@ -1,5 +1,7 @@
 import uuid from 'uuid';
+import AbilityContext from './AbilityContext.js';
 import AbilityDsl from './abilitydsl.js';
+import AgendaSetupAbility from './AgendaSetupAbility.js';
 import CardAction from './cardaction.js';
 import CardForcedInterrupt from './cardforcedinterrupt.js';
 import CardForcedReaction from './cardforcedreaction.js';
@@ -11,11 +13,14 @@ import EventRegistrar from './eventregistrar.js';
 import GameActions from './GameActions/index.js';
 import KeywordsProperty from './PropertyTypes/KeywordsProperty.js';
 import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
+import StateCheckAbility from './StateCheckAbility.js';
+import EventCheckAbility from './EventCheckAbility.js';
 import XValueDefinition from './XValueDefinition.js';
 import { Flags, Tokens } from './Constants/index.js';
 import StackProperty from './PropertyTypes/StackProperty.js';
+import ModifierProperty from './PropertyTypes/ModifierProperty.js';
 
-const ValidKeywords = [
+export const ValidKeywords = [
     'ambush',
     'assault',
     'bestow',
@@ -52,15 +57,18 @@ class BaseCard {
 
         this.uuid = uuid.v1();
         this.code = cardData.code;
-        this.name = cardData.name;
         this.facedown = false;
         this.keywords = new KeywordsProperty();
         this.flags = new ReferenceCountedSetProperty();
         this.traits = new ReferenceCountedSetProperty();
         this.controllerStack = new StackProperty(this.owner);
         this.loyalStack = new StackProperty(!!this.cardData.loyal);
+        this.dominanceStrengthModifiers = new ModifierProperty();
         this.eventsForRegistration = [];
         this.keywordSources = [];
+        this.copiedTextBoxId = undefined;
+        this.copiedTextBoxActions = [];
+        this.copiedTextBoxReactions = [];
 
         this.power = 0;
         this.tokens = {};
@@ -69,7 +77,15 @@ class BaseCard {
         this.abilityRestrictions = [];
         this.events = new EventRegistrar(this.game, this);
 
-        this.abilities = { actions: [], reactions: [], persistentEffects: [], playActions: [] };
+        this.abilities = {
+            actions: [],
+            reactions: [],
+            persistentEffects: [],
+            playActions: [],
+            stateChecks: [],
+            eventChecks: [],
+            agendaSetup: []
+        };
 
         this.setupCardTextProperties(AbilityDsl);
         this.setupCardAbilities(AbilityDsl);
@@ -130,7 +146,8 @@ class BaseCard {
                     condition: () => !this.hasFlag(Flags.plotModifiers.cannotProvide(statName)),
                     match: (card) => card.controller.activePlot === card,
                     targetController: 'current',
-                    effect: plotStatEffects[statName](value)
+                    effect: plotStatEffects[statName](value),
+                    plotModifier: true
                 });
             }
             return printed;
@@ -141,6 +158,86 @@ class BaseCard {
         var action = new CardAction(this.game, this, properties);
         this.abilities.actions.push(action);
         return action;
+    }
+
+    copyTextBoxFrom(card) {
+        this.clearCopiedTextBox();
+        const copyId = uuid.v1();
+        this.copiedTextBoxId = copyId;
+        this.copiedTextBoxActions = card.abilities.actions.map((ability) =>
+            this.cloneCopiedAbility(ability)
+        );
+        this.copiedTextBoxReactions = card.abilities.reactions
+            .filter((ability) => !ability.isWhenRevealedAbility?.())
+            .map((ability) => this.cloneCopiedAbility(ability));
+        this.abilities.actions.push(...this.copiedTextBoxActions);
+        this.abilities.reactions.push(...this.copiedTextBoxReactions);
+        for (const ability of [...this.copiedTextBoxActions, ...this.copiedTextBoxReactions]) {
+            if (ability.isEventListeningLocation?.(this.location)) {
+                ability.registerEvents();
+            }
+        }
+
+        for (const effect of card.abilities.persistentEffects) {
+            if (effect.plotModifier) {
+                continue;
+            }
+            this.game.addEffect(this, {
+                ...effect,
+                location: 'active plot',
+                copiedTextBoxId: copyId
+            });
+        }
+    }
+
+    cloneCopiedAbility(ability) {
+        const copy = Object.assign(Object.create(Object.getPrototypeOf(ability)), ability, {
+            card: this
+        });
+        if (Array.isArray(ability.abilityTriggers)) {
+            copy.abilityTriggers = ability.abilityTriggers.map((trigger) =>
+                Object.assign(Object.create(Object.getPrototypeOf(trigger)), trigger, {
+                    ability: copy
+                })
+            );
+            copy.events = null;
+            copy.playerFunc = ability.customPlayerFunc ? ability.playerFunc : () => this.controller;
+        } else {
+            copy.events = new EventRegistrar(this.game, copy);
+            copy.activationContexts = [];
+        }
+        for (const property of ['limit', 'max']) {
+            if (copy[property]) {
+                const limit = Object.assign(
+                    Object.create(Object.getPrototypeOf(copy[property])),
+                    copy[property],
+                    { useCounts: new Map() }
+                );
+                if (limit.eventName) {
+                    limit.resetHandler = () => limit.reset();
+                }
+                copy[property] = limit;
+            }
+        }
+        return copy;
+    }
+
+    clearCopiedTextBox() {
+        if (!this.copiedTextBoxId) {
+            return;
+        }
+        this.abilities.actions = this.abilities.actions.filter(
+            (ability) => !this.copiedTextBoxActions.includes(ability)
+        );
+        this.abilities.reactions = this.abilities.reactions.filter(
+            (ability) => !this.copiedTextBoxReactions.includes(ability)
+        );
+        this.game.effectEngine.unapplyAndRemove(
+            (effect) => effect.copiedTextBoxId === this.copiedTextBoxId
+        );
+        this.copiedTextBoxActions = [];
+        this.copiedTextBoxReactions = [];
+        this.copiedTextBoxId = undefined;
     }
 
     reaction(properties) {
@@ -161,6 +258,18 @@ class BaseCard {
     forcedInterrupt(properties) {
         var reaction = new CardForcedInterrupt(this.game, this, properties);
         this.abilities.reactions.push(reaction);
+    }
+
+    stateCheck(properties) {
+        this.abilities.stateChecks.push(new StateCheckAbility(this.game, this, properties));
+    }
+
+    eventCheck(properties) {
+        this.abilities.eventChecks.push(new EventCheckAbility(this.game, this, properties));
+    }
+
+    afterAgendasAnnounced(properties) {
+        this.abilities.agendaSetup.push(new AgendaSetupAbility(this.game, this, properties));
     }
 
     /**
@@ -210,9 +319,11 @@ class BaseCard {
      */
     whileAttached(properties) {
         this.persistentEffect({
-            condition: () => !!this.parent && (!properties.condition || properties.condition()),
+            condition: (context) =>
+                !!context.source.parent && (!properties.condition || properties.condition(context)),
             match: (card, context) =>
-                card === this.parent && (!properties.match || properties.match(card, context)),
+                card === context.source.parent &&
+                (!properties.match || properties.match(card, context)),
             targetController: 'any',
             effect: properties.effect
         });
@@ -242,30 +353,6 @@ class BaseCard {
     }
 
     /**
-     * Applies an immediate effect which expires at the end of the current
-     * challenge. Per game rules this duration is outside of the challenge.
-     */
-    atEndOfChallenge(propertyFactory) {
-        var properties = propertyFactory(AbilityDsl);
-        this.game.addEffect(
-            this,
-            Object.assign({ duration: 'atEndOfChallenge', location: 'any' }, properties)
-        );
-    }
-
-    /**
-     * Applies an immediate effect which expires at the end of the phase. Per
-     * game rules this duration is outside of the phase.
-     */
-    atEndOfPhase(propertyFactory) {
-        var properties = propertyFactory(AbilityDsl);
-        this.game.addEffect(
-            this,
-            Object.assign({ duration: 'atEndOfPhase', location: 'any' }, properties)
-        );
-    }
-
-    /**
      * Applies an immediate effect which lasts until the end of the round.
      */
     untilEndOfRound(propertyFactory) {
@@ -273,18 +360,6 @@ class BaseCard {
         this.game.addEffect(
             this,
             Object.assign({ duration: 'untilEndOfRound', location: 'any' }, properties)
-        );
-    }
-
-    /**
-     * Applies an immediate effect which expires at the end of the round. Per
-     * game rules this duration is outside of the round.
-     */
-    atEndOfRound(propertyFactory) {
-        var properties = propertyFactory(AbilityDsl);
-        this.game.addEffect(
-            this,
-            Object.assign({ duration: 'atEndOfRound', location: 'any' }, properties)
         );
     }
 
@@ -319,6 +394,7 @@ class BaseCard {
 
         clone.controllerStack = this.controllerStack.clone();
         clone.loyalStack = this.loyalStack.clone();
+        clone.dominanceStrengthModifiers = this.dominanceStrengthModifiers.clone();
         clone.factions = this.factions.clone();
         clone.flags = this.flags.clone();
         clone.location = this.location;
@@ -343,8 +419,38 @@ class BaseCard {
         return [];
     }
 
+    hasUsableAction(player) {
+        return (
+            this.abilities.actions.some(
+                (action) =>
+                    action.allowPlayer(player) &&
+                    action.meetsRequirements(action.createContext(player))
+            ) ||
+            this.getPlayActions().some((action) => {
+                const context = new AbilityContext({ game: this.game, player, source: this });
+                return (
+                    action.meetsRequirements(context) &&
+                    action.canPayCosts(context) &&
+                    action.canResolveTargets(context)
+                );
+            })
+        );
+    }
+
     get controller() {
         return this.controllerStack.get();
+    }
+
+    get dominanceStrengthModifier() {
+        return this.dominanceStrengthModifiers.value;
+    }
+
+    set dominanceStrengthModifier(value) {
+        this.dominanceStrengthModifiers.set('manual', value);
+    }
+
+    modifyDominanceStrength(amount) {
+        this.dominanceStrengthModifiers.add(amount);
     }
 
     takeControl(controller, source) {
@@ -392,12 +498,35 @@ class BaseCard {
         return this.keywords.getTriggerModifier(keyword);
     }
 
+    get name() {
+        return this.isFacedownInPlay() ? '' : this.cardData.name;
+    }
+
+    // A facedown card in play has no attributes of its own, only those granted by the ability that
+    // put it into play (Rules Reference: Facedown Cards). Setup cards are facedown until revealed.
+    isFacedownInPlay() {
+        return (
+            !!this.facedown && this.location === 'play area' && this.game.currentPhase !== 'setup'
+        );
+    }
+
+    hasAttribute(property, value, printedValues = []) {
+        if (!this.isFacedownInPlay()) {
+            return property.contains(value);
+        }
+
+        const printed = printedValues.some(
+            (printedValue) => printedValue && printedValue.toLowerCase() === value.toLowerCase()
+        );
+        return property.getCountForReference(value) > (printed ? 1 : 0);
+    }
+
     hasTrait(trait) {
         if (this.hasFlag(Flags.losesAspect.traits)) {
             return false;
         }
 
-        return !this.isFullBlank() && this.traits.contains(trait);
+        return !this.isFullBlank() && this.hasAttribute(this.traits, trait, this.cardData.traits);
     }
 
     isFaction(faction) {
@@ -409,12 +538,14 @@ class BaseCard {
 
         if (normalizedFaction === 'neutral') {
             return ValidFactions.every(
-                (f) => !this.factions.contains(f) || this.hasFlag(Flags.losesAspect.faction(f))
+                (f) =>
+                    !this.hasAttribute(this.factions, f, [this.cardData.faction]) ||
+                    this.hasFlag(Flags.losesAspect.faction(f))
             );
         }
 
         return (
-            this.factions.contains(normalizedFaction) &&
+            this.hasAttribute(this.factions, normalizedFaction, [this.cardData.faction]) &&
             !this.hasFlag(Flags.losesAspect.faction(normalizedFaction))
         );
     }
@@ -579,6 +710,10 @@ class BaseCard {
             }
         }
 
+        if (originalLocation === 'active plot' && targetLocation !== 'active plot') {
+            this.clearCopiedTextBox();
+        }
+
         if (targetLocation !== 'play area') {
             this.facedown = false;
         }
@@ -612,8 +747,47 @@ class BaseCard {
         return menuActionPairs.map(([action, index]) => action.getMenuItem(index, player));
     }
 
+    getUnavailableActions(player) {
+        if (player.isSpectator()) {
+            return undefined;
+        }
+
+        const actions = this.abilities.actions
+            .filter(
+                (action) =>
+                    action.allowPlayer(player) &&
+                    (this.getPrintedType() === 'event'
+                        ? player.isCardInPlayableLocation(this, 'play')
+                        : action.location === this.location)
+            )
+            .map((action) => ({
+                title: action.title,
+                reason: action.getUnmetRequirement(action.createContext(player))
+            }))
+            .filter((action) => !!action.reason);
+
+        if (this.controller === player) {
+            for (const action of this.getPlayActions()) {
+                const context = new AbilityContext({ game: this.game, player, source: this });
+                if (!action.isRelevant?.(context)) {
+                    continue;
+                }
+                const reason =
+                    action.getUnmetRequirement(context) ||
+                    (this.game.currentPhase !== 'setup' &&
+                        this.game.getActionTimingRequirement(player)) ||
+                    action.getResolutionFailure(context, { checkGameAction: false });
+                if (reason) {
+                    actions.push({ title: action.title, reason });
+                }
+            }
+        }
+
+        return actions.length > 0 ? actions : undefined;
+    }
+
     isCopyOf(card) {
-        return this.name === card.name;
+        return this.cardData.name === card.cardData.name;
     }
 
     isUnique() {
@@ -733,7 +907,9 @@ class BaseCard {
             return [];
         }
 
-        return this.traits.getValues();
+        return this.traits
+            .getValues()
+            .filter((trait) => this.hasAttribute(this.traits, trait, this.cardData.traits));
     }
 
     addFaction(faction) {
@@ -876,12 +1052,21 @@ class BaseCard {
             return { facedown: true, uuid: this.uuid, tokens: this.tokens, ...selectionState };
         }
 
+        const selectingCards = !!activePlayer.promptState?.selectCard;
         let state = {
+            canPlay: this.getCanPlayState(activePlayer),
             code: this.cardData.code,
             controlled: this.owner !== this.controller && this.getType() !== 'title',
             facedown: this.facedown,
             factionStatus: this.getFactionStatus(),
-            menu: this.getMenu(activePlayer),
+            menu: this.game.manualMode.enabled ? this.getMenu(activePlayer) : undefined,
+            unavailableActions: selectingCards
+                ? undefined
+                : this.getUnavailableActions(activePlayer),
+            unavailableTriggers:
+                activePlayer.isSpectator() || selectingCards
+                    ? undefined
+                    : this.game.getUnavailableAbilityReasons?.(this, activePlayer),
             name: this.cardData.label,
             new: this.new,
             power: this.power,
@@ -892,6 +1077,19 @@ class BaseCard {
         };
 
         return Object.assign(state, selectionState);
+    }
+
+    getCanPlayState(player) {
+        if (this.controller !== player || !this.game.canTakeActionsNow(player)) {
+            return undefined;
+        }
+
+        try {
+            return this.hasUsableAction(player);
+        } catch (error) {
+            this.game.reportError(error);
+            return undefined;
+        }
     }
 }
 

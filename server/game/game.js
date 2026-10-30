@@ -1,5 +1,7 @@
+import DelayedEffect from './DelayedEffect.js';
 import EventEmitter from 'events';
 import AttachmentValidityCheck from './AttachmentValidityCheck.js';
+import StateChecks from './StateChecks.js';
 import ChatCommands from './chatcommands.js';
 import GameCommands from './GameCommands.js';
 import GameChat from './gamechat.js';
@@ -14,8 +16,8 @@ import GamePipeline from './gamepipeline.js';
 import Phases from './gamesteps/Phases.js';
 import SimpleStep from './gamesteps/simplestep.js';
 import ChoosePlayerPrompt from './gamesteps/ChoosePlayerPrompt.js';
+import ChooseResolutionOrder from './gamesteps/ChooseResolutionOrder.js';
 import CardNamePrompt from './gamesteps/CardNamePrompt.js';
-import DeckSearchPrompt from './gamesteps/DeckSearchPrompt.js';
 import MenuPrompt from './gamesteps/menuprompt.js';
 import IconPrompt from './gamesteps/iconprompt.js';
 import SelectCardPrompt from './gamesteps/selectcardprompt.js';
@@ -31,13 +33,16 @@ import NullEvent from './NullEvent.js';
 import AtomicEvent from './AtomicEvent.js';
 import GroupedCardEvent from './GroupedCardEvent.js';
 import SimultaneousEvents from './SimultaneousEvents.js';
-import ChooseGoldSourceAmounts from './gamesteps/ChooseGoldSourceAmounts.js';
 import DropCommand from './ServerCommands/DropCommand.js';
 import CardVisibility from './CardVisibility.js';
 import GameStats from './GameStats.js';
+import ManualActions from './ManualActions.js';
+import ManualMode from './ManualMode.js';
 import PlainTextGameChatFormatter from './PlainTextGameChatFormatter.js';
 import GameActions from './GameActions/index.js';
+import RecordSave from './GameActions/RecordSave.js';
 import EndRound from './GameActions/EndRound.js';
+import TakeControl from './GameActions/TakeControl.js';
 import TimeLimit from './timeLimit.js';
 import PrizedKeywordListener from './PrizedKeywordListener.js';
 import GameOverPrompt from './gamesteps/GameOverPrompt.js';
@@ -46,11 +51,20 @@ import shuffle from 'lodash.shuffle';
 import StartRound from './GameActions/StartRound.js';
 import GameOverHandler from './GameHandlers/GameOverHandler.js';
 import DisconnectHandler from './GameHandlers/DisconnectHandler.js';
-import { Flags } from './Constants/index.js';
+import { Flags, Requirements } from './Constants/index.js';
+import { EventValidator } from './EventValidator.js';
+import PossibleResponders from './PossibleResponders.js';
+import { randomUUID } from 'crypto';
+
+const MinResponseDelay = 1000;
+const MaxResponseDelay = 3000;
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
         super();
+
+        const validateEvents = options.validateEvents ?? process.env.NODE_ENV !== 'production';
+        this.eventValidator = validateEvents ? new EventValidator() : null;
 
         this.instance = details.instance;
         this.event = details.event;
@@ -62,7 +76,13 @@ class Game extends EventEmitter {
             variant: details.restrictedList.variant
         };
         this.allCards = [];
+        this.pendingAbilityMessages = [];
+        // Structured entries for abilities, alongside the chat messages. Kept on the server: they
+        // hold card references regardless of what each player can see.
+        this.logEntries = [];
+        this.unavailableAbilityReasons = new Map();
         this.attachmentValidityCheck = new AttachmentValidityCheck(this);
+        this.stateChecks = new StateChecks(this);
         this.effectEngine = new EffectEngine(this);
         this.flags = new ReferenceCountedSetProperty();
         this.playersAndSpectators = {};
@@ -113,7 +133,12 @@ class Game extends EventEmitter {
         this.remainingPhases = [];
         this.cardVisibility = new CardVisibility(this);
         this.stats = new GameStats(this);
+        this.manualActions = new ManualActions(this);
+        this.manualMode = new ManualMode(this, options.manualMode ?? details.manualMode ?? 'auto');
+        this.strictActionWindows = !!(options.strictActionWindows ?? details.strictActionWindows);
         this.winnerOfDominanceInLastRound = undefined;
+        this.tieWinnerChooserRevisions = { initiative: 0, dominance: 0 };
+        this.tieWinnerChooserSelections = {};
         this.triggerOnLosing = {};
         this.prizedKeywordListener = new PrizedKeywordListener(this);
         this.muteSpectators = details.muteSpectators;
@@ -150,12 +175,28 @@ class Game extends EventEmitter {
         this.setMaxListeners(0);
 
         this.router = options.router;
+        this.schedule = options.schedule || ((delay, callback) => setTimeout(callback, delay));
+        this.responseDelay =
+            options.responseDelay ||
+            (() =>
+                MinResponseDelay +
+                Math.floor(Math.random() * (MaxResponseDelay - MinResponseDelay)));
 
         this.pushAbilityContext({ resolutionStage: 'framework' });
     }
 
     get isGameOver() {
         return this.gameOverHandler.isGameOver;
+    }
+
+    on(eventName, listener) {
+        this.eventValidator?.checkListener(eventName);
+        return super.on(eventName, listener);
+    }
+
+    emit(eventName, ...args) {
+        this.eventValidator?.checkEmit(eventName, args[0]);
+        return super.emit(eventName, ...args);
     }
 
     isPlaytesting() {
@@ -170,16 +211,148 @@ class Game extends EventEmitter {
         return this.gameFormat === 'melee';
     }
 
+    getPossibleResponders() {
+        if (!this.possibleResponders) {
+            this.possibleResponders = new PossibleResponders(this);
+        }
+
+        return this.possibleResponders;
+    }
+
+    /**
+     * Runs the callback after the delay, then carries on with the game and sends the new state to
+     * the players.
+     */
+    afterDelay(delay, callback) {
+        this.schedule(delay, () => {
+            try {
+                callback();
+                this.continue();
+            } catch (e) {
+                this.reportError(e);
+            }
+
+            this.sendGameState();
+        });
+    }
+
     reportError(e) {
         this.router.handleError(this, e);
     }
 
     addMessage() {
+        this.flushPendingAbilityMessages();
         this.gameChat.addMessage(...arguments);
     }
 
     addAlert() {
+        this.flushPendingAbilityMessages();
         this.gameChat.addAlert(...arguments);
+    }
+
+    /**
+     * Holds back an ability's message until its effects resolve, so the log doesn't claim effects
+     * that were cancelled. If anything else is logged first, the message comes before it: as a
+     * plain line saying the ability was used while it could still be cancelled, and in full once
+     * its effects have begun.
+     */
+    holdAbilityMessage(context) {
+        context.messageLogged = 'none';
+        this.pendingAbilityMessages.push(context);
+    }
+
+    markAbilityMessageResolving(context) {
+        context.messageResolving = true;
+    }
+
+    /** Logs a held ability message in full, unless it already has been. */
+    logAbilityMessage(context) {
+        if (!this.pendingAbilityMessages.includes(context)) {
+            return;
+        }
+
+        this.pendingAbilityMessages = this.pendingAbilityMessages.filter(
+            (pending) => pending !== context
+        );
+        context.messageAbility.outputMessage(context);
+    }
+
+    /** Logs a plain line for a held message if nothing was logged, then stops holding it. */
+    finishAbilityMessage(context) {
+        if (!this.pendingAbilityMessages.includes(context)) {
+            return;
+        }
+
+        if (context.messageLogged === 'none') {
+            this.logPlainAbilityLine(context);
+        }
+
+        this.pendingAbilityMessages = this.pendingAbilityMessages.filter(
+            (pending) => pending !== context
+        );
+    }
+
+    flushPendingAbilityMessages() {
+        for (const context of [...this.pendingAbilityMessages]) {
+            if (context.messageResolving) {
+                this.logAbilityMessage(context);
+            } else if (context.messageLogged === 'none') {
+                this.logPlainAbilityLine(context);
+            }
+        }
+    }
+
+    logPlainAbilityLine(context) {
+        context.messageLogged = 'plain';
+        const verb = context.source.getPrintedType() === 'event' ? 'plays' : 'uses';
+        this.gameChat.addMessage('{0} {1} {2}', context.player, verb, context.source);
+        this.addLogEntry('abilityInitiated', context);
+    }
+
+    addLogEntry(type, context, { results = [] } = {}) {
+        this.logEntries.push({
+            type,
+            player: context.player,
+            source: context.source,
+            targets: context.targets ? context.targets.getTargets() : [],
+            results,
+            message: this.gameChat.messages.length - 1
+        });
+    }
+
+    recordUnavailableAbility(ability, context, reason) {
+        this.unavailableAbilityReasons.delete(ability);
+        if (!reason || !context.player || !ability.card) {
+            return;
+        }
+        this.unavailableAbilityReasons.set(ability, {
+            player: context.player,
+            card: ability.card,
+            title: ability.title || ability.card.name,
+            reason,
+            phase: this.currentPhase,
+            round: this.round,
+            challenge: this.currentChallenge || undefined
+        });
+        if (this.unavailableAbilityReasons.size > 200) {
+            this.unavailableAbilityReasons.delete(
+                this.unavailableAbilityReasons.keys().next().value
+            );
+        }
+    }
+
+    getUnavailableAbilityReasons(card, player) {
+        const reasons = [...this.unavailableAbilityReasons.values()]
+            .filter(
+                (entry) =>
+                    entry.card === card &&
+                    entry.player === player &&
+                    entry.round === this.round &&
+                    entry.phase === this.currentPhase &&
+                    entry.challenge === (this.currentChallenge || undefined)
+            )
+            .map(({ title, reason }) => ({ title, reason }));
+        return reasons.length > 0 ? reasons : undefined;
     }
 
     get messages() {
@@ -255,11 +428,54 @@ class Game extends EventEmitter {
         });
     }
 
-    setFirstPlayer(firstPlayer) {
-        for (const player of this.getAllPlayers()) {
-            player.firstPlayer = player === firstPlayer;
+    tieWinnerChooserChanged(tieType) {
+        this.tieWinnerChooserRevisions[tieType]++;
+        delete this.tieWinnerChooserSelections[tieType];
+    }
+
+    chooseTieWinnerController(tieType, callback) {
+        const choosingFlag =
+            tieType === 'initiative'
+                ? 'choosesWinnerForInitiativeTies'
+                : 'choosesWinnerForDominanceTies';
+        const candidates = this.getPlayersInFirstPlayerOrder().filter(
+            (player) => player[choosingFlag]
+        );
+
+        if (candidates.length === 0) {
+            callback(undefined);
+            return;
         }
-        this.raiseEvent('onFirstPlayerDetermined', { player: firstPlayer });
+
+        if (candidates.length === 1) {
+            callback(candidates[0]);
+            return;
+        }
+
+        const selection = this.tieWinnerChooserSelections[tieType];
+        const revision = this.tieWinnerChooserRevisions[tieType];
+        if (selection?.revision === revision && candidates.includes(selection.player)) {
+            callback(selection.player);
+            return;
+        }
+
+        const firstPlayer = this.getFirstPlayer() || this.getPlayersInFirstPlayerOrder()[0];
+        this.queueStep(
+            new ChoosePlayerPrompt(this, firstPlayer, {
+                condition: (player) => candidates.includes(player),
+                activePromptTitle: 'Choose which player chooses tie winners',
+                waitingPromptTitle: 'Waiting for first player to choose a tie winner',
+                onSelect: (player) => {
+                    this.tieWinnerChooserSelections[tieType] = { revision, player };
+                    callback(player);
+                },
+                onCancel: () => callback(undefined)
+            })
+        );
+    }
+
+    setFirstPlayer(firstPlayer) {
+        return this.resolveGameAction(GameActions.setFirstPlayer({ player: firstPlayer }));
     }
 
     getOpponents(player) {
@@ -330,6 +546,51 @@ class Game extends EventEmitter {
         this.addSimultaneousEffects([{ source: source, properties: properties }]);
     }
 
+    addDelayedEffect(delayedEffect) {
+        this.effectEngine.addDelayedEffect(delayedEffect);
+    }
+
+    resolveDelayedEffects(event) {
+        const events = event
+            .getConcurrentEvents()
+            .filter((concurrentEvent) => !concurrentEvent.cancelled);
+        const triggered = this.effectEngine.takeDelayedEffectsTriggeredBy(events);
+        const delayedGroups = new Map();
+        for (const item of triggered) {
+            const key = item.delayedEffect.group || item.delayedEffect;
+            if (!delayedGroups.has(key)) {
+                delayedGroups.set(key, []);
+            }
+            delayedGroups.get(key).push(item);
+        }
+        this.effectEngine.expireDelayedEffectsBy(events);
+        const eventChecks = this.allCards
+            .flatMap((card) => card.abilities.eventChecks || [])
+            .flatMap((ability) =>
+                events
+                    .filter((triggeringEvent) => ability.isTriggeredBy(triggeringEvent))
+                    .map((triggeringEvent) => ability.createContext(triggeringEvent))
+            );
+        this.queueStep(
+            new ChooseResolutionOrder(this, [
+                ...[...delayedGroups.values()].map((group) => ({
+                    player: group[0].delayedEffect.context.player,
+                    source: group[0].delayedEffect.context.source,
+                    title: group[0].delayedEffect.groupTitle || group[0].delayedEffect.title,
+                    canResolve: () =>
+                        group.some(({ delayedEffect, event }) => delayedEffect.canResolve(event)),
+                    resolve: () => DelayedEffect.resolveGroup(group)
+                })),
+                ...eventChecks.map((context) => ({
+                    player: context.player,
+                    source: context.source,
+                    canResolve: () => context.ability.canResolve(context),
+                    resolve: () => this.resolveAbility(context.ability, context)
+                }))
+            ])
+        );
+    }
+
     addSimultaneousEffects(effectProperties) {
         let effects = effectProperties.reduce((array, effect) => {
             let flattenedProperties = Effect.flattenProperties(effect.properties);
@@ -374,13 +635,62 @@ class Game extends EventEmitter {
             return;
         }
 
+        if (!this.manualMode.enabled && this.useCardAction(player, card)) {
+            return;
+        }
+
         this.defaultCardClick(player, card);
+    }
+
+    useCardAction(player, card) {
+        const usable = card.abilities.actions
+            .map((action, index) => ({ action, index }))
+            .filter(
+                ({ action }) =>
+                    action.allowPlayer(player) &&
+                    action.allowMenu() &&
+                    action.meetsRequirements(action.createContext(player))
+            );
+
+        if (usable.length === 0) {
+            return false;
+        }
+
+        const handlers = { cancel: () => true };
+        const buttons = usable.map(({ action, index }) => {
+            const method = `action${index}`;
+            handlers[method] = () => {
+                action.execute(player, index);
+                return true;
+            };
+            return { text: action.title, method };
+        });
+
+        this.promptWithMenu(player, handlers, {
+            activePrompt: {
+                menuTitle: usable.length === 1 ? `Use ${card.name}?` : 'Choose an action',
+                buttons: [...buttons, { text: 'Cancel', method: 'cancel', cancel: true }]
+            },
+            source: card,
+            beforeInitiation: true
+        });
+        return true;
     }
 
     defaultCardClick(player, card) {
         if (card.facedown || card.controller !== player) {
             return;
         }
+
+        if (card.location !== 'play area' && !['faction', 'agenda'].includes(card.getType())) {
+            return;
+        }
+
+        if (!this.manualMode.allows(player)) {
+            return;
+        }
+
+        this.manualActions.record(player, card.kneeled ? 'stand' : 'kneel', { cards: [card] });
 
         let action = card.kneeled
             ? GameActions.standCard({ card, force: true })
@@ -455,9 +765,14 @@ class Game extends EventEmitter {
         }
 
         if (player.showDeck ^ newValue) {
+            if (newValue && !this.manualMode.allows(player)) {
+                return;
+            }
+
             player.setDrawDeckVisibility(newValue);
 
             if (newValue) {
+                this.manualActions.record(player, 'showDrawDeck');
                 this.addAlert('danger', '{0} is looking at their deck', player);
             } else {
                 this.addAlert('info', '{0} stops looking at their deck', player);
@@ -473,8 +788,17 @@ class Game extends EventEmitter {
             return;
         }
 
+        if (!this.manualMode.allows(player)) {
+            return;
+        }
+
         let command = new DropCommand(this, player, card, target);
-        command.execute();
+        if (command.execute()) {
+            this.manualActions.record(player, 'drop', {
+                cards: [card],
+                args: [command.originalLocation, target]
+            });
+        }
     }
 
     addPower(player, power) {
@@ -483,7 +807,9 @@ class Game extends EventEmitter {
             return;
         }
 
-        player.faction.modifyPower(power);
+        return this.resolveGameAction(
+            GameActions.gainPower({ card: player.faction, amount: power })
+        );
     }
 
     addGold(player, amount) {
@@ -530,7 +856,12 @@ class Game extends EventEmitter {
             spendParams
         );
 
-        this.queueStep(new ChooseGoldSourceAmounts(this, spendParams, callback));
+        if (spendParams.amount <= 0) {
+            this.queueSimpleStep(callback);
+            return;
+        }
+
+        return this.resolveGameAction(GameActions.payGold(spendParams)).thenExecute(callback);
     }
 
     /**
@@ -546,35 +877,9 @@ class Game extends EventEmitter {
      * The target object to which gold is being moved
      */
     transferGold(transferParams) {
-        let { from, to, amount } = transferParams;
-        let appliedGold = Math.min(from.gold, amount);
-
-        if (from.getGameElementType() === 'player') {
-            let activePlayer =
-                transferParams.activePlayer ||
-                (this.currentAbilityContext && this.currentAbilityContext.player);
-            appliedGold = Math.min(
-                from.getSpendableGold({ player: from, activePlayer: activePlayer }),
-                amount
-            );
-            this.spendGold(
-                { amount: appliedGold, player: from, activePlayer: activePlayer },
-                () => {
-                    to.modifyGold(appliedGold);
-                    this.raiseEvent('onGoldTransferred', {
-                        source: from,
-                        target: to,
-                        amount: appliedGold
-                    });
-                }
-            );
-            return;
-        }
-
-        from.modifyGold(-appliedGold);
-        to.modifyGold(appliedGold);
-
-        this.raiseEvent('onGoldTransferred', { source: from, target: to, amount: appliedGold });
+        return this.resolveGameAction(
+            GameActions.transferGold({ ...transferParams, context: this.currentAbilityContext })
+        );
     }
 
     /**
@@ -585,10 +890,7 @@ class Game extends EventEmitter {
      * @param {number} params.amount The amount of gold being returned
      */
     returnGoldToTreasury(params) {
-        let { player, amount } = params;
-        let appliedAmount = Math.min(player.gold, amount);
-
-        player.modifyGold(-appliedAmount);
+        return this.resolveGameAction(GameActions.returnGoldToTreasury(params));
     }
 
     recordResults(winners, reason, finishedAt) {
@@ -610,6 +912,12 @@ class Game extends EventEmitter {
         if (!player) {
             return;
         }
+
+        if (!this.manualMode.allows(player)) {
+            return;
+        }
+
+        this.manualActions.record(player, 'changeStat', { args: [stat, value] });
 
         let target = player;
 
@@ -747,6 +1055,11 @@ class Game extends EventEmitter {
             return;
         }
 
+        if (!this.manualMode.allows(player)) {
+            return;
+        }
+
+        this.manualActions.record(player, 'shuffleDeck');
         this.addAlert('danger', '{0} shuffles their deck', player);
 
         player.shuffleDrawDeck();
@@ -765,17 +1078,9 @@ class Game extends EventEmitter {
     }
 
     promptForSelect(player, properties) {
-        this.queueStep(new SelectCardPrompt(this, player, properties));
-    }
-
-    promptForDeckSearch(player, properties) {
-        this.raiseEvent(
-            'onBeforeDeckSearch',
-            { source: properties.source, player: player },
-            (event) => {
-                this.queueStep(new DeckSearchPrompt(this, event.player, properties));
-            }
-        );
+        const prompt = new SelectCardPrompt(this, player, properties);
+        this.queueStep(prompt);
+        return prompt;
     }
 
     promptForOpponentChoice(
@@ -895,6 +1200,7 @@ class Game extends EventEmitter {
     }
 
     beginRound() {
+        this.finishEndingDuration('untilEndOfRound');
         // Reset phases to the standard game flow.
         this.remainingPhases = Phases.names();
 
@@ -939,6 +1245,9 @@ class Game extends EventEmitter {
     markActionAsTaken(context) {
         if (this.currentActionWindow) {
             if (this.currentActionWindow.currentPlayer !== context.player) {
+                this.manualActions.record(context.player, 'actionOutOfTurn', {
+                    cards: [context.source]
+                });
                 this.addAlert(
                     'danger',
                     "{0} uses {1} during {2}'s turn in the action window",
@@ -948,7 +1257,13 @@ class Game extends EventEmitter {
                 );
             }
             this.currentActionWindow.markActionAsTaken(context.player);
-        } else if (this.currentPhase !== 'marshal' || this.hasOpenInterruptOrReactionWindow()) {
+        } else if (
+            this.hasOpenInterruptOrReactionWindow() ||
+            (this.strictActionWindows && this.currentPhase !== 'marshal')
+        ) {
+            this.manualActions.record(context.player, 'actionOutsideWindow', {
+                cards: [context.source]
+            });
             this.addAlert(
                 'danger',
                 '{0} uses {1} outside of an action window',
@@ -972,6 +1287,10 @@ class Game extends EventEmitter {
 
     popAbilityContext() {
         this.abilityContextStack.pop();
+    }
+
+    isResolvingAbility() {
+        return this.abilityContextStack.some((context) => context.resolutionStage !== 'framework');
     }
 
     resolveAbility(ability, context) {
@@ -1027,6 +1346,71 @@ class Game extends EventEmitter {
         for (let window of this.abilityWindowStack) {
             window.clearAbilityResolution(ability);
         }
+    }
+
+    beginEndingDuration(duration) {
+        if (!this.endingDurations) {
+            this.endingDurations = new Set();
+        }
+
+        this.endingDurations.add(duration);
+    }
+
+    finishEndingDuration(duration) {
+        this.endingDurations?.delete(duration);
+    }
+
+    durationHasEnded(duration) {
+        return !!this.endingDurations?.has(duration);
+    }
+
+    isActionTimingOpenFor(player) {
+        if (this.hasOpenInterruptOrReactionWindow()) {
+            return false;
+        }
+
+        if (this.currentActionWindow) {
+            return this.currentActionWindow.currentPlayer === player;
+        }
+
+        return false;
+    }
+
+    canTakeActionsNow(player) {
+        return (
+            !player.isSpectator() &&
+            (this.currentPhase !== 'setup' || !!player.readyToStart) &&
+            !this.hasOpenInterruptOrReactionWindow() &&
+            !this.getActionTimingRequirement(player) &&
+            player.promptState.isActivePrompt &&
+            !player.promptState.selectCard
+        );
+    }
+
+    getActionTimingRequirement(player) {
+        if (this.manualMode.enabled) {
+            return undefined;
+        }
+
+        if (this.isResolvingAbility() || this.hasOpenInterruptOrReactionWindow()) {
+            return Requirements.window;
+        }
+
+        if (this.isActionTimingOpenFor(player)) {
+            return undefined;
+        }
+
+        // While action windows are not being run, play stays available outside them.
+        // A window that is open, and the marshaling phase, are refused either way.
+        if (
+            !this.strictActionWindows &&
+            !this.currentActionWindow &&
+            this.currentPhase !== 'marshal'
+        ) {
+            return undefined;
+        }
+
+        return Requirements.window;
     }
 
     hasOpenInterruptOrReactionWindow() {
@@ -1085,6 +1469,11 @@ class Game extends EventEmitter {
     }
 
     resolveEvent(event) {
+        const context = this.currentAbilityContext;
+        if (context?.recordingCostEvents) {
+            context.costEvents.push(event);
+        }
+
         this.queueStep(new EventWindow(this, event));
     }
 
@@ -1103,9 +1492,12 @@ class Game extends EventEmitter {
      * routine validity & game over checks.
      */
     refreshGameState() {
-        this.effectEngine.recalculateDirtyTargets();
-        this.effectEngine.reapplyStateDependentEffects();
+        if (this.effectEngine.revealingPlots) {
+            return;
+        }
+        this.effectEngine.settle();
         this.attachmentValidityCheck.enforceValidity();
+        this.stateChecks.enforce();
         this.gameOverHandler.checkConditions();
     }
 
@@ -1129,7 +1521,7 @@ class Game extends EventEmitter {
         let player = card.controller;
         let dupe = card.dupes.find((dupe) => dupe.owner === card.controller);
         if (card.canBeSaved() && dupe) {
-            dupe.owner.discardCard(dupe, false);
+            this.resolveGameAction(GameActions.discardCard({ card: dupe, allowSave: false }));
             this.saveCard(card);
             this.addMessage('{0} discards a duplicate to save {1}', player, card);
             return true;
@@ -1139,8 +1531,7 @@ class Game extends EventEmitter {
     }
 
     saveCard(card) {
-        card.markAsSaved();
-        this.raiseEvent('onCardSaved', { card: card });
+        return this.resolveGameAction(RecordSave, { card });
     }
 
     discardFromPlay(cards, options = { allowSave: true }, callback = () => true) {
@@ -1166,64 +1557,7 @@ class Game extends EventEmitter {
     }
 
     takeControl(player, card, source = null) {
-        var oldController = card.controller;
-        var newController = player;
-
-        if (oldController === newController) {
-            return;
-        }
-
-        if (card.location !== 'play area' && !newController.canPutIntoPlay(card)) {
-            return;
-        }
-
-        if (card.location === 'play area' && !newController.canControl(card)) {
-            return;
-        }
-
-        this.applyGameAction('takeControl', card, (card) => {
-            if (card.parent) {
-                card.takeControl(newController, source);
-            } else {
-                oldController.removeCardFromPile(card);
-                card.takeControl(newController, source);
-                newController.cardsInPlay.push(card);
-            }
-
-            if (card.location !== 'play area') {
-                let originalLocation = card.location;
-                card.moveTo('play area');
-                card.applyPersistentEffects();
-                this.raiseEvent('onCardEntersPlay', {
-                    card: card,
-                    playingType: 'play',
-                    originalLocation: originalLocation
-                });
-            }
-
-            this.handleControlChange(card);
-        });
-    }
-
-    revertControl(card, source) {
-        if (card.location !== 'play area') {
-            return;
-        }
-
-        card.controller.removeCardFromPile(card);
-        card.revertControl(source);
-        card.controller.cardsInPlay.push(card);
-
-        this.handleControlChange(card);
-    }
-
-    handleControlChange(card) {
-        if (this.currentChallenge && this.currentChallenge.isParticipating(card)) {
-            this.addMessage('{0} is removed from the challenge because control has changed', card);
-            this.currentChallenge.removeFromChallenge(card);
-        }
-
-        this.raiseEvent('onCardTakenControl', { card: card });
+        return this.resolveGameAction(TakeControl, { player, card, source });
     }
 
     applyGameAction(actionType, cards, func, options = {}) {
@@ -1421,6 +1755,118 @@ class Game extends EventEmitter {
         }
     }
 
+    getProblemReport(reporter) {
+        const players = this.getAllPlayers();
+        const cards = this.allCards.map((card) => ({
+            id: card.uuid,
+            code: card.cardData.code,
+            name: card.name,
+            packCode: card.cardData.packCode,
+            owner: card.owner?.name,
+            controller: card.controller?.name,
+            location: card.location,
+            parent: card.parent?.uuid,
+            facedown: !!card.facedown,
+            kneeled: !!card.kneeled,
+            power: card.power,
+            gold: card.gold,
+            tokens: { ...card.tokens }
+        }));
+        const playerStates = players.map((player, index) => ({
+            name: player.name,
+            seat: index + 1,
+            faction: player.faction.code,
+            gold: player.gold,
+            power: player.faction.getPower(),
+            standing: player.standing,
+            eliminated: player.eliminated,
+            activePlot: player.activePlot?.uuid,
+            plotDeck: player.plotDeck.map((card) => card.uuid),
+            usedPlots: player.plotDiscard.map((card) => card.uuid),
+            cardsInPlay: player.cardsInPlay.map((card) => card.uuid),
+            hand: player.hand.map((card) => card.uuid),
+            drawDeck: player.drawDeck.map((card) => card.uuid),
+            discardPile: player.discardPile.map((card) => card.uuid),
+            deadPile: player.deadPile.map((card) => card.uuid),
+            shadows: player.shadows.map((card) => card.uuid),
+            outOfGame: player.outOfGamePile.map((card) => card.uuid),
+            agendas: (player.agendas || []).map((card) => card.uuid)
+        }));
+
+        return {
+            schemaVersion: 1,
+            id: randomUUID(),
+            createdAt: new Date().toISOString(),
+            game: {
+                id: this.id,
+                name: this.name,
+                format: this.gameFormat,
+                variant: this.gameVariant,
+                manualMode: this.manualMode.enabled,
+                strictActionWindows: this.strictActionWindows,
+                round: this.round,
+                phase: this.currentPhase,
+                firstPlayer: this.getPlayersInFirstPlayerOrder()[0]?.name,
+                currentChallenge: this.currentChallenge && {
+                    ...this.getChallengeSummary(this.currentChallenge),
+                    stage: this.getChallengeStage(this.currentChallenge),
+                    currentType: this.currentChallenge.challengeType,
+                    declaredAttackers: this.currentChallenge.declaredAttackers.map(
+                        (card) => card.uuid
+                    ),
+                    attackers: this.currentChallenge.attackers?.map((card) => card.uuid),
+                    declaredDefenders: this.currentChallenge.declaredDefenders.map(
+                        (card) => card.uuid
+                    ),
+                    defenders: this.currentChallenge.defenders?.map((card) => card.uuid)
+                },
+                earlierChallenges:
+                    this.currentPhase === 'challenge'
+                        ? this.getEarlierChallenges().map((challenge) =>
+                              this.getChallengeSummary(challenge)
+                          )
+                        : []
+            },
+            reporter,
+            players: playerStates,
+            cards,
+            messages: this.gameChat.messages.slice(-100),
+            pipeline: this.pipeline.getDebugInfo()
+        };
+    }
+
+    getChallengeSummary(challenge) {
+        return {
+            type: challenge.initiatedChallengeType,
+            attackingPlayer: challenge.attackingPlayer?.name,
+            defendingPlayer: challenge.isSinglePlayer
+                ? undefined
+                : challenge.initiatedAgainstPlayer?.name
+        };
+    }
+
+    getChallengeStage(challenge) {
+        if (challenge.winnerDetermined) {
+            return 'winnerDetermined';
+        }
+        if (challenge.defendersDeclared) {
+            return 'defendersDeclared';
+        }
+        return challenge.isInitiated ? 'attackersDeclared' : 'declaringAttackers';
+    }
+
+    getEarlierChallenges() {
+        const challenges = new Set();
+        for (const player of this.getPlayers()) {
+            for (const allowance of player.challenges.allowedChallenges) {
+                if (allowance.used && allowance.challenge !== this.currentChallenge) {
+                    challenges.add(allowance.challenge);
+                }
+            }
+        }
+        return [...challenges].filter((challenge) => challenge);
+    }
+
     getSaveState() {
         var players = this.getAllPlayers().map((player) => {
             return {
@@ -1473,6 +1919,9 @@ class Game extends EventEmitter {
                 gameVariant: this.gameVariant,
                 maxPlayers: this.maxPlayers,
                 cancelPromptUsed: this.cancelPromptUsed,
+                manualMode: this.manualMode.enabled,
+                scenario: !!this.scenario,
+                strictActionWindows: this.strictActionWindows,
                 useGameTimeLimit: this.useGameTimeLimit,
                 ...(this.useGameTimeLimit && {
                     gameTimeLimit: this.gameTimeLimit,
@@ -1534,6 +1983,7 @@ class Game extends EventEmitter {
             name: this.name,
             owner: this.owner,
             players: playerSummaries,
+            scenario: !!this.scenario,
             showHand: this.showHand,
             started: this.started,
             startedAt: this.startedAt,
@@ -1552,6 +2002,15 @@ class Game extends EventEmitter {
             },
             useChessClocks: this.useChessClocks
         };
+    }
+
+    toggleManualMode(playerName) {
+        let player = this.getPlayerByName(playerName);
+        if (!player) {
+            return;
+        }
+
+        this.manualMode.request(player);
     }
 
     toggleMuteSpectators(playerName) {

@@ -1,33 +1,32 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class EllariaSand extends DrawCard {
-    setupCardAbilities() {
+    // Ellaria Sand (10002)
+    // Reaction: After Ellaria Sand is declared as an attacker, choose up to 3 characters controlled
+    // by the defending player. Each of those characters must be declared as a defender for this
+    // challenge, if able.
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onDeclaredAsAttacker: (event) => event.card === this
+                onDeclaredAsAttacker: (event, context) => event.card === context.source
             },
             target: {
                 mode: 'upTo',
                 numCards: 3,
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.controller === this.game.currentChallenge.defendingPlayer
+                    card.controller === context.game.currentChallenge.defendingPlayer
             },
-            handler: (context) => {
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    targetController: 'any',
-                    effect: ability.effects.mustBeDeclaredAsDefender()
-                }));
-
-                this.game.addMessage(
-                    '{0} uses {1} to force {2} to be declared as a defender this challenge, if able',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} uses {source} to force {target} to be declared as a defender this challenge, if able',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                targetController: 'any',
+                effect: ability.effects.mustBeDeclaredAsDefender()
+            }))
         });
     }
 }

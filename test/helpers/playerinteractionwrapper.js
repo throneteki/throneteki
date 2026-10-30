@@ -3,14 +3,17 @@ import { matchCardByNameAndPack } from './cardutil.js';
 import { detectBinary } from '../../server/util.js';
 
 class PlayerInteractionWrapper {
-    constructor(game, player) {
+    constructor(game, player, { key = player.name, keepUser = false } = {}) {
         this.game = game;
         this.player = player;
+        this.key = key;
 
         player.noTimer = true;
-        player.user = {
-            settings: {}
-        };
+        if (!keepUser) {
+            player.user = {
+                settings: {}
+            };
+        }
     }
 
     get name() {
@@ -97,7 +100,7 @@ class PlayerInteractionWrapper {
             plot = this.findCardByName(plot, 'plot deck');
         }
 
-        this.player.selectedPlot = plot;
+        this.clickCard(plot);
         this.clickPrompt('Done');
     }
 
@@ -121,6 +124,21 @@ class PlayerInteractionWrapper {
         }
 
         this.game.menuButton(this.player.name, trait, traitControl.method, traitControl.promptId);
+        this.game.continue();
+        this.checkUnserializableGameState();
+    }
+
+    nameCard(cardName) {
+        let currentPrompt = this.player.currentPrompt();
+        let nameControl = currentPrompt.controls.find((control) => control.type === 'card-name');
+
+        if (!nameControl) {
+            throw new Error(
+                `Couldn't name a card for ${this.player.name}. Current prompt is:\n${this.formatPrompt()}`
+            );
+        }
+
+        this.game.menuButton(this.player.name, cardName, nameControl.method, nameControl.promptId);
         this.game.continue();
         this.checkUnserializableGameState();
     }
@@ -150,7 +168,7 @@ class PlayerInteractionWrapper {
     clickPrompt(text) {
         let currentPrompt = this.player.currentPrompt();
         let promptButton = currentPrompt.buttons.find(
-            (button) => button.text.toLowerCase() === text.toLowerCase()
+            (button) => button.text && button.text.toLowerCase() === text.toLowerCase()
         );
 
         if (!promptButton) {
@@ -183,6 +201,18 @@ class PlayerInteractionWrapper {
         this.game.cardClicked(this.player.name, card.uuid);
         this.game.continue();
         this.checkUnserializableGameState();
+
+        // A card with a single usable action, or an event with one way to play it, asks for
+        // confirmation first. Card specs treat the click as using it; CardActionClick.spec.js and
+        // EventPlayConfirm.spec.js cover the confirmation itself.
+        const prompt = this.currentPrompt();
+        if (
+            [`Use ${card.name}?`, `Play ${card.name}?`].includes(prompt.menuTitle) &&
+            prompt.buttons.length === 2 &&
+            prompt.buttons[1].text === 'Cancel'
+        ) {
+            this.clickPrompt(prompt.buttons[0].text);
+        }
     }
 
     clickMenu(card, menuText) {
@@ -208,6 +238,28 @@ class PlayerInteractionWrapper {
 
         const items = card.getMenu(this.player).filter((item) => item.text === menuText);
         return items.some((item) => !item.disabled);
+    }
+
+    /**
+     * Returns why this player can't use the card's action now, as one of the `Requirements`
+     * reasons, or undefined if they can. Pass the action's title when the card has several.
+     */
+    actionUnavailableReason(card, title) {
+        if (typeof card === 'string') {
+            card = this.findCardByName(card);
+        }
+
+        const actions = card.abilities.actions.filter(
+            (action) => title === undefined || action.title === title
+        );
+        if (actions.length !== 1) {
+            throw new Error(
+                `${card.name} has ${actions.length} actions${title ? ` titled "${title}"` : ''}; pass the title of one`
+            );
+        }
+
+        const [action] = actions;
+        return action.getUnmetRequirement(action.createContext(this.player));
     }
 
     triggerAbility(cardOrCardName) {

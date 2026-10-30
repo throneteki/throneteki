@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class LynCorbray extends DrawCard {
+    // Lyn Corbray (00017)
+    // Stealth.
+    // Each non-Army character you control with printed cost 6 or higher gets +2 STR.
+    // Draft format only.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>

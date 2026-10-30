@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class TheCrone extends PlotCard {
+    // The Crone (20053)
+    // Each character with printed STR 1 or lower cannot leave play.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>

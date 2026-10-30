@@ -4,7 +4,7 @@ import DrawCard from '../../../server/game/drawcard.js';
 describe('Player', function () {
     describe('getDuplicateInPlay', function () {
         beforeEach(function () {
-            this.game = jasmine.createSpyObj('game', ['raiseEvent']);
+            this.game = { raiseEvent: vi.fn() };
             this.player = new Player('1', { username: 'Player 1', settings: {} }, true, this.game);
             this.player.initialise();
 
@@ -13,14 +13,14 @@ describe('Player', function () {
 
             this.game.allCards = [this.dupeCard];
 
-            this.cardSpy = jasmine.createSpyObj('card', ['isUnique']);
+            this.cardSpy = { isUnique: vi.fn() };
 
-            this.cardSpy.isUnique.and.returnValue(true);
+            this.cardSpy.isUnique.mockReturnValue(true);
         });
 
         describe('when the card is not unique', function () {
             beforeEach(function () {
-                this.cardSpy.isUnique.and.returnValue(false);
+                this.cardSpy.isUnique.mockReturnValue(false);
 
                 this.dupe = this.player.getDuplicateInPlay(this.cardSpy);
             });

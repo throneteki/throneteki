@@ -1,20 +1,20 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class AcolyteOfTheWaves extends DrawCard {
+    // Acolyte of the Waves (08012)
+    // Interrupt: When Acolyte of the Waves is killed, gain 1 power for your faction.
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCharacterKilled: (event) =>
-                    event.card === this && this.controller.canGainFactionPower()
+                onCharacterKilled: (event, context) =>
+                    event.card === context.source && context.source.controller.canGainFactionPower()
             },
-            handler: (context) => {
-                this.game.addPower(this.controller, 1);
-                this.game.addMessage(
-                    '{0} uses {1} to gain 1 power for their faction',
-                    context.player,
-                    this
-                );
-            }
+            message: '{player} uses {source} to gain 1 power for their faction',
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.player.faction,
+                amount: 1
+            }))
         });
     }
 }

@@ -1,36 +1,40 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerGerrisDrinkwater extends DrawCard {
+    // Ser Gerris Drinkwater (11016)
+    // Renown. Shadow (5).
+    // Reaction: After Ser Gerris Drinkwater comes out of shadows, choose a card in your plot deck
+    // and switch it with a card in your used pile.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             targets: {
                 plotCard: {
                     activePromptTitle: 'Select a plot card',
-                    cardCondition: (card) =>
-                        card.controller === this.controller && card.location === 'plot deck',
+                    cardCondition: (card, context) =>
+                        card.controller === context.player && card.location === 'plot deck',
                     cardType: 'plot'
                 },
                 usedPlotCard: {
                     type: 'select',
                     activePromptTitle: 'Select a used plot card',
-                    cardCondition: (card) =>
-                        card.controller === this.controller && card.location === 'revealed plots',
+                    cardCondition: (card, context) =>
+                        card.controller === context.player && card.location === 'revealed plots',
                     cardType: 'plot'
                 }
             },
-            handler: (context) => {
-                this.controller.moveCard(context.targets.plotCard, 'revealed plots');
-                this.controller.moveCard(context.targets.usedPlotCard, 'plot deck');
-                this.game.addMessage(
-                    '{0} uses {1} to switch {2} from their plot deck with {3} in their used pile',
-                    this.controller,
-                    this,
-                    context.targets.plotCard,
-                    context.targets.usedPlotCard
-                );
+            gameAction: GameActions.switch((context) => ({
+                cards: [context.targets.plotCard, context.targets.usedPlotCard]
+            })),
+            message: {
+                format: '{player} uses {source} to switch {plotCard} from their plot deck with {usedPlotCard} in their used pile',
+                args: {
+                    plotCard: (context) => context.targets.plotCard,
+                    usedPlotCard: (context) => context.targets.usedPlotCard
+                }
             }
         });
     }

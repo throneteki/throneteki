@@ -1,21 +1,21 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheFrostfangs extends DrawCard {
+    // The Frostfangs (04098)
+    // Reaction: After The Frostfangs enters play, give control of it to an opponent.
+    // -1 Reserve.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             chooseOpponent: true,
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to give control of {1} to {2}',
-                    this.controller,
-                    this,
-                    context.opponent
-                );
-                this.game.takeControl(context.opponent, this);
-            }
+            message: '{player} uses {source} to give control of {source} to {opponent}',
+            gameAction: GameActions.takeControl((context) => ({
+                player: context.opponent,
+                card: context.source
+            }))
         });
         this.plotModifiers({
             reserve: -1

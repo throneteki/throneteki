@@ -54,6 +54,8 @@ class GameServer {
         this.gameSocket.on('onFailedConnect', this.onFailedConnect.bind(this));
         this.gameSocket.on('onCloseGame', this.onCloseGame.bind(this));
         this.gameSocket.on('onCardData', this.onCardData.bind(this));
+        this.gameSocket.on('onProblemReportSaved', this.onProblemReportSaved.bind(this));
+        this.gameSocket.on('onProblemReportFailed', this.onProblemReportFailed.bind(this));
 
         var server = undefined;
 
@@ -98,6 +100,14 @@ class GameServer {
 
         this.healthServer = new HealthServer(this);
         this.healthServer.start();
+
+        if (process.env.SCENARIO) {
+            import('../devtools/scenario/host.js')
+                .then(({ install }) =>
+                    install(this, process.env.SCENARIO, process.env.SCENARIO_USERS)
+                )
+                .catch((err) => logger.error('Unable to start the scenario:', err));
+        }
     }
 
     debugDump() {
@@ -287,6 +297,7 @@ class GameServer {
         game.on('sendGameState', () => {
             this.sendGameState(game);
         });
+        game.on('problemReportRequested', (report) => this.requestProblemReport(game, report));
         this.games[pendingGame.id] = game;
 
         game.started = true;
@@ -487,7 +498,10 @@ class GameServer {
             if (command === 'leavegame') {
                 this.onLeaveGame(socket);
             } else {
-                game.commands[command](socket.user.username, ...args);
+                const result = game.commands[command](socket.user.username, ...args);
+                if (command === 'reportProblem' && result) {
+                    this.requestProblemReport(game, result);
+                }
             }
 
             if (!game.isEmpty(false)) {
@@ -496,6 +510,34 @@ class GameServer {
 
             this.sendGameState(game);
         });
+    }
+
+    requestProblemReport(game, report) {
+        this.gameSocket.send('REPORTPROBLEM', { gameId: game.id, report });
+    }
+
+    onProblemReportSaved(gameId, reportId) {
+        const game = this.games[gameId];
+        if (!game) {
+            return;
+        }
+
+        game.addAlert(
+            'info',
+            'Problem report saved. Include report ID {0} when contacting support.',
+            reportId
+        );
+        this.sendGameState(game);
+    }
+
+    onProblemReportFailed(gameId) {
+        const game = this.games[gameId];
+        if (!game) {
+            return;
+        }
+
+        game.addAlert('danger', 'Could not save the problem report');
+        this.sendGameState(game);
     }
 }
 

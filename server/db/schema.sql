@@ -374,6 +374,17 @@ CREATE SEQUENCE public.pgmigrations_id_seq
 ALTER SEQUENCE public.pgmigrations_id_seq OWNED BY public.pgmigrations.id;
 
 --
+-- Name: problem_reports; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.problem_reports (
+    id uuid NOT NULL,
+    report jsonb NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    expires_at timestamp with time zone DEFAULT (now() + '30 days'::interval) NOT NULL
+);
+
+--
 -- Name: refresh_tokens; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -678,6 +689,13 @@ ALTER TABLE ONLY public.pgmigrations
     ADD CONSTRAINT pgmigrations_pkey PRIMARY KEY (id);
 
 --
+-- Name: problem_reports problem_reports_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.problem_reports
+    ADD CONSTRAINT problem_reports_pkey PRIMARY KEY (id);
+
+--
 -- Name: refresh_tokens refresh_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -784,6 +802,12 @@ CREATE INDEX messages_posted_at_idx ON public.messages USING btree (posted_at DE
 --
 
 CREATE INDEX news_published_at_idx ON public.news USING btree (published_at DESC);
+
+--
+-- Name: problem_reports_expires_at_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX problem_reports_expires_at_idx ON public.problem_reports USING btree (expires_at);
 
 --
 -- Name: refresh_tokens_ip_idx; Type: INDEX; Schema: public; Owner: -

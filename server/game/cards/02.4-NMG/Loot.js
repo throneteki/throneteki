@@ -1,36 +1,32 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Loot extends DrawCard {
+    // Loot (02073)
+    // You may only use gold from the losing opponent's gold pool to pay for Loot.
+    // Reaction: After you win an unopposed challenge, discard the top X cards from the losing
+    // opponent's deck.
     setupCardAbilities() {
         this.xValue({
             min: () => 1,
-            max: (context) => this.getLoserDeckSize(context.event.challenge)
+            max: (context) => context.event.challenge.loser.drawDeck.length
         });
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    this.controller === event.challenge.winner &&
-                    event.challenge.isUnopposed() &&
-                    this.getLoserDeckSize(event.challenge) >= 1
+                afterChallenge: (event, context) =>
+                    context.player === event.challenge.winner && event.challenge.isUnopposed()
             },
             payingPlayer: (context) => context.event.challenge.loser,
-            handler: (context) => {
-                let opponent = context.event.challenge.loser;
-                opponent.discardFromDraw(context.xValue);
-                this.game.addMessage(
-                    "{0} plays {1} and pays {2} gold from {3}'s gold pool to discard the top {2} cards from {3}'s deck",
-                    this.controller,
-                    this,
-                    context.costs.gold,
-                    opponent
-                );
-            }
+            message: {
+                format: "{player} plays {source} and pays {costs.gold} gold from {opponent}'s gold pool to discard the top {costs.gold} cards from {opponent}'s deck",
+                args: { opponent: (context) => context.event.challenge.loser }
+            },
+            gameAction: GameActions.discardTopCards((context) => ({
+                player: context.event.challenge.loser,
+                amount: context.xValue
+            }))
         });
-    }
-
-    getLoserDeckSize(challenge) {
-        return challenge.loser.drawDeck.length;
     }
 }
 

@@ -1,34 +1,29 @@
 import DrawCard from '../../drawcard.js';
 import KillTracker from '../../EventTrackers/KillTracker.js';
+import GameActions from '../../GameActions/index.js';
 
 class Craster extends DrawCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
-        this.tracker = new KillTracker(this.game);
-    }
-
+    // Craster (04085)
+    // Immune to Omen card effects.
+    // Action: Sacrifice Craster to put each character that was killed this phase into play from its
+    // owner's dead pile.
     setupCardAbilities(ability) {
+        const tracker = new KillTracker(this.game);
+
         this.persistentEffect({
-            match: this,
+            match: (card, context) => card === context.source,
             effect: ability.effects.immuneTo((card) => card.hasTrait('Omen'))
         });
         this.action({
             title: 'Sacrifice to resurrect',
             cost: ability.costs.sacrificeSelf(),
-            condition: () => this.tracker.anyKilledThisPhase(),
-            handler: (context) => {
-                let characters = this.tracker.getCardsKilledThisPhase(
-                    (card) => card.location === 'dead pile'
-                );
-                for (let character of characters) {
-                    character.owner.putIntoPlay(character);
-                }
-                this.game.addMessage(
-                    '{0} sacrifices {1} to put into play each character killed this phase',
-                    context.player,
-                    this
-                );
-            }
+            message:
+                '{player} sacrifices {source} to put into play each character killed this phase',
+            gameAction: GameActions.simultaneously(() =>
+                tracker
+                    .getCardsKilledThisPhase((card) => card.location === 'dead pile')
+                    .map((card) => GameActions.putIntoPlay({ player: card.owner, card }))
+            )
         });
     }
 }

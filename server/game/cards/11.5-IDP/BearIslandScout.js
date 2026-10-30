@@ -3,13 +3,17 @@ import Conditions from '../../Conditions.js';
 import GameActions from '../../GameActions/index.js';
 
 class BearIslandScout extends DrawCard {
+    // Bear Island Scout (11081)
+    // Reaction: After you marshal Bear Island Scout, if each character you control has the [stark]
+    // affiliation, search your deck for a House Mormont card, reveal it, and add it to your hand.
+    // Shuffle your deck.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    event.card === this &&
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source &&
                     event.playingType === 'marshal' &&
-                    Conditions.allCharactersAreStark({ player: this.controller })
+                    Conditions.allCharactersAreStark({ player: context.source.controller })
             },
             message: '{player} uses {source} to search their deck for a House Mormont card',
             gameAction: GameActions.search({

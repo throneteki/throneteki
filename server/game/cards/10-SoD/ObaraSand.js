@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ObaraSand extends DrawCard {
+    // Obara Sand (10005)
+    // Challenges Action: Return a Sand Snake character to your hand to put a [martell] character
+    // with lower printed cost into play from your hand. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Put character into play',
@@ -19,16 +23,12 @@ class ObaraSand extends DrawCard {
                     (!context.costs.returnToHand ||
                         card.getPrintedCost() < context.costs.returnToHand.getPrintedCost())
             },
-            handler: (context) => {
-                context.player.putIntoPlay(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} and returns {2} to their hand to put {3} into play',
-                    context.player,
-                    this,
-                    context.costs.returnToHand,
-                    context.target
-                );
-            }
+            message:
+                '{player} uses {source} and returns {costs.returnToHand} to their hand to put {target} into play',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 }

@@ -1,69 +1,30 @@
 describe('Calm Over Westeros', function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck = this.buildDeck('lannister', [
-                'Calm Over Westeros',
-                'A Noble Cause',
-                'The Tickler'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.player2.clickCard('The Tickler', 'hand');
-            this.completeSetup();
-
-            this.player1.selectPlot('Calm Over Westeros');
-            this.player2.selectPlot('A Noble Cause');
-            this.selectFirstPlayer(this.player2);
-
-            // Reduce claim on Military this round.
-            this.player1.clickPrompt('Military');
-
-            this.completeMarshalPhase();
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'plot',
+            firstPlayer: 'player2',
+            player1: { plotDeck: ['Calm Over Westeros'], inPlay: ['Tumblestone Knight'] },
+            player2: { inPlay: ['The Tickler'] }
         });
+        this.player1.selectPlot('Calm Over Westeros');
+        this.player2.selectPlot('Filler Plot');
+        this.selectFirstPlayer(this.player2);
+        this.player1.clickPrompt('Military');
+        this.completeMarshalPhase();
+    });
 
-        describe('when applying claim to the reduced challenge type', function () {
-            beforeEach(function () {
-                this.player2.clickPrompt('Military');
-                this.player2.clickCard('The Tickler', 'play area');
-                this.player2.clickPrompt('Done');
+    it('reduces the claim of challenges of the named type in which you defend', function () {
+        this.unopposedChallenge(this.player2, 'Military', this.theTickler);
 
-                this.skipActionWindow();
+        expect(this.player1).not.toHavePrompt('Select 1 character to fulfill military claim');
+        expect(this.tumblestoneKnight.location).toBe('play area');
+        expect(this.player2).isReadyToTakeAction();
+    });
 
-                this.player1.clickPrompt('Done');
+    it('does not reduce the claim of other challenge types', function () {
+        this.unopposedChallenge(this.player2, 'Intrigue', this.theTickler);
 
-                this.skipActionWindow();
-
-                this.player2.clickPrompt('Apply Claim');
-            });
-
-            it('should not apply that claim', function () {
-                expect(this.player1).not.toHavePrompt(
-                    'Select 1 character to fulfill military claim'
-                );
-            });
-        });
-
-        describe('when applying claim to another challenge type', function () {
-            beforeEach(function () {
-                this.player2.clickPrompt('Intrigue');
-                this.player2.clickCard('The Tickler', 'play area');
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
-
-                this.player1.clickPrompt('Done');
-
-                this.skipActionWindow();
-
-                this.player2.clickPrompt('Apply Claim');
-            });
-
-            it('should apply that claim as normal', function () {
-                expect(this.player1Object.discardPile.length).toBe(1);
-            });
-        });
+        expect(this.player1Object.discardPile).toHaveLength(1);
+        expect(this.player2).isReadyToTakeAction();
     });
 });

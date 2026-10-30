@@ -2,7 +2,9 @@ import Phase from './phase.js';
 import SimpleStep from './simplestep.js';
 import DiscardToReservePrompt from './taxation/DiscardToReservePrompt.js';
 import ActionWindow from './actionwindow.js';
+import GameActions from '../GameActions/index.js';
 import { Flags } from '../Constants/index.js';
+import ReturnTitles from '../GameActions/ReturnTitles.js';
 
 class TaxationPhase extends Phase {
     constructor(game) {
@@ -16,6 +18,8 @@ class TaxationPhase extends Phase {
     }
 
     returnGold() {
+        const returns = [];
+
         for (const player of this.game.getPlayersInFirstPlayerOrder()) {
             const amountToReturn = !player.hasFlag(Flags.player.doesNotReturnUnspentGold)
                 ? Math.max(0, player.gold - player.amountUnspentGoldToKeep)
@@ -38,8 +42,12 @@ class TaxationPhase extends Phase {
                 this.game.addMessage('{0} has no unspent gold to return to the treasury', player);
             }
             if (amountToReturn > 0) {
-                this.game.returnGoldToTreasury({ player: player, amount: amountToReturn });
+                returns.push(GameActions.returnGoldToTreasury({ player, amount: amountToReturn }));
             }
+        }
+
+        if (returns.length > 0) {
+            this.game.resolveGameAction(GameActions.simultaneously(returns));
         }
     }
 
@@ -48,9 +56,10 @@ class TaxationPhase extends Phase {
             return;
         }
 
-        for (const player of this.game.getPlayers()) {
-            this.game.titlePool.returnToPool(player, player.title);
-        }
+        this.game.resolveGameAction(ReturnTitles, {
+            pool: this.game.titlePool,
+            players: this.game.getPlayers()
+        });
     }
 }
 

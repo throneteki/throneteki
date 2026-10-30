@@ -1,17 +1,18 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RoyalEntourage extends DrawCard {
+    // Royal Entourage (02027)
+    // Forced Reaction: After you lose an [intrigue] challenge, kneel Royal Entourage.
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.source.controller &&
                     event.challenge.challengeType === 'intrigue'
             },
-            handler: () => {
-                this.controller.kneelCard(this);
-                this.game.addMessage('{0} is forced to kneel {1}', this.controller, this);
-            }
+            message: '{player} is forced to kneel {source}',
+            gameAction: GameActions.kneelCard((context) => ({ card: context.source }))
         });
     }
 }

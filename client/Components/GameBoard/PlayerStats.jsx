@@ -1,9 +1,21 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { sendChangeStatMessage, sendToggleMuteSpectatorsMessage } from '../../redux/reducers/game';
+import {
+    sendChangeStatMessage,
+    sendToggleManualModeMessage,
+    sendReportProblemMessage,
+    sendToggleMuteSpectatorsMessage
+} from '../../redux/reducers/game';
 import { Avatar, Badge, Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCogs, faComment, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import {
+    faBug,
+    faCogs,
+    faComment,
+    faEye,
+    faEyeSlash,
+    faWrench
+} from '@fortawesome/free-solid-svg-icons';
 import StatContainer from './StatContainer';
 import StatDisplay from './StatDisplay';
 import classNames from 'classnames';
@@ -23,6 +35,7 @@ const PlayerStats = ({
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const user = useSelector((state) => state.auth.user);
     const isMe = userProp?.username === user?.username;
+    const canChangeStats = isMe && !!currentGame?.manualMode;
 
     const getStatValueOrDefault = useCallback(
         (stat) => {
@@ -40,24 +53,28 @@ const PlayerStats = ({
             return (
                 <StatContainer title={name}>
                     <StatDisplay
-                        showControls={isMe}
+                        showControls={canChangeStats}
                         statName={name}
                         statCode={stat}
                         statValue={getStatValueOrDefault(stat)}
                         onMinusClick={
-                            isMe ? () => dispatch(sendChangeStatMessage(statToSet, -1)) : null
+                            canChangeStats
+                                ? () => dispatch(sendChangeStatMessage(statToSet, -1))
+                                : null
                         }
                         onPlusClick={
-                            isMe ? () => dispatch(sendChangeStatMessage(statToSet, 1)) : null
+                            canChangeStats
+                                ? () => dispatch(sendChangeStatMessage(statToSet, 1))
+                                : null
                         }
                     />
                 </StatContainer>
             );
         },
-        [isMe, getStatValueOrDefault, dispatch]
+        [canChangeStats, getStatValueOrDefault, dispatch]
     );
 
-    const getStatButton = (onClick, icon, title, text) => (
+    const getStatButton = (onClick, icon, title, text, active = false) => (
         <StatContainer title={title}>
             <Button
                 isIconOnly={!text}
@@ -65,7 +82,7 @@ const PlayerStats = ({
                 startContent={icon ? <FontAwesomeIcon icon={icon} /> : null}
                 radius='none'
                 variant='light'
-                className='h-8 p-2'
+                className={classNames('h-8 p-2', { 'text-danger': active })}
             >
                 {text}
             </Button>
@@ -117,6 +134,23 @@ const PlayerStats = ({
                                     currentGame.muteSpectators
                                         ? 'Un-mute spectators'
                                         : 'Mute spectators'
+                                )}
+                            {isMe &&
+                                getStatButton(
+                                    () => dispatch(sendToggleManualModeMessage()),
+                                    faWrench,
+                                    currentGame.manualMode
+                                        ? 'Manual mode is on: the rules are not fully enforced, and players can change the game by hand. Click to turn it off.'
+                                        : 'Manual mode is off: the game enforces the rules, and manual changes are disabled. Click to ask your opponent to turn it on.',
+                                    'Manual Mode',
+                                    currentGame.manualMode
+                                )}
+                            {isMe &&
+                                getStatButton(
+                                    () => dispatch(sendReportProblemMessage()),
+                                    faBug,
+                                    'Report a problem with this game',
+                                    'Report Problem'
                                 )}
                             <StatContainer>
                                 <Badge

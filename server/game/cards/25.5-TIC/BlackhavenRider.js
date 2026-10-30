@@ -2,10 +2,13 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class BlackhavenRider extends DrawCard {
+    // Blackhaven Rider (25081)
+    // Reaction: After Blackhaven Rider enters play, each player must choose and kneel a loyal
+    // character they control, if able.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             target: {
                 choosingPlayer: 'each',
@@ -14,23 +17,13 @@ class BlackhavenRider extends DrawCard {
                     card.location === 'play area' &&
                     card.controller === context.choosingPlayer &&
                     card.getType() === 'character' &&
-                    card.isLoyal()
+                    card.isLoyal(),
+                gameAction: 'kneel'
             },
-            handler: (context) => {
-                let selections = context.targets.selections.filter(
-                    (selection) => !!selection.value
-                );
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        selections.map((selection) =>
-                            GameActions.kneelCard({
-                                player: selection.choosingPlayer,
-                                card: selection.value
-                            })
-                        )
-                    )
-                );
-            }
+            message: '{player} uses {source} to have each player kneel {target}',
+            gameAction: GameActions.simultaneously((context) =>
+                context.targets.getTargets().map((card) => GameActions.kneelCard({ card }))
+            )
         });
     }
 }

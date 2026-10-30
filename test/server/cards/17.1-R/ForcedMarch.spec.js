@@ -1,77 +1,97 @@
-describe('Forced March', function () {
-    integration(function () {
-        describe('when revealed', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('targaryen', [
-                    'Forced March (R)',
-                    'A Noble Cause',
-                    'Hedge Knight',
-                    'Hedge Knight',
-                    'Hedge Knight',
-                    'Winterfell Steward',
-                    'Ygritte'
-                ]);
+describe('Forced March (R)', function () {
+    function reveal(context, opponentCards) {
+        context.setupTest({
+            phase: 'plot',
+            player1: {
+                plot: 'Forced March (R)',
+                inPlay: ['Hedge Knight', 'Tumblestone Knight', 'Winterfell Steward']
+            },
+            player2: {
+                inPlay: opponentCards
+            }
+        });
 
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
+        context.player1.selectPlot('Forced March');
+        context.player2.selectPlot('Filler Plot');
+        context.selectFirstPlayer(context.player1);
+    }
 
-                [this.char1, this.char2, this.char3] =
-                    this.player1.filterCardsByName('Hedge Knight');
-                [this.char4] = this.player1.filterCardsByName('Winterfell Steward');
-                [this.ygritte] = this.player1.filterCardsByName('Ygritte');
-                [this.opponentChar1, this.opponentChar2, this.opponentChar3] =
-                    this.player2.filterCardsByName('Hedge Knight');
-                [this.opponentChar4] = this.player2.filterCardsByName('Winterfell Steward');
-                [this.opponentYgritte] = this.player2.filterCardsByName('Ygritte');
+    describe('when revealed', function () {
+        beforeEach(function () {
+            reveal(this, [
+                'Bastard in Hiding',
+                'House Dayne Knight',
+                'Burned Men',
+                'House Maester'
+            ]);
+        });
 
-                this.game.addGold(this.player1Object, 3);
-                this.player1.clickCard(this.char1);
-                this.player1.clickCard(this.char2);
-                this.player1.clickCard(this.char3);
-                this.player1.clickCard(this.char4);
-                this.player1.clickCard(this.ygritte);
-                this.game.addGold(this.player2Object, 3);
-                this.player2.clickCard(this.opponentChar1);
-                this.player2.clickCard(this.opponentChar2);
-                this.player2.clickCard(this.opponentChar3);
-                this.player2.clickCard(this.opponentChar4);
-                this.player2.clickCard(this.opponentYgritte);
+        it('kneels X characters you control with a [military] icon, then makes each opponent choose and kneel X characters they control with a [military] icon', function () {
+            expect(this.player1).toBeAbleToSelect(this.hedgeKnight);
+            expect(this.player1).not.toBeAbleToSelect(this.winterfellSteward);
+            expect(this.player1).not.toBeAbleToSelect(this.bastardInHiding);
 
-                this.completeSetup();
+            this.player1.clickCard(this.hedgeKnight);
+            this.player1.clickCard(this.tumblestoneKnight);
+            this.player1.clickPrompt('Done');
 
-                this.player1.selectPlot('Forced March');
-                this.player2.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player1);
-            });
+            expect(this.hedgeKnight.kneeled).toBe(true);
+            expect(this.tumblestoneKnight.kneeled).toBe(true);
+            expect(this.winterfellSteward.kneeled).toBe(false);
+            expect(this.player2).toHavePrompt('Select 2 characters to kneel');
+            expect(this.player2).not.toBeAbleToSelect(this.houseMaester);
+            expect(this.player2).not.toBeAbleToSelect(this.winterfellSteward);
 
-            it('lets you select characters you control with military icons to kneel', function () {
-                expect(this.player1).toHavePrompt('Select characters');
-                this.player1.clickCard(this.char1);
-                this.player1.clickCard(this.char2);
-                this.player1.clickPrompt('Done');
-                expect(this.char1.kneeled).toBe(true);
-                expect(this.char2.kneeled).toBe(true);
-                expect(this.char3.kneeled).toBe(false);
-                expect(this.char4.kneeled).toBe(false);
-                expect(this.ygritte.kneeled).toBe(false);
-            });
+            this.player2.clickCard(this.bastardInHiding);
+            this.player2.clickCard(this.burnedMen);
+            this.player2.clickPrompt('Done');
 
-            it('as many kneelable characters the opponent controls are knelt', function () {
-                this.player1.clickCard(this.char1);
-                this.player1.clickCard(this.char2);
-                this.player1.clickPrompt('Done');
-                expect(this.player2).toHavePrompt('Select 2 characters');
-                this.player2.clickCard(this.opponentChar1);
-                this.player2.clickCard(this.opponentChar2);
-                this.player2.clickPrompt('Done');
-                expect(this.opponentChar1.kneeled).toBe(true);
-                expect(this.opponentChar2.kneeled).toBe(true);
-                expect(this.opponentChar3.kneeled).toBe(false);
-                expect(this.opponentChar4.kneeled).toBe(false);
-                expect(this.opponentYgritte.kneeled).toBe(false);
-            });
+            expect(this.bastardInHiding.kneeled).toBe(true);
+            expect(this.burnedMen.kneeled).toBe(true);
+            expect(this.houseDayneKnight.kneeled).toBe(false);
+            expect(this.game.getPlainTextLog()).toContain(
+                'player1 uses Forced March to kneel Hedge Knight and Tumblestone Knight'
+            );
+            expect(this.game.getPlainTextLog()).toContain(
+                'player2 kneels Bastard in Hiding and kneels Burned Men'
+            );
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
+
+    describe('when you kneel no characters', function () {
+        beforeEach(function () {
+            reveal(this, ['Bastard in Hiding']);
+
+            this.player1.clickPrompt('Done');
+        });
+
+        it('does not make the opponent kneel any', function () {
+            expect(this.player2).not.toHavePrompt('Select 0 characters to kneel');
+            expect(this.bastardInHiding.kneeled).toBe(false);
+            expect(this.game.currentPhase).toBe('marshal');
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
+
+    describe('when the opponent has fewer characters with a [military] icon than X', function () {
+        beforeEach(function () {
+            reveal(this, ['Bastard in Hiding', 'House Maester']);
+
+            this.player1.clickCard(this.hedgeKnight);
+            this.player1.clickCard(this.tumblestoneKnight);
+            this.player1.clickPrompt('Done');
+        });
+
+        it('kneels as many as they are able', function () {
+            expect(this.player2).toHavePrompt('Select 2 characters to kneel');
+
+            this.player2.clickCard(this.bastardInHiding);
+            this.player2.clickPrompt('Done');
+
+            expect(this.bastardInHiding.kneeled).toBe(true);
+            expect(this.houseMaester.kneeled).toBe(false);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

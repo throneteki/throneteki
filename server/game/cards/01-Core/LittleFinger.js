@@ -1,24 +1,20 @@
 import DrawCard from '../../drawcard.js';
-import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class LittleFinger extends DrawCard {
+    // Littlefinger (01028)
+    // Reaction: After you marshal Littlefinger, draw 2 cards.
+    // +1 Income.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    event.card === this &&
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source &&
                     event.playingType === 'marshal' &&
-                    this.controller.canDraw()
+                    context.source.controller.canDraw()
             },
-            handler: () => {
-                let cards = this.controller.drawCardsToHand(2).length;
-                this.game.addMessage(
-                    '{0} uses {1} to draw {2}',
-                    this.controller,
-                    this,
-                    TextHelper.count(cards, 'card')
-                );
-            }
+            message: '{player} uses {source} to draw 2 cards',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 2 }))
         });
         this.plotModifiers({
             gold: 1

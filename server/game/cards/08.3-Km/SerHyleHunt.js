@@ -1,26 +1,27 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerHyleHunt extends DrawCard {
+    // Ser Hyle Hunt (08043)
+    // Action: During a challenge in which Ser Hyle Hunt is participating, pay 1 gold to choose a
+    // participating character with a lower STR than his. Stand that character and remove it from
+    // the challenge. (Limit once per challenge.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove character from challenge',
             limit: ability.limit.perChallenge(1),
-            condition: () => this.isParticipating(),
+            condition: (context) => context.source.isParticipating(),
             cost: ability.costs.payGold(1),
             target: {
-                cardCondition: (card) =>
-                    card.isParticipating() && card.getStrength() < this.getStrength()
+                cardCondition: (card, context) =>
+                    card.isParticipating() && card.getStrength() < context.source.getStrength()
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.currentChallenge.removeFromChallenge(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} and pays 1 gold to stand and remove {2} from the challenge',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} uses {source} and pays 1 gold to stand and remove {target} from the challenge',
+            gameAction: GameActions.simultaneously([
+                GameActions.standCard((context) => ({ card: context.target })),
+                GameActions.removeFromChallenge((context) => ({ card: context.target }))
+            ])
         });
     }
 }

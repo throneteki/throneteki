@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class HarmaDogshead extends DrawCard {
+    // Harma Dogshead (21025)
+    // Pillage.
+    // Reaction: After a Wildling character you control discards a card using pillage, search the
+    // top 10 cards of your deck for an Item or Weapon attachment with printed cost 2 or lower and
+    // put it into play. Shuffle your deck. (Limit twice per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

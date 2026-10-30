@@ -1,7 +1,11 @@
 import DrawCard from '../../drawcard.js';
-import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class Stormcrows extends DrawCard {
+    // Stormcrows (08033)
+    // Bestow (5).
+    // Challenges Action: Discard X gold from Stormcrows to choose X characters. Until the end of
+    // the phase, each of those characters gets -1 STR. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character(s) -1 STR',
@@ -9,39 +13,27 @@ class Stormcrows extends DrawCard {
             limit: ability.limit.perPhase(1),
             cost: ability.costs.discardXGold(
                 () => 1,
-                () => this.game.getNumberOfCardsInPlay((card) => card.getType() === 'character')
+                (context) =>
+                    context.game.getNumberOfCardsInPlay((card) => card.getType() === 'character')
             ),
-            handler: (context) => {
-                let xValue = context.xValue;
-                this.game.promptForSelect(this.controller, {
-                    mode: 'exactly',
-                    numCards: xValue,
-                    activePromptTitle: `Select ${TextHelper.count(xValue, 'character')}`,
-                    source: this,
-                    cardCondition: (card) =>
-                        card.location === 'play area' && card.getType() === 'character',
-                    onSelect: (player, cards) => this.targetsSelected(player, cards, xValue)
-                });
-            }
+            target: {
+                mode: 'exactly',
+                numCards: (context) => context.xValue || 1,
+                activePromptTitle: 'Select characters',
+                cardCondition: (card) =>
+                    card.location === 'play area' && card.getType() === 'character'
+            },
+            message: {
+                format: '{player} discards {xValue} gold from {source} to give {target} -1 STR until the end of the phase',
+                args: { xValue: (context) => context.xValue }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                targetController: 'any',
+                effect: ability.effects.modifyStrength(-1)
+            }))
         });
-    }
-
-    targetsSelected(player, cards, xValue) {
-        this.untilEndOfPhase((ability) => ({
-            match: cards,
-            targetController: 'any',
-            effect: ability.effects.modifyStrength(-1)
-        }));
-
-        this.game.addMessage(
-            '{0} discards {1} gold from {2} to give -1 STR to {3} until the end of the phase',
-            player,
-            xValue,
-            this,
-            cards
-        );
-
-        return true;
     }
 }
 

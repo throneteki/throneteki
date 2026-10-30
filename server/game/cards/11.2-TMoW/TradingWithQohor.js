@@ -2,10 +2,17 @@ import AgendaCard from '../../agendacard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TradingWithQohor extends AgendaCard {
+    // Trading With Qohor (11039)
+    // While you control no attachments, increase the gold value on each opponent’s revealed plot
+    // card by 1.
+    // Reaction: After claim is applied for a challenge you won, sacrifice an attachment to search
+    // your deck for a different attachment with equal or lower printed cost and put it into play.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                !this.controller.anyCardsInPlay((card) => card.getType() === 'attachment'),
+            condition: (context) =>
+                !context.source.controller.anyCardsInPlay(
+                    (card) => card.getType() === 'attachment'
+                ),
             match: (card) => card === card.controller.activePlot,
             targetController: 'opponent',
             effect: ability.effects.modifyGold(1)
@@ -13,7 +20,8 @@ class TradingWithQohor extends AgendaCard {
 
         this.reaction({
             when: {
-                onClaimApplied: (event) => event.challenge && event.player === this.controller
+                onClaimApplied: (event, context) =>
+                    event.challenge && event.player === context.player
             },
             cost: ability.costs.sacrifice(
                 (card) => card.getType() === 'attachment' && card.hasPrintedCost()

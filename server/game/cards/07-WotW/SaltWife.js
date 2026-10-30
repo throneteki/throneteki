@@ -1,6 +1,10 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SaltWife extends DrawCard {
+    // Salt Wife (07027)
+    // Challenges Action: Sacrifice Salt Wife to choose a character. Until the end of the phase,
+    // that character cannot be declared as a defender.
     setupCardAbilities(ability) {
         this.action({
             title: 'Sacrifice Salt Wife',
@@ -10,18 +14,13 @@ class SaltWife extends DrawCard {
                 cardCondition: (card) =>
                     card.location === 'play area' && card.getType() === 'character'
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.cannotBeDeclaredAsDefender()
-                }));
-                this.game.addMessage(
-                    '{0} sacrifices {1} to make {2} unable to be declared as a defender',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} sacrifices {source} to make {target} unable to be declared as a defender',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.cannotBeDeclaredAsDefender()
+            }))
         });
     }
 }

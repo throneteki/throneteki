@@ -1,6 +1,13 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SupportOfSaltcliffe extends DrawCard {
+    // Support of Saltcliffe (00010)
+    // [greyjoy] character only.
+    // Attached character gains stealth.
+    // Reaction: After you win an unopposed challenge in which attached character is attacking,
+    // stand attached character.
+    // Draft format only.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'greyjoy' });
 
@@ -10,20 +17,16 @@ class SupportOfSaltcliffe extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    this.controller === event.challenge.winner &&
-                    event.challenge.isParticipating(this.parent) &&
+                afterChallenge: (event, context) =>
+                    context.source.controller === event.challenge.winner &&
+                    event.challenge.isParticipating(context.source.parent) &&
                     event.challenge.isUnopposed()
             },
-            handler: () => {
-                this.parent.controller.standCard(this.parent);
-                this.game.addMessage(
-                    '{0} uses {1} to stand {2}',
-                    this.controller,
-                    this,
-                    this.parent
-                );
-            }
+            message: {
+                format: '{player} uses {source} to stand {parent}',
+                args: { parent: (context) => context.source.parent }
+            },
+            gameAction: GameActions.standCard((context) => ({ card: context.source.parent }))
         });
     }
 }

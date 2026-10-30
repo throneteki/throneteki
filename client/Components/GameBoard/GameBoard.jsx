@@ -100,8 +100,9 @@ const GameBoard = () => {
         const otherPlayers =
             others.length > 0
                 ? others.map(defaultPlayerInfo)
-                : Array.from({ length: (currentGame?.maxPlayers || 2) - 1 }, (_, index) =>
-                      defaultPlayerInfo({ seatNo: index + 2 })
+                : Array.from(
+                      { length: Math.max((currentGame?.maxPlayers || 2) - 1, 1) },
+                      (_, index) => defaultPlayerInfo({ seatNo: index + 2 })
                   );
 
         const allPlayers = players.concat(currentGame?.spectators);

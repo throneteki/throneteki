@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class HereToServe extends PlotCard {
+    // Here to Serve (02020)
+    // When Revealed: Search your deck for a Maester character with printed cost 3 or lower, and put
+    // it into play. Shuffle your deck.
     setupCardAbilities() {
         this.whenRevealed({
             message: '{player} uses {source} to search their deck for a Maester character',

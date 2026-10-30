@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class RainsOfAutumn extends PlotCard {
+    // Rains of Autumn (04019)
+    // Characters and locations do not provide positive gold modifiers.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>

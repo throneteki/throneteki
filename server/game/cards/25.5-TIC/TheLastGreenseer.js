@@ -1,15 +1,11 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheLastGreenseer extends PlotCard {
-    setupCardAbilities() {
-        const getBaseStats = (card) => {
-            return {
-                income: card.income.baseValue,
-                claim: card.claim.baseValue,
-                reserve: card.reserve.baseValue
-            };
-        };
-
+    // The Last Greenseer (25100)
+    // When Revealed: Switch the base gold, claim, and reserve values on The Last Greenseer with
+    // those values on another revealed plot card until either card leaves play.
+    setupCardAbilities(ability) {
         this.whenRevealed({
             target: {
                 activePromptTitle: 'Select a plot',
@@ -23,41 +19,36 @@ class TheLastGreenseer extends PlotCard {
             },
             message:
                 '{player} uses {source} to switch the base gold, claim, and reserve values with {target}',
-            handler: (context) => {
-                const targetStats = getBaseStats(context.target);
-                const sourceStats = getBaseStats(context.source);
-
-                // TODO: These should not be listening on the reaction variant, however there is a problem
-                // with base events being raised under `thenAttachEvent` scenarios.
-                this.lastingEffect((ability) => ({
-                    until: {
-                        'onCardLeftPlay:reaction': (event) =>
-                            [context.target, context.source].includes(event.card)
-                    },
-                    match: context.target,
-                    targetController: 'any',
-                    effect: [
-                        ability.effects.setBaseGold(sourceStats.income),
-                        ability.effects.setBaseClaim(sourceStats.claim),
-                        ability.effects.setBaseReserve(sourceStats.reserve)
-                    ]
-                }));
-                this.lastingEffect((ability) => ({
-                    until: {
-                        'onCardLeftPlay:reaction': (event) =>
-                            [context.target, context.source].includes(event.card)
-                    },
-                    match: context.source,
-                    targetController: 'any',
-                    effect: [
-                        ability.effects.setBaseGold(targetStats.income),
-                        ability.effects.setBaseClaim(targetStats.claim),
-                        ability.effects.setBaseReserve(targetStats.reserve)
-                    ]
-                }));
-            }
+            gameAction: GameActions.simultaneously((context) => {
+                const plots = [context.target, context.source];
+                return plots.map((plot, index) => {
+                    const stats = getBaseStats(plots[1 - index]);
+                    return GameActions.lastingEffect(() => ({
+                        duration: 'custom',
+                        until: {
+                            onCardLeftPlay: (event) => plots.includes(event.card),
+                            'onCardLeftPlay:reaction': (event) => plots.includes(event.card)
+                        },
+                        match: plot,
+                        targetController: 'any',
+                        effect: [
+                            ability.effects.setBaseGold(stats.income),
+                            ability.effects.setBaseClaim(stats.claim),
+                            ability.effects.setBaseReserve(stats.reserve)
+                        ]
+                    }));
+                });
+            })
         });
     }
+}
+
+function getBaseStats(card) {
+    return {
+        income: card.income.baseValue,
+        claim: card.claim.baseValue,
+        reserve: card.reserve.baseValue
+    };
 }
 
 TheLastGreenseer.code = '25100';

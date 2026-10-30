@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Nymeria extends DrawCard {
+    // Nymeria (03019)
+    // Unique [stark] character only.
+    // Attached character gains intimidate.
+    // Action: Pay 1 gold to attach Nymeria to a different character. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'stark', unique: true });
         this.whileAttached({
@@ -11,21 +16,14 @@ class Nymeria extends DrawCard {
             cost: ability.costs.payGold(1),
             target: {
                 type: 'select',
-                cardCondition: (card) =>
-                    this.controller.canAttach(this, card) &&
-                    card.location === 'play area' &&
-                    card !== this
+                cardCondition: { location: 'play area', type: 'character' }
             },
             limit: ability.limit.perPhase(1),
-            handler: (context) => {
-                this.controller.attach(this.controller, this, context.target);
-                this.game.addMessage(
-                    '{0} pays 1 gold to attach {1} to {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} pays 1 gold to attach {source} to {target}',
+            gameAction: GameActions.attach((context) => ({
+                attachment: context.source,
+                target: context.target
+            }))
         });
     }
 }

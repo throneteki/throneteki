@@ -1,6 +1,19 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+
+function getNumberOfBuilders(source) {
+    return source.controller.getNumberOfCardsInPlay(
+        (card) =>
+            card.controller === source.controller &&
+            card.hasTrait('Builder') &&
+            card.getType() === 'character'
+    );
+}
 
 class AbandonedStronghold extends DrawCard {
+    // Abandoned Stronghold (07018)
+    // Action: Kneel Abandoned Stronghold to choose a defending character. Until the end of the
+    // challenge, that character gets +X STR. X is the number of Builder characters you control.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character +STR',
@@ -11,31 +24,16 @@ class AbandonedStronghold extends DrawCard {
                     card.getType() === 'character' &&
                     card.isDefending()
             },
-            handler: (context) => {
-                let strBoost = this.getNumberOfBuilders();
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(strBoost)
-                }));
-
-                this.game.addMessage(
-                    '{0} kneels {1} to give {2} +{3} STR until the end of the challenge',
-                    context.player,
-                    this,
-                    context.target,
-                    strBoost
-                );
-            }
+            message: {
+                format: '{player} kneels {source} to give {target} +{strBoost} STR until the end of the challenge',
+                args: { strBoost: (context) => getNumberOfBuilders(context.source) }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                effect: ability.effects.modifyStrength(getNumberOfBuilders(context.source))
+            }))
         });
-    }
-
-    getNumberOfBuilders() {
-        return this.controller.getNumberOfCardsInPlay(
-            (card) =>
-                card.controller === this.controller &&
-                card.hasTrait('Builder') &&
-                card.getType() === 'character'
-        );
     }
 }
 

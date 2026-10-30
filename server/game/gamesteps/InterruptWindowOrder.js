@@ -2,19 +2,21 @@ const OrderableEventFunc = {
     onCardPlaced: (game, events) => {
         const groupedEvents = events
             .reduce((groups, event) => {
+                const ownerChooses = ['discard pile', 'dead pile'].includes(event.location);
+                const chooser = ownerChooses ? event.card.owner : event.player;
                 let existing = groups.find(
                     (group) =>
                         group.location === event.location &&
                         group.bottom === event.bottom &&
-                        group.player === event.player &&
-                        group.owner === event.card.owner
+                        group.owner === event.card.owner &&
+                        group.chooser === chooser
                 );
                 if (existing) {
                     existing.events.push(event);
                 } else {
                     let title = 'Select order to ';
                     const owner =
-                        event.player === event.card.owner ? 'your' : event.card.owner.name + "'s";
+                        chooser === event.card.owner ? 'your' : event.card.owner.name + "'s";
                     let orientation = event.bottom ? 'bottom' : 'top';
                     if (event.location === 'draw deck') {
                         title += `place cards on ${orientation} of ${owner} deck (${orientation} first)`;
@@ -30,7 +32,7 @@ const OrderableEventFunc = {
                         title,
                         location: event.location,
                         bottom: event.bottom,
-                        player: event.player,
+                        chooser,
                         owner: event.card.owner,
                         events: [event]
                     });
@@ -41,7 +43,7 @@ const OrderableEventFunc = {
 
         for (let player of game.getPlayersInFirstPlayerOrder()) {
             for (let group of groupedEvents) {
-                if (group.player !== player) {
+                if (group.chooser !== player) {
                     continue;
                 }
 
@@ -52,6 +54,7 @@ const OrderableEventFunc = {
 
                 game.promptForSelect(player, {
                     ordered: true,
+                    revealTargets: group.location === 'draw deck',
                     mode: 'exactly',
                     numCards: group.events.length,
                     activePromptTitle: group.title,

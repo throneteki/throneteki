@@ -1,25 +1,22 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ViserysTargaryen extends DrawCard {
+    // Viserys Targaryen (01167)
+    // Interrupt: When Viserys Targaryen leaves play, choose an attachment, and discard it from
+    // play.
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCardLeftPlay: (event) => event.card === this
+                onCardLeftPlay: (event, context) => event.card === context.source
             },
             target: {
                 activePromptTitle: 'Select an attachment',
                 cardCondition: (card) =>
                     card.location === 'play area' && card.getType() === 'attachment'
             },
-            handler: (context) => {
-                context.target.owner.discardCard(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to discard {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to discard {target}',
+            gameAction: GameActions.discardCard((context) => ({ card: context.target }))
         });
     }
 }

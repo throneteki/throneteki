@@ -1,23 +1,39 @@
 class FixedAbilityLimit {
     constructor(max) {
         this.max = max;
-        this.useCount = 0;
+        this.useCounts = new Map();
     }
 
     isRepeatable() {
         return false;
     }
 
-    isAtMax() {
-        return this.useCount >= this.max;
+    // Limits are player specific (Rules Reference: Limits and Maxima). A use recorded without a
+    // player counts against every player.
+    get useCount() {
+        let total = 0;
+        for (const count of this.useCounts.values()) {
+            total += count;
+        }
+        return total;
     }
 
-    increment() {
-        this.useCount += 1;
+    getUseCount(player) {
+        const shared = this.useCounts.get(undefined) || 0;
+        return player ? shared + (this.useCounts.get(player) || 0) : shared;
+    }
+
+    isAtMax(context) {
+        const max = this.max instanceof Function ? this.max(context) : this.max;
+        return this.getUseCount(context?.player) >= max;
+    }
+
+    increment(player) {
+        this.useCounts.set(player, (this.useCounts.get(player) || 0) + 1);
     }
 
     reset() {
-        this.useCount = 0;
+        this.useCounts = new Map();
     }
 
     registerEvents() {

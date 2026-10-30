@@ -1,28 +1,32 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Sunspear extends DrawCard {
+    // Sunspear (01117)
+    // Reaction: After you lose a challenge as the defending player, kneel Sunspear to raise the
+    // claim value on your revealed plot card by 1 during challenges of this same type until the end
+    // of the phase.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller &&
-                    event.challenge.defendingPlayer === this.controller
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.player &&
+                    event.challenge.defendingPlayer === context.player
             },
             cost: ability.costs.kneelSelf(),
-            handler: () => {
-                let challengeType = this.game.currentChallenge.challengeType;
-                this.game.addMessage(
-                    '{0} kneels {1} to raise the claim on their plot card during {2} challenges by 1 until the end of the phase',
-                    this.controller,
-                    this,
-                    challengeType
-                );
-                this.untilEndOfPhase((ability) => ({
-                    condition: () => this.game.isDuringChallenge({ challengeType: challengeType }),
-                    match: (card) => card === this.controller.activePlot,
+            message: {
+                format: '{player} kneels {source} to raise the claim on their plot card during {challengeType} challenges by 1 until the end of the phase',
+                args: { challengeType: (context) => context.event.challenge.challengeType }
+            },
+            gameAction: GameActions.lastingEffect((context) => {
+                const challengeType = context.event.challenge.challengeType;
+                return {
+                    duration: 'untilEndOfPhase',
+                    condition: () => context.game.isDuringChallenge({ challengeType }),
+                    match: (card) => card === context.player.activePlot,
                     effect: ability.effects.modifyClaim(1)
-                }));
-            }
+                };
+            })
         });
     }
 }

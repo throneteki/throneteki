@@ -15,6 +15,7 @@ class Challenge {
         this.defendingPlayer = properties.defendingPlayer || this.singlePlayerDefender();
         this.initiatedAgainstPlayer = this.defendingPlayer;
         this.isInitiated = properties.isInitiated || false;
+        this.wasInitiated = this.isInitiated;
         this.initiatedChallengeType = properties.challengeType;
         this.challengeType = properties.challengeType;
         this.number = properties.number;
@@ -25,6 +26,7 @@ class Challenge {
         this.defenders = [];
         this.declaredDefenders = [];
         this.defenderStrength = 0;
+        this.participated = new Set();
         this.challengeContributions = new ChallengeContributions();
         this.initiationActions = [];
         this.events = new EventRegistrar(game, this);
@@ -57,11 +59,11 @@ class Challenge {
         this.attackingPlayer.trackChallenge(this);
         this.defendingPlayer.trackChallenge(this);
         this.isInitiated = true;
+        this.wasInitiated = true;
     }
 
     redirectChallengeTo(player) {
         this.defendingPlayer = player;
-        this.initiatedAgainstPlayer = player;
         this.initiationActions = [];
     }
 
@@ -105,7 +107,12 @@ class Challenge {
         for (let card of cards) {
             card.inChallenge = true;
             card.markAsDirty();
+            this.participated.add(card);
         }
+    }
+
+    hasParticipated(card) {
+        return this.participated.has(card);
     }
 
     isDeclared(card) {
@@ -316,11 +323,15 @@ class Challenge {
         this.isInitiated = false;
     }
 
-    cancelChallenge() {
+    cancelChallenge({ silent = false } = {}) {
         this.cancelled = true;
         this.isInitiated = false;
 
         this.resetCards();
+
+        if (silent) {
+            return;
+        }
 
         this.game.addMessage(
             "{0}'s {1} challenge is cancelled",

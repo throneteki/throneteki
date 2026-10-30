@@ -11,35 +11,83 @@ import DeclareDefenders from '../../GameActions/DeclareDefenders.js';
 import { Flags } from '../../Constants/index.js';
 
 class ChallengeFlow extends BaseStep {
-    constructor(game, challenge) {
+    /**
+     * `resumeAt` names the action window ('attackersDeclared' or 'defendersDeclared') to start
+     * from, for a challenge restored from a problem report whose earlier steps already happened.
+     */
+    constructor(game, challenge, { resumeAt } = {}) {
         super(game);
         this.challenge = challenge;
         this.pipeline = new GamePipeline();
+        this.flowSteps = new Set();
 
-        this.pipeline.initialise([
-            new SimpleStep(this.game, () => this.resetCards()),
-            new SimpleStep(this.game, () => this.recalculateEffects()),
-            new SimpleStep(this.game, () => this.announceChallenge()),
-            new SimpleStep(this.game, () => this.preAttackersPromptForDefenders()),
-            new SimpleStep(this.game, () => this.promptForAttackers()),
-            new SimpleStep(this.game, () => this.recalculateEffects()),
-            () => new InitiatingKeywordsWindow(this.game, this.challenge),
-            new SimpleStep(this.game, () => this.initiateChallenge()),
-            new ActionWindow(this.game, 'After attackers declared', 'attackersDeclared'),
-            new SimpleStep(this.game, () => this.promptForDefenders()),
-            new SimpleStep(this.game, () => this.declareDefenders()),
-            new SimpleStep(this.game, () => this.announceDefenderStrength()),
-            new ActionWindow(this.game, 'After defenders declared', 'defendersDeclared'),
-            new SimpleStep(this.game, () => this.determineWinner()),
-            new SimpleStep(this.game, () => this.challengeBonusPower()),
-            new SimpleStep(this.game, () => this.beforeClaim()),
-            () => new ResolutionKeywordsWindow(this.game, this.challenge),
-            new SimpleStep(this.game, () => this.atEndOfChallenge())
-        ]);
+        this.pipeline.initialise(
+            this.trackFlowSteps([
+                new SimpleStep(this.game, () => this.resetCards()),
+                new SimpleStep(this.game, () => this.beginInitiation()),
+                new SimpleStep(this.game, () => this.recalculateEffects()),
+                new SimpleStep(this.game, () => this.announceChallenge()),
+                new SimpleStep(this.game, () => this.preAttackersPromptForDefenders()),
+                new SimpleStep(this.game, () => this.promptForAttackers()),
+                new SimpleStep(this.game, () => this.recalculateEffects()),
+                () => this.trackFlowStep(new InitiatingKeywordsWindow(this.game, this.challenge)),
+                new SimpleStep(this.game, () => this.initiateChallenge()),
+                new SimpleStep(this.game, () => this.endInitiation()),
+                new ActionWindow(this.game, 'After attackers declared', 'attackersDeclared'),
+                new SimpleStep(this.game, () => this.promptForDefenders()),
+                new SimpleStep(this.game, () => this.declareDefenders()),
+                new SimpleStep(this.game, () => this.announceDefenderStrength()),
+                new ActionWindow(this.game, 'After defenders declared', 'defendersDeclared'),
+                new SimpleStep(this.game, () => this.determineWinner()),
+                new SimpleStep(this.game, () => this.challengeBonusPower()),
+                new SimpleStep(this.game, () => this.beforeClaim()),
+                () => this.trackFlowStep(new ResolutionKeywordsWindow(this.game, this.challenge)),
+                new SimpleStep(this.game, () => this.atEndOfChallenge())
+            ])
+        );
+
+        if (resumeAt) {
+            const steps = this.pipeline.pipeline;
+            const index = steps.findIndex(
+                (step) => step instanceof ActionWindow && step.windowName === resumeAt
+            );
+            if (index < 0) {
+                throw new Error(`A challenge cannot resume at '${resumeAt}'`);
+            }
+            this.pipeline.initialise(steps.slice(index));
+        }
+    }
+
+    trackFlowSteps(steps) {
+        for (const step of steps) {
+            this.trackFlowStep(step);
+        }
+        return steps;
+    }
+
+    trackFlowStep(step) {
+        this.flowSteps.add(step);
+        return step;
     }
 
     resetCards() {
         this.challenge.resetCards();
+    }
+
+    // Initiating a challenge is atomic (Rules Reference), so STR changes from effects that start
+    // with the challenge are raised once attackers are declared and knelt, not while they are chosen.
+    beginInitiation() {
+        if (!this.game.effectEngine.strengthChanges) {
+            this.game.effectEngine.beginEffectChanges();
+            this.batchingInitiation = true;
+        }
+    }
+
+    endInitiation() {
+        if (this.batchingInitiation) {
+            this.batchingInitiation = false;
+            this.game.effectEngine.endEffectChanges();
+        }
     }
 
     recalculateEffects() {
@@ -51,11 +99,12 @@ class ChallengeFlow extends BaseStep {
     }
 
     announceChallenge() {
-        let defendersFirstMessage = this.challenge.declareDefendersFirst
-            ? ', with defenders being declared before they declare attackers'
-            : '';
+        if (!this.challenge.declareDefendersFirst) {
+            return;
+        }
+
         this.game.addMessage(
-            '{0} is initiating a {1} challenge' + defendersFirstMessage,
+            '{0} is initiating a {1} challenge, with defenders being declared before they declare attackers',
             this.challenge.attackingPlayer,
             this.challenge.challengeType
         );
@@ -69,14 +118,14 @@ class ChallengeFlow extends BaseStep {
             mustBeDeclaredOption: Flags.challengeOptions.mustBeDeclaredAsAttacker,
             limitsProperty: 'attackerLimits',
             activePromptTitle: 'Select challenge attackers',
-            waitingPromptTitle: 'Waiting for opponent to select attackers',
+            waitingPromptTitle: this.challenge.declareDefendersFirst
+                ? 'Waiting for opponent to select attackers'
+                : 'Waiting for opponent to initiate challenge',
             messages: {
                 autoDeclareSingular: '{0} is automatically declared as an attacker',
                 autoDeclarePlural: '{0} are automatically declared as attackers',
-                notEnoughSingular:
-                    '{0} did not declare at least {1} attacker but had characters to do so',
-                notEnoughPlural:
-                    '{0} did not declare at least {1} attackers but had characters to do so'
+                notEnoughSingular: '{0} must declare at least {1} attacker',
+                notEnoughPlural: '{0} must declare at least {1} attackers'
             },
             onSelect: (attackers) => this.chooseAttackers(attackers)
         });
@@ -89,7 +138,7 @@ class ChallengeFlow extends BaseStep {
 
     chooseAttackers(attackers) {
         if (attackers.length === 0) {
-            this.cancelChallenge();
+            this.challenge.cancelChallenge({ silent: true });
             return;
         }
 
@@ -118,10 +167,8 @@ class ChallengeFlow extends BaseStep {
             messages: {
                 autoDeclareSingular: '{0} is automatically declared as a defender',
                 autoDeclarePlural: '{0} are automatically declared as defenders',
-                notEnoughSingular:
-                    '{0} did not declare at least {1} defender but had characters to do so',
-                notEnoughPlural:
-                    '{0} did not declare at least {1} defenders but had characters to do so'
+                notEnoughSingular: '{0} must declare at least {1} defender',
+                notEnoughPlural: '{0} must declare at least {1} defenders'
             },
             onSelect: (defenders) => this.chooseDefenders(defenders)
         });
@@ -164,6 +211,8 @@ class ChallengeFlow extends BaseStep {
     }
 
     declareDefenders() {
+        this.challenge.defendersDeclared = true;
+
         if (this.challenge.declareDefendersFirst) {
             this.game.addMessage(
                 '{0} cannot declare defenders after attackers are declared for this challenge',
@@ -267,6 +316,11 @@ class ChallengeFlow extends BaseStep {
     }
 
     atEndOfChallenge() {
+        this.game.beginEndingDuration('untilEndOfChallenge');
+        this.game.effectEngine.unapplyAndRemove(
+            (effect) => effect.duration === 'untilEndOfChallenge'
+        );
+        this.game.effectEngine.expireDelayedEffects('untilEndOfChallenge');
         this.game.raiseEvent('onAtEndOfChallenge', { challenge: this.challenge });
     }
 
@@ -291,7 +345,16 @@ class ChallengeFlow extends BaseStep {
     }
 
     continue() {
-        return this.challenge.cancelled || this.pipeline.continue();
+        if (this.challenge.cancelled) {
+            this.endInitiation();
+            // The rest of the challenge is skipped, but whatever ended it (an event and the reactions
+            // to it) still finishes resolving.
+            this.pipeline.pipeline = this.pipeline.pipeline.filter(
+                (step) => !this.flowSteps.has(step)
+            );
+        }
+
+        return this.pipeline.continue();
     }
 
     cancelChallenge() {
@@ -299,6 +362,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     cancelChallengeResolution() {
+        this.endInitiation();
         this.challenge.cancelChallenge();
         this.pipeline.clear();
     }

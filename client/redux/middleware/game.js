@@ -19,6 +19,8 @@ import {
     sendToggleDupesMessage,
     sendToggleKeywordSettingMessage,
     sendToggleMuteSpectatorsMessage,
+    sendToggleManualModeMessage,
+    sendReportProblemMessage,
     sendTogglePromptedActionWindowMessage,
     sendToggleTimerSetting,
     sendCardSizeChangeMessage,
@@ -47,6 +49,8 @@ const GameMessage = Object.freeze({
     DragDrop: 'drop',
     Chat: 'chat',
     ToggleMuteSpectators: 'toggleMuteSpectators',
+    ToggleManualMode: 'toggleManualMode',
+    ReportProblem: 'reportProblem',
     ChangeStat: 'changeStat',
     LeaveGame: 'leavegame',
     Concede: 'concede',
@@ -181,6 +185,10 @@ const gameMiddleware = (store) => {
             socket.emit('game', GameMessage.Chat, action.payload);
         } else if (sendToggleMuteSpectatorsMessage.match(action)) {
             socket.emit('game', GameMessage.ToggleMuteSpectators);
+        } else if (sendToggleManualModeMessage.match(action)) {
+            socket.emit('game', GameMessage.ToggleManualMode);
+        } else if (sendReportProblemMessage.match(action)) {
+            socket.emit('game', GameMessage.ReportProblem);
         } else if (sendChangeStatMessage.match(action)) {
             socket.emit('game', GameMessage.ChangeStat, action.payload.type, action.payload.amount);
         } else if (sendLeaveGameMessage.match(action)) {

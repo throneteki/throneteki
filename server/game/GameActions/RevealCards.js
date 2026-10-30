@@ -1,27 +1,12 @@
 import GameAction from './GameAction.js';
-import HandlerGameActionWrapper from './HandlerGameActionWrapper.js';
+import AcknowledgeRevealedCards from './AcknowledgeRevealedCards.js';
 import AbilityMessage from '../AbilityMessage.js';
-import AcknowledgeRevealCardsPrompt from '../gamesteps/AcknowledgeRevealCardsPrompt.js';
 import Message from '../Message.js';
 
 class RevealCards extends GameAction {
     constructor() {
         super('revealCards');
-        this.defaultWhileRevealed = new HandlerGameActionWrapper({
-            handler: (context) => {
-                if (context.revealed.length > 0) {
-                    // TODO: Replace the below with a separate Card Reveal UI (and don't show the cards in their respective locations). This would clean up effects which simply reveal a single card.
-                    context.game.queueStep(
-                        new AcknowledgeRevealCardsPrompt(
-                            context.game,
-                            context.revealed,
-                            context.revealingPlayer,
-                            context.source
-                        )
-                    );
-                }
-            }
-        });
+        this.defaultWhileRevealed = AcknowledgeRevealedCards;
     }
 
     message({ player, cards, context }) {

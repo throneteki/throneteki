@@ -1,11 +1,14 @@
 import DrawCard from '../../drawcard.js';
 
 class SeptaUnella extends DrawCard {
+    // Septa Unella (25117)
+    // While Septa Unella is participating in a challenge, treat each other non-The Seven character
+    // with 1 or more power as if its printed text box were blank (except for Traits).
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isParticipating(),
-            match: (card) =>
-                card !== this &&
+            condition: (context) => context.source.isParticipating(),
+            match: (card, context) =>
+                card !== context.source &&
                 !card.hasTrait('The Seven') &&
                 card.getType() === 'character' &&
                 card.power > 0,

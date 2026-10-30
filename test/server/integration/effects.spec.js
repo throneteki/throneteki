@@ -85,9 +85,9 @@ describe('effects', function () {
                     this.player1.clickCard('Sneak Attack');
                 });
 
-                it('should apply to any new cards in that position', function () {
+                it('does not apply to a plot revealed later', function () {
                     let plot = this.player1.findCardByName('Sneak Attack');
-                    expect(plot.getClaim()).toBe(3);
+                    expect(plot.getClaim()).toBe(2);
                 });
 
                 it('should unapply from any new cards that leave that position', function () {

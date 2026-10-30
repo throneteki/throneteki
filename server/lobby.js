@@ -63,6 +63,7 @@ class Lobby {
     async init() {
         await this.deckService.init();
         await this.eventService.init();
+        this.deckService.on('cardDataReloaded', () => this.onCardDataReloaded());
     }
 
     // External methods
@@ -963,6 +964,7 @@ class Lobby {
             restrictedList: game.restrictedList,
             allowSpectators: game.allowSpectators,
             showHand: game.showHand,
+            strictActionWindows: game.strictActionWindows,
             gamePrivate: game.gamePrivate,
             gameFormat: game.gameFormat,
             gameVariant: game.gameVariant,
@@ -1117,13 +1119,32 @@ class Lobby {
             this.cardService.getRestrictedList()
         ]).then((results) => {
             let [cards, titles, packs, restrictedList] = results;
-            this.router.sendCommand(nodeName, 'CARDDATA', {
+            this.nodeCardData = {
                 titleCardData: titles,
                 cardData: cards,
                 packData: packs,
                 restrictedListData: restrictedList
-            });
+            };
+            this.router.sendCommand(nodeName, 'CARDDATA', this.nodeCardData);
         });
+    }
+
+    // Sent synchronously so it reaches the nodes before any game started with the new cards.
+    onCardDataReloaded() {
+        if (!this.nodeCardData) {
+            return;
+        }
+
+        const cards = this.deckService.cards;
+        this.nodeCardData = {
+            ...this.nodeCardData,
+            titleCardData: Object.fromEntries(
+                Object.entries(cards).filter(([, card]) => card.type === 'title')
+            ),
+            cardData: cards,
+            packData: this.deckService.packs
+        };
+        this.router.sendCommand('allnodes', 'CARDDATA', this.nodeCardData);
     }
 
     onNodeReconnected(nodeName, games) {

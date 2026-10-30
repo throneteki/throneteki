@@ -1,21 +1,22 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BlackEars extends DrawCard {
+    // Black Ears (08029)
+    // Reaction: After a character is killed, pay 2 gold to put Black Ears into play from your hand.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCharacterKilled: () => this.controller.canPutIntoPlay(this)
+                onCharacterKilled: (event, context) =>
+                    context.source.controller.canPutIntoPlay(context.source)
             },
             location: 'hand',
             cost: ability.costs.payGold(2),
-            handler: (context) => {
-                this.controller.putIntoPlay(this);
-                this.game.addMessage(
-                    '{0} pays 2 gold to put {1} into play from their hand',
-                    context.player,
-                    this
-                );
-            }
+            message: '{player} pays 2 gold to put {source} into play from their hand',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.source
+            }))
         });
     }
 }

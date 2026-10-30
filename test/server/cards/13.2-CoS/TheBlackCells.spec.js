@@ -1,69 +1,38 @@
 describe('The Black Cells', function () {
-    integration(function () {
-        describe('cannot kneel effect', function () {
-            beforeEach(function () {
-                const deck1 = this.buildDeck('baratheon', ['Marching Orders', 'The Black Cells']);
-                const deck2 = this.buildDeck('lannister', [
-                    'Marching Orders',
-                    'Ser Jaime Lannister (Core)',
-                    'Burned Men'
-                ]);
-                this.player1.selectDeck(deck1);
-                this.player2.selectDeck(deck2);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.blackCells = this.player1.findCardByName('The Black Cells', 'hand');
-
-                this.nonKneelingCharacter = this.player2.findCardByName('Ser Jaime Lannister');
-                this.kneelingCharacter = this.player2.findCardByName('Burned Men');
-
-                this.player1.clickCard(this.blackCells);
-                this.player1.clickPrompt('Setup in shadows');
-
-                this.player2.clickCard(this.nonKneelingCharacter);
-                this.player2.clickCard(this.kneelingCharacter);
-
-                this.completeSetup();
-
-                this.selectFirstPlayer(this.player2);
-
-                this.completeMarshalPhase();
-            });
-
-            describe('when a character is required to kneel for challenges', function () {
-                beforeEach(function () {
-                    this.player1.clickCard(this.blackCells);
-                    this.player1.triggerAbility(this.blackCells);
-                    this.player1.clickCard(this.kneelingCharacter);
-
-                    this.player2.clickPrompt('Military');
-                });
-
-                it('does not allow the character to be declared', function () {
-                    let selectState = this.player2Object.getCardSelectionState(
-                        this.kneelingCharacter
-                    );
-                    expect(selectState.selectable).toBe(false);
-                });
-            });
-
-            describe('when a character is not required to kneel for challenges', function () {
-                beforeEach(function () {
-                    this.player1.clickCard(this.blackCells);
-                    this.player1.triggerAbility(this.blackCells);
-                    this.player1.clickCard(this.nonKneelingCharacter);
-
-                    this.player2.clickPrompt('Military');
-                });
-
-                it('allows the character to be declared', function () {
-                    let selectState = this.player2Object.getCardSelectionState(
-                        this.nonKneelingCharacter
-                    );
-                    expect(selectState.selectable).toBe(true);
-                });
-            });
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player2',
+            player1: { shadows: ['The Black Cells'] },
+            player2: { inPlay: ['Ser Jaime Lannister (Core)', 'Burned Men'] }
         });
+        this.player1.clickCard(this.theBlackCells);
+        this.player1.triggerAbility(this.theBlackCells);
+    });
+
+    it('stops a character that must kneel to attack being declared', function () {
+        this.player1.clickCard(this.burnedMen);
+        this.player2.clickPrompt('Military');
+
+        expect(this.player2).not.toBeAbleToSelect(this.burnedMen);
+        expect(this.player2).toBeAbleToSelect(this.serJaimeLannister);
+        expect(this.theBlackCells.kneeled).toBe(true);
+    });
+
+    it('still allows a character that does not kneel to attack to be declared', function () {
+        this.player1.clickCard(this.serJaimeLannister);
+        this.player2.clickPrompt('Military');
+
+        expect(this.player2).toBeAbleToSelect(this.serJaimeLannister);
+        expect(this.player2).toBeAbleToSelect(this.burnedMen);
+
+        this.player2.clickCard(this.serJaimeLannister);
+        this.player2.clickPrompt('Done');
+        this.skipActionWindow();
+        this.player1.clickPrompt('Done');
+        this.skipActionWindow();
+
+        expect(this.serJaimeLannister.kneeled).toBe(false);
+        expect(this.player2).isReadyToTakeAction();
     });
 });

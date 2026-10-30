@@ -1,30 +1,32 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheHandsJudgment extends DrawCard {
+    // The Hand's Judgment (01045)
+    // Interrupt: When the effects of an opponent's event would initiate, cancel those effects. X is
+    // that event's printed cost.
     setupCardAbilities() {
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: (event) => {
-                    if (event.source.getType() !== 'event' || event.player === this.controller) {
+                onCardAbilityInitiated: (event, context) => {
+                    if (
+                        event.source.getType() !== 'event' ||
+                        event.player === context.source.controller
+                    ) {
                         return false;
                     }
 
-                    this.eventToInterrupt = event.source;
+                    context.source.eventToInterrupt = event.source;
 
                     return true;
                 }
             },
-            handler: (context) => {
-                context.event.cancel();
-
-                this.game.addMessage(
-                    '{0} plays {1} to cancel {2}',
-                    this.controller,
-                    this,
-                    context.event.source
-                );
-            }
+            message: {
+                format: '{player} plays {source} to cancel {eventSource}',
+                args: { eventSource: (context) => context.event.source }
+            },
+            gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
         });
     }
 

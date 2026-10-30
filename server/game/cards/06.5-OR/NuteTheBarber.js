@@ -1,33 +1,36 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class NuteTheBarber extends DrawCard {
+    // Nute the Barber (06091)
+    // Pillage.
+    // Reaction: After a character you control discards a card using pillage, return a card from the
+    // losing opponent's discard pile to its owner's hand. Then, draw 1 card. (Limit 3 times per
+    // phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardDiscarded: (event) =>
-                    event.isPillage && event.source.controller === this.controller
+                onCardDiscarded: (event, context) =>
+                    event.isPillage && event.source.controller === context.player
             },
             limit: ability.limit.perPhase(3),
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'discard pile' &&
-                    card.controller === this.game.currentChallenge.loser
+                    card.controller === context.game.currentChallenge.loser
             },
-            handler: (context) => {
-                context.target.owner.moveCard(context.target, 'hand');
-                this.game.addMessage(
-                    "{0} uses {1} to return {2} to {3}'s hand",
-                    this.controller,
-                    this,
-                    context.target,
-                    context.target.owner
-                );
-                if (this.controller.canDraw()) {
-                    this.controller.drawCardsToHand(1);
-                    this.game.addMessage('{0} then draws 1 card', this.controller);
-                }
-            }
+            message: {
+                format: "{player} uses {source} to return {target} to {owner}'s hand",
+                args: { owner: (context) => context.target.owner }
+            },
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target })).then({
+                message: 'Then {player} draws 1 card',
+                gameAction: GameActions.drawCards((context) => ({
+                    player: context.player,
+                    amount: 1
+                }))
+            })
         });
     }
 }

@@ -1,45 +1,19 @@
 describe('Varys (Core)', function () {
-    integration(function () {
-        describe('simultaneous discard', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('thenightswatch', [
-                    'A Noble Cause',
-                    'Varys (Core)',
-                    'Arya Stark (TFM)',
-                    'Sansa Stark (Core)',
-                    'Sansa Stark (Core)'
-                ]);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.player1.clickCard('Varys', 'hand');
-
-                // Explicitly set up a duped Sansa after Arya. If Varys' ability
-                // causes Arya to leave play before Sansa instead of
-                // simultaneously, the 'cannot be saved' effect will wear off
-                // prematurely and Sansa will be saved by her dupe.
-                [this.sansa, this.dupe] = this.player2.filterCardsByName('Sansa Stark', 'hand');
-                this.player2.clickCard('Arya Stark', 'hand');
-                this.player2.clickCard(this.sansa);
-                this.player2.clickCard(this.dupe);
-
-                this.completeSetup();
-
-                this.selectFirstPlayer(this.player1);
-
-                this.completeMarshalPhase();
-                this.completeChallengesPhase();
-
-                this.player1.triggerAbility('Varys');
-                // Skip order prompt
-                this.player2.clickPrompt('Done');
-            });
-
-            it('should cause all cards to be discarded simultaneously', function () {
-                expect(this.sansa.location).toBe('discard pile');
-            });
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { inPlay: ['Varys (Core)'] },
+            player2: { inPlay: ['Arya Stark (TFM)', { card: 'Sansa Stark (Core)', dupes: 1 }] }
         });
+        this.completeChallengesPhase();
+        this.player1.triggerAbility('Varys');
+        this.player2.clickPrompt('Done');
+    });
+
+    it('removes itself from the game to discard each character simultaneously', function () {
+        expect(this.varys.location).toBe('out of game');
+        expect(this.aryaStark.location).toBe('discard pile');
+        expect(this.sansaStark.location).toBe('discard pile');
+        expect(this.player1).isReadyToTakeAction();
     });
 });

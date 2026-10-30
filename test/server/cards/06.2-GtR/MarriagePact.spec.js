@@ -1,79 +1,204 @@
 describe('Marriage Pact', function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck = this.buildDeck('greyjoy', [
-                'A Noble Cause',
-                'Hedge Knight',
-                'Hedge Knight',
-                'Marriage Pact'
-            ]);
-
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.character = this.player1.findCardByName('Hedge Knight', 'hand');
-            this.pact = this.player1.findCardByName('Marriage Pact', 'hand');
-            [this.opponentCharacter, this.opponentCharacter2] = this.player2.filterCardsByName(
-                'Hedge Knight',
-                'hand'
-            );
-
-            this.player1.clickCard(this.character);
-            this.player2.clickCard(this.opponentCharacter);
-            this.player2.clickCard(this.opponentCharacter2);
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player1);
-
-            // Attach Marriage Pact
-            this.player1.clickCard(this.pact);
-            this.player1.clickCard(this.opponentCharacter);
-
-            this.completeMarshalPhase();
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: { inPlay: ['Tumblestone Knight'], hand: ['Marriage Pact'] },
+            player2: { inPlay: ['Castle Guard', 'Hedge Knight', 'Winterfell Steward'] }
         });
+        this.player1.clickCard(this.marriagePact);
+        this.player1.clickCard(this.castleGuard);
+        this.completeMarshalPhase();
+    });
 
-        describe('when the opponent is defender', function () {
-            beforeEach(function () {
+    it('stops the attached character attacking you', function () {
+        this.player1.clickPrompt('Done');
+        this.player2.clickPrompt('Military');
+
+        expect(this.player2).not.toBeAbleToSelect(this.castleGuard);
+        expect(this.player2).toBeAbleToSelect(this.hedgeKnight);
+
+        this.player2.clickCard(this.hedgeKnight);
+        this.player2.clickPrompt('Done');
+        this.skipActionWindow();
+        this.player1.clickPrompt('Done');
+        this.skipActionWindow();
+        this.player1.clickCard(this.tumblestoneKnight);
+
+        expect(this.player2).isReadyToTakeAction();
+    });
+
+    it('stops the attached character defending against you', function () {
+        this.player1.clickPrompt('Power');
+        this.player1.clickCard(this.tumblestoneKnight);
+        this.player1.clickPrompt('Done');
+        this.skipActionWindow();
+
+        expect(this.player2).not.toBeAbleToSelect(this.castleGuard);
+        expect(this.player2).toBeAbleToSelect(this.winterfellSteward);
+
+        this.player2.clickPrompt('Done');
+        this.skipActionWindow();
+
+        expect(this.player1).isReadyToTakeAction();
+    });
+
+    it('makes you sacrifice a character when the attached character leaves play', function () {
+        this.unopposedChallenge(this.player1, 'Military', this.tumblestoneKnight);
+        this.player2.clickCard(this.castleGuard);
+
+        expect(this.player1).toHavePrompt('Select a character');
+        this.player1.clickCard(this.tumblestoneKnight);
+
+        expect(this.castleGuard.location).toBe('dead pile');
+        expect(this.tumblestoneKnight.location).toBe('discard pile');
+        expect(this.player1).isReadyToTakeAction();
+    });
+});
+
+describe('Marriage Pact on your own character', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                inPlay: ['Tumblestone Knight', 'Winterfell Steward'],
+                hand: ['Marriage Pact']
+            },
+            player2: { inPlay: ['Castle Guard'] }
+        });
+        this.player1.clickCard(this.marriagePact);
+        this.player1.clickCard(this.tumblestoneKnight);
+        this.completeMarshalPhase();
+    });
+
+    it('lets the attached character attack for you', function () {
+        this.player1.clickPrompt('Power');
+
+        expect(this.player1).toBeAbleToSelect(this.tumblestoneKnight);
+        expect(this.player1).toBeAbleToSelect(this.winterfellSteward);
+
+        this.player1.clickCard(this.tumblestoneKnight);
+        this.player1.clickPrompt('Done');
+        this.skipActionWindow();
+
+        expect(this.game.currentChallenge.isAttacking(this.tumblestoneKnight)).toBe(true);
+
+        this.player2.clickPrompt('Done');
+        this.skipActionWindow();
+
+        expect(this.player1).isReadyToTakeAction();
+    });
+
+    it('lets the attached character defend for you', function () {
+        this.player1.clickPrompt('Done');
+        this.player2.clickPrompt('Power');
+        this.player2.clickCard(this.castleGuard);
+        this.player2.clickPrompt('Done');
+        this.skipActionWindow();
+
+        expect(this.player1).toBeAbleToSelect(this.tumblestoneKnight);
+        expect(this.player1).toBeAbleToSelect(this.winterfellSteward);
+
+        this.player1.clickCard(this.tumblestoneKnight);
+        this.player1.clickPrompt('Done');
+
+        expect(this.game.currentChallenge.isDefending(this.tumblestoneKnight)).toBe(true);
+
+        this.skipActionWindow();
+
+        expect(this.player2).isReadyToTakeAction();
+    });
+});
+
+describe('Marriage Pact under Valar Morghulis', function () {
+    it('lets you sacrifice a character that is also being killed', function () {
+        this.setupTest({
+            phase: 'plot',
+            player1: {
+                plotDeck: ['Valar Morghulis'],
+                inPlay: [
+                    {
+                        card: 'Tumblestone Knight',
+                        attachments: [{ card: 'Marriage Pact', owner: 'player2' }]
+                    }
+                ]
+            },
+            player2: { inPlay: ['Castle Guard', 'Hedge Knight'] }
+        });
+        this.player1.selectPlot('Valar Morghulis');
+        this.player2.selectPlot('Filler Plot');
+        this.selectFirstPlayer(this.player1);
+
+        expect(this.player2).toBeAbleToSelect(this.castleGuard);
+
+        this.player2.clickCard(this.castleGuard);
+
+        expect(this.castleGuard.location).toBe('discard pile');
+        expect(this.hedgeKnight.location).toBe('dead pile');
+        expect(this.tumblestoneKnight.location).toBe('dead pile');
+    });
+});
+
+describe('Marriage Pact on your own Umber Loyalist', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player2',
+            player1: {
+                inPlay: [{ card: 'Umber Loyalist', attachments: ['Marriage Pact'] }],
+                hand: [
+                    'Hedge Knight',
+                    'Tumblestone Knight',
+                    'House Maester',
+                    'Winterfell Steward',
+                    'Castle Guard'
+                ]
+            },
+            player2: { inPlay: ['Burned Men'] }
+        });
+        this.unopposedChallenge(this.player2, 'Military', this.burnedMen);
+        this.player1.clickCard(this.umberLoyalist);
+    });
+
+    it('sacrifices it again after each discard, until your hand is empty', function () {
+        for (const cards of [
+            [this.hedgeKnight, this.tumblestoneKnight],
+            [this.houseMaester, this.winterfellSteward],
+            [this.castleGuard]
+        ]) {
+            expect(this.player1).toHavePrompt('Select 2 cards to discard');
+            for (const card of cards) {
+                this.player1.clickCard(card);
+            }
+            this.player1.clickPrompt('Done');
+            if (cards.length === 2) {
                 this.player1.clickPrompt('Done');
-
-                this.player2.clickPrompt('Military');
-            });
-
-            it('should not allow the attached character to attack in a challenge', function () {
-                let selectState = this.player2Object.getCardSelectionState(this.opponentCharacter);
-                expect(selectState.selectable).toBe(false);
-            });
-        });
-
-        describe('when the opponent is defender', function () {
-            beforeEach(function () {
-                this.player1.clickPrompt('Military');
-                this.player1.clickCard(this.character);
-                this.player1.clickPrompt('Done');
-
-                this.skipActionWindow();
-            });
-
-            it('should not allow the attached character to defend in a challenge', function () {
-                let selectState = this.player2Object.getCardSelectionState(this.opponentCharacter);
-                expect(selectState.selectable).toBe(false);
-            });
-        });
-
-        describe('when the attached character is killed', function () {
-            beforeEach(function () {
-                this.unopposedChallenge(this.player1, 'Military', this.character);
-                this.player1.clickPrompt('Apply Claim');
-                this.player2.clickCard(this.opponentCharacter);
-            });
-
-            it('should prompt the player to sacrifice a character', function () {
                 expect(this.player1).toHavePrompt('Select a character');
-                this.player1.clickCard(this.character);
-                expect(this.character.location).toBe('discard pile');
-            });
+                this.player1.clickCard(this.umberLoyalist);
+            }
+        }
+
+        expect(this.player1Object.hand).toHaveLength(0);
+        expect(this.umberLoyalist.location).toBe('discard pile');
+        expect(this.marriagePact.location).toBe('discard pile');
+        expect(this.player2).isReadyToTakeAction();
+    });
+});
+
+describe('Marriage Pact on your own only character', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player2',
+            player1: { inPlay: [{ card: 'Hedge Knight', attachments: ['Marriage Pact'] }] },
+            player2: { inPlay: ['Burned Men'] }
         });
+        this.unopposedChallenge(this.player2, 'Military', this.burnedMen);
+        this.player1.clickCard(this.hedgeKnight);
+    });
+
+    it('does not sacrifice it again when that would change nothing', function () {
+        expect(this.hedgeKnight.location).toBe('dead pile');
+        expect(this.marriagePact.location).toBe('discard pile');
+        expect(this.player2).isReadyToTakeAction();
     });
 });

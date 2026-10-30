@@ -2,11 +2,17 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class ABedOfScorpions extends DrawCard {
+    // A Bed of Scorpions (25008)
+    // Reaction: After you win an [intrigue] challenge, choose and kill a participating character.
+    // (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.isMatch({ winner: this.controller, challengeType: 'intrigue' })
+                afterChallenge: (event, context) =>
+                    event.challenge.isMatch({
+                        winner: context.source.controller,
+                        challengeType: 'intrigue'
+                    })
             },
             target: {
                 cardCondition: {
@@ -17,12 +23,7 @@ class ABedOfScorpions extends DrawCard {
             },
             max: ability.limit.perChallenge(1),
             message: '{player} plays {source} to kill {target}',
-            handler: (context) => {
-                context.game.resolveGameAction(
-                    GameActions.kill((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 }

@@ -3,13 +3,13 @@ import Player from '../../../server/game/player.js';
 describe('Player', function () {
     describe('revealSetupCards', function () {
         beforeEach(function () {
-            this.game = jasmine.createSpyObj('game', ['raiseEvent']);
+            this.game = { raiseEvent: vi.fn() };
             this.player = new Player('1', { username: 'Player 1', settings: {} }, true, this.game);
             this.player.deck = {};
             this.player.initialise();
 
-            this.cardSpy = jasmine.createSpyObj('card', ['isUnique', 'addDuplicate']);
-            this.duplicateSpy = jasmine.createSpyObj('card', ['isUnique', 'addDuplicate']);
+            this.cardSpy = { isUnique: vi.fn(), addDuplicate: vi.fn() };
+            this.duplicateSpy = { isUnique: vi.fn(), addDuplicate: vi.fn() };
 
             this.cardSpy.facedown = true;
             this.cardSpy.name = 'Card';
@@ -36,8 +36,8 @@ describe('Player', function () {
 
         describe('when there is a unique card', function () {
             beforeEach(function () {
-                this.cardSpy.isUnique.and.returnValue(true);
-                this.duplicateSpy.isUnique.and.returnValue(true);
+                this.cardSpy.isUnique.mockReturnValue(true);
+                this.duplicateSpy.isUnique.mockReturnValue(true);
             });
 
             describe('and a duplicate is found', function () {
@@ -78,8 +78,8 @@ describe('Player', function () {
         it('should turn all cards faceup', function () {
             this.player.revealSetupCards();
 
-            expect(this.player.cardsInPlay).not.toContain(
-                jasmine.objectContaining({
+            expect(this.player.cardsInPlay).not.toContainEqual(
+                expect.objectContaining({
                     facedown: true
                 })
             );

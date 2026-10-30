@@ -1,28 +1,27 @@
+import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class WhisperCampaign extends PlotCard {
+    // Whisper Campaign (07048)
+    // Forced Reaction: After a character without an [intrigue] icon enters play, kneel it.
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onCardEntersPlay: (event) => {
+                onCardEntersPlay: (event, context) => {
                     let card = event.card;
                     if (card.getType() !== 'character' || card.hasIcon('intrigue')) {
                         return false;
                     }
 
-                    this.pendingCard = card;
+                    context.source.pendingCard = card;
                     return true;
                 }
             },
-            handler: () => {
-                this.pendingCard.controller.kneelCard(this.pendingCard);
-                this.game.addMessage(
-                    '{0} is forced by {1} to kneel {2}',
-                    this.controller,
-                    this,
-                    this.pendingCard
-                );
-            }
+            message: {
+                format: '{player} is forced by {source} to kneel {pendingCard}',
+                args: { pendingCard: (context) => context.source.pendingCard }
+            },
+            gameAction: GameActions.kneelCard((context) => ({ card: context.source.pendingCard }))
         });
     }
 }

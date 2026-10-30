@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ArchmaesterEbrose extends DrawCard {
+    // Archmaester Ebrose (09039)
+    // Action: Kneel a Maester character to choose and stand another Maester character. (Limit once
+    // per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand Maester character',
@@ -15,16 +19,8 @@ class ArchmaesterEbrose extends DrawCard {
                     card.getType() === 'character' &&
                     card.kneeled
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} and kneels {2} to stand {3}',
-                    context.player,
-                    this,
-                    context.costs.kneel,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} and kneels {costs.kneel} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

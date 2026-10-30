@@ -1,9 +1,13 @@
 import DrawCard from '../../drawcard.js';
 
 class MoatCailin extends DrawCard {
+    // Moat Cailin (06012)
+    // While there are more Winter plot cards than Summer plot cards revealed, reduce the initiative
+    // value on each opponent's revealed plot card by 3, and the reserve value on each opponent's
+    // revealed plot card by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.moreWinterThanSummerPlotsRevealed(),
+            condition: (context) => context.source.moreWinterThanSummerPlotsRevealed(),
             match: (card) => card === card.controller.activePlot,
             targetController: 'opponent',
             effect: [ability.effects.modifyInitiative(-3), ability.effects.modifyReserve(-1)]

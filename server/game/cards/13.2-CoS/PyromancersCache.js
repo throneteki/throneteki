@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class PyromancersCache extends DrawCard {
+    // Pyromancer's Cache (13030)
+    // Location only.
+    // Treat attached location as if its printed text box were blank (except for Traits).
+    // Attached location gains: "Action: Kneel this location to draw 1 card."
     setupCardAbilities(ability) {
         this.attachmentRestriction({ type: 'location' });
 
@@ -9,8 +13,6 @@ class PyromancersCache extends DrawCard {
             effect: ability.effects.blankExcludingTraits
         });
 
-        // TODO: Currently blanking is checking on the card gaining the text, not
-        // the card giving the text. So the ability does not actualy work.
         this.whileAttached({
             effect: ability.effects.gainText((text) => {
                 text.action({

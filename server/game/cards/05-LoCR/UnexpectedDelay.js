@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class UnexpectedDelay extends PlotCard {
+    // Unexpected Delay (05047)
+    // Forced Reaction: After the challenges phase begins, each player chooses a character without
+    // attachments or power. Return each of those characters to its owner's hand.
     setupCardAbilities() {
         this.forcedReaction({
             when: {
@@ -17,24 +20,17 @@ class UnexpectedDelay extends PlotCard {
             },
             message: {
                 format: "{source} forces {chosenCards} to return to their owner's hands",
-                args: { chosenCards: (context) => this.getChosenCards(context) }
+                args: { chosenCards: (context) => getChosenCards(context) }
             },
-            handler: (context) => {
-                const uniqueCards = this.getChosenCards(context);
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        uniqueCards.map((card) => GameActions.returnCardToHand({ card }))
-                    ),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                getChosenCards(context).map((card) => GameActions.returnCardToHand({ card }))
+            )
         });
     }
+}
 
-    getChosenCards(context) {
-        const cards = context.targets.selections.map((selection) => selection.value);
-        return [...new Set(cards)];
-    }
+function getChosenCards(context) {
+    return [...new Set(context.targets.getTargets())];
 }
 
 UnexpectedDelay.code = '05047';

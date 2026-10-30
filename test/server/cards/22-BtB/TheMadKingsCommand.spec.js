@@ -1,88 +1,94 @@
 describe("The Mad King's Command", function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck = this.buildDeck('targaryen', [
-                "The Mad King's Command (BtB)",
-                'Aegon Targaryen (TSC)',
-                'Septa Lemore (HMW)',
-                'Beggar King'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.aegon = this.player1.findCardByName('Aegon Targaryen');
-            this.lemore = this.player1.findCardByName('Septa Lemore');
-            this.attachment = this.player1.findCardByName('Beggar King');
-
-            this.player1.clickCard(this.aegon);
-            this.player1.clickPrompt('Setup');
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player1);
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                plot: "The Mad King's Command (BtB)",
+                inPlay: [
+                    { card: 'Hedge Knight', attachments: ['Little Bird (Core)'] },
+                    { card: 'Grand Maester Pycelle (Core)', dupes: 1 },
+                    'Tumblestone Knight',
+                    'Old Gate'
+                ],
+                hand: ['Nightmares'],
+                shadows: ['House Umber Berserkers']
+            },
+            player2: {
+                inPlay: ['Bastard in Hiding', 'The Roseroad'],
+                hand: ['Tithe']
+            }
         });
 
-        describe('when an attachment is chosen, but attached character is not', function () {
-            beforeEach(function () {
-                this.player1.clickCard(this.attachment);
-                this.player1.clickCard(this.aegon);
-                this.completeMarshalPhase();
-                this.player1.clickPrompt("player1 - The Mad King's Command");
+        this.dupe = this.grandMaesterPycelle.dupes[0];
+    });
 
-                // P1 Choosing characters
-                this.player1.clickPrompt('Done');
-                // P1 Choosing attachments
-                this.player1.clickCard(this.attachment);
-                this.player1.clickPrompt('Done');
-                // P1 Choosing cards in hand/shadow
-                this.player1.clickPrompt('Done');
-                // P2 Choosing characters
-                this.player2.clickPrompt('Done');
-                // P2 Choosing attachments
-                this.player2.clickPrompt('Done');
-                // P2 Choosing cards in hand/shadow
-                this.player2.clickPrompt('Done');
+    it('has each player choose up to 3 cards of each type to keep', function () {
+        expect(this.player1).toHavePrompt('Select up to 3 characters');
+        expect(this.player1).toBeAbleToSelect(this.hedgeKnight);
+        expect(this.player1).toBeAbleToSelect(this.tumblestoneKnight);
+        expect(this.player1).toBeAbleToSelect(this.bastardInHiding);
+        expect(this.player1).not.toBeAbleToSelect(this.oldGate);
+        expect(this.player1).not.toBeAbleToSelect(this.littleBird);
 
-                // Skip placement order
-                this.player1.clickPrompt('Done');
-                this.player2.clickPrompt('Done');
-            });
+        this.player1.clickCard(this.hedgeKnight);
+        this.player1.clickPrompt('Done');
+        this.player1.clickCard(this.littleBird);
+        this.player1.clickPrompt('Done');
+        this.player1.clickCard(this.oldGate);
+        this.player1.clickPrompt('Done');
+        this.player1.clickCard(this.nightmares);
+        this.player1.clickCard(this.houseUmberBerserkers);
+        this.player1.clickPrompt('Done');
 
-            it("should return that attachment to it's owners hand", function () {
-                expect(this.aegon.location).toBe('draw deck');
-                expect(this.attachment.location).toBe('hand');
-            });
-        });
+        expect(this.player2).toHavePrompt('Select up to 3 characters');
+        expect(this.player2).toBeAbleToSelect(this.bastardInHiding);
+        expect(this.player2).toBeAbleToSelect(this.hedgeKnight);
 
-        describe('when a card not chosen would change locations before it is moved to deck', function () {
-            beforeEach(function () {
-                this.player1.clickCard(this.lemore);
-                this.completeMarshalPhase();
-                this.player1.clickPrompt("player1 - The Mad King's Command");
+        this.player2.clickCard(this.bastardInHiding);
+        this.player2.clickPrompt('Done');
+        this.player2.clickPrompt('Done');
+        this.player2.clickCard(this.theRoseroad);
+        this.player2.clickPrompt('Done');
+        this.player2.clickCard(this.tithe);
+        this.player2.clickPrompt('Done');
 
-                // P1 Choosing characters
-                this.player1.clickPrompt('Done');
-                // P1 Choosing cards in hand/shadow
-                this.player1.clickPrompt('Done');
-                // P2 Choosing characters
-                this.player2.clickPrompt('Done');
-                // P2 Choosing cards in hand/shadow
-                this.player2.clickPrompt('Done');
+        expect(this.hedgeKnight.location).toBe('play area');
+        expect(this.littleBird.location).toBe('play area');
+        expect(this.oldGate.location).toBe('play area');
+        expect(this.nightmares.location).toBe('hand');
+        expect(this.houseUmberBerserkers.location).toBe('shadows');
+        expect(this.bastardInHiding.location).toBe('play area');
+        expect(this.theRoseroad.location).toBe('play area');
+        expect(this.tithe.location).toBe('hand');
+        this.player1.clickPrompt('Done');
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-                // Trigger Lemore on Aegon
-                this.player1.clickCard(this.lemore);
-                this.player1.clickCard(this.aegon);
+    it("places each card not chosen on the bottom of its owner's deck, which cannot be saved", function () {
+        for (const player of [this.player1, this.player2]) {
+            expect(player).toHavePrompt('Select up to 3 characters');
+            player.clickPrompt('Done');
+            expect(player).toHavePrompt('Select up to 3 attachments');
+            player.clickPrompt('Done');
+            expect(player).toHavePrompt('Select up to 3 locations');
+            player.clickPrompt('Done');
+            expect(player).toHavePrompt('Select up to 3 cards');
+            player.clickPrompt('Done');
+        }
+        this.player1.clickPrompt('Done');
+        this.player2.clickPrompt('Done');
 
-                // Skip placement order
-                this.player1.clickPrompt('Done');
-                this.player2.clickPrompt('Done');
-            });
-
-            it('should not be moved to deck', function () {
-                expect(this.lemore.location).toBe('draw deck');
-                expect(this.aegon.location).toBe('shadows');
-            });
-        });
+        expect(this.hedgeKnight.location).toBe('draw deck');
+        expect(this.grandMaesterPycelle.location).toBe('draw deck');
+        expect(this.dupe.location).toBe('discard pile');
+        expect(this.tumblestoneKnight.location).toBe('draw deck');
+        expect(this.oldGate.location).toBe('draw deck');
+        expect(this.nightmares.location).toBe('draw deck');
+        expect(this.houseUmberBerserkers.location).toBe('draw deck');
+        expect(this.littleBird.location).not.toBe('play area');
+        expect(this.bastardInHiding.location).toBe('draw deck');
+        expect(this.theRoseroad.location).toBe('draw deck');
+        expect(this.tithe.location).toBe('draw deck');
+        expect(this.player1).isReadyToTakeAction();
     });
 });

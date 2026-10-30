@@ -2,16 +2,16 @@ import BaseAbilityWindow from '../../../server/game/gamesteps/BaseAbilityWindow.
 
 describe('BaseAbilityWindow', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['queueStep', 'emit', 'resolveAbility']);
+        this.gameSpy = { queueStep: vi.fn(), emit: vi.fn(), resolveAbility: vi.fn() };
 
-        this.eventSpy = jasmine.createSpyObj('event', [
-            'clearAttachedEvents',
-            'emitTo',
-            'getConcurrentEvents'
-        ]);
-        this.eventSpy.getConcurrentEvents.and.returnValue([this.eventSpy]);
+        this.eventSpy = {
+            clearAttachedEvents: vi.fn(),
+            emitTo: vi.fn(),
+            getConcurrentEvents: vi.fn()
+        };
+        this.eventSpy.getConcurrentEvents.mockReturnValue([this.eventSpy]);
 
-        this.abilitySpy = jasmine.createSpyObj('ability', ['isTriggeredByContext', 'canResolve']);
+        this.abilitySpy = { isTriggeredByContext: vi.fn(), canResolve: vi.fn() };
 
         this.window = new BaseAbilityWindow(this.gameSpy, {
             event: this.eventSpy,
@@ -77,7 +77,7 @@ describe('BaseAbilityWindow', function () {
             this.card = { card: 1 };
             this.context = { event: this.eventSpy, player: this.player };
             this.abilitySpy.card = this.card;
-            this.abilitySpy.canResolve.and.returnValue(true);
+            this.abilitySpy.canResolve.mockReturnValue(true);
         });
 
         describe('when the ability can be registerd', function () {
@@ -86,8 +86,8 @@ describe('BaseAbilityWindow', function () {
             });
 
             it('should register the ability', function () {
-                expect(this.window.abilityChoices).toContain(
-                    jasmine.objectContaining({
+                expect(this.window.abilityChoices).toContainEqual(
+                    expect.objectContaining({
                         ability: this.abilitySpy,
                         card: this.card,
                         context: this.context,
@@ -99,7 +99,7 @@ describe('BaseAbilityWindow', function () {
 
         describe('when the ability does not meet requirements', function () {
             beforeEach(function () {
-                this.abilitySpy.canResolve.and.returnValue(false);
+                this.abilitySpy.canResolve.mockReturnValue(false);
 
                 this.window.registerAbility(this.abilitySpy, this.context);
             });

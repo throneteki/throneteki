@@ -10,6 +10,7 @@ import MovePowerFromFactionCost from './costs/MovePowerFromFactionCost.js';
 import DiscardFromDeckCost from './costs/DiscardFromDeckCost.js';
 import ReduceableGoldCost from './costs/ReduceableGoldCost.js';
 import { Tokens } from './Constants/index.js';
+import GameActions from './GameActions/index.js';
 import MovePowerFromCardCost from './costs/MovePowerFromCardCost.js';
 
 const Costs = {
@@ -189,7 +190,11 @@ const Costs = {
                 context.originalLocation = context.source.location;
                 // For events being played from underneath another card
                 context.originalParent = context.source.parent;
-                context.source.controller.moveCard(context.source, 'being played');
+                context.originalFacedown = context.source.facedown;
+                context.game.resolveGameAction(
+                    GameActions.placeCard({ card: context.source, location: 'being played' }),
+                    context
+                );
             }
         };
     },
@@ -439,10 +444,10 @@ const Costs = {
     discardXGold: function (minFunc, maxFunc) {
         return {
             canPay: function (context) {
-                return context.source.tokens.gold >= minFunc(context);
+                return (context.source.tokens.gold || 0) >= minFunc(context);
             },
             resolve: function (context, result = { resolved: false }) {
-                let max = Math.min(maxFunc(context), context.source.tokens.gold);
+                let max = Math.min(maxFunc(context), context.source.tokens.gold || 0);
 
                 context.game.queueStep(new XValuePrompt(minFunc(context), max, context));
 
@@ -451,7 +456,14 @@ const Costs = {
                 return result;
             },
             pay: function (context) {
-                context.source.modifyToken(Tokens.gold, -context.xValue);
+                context.game.resolveGameAction(
+                    GameActions.discardToken({
+                        card: context.source,
+                        token: Tokens.gold,
+                        amount: context.xValue
+                    }),
+                    context
+                );
             }
         };
     },

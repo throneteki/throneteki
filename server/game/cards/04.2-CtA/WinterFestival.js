@@ -1,19 +1,23 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WinterFestival extends PlotCard {
+    // Winter Festival (04040)
+    // Interrupt: When the challenges phase ends, if there are no Summer plot cards revealed, gain 2
+    // power for your faction.
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onPhaseEnded: (event) =>
+                onPhaseEnded: (event, context) =>
                     event.phase === 'challenge' &&
-                    !this.game.anyPlotHasTrait('Summer') &&
-                    this.controller.canGainFactionPower()
+                    !context.game.anyPlotHasTrait('Summer') &&
+                    context.source.controller.canGainFactionPower()
             },
-            handler: () => {
-                this.game.addPower(this.controller, 2);
-
-                this.game.addMessage('{0} gains 2 power from {1}', this.controller, this);
-            }
+            message: '{player} gains 2 power from {source}',
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.player.faction,
+                amount: 2
+            }))
         });
     }
 }

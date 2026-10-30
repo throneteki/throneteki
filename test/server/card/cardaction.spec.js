@@ -1,40 +1,38 @@
+import GameActions from '../../../server/game/GameActions/index.js';
 import CardAction from '../../../server/game/cardaction.js';
 
 describe('CardAction', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', [
-            'on',
-            'popAbilityContext',
-            'pushAbilityContext',
-            'removeListener',
-            'raiseEvent',
-            'resolveAbility',
-            'resolveGameAction'
-        ]);
+        this.gameSpy = {
+            getActionTimingRequirement: vi.fn(),
+            on: vi.fn(),
+            popAbilityContext: vi.fn(),
+            pushAbilityContext: vi.fn(),
+            removeListener: vi.fn(),
+            raiseEvent: vi.fn(),
+            resolveAbility: vi.fn(),
+            resolveGameAction: vi.fn()
+        };
         this.gameSpy.currentPhase = 'marshal';
 
-        this.playerSpy = jasmine.createSpyObj('player', ['canTrigger']);
-        this.playerSpy.canTrigger.and.returnValue(true);
+        this.playerSpy = { canTrigger: vi.fn() };
+        this.playerSpy.canTrigger.mockReturnValue(true);
 
-        this.otherPlayerSpy = jasmine.createSpyObj('player', ['canTrigger']);
-        this.otherPlayerSpy.canTrigger.and.returnValue(true);
+        this.otherPlayerSpy = { canTrigger: vi.fn() };
+        this.otherPlayerSpy.canTrigger.mockReturnValue(true);
 
-        this.cardSpy = jasmine.createSpyObj('card', [
-            'getPrintedType',
-            'isAnyBlank',
-            'createSnapshot'
-        ]);
-        this.cardSpy.createSnapshot.and.returnValue(this.cardSpy);
-        this.handlerSpy = jasmine.createSpy('handler');
+        this.cardSpy = { getPrintedType: vi.fn(), isAnyBlank: vi.fn(), createSnapshot: vi.fn() };
+        this.cardSpy.createSnapshot.mockReturnValue(this.cardSpy);
+        this.handlerSpy = vi.fn();
 
-        this.limitSpy = jasmine.createSpyObj('limit', [
-            'increment',
-            'isAtMax',
-            'registerEvents',
-            'unregisterEvents'
-        ]);
+        this.limitSpy = {
+            increment: vi.fn(),
+            isAtMax: vi.fn(),
+            registerEvents: vi.fn(),
+            unregisterEvents: vi.fn()
+        };
 
-        this.gameSpy.raiseEvent.and.callFake((name, params, handler) => {
+        this.gameSpy.raiseEvent.mockImplementation((name, params, handler) => {
             if (handler) {
                 handler(params);
             }
@@ -42,7 +40,7 @@ describe('CardAction', function () {
 
         this.properties = {
             title: 'Do the thing',
-            handler: this.handlerSpy
+            gameAction: GameActions.genericHandler(this.handlerSpy, () => true)
         };
     });
 
@@ -70,18 +68,18 @@ describe('CardAction', function () {
                 });
             });
 
-            describe('when passed a handler directly', function () {
+            describe('when passed an explicit callback game action', function () {
                 beforeEach(function () {
                     this.properties = {
                         title: 'Do the thing',
-                        handler: jasmine.createSpy('handler')
+                        gameAction: GameActions.genericHandler(vi.fn(), () => true)
                     };
                     this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
                 });
 
-                it('should convert the handler to a game action', function () {
+                it('should resolve the supplied game action', function () {
                     this.action.gameAction.createEvent(this.context).executeHandler();
-                    expect(this.properties.handler).toHaveBeenCalledWith(this.context);
+                    expect(this.properties.gameAction.handler).toHaveBeenCalledWith(this.context);
                 });
             });
         });
@@ -93,19 +91,19 @@ describe('CardAction', function () {
             });
 
             it('should default to agenda for cards with type agenda', function () {
-                this.cardSpy.getPrintedType.and.returnValue('agenda');
+                this.cardSpy.getPrintedType.mockReturnValue('agenda');
                 this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
                 expect(this.action.location).toBe('agenda');
             });
 
             it('should default to active plot for cards with type plot', function () {
-                this.cardSpy.getPrintedType.and.returnValue('plot');
+                this.cardSpy.getPrintedType.mockReturnValue('plot');
                 this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
                 expect(this.action.location).toBe('active plot');
             });
 
             it('should default to hand for cards with type event', function () {
-                this.cardSpy.getPrintedType.and.returnValue('event');
+                this.cardSpy.getPrintedType.mockReturnValue('event');
                 this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
                 expect(this.action.location).toBe('hand');
             });
@@ -120,7 +118,7 @@ describe('CardAction', function () {
         describe('cost', function () {
             describe('when the card type is event', function () {
                 beforeEach(function () {
-                    this.cardSpy.getPrintedType.and.returnValue('event');
+                    this.cardSpy.getPrintedType.mockReturnValue('event');
                     this.properties.cost = ['foo'];
                     this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
                 });
@@ -147,7 +145,7 @@ describe('CardAction', function () {
 
             describe('and the use count has reached the limit', function () {
                 beforeEach(function () {
-                    this.limitSpy.isAtMax.and.returnValue(true);
+                    this.limitSpy.isAtMax.mockReturnValue(true);
 
                     this.action.execute(this.player, 'arg');
                 });
@@ -212,7 +210,7 @@ describe('CardAction', function () {
 
         describe('when the card is blank', function () {
             beforeEach(function () {
-                this.cardSpy.isAnyBlank.and.returnValue(true);
+                this.cardSpy.isAnyBlank.mockReturnValue(true);
                 this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
                 this.action.execute(this.player, 'arg');
             });
@@ -266,14 +264,14 @@ describe('CardAction', function () {
 
         describe('when a condition is provided', function () {
             beforeEach(function () {
-                this.condition = jasmine.createSpy('condition');
+                this.condition = vi.fn();
                 this.properties.condition = this.condition;
                 this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
             });
 
             describe('and the condition returns true', function () {
                 beforeEach(function () {
-                    this.condition.and.returnValue(true);
+                    this.condition.mockReturnValue(true);
                     this.action.execute(this.player, 'arg');
                 });
 
@@ -284,7 +282,7 @@ describe('CardAction', function () {
 
             describe('and the condition returns false', function () {
                 beforeEach(function () {
-                    this.condition.and.returnValue(false);
+                    this.condition.mockReturnValue(false);
                     this.action.execute(this.player, 'arg');
                 });
 
@@ -311,8 +309,8 @@ describe('CardAction', function () {
             this.player = { player: 1 };
             this.cardSpy.controller = this.player;
             this.cardSpy.location = 'play area';
-            this.costSpy = jasmine.createSpyObj('cost', ['canUnpay', 'unpay']);
-            this.costSpy.canUnpay.and.returnValue(true);
+            this.costSpy = { canUnpay: vi.fn(), unpay: vi.fn() };
+            this.costSpy.canUnpay.mockReturnValue(true);
             this.properties.cost = this.costSpy;
             this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
             this.bottomContext = { context: 'bottom', player: this.player };
@@ -361,7 +359,7 @@ describe('CardAction', function () {
 
         describe('when the cost cannot be unpaid', function () {
             beforeEach(function () {
-                this.costSpy.canUnpay.and.returnValue(false);
+                this.costSpy.canUnpay.mockReturnValue(false);
                 this.result = this.action.deactivate(this.player);
             });
 
@@ -457,7 +455,7 @@ describe('CardAction', function () {
 
         it('returns the menu item format', function () {
             expect(this.menuItem).toEqual(
-                jasmine.objectContaining({ text: 'Do the thing', method: 'doAction', arg: 'arg' })
+                expect.objectContaining({ text: 'Do the thing', method: 'doAction', arg: 'arg' })
             );
         });
 
@@ -482,15 +480,15 @@ describe('CardAction', function () {
                 source: this.cardSpy,
                 arg: 'arg'
             };
-            this.handler = jasmine.createSpy('handler');
-            this.properties.handler = this.handler;
+            this.handler = vi.fn();
+            this.properties.gameAction = GameActions.genericHandler(this.handler, () => true);
             this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
             this.action.executeHandler(this.context);
         });
 
         it('should resolve the game action', function () {
             expect(this.gameSpy.resolveGameAction).toHaveBeenCalledWith(
-                jasmine.any(Object),
+                expect.any(Object),
                 this.context
             );
         });

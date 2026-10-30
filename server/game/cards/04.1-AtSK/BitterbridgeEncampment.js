@@ -1,58 +1,31 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BitterbridgeEncampment extends DrawCard {
+    // Bitterbridge Encampment (04005)
+    // Reaction: After a Summer plot card is revealed, kneel Bitterbridge Encampment. Then, each
+    // player may put a character into play from his or her hand.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPlotsRevealed: (event) =>
-                    event.plots.some((plot) => plot.hasTrait('Summer')) && !this.kneeled
+                onPlotsRevealed: (event) => event.plots.some((plot) => plot.hasTrait('Summer'))
             },
-            handler: () => {
-                this.controller.kneelCard(this);
-
-                this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder();
-                this.selections = [];
-                this.proceedToNextStep();
-            }
+            message:
+                '{player} kneels {source} to have each player put a character into play from their hand',
+            gameAction: GameActions.kneelCard((context) => ({ card: context.source })).then({
+                gameAction: GameActions.chooseCards({
+                    players: (context) => context.game.getPlayersInFirstPlayerOrder(),
+                    mode: 'upTo',
+                    numCards: 1,
+                    title: 'Select a character to put into play',
+                    cardCondition: (card, context) =>
+                        card.controller === context.choosingPlayer &&
+                        card.getType() === 'character' &&
+                        card.location === 'hand',
+                    gameAction: (card) => GameActions.putIntoPlay({ player: card.controller, card })
+                })
+            })
         });
-    }
-
-    cancelSelection(player) {
-        this.game.addMessage('{0} does not select a character for {1}', player, this);
-        this.proceedToNextStep();
-    }
-
-    onCardSelected(player, card) {
-        this.selections.push({ player: player, card: card });
-        this.game.addMessage('{0} selects {1} to put into play with {2}', player, card, this);
-        this.proceedToNextStep();
-
-        return true;
-    }
-
-    doPutIntoPlay() {
-        for (let selection of this.selections) {
-            let player = selection.player;
-            player.putIntoPlay(selection.card);
-        }
-    }
-
-    proceedToNextStep() {
-        if (this.remainingPlayers.length > 0) {
-            let currentPlayer = this.remainingPlayers.shift();
-            this.game.promptForSelect(currentPlayer, {
-                source: this,
-                cardCondition: (card) =>
-                    card.controller === currentPlayer &&
-                    card.getType() === 'character' &&
-                    card.location === 'hand' &&
-                    currentPlayer.canPutIntoPlay(card),
-                onSelect: (player, card) => this.onCardSelected(player, card),
-                onCancel: (player) => this.cancelSelection(player)
-            });
-        } else {
-            this.doPutIntoPlay();
-        }
     }
 }
 

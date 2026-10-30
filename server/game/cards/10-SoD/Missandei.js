@@ -1,25 +1,24 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Missandei extends DrawCard {
+    // Missandei (10035)
+    // Interrupt: When Missandei is discarded from your hand or deck, put her into play instead of
+    // placing her in your discard pile.
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCardDiscarded: (event) =>
-                    event.card === this &&
-                    this.controller.canPutIntoPlay(this) &&
+                onCardDiscarded: (event, context) =>
+                    event.card === context.source &&
                     ['draw deck', 'hand'].includes(event.originalLocation)
             },
             location: ['hand', 'draw deck'],
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to put {1} into play instead of placing in their discard pile',
-                    this.controller,
-                    this
-                );
-                context.event.replaceHandler(() => {
-                    this.controller.putIntoPlay(this);
-                });
-            }
+            message:
+                '{player} uses {source} to put {source} into play instead of placing it in their discard pile',
+            gameAction: GameActions.replaceEvent((context) => ({
+                event: context.event,
+                replacement: GameActions.putIntoPlay({ card: context.source })
+            }))
         });
     }
 }

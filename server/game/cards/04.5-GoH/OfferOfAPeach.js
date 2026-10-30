@@ -1,28 +1,27 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class OfferOfAPeach extends DrawCard {
+    // Offer of a Peach (04084)
+    // Play only if you control Renly Baratheon or a Lady character.
+    // Challenges Action: Choose an attacking character. Stand that character and remove it from the
+    // challenge.
     setupCardAbilities() {
         this.action({
             title: 'Remove character from challenge',
-            condition: () =>
-                this.controller.anyCardsInPlay(
+            condition: (context) =>
+                context.source.controller.anyCardsInPlay(
                     (card) => card.hasTrait('Lady') || card.name === 'Renly Baratheon'
                 ),
             phase: 'challenge',
             target: {
-                cardCondition: (card) => this.cardCondition(card)
+                cardCondition: (card, context) => context.source.cardCondition(card)
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.currentChallenge.removeFromChallenge(context.target);
-
-                this.game.addMessage(
-                    '{0} uses {1} to stand {2} and remove them from the challenge',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to stand {target} and remove them from the challenge',
+            gameAction: GameActions.simultaneously([
+                GameActions.standCard((context) => ({ card: context.target })),
+                GameActions.removeFromChallenge((context) => ({ card: context.target }))
+            ])
         });
     }
 

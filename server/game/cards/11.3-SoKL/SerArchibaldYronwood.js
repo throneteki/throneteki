@@ -1,40 +1,31 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerArchibaldYronwood extends DrawCard {
+    // Ser Archibald Yronwood (11055)
+    // Shadow (4). No attachments except Weapon.
+    // Reaction: After you lose dominance, the winning opponent must choose and kill a character he
+    // or she controls.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onDominanceDetermined: (event) => event.winner && this.controller !== event.winner
+                onDominanceDetermined: (event, context) =>
+                    event.winner && event.winner !== context.player
             },
-            handler: (context) => {
-                this.game.promptForSelect(context.event.winner, {
-                    source: this,
-                    cardCondition: (card) =>
-                        card.location === 'play area' &&
-                        card.controller === context.event.winner &&
-                        card.getType() === 'character',
-                    gameAction: 'kill',
-                    onSelect: (player, card) => this.onCardSelected(player, card),
-                    onCancel: (player) => this.cancelSelection(player)
-                });
-            }
+            message: {
+                format: '{player} uses {source} to have {winner} choose and kill a character they control',
+                args: { winner: (context) => context.event.winner }
+            },
+            gameAction: GameActions.chooseCards({
+                player: (context) => context.event.winner,
+                title: 'Select a character to kill',
+                cardCondition: (card, context) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.controller === context.choosingPlayer,
+                gameAction: (card) => GameActions.kill({ card })
+            })
         });
-    }
-    onCardSelected(player, card) {
-        this.game.killCharacter(card);
-        this.game.addMessage(
-            '{0} uses {1} to have {2} choose and kill {3}',
-            this.controller,
-            this,
-            player,
-            card
-        );
-        return true;
-    }
-
-    cancelSelection(player) {
-        this.game.addAlert('danger', '{0} cancels the resolution of {1}', player, this);
-        return true;
     }
 }
 

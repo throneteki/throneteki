@@ -2,15 +2,15 @@ import ReturnCardToHand from '../../../server/game/GameActions/ReturnCardToHand.
 
 describe('ReturnCardToHand', function () {
     beforeEach(function () {
-        this.playerSpy = jasmine.createSpyObj('player', ['']);
-        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'createSnapshot']);
+        this.playerSpy = {};
+        this.cardSpy = { allowGameAction: vi.fn(), createSnapshot: vi.fn() };
         this.cardSpy.controller = this.playerSpy;
         this.props = { card: this.cardSpy, allowSave: true };
     });
 
     describe('allow()', function () {
         beforeEach(function () {
-            this.cardSpy.allowGameAction.and.returnValue(true);
+            this.cardSpy.allowGameAction.mockReturnValue(true);
         });
 
         for (let location of ['dead pile', 'discard pile', 'play area', 'shadows', 'duplicate']) {
@@ -74,7 +74,7 @@ describe('ReturnCardToHand', function () {
 
         describe('the event handler', function () {
             beforeEach(function () {
-                this.cardSpy.createSnapshot.and.returnValue('snapshot');
+                this.cardSpy.createSnapshot.mockReturnValue('snapshot');
                 this.event.executeHandler();
             });
 

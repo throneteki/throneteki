@@ -1,10 +1,13 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SetDownOurDeeds extends DrawCard {
+    // Set Down Our Deeds (20005)
+    // Action: Kneel your faction card to discard up to 3 power from a card you own. Draw 2 cards
+    // for each power discarded this way.
     setupCardAbilities(ability) {
         this.action({
             title: 'Discard power to draw',
-            condition: () => this.controller.canDraw(),
             cost: ability.costs.kneelFactionCard(),
             target: {
                 activePromptTitle: 'Select card with power',
@@ -14,42 +17,32 @@ class SetDownOurDeeds extends DrawCard {
                     card.power > 0,
                 cardType: ['attachment', 'character', 'faction', 'location', 'plot']
             },
-            handler: (context) => {
-                this.target = context.target;
-
-                let nums = [];
-                let maxAmount = Math.min(context.target.power, 3);
-                for (var i = 1; i <= maxAmount; i++) {
-                    nums.push(i);
-                }
-                let buttons = nums.map((num) => {
-                    return { text: num, method: 'numSelected', arg: num };
-                });
-
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: 'Select # of power to discard',
-                        buttons: buttons
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.choose({
+                title: 'Select # of power to discard',
+                message: {
+                    format: '{player} plays {source} and discards {choice} power from {target} to draw {cards} cards',
+                    args: { cards: (context) => Number(context.selectedChoice.text) * 2 }
+                },
+                choices: (context) =>
+                    Object.fromEntries(
+                        [1, 2, 3]
+                            .filter((amount) => amount <= context.target.power)
+                            .map((amount) => [
+                                `${amount}`,
+                                GameActions.simultaneously([
+                                    GameActions.discardPower((context) => ({
+                                        card: context.target,
+                                        amount
+                                    })),
+                                    GameActions.drawCards((context) => ({
+                                        player: context.player,
+                                        amount: amount * 2
+                                    }))
+                                ])
+                            ])
+                    )
+            })
         });
-    }
-
-    numSelected(player, num) {
-        this.game.addMessage(
-            '{0} plays {1} and discards {2} power from {3} to draw {4}',
-            player,
-            this,
-            num,
-            this.target,
-            num * 2
-        );
-        this.target.modifyPower(num * -1);
-        player.drawCardsToHand(num * 2);
-        this.target = undefined;
-        return true;
     }
 }
 

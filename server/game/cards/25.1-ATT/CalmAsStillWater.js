@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class CalmAsStillWater extends DrawCard {
+    // Calm as Still Water (25018)
+    // Interrupt: When a character with printed cost 3 or lower would be killed, save it and return
+    // it to its owner's hand.
     setupCardAbilities() {
         this.interrupt({
             canCancel: true,
@@ -17,9 +20,7 @@ class CalmAsStillWater extends DrawCard {
                 args: { character: (context) => context.event.card }
             },
             gameAction: GameActions.simultaneously([
-                GameActions.genericHandler((context) => {
-                    context.event.saveCard();
-                }),
+                GameActions.saveCard((context) => ({ event: context.event, remediesBurn: true })),
                 GameActions.returnCardToHand((context) => ({ card: context.event.card }))
             ])
         });

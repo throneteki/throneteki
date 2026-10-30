@@ -1,13 +1,25 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+
+function getMinimumCost(source) {
+    return source.game
+        .filterCardsInPlay((card) => card !== source && card.getType() === 'character')
+        .map((card) => card.getPrintedCost())
+        .reduce((acc, val) => Math.min(acc, val), 0);
+}
 
 class Catspaw extends DrawCard {
+    // Catspaw (11049)
+    // Shadow (2).
+    // Reaction: After Catspaw comes out of shadows, pay X gold to choose another character with
+    // printed cost X or lower and return it to its owner's hand.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             cost: ability.costs.payXGold(
-                () => this.getMinimumCost(),
+                (context) => getMinimumCost(context.source),
                 () => 99
             ),
             target: {
@@ -16,27 +28,14 @@ class Catspaw extends DrawCard {
                     card.getType() === 'character' &&
                     (context.xValue
                         ? card.getPrintedCost() <= context.xValue
-                        : card.getPrintedCost() <= this.controller.getSpendableGold())
+                        : card.getPrintedCost() <= context.source.controller.getSpendableGold())
             },
-            handler: (context) => {
-                context.target.controller.returnCardToHand(context.target);
-                this.game.addMessage(
-                    "{0} uses {1} and pays {2} gold to return {3} to {4}'s hand",
-                    context.player,
-                    this,
-                    context.costs.gold,
-                    context.target,
-                    context.target.owner
-                );
-            }
+            message: {
+                format: "{player} uses {source} and pays {costs.gold} gold to return {target} to {owner}'s hand",
+                args: { owner: (context) => context.target.owner }
+            },
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
-    }
-
-    getMinimumCost() {
-        return this.game
-            .filterCardsInPlay((card) => card !== this && card.getType() === 'character')
-            .map((card) => card.getPrintedCost())
-            .reduce((acc, val) => Math.min(acc, val), 0);
     }
 }
 

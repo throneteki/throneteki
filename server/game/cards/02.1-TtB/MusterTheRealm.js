@@ -1,9 +1,12 @@
 import PlotCard from '../../plotcard.js';
 
 class MusterTheRealm extends PlotCard {
+    // Muster the Realm (02019)
+    // During a challenge in which you control an attacking Army character, raise the claim value on
+    // Muster the Realm by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.hasAttackingArmy(),
+            condition: (context) => context.source.hasAttackingArmy(),
             match: this,
             effect: ability.effects.modifyClaim(1)
         });

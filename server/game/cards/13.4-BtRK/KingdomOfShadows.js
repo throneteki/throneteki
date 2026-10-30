@@ -1,6 +1,11 @@
 import AgendaCard from '../../agendacard.js';
 
 class KingdomOfShadows extends AgendaCard {
+    // Kingdom of Shadows (13079)
+    // You may include non-loyal characters with the printed shadow keyword from any faction in your
+    // deck.
+    // Increase the cost of each character you marshal by 1. Reduce the cost of the first character
+    // you bring out of shadows each round by 2.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',

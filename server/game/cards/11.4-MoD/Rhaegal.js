@@ -1,18 +1,20 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Rhaegal extends DrawCard {
+    // Rhaegal (11073)
+    // Ambush (5). No attachments.
+    // Reaction: After an opponent's character is killed by a card effect, stand Rhaegal.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCharacterKilled: (event) =>
-                    !this.game.claim.isApplying &&
-                    event.card.controller !== this.controller &&
-                    this.kneeled
+                onCharacterKilled: (event, context) =>
+                    !event.isClaim &&
+                    event.card.controller !== context.source.controller &&
+                    context.source.kneeled
             },
-            handler: (context) => {
-                context.player.standCard(this);
-                this.game.addMessage('{0} stands {1}', context.player, this);
-            }
+            message: '{player} stands {source}',
+            gameAction: GameActions.standCard((context) => ({ card: context.source }))
         });
     }
 }

@@ -106,11 +106,25 @@ class AbilityMessage {
             { name: 'searchTarget', getValue: (context) => context.searchTarget },
             {
                 name: 'gameAction',
-                getValue: (context) => context.gameAction && context.gameAction.message(context)
+                getValue: (context) => this.getGameActionMessage(context)
             }
         ];
 
         return optionalArgTypes.filter((argType) => format.includes(`{${argType.name}}`));
+    }
+
+    getGameActionMessage(context) {
+        const gameAction = context.gameAction;
+        if (!gameAction) {
+            return undefined;
+        }
+
+        const result = context.gameActionResult;
+        if (result && result.gameAction === gameAction) {
+            return gameAction.resultMessage(context, result.event);
+        }
+
+        return gameAction.message(context);
     }
 
     getTargetSelectionArgs(format) {

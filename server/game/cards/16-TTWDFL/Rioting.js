@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Rioting extends PlotCard {
+    // Rioting (16032)
+    // Forced Reaction: After the standing phase begins, discard each kneeling character from play
+    // (cannot be saved).
     setupCardAbilities() {
         this.forcedReaction({
             when: {
@@ -9,12 +12,12 @@ class Rioting extends PlotCard {
             },
             message: {
                 format: '{player} is forced by {source} to discard {characters} from play',
-                args: { characters: () => this.getKneelingCharacters() }
+                args: { characters: (context) => context.source.getKneelingCharacters() }
             },
-            gameAction: GameActions.simultaneously(() =>
-                this.getKneelingCharacters().map((card) =>
-                    GameActions.discardCard({ card, allowSave: false })
-                )
+            gameAction: GameActions.simultaneously((context) =>
+                context.source
+                    .getKneelingCharacters()
+                    .map((card) => GameActions.discardCard({ card, allowSave: false }))
             )
         });
     }

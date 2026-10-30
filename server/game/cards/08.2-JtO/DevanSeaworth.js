@@ -2,10 +2,16 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class DevanSeaworth extends DrawCard {
+    // Devan Seaworth (08027)
+    // Bestow (3).
+    // Reaction: After you win dominance, discard X gold from Devan Seaworth to search your deck for
+    // a non-limited location with printed cost X or lower, reveal it, and put it into play (X
+    // cannot be 0). Shuffle your deck.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onDominanceDetermined: (event) => event.winner === this.controller
+                onDominanceDetermined: (event, context) =>
+                    event.winner === context.source.controller
             },
             cost: ability.costs.discardXGold(
                 () => 1,

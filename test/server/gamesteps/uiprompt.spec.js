@@ -2,21 +2,13 @@ import UiPrompt from '../../../server/game/gamesteps/uiprompt.js';
 
 describe('the UiPrompt', function () {
     beforeEach(function () {
-        this.player1 = jasmine.createSpyObj('player', [
-            'setPrompt',
-            'cancelPrompt',
-            'setIsActivePrompt'
-        ]);
+        this.player1 = { setPrompt: vi.fn(), cancelPrompt: vi.fn(), setIsActivePrompt: vi.fn() };
         this.player1.isPlaying = () => !this.player1.eliminated && !this.player1.left;
-        this.player2 = jasmine.createSpyObj('player', [
-            'setPrompt',
-            'cancelPrompt',
-            'setIsActivePrompt'
-        ]);
+        this.player2 = { setPrompt: vi.fn(), cancelPrompt: vi.fn(), setIsActivePrompt: vi.fn() };
         this.player2.isPlaying = () => !this.player2.eliminated && !this.player2.left;
 
-        this.game = jasmine.createSpyObj('game', ['getPlayers', 'isEmpty']);
-        this.game.getPlayers.and.returnValue([this.player1, this.player2]);
+        this.game = { getPlayers: vi.fn(), isEmpty: vi.fn() };
+        this.game.getPlayers.mockReturnValue([this.player1, this.player2]);
 
         this.activePrompt = {
             menuTitle: 'Do stuff',
@@ -25,11 +17,11 @@ describe('the UiPrompt', function () {
         this.waitingPrompt = {};
 
         this.prompt = new UiPrompt(this.game);
-        spyOn(this.prompt, 'getPlayer').and.returnValue(this.player2);
-        spyOn(this.prompt, 'complete');
-        spyOn(this.prompt, 'activePrompt').and.returnValue(this.activePrompt);
-        spyOn(this.prompt, 'waitingPrompt').and.returnValue(this.waitingPrompt);
-        spyOn(this.prompt, 'activeCondition').and.callFake((player) => {
+        vi.spyOn(this.prompt, 'getPlayer').mockReturnValue(this.player2);
+        vi.spyOn(this.prompt, 'complete').mockImplementation(() => {});
+        vi.spyOn(this.prompt, 'activePrompt').mockReturnValue(this.activePrompt);
+        vi.spyOn(this.prompt, 'waitingPrompt').mockReturnValue(this.waitingPrompt);
+        vi.spyOn(this.prompt, 'activeCondition').mockImplementation((player) => {
             return player === this.player2;
         });
     });
@@ -37,7 +29,7 @@ describe('the UiPrompt', function () {
     describe('the continue() function', function () {
         describe('when the prompt is incomplete', function () {
             beforeEach(function () {
-                spyOn(this.prompt, 'isComplete').and.returnValue(false);
+                vi.spyOn(this.prompt, 'isComplete').mockReturnValue(false);
             });
 
             it('should set the active prompt for players meeting the active condition', function () {
@@ -47,7 +39,7 @@ describe('the UiPrompt', function () {
             });
 
             it('should default the command for any buttons on the active prompt', function () {
-                this.prompt.activePrompt.and.returnValue({ buttons: [{ text: 'foo' }] });
+                this.prompt.activePrompt.mockReturnValue({ buttons: [{ text: 'foo' }] });
                 this.prompt.continue();
                 expect(this.player2.setPrompt).toHaveBeenCalledWith({
                     buttons: [
@@ -90,7 +82,7 @@ describe('the UiPrompt', function () {
 
         describe('when the prompt is complete', function () {
             beforeEach(function () {
-                spyOn(this.prompt, 'isComplete').and.returnValue(true);
+                vi.spyOn(this.prompt, 'isComplete').mockReturnValue(true);
             });
 
             it('should set the cancel prompts for each player', function () {

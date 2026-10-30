@@ -1,6 +1,8 @@
 import BaseAbility from '../baseability.js';
 import Costs from '../costs.js';
 import Message from '../Message.js';
+import { Requirements } from '../Constants/index.js';
+import PutIntoPlay from '../GameActions/PutIntoPlay.js';
 
 class OutOfShadowsAction extends BaseAbility {
     constructor() {
@@ -14,13 +16,45 @@ class OutOfShadowsAction extends BaseAbility {
         return true;
     }
 
-    meetsRequirements(context) {
+    isRelevant({ game, player, source }) {
         return (
-            context.source.isShadow() &&
-            context.player.isCardInPlayableLocation(context.source, 'outOfShadows') &&
-            context.player.canPutIntoPlay(context.source, 'outOfShadows') &&
-            context.source.getType() !== 'event'
+            game.currentPhase !== 'setup' &&
+            source.getType() !== 'event' &&
+            source.isShadow() &&
+            player.isCardInPlayableLocation(source, 'outOfShadows')
         );
+    }
+
+    getUnmetRequirement(context) {
+        const timingRequirement = context.game.getActionTimingRequirement(context.player);
+        if (timingRequirement) {
+            return timingRequirement;
+        }
+
+        if (!context.source.isShadow() || context.source.getType() === 'event') {
+            return Requirements.condition;
+        }
+
+        if (!context.player.isCardInPlayableLocation(context.source, 'outOfShadows')) {
+            return Requirements.location;
+        }
+
+        if (!context.player.canPutIntoPlay(context.source, 'outOfShadows')) {
+            return Requirements.restriction;
+        }
+
+        if (
+            context.source.getType() === 'attachment' &&
+            !PutIntoPlay.canChangeGameState({
+                player: context.player,
+                card: context.source,
+                playingType: 'outOfShadows'
+            })
+        ) {
+            return Requirements.target;
+        }
+
+        return undefined;
     }
 
     executeHandler(context) {

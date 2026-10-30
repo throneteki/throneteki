@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ArnolfKarstark extends DrawCard {
+    // Arnolf Karstark (27011)
+    // Reaction: After a character or location is sacrificed, stand Arnolf Karstark. (Limit once per
+    // round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

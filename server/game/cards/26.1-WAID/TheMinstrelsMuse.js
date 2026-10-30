@@ -3,12 +3,15 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class TheMinstrelsMuse extends PlotCard {
+    // The Minstrel's Muse (26020)
+    // You cannot play more than 3 events this round.
+    // Reaction: After a Song event is played, draw 1 card.
     setupCardAbilities(ability) {
-        this.tracker = EventPlayedTracker.forPhase(this.game);
+        this.tracker = EventPlayedTracker.forRound(this.game);
         this.persistentEffect({
-            condition: () => true,
-            match: (player) =>
-                player === this.controller && this.tracker.getNumberOfPlayedEvents(player) >= 3,
+            match: (player, context) =>
+                player === context.source.controller &&
+                context.source.tracker.getNumberOfPlayedEvents(player) >= 3,
             targetController: 'any',
             effect: ability.effects.cannotPlay((card) => card.getType() === 'event')
         });

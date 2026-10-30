@@ -1,25 +1,23 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class CitadelArchivist extends DrawCard {
+    // Citadel Archivist (12041)
+    // Reaction: After Citadel Archivist enters your discard pile, each player shuffles his or her
+    // discard pile into his or her deck.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardPlaced: (event) =>
+                onCardPlaced: (event, context) =>
+                    event.card === context.source &&
                     event.card.location === 'discard pile' &&
-                    event.player === this.controller &&
-                    event.card === this
+                    event.player === context.player
             },
             location: 'discard pile',
             message: "{player} uses {source} to shuffle each player's discard pile into their deck",
-            handler: () => {
-                for (let player of this.game.getPlayersInFirstPlayerOrder()) {
-                    for (let card of player.discardPile) {
-                        player.moveCard(card, 'draw deck');
-                    }
-
-                    player.shuffleDrawDeck();
-                }
-            }
+            gameAction: GameActions.shuffleIntoDeck((context) => ({
+                cards: context.game.getPlayers().flatMap((player) => [...player.discardPile])
+            }))
         });
     }
 }

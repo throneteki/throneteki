@@ -1,42 +1,39 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class DrownedGodFanatic extends DrawCard {
+    // Drowned God Fanatic (11051)
+    // Action: Kill a character to put Drowned God Fanatic into play from your dead pile. (Max once
+    // per round.)
+    // Interrupt: When the effects of an opponent's triggered character ability would initiate,
+    // place Drowned God Fanatic into your dead pile from your hand to cancel those effects.
     setupCardAbilities(ability) {
         this.action({
             max: ability.limit.perRound(1),
             title: 'Put Drowned God Fanatic into play',
-            condition: () => this.controller.canPutIntoPlay(this),
             location: 'dead pile',
             cost: ability.costs.kill(),
-            handler: (context) => {
-                context.player.putIntoPlay(this);
-                this.game.addMessage(
-                    '{0} kills {1} to put {2} into play from their dead pile',
-                    context.player,
-                    context.costs.kill,
-                    this
-                );
-            }
+            message: '{player} kills {costs.kill} to put {source} into play from their dead pile',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.source
+            }))
         });
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: (event) =>
+                onCardAbilityInitiated: (event, context) =>
                     event.source.getType() === 'character' &&
                     event.ability.isTriggeredAbility() &&
-                    event.source.controller !== this.controller
+                    event.player !== context.player
             },
             location: 'hand',
             cost: ability.costs.placeSelfInDeadPileFromHand(),
-            handler: (context) => {
-                context.event.cancel();
-                this.game.addMessage(
-                    '{0} places {1} in their dead pile from their hand to cancel {2}',
-                    context.player,
-                    this,
-                    context.event.source
-                );
-            }
+            message: {
+                format: '{player} places {source} in their dead pile from their hand to cancel {eventSource}',
+                args: { eventSource: (context) => context.event.source }
+            },
+            gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
         });
     }
 }

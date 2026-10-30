@@ -2,12 +2,12 @@ import PlaceCard from '../../../server/game/GameActions/PlaceCard.js';
 
 describe('PlaceCard', function () {
     beforeEach(function () {
-        this.controllerSpy = jasmine.createSpyObj('player', ['placeCardInPile']);
+        this.controllerSpy = { placeCardInPile: vi.fn() };
         this.controllerSpy.drawDeck = [];
-        this.ownerSpy = jasmine.createSpyObj('player', ['placeCardInPile']);
+        this.ownerSpy = { placeCardInPile: vi.fn() };
         this.ownerSpy.drawDeck = [];
 
-        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'leavesPlay']);
+        this.cardSpy = { allowGameAction: vi.fn(), leavesPlay: vi.fn() };
         this.cardSpy.location = 'play area';
         this.cardSpy.controller = this.controllerSpy;
         this.cardSpy.owner = this.ownerSpy;
@@ -17,7 +17,7 @@ describe('PlaceCard', function () {
 
     describe('allow()', function () {
         beforeEach(function () {
-            this.cardSpy.allowGameAction.and.returnValue(true);
+            this.cardSpy.allowGameAction.mockReturnValue(true);
         });
 
         describe('when the card is being placed in a different location', function () {
@@ -99,7 +99,7 @@ describe('PlaceCard', function () {
         });
     });
 
-    xdescribe('createEvent()', function () {
+    describe.skip('createEvent()', function () {
         beforeEach(function () {
             this.event = PlaceCard.createEvent(this.props);
         });

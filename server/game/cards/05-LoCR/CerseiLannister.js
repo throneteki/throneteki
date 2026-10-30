@@ -2,6 +2,10 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class CerseiLannister extends DrawCard {
+    // Cersei Lannister (05001)
+    // Cersei Lannister does not kneel when declared as an attacker in an [intrigue] challenge.
+    // Reaction: After 1 or more cards are discarded from an opponent's hand, if you do not support
+    // that player, Cersei Lannister gains 1 power. (Limit 3 times per round.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
@@ -15,7 +19,7 @@ class CerseiLannister extends DrawCard {
                         location: event.cardStateWhenDiscarded.location
                     }),
                     condition: (aggregate, events, context) =>
-                        aggregate.controller !== this.controller &&
+                        aggregate.controller !== context.player &&
                         aggregate.location === 'hand' &&
                         !context.player.isSupporter(aggregate.controller)
                 }

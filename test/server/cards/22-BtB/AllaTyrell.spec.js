@@ -1,49 +1,33 @@
 describe('Alla Tyrell', function () {
-    integration(function () {
+    describe('when she is revealed from your deck', function () {
         beforeEach(function () {
-            const deck = this.buildDeck('tyrell', [
-                'Late Summer Feast',
-                'Alla Tyrell (BtB)',
-                'Oldtown (JtO)'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    inPlay: ['Oldtown (JtO)'],
+                    drawDeck: ['Alla Tyrell (BtB)']
+                }
+            });
 
-            this.alla = this.player1.findCardByName('Alla Tyrell');
-            this.oldtown = this.player1.findCardByName('Oldtown');
-
-            this.player1.clickCard(this.oldtown);
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player1);
+            this.player1.clickMenu(this.oldtown, 'Reveal top card of deck');
+            this.player1.clickPrompt('Character');
         });
 
-        describe('when Alla Tyrell is revealed from your deck', function () {
-            beforeEach(function () {
-                this.player1.dragCard(this.alla, 'draw deck');
-                this.player1.clickMenu(this.oldtown, 'Reveal top card of deck');
-                this.player1.clickPrompt('Character');
-            });
+        it('puts her into play', function () {
+            this.player1.triggerAbility(this.allaTyrell);
 
-            it('should be able to trigger', function () {
-                expect(this.player1).toAllowAbilityTrigger(this.alla);
-            });
+            expect(this.allaTyrell.location).toBe('play area');
+            expect(this.oldtown.kneeled).toBe(true);
+            expect(this.player1Object.faction.power).toBe(1);
+            expect(this.player1).isReadyToTakeAction();
+        });
 
-            describe('and she is triggered', function () {
-                beforeEach(function () {
-                    this.player1.clickCard(this.alla);
-                });
+        it('can be declined, and she is drawn instead', function () {
+            this.player1.clickPrompt('Pass');
 
-                it('should put her into play', function () {
-                    expect(this.alla.location).toBe('play area');
-                });
-
-                it('should still consider to have been revealed', function () {
-                    expect(this.player1Object.faction.power).toBe(1);
-                });
-            });
+            expect(this.allaTyrell.location).toBe('hand');
+            expect(this.player1Object.faction.power).toBe(1);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

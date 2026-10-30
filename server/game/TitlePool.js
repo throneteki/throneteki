@@ -1,4 +1,5 @@
 import shuffle from 'lodash.shuffle';
+import SelectTitles from './GameActions/SelectTitles.js';
 
 const titles = [
     (await import('./cards/titles/CrownRegent.js')).default,
@@ -44,6 +45,10 @@ class TitlePool {
         return 2;
     }
 
+    placeSelections(selections) {
+        return this.game.resolveGameAction(SelectTitles, { pool: this, selections });
+    }
+
     chooseFromPool(player, card) {
         if (!this.cards.includes(card)) {
             return;
@@ -69,7 +74,6 @@ class TitlePool {
         const players = this.game.getPlayers();
 
         for (const selection of selections) {
-            selection.title.facedown = false;
             selection.title.applyPersistentEffects();
 
             const supports = players.filter((player) =>

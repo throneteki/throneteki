@@ -1,11 +1,16 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Windblown extends DrawCard {
+    // Windblown (21011)
+    // Assault. Shadow (3).
+    // Reaction: After you win a challenge in which Windblown is participating, return it to shadows
+    // to choose and stand an Army or Mercenary character.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: (event, context) =>
-                    event.challenge.winner === context.player && this.isParticipating()
+                    event.challenge.winner === context.player && context.source.isParticipating()
             },
             cost: ability.costs.putSelfIntoShadows(),
             target: {
@@ -15,15 +20,8 @@ class Windblown extends DrawCard {
                     (card.hasTrait('Army') || card.hasTrait('Mercenary')),
                 gameAction: 'stand'
             },
-            handler: (context) => {
-                context.player.standCard(context.target);
-                this.game.addMessage(
-                    '{0} returns {1} to shadows to stand {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} returns {source} to shadows to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

@@ -1,113 +1,77 @@
-describe('Flea Bottom', function () {
-    integration(function () {
+describe('Flea Bottom (OR)', function () {
+    function setup(context, inPlay = []) {
+        context.setupTest({
+            phase: 'challenge',
+            player1: { inPlay: ['Flea Bottom (OR)', ...inPlay], discard: ['Drogon (Core)'] },
+            player2: { inPlay: ['Castle Guard'] }
+        });
+        context.player1.togglePromptedActionWindow('dominance', true);
+        context.drogon = context.player1.findCardByName('Drogon', 'discard pile');
+        context.player1.clickMenu(context.fleaBottom, 'Put character into play');
+        context.player1.clickCard(context.drogon);
+    }
+
+    function killDrogon(context) {
+        context.player1.clickPrompt('Done');
+        context.unopposedChallenge(context.player2, 'Military', context.castleGuard);
+        context.player1.clickCard(context.inPlayDrogon || context.drogon);
+    }
+
+    describe('when putting out a character', function () {
         beforeEach(function () {
-            const deck = this.buildDeck('targaryen', [
-                'Trading with the Pentoshi',
-                'Flea Bottom (OR)',
-                'Drogon (Core)',
-                'Drogon (Core)',
-                'Hedge Knight'
-            ]);
-
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            [this.character, this.dupe] = this.player1.filterCardsByName('Drogon', 'hand');
-            this.fleaBottom = this.player1.findCardByName('Flea Bottom', 'hand');
-            this.player1.clickCard(this.fleaBottom);
-
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player1);
-            this.selectPlotOrder(this.player1);
-
-            // Drag filler card back to deck so that the "bottom of deck" condition
-            // can be checked.
-            let fillerCard = this.player1.findCardByName('Hedge Knight', 'hand');
-            this.player1.dragCard(fillerCard, 'draw deck');
+            setup(this);
         });
 
-        describe('when putting out a character', function () {
-            beforeEach(function () {
-                this.player1.dragCard(this.character, 'discard pile');
-
-                this.completeMarshalPhase();
-                this.player1.clickMenu(this.fleaBottom, 'Put character into play');
-
-                this.player1.clickCard(this.character);
-            });
-
-            it('should put the character into play', function () {
-                expect(this.character.location).toBe('play area');
-            });
-
-            describe('and the character is in play when the phase ends', function () {
-                beforeEach(function () {
-                    this.completeChallengesPhase();
-                });
-
-                it('should return the character to the bottom of the deck', function () {
-                    expect(this.character.location).toBe('draw deck');
-                    expect(this.player1Object.drawDeck.slice(-1)[0]).toBe(this.character);
-                });
-            });
-
-            describe('and the character leaves play before the phase ends', function () {
-                beforeEach(function () {
-                    this.game.killCharacter(this.character);
-                    this.completeChallengesPhase();
-                });
-
-                it('should not return the character to the bottom of the deck', function () {
-                    expect(this.character.location).not.toBe('draw deck');
-                });
-            });
+        it('pays 1 gold and kneels to put a character from your discard pile into play', function () {
+            expect(this.drogon.location).toBe('play area');
+            expect(this.fleaBottom.kneeled).toBe(true);
+            expect(this.player1).isReadyToTakeAction();
         });
 
-        describe('when putting out a duplicate', function () {
-            beforeEach(function () {
-                this.player1.dragCard(this.dupe, 'discard pile');
+        it('places the character on the bottom of your deck if it is in play when the phase ends', function () {
+            this.completeChallengesPhase();
 
-                this.player1.clickCard(this.character);
+            expect(this.drogon.location).toBe('draw deck');
+            expect(this.player1Object.drawDeck.slice(-1)[0]).toBe(this.drogon);
+            expect(this.player1).isReadyToTakeAction();
+        });
 
-                this.completeMarshalPhase();
-                this.player1.clickMenu(this.fleaBottom, 'Put character into play');
+        it('does not place the character in your deck if it leaves play before the phase ends', function () {
+            killDrogon(this);
+            this.player2.clickPrompt('Done');
 
-                this.player1.clickCard(this.dupe);
-            });
+            expect(this.drogon.location).toBe('dead pile');
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 
-            it('should duplicate the character', function () {
-                expect(this.character.dupes).toContain(this.dupe);
-                expect(this.dupe.location).toBe('duplicate');
-            });
+    describe('when putting out a duplicate', function () {
+        beforeEach(function () {
+            setup(this, ['Drogon (Core)']);
+            this.inPlayDrogon = this.player1.findCardByName('Drogon', 'play area');
+        });
 
-            describe('and the dupe is in play when the phase ends', function () {
-                beforeEach(function () {
-                    this.completeChallengesPhase();
-                });
+        it('duplicates the character', function () {
+            expect(this.inPlayDrogon.dupes).toContain(this.drogon);
+            expect(this.drogon.location).toBe('duplicate');
+            expect(this.player1).isReadyToTakeAction();
+        });
 
-                it('should remove the dupe from the character', function () {
-                    expect(this.character.dupes).not.toContain(this.dupe);
-                });
+        it('removes the dupe and places it on the bottom of your deck when the phase ends', function () {
+            this.completeChallengesPhase();
 
-                it('should return the dupe to the bottom of the deck', function () {
-                    expect(this.dupe.location).toBe('draw deck');
-                    expect(this.player1Object.drawDeck.slice(-1)[0]).toBe(this.dupe);
-                });
-            });
+            expect(this.inPlayDrogon.dupes).not.toContain(this.drogon);
+            expect(this.drogon.location).toBe('draw deck');
+            expect(this.player1Object.drawDeck.slice(-1)[0]).toBe(this.drogon);
+            expect(this.player1).isReadyToTakeAction();
+        });
 
-            describe('and the dupe leaves play before the phase ends', function () {
-                beforeEach(function () {
-                    this.game.killCharacter(this.character);
-                    this.completeChallengesPhase();
-                });
+        it('does not place the dupe in your deck if it leaves play before the phase ends', function () {
+            killDrogon(this);
+            this.player2.clickPrompt('Done');
 
-                it('should not return the character to the bottom of the deck', function () {
-                    expect(this.dupe.location).not.toBe('draw deck');
-                });
-            });
+            expect(this.drogon.location).not.toBe('draw deck');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

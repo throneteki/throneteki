@@ -1,21 +1,20 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Osha extends DrawCard {
+    // Osha (03011)
+    // Challenges Action: Remove Osha from the challenge. Then, stand her. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove Osha from the challenge and stand her',
             phase: 'challenge',
             limit: ability.limit.perPhase(1),
-            condition: () => this.isParticipating(),
-            handler: (context) => {
-                this.game.currentChallenge.removeFromChallenge(this);
-                this.controller.standCard(this);
-                this.game.addMessage(
-                    '{0} removes {1} from the challenge and stands her',
-                    context.player,
-                    this
-                );
-            }
+            condition: (context) => context.source.isParticipating(),
+            message: '{player} removes {source} from the challenge and stands her',
+            gameAction: GameActions.simultaneously([
+                GameActions.removeFromChallenge((context) => ({ card: context.source })),
+                GameActions.standCard((context) => ({ card: context.source }))
+            ])
         });
     }
 }

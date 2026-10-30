@@ -2,42 +2,40 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class LittleBird extends DrawCard {
+    // Little Bird (25097)
+    // Shadow (1).
+    // Reaction: After Little Bird comes out of shadows, choose an opponent and look at the top card
+    // of their deck. Then, you and that player may draw 1 card.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             chooseOpponent: (opponent) => opponent.drawDeck.length > 0,
             message: {
                 format: "{player} uses {source} to look at the top card of {opponent}'s deck",
                 args: { opponent: (context) => context.opponent }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.lookAtDeck((context) => ({
-                        player: context.player,
-                        lookingAt: context.opponent,
-                        amount: 1
-                    })).then({
-                        gameAction: GameActions.simultaneously((context) =>
-                            // TODO: Add a 'decline message' to GameActions.may
-                            context.game.getPlayersInFirstPlayerOrder().map((player) =>
-                                GameActions.may({
-                                    player,
-                                    title: (context) =>
-                                        'Draw 1 card from ' + context.source.name + '?',
-                                    message: '{choosingPlayer} chooses to draw 1 card',
-                                    gameAction: GameActions.drawCards((context) => ({
-                                        player: context.choosingPlayer,
-                                        amount: 1
-                                    }))
-                                })
-                            )
-                        )
-                    }),
-                    context
-                );
-            }
+            gameAction: GameActions.lookAtDeck((context) => ({
+                player: context.player,
+                lookingAt: context.opponent,
+                amount: 1
+            })).then({
+                gameAction: GameActions.simultaneously((context) =>
+                    context.game.getPlayersInFirstPlayerOrder().map((player) =>
+                        GameActions.may({
+                            player,
+                            title: (context) => 'Draw 1 card from ' + context.source.name + '?',
+                            message: '{choosingPlayer} chooses to draw 1 card',
+                            declineMessage: '{choosingPlayer} chooses not to draw a card',
+                            gameAction: GameActions.drawCards((context) => ({
+                                player: context.choosingPlayer,
+                                amount: 1
+                            }))
+                        })
+                    )
+                )
+            })
         });
     }
 }

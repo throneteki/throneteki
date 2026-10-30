@@ -2,11 +2,22 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class NestorRoyce extends DrawCard {
+    // Nestor Royce (23023)
+    // Reaction: After you win a challenge in which Nestor Royce is participating, kneel a neutral
+    // location with printed cost 1 or higher to have him gain intimidate or renown until the end of
+    // the challenge.
     setupCardAbilities(ability) {
+        const gainKeyword = (keyword) =>
+            GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.source,
+                effect: ability.effects.addKeyword(keyword)
+            }));
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    this.isAttacking() && event.challenge.isMatch({ winner: this.controller })
+                afterChallenge: (event, context) =>
+                    context.source.isAttacking() &&
+                    event.challenge.isMatch({ winner: context.source.controller })
             },
             cost: ability.costs.kneel({
                 type: 'location',
@@ -22,23 +33,11 @@ class NestorRoyce extends DrawCard {
                     args: { keyword: (context) => context.selectedChoice.text.toLowerCase() }
                 },
                 choices: {
-                    Renown: GameActions.genericHandler((context) =>
-                        this.gainKeyword(context.selectedChoice.text.toLowerCase())
-                    ),
-                    Intimidate: GameActions.genericHandler((context) =>
-                        this.gainKeyword(context.selectedChoice.text.toLowerCase())
-                    )
+                    Renown: gainKeyword('renown'),
+                    Intimidate: gainKeyword('intimidate')
                 }
             })
         });
-    }
-
-    gainKeyword(keyword) {
-        this.untilEndOfChallenge((ability) => ({
-            match: this,
-            effect: ability.effects.addKeyword(keyword)
-        }));
-        return true;
     }
 }
 

@@ -2,11 +2,15 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheReader extends DrawCard {
+    // The Reader (02031)
+    // Reaction: After you win an unopposed challenge in which a unique [greyjoy] character is
+    // participating, either: draw 1 card, or discard the top 3 cards from each opponent's deck.
+    // (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
                     event.challenge.isUnopposed() &&
                     event.challenge
                         .getWinnerCards()
@@ -25,13 +29,11 @@ class TheReader extends DrawCard {
                     message:
                         "{player} uses {source} to discard the top 3 cards from each opponent's deck",
                     gameAction: GameActions.simultaneously((context) =>
-                        this.game.getOpponents(context.player).map((opponent) =>
+                        context.game.getOpponents(context.player).map((opponent) =>
                             GameActions.discardTopCards({
                                 player: opponent,
                                 amount: 3,
                                 source: context.source
-                            }).thenExecute((event) => {
-                                this.game.addMessage('{player} discards {topCards}', event);
                             })
                         )
                     )

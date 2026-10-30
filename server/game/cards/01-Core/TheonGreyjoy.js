@@ -1,23 +1,22 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheonGreyjoy extends DrawCard {
+    // Theon Greyjoy (01071)
+    // Stealth.
+    // Reaction: After you win an unopposed challenge in which Theon Greyjoy is participating, he
+    // gains 1 power.
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.isParticipating() &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isParticipating() &&
                     event.challenge.isUnopposed() &&
-                    this.allowGameAction('gainPower')
+                    context.source.allowGameAction('gainPower')
             },
-            handler: () => {
-                this.modifyPower(1);
-                this.game.addMessage(
-                    '{0} gains 1 power on {1} after winning an unopposed challenge',
-                    this.controller,
-                    this
-                );
-            }
+            message: '{player} gains 1 power on {source} after winning an unopposed challenge',
+            gameAction: GameActions.gainPower((context) => ({ card: context.source, amount: 1 }))
         });
     }
 }

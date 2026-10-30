@@ -19,25 +19,22 @@ describe('SimultaneousEvents', function () {
 
     describe('emitTo', function () {
         beforeEach(function () {
-            this.emitter = jasmine.createSpyObj('emitter', ['emit']);
+            this.emitter = { emit: vi.fn() };
             this.event.emitTo(this.emitter, 'suffix');
         });
 
         it('should call emitTo on all non-cancelled children', function () {
-            expect(this.emitter.emit).toHaveBeenCalledWith('event1:suffix', jasmine.any(Object));
-            expect(this.emitter.emit).not.toHaveBeenCalledWith(
-                'event2:suffix',
-                jasmine.any(Object)
-            );
-            expect(this.emitter.emit).toHaveBeenCalledWith('event3:suffix', jasmine.any(Object));
+            expect(this.emitter.emit).toHaveBeenCalledWith('event1:suffix', expect.any(Object));
+            expect(this.emitter.emit).not.toHaveBeenCalledWith('event2:suffix', expect.any(Object));
+            expect(this.emitter.emit).toHaveBeenCalledWith('event3:suffix', expect.any(Object));
         });
     });
 
     describe('executeHandler', function () {
         beforeEach(function () {
-            spyOn(this.childEvent1, 'executeHandler');
-            spyOn(this.childEvent2, 'executeHandler');
-            spyOn(this.childEvent3, 'executeHandler');
+            vi.spyOn(this.childEvent1, 'executeHandler').mockImplementation(() => {});
+            vi.spyOn(this.childEvent2, 'executeHandler').mockImplementation(() => {});
+            vi.spyOn(this.childEvent3, 'executeHandler').mockImplementation(() => {});
             this.event.executeHandler();
         });
 
@@ -65,7 +62,7 @@ describe('SimultaneousEvents', function () {
 
         describe('when the event has a parent', function () {
             beforeEach(function () {
-                this.parentEventSpy = jasmine.createSpyObj('parentEvent', ['onChildCancelled']);
+                this.parentEventSpy = { onChildCancelled: vi.fn() };
                 this.event.parent = this.parentEventSpy;
                 this.event.cancel();
             });
@@ -76,7 +73,7 @@ describe('SimultaneousEvents', function () {
         });
     });
 
-    xdescribe('addChildEvent', function () {
+    describe.skip('addChildEvent', function () {
         beforeEach(function () {
             this.childEvent1.params = { prop1: 'foo', prop2: 'bar' };
             this.event = new SimultaneousEvents();
@@ -97,7 +94,7 @@ describe('SimultaneousEvents', function () {
         });
     });
 
-    xdescribe('onChildCancelled', function () {
+    describe.skip('onChildCancelled', function () {
         beforeEach(function () {
             this.event.onChildCancelled(this.childEvent1);
         });

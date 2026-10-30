@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class YourKingCommandsIt extends PlotCard {
+    // Your King Commands It (09048)
+    // Each non-King, non-Queen character cannot gain power.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) =>

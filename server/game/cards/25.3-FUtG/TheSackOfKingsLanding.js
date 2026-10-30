@@ -2,18 +2,22 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class TheSackOfKingsLanding extends PlotCard {
+    // The Sack of King's Landing (25046)
+    // During [intrigue] challenges, each [lannister] character you control gains pillage.
+    // Reaction: After a location enters an opponent's discard pile, that player must choose and
+    // kill a character they control with the same printed cost.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ challengeType: 'intrigue' }),
+            condition: (context) => context.game.isDuringChallenge({ challengeType: 'intrigue' }),
             match: (card) => card.getType() === 'character' && card.isFaction('lannister'),
             effect: ability.effects.addKeyword('pillage')
         });
 
         this.reaction({
             when: {
-                onCardPlaced: (event) =>
+                onCardPlaced: (event, context) =>
                     event.card.getType() === 'location' &&
-                    event.card.controller !== this.controller &&
+                    event.card.controller !== context.source.controller &&
                     event.location === 'discard pile' &&
                     event.card.hasPrintedCost()
             },
@@ -31,15 +35,10 @@ class TheSackOfKingsLanding extends PlotCard {
                 format: '{player} uses {source} to have {choosingPlayer} choose and kill {target}',
                 args: { choosingPlayer: (context) => context.choosingPlayer }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.kill((context) => ({
-                        card: context.target,
-                        player: context.choosingPlayer
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.kill((context) => ({
+                card: context.target,
+                player: context.choosingPlayer
+            }))
         });
     }
 }

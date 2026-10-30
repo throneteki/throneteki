@@ -1,22 +1,22 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LastHearthScouts extends DrawCard {
+    // Last Hearth Scouts (05034)
+    // Forced Reaction: After a character enters play during the challenges phase, kneel that
+    // character.
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    this.game.currentPhase === 'challenge' && event.card.getType() === 'character'
+                onCardEntersPlay: (event, context) =>
+                    context.game.currentPhase === 'challenge' &&
+                    event.card.getType() === 'character'
             },
-            handler: (context) => {
-                context.event.card.controller.kneelCard(context.event.card);
-
-                this.game.addMessage(
-                    '{0} uses {1} to kneel {2}',
-                    this.controller,
-                    this,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} is forced by {source} to kneel {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.kneelCard((context) => ({ card: context.event.card }))
         });
     }
 }

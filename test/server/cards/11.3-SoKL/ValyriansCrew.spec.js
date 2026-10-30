@@ -1,197 +1,106 @@
 describe("Valyrian's Crew", function () {
-    beforeAll(function () {
-        this.setupTopCardUnderCrew = function (cardName) {
-            const deck1 = this.buildDeck('baratheon', [
-                'Trading with the Pentoshi',
-                'A Noble Cause',
-                'A Noble Cause',
-                "Valyrian's Crew",
-                'Dragonstone Faithful'
-            ]);
-            const deck2 = this.buildDeck('stark', [
-                'Trading with the Pentoshi',
-                'A Noble Cause',
-                'Blood of the Dragon',
-                { name: cardName, count: 12 }
-            ]);
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck2);
-            this.startGame();
-            this.keepStartingHands();
+    function setup(topCard, { player1 = {}, player2 = {}, challenge = 'Intrigue' } = {}) {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                faction: 'baratheon',
+                inPlay: ["Valyrian's Crew"],
+                drawDeck: ['Dragonstone Faithful'],
+                ...player1
+            },
+            player2: { drawDeck: [topCard], ...player2 }
+        });
+        this.topCard = this.player2Object.drawDeck[0];
+        this.unopposedChallenge(this.player1, challenge, this.valyriansCrew);
+        this.player1.triggerAbility("Valyrian's Crew");
+    }
 
-            this.crew = this.player1.findCardByName("Valyrian's Crew", 'hand');
+    function nextRound(firstPlayer, player2Plot = 'Filler Plot') {
+        this.completeChallengesPhase();
+        this.player1.selectPlot('Filler Plot');
+        this.player2.selectPlot(player2Plot);
+        this.selectFirstPlayer(firstPlayer);
+    }
 
-            this.player1.clickCard(this.crew);
+    describe('when winning a challenge', function () {
+        it('attaches the top card of the losing opponent deck facedown under your control as a Terminal attachment', function () {
+            setup.call(this, 'Arya Stark (Core)');
+            expect(this.valyriansCrew.attachments).toContain(this.topCard);
+            expect(this.topCard.facedown).toBe(true);
+            expect(this.topCard).toBeControlledBy(this.player1);
+            expect(this.topCard.getType()).toBe('attachment');
+            expect(this.topCard.isTerminal()).toBe(true);
+        });
 
-            this.completeSetup();
+        it('lets you marshal a facedown character as if it were in your hand, with effects applied to it', function () {
+            setup.call(this, 'Arya Stark (Core)', {
+                player2: { plotDeck: ['Blood of the Dragon', 'Filler Plot'] }
+            });
+            nextRound.call(this, this.player1, 'Blood of the Dragon');
+            this.player1.clickCard(this.topCard);
+            expect(this.player1Object.cardsInPlay).toContain(this.topCard);
+            expect(this.topCard.getType()).toBe('character');
+            expect(this.topCard).toBeControlledBy(this.player1);
+            // Printed 2 STR - 1 STR from Blood of the Dragon
+            expect(this.topCard.getStrength()).toBe(1);
+        });
 
-            this.player1.selectPlot('Trading with the Pentoshi');
-            this.player2.selectPlot('Trading with the Pentoshi');
-            this.selectFirstPlayer(this.player1);
-            this.selectPlotOrder(this.player1);
-            this.completeMarshalPhase();
-
-            // 1 or more cards required in deck to trigger any search effects (such as Olenna's Cunning)
-            this.faithful = this.player1.findCardByName('Dragonstone Faithful', 'hand');
-            this.player1.dragCard(this.faithful, 'draw deck');
-
-            this.topCard = this.player2Object.drawDeck[0];
-
-            // Win a challenge
-            this.player1.clickPrompt('Intrigue');
-            this.player1.clickCard(this.crew);
-            this.player1.clickPrompt('Done');
-            this.skipActionWindow();
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
-
-            // Trigger the ability
-            this.player1.triggerAbility(this.crew);
-        };
+        it('does not stop the opponent marshaling a copy of a facedown unique card', function () {
+            setup.call(this, 'Arya Stark (Core)', {
+                player2: { hand: ['Arya Stark (Core)'] },
+                challenge: 'Military'
+            });
+            const copy = this.player2Object.hand[0];
+            nextRound.call(this, this.player2);
+            this.player2.clickCard(copy);
+            expect(copy.location).toBe('play area');
+        });
     });
 
-    integration(function () {
-        describe('when winning a challenge', function () {
-            beforeEach(function () {
-                this.setupTopCardUnderCrew('Arya Stark (Core)');
-            });
-
-            it('should add the top card as a facedown attachment', function () {
-                expect(this.crew.attachments).toContain(this.topCard);
-                expect(this.topCard.facedown).toBe(true);
-                expect(this.topCard).toBeControlledBy(this.player1);
-                expect(this.topCard.getType()).toBe('attachment');
-                expect(this.topCard.isTerminal()).toBe(true);
-            });
-
-            describe('and the stealing player tries to marshal it', function () {
-                beforeEach(function () {
-                    // Skip claim from challenge
-                    this.player1.clickPrompt('Continue');
-                    this.completeChallengesPhase();
-
-                    this.player2.discardToReserve();
-                    // Skip order of discarded cards
-                    this.player2.clickPrompt('Done');
-
-                    this.player1.selectPlot('A Noble Cause');
-                    this.player2.selectPlot('Blood of the Dragon');
-                    this.selectFirstPlayer(this.player1);
-                });
-
-                it('should allow the character to be marshalled', function () {
-                    this.player1.clickCard(this.topCard);
-
-                    expect(this.player1Object.cardsInPlay).toContain(this.topCard);
-                    expect(this.topCard.location).toBe('play area');
-                    expect(this.topCard.getType()).toBe('character');
-                    expect(this.topCard).toBeControlledBy(this.player1);
-                });
-
-                it('should apply effects to the newly marshalled card', function () {
-                    this.player1.clickCard(this.topCard);
-
-                    // Printed 2 STR - 1 STR from Blood of the Dragon
-                    expect(this.topCard.getStrength()).toBe(1);
-                });
-            });
-
-            describe('and the opponent tries to marshal a copy of that card', function () {
-                beforeEach(function () {
-                    // Skip claim from challenge
-                    this.player1.clickPrompt('Continue');
-                    this.completeChallengesPhase();
-
-                    this.player2.discardToReserve();
-                    // Skip order of discarded cards
-                    this.player2.clickPrompt('Done');
-
-                    this.player1.selectPlot('A Noble Cause');
-                    this.player2.selectPlot('A Noble Cause');
-                    this.selectFirstPlayer(this.player2);
-
-                    this.character = this.player2.findCardByName('Arya Stark', 'hand');
-
-                    this.player2.clickCard(this.character);
-                });
-
-                it('should allow the character to be marshalled', function () {
-                    // A facedown character is not considered in play, so even
-                    // though the opponent controls a copy of the card, because
-                    // it isn't in play as that card, it should not prevent the
-                    // owner to marshal the character.
-                    expect(this.character.location).toBe('play area');
-                });
-            });
+    describe('when attaching a facedown attachment', function () {
+        beforeEach(function () {
+            setup.call(this, 'Longclaw');
         });
 
-        describe('when attaching a facedown attachment', function () {
-            beforeEach(function () {
-                this.setupTopCardUnderCrew('Longclaw');
-            });
-
-            it('should allow it to be attached regardless of restrictions', function () {
-                // Longclaw can normally only be attached to a Night's Watch
-                // character, but while facedown does not have such a restriction
-                expect(this.crew.attachments).toContain(this.topCard);
-            });
-
-            it('should not grant effects that attachment normally grants', function () {
-                expect(this.crew.getStrength()).toBe(this.crew.getPrintedStrength());
-            });
+        it('attaches it regardless of its restrictions', function () {
+            expect(this.valyriansCrew.attachments).toContain(this.topCard);
         });
 
-        describe("when there's a valid facedown attachment", function () {
-            beforeEach(function () {
-                this.setupTopCardUnderCrew('Noble Lineage');
-
-                // Skip claim
-                this.player1.clickPrompt('Continue');
-
-                this.completeChallengesPhase();
-                this.player2.discardToReserve();
-                // Skip order of discarded cards
-                this.player2.clickPrompt('Done');
-
-                this.player1.selectPlot('A Noble Cause');
-                this.player2.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player1);
-            });
-
-            it('should allow it to be marshalled', function () {
-                this.player1.clickCard(this.topCard);
-                this.player1.clickCard(this.crew);
-
-                expect(this.topCard.facedown).toBe(false);
-                expect(this.crew.attachments).toContain(this.topCard);
-                expect(this.crew.hasIcon('power')).toBe(true);
-            });
+        it('does not grant the effects the attachment normally grants', function () {
+            expect(this.valyriansCrew.getStrength()).toBe(this.valyriansCrew.getPrintedStrength());
         });
+    });
 
-        describe("when there's an action-based event", function () {
-            beforeEach(function () {
-                this.setupTopCardUnderCrew('Nightmares');
+    it('lets you marshal a facedown attachment', function () {
+        setup.call(this, 'Noble Lineage');
+        nextRound.call(this, this.player1);
+        this.player1.clickCard(this.topCard);
+        this.player1.clickCard(this.valyriansCrew);
+        expect(this.topCard.facedown).toBe(false);
+        expect(this.valyriansCrew.attachments).toContain(this.topCard);
+        expect(this.valyriansCrew.hasIcon('power')).toBe(true);
+    });
 
-                // Skip claim
-                this.player1.clickPrompt('Continue');
-            });
+    it('lets you play a facedown action event', function () {
+        setup.call(this, 'Nightmares');
+        this.player1.clickCard(this.topCard);
+        this.player1.clickCard(this.valyriansCrew);
+        expect(this.valyriansCrew.isAnyBlank()).toBe(true);
+    });
 
-            it('should allow it to be played', function () {
-                this.player1.clickCard(this.topCard);
-                this.player1.clickCard(this.crew);
-
-                expect(this.crew.isAnyBlank()).toBe(true);
-            });
+    it('lets you trigger a facedown triggered event', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                faction: 'baratheon',
+                inPlay: ["Valyrian's Crew"],
+                drawDeck: ['Dragonstone Faithful']
+            },
+            player2: { drawDeck: ["Olenna's Cunning"] }
         });
-
-        describe("when there's a triggered event", function () {
-            beforeEach(function () {
-                this.setupTopCardUnderCrew("Olenna's Cunning");
-            });
-
-            it('should allow it to be played', function () {
-                expect(this.player1).toAllowAbilityTrigger(this.topCard);
-            });
-        });
+        this.topCard = this.player2Object.drawDeck[0];
+        this.unopposedChallenge(this.player1, 'Intrigue', this.valyriansCrew);
+        this.player1.triggerAbility("Valyrian's Crew");
+        expect(this.player1).toAllowAbilityTrigger(this.topCard);
     });
 });

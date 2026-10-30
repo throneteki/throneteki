@@ -2,21 +2,18 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Hornvale extends DrawCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
-
-        this.registerEvents([{ 'onCardLeftPlay:forcedinterrupt': 'onCardLeftPlay' }]);
-    }
-
+    // Hornvale (27026)
+    // Reaction: After you win an [intrigue] challenge, kneel Hornvale to have the losing opponent
+    // choose a card in their hand and place it facedown under Hornvale. If Hornvale leaves play,
+    // return each card under it to its owner's hand.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'intrigue' &&
-                    event.challenge.winner === this.controller
+                    event.challenge.winner === context.player
             },
             cost: ability.costs.kneelSelf(),
-
             target: {
                 choosingPlayer: (player, context) => player === context.event.challenge.loser,
                 activePromptTitle: 'Select a card',
@@ -24,40 +21,35 @@ class Hornvale extends DrawCard {
             },
             message: {
                 format: '{player} kneels {source} to have {loser} place a card from their hand facedown under {source}',
-                args: {
-                    loser: (context) => context.event.challenge.loser
-                }
+                args: { loser: (context) => context.event.challenge.loser }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.placeCardUnderneath({
-                        card: context.target,
-                        parentCard: this,
-                        facedown: true
-                    }),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously([
+                GameActions.placeCardUnderneath((context) => ({
+                    card: context.target,
+                    parentCard: context.source,
+                    facedown: true
+                })),
+                GameActions.delayedEffect({
+                    duration: 'untilTriggered',
+                    when: {
+                        onCardLeftPlay: (event, context) => event.card === context.source
+                    },
+                    message: {
+                        format: "{player} returns {card} to {owner}'s hand as {source} left play",
+                        args: {
+                            card: (context) => context.target,
+                            owner: (context) => context.target.owner
+                        }
+                    },
+                    gameAction: GameActions.ifCondition({
+                        condition: (context) => context.source.underneath.includes(context.target),
+                        thenAction: GameActions.returnCardToHand((context) => ({
+                            card: context.target
+                        }))
+                    })
+                })
+            ])
         });
-    }
-
-    onCardLeftPlay(event) {
-        if (event.card !== this || this.underneath.length === 0) {
-            return;
-        }
-
-        const cards = [...this.underneath];
-
-        this.game.addMessage(
-            "{0} returns {1} to their owner's hand due to {2} leaving play",
-            this.controller,
-            cards,
-            this
-        );
-
-        this.game.resolveGameAction(
-            GameActions.simultaneously(cards.map((card) => GameActions.returnCardToHand({ card })))
-        );
     }
 }
 

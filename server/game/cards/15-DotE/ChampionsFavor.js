@@ -1,6 +1,11 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class ChampionsFavor extends DrawCard {
+    // Champion's Favor (15038)
+    // Lady character only.
+    // Action: Kneel attached character to choose a participating non-Lady character and give it +X
+    // STR until the end of the challenge. X is 2 higher than attached character's STR.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Lady' });
         this.action({
@@ -15,17 +20,15 @@ class ChampionsFavor extends DrawCard {
             message: {
                 format: '{player} uses {source} and kneels {parent} to give {target} +{strength} STR until the end of the challenge',
                 args: {
-                    parent: () => this.parent,
-                    strength: () => this.parent.getStrength() + 2
+                    parent: (context) => context.source.parent,
+                    strength: (context) => context.source.parent.getStrength() + 2
                 }
             },
-            handler: (context) => {
-                let str = this.parent.getStrength() + 2;
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(str)
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                effect: ability.effects.modifyStrength(context.source.parent.getStrength() + 2)
+            }))
         });
     }
 }

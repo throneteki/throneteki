@@ -1,115 +1,169 @@
 describe('Cersei Lannister (LoCR)', function () {
-    integration(function () {
+    describe('when she attacks in an [intrigue] challenge', function () {
         beforeEach(function () {
-            const deck1 = this.buildDeck('lannister', [
-                'Sneak Attack',
-                'A Clash of Kings',
-                'Heads on Spikes',
-                'Cersei Lannister (LoCR)'
-            ]);
-            const deck2 = this.buildDeck('lannister', [
-                'Sneak Attack',
-                'Hedge Knight',
-                'Hedge Knight',
-                'Missandei'
-            ]);
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck2);
-            this.startGame();
-            this.keepStartingHands();
+            this.setupTest({
+                phase: 'challenge',
+                player1: {
+                    faction: 'lannister',
+                    inPlay: ['Cersei Lannister (LoCR)']
+                },
+                player2: {
+                    hand: ['Hedge Knight']
+                }
+            });
 
-            this.player1.clickCard('Cersei Lannister', 'hand');
-            [this.hedge1, this.hedge2] = this.player2.filterCardsByName('Hedge Knight', 'hand');
-            this.missandei = this.player2.findCardByName('Missandei');
-            //hide missandei in dead pile for later test
-            this.player2.dragCard(this.missandei, 'dead pile');
-            this.completeSetup();
+            this.unopposedChallenge(this.player1, 'Intrigue', this.cerseiLannister);
         });
 
-        describe('when opponent hand cards are discarded', function () {
-            describe('when a single card is discarded via claim', function () {
-                beforeEach(function () {
-                    this.cersei = this.player1.findCardByName('Cersei Lannister');
+        it('does not kneel', function () {
+            expect(this.cerseiLannister.kneeled).toBe(false);
+            expect(this.hedgeKnight.location).toBe('discard pile');
+            expect(this.player1).toAllowAbilityTrigger(this.cerseiLannister);
 
-                    this.player1.selectPlot('A Clash of Kings');
-                    this.selectFirstPlayer(this.player1);
+            this.player1.clickPrompt('Pass');
 
-                    this.completeMarshalPhase();
+            expect(this.player1).isReadyToTakeAction();
+        });
 
-                    this.unopposedChallenge(this.player1, 'Intrigue', this.cersei);
+        it('gains 1 power after a card is discarded from an opponent’s hand', function () {
+            this.player1.triggerAbility(this.cerseiLannister);
 
-                    this.player1.clickPrompt('Apply Claim');
-                });
+            expect(this.hedgeKnight.location).toBe('discard pile');
+            expect(this.cerseiLannister.power).toBe(1);
+            expect(this.game.getPlainTextLog()).toContain(
+                'player1 uses Cersei Lannister to have Cersei Lannister gain 1 power'
+            );
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 
-                it('should allow Cersei to gain power', function () {
-                    this.player1.triggerAbility('Cersei Lannister');
-                    expect(this.cersei.power).toBe(1);
-                });
+    describe('when she attacks in a [power] challenge', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: {
+                    faction: 'lannister',
+                    inPlay: ['Cersei Lannister (LoCR)']
+                }
             });
 
-            describe('when a multiple cards are discarded via claim', function () {
-                beforeEach(function () {
-                    this.cersei = this.player1.findCardByName('Cersei Lannister');
+            this.player1.clickPrompt('Power');
+            this.player1.clickCard(this.cerseiLannister);
+            this.player1.clickPrompt('Done');
+        });
 
-                    this.player1.selectPlot('Sneak Attack');
-                    this.selectFirstPlayer(this.player1);
+        it('kneels', function () {
+            expect(this.cerseiLannister.kneeled).toBe(true);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 
-                    this.completeMarshalPhase();
-
-                    this.unopposedChallenge(this.player1, 'Intrigue', this.cersei);
-
-                    this.player1.clickPrompt('Apply Claim');
-                    // Skip order prompt
-                    this.player2.clickPrompt('Done');
-                });
-
-                it('should not prompt Cersei to gain power twice', function () {
-                    this.player1.triggerAbility('Cersei Lannister');
-
-                    expect(this.player1).not.toAllowAbilityTrigger('Cersei Lannister');
-                });
+    describe('when several cards are discarded from an opponent’s hand at once', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: {
+                    faction: 'lannister',
+                    plot: 'Sneak Attack',
+                    inPlay: ['Cersei Lannister (LoCR)']
+                },
+                player2: {
+                    hand: ['Hedge Knight', 'House Dayne Knight']
+                }
             });
 
-            describe('when a single card is discarded via other means', function () {
-                beforeEach(function () {
-                    this.cersei = this.player1.findCardByName('Cersei Lannister');
+            this.unopposedChallenge(this.player1, 'Intrigue', this.cerseiLannister);
+            this.player2.clickPrompt('Done');
+        });
 
-                    this.player1.selectPlot('Heads on Spikes');
-                    this.selectFirstPlayer(this.player1);
-                });
+        it('gains only 1 power', function () {
+            this.player1.triggerAbility(this.cerseiLannister);
 
-                it('should allow Cersei to gain power', function () {
-                    this.player1.triggerAbility('Cersei Lannister');
-                    expect(this.cersei.power).toBe(1);
-                });
+            expect(this.hedgeKnight.location).toBe('discard pile');
+            expect(this.houseDayneKnight.location).toBe('discard pile');
+            expect(this.cerseiLannister.power).toBe(1);
+            expect(this.player1).not.toAllowAbilityTrigger(this.cerseiLannister);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
+
+    describe('when a card is discarded from an opponent’s hand by another effect', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'plot',
+                player1: {
+                    faction: 'lannister',
+                    plotDeck: ['Heads on Spikes'],
+                    inPlay: ['Cersei Lannister (LoCR)']
+                },
+                player2: {
+                    hand: ['Hedge Knight']
+                }
             });
 
-            describe('when a card with an interrupt replacement handler is discarded', function () {
-                beforeEach(function () {
-                    this.cersei = this.player1.findCardByName('Cersei Lannister');
-                    this.player2.dragCard(this.hedge1, 'dead pile');
-                    this.player2.dragCard(this.hedge2, 'dead pile');
-                    this.player2.dragCard(this.missandei, 'hand');
+            this.player1.selectPlot(this.headsOnSpikes);
+            this.player2.selectPlot('Filler Plot');
+            this.selectFirstPlayer(this.player1);
+        });
 
-                    this.player1.selectPlot('A Clash of Kings');
-                    this.selectFirstPlayer(this.player1);
+        it('gains 1 power', function () {
+            this.player1.triggerAbility(this.cerseiLannister);
 
-                    this.completeMarshalPhase();
+            expect(this.hedgeKnight.location).toBe('dead pile');
+            expect(this.cerseiLannister.power).toBe(1);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 
-                    this.unopposedChallenge(this.player1, 'Intrigue', this.cersei);
-
-                    this.player1.clickPrompt('Apply Claim');
-                });
-
-                it('should allow Cersei to gain power AND NOT CRASH THE GAME', function () {
-                    expect(this.player2).toAllowAbilityTrigger('Missandei');
-                    this.player2.triggerAbility('Missandei');
-                    expect(this.missandei.location).toBe('play area');
-                    expect(this.player1).toAllowAbilityTrigger('Cersei Lannister');
-                    this.player1.triggerAbility('Cersei Lannister');
-                    expect(this.cersei.power).toBe(1);
-                });
+    describe('when a card discarded from an opponent’s hand is put into play instead', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: {
+                    faction: 'lannister',
+                    inPlay: ['Cersei Lannister (LoCR)']
+                },
+                player2: {
+                    hand: ['Missandei']
+                }
             });
+
+            this.unopposedChallenge(this.player1, 'Intrigue', this.cerseiLannister);
+            this.player2.triggerAbility(this.missandei);
+        });
+
+        it('still gains 1 power', function () {
+            expect(this.missandei.location).toBe('play area');
+
+            this.player1.triggerAbility(this.cerseiLannister);
+
+            expect(this.cerseiLannister.power).toBe(1);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
+
+    describe('when a card is discarded from your own hand', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: {
+                    faction: 'lannister',
+                    hand: ['Hedge Knight'],
+                    inPlay: ['Cersei Lannister (LoCR)']
+                },
+                player2: {
+                    inPlay: ['House Maester']
+                }
+            });
+
+            this.player1.clickPrompt('Done');
+            this.unopposedChallenge(this.player2, 'Intrigue', this.houseMaester);
+        });
+
+        it('cannot be triggered', function () {
+            expect(this.hedgeKnight.location).toBe('discard pile');
+            expect(this.player1).not.toAllowAbilityTrigger(this.cerseiLannister);
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

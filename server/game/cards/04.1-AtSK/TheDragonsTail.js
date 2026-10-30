@@ -1,27 +1,18 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheDragonsTail extends DrawCard {
+    // The Dragon's Tail (04001)
+    // Action: Choose an opponent. You and that player each draw 2 cards.
     setupCardAbilities() {
         this.action({
             title: 'Both you and opponent draw 2 cards',
             chooseOpponent: true,
-            handler: (context) => {
-                let opponent = context.opponent;
-
-                if (this.controller.canDraw()) {
-                    this.controller.drawCardsToHand(2);
-                }
-                if (opponent.canDraw()) {
-                    opponent.drawCardsToHand(2);
-                }
-
-                this.game.addMessage(
-                    '{0} uses {1} to make both themself and {2} draw 2 cards',
-                    this.controller,
-                    this,
-                    opponent
-                );
-            }
+            message: '{player} uses {source} to make both themself and {opponent} draw 2 cards',
+            gameAction: GameActions.simultaneously([
+                GameActions.drawCards((context) => ({ player: context.player, amount: 2 })),
+                GameActions.drawCards((context) => ({ player: context.opponent, amount: 2 }))
+            ])
         });
     }
 }

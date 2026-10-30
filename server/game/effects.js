@@ -5,26 +5,82 @@ import CardTextDefinition from './CardTextDefinition.js';
 import { ValueContribution, CharacterStrengthContribution } from './ChallengeContributions.js';
 import CostReducer from './costreducer.js';
 import GameActions from './GameActions/index.js';
+import TakeControl from './GameActions/TakeControl.js';
 import PlayableLocation from './playablelocation.js';
 import CannotRestriction from './cannotrestriction.js';
 import ChallengeRestriction from './ChallengeRestriction.js';
 import ImmunityRestriction from './immunityrestriction.js';
 import GoldSource from './GoldSource.js';
-import { Flags, Tokens } from './Constants/index.js';
+import { Flags } from './Constants/index.js';
 import ForcedChallenge from './ForcedChallenge.js';
 import PowerAsGoldSource from './PowerAsGoldSource.js';
 
 function cannotEffect(type) {
     return function (predicate) {
-        const restriction = new CannotRestriction(type, predicate);
+        const restrictions = new Map();
         return {
-            apply: function (card) {
+            apply: function (card, context) {
+                const restriction = new CannotRestriction(
+                    type,
+                    predicate && ((abilityContext) => predicate(abilityContext, context))
+                );
+                restrictions.set(card, restriction);
                 card.addAbilityRestriction(restriction);
             },
             unapply: function (card) {
-                card.removeAbilityRestriction(restriction);
+                card.removeAbilityRestriction(restrictions.get(card));
+                restrictions.delete(card);
             }
         };
+    };
+}
+
+function iconEffect(getIcons, gameAction) {
+    const appliedIcons = (context) => (context.appliedIcons ??= new Map());
+    const canChange = (card, context) =>
+        card.getType() === 'character' &&
+        card.location === 'play area' &&
+        card.allowGameAction(gameAction, {
+            game: context.game,
+            source: context.source,
+            resolutionStage: 'effect'
+        });
+    const change = (card, icon, applying) =>
+        gameAction === 'gainIcon'
+            ? card.addIconByEffect(icon, applying)
+            : card.removeIconByEffect(icon, applying);
+    const revert = (card, icon) =>
+        gameAction === 'gainIcon'
+            ? card.removeIconByEffect(icon, false)
+            : card.addIconByEffect(icon, false);
+    const desiredIcons = (card, context) =>
+        canChange(card, context) ? [...new Set(getIcons(card, context))] : [];
+
+    return {
+        apply: function (card, context) {
+            const icons = desiredIcons(card, context);
+            for (const icon of icons) {
+                change(card, icon, true);
+            }
+            appliedIcons(context).set(card, icons);
+        },
+        reapply: function (card, context) {
+            const current = appliedIcons(context).get(card) || [];
+            const icons = desiredIcons(card, context);
+            for (const icon of current.filter((icon) => !icons.includes(icon))) {
+                revert(card, icon);
+            }
+            for (const icon of icons.filter((icon) => !current.includes(icon))) {
+                change(card, icon, true);
+            }
+            appliedIcons(context).set(card, icons);
+        },
+        unapply: function (card, context) {
+            for (const icon of appliedIcons(context).get(card) || []) {
+                revert(card, icon);
+            }
+            appliedIcons(context).delete(card);
+        }
     };
 }
 
@@ -53,6 +109,27 @@ function modifyFlagEffect(flagOrFunc, options = {}) {
                 handler(target, context);
             }
         };
+    };
+}
+
+function playableLocationEffect(playingType, predicate) {
+    const matcher = CardMatcher.createMatcher(predicate);
+    return {
+        targetType: 'player',
+        apply: function (player, context) {
+            const playableLocation = new PlayableLocation(playingType, (card) =>
+                matcher(card, context)
+            );
+            context.playableLocations = context.playableLocations || {};
+            context.playableLocations[player.name] = playableLocation;
+            player.playableLocations.push(playableLocation);
+        },
+        unapply: function (player, context) {
+            player.playableLocations = player.playableLocations.filter(
+                (l) => l !== context.playableLocations[player.name]
+            );
+            delete context.playableLocations[player.name];
+        }
     };
 }
 
@@ -258,8 +335,7 @@ const Effects = {
             },
             unapply: function (card, context) {
                 card.removeStrengthModifier(context.effect, false);
-            },
-            order: value >= 0 ? 0 : 1000
+            }
         };
     },
     setStrength: function (value) {
@@ -288,11 +364,11 @@ const Effects = {
     },
     modifyDominanceStrength: function (value) {
         return {
-            apply: function (card) {
-                card.modifyDominanceStrength(value);
+            apply: function (card, context) {
+                card.dominanceStrengthModifiers.set(context.effect, value);
             },
-            unapply: function (card) {
-                card.modifyDominanceStrength(-value);
+            unapply: function (card, context) {
+                card.dominanceStrengthModifiers.remove(context.effect);
             }
         };
     },
@@ -386,78 +462,16 @@ const Effects = {
         Flags.challengeOptions.ignoresAssaultLocationCost
     ),
     addIcon: function (icon) {
-        return {
-            apply: function (card, context) {
-                context.game.resolveGameAction(
-                    GameActions.gainIcon({ card, icon, applying: true })
-                );
-            },
-            unapply: function (card, context) {
-                context.game.resolveGameAction(
-                    GameActions.loseIcon({ card, icon, applying: false })
-                );
-            }
-        };
+        return iconEffect(() => [icon], 'gainIcon');
     },
     dynamicIcons: function (iconsFunc) {
         return {
-            apply: function (card, context) {
-                context.dynamicIcons = context.dynamicIcons || {};
-                context.dynamicIcons[card.uuid] = iconsFunc(card, context) || [];
-                context.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        context.dynamicIcons[card.uuid].map((icon) =>
-                            GameActions.gainIcon({ card, icon, applying: true })
-                        )
-                    )
-                );
-            },
-            reapply: function (card, context) {
-                let currentIcons = context.dynamicIcons[card.uuid];
-                context.dynamicIcons[card.uuid] = iconsFunc(card, context);
-
-                let iconsGained = context.dynamicIcons[card.uuid].filter(
-                    (icon) => !currentIcons.includes(icon)
-                );
-                let iconsLost = currentIcons.filter(
-                    (icon) => !context.dynamicIcons[card.uuid].includes(icon)
-                );
-
-                let actions = iconsGained.map((icon) =>
-                    GameActions.gainIcon({ card, icon, applying: true })
-                );
-                actions = actions.concat(
-                    iconsLost.map((icon) => GameActions.loseIcon({ card, icon, applying: false }))
-                );
-
-                context.game.resolveGameAction(GameActions.simultaneously(actions));
-            },
-            unapply: function (card, context) {
-                context.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        context.dynamicIcons[card.uuid].map((icon) =>
-                            GameActions.loseIcon({ card, icon, applying: false })
-                        )
-                    )
-                );
-                delete context.dynamicIcons[card.uuid];
-            },
+            ...iconEffect((card, context) => iconsFunc(card, context) || [], 'gainIcon'),
             isStateDependent: true
         };
     },
     removeIcon: function (icon) {
-        return {
-            apply: function (card, context) {
-                context.game.resolveGameAction(
-                    GameActions.loseIcon({ card, icon, applying: true })
-                );
-            },
-            unapply: function (card, context) {
-                context.game.resolveGameAction(
-                    GameActions.gainIcon({ card, icon, applying: false })
-                );
-            }
-        };
+        return iconEffect(() => [icon], 'loseIcon');
     },
     addKeyword: function (keyword) {
         return {
@@ -498,13 +512,18 @@ const Effects = {
     },
     dynamicKeywordSources: function (sourceFunc) {
         return {
-            apply: function (card) {
-                card.keywordSources.push(sourceFunc);
+            apply: function (card, context) {
+                const boundFunc = (source) => sourceFunc(source, context);
+                context.dynamicKeywordSources = context.dynamicKeywordSources || {};
+                context.dynamicKeywordSources[card.uuid] = boundFunc;
+                card.keywordSources.push(boundFunc);
             },
-            unapply: function (card) {
+            unapply: function (card, context) {
+                const boundFunc = context.dynamicKeywordSources[card.uuid];
                 card.keywordSources = card.keywordSources.filter(
-                    (existingSourceFunc) => existingSourceFunc !== sourceFunc
+                    (existingSourceFunc) => existingSourceFunc !== boundFunc
                 );
+                delete context.dynamicKeywordSources[card.uuid];
             }
         };
     },
@@ -580,11 +599,11 @@ const Effects = {
         };
     },
     burn: {
-        apply: function (card) {
-            card.setIsBurning(true);
+        apply: function (card, context) {
+            card.setIsBurning(true, context.effect);
         },
-        unapply: function (card) {
-            card.setIsBurning(false);
+        unapply: function (card, context) {
+            card.setIsBurning(false, context.effect);
         }
     },
     killByStrength: function (value) {
@@ -594,11 +613,11 @@ const Effects = {
         return [Effects.burn, Effects.dynamicDecreaseStrength(calculate)];
     },
     shadowBurn: {
-        apply: function (card) {
-            card.setIsShadowBurning(true);
+        apply: function (card, context) {
+            card.setIsShadowBurning(true, context.effect);
         },
-        unapply: function (card) {
-            card.setIsShadowBurning(false);
+        unapply: function (card, context) {
+            card.setIsShadowBurning(false, context.effect);
         }
     },
     putInShadowsByStrength: function (value) {
@@ -620,29 +639,7 @@ const Effects = {
             card.clearBlank(Flags.blanks.full);
         }
     },
-    poison: {
-        apply: function (card, context) {
-            card.modifyToken(Tokens.poison, 1);
-            context.game.addMessage(
-                '{0} uses {1} to place 1 poison token on {2}',
-                context.source.controller,
-                context.source,
-                card
-            );
-        },
-        unapply: function (card, context) {
-            if (card.location === 'play area' && card.hasToken(Tokens.poison)) {
-                card.modifyToken(Tokens.poison, -1);
-                card.controller.killCharacter(card);
-                context.game.addMessage(
-                    '{0} uses {1} to kill {2} at the end of the phase',
-                    context.source.controller,
-                    context.source,
-                    card
-                );
-            }
-        }
-    },
+
     gainAmbush: function (costModifier = 0) {
         return {
             apply: function (card) {
@@ -655,61 +652,19 @@ const Effects = {
             }
         };
     },
-    setEventPlacementLocation: function (location) {
+    setEventPlacementLocation: function (location, bottom = false) {
         return {
             apply: function (card) {
                 card.eventPlacementLocation = location;
+                card.eventPlacementBottom = bottom;
             },
             unapply: function (card) {
                 card.eventPlacementLocation = 'discard pile';
+                card.eventPlacementBottom = false;
             }
         };
     },
-    discardIfStillInPlay: function (allowSave = false) {
-        return {
-            apply: function (card, context) {
-                context.discardIfStillInPlay = context.discardIfStillInPlay || [];
-                context.discardIfStillInPlay.push(card);
-            },
-            unapply: function (card, context) {
-                if (
-                    ['play area', 'duplicate'].includes(card.location) &&
-                    context.discardIfStillInPlay.includes(card)
-                ) {
-                    context.discardIfStillInPlay = context.discardIfStillInPlay.filter(
-                        (c) => c !== card
-                    );
-                    card.controller.discardCard(card, allowSave);
-                    context.game.addMessage(
-                        '{0} discards {1} at the end of the phase because of {2}',
-                        context.source.controller,
-                        card,
-                        context.source
-                    );
-                }
-            }
-        };
-    },
-    killIfStillInPlay: function (allowSave = false) {
-        return {
-            apply: function (card, context) {
-                context.killIfStillInPlay = context.killIfStillInPlay || [];
-                context.killIfStillInPlay.push(card);
-            },
-            unapply: function (card, context) {
-                if (card.location === 'play area' && context.killIfStillInPlay.includes(card)) {
-                    context.killIfStillInPlay = context.killIfStillInPlay.filter((c) => c !== card);
-                    card.controller.killCharacter(card, allowSave);
-                    context.game.addMessage(
-                        '{0} kills {1} at the end of the phase because of {2}',
-                        context.source.controller,
-                        card,
-                        context.source
-                    );
-                }
-            }
-        };
-    },
+
     killIf: function (condition) {
         return {
             apply: function (card, context) {
@@ -740,165 +695,7 @@ const Effects = {
             isStateDependent: true
         };
     },
-    moveToDeadPileIfStillInPlay: function () {
-        return {
-            apply: function (card, context) {
-                context.moveToDeadPileIfStillInPlay = context.moveToDeadPileIfStillInPlay || [];
-                context.moveToDeadPileIfStillInPlay.push(card);
-            },
-            unapply: function (card, context) {
-                if (
-                    ['play area', 'duplicate'].includes(card.location) &&
-                    context.moveToDeadPileIfStillInPlay.includes(card)
-                ) {
-                    context.moveToDeadPileIfStillInPlay =
-                        context.moveToDeadPileIfStillInPlay.filter((c) => c !== card);
-                    card.owner.moveCard(card, 'dead pile');
-                    context.game.addMessage(
-                        "{0} moves {1} to its owner's dead pile at the end of the phase because of {2}",
-                        context.source.controller,
-                        card,
-                        context.source
-                    );
-                }
-            }
-        };
-    },
-    moveToBottomOfDeckIfStillInPlay: function (allowSave = true) {
-        return {
-            apply: function (card, context) {
-                context.moveToBottomOfDeckIfStillInPlay =
-                    context.moveToBottomOfDeckIfStillInPlay || [];
-                context.moveToBottomOfDeckIfStillInPlay.push(card);
-            },
-            unapply: function (card, context) {
-                if (
-                    ['play area', 'duplicate'].includes(card.location) &&
-                    context.moveToBottomOfDeckIfStillInPlay.includes(card)
-                ) {
-                    context.moveToBottomOfDeckIfStillInPlay =
-                        context.moveToBottomOfDeckIfStillInPlay.filter((c) => c !== card);
-                    context.game.resolveGameAction(
-                        GameActions.returnCardToDeck({ card, allowSave, bottom: true })
-                    );
-                    context.game.addMessage(
-                        "{0} places {1} on the bottom of its owner's deck at the end of the phase because of {2}",
-                        context.source.controller,
-                        card,
-                        context.source
-                    );
-                }
-            }
-        };
-    },
-    returnToHandIfStillInPlay: function (allowSave = false, duration = 'phase') {
-        return {
-            apply: function (card, context) {
-                context.returnToHandIfStillInPlay = context.returnToHandIfStillInPlay || [];
-                context.returnToHandIfStillInPlay.push(card);
-            },
-            unapply: function (card, context) {
-                if (
-                    ['play area', 'duplicate'].includes(card.location) &&
-                    context.returnToHandIfStillInPlay.includes(card)
-                ) {
-                    context.returnToHandIfStillInPlay = context.returnToHandIfStillInPlay.filter(
-                        (c) => c !== card
-                    );
-                    card.controller.returnCardToHand(card, allowSave);
-                    context.game.addMessage(
-                        '{0} returns {1} to hand at the end of the {2} because of {3}',
-                        context.source.controller,
-                        card,
-                        duration,
-                        context.source
-                    );
-                }
-            }
-        };
-    },
-    returnToHandIfStillInPlayAndNotAttachedToCardByTitle: function (
-        parentCardTitle,
-        allowSave = false,
-        duration = 'phase'
-    ) {
-        return {
-            apply: function (card, context) {
-                context.returnToHandIfStillInPlay = context.returnToHandIfStillInPlay || [];
-                context.returnToHandIfStillInPlay.push(card);
-            },
-            unapply: function (card, context) {
-                if (
-                    ['play area', 'duplicate'].includes(card.location) &&
-                    context.returnToHandIfStillInPlay.includes(card)
-                ) {
-                    context.returnToHandIfStillInPlay = context.returnToHandIfStillInPlay.filter(
-                        (c) => c !== card
-                    );
-                    if ((card.parent && card.parent.name !== parentCardTitle) || !card.parent) {
-                        card.controller.returnCardToHand(card, allowSave);
-                        context.game.addMessage(
-                            '{0} returns {1} to hand at the end of the {2} because of {3}',
-                            context.source.controller,
-                            card,
-                            duration,
-                            context.source
-                        );
-                    }
-                }
-            }
-        };
-    },
-    shuffleIntoDeckIfStillInPlay: function (allowSave = true) {
-        return {
-            apply: function (card, context) {
-                context.shuffleIntoDeckIfStillInPlay = context.shuffleIntoDeckIfStillInPlay || [];
-                context.shuffleIntoDeckIfStillInPlay.push(card);
-            },
-            unapply: function (card, context) {
-                if (
-                    ['play area', 'duplicate'].includes(card.location) &&
-                    context.shuffleIntoDeckIfStillInPlay.includes(card)
-                ) {
-                    context.shuffleIntoDeckIfStillInPlay =
-                        context.shuffleIntoDeckIfStillInPlay.filter((c) => c !== card);
-                    context.game.resolveGameAction(
-                        GameActions.shuffleIntoDeck({ cards: [card], allowSave })
-                    );
-                    context.game.addMessage(
-                        '{0} shuffles {1} into their deck at the end of the phase because of {2}',
-                        card.owner,
-                        card,
-                        context.source
-                    );
-                }
-            }
-        };
-    },
-    removeFromGameIfStillInPlay: function (allowSave = true) {
-        return {
-            apply: function (card, context) {
-                context.removeFromGameIfStillInPlay = context.removeFromGameIfStillInPlay || [];
-                context.removeFromGameIfStillInPlay.push(card);
-            },
-            unapply: function (card, context) {
-                if (
-                    ['play area', 'duplicate'].includes(card.location) &&
-                    context.removeFromGameIfStillInPlay.includes(card)
-                ) {
-                    context.removeFromGameIfStillInPlay =
-                        context.removeFromGameIfStillInPlay.filter((c) => c !== card);
-                    context.game.resolveGameAction(GameActions.removeFromGame({ card, allowSave }));
-                    context.game.addMessage(
-                        '{0} removes {1} from the game at the end of the phase because of {2}',
-                        card.owner,
-                        card,
-                        context.source
-                    );
-                }
-            }
-        };
-    },
+
     removeFromGame: function () {
         return {
             apply: function (card, context) {
@@ -912,7 +709,9 @@ const Effects = {
                     if (originalLocation === 'play area') {
                         card.owner.putIntoPlay(card, 'play', { isEffectExpiration: true });
                     } else {
-                        card.owner.moveCard(card, originalLocation);
+                        context.game.resolveGameAction(
+                            GameActions.placeCard({ card, location: originalLocation })
+                        );
                     }
                     context.game.addMessage(
                         '{0} is put into play because of {1}',
@@ -933,7 +732,10 @@ const Effects = {
     immuneTo: function (cardCondition) {
         return {
             apply: function (card, context) {
-                const restriction = new ImmunityRestriction(cardCondition, context.source);
+                const restriction = new ImmunityRestriction(
+                    (source, abilityContext) => cardCondition(source, abilityContext, context),
+                    context.source
+                );
                 context.immuneTo = context.immuneTo || {};
                 context.immuneTo[card.uuid] = restriction;
                 card.addAbilityRestriction(restriction);
@@ -948,9 +750,22 @@ const Effects = {
     takeControl: function (newController) {
         return {
             apply: function (card, context) {
-                let finalController =
-                    typeof newController === 'function' ? newController() : newController;
-                context.game.takeControl(finalController, card, context.source);
+                const player =
+                    typeof newController === 'function' ? newController(context) : newController;
+                if (
+                    !TakeControl.canChangeGameState({ player, card }) ||
+                    !card.allowGameAction('takeControl', {
+                        game: context.game,
+                        source: context.source,
+                        resolutionStage: 'effect'
+                    })
+                ) {
+                    return;
+                }
+                (context.controlledCards ??= new Set()).add(card);
+                context.game.effectEngine.changeControlByEffect(card, context.source, () =>
+                    card.takeControl(player, context.effect)
+                );
                 context.game.addMessage(
                     '{0} uses {1} to take control of {2}',
                     context.source.controller,
@@ -959,7 +774,12 @@ const Effects = {
                 );
             },
             unapply: function (card, context) {
-                context.game.revertControl(card, context.source);
+                if (!context.controlledCards?.delete(card) || card.location !== 'play area') {
+                    return;
+                }
+                context.game.effectEngine.changeControlByEffect(card, context.source, () =>
+                    card.revertControl(context.effect)
+                );
             }
         };
     },
@@ -973,33 +793,41 @@ const Effects = {
         return this.cannotPutIntoPlay(restriction);
     },
     cannotMarshal: function (condition) {
-        let restriction = (card, playingType) => playingType === 'marshal' && condition(card);
+        let restriction = (card, playingType, context) =>
+            playingType === 'marshal' && condition(card, context);
         return this.cannotPutIntoPlay(restriction);
     },
     cannotBringOutOfShadows: function (condition) {
-        let restriction = (card, playingType) => playingType === 'outOfShadows' && condition(card);
+        let restriction = (card, playingType, context) =>
+            playingType === 'outOfShadows' && condition(card, context);
         return this.cannotPutIntoPlay(restriction);
     },
     cannotPlay: function (condition) {
-        let restriction = (card, playingType) =>
-            card.getType() === 'event' && playingType === 'play' && condition(card);
+        let restriction = (card, playingType, context) =>
+            card.getType() === 'event' && playingType === 'play' && condition(card, context);
         return this.cannotPutIntoPlay(restriction);
     },
     cannotPutIntoPlay: function (restriction) {
         return {
             targetType: 'player',
-            apply: function (player) {
-                player.playCardRestrictions.push(restriction);
+            apply: function (player, context) {
+                const bound = (card, playingType) => restriction(card, playingType, context);
+                context.playCardRestrictions = context.playCardRestrictions || {};
+                context.playCardRestrictions[player.name] = bound;
+                player.playCardRestrictions.push(bound);
             },
-            unapply: function (player) {
+            unapply: function (player, context) {
+                const bound = context.playCardRestrictions[player.name];
                 player.playCardRestrictions = player.playCardRestrictions.filter(
-                    (r) => r !== restriction
+                    (r) => r !== bound
                 );
+                delete context.playCardRestrictions[player.name];
             }
         };
     },
     cannotSetup: function (condition = () => true) {
-        let restriction = (card, playingType) => playingType === 'setup' && condition(card);
+        let restriction = (card, playingType, context) =>
+            playingType === 'setup' && condition(card, context);
         return this.cannotPutIntoPlay(restriction);
     },
     cannotSetupIntoShadows: function (condition = () => true) {
@@ -1129,15 +957,28 @@ const Effects = {
             }
         };
     },
-    mayInitiateAdditionalChallenge: function (challengeType, opponentFunc) {
-        let allowedChallenge = new AllowedChallenge(challengeType, opponentFunc);
+    mayInitiateAdditionalChallenge: function (challengeType, opponentFunc = () => true) {
+        const allowances = new WeakMap();
         return {
             targetType: 'player',
-            apply: function (player) {
+            apply: function (player, context) {
+                if (!allowances.has(context)) {
+                    allowances.set(context, new Map());
+                }
+                const players = allowances.get(context);
+                if (!players.has(player)) {
+                    players.set(
+                        player,
+                        new AllowedChallenge(challengeType, (opponent) =>
+                            opponentFunc(opponent, context)
+                        )
+                    );
+                }
+                const allowedChallenge = players.get(player);
                 player.addAllowedChallenge(allowedChallenge);
             },
-            unapply: function (player) {
-                player.removeAllowedChallenge(allowedChallenge);
+            unapply: function (player, context) {
+                player.removeAllowedChallenge(allowances.get(context).get(player));
             }
         };
     },
@@ -1168,10 +1009,12 @@ const Effects = {
             }
         };
     },
-    canSpendGold: function (allowSpendingFunc) {
+    canSpendGold: function (allowSpendingFunc = () => true) {
         return {
             apply: function (card, context) {
-                let goldSource = new GoldSource(card, allowSpendingFunc);
+                let goldSource = new GoldSource(card, (spendParams) =>
+                    allowSpendingFunc(spendParams, context)
+                );
                 context.canSpendGold = context.canSpendGold || {};
                 context.canSpendGold[card.uuid] = goldSource;
                 card.controller.addGoldSource(goldSource);
@@ -1183,10 +1026,12 @@ const Effects = {
             }
         };
     },
-    canSpendPowerAsGold: function (allowSpendingFunc) {
+    canSpendPowerAsGold: function (allowSpendingFunc = () => true) {
         return {
             apply: function (card, context) {
-                let goldSource = new PowerAsGoldSource(card, allowSpendingFunc);
+                let goldSource = new PowerAsGoldSource(card, (spendParams) =>
+                    allowSpendingFunc(spendParams, context)
+                );
                 context.canSpendPowerAsGold = context.canSpendPowerAsGold || {};
                 context.canSpendPowerAsGold[card.uuid] = goldSource;
                 context.source.controller.addGoldSource(goldSource);
@@ -1318,13 +1163,15 @@ const Effects = {
         return {
             targetType: 'player',
             apply: function (player, context) {
+                player.choosesWinnerForInitiativeTiesSources.add(context.effect);
                 player.choosesWinnerForInitiativeTies = true;
-                for (let opponent of context.game.getOpponents(player)) {
-                    delete opponent.choosesWinnerForInitiativeTies;
-                }
+                context.game.tieWinnerChooserChanged('initiative');
             },
-            unapply: function (player) {
-                delete player.choosesWinnerForInitiativeTies;
+            unapply: function (player, context) {
+                player.choosesWinnerForInitiativeTiesSources.delete(context.effect);
+                player.choosesWinnerForInitiativeTies =
+                    player.choosesWinnerForInitiativeTiesSources.size > 0;
+                context.game.tieWinnerChooserChanged('initiative');
             }
         };
     },
@@ -1332,63 +1179,26 @@ const Effects = {
         return {
             targetType: 'player',
             apply: function (player, context) {
+                player.choosesWinnerForDominanceTiesSources.add(context.effect);
                 player.choosesWinnerForDominanceTies = true;
-                for (let opponent of context.game.getOpponents(player)) {
-                    delete opponent.choosesWinnerForDominanceTies;
-                }
+                context.game.tieWinnerChooserChanged('dominance');
             },
-            unapply: function (player) {
-                delete player.choosesWinnerForDominanceTies;
+            unapply: function (player, context) {
+                player.choosesWinnerForDominanceTiesSources.delete(context.effect);
+                player.choosesWinnerForDominanceTies =
+                    player.choosesWinnerForDominanceTiesSources.size > 0;
+                context.game.tieWinnerChooserChanged('dominance');
             }
         };
     },
     canPlay: function (predicate) {
-        let playableLocation = new PlayableLocation('play', predicate);
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.playableLocations.push(playableLocation);
-            },
-            unapply: function (player) {
-                player.playableLocations = player.playableLocations.filter(
-                    (l) => l !== playableLocation
-                );
-            }
-        };
+        return playableLocationEffect('play', predicate);
     },
     canMarshal: function (predicate) {
-        let playableLocation = new PlayableLocation(
-            'marshal',
-            CardMatcher.createMatcher(predicate)
-        );
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.playableLocations.push(playableLocation);
-            },
-            unapply: function (player) {
-                player.playableLocations = player.playableLocations.filter(
-                    (l) => l !== playableLocation
-                );
-            }
-        };
+        return playableLocationEffect('marshal', predicate);
     },
     canMarshalIntoShadows: function (predicate) {
-        let playableLocation = new PlayableLocation(
-            'marshalIntoShadows',
-            CardMatcher.createMatcher(predicate)
-        );
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.playableLocations.push(playableLocation);
-            },
-            unapply: function (player) {
-                player.playableLocations = player.playableLocations.filter(
-                    (l) => l !== playableLocation
-                );
-            }
-        };
+        return playableLocationEffect('marshalIntoShadows', predicate);
     },
     canPlayFromOwn: function (location) {
         return {
@@ -1411,26 +1221,15 @@ const Effects = {
         };
     },
     canAmbush: function (predicate) {
-        let playableLocation = new PlayableLocation('ambush', CardMatcher.createMatcher(predicate));
-        return {
-            targetType: 'player',
-            apply: function (player) {
-                player.playableLocations.push(playableLocation);
-            },
-            unapply: function (player) {
-                player.playableLocations = player.playableLocations.filter(
-                    (l) => l !== playableLocation
-                );
-            }
-        };
+        return playableLocationEffect('ambush', predicate);
     },
     cannotBeFirstPlayer: modifyPlayerFlagEffect(Flags.player.cannotBeFirstPlayer),
     cannotGainDominancePower: modifyPlayerFlagEffect(Flags.player.cannotGainDominancePower),
     canSelectAsFirstPlayer: function (condition) {
         return {
             targetType: 'player',
-            apply: function (player) {
-                player.firstPlayerSelectCondition = condition;
+            apply: function (player, context) {
+                player.firstPlayerSelectCondition = (candidate) => condition(candidate, context);
             },
             unapply: function (player) {
                 player.firstPlayerSelectCondition = null;
@@ -1456,7 +1255,12 @@ const Effects = {
             targetType: 'player',
             apply: function (player, context) {
                 context.reducers = context.reducers || [];
-                var reducer = new CostReducer(context.game, context.source, properties);
+                var reducer = new CostReducer(context.game, context.source, {
+                    ...properties,
+                    ...(properties.match && {
+                        match: (card) => properties.match(card, context)
+                    })
+                });
                 context.reducers.push(reducer);
                 player.addCostReducer(reducer);
             },
@@ -1589,6 +1393,17 @@ const Effects = {
             isStateDependent: true
         };
     },
+    modifyUsedPlots: function (amount) {
+        return {
+            targetType: 'player',
+            apply: function (player) {
+                player.modifyUsedPlots(amount);
+            },
+            unapply: function (player) {
+                player.modifyUsedPlots(-amount);
+            }
+        };
+    },
     dynamicUsedPlotsWithTrait: function (calculate, trait) {
         return {
             targetType: 'player',
@@ -1644,6 +1459,7 @@ const Effects = {
     },
     skipPhase: modifyGameFlagEffect((name) => Flags.game.skipPhase(name)),
     notConsideredToBeInPlotDeck: modifyFlagEffect(Flags.card.notConsideredToBeInPlotDeck),
+    notConsideredWhenRecyclingPlots: modifyFlagEffect(Flags.card.notConsideredWhenRecyclingPlots),
     mustRevealPlot: function (card) {
         return {
             targetType: 'player',
@@ -1670,11 +1486,6 @@ const Effects = {
         return {
             targetType: 'player',
             apply: function (player, context) {
-                // TODO: Update this to actually wait for targeted player to choose their plot first, then allow you to choose. This will require
-                //       some updates to account for the loop scenario (eg. PlayerA > PlayerB > PlayerC > PlayerA), which is ruled to allow first
-                //       player to choose the order of simultaneous resolution. This could be part of a wider update to ensure first player chooses
-                //       the priority of delayed persistent effects happening simultaneously (eg. multiple "at end of phase, discard X" at once).
-                //       For now, this will allow the players to choose at the same time, and they can simply wait to see the choice.
                 player.mustShowPlotSelection.push(opponent);
                 // Only add visibility rule if it previously would not have been active
                 if (player.mustShowPlotSelection.length === 1) {
@@ -1851,37 +1662,6 @@ const Effects = {
         };
     },
     cannotRevealPlot: modifyPlayerFlagEffect(Flags.player.cannotRevealPlot),
-    //Meereen only effect
-    removeCardsFromHand: function () {
-        return {
-            targetType: 'player',
-            apply: function (player, context) {
-                context.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        player.hand.map((card) =>
-                            GameActions.placeCardUnderneath({
-                                card,
-                                player,
-                                parentCard: context.source,
-                                facedown: true
-                            })
-                        )
-                    )
-                );
-            },
-            unapply: function (player, context) {
-                player.discardCards(player.hand);
-                for (const card of context.source.underneath) {
-                    player.moveCard(card, 'hand');
-                }
-                context.game.addMessage(
-                    '{0} discards their hand and returns each card under {1} to their hand',
-                    player,
-                    context.source
-                );
-            }
-        };
-    },
     placeCardUnderneath: function (unapplyFunc = null) {
         return {
             apply: function (card, context) {

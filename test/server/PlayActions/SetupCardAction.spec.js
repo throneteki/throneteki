@@ -2,9 +2,14 @@ import SetupCardAction from '../../../server/game/PlayActions/SetupCardAction.js
 
 describe('SetupCardAction', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['on', 'removeListener']);
-        this.playerSpy = jasmine.createSpyObj('player', ['putIntoPlay']);
-        this.cardSpy = jasmine.createSpyObj('card', ['getType']);
+        this.gameSpy = { on: vi.fn(), removeListener: vi.fn() };
+        this.playerSpy = {
+            putIntoPlay: vi.fn(),
+            getSetupPlacement: vi.fn().mockReturnValue({ cost: 0, limited: 0 }),
+            setupGold: 8,
+            maxLimited: 1
+        };
+        this.cardSpy = { getType: vi.fn() };
         this.context = {
             game: this.gameSpy,
             player: this.playerSpy,
@@ -18,7 +23,7 @@ describe('SetupCardAction', function () {
             this.gameSpy.currentPhase = 'setup';
             this.playerSpy.readyToStart = true;
             this.playerSpy.hand = [this.cardSpy];
-            this.cardSpy.getType.and.returnValue('character');
+            this.cardSpy.getType.mockReturnValue('character');
         });
 
         describe('when all conditions are met', function () {
@@ -49,7 +54,7 @@ describe('SetupCardAction', function () {
 
         describe('when the card is an event', function () {
             beforeEach(function () {
-                this.cardSpy.getType.and.returnValue('event');
+                this.cardSpy.getType.mockReturnValue('event');
             });
 
             it('should return false', function () {

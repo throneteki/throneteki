@@ -1,47 +1,30 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class HisViperEyes extends DrawCard {
+    // His Viper Eyes (03032)
+    // Reaction: After you lose a [military] or [power] challenge as the defending player, look at
+    // the winning opponent's hand. Then, choose and discard 1 card from that hand.
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.defendingPlayer === this.controller &&
-                    event.challenge.loser === this.controller &&
-                    ['military', 'power'].includes(event.challenge.challengeType) &&
-                    event.challenge.winner.hand.length !== 0
+                afterChallenge: (event, context) =>
+                    event.challenge.defendingPlayer === context.player &&
+                    event.challenge.loser === context.player &&
+                    ['military', 'power'].includes(event.challenge.challengeType)
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    "{0} plays {1} to look at {2}'s hand",
-                    context.player,
-                    this,
-                    context.event.challenge.winner
-                );
-                this.game.promptForSelect(context.player, {
-                    activePromptTitle: 'Select a card',
-                    source: this,
-                    revealTargets: true,
-                    cardCondition: (card) =>
-                        card.location === 'hand' &&
-                        card.controller === context.event.challenge.winner,
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
-            }
+            message: {
+                format: "{player} plays {source} to look at {winner}'s hand and discard 1 card from it",
+                args: { winner: (context) => context.event.challenge.winner }
+            },
+            gameAction: GameActions.chooseCards({
+                title: 'Select a card to discard',
+                revealTargets: true,
+                cardCondition: (card, context) =>
+                    card.location === 'hand' && card.controller === context.event.challenge.winner,
+                gameAction: (card) => GameActions.discardCard({ card })
+            })
         });
-    }
-
-    onCardSelected(player, card) {
-        let otherPlayer = card.controller;
-        otherPlayer.discardCard(card);
-        this.game.addMessage(
-            "{0} then uses {1} to discard {2} from {3}'s hand",
-            player,
-            this,
-            card,
-            otherPlayer
-        );
-
-        return true;
     }
 }
 

@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Chett extends DrawCard {
+    // Chett (02085)
+    // No attachments except Weapon.
+    // Dominance Action: Kneel a Steward character to return a Direwolf or Raven card from your
+    // discard pile to your hand. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Return a card to hand',
@@ -11,21 +16,14 @@ class Chett extends DrawCard {
             limit: ability.limit.perPhase(1),
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'discard pile' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     (card.hasTrait('Direwolf') || card.hasTrait('Raven'))
             },
-            handler: (context) => {
-                this.controller.moveCard(context.target, 'hand');
-                this.game.addMessage(
-                    '{0} uses {1} to kneel {2} to return {3} to their hand',
-                    context.player,
-                    this,
-                    context.costs.kneel,
-                    context.target
-                );
-            }
+            message:
+                '{player} uses {source} to kneel {costs.kneel} to return {target} to their hand',
+            gameAction: GameActions.addToHand((context) => ({ card: context.target }))
         });
     }
 }

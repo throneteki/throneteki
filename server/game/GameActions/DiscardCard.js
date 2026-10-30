@@ -29,7 +29,13 @@ class DiscardCard extends GameAction {
         });
     }
 
-    canChangeGameState({ card, isRandom = false, context }) {
+    canChangeGameState({ card, isRandom = false, context, destination = 'discard pile' }) {
+        if (
+            !['discard pile', 'dead pile'].includes(destination) ||
+            (destination === 'dead pile' && card.getType() !== 'character')
+        ) {
+            return false;
+        }
         if (card.location === 'play area' && !LeavePlay.allow({ card })) {
             return false;
         }
@@ -47,8 +53,10 @@ class DiscardCard extends GameAction {
         allowSave = true,
         isPillage = false,
         isRandom = false,
+        claimWinner,
         source,
-        orderable
+        orderable,
+        destination = 'discard pile'
     }) {
         return MoveCardEventGenerator.createDiscardCardEvent({
             card,
@@ -56,7 +64,9 @@ class DiscardCard extends GameAction {
             isPillage,
             source,
             isRandom,
-            orderable
+            claimWinner,
+            orderable,
+            destination
         });
     }
 }

@@ -1,151 +1,127 @@
-import { Tokens } from '../../../../server/game/Constants/index.js';
-
 describe('Rickon Stark', function () {
-    integration(function () {
-        describe('when a normal search would be triggered', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('stark', [
-                    'A Noble Cause',
-                    'Here to Serve',
-                    'Rickon Stark',
-                    'Maester Aemon (Core)'
-                ]);
-
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.rickon = this.player1.findCardByName('Rickon Stark', 'hand');
-                this.p1deckCard = this.player1.findCardByName('Maester Aemon', 'hand');
-                this.p2deckCard = this.player2.findCardByName('Maester Aemon', 'hand');
-
-                this.player1.clickCard(this.rickon);
-
-                this.completeSetup();
-
-                // Search effect requires card in deck to actually trigger
-                this.player1.dragCard(this.p1deckCard, 'draw deck');
-                this.player2.dragCard(this.p2deckCard, 'draw deck');
-            });
-
-            describe('and the search is for the opponent', function () {
-                beforeEach(function () {
-                    this.player1.selectPlot('A Noble Cause');
-                    this.player2.selectPlot('Here to Serve');
-                    this.selectFirstPlayer(this.player1);
-                });
-
-                it('allows Rickon to cancel', function () {
-                    expect(this.player1).toAllowAbilityTrigger(this.rickon);
-                });
-            });
-
-            describe('and the search is for the current player', function () {
-                beforeEach(function () {
-                    this.player1.selectPlot('Here to Serve');
-                    this.player2.selectPlot('A Noble Cause');
-                    this.selectFirstPlayer(this.player1);
-                });
-
-                it('allows Rickon to cancel', function () {
-                    expect(this.player1).toAllowAbilityTrigger(this.rickon);
-                });
+    describe('when a normal search would be triggered', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'plot',
+                player1: {
+                    plotDeck: ['Here to Serve'],
+                    inPlay: ['Rickon Stark'],
+                    deck: ['Maester Aemon (Core)']
+                },
+                player2: { plotDeck: ['Here to Serve'], deck: ['Maester Aemon (Core)'] }
             });
         });
 
-        describe('when an ability has search under a choice or Then', function () {
-            beforeEach(function () {
-                const deck1 = this.buildDeck('stark', ['A Noble Cause', 'Rickon Stark']);
-                const deck2 = this.buildDeck('greyjoy', [
-                    'Sea of Blood (KotI)',
-                    'A Noble Cause',
-                    'Balon Greyjoy (Core)'
-                ]);
+        it("sacrifices himself to cancel an opponent's search", function () {
+            this.player1.selectPlot('Filler Plot');
+            this.player2.selectPlot('Here to Serve');
+            this.selectFirstPlayer(this.player1);
 
-                this.player1.selectDeck(deck1);
-                this.player2.selectDeck(deck2);
-                this.startGame();
-                this.keepStartingHands();
+            expect(this.player1).toAllowAbilityTrigger(this.rickonStark);
+            this.player1.triggerAbility(this.rickonStark);
 
-                this.rickon = this.player1.findCardByName('Rickon Stark', 'hand');
-                this.seaOfBlood = this.player2.findCardByName('Sea of Blood', 'agenda');
-                this.opponentCharacter = this.player2.findCardByName('Balon Greyjoy', 'hand');
-
-                this.player1.clickCard(this.rickon);
-                this.player2.clickCard(this.opponentCharacter);
-
-                this.completeSetup();
-
-                this.selectFirstPlayer(this.player2);
-                this.completeMarshalPhase();
-
-                this.player2.clickPrompt('Military');
-                this.player2.clickCard(this.opponentCharacter);
-                this.player2.clickPrompt('Done');
-                this.skipActionWindow();
-                this.player1.clickPrompt('Done');
-                this.skipActionWindow();
-
-                this.player2.triggerAbility('Sea of Blood');
-            });
-
-            it('allows Rickon to cancel the ability', function () {
-                expect(this.player1).toAllowAbilityTrigger(this.rickon);
-            });
-
-            it('cancels the full ability before the choice / Then', function () {
-                this.player1.triggerAbility(this.rickon);
-
-                // Ensure costs were paid but the pre-then effect didn't resolve
-                expect(this.player2Object.faction.kneeled).toBe(true);
-                expect(this.seaOfBlood.hasToken(Tokens.blood)).toBe(false);
-            });
+            expect(this.rickonStark.location).toBe('discard pile');
+            expect(this.player2.findCardByName('Maester Aemon').location).not.toBe('play area');
+            expect(this.player1).isReadyToTakeAction();
         });
 
-        describe('when a keyword triggers and the card has the word search in it', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('stark', [
-                    'A Noble Cause',
-                    'Rickon Stark',
-                    "Euron Crow's Eye (KotI)"
-                ]);
+        it('can cancel your own search', function () {
+            this.player1.selectPlot('Here to Serve');
+            this.player2.selectPlot('Filler Plot');
+            this.selectFirstPlayer(this.player1);
 
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.rickon = this.player1.findCardByName('Rickon Stark', 'hand');
-                this.euron = this.player2.findCardByName("Euron Crow's Eye", 'hand');
-
-                this.player1.clickCard(this.rickon);
-                this.player2.clickCard(this.euron);
-
-                this.completeSetup();
-                this.selectFirstPlayer(this.player2);
-
-                this.completeMarshalPhase();
-
-                this.player2.clickPrompt('Power');
-                this.player2.clickCard(this.euron);
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
-
-                this.player1.clickPrompt('Done');
-
-                this.skipActionWindow();
-
-                this.player2.clickPrompt('Apply Claim');
-
-                // Intimidate Rickon
-                this.player2.clickCard(this.rickon);
-            });
-
-            it('does not allow Rickon to cancel', function () {
-                expect(this.player1).not.toAllowAbilityTrigger(this.rickon);
-            });
+            expect(this.player1).toAllowAbilityTrigger(this.rickonStark);
         });
+    });
+
+    describe('when an ability has search under a choice or Then', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                firstPlayer: 'player2',
+                player1: { inPlay: ['Rickon Stark'] },
+                player2: { agenda: 'Sea of Blood (KotI)', inPlay: ['Balon Greyjoy (Core)'] }
+            });
+            this.player2.clickPrompt('Military');
+            this.player2.clickCard(this.balonGreyjoy);
+            this.player2.clickPrompt('Done');
+            this.skipActionWindow();
+            this.player1.clickPrompt('Done');
+            this.skipActionWindow();
+            this.player2.triggerAbility(this.seaOfBlood);
+        });
+
+        it('cancels the full ability before the choice or Then', function () {
+            expect(this.player1).toAllowAbilityTrigger(this.rickonStark);
+
+            this.player1.triggerAbility(this.rickonStark);
+
+            expect(this.player2Object.faction.kneeled).toBe(true);
+            expect(this.seaOfBlood.hasToken('blood')).toBe(false);
+        });
+    });
+
+    describe('when a keyword triggers on a card with the word search in it', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                firstPlayer: 'player2',
+                player1: { inPlay: ['Rickon Stark'] },
+                player2: { inPlay: ["Euron Crow's Eye (KotI)"] }
+            });
+            this.player2.clickPrompt('Power');
+            this.player2.clickCard(this.euronCrowsEye);
+            this.player2.clickPrompt('Done');
+            this.skipActionWindow();
+            this.player1.clickPrompt('Done');
+            this.skipActionWindow();
+            this.player2.clickCard(this.rickonStark);
+        });
+
+        it('does not let Rickon cancel it', function () {
+            expect(this.player1).not.toAllowAbilityTrigger(this.rickonStark);
+            expect(this.rickonStark.kneeled).toBe(true);
+        });
+    });
+});
+
+describe('Rickon Stark against a card with search in only one of its abilities', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player2',
+            player1: { inPlay: ['Rickon Stark'] },
+            player2: {
+                agenda: { card: 'Sea of Blood (R)', tokens: { blood: 1 } },
+                inPlay: ['Balon Greyjoy (Core)']
+            }
+        });
+    });
+
+    it('cannot cancel the ability without the word search', function () {
+        this.player2.clickCard(this.seaOfBlood);
+
+        expect(this.player1).not.toAllowAbilityTrigger(this.rickonStark);
+        expect(this.seaOfBlood.hasToken('blood')).toBe(false);
+        expect(this.rickonStark.location).toBe('play area');
+        expect(this.player2).isReadyToTakeAction();
+    });
+
+    it('can cancel the ability with the word search', function () {
+        this.player2.clickPrompt('Military');
+        this.player2.clickCard(this.balonGreyjoy);
+        this.player2.clickPrompt('Done');
+        this.skipActionWindow();
+        this.player1.clickPrompt('Done');
+        this.skipActionWindow();
+        this.player2.triggerAbility(this.seaOfBlood);
+
+        expect(this.player1).toAllowAbilityTrigger(this.rickonStark);
+
+        this.player1.triggerAbility(this.rickonStark);
+
+        expect(this.rickonStark.location).toBe('discard pile');
+        expect(this.seaOfBlood.tokens.blood).toBe(1);
+        expect(this.player2).isReadyToTakeAction();
     });
 });

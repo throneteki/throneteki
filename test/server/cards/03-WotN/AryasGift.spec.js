@@ -1,85 +1,50 @@
 describe("Arya's Gift", function () {
-    integration(function () {
+    function setup(attachment) {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                inPlay: [
+                    {
+                        card: 'Bran Stark (Core)',
+                        attachments: [{ card: attachment, owner: 'player2' }]
+                    },
+                    'Winterfell Steward'
+                ],
+                hand: ["Arya's Gift"]
+            }
+        });
+        this.player1.clickCard(this.aryasGift);
+    }
+
+    describe('with a normal attachment', function () {
         beforeEach(function () {
-            const deck = this.buildDeck('stark', [
-                'A Noble Cause',
-                'Winterfell Steward',
-                'Bran Stark (Core)',
-                'Milk of the Poppy',
-                "Arya's Gift",
-                'Fishing Net'
-            ]);
-
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.character1 = this.player1.findCardByName('Bran Stark', 'hand');
-            this.character2 = this.player1.findCardByName('Winterfell Steward', 'hand');
-
-            this.player1.clickCard(this.character1);
-            this.player1.clickCard(this.character2);
-
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player2);
+            setup.call(this, 'Milk of the Poppy');
+            this.player1.clickCard(this.milkOfThePoppy);
+            this.player1.clickCard(this.winterfellSteward);
         });
 
-        describe('with a normal attachment', function () {
-            beforeEach(function () {
-                this.milk = this.player2.findCardByName('Milk of the Poppy', 'hand');
-
-                // Attach Milk to the first character.
-                this.player2.clickCard(this.milk);
-                this.player2.clickCard(this.character1);
-
-                this.completeMarshalPhase();
-
-                this.player1.clickCard("Arya's Gift", 'hand');
-                this.player1.clickCard(this.milk);
-                this.player1.clickCard(this.character2);
-            });
-
-            it('should move the attachment to the new parent', function () {
-                expect(this.milk.parent).toBe(this.character2);
-            });
-
-            it('should remove the attachment from the old parent', function () {
-                expect(this.character1.attachments.includes(this.milk)).toBe(false);
-            });
-
-            it('should apply effects to the new parent', function () {
-                expect(this.character2.isAnyBlank()).toBe(true);
-            });
-
-            it('should unapply effects from the old parent', function () {
-                expect(this.character1.isAnyBlank()).toBe(false);
-            });
+        it('moves the attachment to the new parent', function () {
+            expect(this.milkOfThePoppy.parent).toBe(this.winterfellSteward);
+            expect(this.branStark.attachments).not.toContain(this.milkOfThePoppy);
         });
 
-        describe('with an opponent-only attachment', function () {
-            beforeEach(function () {
-                this.net = this.player2.findCardByName('Fishing Net', 'hand');
+        it('applies its effects to the new parent and unapplies them from the old one', function () {
+            expect(this.winterfellSteward.isAnyBlank()).toBe(true);
+            expect(this.branStark.isAnyBlank()).toBe(false);
+        });
+    });
 
-                // Attach Fishing Net to the first character.
-                this.player2.clickCard(this.net);
-                this.player2.clickCard(this.character1);
+    describe('with an opponent-only attachment', function () {
+        beforeEach(function () {
+            setup.call(this, 'Fishing Net');
+            this.player1.clickCard(this.fishingNet);
+            this.player1.clickCard(this.winterfellSteward);
+        });
 
-                this.completeMarshalPhase();
-
-                this.player1.clickCard("Arya's Gift", 'hand');
-                this.player1.clickCard(this.net);
-                this.player1.clickCard(this.character2);
-            });
-
-            it('should move the attachment to the new parent', function () {
-                expect(this.net.parent).toBe(this.character2);
-            });
-
-            it('should remove the attachment from the old parent', function () {
-                expect(this.character1.attachments).not.toContain(this.net);
-            });
+        it('moves the attachment to the new parent', function () {
+            expect(this.fishingNet.parent).toBe(this.winterfellSteward);
+            expect(this.branStark.attachments).not.toContain(this.fishingNet);
+            expect(this.fishingNet).toBeControlledBy(this.player2);
         });
     });
 });

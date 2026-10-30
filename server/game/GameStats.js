@@ -67,6 +67,7 @@ class GameStats {
                 eventsPlayed: 0,
                 goldGained: 0,
                 initiativeWon: 0,
+                manualActions: [],
                 powerFromRenown: 0,
                 powerGained: 0,
                 unopposedChallengesWon: 0

@@ -283,6 +283,8 @@ const CardPile = ({
         // Note: If CardPiles ever become available in locations where "Select Card" is always an option (such as "play area"), this will need to be permenantly enabled for those cards
         if (topCard?.selectable) {
             menu.push({ hideable: true, command: 'click', text: 'Select Card' });
+        } else if (topCard?.canPlay) {
+            menu.push({ command: 'click', text: 'Use' });
         }
     }
 

@@ -1,13 +1,17 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheRedWedding extends PlotCard {
+    // The Red Wedding (06080)
+    // Interrupt: When you win a challenge as the attacking player, choose and kill a Lord or Lady
+    // character controlled by the losing opponent. (Any player may initiate this ability.)
     setupCardAbilities() {
         this.interrupt({
             when: {
                 afterChallenge: (event) =>
                     event.challenge.attackingPlayer === event.challenge.winner
             },
-            player: () => this.game.currentChallenge.winner,
+            player: (event) => event.challenge.winner,
             target: {
                 activePromptTitle: 'Choose a Lord or Lady',
                 cardCondition: (card, context) =>
@@ -16,15 +20,8 @@ class TheRedWedding extends PlotCard {
                     (card.hasTrait('Lord') || card.hasTrait('Lady')) &&
                     card.location === 'play area'
             },
-            handler: (context) => {
-                this.game.killCharacter(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to kill {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to kill {target}',
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 }

@@ -1,43 +1,24 @@
 describe('A Song of Summer', function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck = this.buildDeck('lannister', [
-                'A Song of Summer',
-                'Winter Festival',
-                'Ser Jaime Lannister (Core)'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.jaime = this.player1.findCardByName('Ser Jaime Lannister', 'hand');
-
-            this.player1.clickCard(this.jaime);
-
-            this.completeSetup();
+    function setup(context, opponentPlot) {
+        context.setupTest({
+            phase: 'marshal',
+            player1: { plot: 'A Song of Summer', inPlay: ['Tumblestone Knight'] },
+            player2: { plot: opponentPlot, inPlay: ['Bastard in Hiding'] }
         });
+    }
 
-        describe('when played against a non-Winter card', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('A Song of Summer');
-                this.player2.selectPlot('A Song of Summer');
-            });
+    it('gives each character you control +1 STR while no Winter plot is revealed', function () {
+        setup(this, 'A Noble Cause');
 
-            it('should increase strength of characters by 1', function () {
-                expect(this.jaime.getStrength()).toBe(6);
-            });
-        });
+        expect(this.tumblestoneKnight.getStrength()).toBe(3);
+        expect(this.bastardInHiding.getStrength()).toBe(2);
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-        describe('when played against a Winter card', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('A Song of Summer');
-                this.player2.selectPlot('Winter Festival');
-            });
+    it('gives no STR while a Winter plot is revealed', function () {
+        setup(this, 'The Winds of Winter');
 
-            it('should not increase strength of characters', function () {
-                expect(this.jaime.getStrength()).toBe(5);
-            });
-        });
+        expect(this.tumblestoneKnight.getStrength()).toBe(2);
+        expect(this.player1).isReadyToTakeAction();
     });
 });

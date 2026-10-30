@@ -2,10 +2,14 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheLateLordFrey extends PlotCard {
+    // The Late Lord Frey (20055)
+    // Reaction: After you initiate a challenge, put a House Frey card into play from your hand or
+    // discard pile.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: (event) => event.challenge.attackingPlayer === this.controller
+                onChallengeInitiated: (event, context) =>
+                    event.challenge.attackingPlayer === context.source.controller
             },
             target: {
                 type: 'select',
@@ -19,15 +23,10 @@ class TheLateLordFrey extends PlotCard {
                 format: '{player} uses {source} to put {target} into play from their {originalLocation}',
                 args: { originalLocation: (context) => context.target.location }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoPlay((context) => ({
-                        player: context.player,
-                        card: context.target
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 }

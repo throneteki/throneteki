@@ -2,13 +2,18 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TheThroneOfDorne extends DrawCard {
+    // The Throne of Dorne (25028)
+    // Reaction: After you lose dominance, kneel The Throne of Dorne to place a [martell] card you
+    // control in shadows.
+    // +1 Reserve.
     setupCardAbilities(ability) {
         this.plotModifiers({
             reserve: 1
         });
         this.reaction({
             when: {
-                onDominanceDetermined: (event) => event.winner && this.controller !== event.winner
+                onDominanceDetermined: (event, context) =>
+                    event.winner && context.source.controller !== event.winner
             },
             cost: ability.costs.kneelSelf(),
             target: {
@@ -21,12 +26,7 @@ class TheThroneOfDorne extends DrawCard {
                 }
             },
             message: '{player} kneels {costs.kneel} to place {target} in shadows',
-            handler: (context) => {
-                context.game.resolveGameAction(
-                    GameActions.putIntoShadows((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.putIntoShadows((context) => ({ card: context.target }))
         });
     }
 }

@@ -44,7 +44,7 @@ describe('the GamePipeline', function () {
                     this.existingStep = {
                         queueStep: function () {}
                     };
-                    spyOn(this.existingStep, 'queueStep');
+                    vi.spyOn(this.existingStep, 'queueStep').mockImplementation(() => {});
                     this.pipeline.initialise([this.existingStep]);
                 });
 

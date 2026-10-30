@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class SilverHairNet extends DrawCard {
+    // Silver Hair Net (06044)
+    // Lady character only.
+    // Attached character gains stealth.
+    // While attached character is participating in a challenge, reduce the cost of each event you
+    // play by 1.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Lady' });
 
@@ -9,7 +14,8 @@ class SilverHairNet extends DrawCard {
         });
 
         this.persistentEffect({
-            condition: () => this.parent && this.parent.isParticipating(),
+            condition: (context) =>
+                context.source.parent && context.source.parent.isParticipating(),
             targetController: 'current',
             effect: ability.effects.reduceCost({
                 playingTypes: 'play',

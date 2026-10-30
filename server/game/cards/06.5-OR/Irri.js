@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Irri extends DrawCard {
+    // Irri (06093)
+    // Bestow (2).
+    // Action: Discard 1 gold from Irri to choose and stand a Lord or Lady character. (Limit once
+    // per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand Lord or Lady',
@@ -14,15 +19,8 @@ class Irri extends DrawCard {
                     card.kneeled,
                 gameAction: 'stand'
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.addMessage(
-                    '{0} discards 1 gold from {1} to stand {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} discards 1 gold from {source} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

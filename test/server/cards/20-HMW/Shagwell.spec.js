@@ -1,188 +1,89 @@
 describe('Shagwell', function () {
-    integration(function () {
+    function setup(context, sourceGold) {
+        context.setupTest({
+            phase: 'marshal',
+            player1: {
+                inPlay: [
+                    { card: 'Shagwell (HMW)', gold: 1 },
+                    { card: 'Jinglebell (HMW)', gold: 1 },
+                    { card: 'Maester Wendamyr', gold: sourceGold },
+                    'House Maester'
+                ]
+            },
+            player2: {
+                inPlay: ['Jinglebell (ToJ)']
+            }
+        });
+
+        context.fool = context.player1.findCardByName('Jinglebell (HMW)');
+        context.opponentFool = context.player2.findCardByName('Jinglebell (ToJ)');
+    }
+
+    describe('while a character with gold has a keyword', function () {
         beforeEach(function () {
-            const deck1 = this.buildDeck('tyrell', [
-                "A Mummer's Farce",
-                'Late Summer Feast',
-                'Shagwell (HMW)',
-                'Jinglebell (HMW)',
-                'Maester Aemon (Core)',
-                'Veteran Builder',
-                'Asha Greyjoy (KotI)',
-                'Polliver',
-                'Patchface',
-                'Saltcliffe Sailor'
-            ]);
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck1);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.shagwell = this.player1.findCardByName('Shagwell');
-            this.jinglebell = this.player1.findCardByName('Jinglebell');
-            this.patchface = this.player1.findCardByName('Patchface');
-            this.noAttach = this.player1.findCardByName('Maester Aemon');
-            this.noAttachExcept = this.player1.findCardByName('Veteran Builder');
-            this.stealthAndPillage = this.player1.findCardByName('Asha Greyjoy');
-            this.pillage = this.player1.findCardByName('Polliver');
-            this.stealthGaining = this.player1.findCardByName('Saltcliffe Sailor');
-
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player1);
+            setup(this, 1);
         });
 
-        describe('when shagwell is alone in play', function () {
-            beforeEach(function () {
-                this.player1.clickCard(this.shagwell);
-                this.player1.clickPrompt('Done');
-            });
+        it('gives that keyword to each Fool character with gold', function () {
+            expect(this.shagwell.hasKeyword('stealth')).toBe(true);
+            expect(this.fool.hasKeyword('stealth')).toBe(true);
+            expect(this.fool.isBestow()).toBe(true);
+            expect(this.houseMaester.hasKeyword('stealth')).toBe(false);
+            expect(this.houseMaester.isBestow()).toBe(false);
+            expect(this.opponentFool.hasKeyword('stealth')).toBe(false);
+            expect(this.opponentFool.isBestow()).toBe(false);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 
-            it('should copy his own keywords', function () {
-                expect(this.shagwell.keywords.getCount('Bestow (1)')).toBe(1);
-                this.shagwell.modifyToken('gold', 1);
-                //update state
-                this.player1.clickCard(this.shagwell);
-                expect(this.shagwell.keywords.getCount('Bestow (1)')).toBe(2);
+    describe('while the character with the keyword has no gold', function () {
+        beforeEach(function () {
+            setup(this, 0);
+        });
+
+        it('does not give the keyword to Fool characters', function () {
+            expect(this.shagwell.hasKeyword('stealth')).toBe(false);
+            expect(this.fool.hasKeyword('stealth')).toBe(false);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
+
+    describe('while the Fool character has no gold', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    inPlay: ['Shagwell (HMW)', { card: 'Maester Wendamyr', gold: 1 }]
+                }
             });
         });
 
-        describe('when shagwell is in play', function () {
-            beforeEach(function () {
-                this.player1.clickCard(this.shagwell);
-                this.player1.clickPrompt('1');
-            });
-
-            it('should copy the keywords of a no attachment character', function () {
-                expect(this.shagwell.keywords.contains('Bestow (1)')).toBe(true);
-                expect(this.shagwell.keywords.contains('No Attachments')).toBe(false);
-                this.player1.dragCard(this.noAttach, 'play area');
-                this.noAttach.modifyToken('gold', 1);
-                //update state
-                this.player1.clickCard(this.shagwell);
-                expect(this.shagwell.keywords.contains('Bestow (1)')).toBe(true);
-                expect(this.shagwell.keywords.contains('No Attachments')).toBe(true);
-            });
-
-            it('should copy the keywords of a no attachment except weapon character', function () {
-                expect(this.shagwell.keywords.contains('Bestow (1)')).toBe(true);
-                expect(this.shagwell.keywords.contains('no attachments except <i>weapon</i>')).toBe(
-                    false
-                );
-                this.player1.dragCard(this.noAttachExcept, 'play area');
-                this.noAttachExcept.modifyToken('gold', 1);
-                //update state
-                this.player1.clickCard(this.shagwell);
-                expect(this.shagwell.keywords.contains('Bestow (1)')).toBe(true);
-                expect(this.shagwell.keywords.contains('no attachments except <i>weapon</i>')).toBe(
-                    true
-                );
-            });
-
-            it('should copy the keywords of a pillage and stealth character', function () {
-                expect(this.shagwell.keywords.contains('Bestow (1)')).toBe(true);
-                expect(this.shagwell.keywords.contains('pillage')).toBe(false);
-                expect(this.shagwell.keywords.contains('stealth')).toBe(false);
-                this.player1.dragCard(this.stealthAndPillage, 'play area');
-                this.stealthAndPillage.modifyToken('gold', 1);
-                //update state
-                this.player1.clickCard(this.shagwell);
-                expect(this.shagwell.keywords.contains('Bestow (1)')).toBe(true);
-                expect(this.shagwell.keywords.contains('pillage')).toBe(true);
-                expect(this.shagwell.keywords.contains('stealth')).toBe(true);
-            });
-
-            it('should only copy one instance of the same keyword whilst on different characters', function () {
-                expect(this.shagwell.keywords.getCount('Bestow (1)')).toBe(2);
-                expect(this.shagwell.keywords.getCount('pillage')).toBe(0);
-
-                this.player1.dragCard(this.stealthAndPillage, 'play area');
-                this.stealthAndPillage.modifyToken('gold', 1);
-                //update state
-                this.player1.clickCard(this.shagwell);
-                expect(this.shagwell.keywords.getCount('Bestow (1)')).toBe(2);
-                expect(this.shagwell.keywords.getCount('pillage')).toBe(1);
-
-                this.player1.dragCard(this.pillage, 'play area');
-                this.pillage.modifyToken('gold', 1);
-                //update state
-                this.player1.clickCard(this.shagwell);
-                expect(this.shagwell.keywords.getCount('Bestow (1)')).toBe(2);
-                expect(this.shagwell.keywords.getCount('pillage')).toBe(1);
-            });
-
-            it('should not copy the keywords of a character that left play while another fool with gold is in play', function () {
-                expect(this.shagwell.keywords.contains('Bestow (1)')).toBe(true);
-                expect(this.shagwell.keywords.contains('pillage')).toBe(false);
-                expect(this.shagwell.keywords.contains('stealth')).toBe(false);
-                this.player1.dragCard(this.stealthAndPillage, 'play area');
-                this.stealthAndPillage.modifyToken('gold', 1);
-                //update state
-                this.player1.clickCard(this.shagwell);
-                this.player1.dragCard(this.jinglebell, 'play area');
-                this.jinglebell.modifyToken('gold', 1);
-                //update state
-                this.player1.clickCard(this.shagwell);
-                expect(this.shagwell.keywords.contains('Bestow (1)')).toBe(true);
-                expect(this.shagwell.keywords.contains('pillage')).toBe(true);
-                expect(this.shagwell.keywords.contains('stealth')).toBe(true);
-                expect(this.jinglebell.keywords.contains('Bestow (1)')).toBe(true);
-                expect(this.jinglebell.keywords.contains('pillage')).toBe(true);
-                expect(this.jinglebell.keywords.contains('stealth')).toBe(true);
-                //source of pillage and stealth leaves play
-                this.player1.dragCard(this.stealthAndPillage, 'discard pile');
-                //update state
-                this.player1.clickCard(this.shagwell);
-                expect(this.shagwell.keywords.contains('Bestow (1)')).toBe(true);
-                expect(this.shagwell.keywords.contains('pillage')).toBe(false);
-                expect(this.shagwell.keywords.contains('stealth')).toBe(false);
-                expect(this.jinglebell.keywords.contains('Bestow (1)')).toBe(true);
-                expect(this.jinglebell.keywords.contains('pillage')).toBe(false);
-                expect(this.jinglebell.keywords.contains('stealth')).toBe(false);
-            });
-
-            it('should not copy the keywords of a character which were also copied from a separate character that left play', function () {
-                expect(this.shagwell.keywords.contains('Bestow (1)')).toBe(true);
-                expect(this.shagwell.keywords.contains('pillage')).toBe(false);
-                expect(this.shagwell.keywords.contains('stealth')).toBe(false);
-            });
-
-            describe('and patchface is in play', function () {
-                beforeEach(function () {
-                    this.player1.clickCard(this.patchface);
-                    this.player1.clickPrompt('1');
-                });
-
-                it("should not copy patchface's keywords when the source of those keywords has left play", function () {
-                    expect(this.shagwell.keywords.contains('Bestow (1)')).toBe(true);
-                    expect(this.patchface.keywords.contains('Bestow (1)')).toBe(true);
-                    expect(this.shagwell.keywords.contains('Bestow (3)')).toBe(false);
-                    expect(this.patchface.keywords.contains('Bestow (3)')).toBe(false);
-                    expect(this.shagwell.keywords.contains('stealth')).toBe(false);
-                    expect(this.patchface.keywords.contains('stealth')).toBe(false);
-                    //source of stealth gaining ability enters play
-                    this.player1.dragCard(this.stealthGaining, 'play area');
-                    this.player1.clickPrompt('1');
-                    //update state
-                    this.player1.clickCard(this.shagwell);
-                    expect(this.shagwell.keywords.contains('Bestow (1)')).toBe(true);
-                    expect(this.patchface.keywords.contains('Bestow (1)')).toBe(true);
-                    expect(this.shagwell.keywords.contains('Bestow (3)')).toBe(true);
-                    expect(this.patchface.keywords.contains('Bestow (3)')).toBe(true);
-                    expect(this.shagwell.keywords.contains('stealth')).toBe(true);
-                    expect(this.patchface.keywords.contains('stealth')).toBe(true);
-                    //source of stealth gaining ability leaves play
-                    this.player1.dragCard(this.stealthGaining, 'discard pile');
-                    //update state
-                    this.player1.clickCard(this.shagwell);
-                    expect(this.shagwell.keywords.contains('Bestow (1)')).toBe(true);
-                    expect(this.patchface.keywords.contains('Bestow (1)')).toBe(true);
-                    expect(this.shagwell.keywords.contains('Bestow (3)')).toBe(false);
-                    expect(this.patchface.keywords.contains('Bestow (3)')).toBe(false);
-                    expect(this.shagwell.keywords.contains('stealth')).toBe(false);
-                    expect(this.patchface.keywords.contains('stealth')).toBe(false);
-                });
-            });
+        it('does not gain the keyword', function () {
+            expect(this.shagwell.hasKeyword('stealth')).toBe(false);
+            expect(this.player1).isReadyToTakeAction();
         });
+    });
+});
+
+describe('Shagwell with a character made a Fool', function () {
+    it('gives it the keywords of characters with gold', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                inPlay: [
+                    { card: 'Shagwell (HMW)', gold: 1 },
+                    { card: 'Arya Stark (Core)', gold: 1 },
+                    { card: 'Kindly Man', gold: 1 }
+                ],
+                hand: ['"Florian and Jonquil" (BtB)'],
+                gold: 1
+            }
+        });
+        this.player1.clickCard(this.florianAndJonquil);
+        this.player1.clickCard(this.kindlyMan);
+
+        expect(this.kindlyMan.hasTrait('Fool')).toBe(true);
+        expect(this.kindlyMan.hasKeyword('stealth')).toBe(true);
+        expect(this.shagwell.hasKeyword('renown')).toBe(true);
     });
 });

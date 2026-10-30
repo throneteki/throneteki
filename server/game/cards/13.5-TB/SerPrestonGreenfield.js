@@ -2,55 +2,35 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SerPrestonGreenfield extends DrawCard {
+    // Ser Preston Greenfield (13087)
+    // Shadow (4).
+    // Reaction: After you win a challenge in which Ser Preston Greenfield is participating, the
+    // losing opponent must move 1 power from his or her faction card to a standing character he or
+    // she controls.
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.isParticipating() &&
-                    this.opponentCanMovePower(event.challenge.loser)
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
+                    context.source.isParticipating() &&
+                    event.challenge.loser.faction.power > 0
             },
             message: {
-                format: '{player} uses {source} to force {loser} to move power',
+                format: '{player} uses {source} to have {loser} move 1 power from their faction card to a standing character they control',
                 args: { loser: (context) => context.event.challenge.loser }
             },
-            handler: (context) => {
-                const loser = context.event.challenge.loser;
-                this.game.promptForSelect(loser, {
-                    cardCondition: (card) =>
-                        card.controller === loser &&
-                        card.getType() === 'character' &&
-                        card.location === 'play area' &&
-                        !card.kneeled,
-                    onSelect: (opponent, card) => this.handleSelect(opponent, card),
-                    onCancel: (opponent) => this.handleCancel(opponent),
-                    source: this
-                });
-            }
-        });
-    }
-
-    opponentCanMovePower(opponent) {
-        return (
-            opponent.faction.power > 0 &&
-            opponent.anyCardsInPlay((card) => card.getType() === 'character' && !card.kneeled)
-        );
-    }
-
-    handleSelect(opponent, card) {
-        this.game.addMessage('{0} moves 1 power to {1} for {2}', opponent, card, this);
-        this.game.resolveGameAction(
-            GameActions.movePower({
-                from: opponent.faction,
-                to: card
+            gameAction: GameActions.chooseCards({
+                player: (context) => context.event.challenge.loser,
+                title: 'Select a character',
+                cardCondition: (card, context) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    !card.kneeled &&
+                    card.controller === context.choosingPlayer,
+                gameAction: (card) =>
+                    GameActions.movePower({ from: card.controller.faction, to: card })
             })
-        );
-        return true;
-    }
-
-    handleCancel(opponent) {
-        this.game.addAlert('danger', '{0} cancels the resolution of {1}', opponent, this);
-        return true;
+        });
     }
 }
 

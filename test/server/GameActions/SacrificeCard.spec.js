@@ -2,14 +2,14 @@ import SacrificeCard from '../../../server/game/GameActions/SacrificeCard.js';
 
 describe('SacrificeCard', function () {
     beforeEach(function () {
-        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'createSnapshot']);
+        this.cardSpy = { allowGameAction: vi.fn(), createSnapshot: vi.fn() };
         this.props = { card: this.cardSpy };
     });
 
     describe('allow()', function () {
         beforeEach(function () {
             this.cardSpy.location = 'play area';
-            this.cardSpy.allowGameAction.and.returnValue(true);
+            this.cardSpy.allowGameAction.mockReturnValue(true);
         });
 
         describe('when the card is in play and not immune', function () {
@@ -30,7 +30,7 @@ describe('SacrificeCard', function () {
 
         describe('when the card is immune to sacrifice', function () {
             beforeEach(function () {
-                this.cardSpy.allowGameAction.and.callFake(
+                this.cardSpy.allowGameAction.mockImplementation(
                     (actionName) => actionName !== 'sacrifice'
                 );
             });
@@ -42,7 +42,7 @@ describe('SacrificeCard', function () {
 
         describe('when the card is immune to leaving play', function () {
             beforeEach(function () {
-                this.cardSpy.allowGameAction.and.callFake(
+                this.cardSpy.allowGameAction.mockImplementation(
                     (actionName) => actionName !== 'leavePlay'
                 );
             });
@@ -75,7 +75,7 @@ describe('SacrificeCard', function () {
         describe('the event handler', function () {
             beforeEach(function () {
                 this.event = this.events.find((e) => e.name === 'onSacrificed');
-                this.cardSpy.createSnapshot.and.returnValue('snapshot');
+                this.cardSpy.createSnapshot.mockReturnValue('snapshot');
                 this.event.executeHandler();
             });
 

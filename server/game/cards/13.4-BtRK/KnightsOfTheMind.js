@@ -1,23 +1,22 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class KnightsOfTheMind extends DrawCard {
-    setupCardAbilities() {
+    // Knights of the Mind (13078)
+    // Challenge Action: Until the end of the phase, each Maester character you control gains a
+    // [military] icon.
+    setupCardAbilities(ability) {
         this.action({
             title: 'Give each Maester character you control a military icon',
-            handler: () => {
-                this.game.addMessage(
-                    '{0} plays {1} to give each Maester character a military icon until the end of the phase',
-                    this.controller,
-                    this
-                );
-                let maesters = this.controller.filterCardsInPlay(
+            message:
+                '{player} plays {source} to give each Maester character a military icon until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.player.filterCardsInPlay(
                     (card) => card.getType() === 'character' && card.hasTrait('Maester')
-                );
-                this.untilEndOfPhase((ability) => ({
-                    match: maesters,
-                    effect: ability.effects.addIcon('military')
-                }));
-            }
+                ),
+                effect: ability.effects.addIcon('military')
+            }))
         });
     }
 }

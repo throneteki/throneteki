@@ -1,23 +1,30 @@
+import GameActions from '../../../server/game/GameActions/index.js';
 import ThenAbilityAction from '../../../server/game/GameActions/ThenAbilityAction.js';
 import ThenClauseAbility from '../../../server/game/ThenClauseAbility.js';
 
 describe('ThenAbilityAction', function () {
     beforeEach(function () {
-        this.eventSpy = jasmine.createSpyObj('event', ['thenExecute']);
+        this.eventSpy = { thenExecute: vi.fn() };
         this.eventSpy.resolved = true;
-        this.internalActionSpy = jasmine.createSpyObj('action', ['allow', 'createEvent']);
-        this.internalActionSpy.createEvent.and.returnValue(this.eventSpy);
-        this.gameSpy = jasmine.createSpyObj('game', [
-            'popAbilityContext',
-            'pushAbilityContext',
-            'resolveAbility'
-        ]);
+        this.internalActionSpy = { allow: vi.fn(), createEvent: vi.fn() };
+        this.internalActionSpy.createEvent.mockReturnValue(this.eventSpy);
+        this.gameSpy = {
+            popAbilityContext: vi.fn(),
+            pushAbilityContext: vi.fn(),
+            resolveAbility: vi.fn()
+        };
         this.context = { props: 'external', game: this.gameSpy };
     });
 
     describe('when passed a properties object', function () {
         beforeEach(function () {
-            this.abilityProps = { props: 'internal', handler: () => true };
+            this.abilityProps = {
+                props: 'internal',
+                gameAction: GameActions.genericHandler(
+                    () => true,
+                    () => true
+                )
+            };
             this.action = new ThenAbilityAction(this.internalActionSpy, this.abilityProps);
         });
 
@@ -29,7 +36,7 @@ describe('ThenAbilityAction', function () {
             });
 
             it('should return the value of the internal allow call', function () {
-                this.internalActionSpy.allow.and.returnValue('INTERNAL ALLOW VALUE');
+                this.internalActionSpy.allow.mockReturnValue('INTERNAL ALLOW VALUE');
 
                 expect(this.action.allow(this.context)).toBe('INTERNAL ALLOW VALUE');
             });
@@ -48,7 +55,7 @@ describe('ThenAbilityAction', function () {
 
             describe('the thenExecute function', function () {
                 beforeEach(function () {
-                    this.eventSpy.thenExecute.and.callFake((thenExecute) => {
+                    this.eventSpy.thenExecute.mockImplementation((thenExecute) => {
                         this.thenExecute = thenExecute;
                     });
 
@@ -59,8 +66,8 @@ describe('ThenAbilityAction', function () {
                     this.thenExecute(this.eventSpy);
 
                     expect(this.gameSpy.resolveAbility).toHaveBeenCalledWith(
-                        jasmine.any(ThenClauseAbility),
-                        jasmine.any(Object)
+                        expect.any(ThenClauseAbility),
+                        expect.any(Object)
                     );
                 });
 

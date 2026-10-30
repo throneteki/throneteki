@@ -1,40 +1,27 @@
 describe('Renly Baratheon (TtB)', function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck = this.buildDeck('baratheon', [
-                'Sneak Attack',
-                'Renly Baratheon (TtB)',
-                'Dragonstone Faithful',
-                'Castle Black (Core)',
-                'Steward at the Wall',
-                'Steward at the Wall'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.player1.clickCard('Renly Baratheon', 'hand');
-            this.completeSetup();
-            this.selectFirstPlayer(this.player1);
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                gold: 6,
+                hand: ['Bastard in Hiding', 'Tumblestone Knight', 'House Dayne Knight'],
+                inPlay: ['Renly Baratheon (TtB)']
+            }
         });
+    });
 
-        it('should reduce the first non Baratheon character marshalled.', function () {
-            // Does not reduce Baratheon characters
-            this.player1.clickCard('Dragonstone Faithful', 'hand');
-            expect(this.player1Object.gold).toBe(4);
+    it('reduces the cost of the first non-[baratheon] character you marshal by 1, and only that one', function () {
+        this.player1.clickCard(this.bastardInHiding);
 
-            // Does not reduce non-characters.
-            this.player1.clickCard('Castle Black', 'hand');
-            expect(this.player1Object.gold).toBe(2);
+        expect(this.player1Object.gold).toBe(4);
 
-            // First non-Baratheon character, should be reduced.
-            this.player1.clickCard('Steward at the Wall', 'hand');
-            expect(this.player1Object.gold).toBe(2);
+        this.player1.clickCard(this.tumblestoneKnight);
 
-            // Does not reduce subsequent non-Baratheon characters.
-            this.player1.clickCard('Steward at the Wall', 'hand');
-            expect(this.player1Object.gold).toBe(1);
-        });
+        expect(this.player1Object.gold).toBe(3);
+
+        this.player1.clickCard(this.houseDayneKnight);
+
+        expect(this.player1Object.gold).toBe(1);
+        expect(this.player1).isReadyToTakeAction();
     });
 });

@@ -1,7 +1,11 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Nightmares extends DrawCard {
-    setupCardAbilities() {
+    // Nightmares (02099)
+    // Action: Choose a character or location. Until the end of the phase, treat that card's printed
+    // text box as if it were blank (except for Traits).
+    setupCardAbilities(ability) {
         this.action({
             title: 'Blank a character or location',
             target: {
@@ -10,19 +14,13 @@ class Nightmares extends DrawCard {
                     card.location === 'play area' &&
                     (card.getType() === 'character' || card.getType() === 'location')
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.blankExcludingTraits
-                }));
-
-                this.game.addMessage(
-                    '{0} uses {1} to treat the text box of {2} as blank until the end of the phase',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} plays {source} to treat the text box of {target} as blank until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.blankExcludingTraits
+            }))
         });
     }
 }

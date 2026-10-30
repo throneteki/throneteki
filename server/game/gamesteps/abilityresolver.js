@@ -2,6 +2,7 @@ import BaseStep from './basestep.js';
 import Event from '../event.js';
 import GamePipeline from '../gamepipeline.js';
 import SimpleStep from './simplestep.js';
+import GameActions from '../GameActions/index.js';
 
 class AbilityResolver extends BaseStep {
     constructor(game, ability, context) {
@@ -19,6 +20,7 @@ class AbilityResolver extends BaseStep {
             new SimpleStep(game, () => this.resolveCosts()),
             new SimpleStep(game, () => this.waitForCostResolution()),
             new SimpleStep(game, () => this.payCosts()),
+            new SimpleStep(game, () => this.endIfCostPrevented()),
             new SimpleStep(game, () => (this.context.resolutionStage = 'effect')),
             new SimpleStep(game, () => this.choosePlayer()),
             new SimpleStep(game, () => this.waitForChoosePlayerResolution()),
@@ -26,6 +28,7 @@ class AbilityResolver extends BaseStep {
             new SimpleStep(game, () => this.waitForTargetResolution()),
             new SimpleStep(game, () => this.incrementAbilityLimit()),
             new SimpleStep(game, () => this.executeHandler()),
+            new SimpleStep(game, () => this.flushHeldMessage()),
             new SimpleStep(game, () => this.raiseCardPlayedIfEvent()),
             new SimpleStep(game, () => this.game.popAbilityContext())
         ]);
@@ -73,6 +76,16 @@ class AbilityResolver extends BaseStep {
         ) {
             this.context.cardStateWhenInitiated = this.context.source.createSnapshot();
         }
+
+        this.context.legalTargetsAtInitiation = new Map();
+        for (const target of this.ability.targets || []) {
+            if (target.legalCards) {
+                const cards = target.legalCards(this.context);
+                if (cards) {
+                    this.context.legalTargetsAtInitiation.set(target, cards);
+                }
+            }
+        }
     }
 
     markActionAsTaken() {
@@ -112,11 +125,61 @@ class AbilityResolver extends BaseStep {
             return;
         }
 
+        this.context.costEvents = [];
+        this.context.recordingCostEvents = true;
         this.ability.payCosts(this.context);
+        this.context.recordingCostEvents = false;
+    }
+
+    endIfCostPrevented() {
+        if (this.cancelled || !this.costWasPrevented()) {
+            return;
+        }
+
+        this.costPrevented = true;
+        const source = this.context.source;
+        if (source.location === 'being played') {
+            const parentCard = this.context.originalParent;
+            const action =
+                this.context.originalLocation === 'underneath' && parentCard
+                    ? GameActions.placeCardUnderneath({
+                          card: source,
+                          parentCard,
+                          player: source.owner,
+                          facedown: this.context.originalFacedown
+                      })
+                    : GameActions.placeCard({
+                          card: source,
+                          location: this.context.originalLocation || 'hand'
+                      });
+            this.game.resolveGameAction(action);
+        }
+
+        this.game.addMessage(
+            '{0} fails to initiate {1} because a cost was prevented',
+            this.context.player,
+            source
+        );
+    }
+
+    costWasPrevented() {
+        return (this.context.costEvents || []).some((event) => this.eventWasPrevented(event));
+    }
+
+    eventWasPrevented(event) {
+        if (!event?.name) {
+            return false;
+        }
+
+        if (event.cancelled) {
+            return true;
+        }
+
+        return (event.childEvents || []).some((child) => this.eventWasPrevented(child));
     }
 
     choosePlayer() {
-        if (this.cancelled || !this.ability.needsChoosePlayer()) {
+        if (this.cancelled || this.costPrevented || !this.ability.needsChoosePlayer()) {
             return;
         }
 
@@ -145,7 +208,7 @@ class AbilityResolver extends BaseStep {
     }
 
     resolveTargets() {
-        if (this.cancelled) {
+        if (this.cancelled || this.costPrevented) {
             return;
         }
 
@@ -153,7 +216,17 @@ class AbilityResolver extends BaseStep {
     }
 
     waitForTargetResolution() {
-        if (this.cancelled) {
+        if (this.cancelled || this.costPrevented) {
+            return;
+        }
+
+        if (this.targetResults.some((result) => result.unsuccessful)) {
+            this.unsuccessful = true;
+            this.game.addMessage(
+                "{0}'s {1} resolves unsuccessfully",
+                this.context.player,
+                this.context.source
+            );
             return;
         }
 
@@ -188,11 +261,11 @@ class AbilityResolver extends BaseStep {
     }
 
     incrementAbilityLimit() {
-        if (this.cancelled) {
+        if (this.cancelled || this.costPrevented) {
             return;
         }
 
-        this.ability.incrementLimit();
+        this.ability.incrementLimit(this.context.player);
 
         if (this.ability.max) {
             this.context.player.incrementAbilityMax(this.context.source.name);
@@ -200,16 +273,22 @@ class AbilityResolver extends BaseStep {
     }
 
     executeHandler() {
-        if (this.cancelled) {
+        if (this.cancelled || this.costPrevented || this.unsuccessful) {
             return;
         }
-
-        this.ability.outputMessage(this.context);
 
         // Check to make sure the ability is actually a card ability. For
         // instance, marshaling does not count as initiating a card ability and
         // thus is not subject to cancels such as Treachery.
         if (this.ability.isCardAbility()) {
+            if (this.ability.hasMessage) {
+                this.context.messageHeld = true;
+                this.context.messageAbility = this.ability;
+                this.game.holdAbilityMessage(this.context);
+            } else {
+                this.ability.outputMessage(this.context);
+            }
+
             let targets = this.context.targets.getTargets();
             // Collect cards which require validation/proof that it is actually a valid target for ability
             let targetsToValidate = this.context.targets.getTargetsToValidate();
@@ -228,11 +307,22 @@ class AbilityResolver extends BaseStep {
                 }
             );
         } else {
+            this.ability.outputMessage(this.context);
             this.ability.executeHandler(this.context);
         }
     }
 
+    flushHeldMessage() {
+        if (this.context.messageHeld) {
+            this.game.finishAbilityMessage(this.context);
+        }
+    }
+
     raiseCardPlayedIfEvent() {
+        if (this.costPrevented) {
+            return;
+        }
+
         // An event card is considered to be played even if it has been
         // cancelled. Raising the event here will allow forced reactions and
         // reactions to fire with the appropriate timing. There are no cards
@@ -241,9 +331,12 @@ class AbilityResolver extends BaseStep {
         // ability instead.
         if (this.ability.isPlayableEventAbility()) {
             if (this.context.source.location === 'being played') {
-                this.context.source.owner.moveCard(
-                    this.context.source,
-                    this.context.source.eventPlacementLocation
+                this.game.resolveGameAction(
+                    GameActions.placeCard({
+                        card: this.context.source,
+                        location: this.context.source.eventPlacementLocation,
+                        bottom: this.context.source.eventPlacementBottom
+                    })
                 );
             }
 

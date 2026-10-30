@@ -8,8 +8,7 @@ class ApplyClaim extends GameAction {
 
     createEvent({ player, challenge, claim, game }) {
         return this.event('onClaimApplied', { player, challenge, claim }, (event) => {
-            // TODO: Move "SatisfyClaim" logic into here, properly.
-            game.queueStep(new SatisfyClaim(game, event.claim));
+            game.queueStep(new SatisfyClaim(game, event.claim, event));
         });
     }
 }

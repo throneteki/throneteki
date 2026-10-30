@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class FireMadeFlesh extends DrawCard {
+    // Fire Made Flesh (15023)
+    // Marshaling Action: Sacrifice a Hatchling character to search your hand and deck for a Dragon
+    // character with the same title and put it into play. Shuffle your deck.
     setupCardAbilities(ability) {
         this.action({
             title: 'Search your hand and deck',

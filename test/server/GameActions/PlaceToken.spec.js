@@ -2,15 +2,15 @@ import PlaceToken from '../../../server/game/GameActions/PlaceToken.js';
 
 describe('PlaceToken', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['']);
-        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'modifyToken']);
+        this.gameSpy = {};
+        this.cardSpy = { allowGameAction: vi.fn(), modifyToken: vi.fn() };
         this.cardSpy.location = 'play area';
         this.props = { card: this.cardSpy, token: 'TOKEN_TYPE', amount: 2 };
     });
 
     describe('allow()', function () {
         beforeEach(function () {
-            this.cardSpy.allowGameAction.and.returnValue(true);
+            this.cardSpy.allowGameAction.mockReturnValue(true);
         });
 
         for (let location of ['active plot', 'agenda', 'play area', 'shadows', 'title']) {

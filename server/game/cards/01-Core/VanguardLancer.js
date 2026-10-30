@@ -1,35 +1,23 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class VanguardLancer extends DrawCard {
+    // Vanguard Lancer (01057)
+    // Reaction: After Vanguard Lancer enters play, choose an opponent's character or faction card,
+    // and discard 1 power from that card.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: (card) => card.controller !== this.controller && card.getPower() > 0,
+                cardCondition: (card, context) =>
+                    card.controller !== context.source.controller && card.getPower() > 0,
                 cardType: ['character', 'faction']
             },
-            handler: (context) => {
-                if (context.target.getType() === 'faction') {
-                    this.game.addMessage(
-                        "{0} uses {1} to remove 1 power from {2}'s faction card",
-                        this.controller,
-                        this,
-                        context.target.owner
-                    );
-                } else {
-                    this.game.addMessage(
-                        '{0} uses {1} to remove 1 power from {2}',
-                        this.controller,
-                        this,
-                        context.target
-                    );
-                }
-
-                context.target.modifyPower(-1);
-            }
+            message: '{player} uses {source} to remove 1 power from {target}',
+            gameAction: GameActions.discardPower((context) => ({ card: context.target, amount: 1 }))
         });
     }
 }

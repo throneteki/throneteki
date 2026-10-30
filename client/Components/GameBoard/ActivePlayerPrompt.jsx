@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import AbilityTargeting from './AbilityTargeting';
 import AbilityTimer from './AbilityTimer';
@@ -10,6 +10,7 @@ import { Button } from '@heroui/react';
 import ThronesIcon from './ThronesIcon';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import CardHoverable from '../Images/CardHoverable';
+import ResponseDelay from './ResponseDelay';
 
 const ActivePlayerPrompt = ({
     className,
@@ -23,10 +24,25 @@ const ActivePlayerPrompt = ({
     promptText
 }) => {
     const { data: cards, isLoading } = useGetCardsQuery();
+    const [pausedPromptId, setPausedPromptId] = useState();
+
+    // Ignore a press that lands just after the buttons change, such as one meant for a window
+    // that closed under the cursor.
+    const buttonsShownAt = useRef(0);
+    const buttonsKey = (buttons || [])
+        .map((button) => `${button.promptId}:${button.text}`)
+        .join('|');
+    useEffect(() => {
+        buttonsShownAt.current = Date.now();
+    }, [buttonsKey]);
+    const isFreshPress = () => Date.now() - buttonsShownAt.current < 300;
 
     const handleButtonClick = useCallback(
         (event, button) => {
             //     stopAbilityTimer();
+            if (isFreshPress()) {
+                return;
+            }
 
             let googleFormMatcher =
                 button.arg && button.arg.toString().match(/^googleForm:(?<formId>.+)$/);
@@ -39,6 +55,10 @@ const ActivePlayerPrompt = ({
                 return;
             }
 
+            if (button.pausesTimer) {
+                setPausedPromptId(button.promptId);
+            }
+
             if (onButtonClick) {
                 onButtonClick(button);
             }
@@ -49,6 +69,9 @@ const ActivePlayerPrompt = ({
     const handleCancelTimerClick = useCallback(
         (event, button) => {
             //      stopAbilityTimer();
+            if (isFreshPress()) {
+                return;
+            }
 
             if (button.method || button.arg) {
                 onButtonClick(button);
@@ -85,7 +108,7 @@ const ActivePlayerPrompt = ({
                 const buttonRet = (
                     <Button
                         type='button'
-                        color='primary'
+                        color={button.cancel ? 'default' : 'primary'}
                         className='text-wrap text-xs h-8 md:h-full md:min-h-10 md:text-small'
                         onPress={clickCallback}
                         isDisabled={button.disabled}
@@ -153,6 +176,15 @@ const ActivePlayerPrompt = ({
                             )}
                         />
                     );
+                case 'response-delay':
+                case 'action-delay':
+                    return (
+                        <ResponseDelay
+                            key={`${control.type}-${control.promptId}`}
+                            duration={control.duration}
+                            paused={control.paused || control.promptId === pausedPromptId}
+                        />
+                    );
                 case 'select-from-values':
                     return (
                         <SelectFromValuesLookup
@@ -168,7 +200,17 @@ const ActivePlayerPrompt = ({
                     );
             }
         });
-    }, [controls, cards, handleLookupValueSelected]);
+    }, [controls, cards, handleLookupValueSelected, pausedPromptId]);
+
+    // A wait shown to every player who might be able to respond, so their opponents can't tell
+    // who really can.
+    const responseDelay = controls && controls.find((control) => control.type === 'response-delay');
+    if (responseDelay) {
+        const word = responseDelay.abilityWord || 'response';
+        promptText = `Any ${word}s?`;
+    } else if (controls && controls.some((control) => control.type === 'action-delay')) {
+        promptText = 'Any actions?';
+    }
 
     const promptTextElement = [];
     if (promptText && promptText.includes('\n')) {

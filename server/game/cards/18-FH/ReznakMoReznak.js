@@ -1,63 +1,64 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
+import { Tokens } from '../../Constants/index.js';
 
 class ReznakMoReznak extends DrawCard {
+    // Reznak mo Reznak (18013)
+    // Bestow (3).
+    // Reaction: After a character is discarded from your hand, Reznak mo Reznak gains 1 gold. Then,
+    // you may discard X gold from him to put that character into play from your discard pile, where
+    // X is that character's printed cost. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.reaction({
             limit: ability.limit.perRound(2),
             when: {
-                onCardDiscarded: (event) =>
-                    event.card.controller === this.controller &&
+                onCardDiscarded: (event, context) =>
+                    event.card.controller === context.player &&
                     event.originalLocation === 'hand' &&
                     event.card.getType() === 'character'
             },
-            handler: (context) => {
-                this.context = context;
-                this.discarded = context.event.card;
-                this.game.addMessage('{0} uses {1} to have {1} gain 1 gold', context.player, this);
-                this.modifyGold(1);
-
-                if (
-                    this.gold >= this.discarded.translateXValue(this.discarded.getPrintedCost()) &&
-                    context.player.canPutIntoPlay(this.discarded) &&
-                    this.discarded.location === 'discard pile'
-                ) {
-                    this.game.promptWithMenu(context.player, this, {
-                        activePrompt: {
-                            menuTitle: `Put ${this.discarded.name} into play?`,
-                            buttons: [
-                                { text: 'Yes', method: 'accept' },
-                                { text: 'No', method: 'decline' }
-                            ]
-                        },
-                        source: this
-                    });
-                }
-            }
+            message: '{player} uses {source} to have {source} gain 1 gold',
+            gameAction: GameActions.placeToken((context) => ({
+                card: context.source,
+                token: Tokens.gold,
+                amount: 1
+            })).then({
+                condition: (context) => {
+                    const card = context.parentContext.event.card;
+                    return (
+                        card.location === 'discard pile' &&
+                        context.source.tokens[Tokens.gold] >= printedCost(card) &&
+                        context.player.canPutIntoPlay(card)
+                    );
+                },
+                gameAction: GameActions.may({
+                    title: (context) => `Put ${context.parentContext.event.card.name} into play?`,
+                    message: {
+                        format: 'Then {player} discards {amount} gold from {source} to put {character} into play',
+                        args: {
+                            amount: (context) => printedCost(context.parentContext.event.card),
+                            character: (context) => context.parentContext.event.card
+                        }
+                    },
+                    gameAction: GameActions.simultaneously([
+                        GameActions.discardToken((context) => ({
+                            card: context.source,
+                            token: Tokens.gold,
+                            amount: printedCost(context.parentContext.event.card)
+                        })),
+                        GameActions.putIntoPlay((context) => ({
+                            player: context.player,
+                            card: context.parentContext.event.card
+                        }))
+                    ])
+                })
+            })
         });
     }
+}
 
-    accept(player) {
-        this.game.addMessage(
-            'Then {0} uses {1} to put {2} into play and discards {3} gold from {1}.',
-            player,
-            this,
-            this.discarded,
-            this.discarded.getPrintedCost()
-        );
-        this.modifyGold(-this.discarded.getPrintedCost());
-        this.game.resolveGameAction(
-            GameActions.putIntoPlay(() => ({
-                card: this.discarded
-            })),
-            this.context
-        );
-        return true;
-    }
-
-    decline() {
-        return true;
-    }
+function printedCost(card) {
+    return card.translateXValue(card.getPrintedCost());
 }
 
 ReznakMoReznak.code = '18013';

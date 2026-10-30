@@ -1,17 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-import moment from 'moment';
-import startCase from 'lodash.startcase';
+import {
+    compileLegalityLists,
+    setActiveLegalityLists
+} from '../../deck-helper/compileLegalityLists.js';
 import defaultDb from '../db/index.js';
 import logger from '../log.js';
 
 const __dirname = import.meta.dirname;
-
-const defaultVariant = {
-    joust: 'standard',
-    melee: 'standard',
-    draft: 'valyrian'
-};
 
 class CardService {
     constructor(db = defaultDb) {
@@ -54,64 +50,13 @@ class CardService {
     }
 
     compileLists(lists) {
-        // Sort by newest first
-        const sorted = lists.sort((a, b) => new Date(b.date) - new Date(a.date));
-        const compiled = [];
-        for (const legality of sorted) {
-            // Cards banned at legality level apply to all formats/lists
-            const legalityBanned = legality.bannedCards ?? [];
-            for (const list of legality.formats) {
-                const { name: lName, variant: lVariant, banned: listBanned, ...details } = list;
-                const format = lName;
-                const variant = lVariant ?? defaultVariant[format];
-                const version = legality.version;
-                const name = `${startCase(`${format} ${variant}`)} ${version}`;
-                const banned = [...new Set([...(listBanned ?? []), ...legalityBanned])];
-                const data = {
-                    _id: `${legality.code}_${format}_${variant}`,
-                    format,
-                    variant,
-                    name,
-                    version,
-                    date: legality.date,
-                    issuer: legality.issuer,
-                    official: true,
-                    active: false, // Actually set in setActiveLists,
-                    restricted: [],
-                    pods: [],
-                    banned,
-                    ...details
-                };
-                compiled.push(data);
-            }
-        }
-
+        const compiled = compileLegalityLists(lists);
         this.setActiveLists(compiled);
-
         return compiled;
     }
 
     setActiveLists(compiled) {
-        const today = moment().startOf('day');
-
-        const closest = {};
-
-        for (const item of compiled) {
-            const date = moment(item.date, 'YYYY-MM-DD');
-
-            if (!date.isSameOrBefore(today)) continue;
-
-            const key = `${item.format}__${item.variant}`;
-            if (!closest[key] || date.isAfter(moment(closest[key].date, 'YYYY-MM-DD'))) {
-                closest[key] = item;
-            }
-        }
-
-        for (const item of Object.values(closest)) {
-            item.active = true;
-        }
-
-        return compiled;
+        return setActiveLegalityLists(compiled);
     }
 
     replaceCards(cards) {

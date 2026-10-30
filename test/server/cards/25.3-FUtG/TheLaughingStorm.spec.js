@@ -1,105 +1,76 @@
-describe('The Laughing Storm', function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck1 = this.buildDeck('lannister', [
-                'Heads on Spikes',
-                'A Noble Cause',
-                'Cersei Lannister (LoCR)'
-            ]);
-            const deck2 = this.buildDeck('baratheon', [
-                'Taxation',
-                'The Red Keep (Core)',
-                'The Laughing Storm (FUtG)',
-                'Bastard in Hiding',
-                'Stannis Baratheon (Core)'
-            ]);
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck2);
-            this.startGame();
-            this.keepStartingHands();
+describe('The Laughing Storm (FUtG)', function () {
+    function setup(context, phase, { kneeling = false, firstPlayer = 'player1' } = {}) {
+        context.setupTest({
+            phase,
+            firstPlayer,
+            player1: { plotDeck: ['Heads on Spikes'], inPlay: ['Cersei Lannister (LoCR)'] },
+            player2: {
+                inPlay: [
+                    {
+                        card: 'The Red Keep (Core)',
+                        attachments: [{ card: 'The Laughing Storm (FUtG)', kneeling }]
+                    },
+                    'Bastard in Hiding'
+                ],
+                hand: ['Stannis Baratheon (Core)']
+            }
+        });
+    }
 
-            this.redKeep = this.player2.findCardByName('The Red Keep (Core)', 'hand');
-            this.laughingStorm = this.player2.findCardByName('The Laughing Storm', 'hand');
+    function revealHeadsOnSpikes(context) {
+        context.player1.selectPlot('Heads on Spikes');
+        context.player2.selectPlot('Filler Plot');
+        context.selectFirstPlayer(context.player1);
+    }
 
-            this.player1.clickCard('Cersei Lannister', 'hand');
-            this.player2.clickCard(this.redKeep);
-            this.player2.clickCard(this.laughingStorm);
-            this.player2.clickCard('Bastard in Hiding', 'hand');
+    describe('while it is standing', function () {
+        it('stops Heads on Spikes discarding from your hand', function () {
+            setup(this, 'plot');
+            revealHeadsOnSpikes(this);
 
-            this.completeSetup();
-
-            this.player2.clickCard(this.laughingStorm, 'play area');
-            this.player2.clickCard(this.redKeep);
+            expect(this.stannisBaratheon.location).toBe('hand');
+            expect(this.player2Object.deadPile).toHaveLength(0);
+            expect(this.player1).isReadyToTakeAction();
         });
 
-        describe('when the Laughing Storm is standing', function () {
-            it('Heads on Spikes does not discard from hand', function () {
-                this.player1.selectPlot('Heads on Spikes');
-                this.selectFirstPlayer(this.player1);
+        it('stops intrigue claim discarding from your hand', function () {
+            setup(this, 'challenge');
+            this.unopposedChallenge(this.player1, 'Intrigue', this.cerseiLannister);
 
-                expect(this.player2Object.hand.length).toBe(1);
-                expect(this.player2Object.deadPile.length).toBe(0);
-            });
-
-            it('intrigue challenge does not discard from hand', function () {
-                this.cersei = this.player1.findCardByName('Cersei Lannister');
-                this.player1.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player1);
-
-                this.completeMarshalPhase();
-
-                this.unopposedChallenge(this.player1, 'Intrigue', this.cersei);
-
-                this.player1.clickPrompt('Apply Claim');
-
-                expect(this.player2Object.hand.length).toBe(1);
-                expect(this.player2Object.discardPile.length).toBe(0);
-            });
-
-            it('can be triggered to kneel a character', function () {
-                this.cersei = this.player1.findCardByName('Cersei Lannister');
-                this.bastard = this.player2.findCardByName('Bastard in Hiding');
-                this.player1.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player2);
-
-                this.completeMarshalPhase();
-
-                this.unopposedChallenge(this.player2, 'Power', this.bastard);
-
-                this.player2.triggerAbility('The Laughing Storm');
-                this.player2.clickCard(this.cersei);
-
-                expect(this.cersei.kneeled).toBe(true);
-            });
+            expect(this.stannisBaratheon.location).toBe('hand');
+            expect(this.player2Object.discardPile).toHaveLength(0);
+            expect(this.player1).isReadyToTakeAction();
         });
 
-        describe('when the Laughing Storm is kneeling', function () {
-            beforeEach(function () {
-                this.laughingStorm.kneeled = true;
-            });
+        it('kneels to kneel a character controlled by the losing opponent after you win a challenge', function () {
+            setup(this, 'challenge', { firstPlayer: 'player2' });
+            this.unopposedChallenge(this.player2, 'Power', this.bastardInHiding);
+            this.player2.triggerAbility(this.theLaughingStorm);
+            this.player2.clickCard(this.cerseiLannister);
 
-            it('Heads on Spikes does discard from hand', function () {
-                this.player1.selectPlot('Heads on Spikes');
-                this.selectFirstPlayer(this.player1);
+            expect(this.cerseiLannister.kneeled).toBe(true);
+            expect(this.theLaughingStorm.kneeled).toBe(true);
+            expect(this.player2).isReadyToTakeAction();
+        });
+    });
 
-                expect(this.player2Object.hand.length).toBe(0);
-                expect(this.player2Object.deadPile.length).toBe(1);
-            });
+    describe('while it is kneeling', function () {
+        it('lets Heads on Spikes discard from your hand', function () {
+            setup(this, 'plot', { kneeling: true });
+            revealHeadsOnSpikes(this);
+            this.player1.clickPrompt('Pass');
 
-            it('intrigue challenge does discard from hand', function () {
-                this.cersei = this.player1.findCardByName('Cersei Lannister');
-                this.player1.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player1);
+            expect(this.stannisBaratheon.location).toBe('dead pile');
+            expect(this.player1).isReadyToTakeAction();
+        });
 
-                this.completeMarshalPhase();
+        it('lets intrigue claim discard from your hand', function () {
+            setup(this, 'challenge', { kneeling: true });
+            this.unopposedChallenge(this.player1, 'Intrigue', this.cerseiLannister);
+            this.player1.clickPrompt('Pass');
 
-                this.unopposedChallenge(this.player1, 'Intrigue', this.cersei);
-
-                this.player1.clickPrompt('Apply Claim');
-
-                expect(this.player2Object.hand.length).toBe(0);
-                expect(this.player2Object.discardPile.length).toBe(1);
-            });
+            expect(this.player2Object.discardPile).toHaveLength(1);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

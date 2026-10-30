@@ -1,25 +1,25 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BlackcrownKnights extends DrawCard {
+    // Blackcrown Knights (00016)
+    // No attachments.
+    // Reaction: After you win a [power] challenge in which Blackcrown Knights is participating,
+    // discard 1 card from your hand to have Blackcrown Knights gain 2 power.
+    // Draft format only.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.challengeType === 'power' &&
-                    this.isParticipating() &&
-                    this.allowGameAction('gainPower')
+                    context.source.isParticipating() &&
+                    context.source.allowGameAction('gainPower')
             },
             cost: ability.costs.discardFromHand(),
-            handler: (context) => {
-                this.modifyPower(2);
-                this.game.addMessage(
-                    '{0} uses {1} and discards {2} from their hand to gain 2 power on {1}',
-                    this.controller,
-                    this,
-                    context.costs.discardFromHand
-                );
-            }
+            message:
+                '{player} uses {source} and discards {costs.discardFromHand} from their hand to gain 2 power on {source}',
+            gameAction: GameActions.gainPower((context) => ({ card: context.source, amount: 2 }))
         });
     }
 }

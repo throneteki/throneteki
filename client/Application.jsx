@@ -74,6 +74,14 @@ const Application = () => {
         }
     }, [data, dispatch]);
 
+    // Scenario games are created by the game node rather than from the lobby, so nothing else
+    // takes the players to the board.
+    useEffect(() => {
+        if (currentGame?.scenario && path !== '/play') {
+            dispatch(navigate('/play'));
+        }
+    }, [currentGame, dispatch, path]);
+
     let component = router.resolvePath({
         pathname: path,
         user: user,

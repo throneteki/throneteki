@@ -2,12 +2,16 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SerMarkMullendore extends DrawCard {
+    // Ser Mark Mullendore (11063)
+    // Reaction: After you win a challenge in which Ser Mark Mullendore is participating, reveal the
+    // top card of your deck. You may put that card into play. If you do, place Ser Mark Mullendore
+    // on top of your deck (cannot be saved).
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    event.challenge.isParticipating(this)
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    event.challenge.isParticipating(context.source)
             },
             message: '{player} uses {source} to reveal the top card of their deck',
             gameAction: GameActions.revealTopCards((context) => ({

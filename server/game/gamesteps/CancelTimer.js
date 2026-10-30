@@ -13,6 +13,14 @@ class CancelTimer {
         return player.isTimerEnabled() && this.hasCancellableEvent(player);
     }
 
+    /**
+     * A player who paused the timer for the round is not offered the windows it covers, even if
+     * they hold a legal cancel. Prompting them only when they hold one would reveal it.
+     */
+    isPausedFor(player) {
+        return !!player.timerPausedForRound && this.hasCancellableEvent(player);
+    }
+
     hasCancellableEvent(player) {
         return this.event.getConcurrentEvents().some((event) => {
             return (

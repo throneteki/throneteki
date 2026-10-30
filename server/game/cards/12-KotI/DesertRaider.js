@@ -1,60 +1,52 @@
 import DrawCard from '../../drawcard.js';
-import ChallengeTypes from '../../ChallengeTypes.js';
+import GameActions from '../../GameActions/index.js';
 
 class DesertRaider extends DrawCard {
-    setupCardAbilities() {
+    // Desert Raider (12029)
+    // Reaction: After you lose a challenge, put Desert Raider into play from your dead pile and
+    // choose a character controlled by the winning opponent. That character gains 1 power. Until
+    // the end of the phase, that character loses an [intrigue] or [power] icon and Desert Raider
+    // gains that icon.
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) => event.challenge.loser === this.controller
+                afterChallenge: (event, context) => event.challenge.loser === context.player
             },
             location: 'dead pile',
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    this.game.currentChallenge.winner === card.controller
+                    card.controller === context.event.challenge.winner
             },
-            handler: (context) => {
-                if (this.controller.canPutIntoPlay(this)) {
-                    this.controller.putIntoPlay(this);
-                }
-                context.target.modifyPower(1);
-
-                this.target = context.target;
-
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: 'Select an icon',
-                        buttons: ChallengeTypes.asButtons({ method: 'selectIcon' }).filter(
-                            (button) => ['intrigue', 'power'].includes(button.arg)
-                        )
-                    },
-                    source: this
-                });
-            }
+            message:
+                '{player} puts {source} into play from their dead pile to have {target} gain 1 power',
+            gameAction: GameActions.simultaneously([
+                GameActions.putIntoPlay((context) => ({
+                    player: context.player,
+                    card: context.source
+                })),
+                GameActions.gainPower((context) => ({ card: context.target, amount: 1 })),
+                GameActions.chooseIcon({
+                    icons: ['intrigue', 'power'],
+                    message:
+                        '{player} chooses to have {target} lose {icon} icon and {source} gain it until the end of the phase',
+                    gameAction: (icon) =>
+                        GameActions.simultaneously([
+                            GameActions.lastingEffect((context) => ({
+                                duration: 'untilEndOfPhase',
+                                match: context.target,
+                                effect: ability.effects.removeIcon(icon)
+                            })),
+                            GameActions.lastingEffect((context) => ({
+                                duration: 'untilEndOfPhase',
+                                match: context.source,
+                                effect: ability.effects.addIcon(icon)
+                            }))
+                        ])
+                })
+            ])
         });
-    }
-
-    selectIcon(player, icon) {
-        this.untilEndOfPhase((ability) => ({
-            match: this.target,
-            effect: ability.effects.removeIcon(icon)
-        }));
-        this.untilEndOfPhase((ability) => ({
-            match: this,
-            effect: ability.effects.addIcon(icon)
-        }));
-
-        this.game.addMessage(
-            '{0} puts {1} into play from their dead pile to have {2} gain 1 power, have it lose {3} {4} icon and have {1} gain {3} {4} icon until the end of the phase',
-            this.controller,
-            this,
-            this.target,
-            icon === 'intrigue' ? 'an' : 'a',
-            icon
-        );
-
-        return true;
     }
 }
 

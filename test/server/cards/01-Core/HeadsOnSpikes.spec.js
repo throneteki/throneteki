@@ -1,108 +1,61 @@
 describe('Heads on Spikes', function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck1 = this.buildDeck('lannister', [
-                'Heads on Spikes',
-                'Cersei Lannister (LoCR)'
-            ]);
-            const deck2 = this.buildDeck('lannister', [
-                'Sneak Attack',
-                'Hedge Knight',
-                'Hedge Knight',
-                'The Roseroad',
-                'The Roseroad'
-            ]);
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck2);
-            this.startGame();
-            this.keepStartingHands();
-            this.completeSetup();
+    function reveal(context, hand) {
+        context.setupTest({
+            phase: 'plot',
+            player1: { plotDeck: ['Heads on Spikes'], hand: ['House Maester'] },
+            player2: { hand }
         });
+        context.player1.togglePromptedActionWindow('plot', true);
+        context.player1.selectPlot('Heads on Spikes');
+        context.player2.selectPlot('Filler Plot');
+        context.selectFirstPlayer(context.player1);
+    }
 
-        describe('when a character gets discarded', function () {
-            beforeEach(function () {
-                // Move non-characters back to draw
-                for (const card of this.player2Object.hand) {
-                    if (card.getType() !== 'character') {
-                        this.player2Object.moveCard(card, 'draw deck');
-                    }
-                }
-
-                this.selectFirstPlayer(this.player1);
-
-                this.completeMarshalPhase();
-            });
-
-            it('should discard a card from the opponent hand', function () {
-                // 1 card discarded, 2 drawn from draw phase
-                expect(this.player2Object.hand.length).toBe(3);
-            });
-
-            it('should move the opponent character into the dead pile', function () {
-                expect(this.player2Object.discardPile.length).toBe(0);
-                expect(this.player2Object.deadPile.length).toBe(1);
-            });
-
-            it('should gain 2 power for the current player', function () {
-                expect(this.player1Object.faction.power).toBe(2);
-            });
-        });
-
-        describe('when a non-character gets discarded', function () {
-            beforeEach(function () {
-                // Move characters back to draw
-                for (const card of this.player2Object.hand) {
-                    if (card.getType() === 'character') {
-                        this.player2Object.moveCard(card, 'draw deck');
-                    }
-                }
-
-                this.selectFirstPlayer(this.player1);
-
-                this.completeMarshalPhase();
-            });
-
-            it('should discard a card from the opponent hand', function () {
-                // 1 card discarded, 2 drawn from draw phase
-                expect(this.player2Object.hand.length).toBe(3);
-            });
-
-            it('should move the opponent character into the discard pile', function () {
-                expect(this.player2Object.discardPile.length).toBe(1);
-                expect(this.player2Object.deadPile.length).toBe(0);
-            });
-
-            it('should not gain power for the current player', function () {
-                expect(this.player1Object.faction.power).toBe(0);
-            });
-        });
+    it('discards a character directly to the dead pile and gains exactly two faction power', function () {
+        reveal(this, ['Hedge Knight']);
+        expect(this.hedgeKnight.location).toBe('dead pile');
+        expect(this.player2Object.discardPile.length).toBe(0);
+        expect(this.player2Object.hand.length).toBe(0);
+        expect(this.player1Object.faction.power).toBe(2);
+        expect(this.houseMaester.location).toBe('hand');
+        this.skipActionWindow();
+        expect(this.player1).isReadyToTakeAction();
     });
 
-    integration(function () {
-        describe('vs Missandei', function () {
-            beforeEach(function () {
-                const deck1 = this.buildDeck('lannister', ['Heads on Spikes']);
-                const deck2 = this.buildDeck('targaryen', ['Sneak Attack', 'Missandei']);
-                this.player1.selectDeck(deck1);
-                this.player2.selectDeck(deck2);
-                this.startGame();
-                this.keepStartingHands();
+    it('randomly discards only one card when the opponent has more than one', function () {
+        reveal(this, ['Hedge Knight', 'Handmaiden']);
+        expect(this.player2Object.deadPile.length).toBe(1);
+        expect(this.player2Object.hand.length).toBe(1);
+        expect(this.player2Object.discardPile.length).toBe(0);
+        expect(this.player1Object.faction.power).toBe(2);
+        this.skipActionWindow();
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-                this.missandei = this.player2.findCardByName('Missandei', 'hand');
+    it('discards a non-character normally without gaining power', function () {
+        reveal(this, ['The Roseroad']);
+        expect(this.theRoseroad.location).toBe('discard pile');
+        expect(this.player2Object.deadPile.length).toBe(0);
+        expect(this.player1Object.faction.power).toBe(0);
+        this.skipActionWindow();
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-                this.completeSetup();
-                this.selectFirstPlayer(this.player1);
+    it('does nothing when the opponents hand is empty', function () {
+        reveal(this, []);
+        expect(this.player1Object.faction.power).toBe(0);
+        expect(this.player2Object.deadPile.length).toBe(0);
+        this.skipActionWindow();
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-                this.player2.triggerAbility('Missandei');
-            });
-
-            it('should not move Missandei from play to the dead pile', function () {
-                expect(this.missandei.location).toBe('play area');
-            });
-
-            it('should still gain 2 power for the player', function () {
-                expect(this.player1Object.getTotalPower()).toBe(2);
-            });
-        });
+    it('still gains two power when Missandei replaces the discard by entering play', function () {
+        reveal(this, ['Missandei']);
+        this.player2.triggerAbility('Missandei');
+        expect(this.missandei.location).toBe('play area');
+        expect(this.player2Object.deadPile.length).toBe(0);
+        expect(this.player1Object.faction.power).toBe(2);
+        this.skipActionWindow();
+        expect(this.player1).isReadyToTakeAction();
     });
 });

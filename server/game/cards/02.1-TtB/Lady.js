@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Lady extends DrawCard {
+    // Lady (02004)
+    // [stark] character only. Terminal.
+    // Attached character gets +2 STR.
+    // Action: Pay 1 gold to attach Lady to a different character. Then, if attached character is
+    // Sansa Stark, stand her. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'stark' });
         this.whileAttached({
@@ -11,23 +17,23 @@ class Lady extends DrawCard {
             cost: ability.costs.payGold(1),
             target: {
                 type: 'select',
-                cardCondition: (card) =>
-                    this.controller.canAttach(this, card) &&
-                    card.location === 'play area' &&
-                    card !== this.parent
+                cardCondition: { location: 'play area', type: 'character' }
             },
             limit: ability.limit.perPhase(1),
-            handler: (context) => {
-                this.controller.attach(this.controller, this, context.target);
-                let message = '{0} pays 1 gold to attach {1} to {2}';
-
-                if (context.target.name === 'Sansa Stark' && context.target.kneeled) {
-                    context.target.controller.standCard(context.target);
-                    message += ' and stand her';
-                }
-
-                this.game.addMessage(message, this.controller, this, context.target);
-            }
+            message: '{player} pays 1 gold to attach {source} to {target}',
+            gameAction: GameActions.attach((context) => ({
+                attachment: context.source,
+                target: context.target
+            })).then({
+                condition: (context) => context.parentContext.target.name === 'Sansa Stark',
+                message: {
+                    format: 'Then {player} stands {sansa}',
+                    args: { sansa: (context) => context.parentContext.target }
+                },
+                gameAction: GameActions.standCard((context) => ({
+                    card: context.parentContext.target
+                }))
+            })
         });
     }
 }

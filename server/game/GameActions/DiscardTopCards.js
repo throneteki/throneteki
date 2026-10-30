@@ -1,9 +1,28 @@
 import GameAction from './GameAction.js';
+import Message from '../Message.js';
+import TextHelper from '../TextHelper.js';
 import DiscardCard from './DiscardCard.js';
 
 class DiscardTopCards extends GameAction {
     constructor() {
         super('discardTopCards');
+    }
+
+    message({ player, amount, context }) {
+        return this.describe(player, Math.min(amount, player.drawDeck.length), context);
+    }
+
+    resultMessage(props, event) {
+        return this.hasResult(event)
+            ? this.describe(event.player, event.amount, props.context)
+            : '';
+    }
+
+    describe(player, amount, context) {
+        const cards = TextHelper.count(amount, 'card');
+        return context && context.player === player
+            ? Message.fragment('discards the top {cards} of their deck', { cards })
+            : Message.fragment("discards the top {cards} of {player}'s deck", { cards, player });
     }
 
     canChangeGameState({ player, amount }) {

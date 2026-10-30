@@ -2,6 +2,8 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SerEldonEstermont extends DrawCard {
+    // Ser Eldon Estermont (13047)
+    // Action: Choose and stand a [baratheon] location. (Limit once per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand location',
@@ -14,12 +16,7 @@ class SerEldonEstermont extends DrawCard {
                 gameAction: 'stand'
             },
             message: '{player} uses {source} to stand {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.standCard((context) => ({ card: context.target })),
-                    context
-                );
-            },
+            gameAction: GameActions.standCard((context) => ({ card: context.target })),
             limit: ability.limit.perRound(1)
         });
     }

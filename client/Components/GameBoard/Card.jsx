@@ -1,5 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import classNames from 'classnames';
+import { useSelector } from 'react-redux';
 import { useDraggable } from '@dnd-kit/core';
 import CardMenu from './CardMenu';
 import CardCounters from './CardCounters';
@@ -13,6 +14,11 @@ import CardHoverable from '../Images/CardHoverable';
 import CardImage from '../Images/CardImage';
 import { cardClass, standardiseCardSize } from '../../util';
 import { Tooltip } from '@heroui/react';
+import { getActionRequirementReason, isNotableRequirement } from './actionRequirementReasons';
+
+// Opening one card menu closes any other that is open.
+const cardMenus = new EventTarget();
+let nextMenuId = 0;
 
 const Card = ({
     card,
@@ -31,6 +37,35 @@ const Card = ({
     cardStackIndex = 200
 }) => {
     const [showMenu, setShowMenu] = useState(false);
+    const menuIdRef = useRef(null);
+    const cardRef = useRef(null);
+    if (menuIdRef.current === null) {
+        menuIdRef.current = ++nextMenuId;
+    }
+
+    useEffect(() => {
+        if (!showMenu) {
+            return;
+        }
+
+        const onOtherMenuOpened = (event) => {
+            if (event.detail !== menuIdRef.current) {
+                setShowMenu(false);
+            }
+        };
+        const onDocumentMouseDown = (event) => {
+            if (!cardRef.current?.contains(event.target)) {
+                setShowMenu(false);
+            }
+        };
+
+        cardMenus.addEventListener('open', onOtherMenuOpened);
+        document.addEventListener('mousedown', onDocumentMouseDown);
+        return () => {
+            cardMenus.removeEventListener('open', onOtherMenuOpened);
+            document.removeEventListener('mousedown', onDocumentMouseDown);
+        };
+    }, [showMenu]);
 
     const key = `card-${card.uuid}-${source}`;
 
@@ -56,8 +91,10 @@ const Card = ({
 
     const standardisedSize = standardiseCardSize(size);
 
+    const manualMode = useSelector((state) => state.lobby.currentGame?.manualMode);
     const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
         id: useUniqueId(key),
+        disabled: !manualMode,
         data: { type: ItemTypes.CARD, card, orientation, source, key: key }
     });
 
@@ -87,7 +124,9 @@ const Card = ({
     }, [card.menu, menu]);
 
     const shouldShowMenu = useCallback(
-        () => getMenu().some((item) => item.command !== 'click') && isAllowedMenuSource(),
+        () =>
+            getMenu().some((item) => item.command !== 'click' && !item.disabled) &&
+            isAllowedMenuSource(),
         [getMenu, isAllowedMenuSource]
     );
 
@@ -97,6 +136,9 @@ const Card = ({
             event.stopPropagation();
 
             if (shouldShowMenu()) {
+                if (!showMenu) {
+                    cardMenus.dispatchEvent(new CustomEvent('open', { detail: menuIdRef.current }));
+                }
                 setShowMenu(!showMenu);
                 return;
             }
@@ -265,10 +307,10 @@ const Card = ({
     // Need to get classes in priority, as tailwind is not consistent in CSS priority
     const getHighlightClass = () => {
         if (card.selected) {
-            return 'shadow-[0_0_2px_4px] shadow-green-400';
+            return 'shadow-[0_0_0_3px] shadow-sky-400';
         }
-        if (card.selectable) {
-            return 'shadow-[0_0_8px_4px] shadow-slate-300';
+        if (card.selectable || card.canPlay) {
+            return 'shadow-[0_0_8px_3px] shadow-green-500';
         }
         if (card.inChallenge) {
             return 'shadow-[0_0_1px_2px] shadow-red-500';
@@ -308,10 +350,29 @@ const Card = ({
             ),
             getHighlightClass(),
             {
-                'grayscale brightness-75': card.unselectable
+                'brightness-[.85] saturate-[.75]':
+                    card.unselectable ||
+                    (card.canPlay === false && !card.selected && !card.selectable)
             }
         );
         const isFaceup = forceFaceup || (!card.facedown && card.code);
+        const availabilityNotes = isFaceup
+            ? [
+                  ...(card.unavailableActions || []).map((action) => ({
+                      ...action,
+                      label: 'Unavailable'
+                  })),
+                  ...(card.unavailableTriggers || []).map((trigger) => ({
+                      ...trigger,
+                      label: 'Did not resolve'
+                  }))
+              ]
+                  .filter((note) => isNotableRequirement(note.reason))
+                  .map((note) => ({
+                      ...note,
+                      reason: getActionRequirementReason(note.reason)
+                  }))
+            : [];
         const imageCode = isFaceup
             ? card.code
             : source === 'shadows'
@@ -348,12 +409,13 @@ const Card = ({
             className
         );
         return (
-            <div className={wrapperClass}>
+            <div className={wrapperClass} ref={cardRef}>
                 {disableHover ? (
                     image
                 ) : (
                     <CardHoverable
                         code={card.code}
+                        notes={availabilityNotes}
                         isDisabled={isDragging || showMenu}
                         touchDelay={250}
                     >

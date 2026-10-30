@@ -1,59 +1,25 @@
+import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class CityOfSpiders extends PlotCard {
+    // City of Spiders (13080)
+    // When Revealed: Initiate the when revealed ability of a City plot card in your used pile as if
+    // you had just revealed it.
     setupCardAbilities() {
         this.whenRevealed({
-            handler: (context) => {
-                if (this.resolving) {
-                    return;
-                }
-
-                this.context = context;
-
-                this.game.promptForSelect(context.player, {
-                    cardCondition: (card) =>
-                        this.isCityPlotInControllersUsedPileWithWhenRevealedAbility(
-                            card,
-                            context.player
-                        ),
-                    cardType: 'plot',
-                    activePromptTitle: 'Select a plot',
-                    source: this,
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
-            }
+            target: {
+                activePromptTitle: 'Select a plot',
+                cardCondition: (card, context) =>
+                    card.location === 'revealed plots' &&
+                    card.controller === context.player &&
+                    card.hasTrait('City') &&
+                    card.name !== context.source.name &&
+                    !!card.getWhenRevealedAbility(),
+                cardType: 'plot'
+            },
+            message: '{player} uses {source} to initiate the When Revealed ability of {target}',
+            gameAction: GameActions.initiateWhenRevealed((context) => ({ plot: context.target }))
         });
-    }
-
-    isCityPlotInControllersUsedPileWithWhenRevealedAbility(card, player) {
-        return (
-            card.location === 'revealed plots' &&
-            card.controller === player &&
-            card.hasTrait('City') &&
-            card.getWhenRevealedAbility()
-        );
-    }
-
-    onCardSelected(player, card) {
-        this.resolving = true;
-
-        this.game.addMessage(
-            '{0} uses {1} to initiate the When Revealed ability of {2}',
-            player,
-            this,
-            card
-        );
-
-        let whenRevealed = card.getWhenRevealedAbility();
-        if (whenRevealed) {
-            // Attach the current When Revealed event to the new context
-            let context = whenRevealed.createContext(this.context.event);
-            this.game.resolveAbility(whenRevealed, context);
-        }
-
-        this.resolving = false;
-
-        return true;
     }
 }
 

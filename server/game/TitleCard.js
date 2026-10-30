@@ -4,7 +4,6 @@ class TitleCard extends BaseCard {
     constructor(owner, cardData) {
         super(owner, cardData);
 
-        this.dominanceStrengthModifier = 0;
         this.supporterNames = this.supporterNames || [];
         this.rivalNames = this.rivalNames || [];
         this.isContributing = false;
@@ -33,10 +32,6 @@ class TitleCard extends BaseCard {
         }
 
         return this.supporterNames.includes(card.name);
-    }
-
-    modifyDominanceStrength(value) {
-        this.dominanceStrengthModifier += value;
     }
 
     getDominanceStrength() {

@@ -1,6 +1,11 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class NefariousAcolyte extends DrawCard {
+    // Nefarious Acolyte (11018)
+    // Shadow (2).
+    // Action: Kneel Nefarious Acolyte and pay 1 gold to choose a plot card. Until the end of the
+    // phase, treat it as if its printed text box were blank (except for Traits).
     setupCardAbilities(ability) {
         this.action({
             title: 'Blank a plot',
@@ -10,18 +15,13 @@ class NefariousAcolyte extends DrawCard {
                 cardCondition: (card) => card.location === 'active plot',
                 cardType: 'plot'
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.blankExcludingTraits
-                }));
-                this.game.addMessage(
-                    '{0} kneels {1} and pays 1 gold to blank {2} until the end of the phase',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} kneels {source} and pays 1 gold to blank {target} until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.blankExcludingTraits
+            }))
         });
     }
 }

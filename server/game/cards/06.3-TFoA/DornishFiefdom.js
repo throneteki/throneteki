@@ -1,18 +1,25 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class DornishFiefdom extends DrawCard {
+    // Dornish Fiefdom (06056)
+    // Limited.
+    // Marshaling Action: Kneel Dornish Fiefdom to gain 1 gold. (2 gold instead if you are not the
+    // first player.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Gain gold',
             phase: 'marshal',
-            condition: () => this.controller.canGainGold(),
+            condition: (context) => context.source.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
-            handler: (context) => {
-                let gold = !this.controller.firstPlayer ? 2 : 1;
-                gold = this.game.addGold(context.player, gold);
-
-                this.game.addMessage('{0} kneels {1} to gain {2} gold', context.player, this, gold);
-            }
+            message: {
+                format: '{player} kneels {source} to gain {amount} gold',
+                args: { amount: (context) => (!context.player.firstPlayer ? 2 : 1) }
+            },
+            gameAction: GameActions.gainGold((context) => ({
+                player: context.player,
+                amount: !context.player.firstPlayer ? 2 : 1
+            }))
         });
     }
 }
