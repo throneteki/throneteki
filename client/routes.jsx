@@ -88,7 +88,7 @@ const routes = [
         )
     },
     {
-        path: '/wrapped/:year(\\d{4})',
+        path: '/white-book/:year(\\d{4})',
         action: (context) => <Wrapped key='wrapped' year={context.params.year} />
     },
     { path: '/users', action: () => <UserAdmin key='useradmin' />, permission: 'canManageUsers' },

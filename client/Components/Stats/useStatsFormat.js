@@ -29,6 +29,10 @@ const useStatsFormat = () => {
             pairing.agendas.length > 0 ? pairing.agendas.join(' / ') : 'No agenda',
         cardName: (code) => cards?.[code]?.label || cards?.[code]?.name || code,
         cardTitle: (code) => cards?.[code]?.name || code,
+        // Games only keep agenda names, so find the card by name to show its art
+        agendaCode: (name) =>
+            Object.values(cards || {}).find((card) => card.type === 'agenda' && card.name === name)
+                ?.code,
         // Days are worked out in UTC on the server, so format them as UTC too
         formatDay: (day, options) =>
             new Date(`${day}T00:00:00Z`).toLocaleDateString(undefined, {

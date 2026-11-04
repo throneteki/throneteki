@@ -43,7 +43,7 @@ export function isValidUnsubscribeToken(secret, userId, token) {
 
 export function renderWrappedEmail({ appName, publicUrl, user, wrapped, token }) {
     const year = wrapped.year;
-    const wrappedUrl = `${publicUrl}/wrapped/${year}`;
+    const wrappedUrl = `${publicUrl}/white-book/${year}`;
     // A fixed path in public/, as built assets have hashed names
     const logoUrl = `${publicUrl}/email/logo.png`;
     const unsubscribeUrl = `${publicUrl}/unsubscribe?id=${user.id}&token=${token}`;
@@ -54,28 +54,33 @@ export function renderWrappedEmail({ appName, publicUrl, user, wrapped, token })
         : null;
 
     const facts = [
-        ['Games', wrapped.games],
-        ['Wins', wrapped.wins],
+        ['Battles', wrapped.games],
+        ['Victories', wrapped.wins],
         ['Hours', hours]
     ];
 
-    const subject = `Your ${year} on ${appName} is ready`;
+    const subject = `Your ${year} page in the White Book is ready`;
 
     const text =
         `Hi ${user.username},\n\n` +
-        `Your ${year} Wrapped is ready: ${wrapped.games} games, ${wrapped.wins} wins and about ${hours} hours at the table` +
+        `Your page in the ${year} White Book has been written: ${wrapped.games} battles, ${wrapped.wins} victories and about ${hours} hours at the table` +
         (faction ? `, mostly as ${faction}` : '') +
         '.\n\n' +
-        `See the rest, and share it: ${wrappedUrl}\n\n` +
+        `Read it, and share it: ${wrappedUrl}\n\n` +
         `${appName} team\n\n` +
         `You're getting this because you played on ${appName} this year. To stop these emails: ${unsubscribeUrl}\n`;
 
+    const ink = '#2a1f14';
+    const gold = '#8a6424';
+    const parchment = '#f3e9cf';
+    const serif = "Georgia,'Times New Roman',serif";
+
     const cell = ([label, value]) =>
         '<td align="center" style="padding:12px 4px;">' +
-        `<div style="font-size:32px;line-height:36px;font-weight:700;color:#ffffff;">${escapeHtml(
+        `<div style="font-family:${serif};font-size:32px;line-height:36px;font-weight:700;color:${ink};">${escapeHtml(
             value.toLocaleString('en')
         )}</div>` +
-        `<div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#b9b0a0;">${escapeHtml(
+        `<div style="font-family:${serif};font-size:12px;letter-spacing:2px;text-transform:uppercase;color:${gold};">${escapeHtml(
             label
         )}</div></td>`;
 
@@ -84,33 +89,35 @@ export function renderWrappedEmail({ appName, publicUrl, user, wrapped, token })
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="dark">
+<meta name="color-scheme" content="light">
 <title>${escapeHtml(subject)}</title>
 </head>
-<body style="margin:0;padding:0;background:#0a0b0d;font-family:Helvetica,Arial,sans-serif;color:#efe9df;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0a0b0d;">
+<body style="margin:0;padding:0;background:#1a140d;font-family:${serif};color:${ink};">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#1a140d;">
 <tr><td align="center" style="padding:32px 16px;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#16181c;border-radius:12px;">
-<tr><td align="center" style="padding:36px 28px 8px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:${parchment};border:4px double ${gold};border-radius:6px;">
+<tr><td align="center" style="background:${ink};padding:18px 28px;">
 <a href="${escapeHtml(publicUrl)}" style="text-decoration:none;"><img src="${escapeHtml(
         logoUrl
     )}" width="300" height="20" alt="${escapeHtml(
         appName
-    )}" style="display:block;margin:0 auto;width:300px;max-width:100%;height:auto;border:0;color:#b9b0a0;font-size:14px;"></a>
-<div style="font-size:56px;line-height:60px;font-weight:700;color:#da8a2a;padding-top:20px;">${year}</div>
-<div style="font-size:30px;line-height:36px;font-weight:700;color:#ffffff;">Wrapped</div>
-<p style="font-size:17px;line-height:25px;margin:20px 0 4px;">Hi ${escapeHtml(
+    )}" style="display:block;margin:0 auto;width:300px;max-width:100%;height:auto;border:0;color:${parchment};font-size:14px;"></a>
+</td></tr>
+<tr><td align="center" style="padding:32px 28px 8px;">
+<div style="font-size:15px;letter-spacing:6px;text-transform:uppercase;color:${gold};">The White Book</div>
+<div style="font-size:56px;line-height:62px;font-weight:700;color:${ink};padding-top:6px;">${year}</div>
+<p style="font-size:18px;line-height:26px;font-style:italic;margin:16px 0 4px;">Hi ${escapeHtml(
         user.username
-    )}, your year in Westeros is ready.</p>
+    )}, your page has been written.</p>
 </td></tr>
 <tr><td style="padding:8px 20px;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>${facts
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid ${gold};border-bottom:1px solid ${gold};"><tr>${facts
         .map(cell)
         .join('')}</tr></table>
 </td></tr>
 ${
     faction
-        ? `<tr><td align="center" style="padding:4px 28px 0;font-size:16px;line-height:24px;">Your faction: <strong style="color:#da8a2a;">${escapeHtml(
+        ? `<tr><td align="center" style="padding:12px 28px 0;font-size:17px;line-height:24px;">Sworn to <strong>${escapeHtml(
               faction
           )}</strong></td></tr>`
         : ''
@@ -118,14 +125,14 @@ ${
 <tr><td align="center" style="padding:28px 28px 36px;">
 <a href="${escapeHtml(
         wrappedUrl
-    )}" style="display:inline-block;background:#da8a2a;color:#16181c;font-size:17px;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:999px;">See your ${year} Wrapped</a>
+    )}" style="display:inline-block;background:${ink};color:${parchment};font-size:17px;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:999px;">Read your ${year} page</a>
 </td></tr>
 </table>
-<p style="max-width:520px;font-size:12px;line-height:18px;color:#8a857c;margin:20px auto 0;">You're getting this because you played on ${escapeHtml(
+<p style="max-width:520px;font-size:12px;line-height:18px;color:#a8987a;margin:20px auto 0;">You're getting this because you played on ${escapeHtml(
         appName
     )} this year. <a href="${escapeHtml(
         unsubscribeUrl
-    )}" style="color:#b9b0a0;">Stop these emails</a>.</p>
+    )}" style="color:#d6c7a4;">Stop these emails</a>.</p>
 </td></tr>
 </table>
 </body>
@@ -211,7 +218,7 @@ class WrappedEmailService {
                 }
             } else {
                 result.failed++;
-                logger.error('Unable to send the Wrapped email to %s', recipient.username);
+                logger.error('Unable to send the White Book email to %s', recipient.username);
             }
 
             if ((result.sent + result.failed) % 100 === 0) {
@@ -236,7 +243,7 @@ class WrappedEmailService {
                 return true;
             } catch (err) {
                 logger.error(
-                    'Unable to record the Wrapped email to user %s as sent (attempt %s) %s',
+                    'Unable to record the White Book email to user %s as sent (attempt %s) %s',
                     userId,
                     attempt,
                     err

@@ -125,8 +125,8 @@ describe('Wrapped', function () {
                 token: 'abc'
             });
 
-            expect(email.subject).toBe('Your 2026 on The Iron Throne is ready');
-            expect(email.text).toContain('https://theironthrone.net/wrapped/2026');
+            expect(email.subject).toBe('Your 2026 page in the White Book is ready');
+            expect(email.text).toContain('https://theironthrone.net/white-book/2026');
             expect(email.text).toContain("mostly as The Night's Watch");
             expect(email.html).toContain(
                 'https://theironthrone.net/unsubscribe?id=5&amp;token=abc'

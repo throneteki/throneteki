@@ -133,7 +133,7 @@ const ProfileMain = ({ user, formProps }) => {
                         formProps.setFieldValue('emailUpdates', isSelected)
                     }
                 >
-                    Email me occasional updates, such as my yearly Wrapped
+                    Email me occasional updates, such as my yearly page in the White Book
                 </Switch>
                 <div className='flex flex-col md:flex-row gap-2'>
                     <div className='flex flex-col gap-1 w-full md:w-1/2'>
