@@ -11,6 +11,8 @@ import CardSelector from '../CardSelector.js';
  * multiSelect        - boolean that ensures that the selected cards are sent as
  *                      an array, even if the numCards limit is 1.
  * additionalButtons  - array of additional buttons for the prompt.
+ * doneButtonFirst    - when true, the done button is shown before the additional
+ *                      buttons.
  * additionalControls - array of additional controls for the prompt.
  * activePromptTitle  - the title that should be used in the prompt for the
  *                      choosing player.
@@ -139,7 +141,9 @@ class SelectCardPrompt extends UiPrompt {
             menuTitle:
                 this.activePromptTitleFunc(this.context) ||
                 this.selector.defaultActivePromptTitle(),
-            buttons: this.properties.additionalButtons.concat([this.getDoneButton()]),
+            buttons: this.properties.doneButtonFirst
+                ? [this.getDoneButton(), ...this.properties.additionalButtons]
+                : this.properties.additionalButtons.concat([this.getDoneButton()]),
             controls: this.properties.additionalControls,
             promptTitle: this.properties.source ? this.properties.source.name : undefined
         };

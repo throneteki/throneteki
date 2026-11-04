@@ -7,9 +7,12 @@ class ActionWindow extends PlayerOrderPrompt {
         this.title = title;
         this.windowName = windowName;
         this.offer = null;
+        this.offeredPlayers = new Set();
     }
 
     continue() {
+        this.game.passedActionWindowPlayers = null;
+
         if (this.game.strictActionWindows) {
             this.offerToCurrentPlayer();
         }
@@ -20,6 +23,7 @@ class ActionWindow extends PlayerOrderPrompt {
             this.game.currentActionWindow = this;
         } else {
             this.game.currentActionWindow = null;
+            this.game.passedActionWindowPlayers = this.offeredPlayers;
         }
 
         return completed;
@@ -83,6 +87,13 @@ class ActionWindow extends PlayerOrderPrompt {
                 this.completePlayer();
             }
         });
+    }
+
+    skipPlayers() {
+        super.skipPlayers();
+        for (const player of this.players) {
+            this.offeredPlayers.add(player);
+        }
     }
 
     activePrompt(player) {

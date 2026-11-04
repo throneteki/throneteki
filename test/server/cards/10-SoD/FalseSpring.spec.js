@@ -20,4 +20,11 @@ describe('False Spring', function () {
         expect(this.castleGuard.location).toBe('discard pile');
         expect(this.hedgeKnight.location).toBe('hand');
     });
+
+    it('hides the revealed cards again once the ability resolves', function () {
+        this.player1.clickCard(this.castleGuard);
+        for (const card of [this.hedgeKnight, this.theRoseroad, this.theKingsroad]) {
+            expect(this.game.cardVisibility.isVisible(card, this.player1Object)).toBe(false);
+        }
+    });
 });

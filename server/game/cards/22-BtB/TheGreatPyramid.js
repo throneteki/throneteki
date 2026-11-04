@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GenericTracker from '../../EventTrackers/GenericTracker.js';
 import GameActions from '../../GameActions/index.js';
 
+const cardsInDiscardPile = (context) =>
+    context.events.map((event) => event.card).filter((card) => card.location === 'discard pile');
+
 const placedCards = (context) =>
     context.events
         .map((event) => event.card)
@@ -39,19 +42,21 @@ class TheGreatPyramid extends DrawCard {
                         location: event.cardStateWhenDiscarded.location
                     }),
                     condition: (aggregate, events, context) =>
-                        aggregate.controller === context.player && aggregate.location === 'hand'
+                        aggregate.controller === context.player &&
+                        aggregate.location === 'hand' &&
+                        events.some((event) => event.card.location === 'discard pile')
                 }
             },
             limit: ability.limit.perRound(2),
             message: {
                 format: '{player} uses {source} to place {cards} facedown under {source}',
-                args: { cards: (context) => context.events.map((event) => event.card) }
+                args: { cards: (context) => cardsInDiscardPile(context) }
             },
             gameAction: GameActions.simultaneously([
                 GameActions.simultaneously((context) =>
-                    context.events.map((event) =>
+                    cardsInDiscardPile(context).map((card) =>
                         GameActions.placeCardUnderneath({
-                            card: event.card,
+                            card,
                             parentCard: context.source,
                             facedown: true
                         })

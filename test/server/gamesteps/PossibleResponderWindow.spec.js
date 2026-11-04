@@ -64,6 +64,13 @@ describe('cancel windows for a player without the timer', function () {
                 expect(opponentView(this)).toEqual(ViewWhileConsidering);
             });
 
+            it('shows Skip before Wait', function () {
+                expect(this.player2.player.promptState.buttons.map((b) => b.text)).toEqual([
+                    'Skip',
+                    'Wait'
+                ]);
+            });
+
             it('shows them the same window, with nothing to choose', function () {
                 expect(this.player2).toHavePrompt(WindowTitle);
                 expect(this.player2).toHavePromptButton('Skip');

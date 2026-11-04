@@ -19,7 +19,7 @@ const OrderableEventFunc = {
                         chooser === event.card.owner ? 'your' : event.card.owner.name + "'s";
                     let orientation = event.bottom ? 'bottom' : 'top';
                     if (event.location === 'draw deck') {
-                        title += `place cards on ${orientation} of ${owner} deck (${orientation} first)`;
+                        title += `place cards on ${orientation} of ${owner} deck (card 1 goes ${orientation === 'top' ? 'on top' : 'on the bottom'})`;
                     }
                     if (['discard pile', 'dead pile'].includes(event.location)) {
                         title += `place cards ${orientation === 'top' ? 'in' : 'on the bottom of'} ${owner} ${event.location} (${orientation} first)`;

@@ -42,3 +42,37 @@ describe('The Great Pyramid', function () {
         expect(this.nightmares.location).toBe('out of game');
     });
 });
+
+describe('The Great Pyramid when the discarded card leaves the discard pile first', function () {
+    function setup(hand) {
+        this.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player2',
+            player1: {
+                faction: 'targaryen',
+                inPlay: ['The Great Pyramid'],
+                hand
+            },
+            player2: {
+                inPlay: ['House Dayne Knight']
+            }
+        });
+        this.unopposedChallenge(this.player2, 'Intrigue', this.houseDayneKnight);
+    }
+
+    it('does not react when the discarded card was put into play instead', function () {
+        setup.call(this, ['Missandei']);
+        this.player1.triggerAbility(this.missandei);
+        expect(this.missandei.location).toBe('play area');
+        expect(this.player1).not.toAllowAbilityTrigger(this.theGreatPyramid);
+        expect(this.player2).isReadyToTakeAction();
+    });
+
+    it('does not react once the discarded card has been shuffled back into the deck', function () {
+        setup.call(this, ['Citadel Archivist']);
+        this.player1.triggerAbility(this.citadelArchivist);
+        expect(this.citadelArchivist.location).toBe('draw deck');
+        expect(this.player1).not.toAllowAbilityTrigger(this.theGreatPyramid);
+        expect(this.player2).isReadyToTakeAction();
+    });
+});

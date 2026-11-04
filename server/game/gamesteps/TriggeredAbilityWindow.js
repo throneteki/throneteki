@@ -89,6 +89,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
                 }
             ],
             doneButtonText: 'Skip',
+            doneButtonFirst: true,
             onCancel: () => this.pass(),
             onMenuCommand: (selectingPlayer, arg) => {
                 if (arg === 'wait') {
@@ -131,6 +132,13 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             .map((choice) => choice.card);
 
         let unclickableCards = cardsForPlayer.filter((card) => card.location === 'draw deck');
+        const pileCards = cardsForPlayer.filter(
+            (card, index) =>
+                ['discard pile', 'dead pile'].includes(card.location) &&
+                cardsForPlayer.findIndex(
+                    (other) => other.name === card.name && other.location === card.location
+                ) === index
+        );
         const timed = this.cancelTimer.isEnabled(player);
         const delay = timed ? player.getWindowTimerDelay() : undefined;
         let timerStopped = false;
@@ -143,7 +151,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             isCardEffect: false,
             cardCondition: (card) => cardsForPlayer.includes(card),
             cardType: ['agenda', 'attachment', 'character', 'event', 'location', 'plot', 'title'],
-            additionalButtons: this.getButtons(player, unclickableCards),
+            additionalButtons: this.getButtons(player, [...unclickableCards, ...pileCards]),
             additionalControls: [
                 ...(timed ? [this.getResponseDelayControl(delay)] : []),
                 ...this.getAdditionalPromptControls(player)
@@ -201,8 +209,8 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         );
     }
 
-    getButtons(player, unclickableCards) {
-        let buttons = unclickableCards.map((card) => {
+    getButtons(player, listedCards) {
+        let buttons = listedCards.map((card) => {
             return { text: `${card.name} (${card.location})`, card: card, mapCard: true };
         });
 

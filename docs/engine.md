@@ -256,7 +256,9 @@ cancel such as The Hand's Judgment.
 - An action is refused with the `window` reason, whether or not strict windows are on, while a
   window is open and it is not that player's turn, and during marshaling except on that player's
   turn, and always while an interrupt or reaction window is open. With strict windows off, outside
-  marshaling and with no window open, actions are allowed.
+  marshaling and with no window open, actions are allowed, except to a player who passed in the
+  action window that last closed: they wait for the next window, which may be skipped, or the next
+  phase ([actionwindow.js](../server/game/gamesteps/actionwindow.js) `passedActionWindowPlayers`).
 
 Trigger checks (`when`, `condition`, cost `canPay`) therefore have no side effects, work on a card
 that is not in the game, and keep nothing on the card instance between the check and resolution.
@@ -325,7 +327,7 @@ Rules readings and design choices that stand until changed:
 ## Open work
 
 - Strict action windows are not the default, and actions are still allowed when no window is open
-  outside marshaling.
+  outside marshaling, unless the player passed in the window that last closed.
 - There is no prompt for the infinite-loop shortcut (naming a number of repetitions).
 - Logs are translation-ready but there are no locale catalogs or translating renderer.
 - A problem report cannot restore an arbitrary open prompt.

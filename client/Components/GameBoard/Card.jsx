@@ -5,6 +5,8 @@ import { useDraggable } from '@dnd-kit/core';
 import CardMenu from './CardMenu';
 import CardCounters from './CardCounters';
 import SquishableCardPanel from './SquishableCardPanel';
+import CardTiledList from './CardTiledList';
+import MovablePanel from './MovablePanel';
 
 import { ItemTypes } from '../../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -37,6 +39,7 @@ const Card = ({
     cardStackIndex = 200
 }) => {
     const [showMenu, setShowMenu] = useState(false);
+    const [showUnderneath, setShowUnderneath] = useState(false);
     const menuIdRef = useRef(null);
     const cardRef = useRef(null);
     if (menuIdRef.current === null) {
@@ -66,6 +69,16 @@ const Card = ({
             document.removeEventListener('mousedown', onDocumentMouseDown);
         };
     }, [showMenu]);
+
+    const hasUnderneathPopup = card.childCards?.length > 0 && card.type !== 'agenda';
+    const hasSelectableUnderneath =
+        hasUnderneathPopup && card.childCards.some((child) => child.selectable);
+
+    useEffect(() => {
+        if (hasSelectableUnderneath) {
+            setShowUnderneath(true);
+        }
+    }, [hasSelectableUnderneath]);
 
     const key = `card-${card.uuid}-${source}`;
 
@@ -274,13 +287,70 @@ const Card = ({
         );
     };
 
+    const getUnderneathBadge = () => {
+        if (!hasUnderneathPopup) {
+            return null;
+        }
+
+        return (
+            <button
+                type='button'
+                title='Cards underneath'
+                className='absolute bottom-1 right-1 z-[230] min-w-6 h-6 px-1 text-white bg-black/80 font-bold text-center rounded-md border-1'
+                onClick={(event) => {
+                    event.stopPropagation();
+                    setShowUnderneath(!showUnderneath);
+                }}
+            >
+                {card.childCards.length}
+            </button>
+        );
+    };
+
+    const getUnderneathPopup = () => {
+        if (!hasUnderneathPopup || !showUnderneath) {
+            return null;
+        }
+
+        // Facedown cards the viewer may see (their own) arrive with a code; show those face up here.
+        const cards = card.childCards.map((child) =>
+            child.code ? { ...child, facedown: false } : child
+        );
+
+        return (
+            <MovablePanel
+                id={card.uuid}
+                anchorRef={cardRef}
+                title={`Underneath ${card.name || 'card'}`}
+                name='underneath'
+                onCloseClick={() => setShowUnderneath(false)}
+                side='bottom'
+            >
+                <div
+                    className='flex flex-col box-content border-1 border-default-200 bg-black/75 rounded-b-md overflow-hidden'
+                    onClick={(event) => event.stopPropagation()}
+                >
+                    <CardTiledList
+                        cards={cards}
+                        numColumns={Math.min(cards.length, 5)}
+                        numRows={1.2}
+                        onCardClick={onClick}
+                        onMenuItemClick={onMenuItemClick}
+                        size={size}
+                        source='underneath'
+                    />
+                </div>
+            </MovablePanel>
+        );
+    };
+
     const getCardOrder = () => {
         if (!card.order) {
             return null;
         }
 
         return (
-            <div className='absolute w-6 h-6 -ml-3 -top-7 z-[230] left-1/2 text-white bg-black/80 font-bold text-center rounded-md border-1'>
+            <div className='absolute w-6 h-6 -ml-3 top-1 z-[230] left-1/2 text-white bg-black/80 font-bold text-center rounded-md border-1'>
                 {card.order}
             </div>
         );
@@ -424,6 +494,8 @@ const Card = ({
                 )}
                 {showMenu && <CardMenu menu={getMenu()} onMenuItemClick={handleMenuItemClick} />}
                 {getCardOrder()}
+                {getUnderneathBadge()}
+                {getUnderneathPopup()}
             </div>
         );
     };

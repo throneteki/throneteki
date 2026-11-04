@@ -1400,12 +1400,14 @@ class Game extends EventEmitter {
             return undefined;
         }
 
-        // While action windows are not being run, play stays available outside them.
+        // While action windows are not being run, play stays available outside them, except to a
+        // player who passed in the action window that last closed, until the next window is reached.
         // A window that is open, and the marshaling phase, are refused either way.
         if (
             !this.strictActionWindows &&
             !this.currentActionWindow &&
-            this.currentPhase !== 'marshal'
+            this.currentPhase !== 'marshal' &&
+            !this.passedActionWindowPlayers?.has(player)
         ) {
             return undefined;
         }
