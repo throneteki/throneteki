@@ -31,7 +31,7 @@ function fromWinners(winners) {
 
 export function playerRows(players) {
     return (players || []).map((player, position) => {
-        const { name, faction, agendas, power, eliminated, stats, ...details } = player;
+        const { name, faction, agendas, power, eliminated, stats, deckId, ...details } = player;
 
         return {
             position,
@@ -41,7 +41,8 @@ export function playerRows(players) {
             power: Number.isInteger(power) && Math.abs(power) <= MaxPower ? power : null,
             eliminated: !!eliminated,
             details,
-            stats: stats ?? null
+            stats: stats ?? null,
+            deck_id: /^\d{1,18}$/.test(String(deckId ?? '')) ? String(deckId) : null
         };
     });
 }
@@ -54,11 +55,12 @@ class GameService {
     async savePlayers(tx, gameId, players) {
         await tx.query('DELETE FROM game_players WHERE game_id = $1', [gameId]);
         await tx.query(
-            `INSERT INTO game_players (game_id, position, name, user_id, faction, agendas, power, eliminated, details, stats)
-            SELECT $1, p.position, p.name, (SELECT id FROM users WHERE lower(username) = lower(p.name)),
-                p.faction, p.agendas, p.power, p.eliminated, p.details, p.stats
+            `INSERT INTO game_players (game_id, position, name, user_id, faction, agendas, power, eliminated, details, stats, deck_id)
+            SELECT $1, p.position, p.name, u.id, p.faction, p.agendas, p.power, p.eliminated, p.details, p.stats, d.id
             FROM jsonb_to_recordset($2::jsonb)
-                AS p(position integer, name text, faction text, agendas text[], power integer, eliminated boolean, details jsonb, stats jsonb)`,
+                AS p(position integer, name text, faction text, agendas text[], power integer, eliminated boolean, details jsonb, stats jsonb, deck_id bigint)
+            LEFT JOIN users u ON lower(u.username) = lower(p.name)
+            LEFT JOIN decks d ON d.id = p.deck_id AND d.user_id = u.id`,
             [gameId, JSON.stringify(playerRows(players))]
         );
     }

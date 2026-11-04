@@ -72,3 +72,15 @@ body {
 .rrt-confirm {
     background: var(--color-primary) !important;
 }
+
+/* Wrapped story cards slide in as you move between them */
+@keyframes wrapped-in {
+    from {
+        opacity: 0;
+        transform: translateY(2%);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}

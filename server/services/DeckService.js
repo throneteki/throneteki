@@ -2,6 +2,7 @@ import { formatDeckAsFullCards } from '../../deck-helper/formatDeckAsFullCards.j
 import { validateDeck } from '../../deck-helper/index.js';
 import defaultDb from '../db/index.js';
 import logger from '../log.js';
+import { FinishedGameSql } from './UserStatsService.js';
 import { idColumn } from '../db/ids.js';
 
 export const Factions = [
@@ -267,7 +268,7 @@ class DeckService {
         }
     }
 
-    async findDecks(baseCondition, baseParams, options) {
+    async findDecks(baseCondition, baseParams, options, { withRecords = false } = {}) {
         const params = [...baseParams];
         const { conditions, order, page, pageSize } = getQueryOptions(options, params);
         const where = [baseCondition, ...conditions].join(' AND ');
@@ -286,16 +287,40 @@ class DeckService {
             params
         );
 
+        const records = withRecords ? await this.getRecords(rows.map((row) => row.id)) : new Map();
+
         const data = [];
         for (const row of rows) {
-            data.push(await this.processDeck(rowToDeck(row), options));
+            const deck = rowToDeck(row);
+            if (records.has(row.id)) {
+                deck.record = records.get(row.id);
+            }
+
+            data.push(await this.processDeck(deck, options));
         }
 
         return { totalCount: count, page, pageSize, success: true, data };
     }
 
+    // Each deck's record from its owner's games, counted the same way as the stats page
+    async getRecords(deckIds) {
+        const rows = await this.db.query(
+            `SELECT gp.deck_id, count(*) AS games, count(*) FILTER (WHERE gp.name = ANY(g.winners)) AS wins
+            FROM game_players gp
+            JOIN games g ON g.id = gp.game_id
+            JOIN decks d ON d.id = gp.deck_id AND d.user_id = gp.user_id
+            WHERE gp.deck_id = ANY($1) AND ${FinishedGameSql}
+            GROUP BY gp.deck_id`,
+            [deckIds]
+        );
+
+        return new Map(rows.map((row) => [row.deck_id, { games: row.games, wins: row.wins }]));
+    }
+
     findByUserName(username, options = {}) {
-        return this.findDecks('lower(u.username) = lower($1)', [username], options);
+        return this.findDecks('lower(u.username) = lower($1)', [username], options, {
+            withRecords: true
+        });
     }
 
     getStandaloneDecks(options = {}) {

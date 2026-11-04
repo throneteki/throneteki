@@ -165,7 +165,8 @@ class User {
             promptedActionWindows: this.userData.promptedActionWindows,
             permissions: this.userData.permissions,
             verified: this.userData.verified,
-            enableGravatar: this.userData.enableGravatar
+            enableGravatar: this.userData.enableGravatar,
+            emailUpdates: this.userData.emailUpdates !== false
         };
 
         user = Settings.getUserWithDefaultsSet(user);

@@ -64,7 +64,7 @@ const DeckList = ({
                     );
                 },
                 meta: {
-                    colWidth: '50%',
+                    colWidth: '45%',
                     className: 'min-w-34'
                 }
             },
@@ -161,22 +161,33 @@ const DeckList = ({
                 enableColumnFilter: false,
                 enableSorting: false
             },
-            /*  {
-                accessorKey: 'winRate',
+            {
+                id: 'record',
+                accessorFn: (deck) => deck.record,
                 cell: (info) => {
+                    const record = info.getValue();
+                    if (!record) {
+                        return null;
+                    }
+
                     return (
-                        <span>
-                            {info.getValue()}
-                            {`${info.getValue() ? '%' : ''}`}
+                        <span
+                            className='whitespace-nowrap tabular-nums'
+                            title={`${record.games} games with this deck`}
+                        >
+                            {record.wins}-{record.games - record.wins}
                         </span>
                     );
                 },
-                header: 'Win Rate',
+                header: 'Record',
                 meta: {
-                    colWidth: '10%'
+                    colWidth: '8%',
+                    className: 'max-md:hidden'
                 },
-                enableColumnFilter: false
-            }*/ {
+                enableColumnFilter: false,
+                enableSorting: false
+            },
+            {
                 accessorKey: 'isFavourite',
                 cell: (info) => (
                     <div
