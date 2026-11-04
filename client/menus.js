@@ -30,6 +30,7 @@ export const RightMenu = [
 
 export const ProfileMenu = [
     { title: 'Profile', path: '/profile' },
+    { title: 'Stats', path: '/stats' },
     { title: 'Security', path: '/security' },
     { title: 'Block List', path: '/blocklist' },
     { title: 'Logout', path: '/logout' }

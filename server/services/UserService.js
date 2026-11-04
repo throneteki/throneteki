@@ -33,6 +33,7 @@ export const UserFields = [
     { property: 'verified', column: 'verified' },
     { property: 'disabled', column: 'disabled' },
     { property: 'enableGravatar', column: 'enable_gravatar' },
+    { property: 'emailUpdates', column: 'email_updates' },
     { property: 'settings', column: 'settings', type: 'json' },
     { property: 'promptedActionWindows', column: 'prompted_action_windows', type: 'json' },
     { property: 'patreon', column: 'patreon', type: 'json' },
@@ -68,6 +69,7 @@ const NotNullDefaults = {
     verified: false,
     disabled: false,
     enableGravatar: false,
+    emailUpdates: true,
     evasionReviewRequired: false
 };
 
@@ -268,6 +270,10 @@ class UserService extends EventEmitter {
             evasionReviewRequired: !!user.evasionReviewRequired,
             modNotes: user.modNotes || null
         };
+
+        if (typeof user.emailUpdates === 'boolean') {
+            toSet.emailUpdates = user.emailUpdates;
+        }
 
         if (user.password && user.password !== '') {
             toSet.password = user.password;

@@ -504,6 +504,20 @@ export const apiSlice = createApi({
                 body: { code }
             })
         }),
+        getMonthlyStats: builder.query({
+            query: (month) => ({ url: '/stats/monthly', params: { month } }),
+            keepUnusedDataFor: 300
+        }),
+        getWrapped: builder.query({
+            query: (year) => `/wrapped/${year}`
+        }),
+        unsubscribe: builder.mutation({
+            query: ({ id, token }) => ({
+                url: '/unsubscribe',
+                method: 'POST',
+                body: { id, token }
+            })
+        }),
         removeMessage: builder.mutation({
             query: (messageId) => ({
                 url: `/messages/${messageId}`,
@@ -563,5 +577,8 @@ export const {
     useResetPasswordMutation,
     useLinkPatreonMutation,
     useRemoveMessageMutation,
+    useGetMonthlyStatsQuery,
+    useGetWrappedQuery,
+    useUnsubscribeMutation,
     useDeleteDecksMutation
 } = apiSlice;

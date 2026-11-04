@@ -22,7 +22,7 @@ class EmailService {
         });
     }
 
-    async sendEmail(address, subject, text) {
+    async sendEmail(address, subject, text, { html, headers } = {}) {
         try {
             await this.client.send(
                 new SendEmailCommand({
@@ -39,15 +39,21 @@ class EmailService {
                             Body: {
                                 Text: {
                                     Data: text
-                                }
-                            }
+                                },
+                                Html: html ? { Data: html } : undefined
+                            },
+                            Headers: headers
                         }
                     }
                 })
             );
         } catch (err) {
             logger.error('Unable to send email %s', err);
+
+            return false;
         }
+
+        return true;
     }
 }
 

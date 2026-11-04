@@ -8,6 +8,8 @@ import { init as UserInit } from './user.js';
 import { init as MessagesInit } from './messages.js';
 import { init as BanlistInit } from './banlist.js';
 import { init as AbuseBlocksInit } from './abuseBlocks.js';
+import { init as StatsInit } from './stats.js';
+import { init as UnsubscribeInit } from './unsubscribe.js';
 
 export const init = async function (server, options) {
     AccountInit(server, options);
@@ -19,5 +21,7 @@ export const init = async function (server, options) {
     MessagesInit(server, options);
     BanlistInit(server, options);
     AbuseBlocksInit(server, options);
+    StatsInit(server, options);
+    UnsubscribeInit(server, options);
     await EventsInit(server, options);
 };
