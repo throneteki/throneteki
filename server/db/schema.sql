@@ -237,7 +237,8 @@ CREATE TABLE public.game_players (
     power integer,
     eliminated boolean DEFAULT false NOT NULL,
     details jsonb DEFAULT '{}'::jsonb NOT NULL,
-    stats jsonb
+    stats jsonb,
+    deck_id bigint
 );
 
 --
@@ -428,6 +429,18 @@ CREATE TABLE public.user_blocks (
 );
 
 --
+-- Name: user_monthly_stats; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_monthly_stats (
+    user_id bigint NOT NULL,
+    month date NOT NULL,
+    version integer NOT NULL,
+    data jsonb NOT NULL,
+    computed_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+--
 -- Name: user_permissions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -435,6 +448,19 @@ CREATE TABLE public.user_permissions (
     user_id bigint NOT NULL,
     permission text NOT NULL,
     CONSTRAINT user_permissions_permission_check CHECK ((permission = ANY (ARRAY['isAdmin'::text, 'isContributor'::text, 'isSupporter'::text, 'canEditNews'::text, 'canManageUsers'::text, 'canManagePermissions'::text, 'canManageGames'::text, 'canManageNodes'::text, 'canModerateChat'::text, 'canManageMotd'::text, 'canManageEvents'::text, 'canManageBanlist'::text])))
+);
+
+--
+-- Name: user_wrapped; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_wrapped (
+    user_id bigint NOT NULL,
+    year integer NOT NULL,
+    version integer NOT NULL,
+    data jsonb NOT NULL,
+    generated_at timestamp with time zone DEFAULT now() NOT NULL,
+    emailed_at timestamp with time zone
 );
 
 --
@@ -475,6 +501,7 @@ CREATE TABLE public.users (
     ban_reason text,
     mod_notes text,
     legacy jsonb,
+    email_updates boolean DEFAULT true NOT NULL,
     CONSTRAINT users_email_check CHECK ((email <> ''::text)),
     CONSTRAINT users_trust_state_check CHECK ((trust_state = ANY (ARRAY['trusted'::text, 'new'::text, 'restricted'::text, 'banned_evasion_review'::text]))),
     CONSTRAINT users_username_check CHECK ((username <> ''::text))
@@ -717,11 +744,25 @@ ALTER TABLE ONLY public.user_blocks
     ADD CONSTRAINT user_blocks_pkey PRIMARY KEY (user_id, blocked_username);
 
 --
+-- Name: user_monthly_stats user_monthly_stats_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_monthly_stats
+    ADD CONSTRAINT user_monthly_stats_pkey PRIMARY KEY (user_id, month);
+
+--
 -- Name: user_permissions user_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_permissions
     ADD CONSTRAINT user_permissions_pkey PRIMARY KEY (user_id, permission);
+
+--
+-- Name: user_wrapped user_wrapped_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_wrapped
+    ADD CONSTRAINT user_wrapped_pkey PRIMARY KEY (user_id, year);
 
 --
 -- Name: users users_mongo_id_key; Type: CONSTRAINT; Schema: public; Owner: -
@@ -778,6 +819,12 @@ CREATE UNIQUE INDEX decks_user_id_event_id_key ON public.decks USING btree (user
 --
 
 CREATE INDEX decks_user_id_last_updated_idx ON public.decks USING btree (user_id, last_updated DESC);
+
+--
+-- Name: game_players_deck_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX game_players_deck_id_idx ON public.game_players USING btree (deck_id) WHERE (deck_id IS NOT NULL);
 
 --
 -- Name: game_players_user_id_idx; Type: INDEX; Schema: public; Owner: -
@@ -917,6 +964,13 @@ ALTER TABLE ONLY public.decks
     ADD CONSTRAINT decks_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 --
+-- Name: game_players game_players_deck_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.game_players
+    ADD CONSTRAINT game_players_deck_id_fkey FOREIGN KEY (deck_id) REFERENCES public.decks(id) ON DELETE SET NULL;
+
+--
 -- Name: game_players game_players_game_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -952,11 +1006,25 @@ ALTER TABLE ONLY public.user_blocks
     ADD CONSTRAINT user_blocks_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 --
+-- Name: user_monthly_stats user_monthly_stats_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_monthly_stats
+    ADD CONSTRAINT user_monthly_stats_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+--
 -- Name: user_permissions user_permissions_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_permissions
     ADD CONSTRAINT user_permissions_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+--
+-- Name: user_wrapped user_wrapped_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_wrapped
+    ADD CONSTRAINT user_wrapped_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 --
 -- PostgreSQL database dump complete

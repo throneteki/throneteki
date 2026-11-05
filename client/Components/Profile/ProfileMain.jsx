@@ -127,6 +127,14 @@ const ProfileMain = ({ user, formProps }) => {
                         type='password'
                     />
                 </div>
+                <Switch
+                    isSelected={formProps.values.emailUpdates}
+                    onValueChange={(isSelected) =>
+                        formProps.setFieldValue('emailUpdates', isSelected)
+                    }
+                >
+                    Email me occasional updates, such as my yearly page in the White Book
+                </Switch>
                 <div className='flex flex-col md:flex-row gap-2'>
                     <div className='flex flex-col gap-1 w-full md:w-1/2'>
                         <label className='font-bold'>Avatar</label>

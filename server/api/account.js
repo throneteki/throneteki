@@ -1280,6 +1280,12 @@ export const init = function (server) {
             );
             user.enableGravatar = !!userToSet.enableGravatar;
 
+            // Only sent when changed on the page, so saving a profile loaded before unsubscribing from an email
+            // doesn't turn emails back on
+            if (typeof userToSet.emailUpdates === 'boolean') {
+                user.emailUpdates = userToSet.emailUpdates;
+            }
+
             await downloadAvatar(user);
 
             await userService.update(user);

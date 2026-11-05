@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
 import GameBackgroundOption from '../Components/Profile/GameBackgroundOption';
-import { useSaveProfileMutation } from '../redux/middleware/api';
+import { useSaveProfileMutation, useVerifyAuthenticationQuery } from '../redux/middleware/api';
 import ProfileMain from '../Components/Profile/ProfileMain';
 import ActionWindowOptions from '../Components/Profile/ActionWindowOptions';
 import GameSettings from '../Components/Profile/GameSettings';
@@ -44,6 +44,13 @@ const Profile = () => {
     );
 
     const [saveProfile, { isLoading: isSaveLoading, error: saveError }] = useSaveProfileMutation();
+    // The user in the store comes from the login token, which can be out of date (e.g. after unsubscribing from an
+    // email), so load the account as it is now before building the form
+    const { data: currentUser, isFetching: isLoadingUser } = useVerifyAuthenticationQuery('', {
+        skip: !user,
+        refetchOnMountOrArgChange: true
+    });
+    const emailUpdates = (currentUser ?? user)?.emailUpdates !== false;
 
     useEffect(() => {
         if (saveError) {
@@ -61,6 +68,10 @@ const Profile = () => {
         return (
             <AlertPanel variant='error' message='You must be logged in to update your profile' />
         );
+    }
+
+    if (isLoadingUser) {
+        return <p className='py-6 text-center'>Loading...</p>;
     }
 
     const schema = yup.object({
@@ -102,6 +113,7 @@ const Profile = () => {
 
     const initialValues = {
         enableGravatar: !!user.enableGravatar,
+        emailUpdates,
         email: user.email,
         currentPassword: '',
         password: '',
@@ -130,6 +142,12 @@ const Profile = () => {
                                 password: values.password,
                                 promptedActionWindows: values.actionWindows,
                                 enableGravatar: values.enableGravatar,
+                                // Only sent when changed here, so saving a page loaded before
+                                // unsubscribing from an email doesn't turn emails back on
+                                emailUpdates:
+                                    values.emailUpdates !== emailUpdates
+                                        ? values.emailUpdates
+                                        : undefined,
                                 settings: {
                                     promptDupes: values.promptDupes,
                                     hideInterrupts: values.hideInterrupts,

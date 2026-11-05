@@ -1866,6 +1866,7 @@ class Game extends EventEmitter {
                 standing: player.standing,
                 eliminated: player.eliminated,
                 eliminatedReason: player.eliminatedReason,
+                deckId: player.deck?._id,
                 stats: this.stats.getPlayerStats(player),
                 playtested: this.isPlaytesting()
                     ? player.preparedDeck.allCards
