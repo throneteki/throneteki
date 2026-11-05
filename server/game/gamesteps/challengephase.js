@@ -3,7 +3,7 @@ import SimpleStep from './simplestep.js';
 import Challenge from '../challenge.js';
 import ChallengeFlow from './challenge/challengeflow.js';
 import ChallengeTypes from '../ChallengeTypes.js';
-import ActionWindow from './actionwindow.js';
+import ChallengeActionWindow from './challenge/ChallengeActionWindow.js';
 import { ChallengeTracker } from '../EventTrackers/index.js';
 
 class ChallengePhase extends Phase {
@@ -26,35 +26,26 @@ class ChallengePhase extends Phase {
     }
 
     // A challenge abandoned before it was initiated (no attackers, or no opponent chosen) returns
-    // to choosing a challenge without a new action window.
+    // to choosing a challenge without offering the other players a new action window.
     promptForChallenge({ actionWindow = true } = {}) {
         if (this.remainingPlayers.length === 0) {
             return true;
         }
 
-        if (actionWindow) {
-            this.game.queueStep(new ActionWindow(this.game, 'Before challenge', 'challengeBegin'));
-        }
-
         const currentPlayer = this.remainingPlayers[0];
-        const buttons = ChallengeTypes.asButtons((challengeType) => ({
-            method: 'chooseChallengeType',
-            disabled: () => !this.allowChallengeType(currentPlayer, challengeType)
-        }));
-
-        this.game.promptWithMenu(currentPlayer, this, {
-            activePrompt: {
-                menuTitle: '',
-                buttons: buttons.concat([
-                    {
-                        text: 'Done',
-                        method: 'completeChallenges',
-                        disabled: () => this.mustInitiateChallenge(currentPlayer)
-                    }
-                ])
-            },
-            waitingPromptTitle: 'Waiting for opponent to initiate challenge'
+        const window = new ChallengeActionWindow(this.game, this, currentPlayer, {
+            otherPlayers: actionWindow
         });
+        this.game.queueStep(window);
+        this.game.queueSimpleStep(() => this.resolveChoice(currentPlayer, window.choice));
+    }
+
+    resolveChoice(player, choice) {
+        if (choice === 'done' || !player.isPlaying()) {
+            this.completeChallenges(player);
+        } else if (choice) {
+            this.chooseChallengeType(player, choice);
+        }
     }
 
     allowChallengeType(player, challengeType) {

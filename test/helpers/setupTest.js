@@ -410,6 +410,9 @@ export function applySetupTest(options, ctx) {
         );
         players[key].selectDeck(deck);
         claims[key] = new CardClaims(players[key]);
+        for (const [window, enabled] of Object.entries(options[key].actionWindows || {})) {
+            players[key].togglePromptedActionWindow(window, enabled);
+        }
     }
 
     flow.startGame();

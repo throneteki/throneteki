@@ -43,7 +43,6 @@ class Phase extends BaseStep {
     startPhase() {
         this.game.finishEndingDuration('untilEndOfPhase');
         this.game.currentPhase = this.name;
-        this.game.passedActionWindowPlayers = null;
 
         this.game.raiseEvent('onPhaseStarted', { phase: this.name });
         this.game.addAlert('phasestart', '{0} phase', this.name);

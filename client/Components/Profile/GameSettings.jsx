@@ -24,6 +24,12 @@ const GameSettings = ({ formProps }) => {
                 >
                     Prompt before using dupes to save
                 </Switch>
+                <Switch
+                    {...formProps.getFieldProps('hideResponses')}
+                    isSelected={formProps.values.hideResponses}
+                >
+                    Hide whether I can respond (a short wait in any window I might respond in)
+                </Switch>
             </div>
         </Panel>
     );

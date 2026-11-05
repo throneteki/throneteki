@@ -2,7 +2,11 @@ describe('Double-Dealing', function () {
     beforeEach(function () {
         this.setupTest({
             phase: 'plot',
-            player1: { plotDeck: ['Double-Dealing'], inPlay: ['Tumblestone Knight'] },
+            player1: {
+                actionWindows: { plot: true },
+                plotDeck: ['Double-Dealing'],
+                inPlay: ['Tumblestone Knight']
+            },
             player2: {
                 plotDeck: ['Filler Plot', 'Famine'],
                 usedPlots: ['Famine'],
@@ -17,12 +21,14 @@ describe('Double-Dealing', function () {
         expect(this.doubleDealing.location).toBe('active plot');
         expect(this.famine.location).toBe('revealed plots');
         expect(this.famine.controller.activePlot).not.toBe(this.famine);
+        this.selectFirstPlayer(this.player1);
         expect(this.player1.actionUnavailableReason(this.doubleDealing)).toBe(undefined);
         this.player1.clickMenu(this.doubleDealing, 'Copy a plot card text box');
         expect(this.player1).toBeAbleToSelect(this.famine);
         this.player1.clickCard(this.famine);
 
-        this.selectFirstPlayer(this.player1);
+        this.player2.clickPrompt('Pass');
+        this.player1.clickPrompt('Pass');
         this.player1.clickPrompt('Done');
         const character = this.player2.findCardByName('Tumblestone Knight', 'hand');
         expect(this.player2Object.getCostReduction('marshal', character)).toBe(-1);

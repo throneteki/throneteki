@@ -262,7 +262,6 @@ async function runProblemReport(reportId, options) {
         gameFormat: report.game?.format || 'joust',
         gameOptions: {
             manualMode: report.game?.manualMode ?? true,
-            strictActionWindows: report.game?.strictActionWindows,
             ...options.gameOptions
         },
         disableWinning: false

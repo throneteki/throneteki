@@ -6,115 +6,29 @@ class ActionWindow extends PlayerOrderPrompt {
 
         this.title = title;
         this.windowName = windowName;
-        this.offer = null;
-        this.offeredPlayers = new Set();
     }
 
     continue() {
-        this.game.passedActionWindowPlayers = null;
-
-        if (this.game.strictActionWindows) {
-            this.offerToCurrentPlayer();
-        }
-
         let completed = super.continue();
 
         if (!completed) {
             this.game.currentActionWindow = this;
         } else {
             this.game.currentActionWindow = null;
-            this.game.passedActionWindowPlayers = this.offeredPlayers;
         }
 
         return completed;
     }
 
-    offerToCurrentPlayer() {
-        this.game.currentActionWindow = this;
-        this.lazyFetchPlayers();
-
-        while (!this.isComplete()) {
-            const player = this.currentPlayer;
-            if (this.offer && this.offer.player === player) {
-                return;
-            }
-
-            const type = this.getOfferType(player);
-            if (type === 'skip') {
-                this.completePlayer();
-                continue;
-            }
-
-            this.offer = { player, type };
-            if (type === 'wait') {
-                this.passAfterDelay(this.offer);
-            }
-            return;
-        }
-    }
-
-    getOfferType(player) {
-        if (!player.isPlaying()) {
-            return 'skip';
-        }
-
-        if (player.promptedActionWindows[this.windowName] || this.hasAvailableAction(player)) {
-            return 'prompt';
-        }
-
-        if (this.game.getPossibleResponders().couldAct(player)) {
-            return 'wait';
-        }
-
-        return 'skip';
-    }
-
-    hasAvailableAction(player) {
-        return this.game.allCards.some((card) => {
-            try {
-                return card.hasUsableAction(player);
-            } catch (error) {
-                this.game.reportError(error);
-                return true;
-            }
-        });
-    }
-
-    passAfterDelay(offer) {
-        offer.delay = this.game.responseDelay();
-        this.game.afterDelay(offer.delay, () => {
-            if (this.offer === offer && this.currentPlayer === offer.player) {
-                this.completePlayer();
-            }
-        });
-    }
-
-    skipPlayers() {
-        super.skipPlayers();
-        for (const player of this.players) {
-            this.offeredPlayers.add(player);
-        }
-    }
-
-    activePrompt(player) {
-        const prompt = {
+    activePrompt() {
+        return {
             menuTitle: 'Initiate an action',
             buttons: [{ text: 'Pass' }],
             promptTitle: this.title
         };
-
-        if (this.offer && this.offer.player === player && this.offer.type === 'wait') {
-            prompt.controls = [{ type: 'action-delay', duration: this.offer.delay }];
-        }
-
-        return prompt;
     }
 
     skipCondition() {
-        if (this.game.strictActionWindows) {
-            return false;
-        }
-
         return this.game
             .getPlayersInFirstPlayerOrder()
             .every((player) => !player.promptedActionWindows[this.windowName]);
@@ -130,13 +44,7 @@ class ActionWindow extends PlayerOrderPrompt {
         return true;
     }
 
-    completePlayer() {
-        this.offer = null;
-        super.completePlayer();
-    }
-
     markActionAsTaken(player) {
-        this.offer = null;
         this.setPlayers(this.rotatedPlayerOrder(player));
     }
 

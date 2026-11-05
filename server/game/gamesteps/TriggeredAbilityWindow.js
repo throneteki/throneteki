@@ -61,6 +61,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
      */
     isPossibleResponder(player) {
         return (
+            player.hideResponses &&
             !this.cancelTimer.isEnabled(player) &&
             this.game.getPossibleResponders().couldRespond(player, this.abilityType, this.event)
         );

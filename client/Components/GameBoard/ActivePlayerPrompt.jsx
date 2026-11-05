@@ -177,7 +177,6 @@ const ActivePlayerPrompt = ({
                         />
                     );
                 case 'response-delay':
-                case 'action-delay':
                     return (
                         <ResponseDelay
                             key={`${control.type}-${control.promptId}`}
@@ -208,8 +207,6 @@ const ActivePlayerPrompt = ({
     if (responseDelay) {
         const word = responseDelay.abilityWord || 'response';
         promptText = `Any ${word}s?`;
-    } else if (controls && controls.some((control) => control.type === 'action-delay')) {
-        promptText = 'Any actions?';
     }
 
     const promptTextElement = [];

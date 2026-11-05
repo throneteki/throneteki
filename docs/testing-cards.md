@@ -135,8 +135,11 @@ Things to know:
 - `usedPlots` puts plots in a player's used pile, for abilities that need a previous plot.
 - `setupTest` refreshes the game state after placing cards, so state checks resolve before the
   test starts: Esgred and Asha Greyjoy both `inPlay` leaves Esgred in the discard pile.
-- Game options such as `strictActionWindows` go in `gameOptions`. Setting them after a window has
-  opened does not put skipped players back.
+- `actionWindows` stops a player at action windows, for example
+  `player2: { actionWindows: { challengeBegin: true } }`. Set it in `setupTest` rather than after a
+  window has opened, which does not put skipped players back. An action is only allowed on the
+  player's turn in an open window: the active player can act while choosing a challenge, and the
+  other player acts in the before-challenge window after the active player chooses.
 - `gameOptions: { manualMode: true }` allows chat commands, for specs of manual controls only. A
   spec that uses it cannot verify a card.
 

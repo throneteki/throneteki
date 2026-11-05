@@ -7,6 +7,7 @@ class Spectator {
         this.id = id;
         this.cardSize = this.user.settings?.cardSize;
         this.promptDupes = user.settings?.promptDupes;
+        this.hideResponses = user.settings?.hideResponses ?? true;
         this.timerSettings = user.settings?.timerSettings || {};
         this.timerSettings.windowTimer = user.settings?.windowTimer;
         this.keywordSettings = user.settings?.keywordSettings;

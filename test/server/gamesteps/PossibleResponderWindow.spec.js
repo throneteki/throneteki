@@ -202,6 +202,26 @@ describe('cancel windows for a player without the timer', function () {
         });
     });
 
+    describe('when they turn off hiding whether they can respond', function () {
+        it('skips the window when they hold none', function () {
+            setup(this, {});
+            this.player2.player.hideResponses = false;
+            playRoar(this);
+
+            expect(this.scheduled).toHaveLength(0);
+            expect(this.lannisportMerchant.location).toBe('play area');
+            expect(this.player1).isReadyToTakeAction();
+        });
+
+        it('still prompts them when they hold one', function () {
+            setup(this, { player2Hand: ["The Hand's Judgment"] });
+            this.player2.player.hideResponses = false;
+            playRoar(this);
+
+            expect(this.player2).toAllowAbilityTrigger("The Hand's Judgment");
+        });
+    });
+
     describe('when they use the cancel timer', function () {
         beforeEach(function () {
             setup(this, {});

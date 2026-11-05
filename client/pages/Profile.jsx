@@ -28,6 +28,7 @@ const backgrounds = [
 const defaultActionWindows = {
     plot: false,
     draw: false,
+    marshal: false,
     challengeBegin: false,
     attackersDeclared: true,
     defendersDeclared: true,
@@ -110,6 +111,7 @@ const Profile = () => {
         chooseOrder: !!settings.keywordSettings.chooseOrder,
         chooseCards: !!settings.keywordSettings.chooseCards,
         promptDupes: !!settings.promptDupes,
+        hideResponses: settings.hideResponses ?? true,
         windowTimer: settings.windowTimer || 5,
         timerAbilities: !!settings.timerSettings.abilities,
         timerEvents: settings.timerSettings.events,
@@ -133,6 +135,7 @@ const Profile = () => {
                                 enableGravatar: values.enableGravatar,
                                 settings: {
                                     promptDupes: values.promptDupes,
+                                    hideResponses: values.hideResponses,
                                     windowTimer: values.windowTimer,
                                     keywordSettings: {
                                         chooseOrder: values.chooseOrder,

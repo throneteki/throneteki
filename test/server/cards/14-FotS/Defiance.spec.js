@@ -22,6 +22,7 @@ describe('Defiance after a character joins a challenge without being declared', 
         this.setupTest({
             phase: 'challenge',
             player1: {
+                actionWindows: { challengeBegin: true },
                 gold: 2,
                 hand: ['Defiance', 'Ours is the Fury'],
                 inPlay: [
@@ -32,6 +33,7 @@ describe('Defiance after a character joins a challenge without being declared', 
             player2: { inPlay: ['Castle Guard'] }
         });
         this.player1.clickPrompt('Done');
+        this.player1.clickPrompt('Pass');
         this.player2.clickPrompt('Power');
         this.player2.clickCard(this.castleGuard);
         this.player2.clickPrompt('Done');

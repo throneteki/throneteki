@@ -29,6 +29,7 @@ describe('Northern Patriarch', function () {
                     inPlay: ['Northern Patriarch', 'Tumblestone Knight']
                 },
                 player2: {
+                    actionWindows: { challengeBegin: true },
                     gold: 2,
                     power: 1,
                     hand: ['Nightmares', 'Nightmares'],
@@ -36,6 +37,7 @@ describe('Northern Patriarch', function () {
                 }
             });
 
+            this.player1.clickPrompt('Military');
             this.player2.clickCard(this.nightmares);
             this.player2.clickCard(this.tumblestoneKnight);
         });
@@ -80,6 +82,7 @@ describe('Northern Patriarch', function () {
 
             it('can only be used once per round', function () {
                 this.player2.clickPrompt('Do not move power');
+                this.player1.clickPrompt('Military');
                 this.player2.clickCard(this.player2.filterCardsByName('Nightmares', 'hand')[0]);
                 this.player2.clickCard(this.tumblestoneKnight);
 
@@ -99,11 +102,13 @@ describe('Northern Patriarch', function () {
                     inPlay: ['Northern Patriarch', 'Tumblestone Knight']
                 },
                 player2: {
+                    actionWindows: { challengeBegin: true },
                     gold: 1,
                     hand: ['Nightmares']
                 }
             });
 
+            this.player1.clickPrompt('Military');
             this.player2.clickCard(this.nightmares);
             this.player2.clickCard(this.tumblestoneKnight);
             this.player1.triggerAbility(this.northernPatriarch);

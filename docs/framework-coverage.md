@@ -13,14 +13,13 @@ not cover a framework entry; a FAQ note about one card is covered by that card's
 | Melee titles are chosen in secret and enter play together (Appendix I 1.4)                                                                                                         | [ChooseTitle.spec.js](../test/server/gamesteps/ChooseTitle.spec.js)                                                                                          |
 | Targets are locked at initiation; no legal target resolves unsuccessfully; any number with zero chosen does not resolve; a prevented cost ends initiation (FAQ 3.3, Costs, Target) | [AbilityResolution.spec.js](../test/server/gamesteps/AbilityResolution.spec.js)                                                                              |
 | A "would" interrupt is before a forced interrupt                                                                                                                                   | [InterruptOrder.spec.js](../test/server/gamesteps/InterruptOrder.spec.js). The window order is cancel, duplicate saves, would, forced, then other interrupts |
-| Marshaling gives the active player their turn, and with strict windows every player acts in order                                                                                  | [MarshalingWindow.spec.js](../test/server/gamesteps/MarshalingWindow.spec.js)                                                                                |
+| Marshaling gives the active player their turn, and players who stop at the window act in order                                                                                     | [MarshalingWindow.spec.js](../test/server/gamesteps/MarshalingWindow.spec.js)                                                                                |
 | Lasting-effect eligibility, until-end expiry, end-of-phase order, loses-all-traits, immunity with no named game action                                                             | [LastingEffects.spec.js](../test/server/gamesteps/LastingEffects.spec.js)                                                                                    |
 | Burn can be saved when the save removes the 0 STR; a duplicate cannot save it                                                                                                      | [Burn.spec.js](../test/server/gamesteps/Burn.spec.js)                                                                                                        |
 | Claim is applied when manual mode is off (Appendix I 4.2.4)                                                                                                                        | [Claim.spec.js](../test/server/gamesteps/Claim.spec.js)                                                                                                      |
 | Unspent gold is returned together (Appendix I 7.2)                                                                                                                                 | [TaxationPhase.spec.js](../test/server/gamesteps/TaxationPhase.spec.js)                                                                                      |
 | The owner orders cards entering the discard pile or dead pile                                                                                                                      | [PileOrder.spec.js](../test/server/gamesteps/PileOrder.spec.js)                                                                                              |
 | Attachments and duplicates leave with the card and cannot be saved                                                                                                                 | [LeavePlayConsequences.spec.js](../test/server/player/LeavePlayConsequences.spec.js)                                                                         |
-| Strict windows offer, wait or skip from public information                                                                                                                         | [StrictActionWindows.spec.js](../test/server/gamesteps/StrictActionWindows.spec.js)                                                                          |
 
 ## Appendix I
 
@@ -104,7 +103,4 @@ These entries have a spec or an explicit gap:
 
 ## Open framework gaps
 
-- Actions are still allowed when strict action windows are off, no window is open, and it is not
-  the marshaling phase.
-- Strict action windows are not the default.
 - FAQ 1.1: there is no prompt for naming a number of repetitions of an infinite loop.

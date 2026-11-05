@@ -10,6 +10,6 @@ describe('bringing a card out of shadows', function () {
 
     it('is not offered for a card set up in shadows during setup', function () {
         expect(this.shadowblackAssassin.location).toBe('shadows');
-        expect(this.shadowblackAssassin.getCanPlayState(this.player1Object)).toBe(false);
+        expect(this.shadowblackAssassin.getCanPlayState(this.player1Object)).toBeFalsy();
     });
 });

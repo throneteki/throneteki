@@ -1,6 +1,7 @@
 const defaultWindows = {
     plot: false,
     draw: false,
+    marshal: false,
     challengeBegin: false,
     attackersDeclared: true,
     defendersDeclared: true,
@@ -18,7 +19,8 @@ const defaultSettings = {
     windowTimer: 10,
     background: 'BG1',
     cardSize: 'normal',
-    promptDupes: false
+    promptDupes: false,
+    hideResponses: true
 };
 
 const defaultTimerSettings = {

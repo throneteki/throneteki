@@ -16,20 +16,8 @@ class MarshalingActionWindow extends ActionWindow {
         return completed;
     }
 
-    getOfferType(player) {
-        if (player === this.marshalingPlayer && player.isPlaying()) {
-            return 'prompt';
-        }
-
-        return super.getOfferType(player);
-    }
-
     skipCondition(player) {
         if (player === this.marshalingPlayer) {
-            return false;
-        }
-
-        if (this.game.strictActionWindows) {
             return false;
         }
 
@@ -45,7 +33,7 @@ class MarshalingActionWindow extends ActionWindow {
             };
         }
 
-        return super.activePrompt(player);
+        return super.activePrompt();
     }
 
     markActionAsTaken(player) {

@@ -1,5 +1,5 @@
 describe('the marshaling action window', function () {
-    describe('when action windows are not strict', function () {
+    describe('when the other player has not enabled the marshaling window', function () {
         beforeEach(function () {
             this.setupTest({
                 phase: 'marshal',
@@ -27,16 +27,16 @@ describe('the marshaling action window', function () {
         });
     });
 
-    describe('when action windows are strict', function () {
+    describe('when the other player has enabled the marshaling window', function () {
         beforeEach(function () {
             this.setupTest({
                 phase: 'marshal',
-                gameOptions: { strictActionWindows: true },
                 player1: {
                     inPlay: ['Hedge Knight'],
                     hand: ['The Kingsroad']
                 },
                 player2: {
+                    actionWindows: { marshal: true },
                     gold: 5,
                     hand: ['Nightmares']
                 }
@@ -59,12 +59,12 @@ describe('the marshaling action window', function () {
         beforeEach(function () {
             this.setupTest({
                 phase: 'marshal',
-                gameOptions: { strictActionWindows: true },
                 player1: {
                     inPlay: ['Hedge Knight'],
                     hand: ['The Kingsroad', 'Winterfell Steward']
                 },
                 player2: {
+                    actionWindows: { marshal: true },
                     gold: 5,
                     inPlay: ['House Maester'],
                     hand: ['Nightmares', 'Nightmares']
@@ -115,8 +115,8 @@ describe('the marshaling action window', function () {
         beforeEach(function () {
             this.setupTest({
                 phase: 'marshal',
-                gameOptions: { strictActionWindows: true },
                 player1: {
+                    actionWindows: { marshal: true },
                     gold: 1,
                     inPlay: ['Hedge Knight'],
                     hand: ['Nightmares']

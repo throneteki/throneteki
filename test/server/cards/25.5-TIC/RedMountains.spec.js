@@ -3,7 +3,7 @@ describe('Red Mountains', function () {
         context.setupTest({
             phase: 'challenge',
             firstPlayer: 'player2',
-            player1: { plot, inPlay: ['Red Mountains'] },
+            player1: { actionWindows: { challengeBegin: true }, plot, inPlay: ['Red Mountains'] },
             player2: {
                 plot: 'Trading with the Pentoshi',
                 inPlay: ['Obara Sand (SoD)', 'Arianne Martell (Core)', ...inPlay],
@@ -15,6 +15,7 @@ describe('Red Mountains', function () {
     describe('when triggered before challenges', function () {
         beforeEach(function () {
             setup(this, { hand: ['Edric Dayne (Core)'] });
+            this.player2.clickPrompt('Intrigue');
             this.player1.clickMenu(this.redMountains, 'Force military challenge');
         });
 
@@ -31,6 +32,7 @@ describe('Red Mountains', function () {
                 this.player2.clickMenu(this.obaraSand, 'Put character into play');
                 this.player2.clickCard(this.obaraSand);
                 this.player2.clickCard(this.edricDayne);
+                this.player1.clickPrompt('Pass');
             });
 
             it('lets them initiate intrigue or power challenges, or pass', function () {
@@ -44,6 +46,7 @@ describe('Red Mountains', function () {
                 this.unopposedChallenge(this.player2, 'Intrigue', this.arianneMartell);
                 this.player2.clickMenu(this.arianneMartell, 'Put character into play');
                 this.player2.clickCard(this.obaraSand);
+                this.player1.clickPrompt('Pass');
 
                 expect(this.player2).not.toHaveDisabledPromptButton('Military');
                 expect(this.player2).toHaveDisabledPromptButton('Intrigue');
@@ -58,9 +61,11 @@ describe('Red Mountains', function () {
         beforeEach(function () {
             setup(this, { inPlay: ['Edric Dayne (Core)'] });
             this.unopposedChallenge(this.player2, 'Military', this.obaraSand);
+            this.player2.clickPrompt('Intrigue');
             this.player1.clickMenu(this.redMountains, 'Force military challenge');
             this.player2.clickMenu(this.edricDayne, 'Give icon');
             this.player2.clickPrompt('Military');
+            this.player1.clickPrompt('Pass');
         });
 
         it('lets the opponent initiate intrigue or power challenges, or pass', function () {
@@ -77,6 +82,7 @@ describe('Red Mountains', function () {
         });
 
         it('lets the opponent initiate intrigue or skip challenges', function () {
+            this.player2.clickPrompt('Intrigue');
             this.player1.clickMenu(this.redMountains, 'Force military challenge');
 
             expect(this.player2).not.toHaveDisabledPromptButton('Intrigue');
@@ -87,6 +93,7 @@ describe('Red Mountains', function () {
         });
 
         it('only affects the next challenge', function () {
+            this.player2.clickPrompt('Intrigue');
             this.player1.clickMenu(this.redMountains, 'Force military challenge');
             this.unopposedChallenge(this.player2, 'Intrigue', this.arianneMartell);
 
@@ -96,6 +103,7 @@ describe('Red Mountains', function () {
 
         it('still has an effect if triggered after the plot condition has been fulfilled', function () {
             this.unopposedChallenge(this.player2, 'Intrigue', this.arianneMartell);
+            this.player2.clickPrompt('Military');
             this.player1.clickMenu(this.redMountains, 'Force military challenge');
 
             expect(this.player2).toHaveDisabledPromptButton('Power');

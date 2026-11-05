@@ -229,6 +229,7 @@ function validatePassword(password) {
 const PromptedActionWindowNames = [
     'plot',
     'draw',
+    'marshal',
     'challengeBegin',
     'attackersDeclared',
     'defendersDeclared',
@@ -269,6 +270,10 @@ function sanitizeSettings(settings) {
 
     if (Object.hasOwn(settings, 'promptDupes')) {
         result.promptDupes = !!settings.promptDupes;
+    }
+
+    if (Object.hasOwn(settings, 'hideResponses')) {
+        result.hideResponses = !!settings.hideResponses;
     }
 
     let windowTimer = Number(settings.windowTimer);

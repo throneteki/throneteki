@@ -205,10 +205,19 @@ class GameFlowWrapper {
         promptedPlayer.clickPrompt(buttonText);
     }
 
+    passChallengeBeginWindow(activePlayer) {
+        let window = this.game.currentActionWindow;
+        while (window?.windowName === 'challengeBegin' && window.currentPlayer !== activePlayer) {
+            this.playerToPlayerWrapperIndex[window.currentPlayer.name].clickPrompt('Pass');
+            window = this.game.currentActionWindow;
+        }
+    }
+
     unopposedChallenge(player, type, participant) {
         var opponent = this.allPlayers.find((p) => p !== player);
 
         player.clickPrompt(type);
+        this.passChallengeBeginWindow(player);
         player.clickCard(participant, 'play area');
         player.clickPrompt('Done');
 

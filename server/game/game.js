@@ -135,7 +135,6 @@ class Game extends EventEmitter {
         this.stats = new GameStats(this);
         this.manualActions = new ManualActions(this);
         this.manualMode = new ManualMode(this, options.manualMode ?? details.manualMode ?? 'auto');
-        this.strictActionWindows = !!(options.strictActionWindows ?? details.strictActionWindows);
         this.winnerOfDominanceInLastRound = undefined;
         this.tieWinnerChooserRevisions = { initiative: 0, dominance: 0 };
         this.tieWinnerChooserSelections = {};
@@ -1257,10 +1256,7 @@ class Game extends EventEmitter {
                 );
             }
             this.currentActionWindow.markActionAsTaken(context.player);
-        } else if (
-            this.hasOpenInterruptOrReactionWindow() ||
-            (this.strictActionWindows && this.currentPhase !== 'marshal')
-        ) {
+        } else {
             this.manualActions.record(context.player, 'actionOutsideWindow', {
                 cards: [context.source]
             });
@@ -1397,18 +1393,6 @@ class Game extends EventEmitter {
         }
 
         if (this.isActionTimingOpenFor(player)) {
-            return undefined;
-        }
-
-        // While action windows are not being run, play stays available outside them, except to a
-        // player who passed in the action window that last closed, until the next window is reached.
-        // A window that is open, and the marshaling phase, are refused either way.
-        if (
-            !this.strictActionWindows &&
-            !this.currentActionWindow &&
-            this.currentPhase !== 'marshal' &&
-            !this.passedActionWindowPlayers?.has(player)
-        ) {
             return undefined;
         }
 
@@ -1805,7 +1789,6 @@ class Game extends EventEmitter {
                 format: this.gameFormat,
                 variant: this.gameVariant,
                 manualMode: this.manualMode.enabled,
-                strictActionWindows: this.strictActionWindows,
                 round: this.round,
                 phase: this.currentPhase,
                 firstPlayer: this.getPlayersInFirstPlayerOrder()[0]?.name,
@@ -1923,7 +1906,6 @@ class Game extends EventEmitter {
                 cancelPromptUsed: this.cancelPromptUsed,
                 manualMode: this.manualMode.enabled,
                 scenario: !!this.scenario,
-                strictActionWindows: this.strictActionWindows,
                 useGameTimeLimit: this.useGameTimeLimit,
                 ...(this.useGameTimeLimit && {
                     gameTimeLimit: this.gameTimeLimit,

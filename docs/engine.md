@@ -231,7 +231,8 @@ cancel such as The Hand's Judgment.
   ([TriggeredAbilityWindow.js](../server/game/gamesteps/TriggeredAbilityWindow.js)). They see
   window's question with a progress bar and Wait and Skip buttons; their opponent sees an ordinary
   wait. Wait pauses the bar and leaves the window open until they pass. Players using the cancel
-  timer keep the timer prompt.
+  timer keep the timer prompt. A player who turns off "Hide whether I can respond" in their profile
+  gets no fake waits, so their opponents can tell when they really hold a response.
 - The cancel timer runs on the server: it passes for the player after their profile's window timer
   unless they choose "I need more time", and shows the same progress bar as the wait above. "I need
   more time" pauses the bar.
@@ -244,21 +245,23 @@ cancel such as The Hand's Judgment.
   timer covers until the next round, even when they hold a legal cancel.
 - A player can always set a window as a stop. That doesn't depend on their hand, so it leaks
   nothing.
-- **Strict action windows** (a game option, off by default,
-  [actionwindow.js](../server/game/gamesteps/actionwindow.js)) prompt a player who holds an action
-  they can take, give a timed wait to a player who has a playable action on a public card or could
-  hold one, and skip everyone else. Public card actions stay clickable during the wait.
+- An action can only be initiated in an action window, on that player's turn in it. Outside manual
+  mode every other action is refused with the `window` reason, including while an interrupt or
+  reaction window is open. A window opens when any player stops at it in their profile, and then
+  every player has a turn in player order; nobody is offered a window from what they hold. A window
+  nobody stops at is skipped, and nobody can take actions there.
 - **Marshaling** is an action window
   ([MarshalingActionWindow.js](../server/game/gamesteps/marshaling/MarshalingActionWindow.js)). The
-  active player marshals on their turn; with strict windows on, every other player is offered an
+  active player marshals on their turn; players who stop at the marshaling window are offered an
   action in player order, and the window closes only after every player passes in a row (Appendix
   I, 3.2).
-- An action is refused with the `window` reason, whether or not strict windows are on, while a
-  window is open and it is not that player's turn, and during marshaling except on that player's
-  turn, and always while an interrupt or reaction window is open. With strict windows off, outside
-  marshaling and with no window open, actions are allowed, except to a player who passed in the
-  action window that last closed: they wait for the next window, which may be skipped, or the next
-  phase ([actionwindow.js](../server/game/gamesteps/actionwindow.js) `passedActionWindowPlayers`).
+- **Before each challenge** is an action window
+  ([ChallengeActionWindow.js](../server/game/gamesteps/challenge/ChallengeActionWindow.js)). The
+  active player's turn in it is choosing a challenge, so they can always take actions there. Choosing
+  a challenge type, or Done, is their pass: the choice stands once every other player who stops at
+  the window passes, and if another player takes an action the active player chooses again.
+- The "action outside a window" and "action during another player's turn" warnings can only appear
+  in manual mode.
 
 Trigger checks (`when`, `condition`, cost `canPay`) therefore have no side effects, work on a card
 that is not in the game, and keep nothing on the card instance between the check and resolution.
@@ -296,8 +299,8 @@ Rules readings and design choices that stand until changed:
   skip button.
 - Fake waits cover every prompted window (cancels, interrupts, reactions) and last a random 1 to 3
   seconds.
-- Strict action windows stay opt-in until the auto-pass behaviour has had feedback from real games.
-  Refusing actions when no window is open waits until they are the default.
+- Action windows are opened from the players' profile settings only. There is no option to offer
+  every window to every player.
 - Do not add a hold that stops verified decks starting with manual mode off.
 - While manual mode is on, the winner may skip claim and the defender may cancel military claim,
   because a wrongly applied claim is hard to undo.
@@ -326,8 +329,6 @@ Rules readings and design choices that stand until changed:
 
 ## Open work
 
-- Strict action windows are not the default, and actions are still allowed when no window is open
-  outside marshaling, unless the player passed in the window that last closed.
 - There is no prompt for the infinite-loop shortcut (naming a number of repetitions).
 - Logs are translation-ready but there are no locale catalogs or translating renderer.
 - A problem report cannot restore an arbitrary open prompt.
@@ -340,8 +341,9 @@ Rules readings and design choices that stand until changed:
 - `clearInvalidTargets` removes a target of a lasting effect only when it left `targetLocation`.
 - `context.opponent` is not a getter. A target snapshot is skipped when any choosing player is
   missing.
-- `ActionWindow.skipCondition` skips everyone when strict windows are off and nobody opted in;
-  `MarshalingActionWindow` overrides it per player.
+- `ActionWindow.skipCondition` skips everyone when nobody stops at the window;
+  `MarshalingActionWindow` and `ChallengeActionWindow` override it per player, so the active player
+  always has their turn.
 - Timing is checked before `cannotTrigger`, `cost` and `noEffect`, so a spec asserting one of those
   reasons must wait until it is that player's turn.
 - Pile-order prompts keep `canCancel`: Done with nothing selected uses the default order.
