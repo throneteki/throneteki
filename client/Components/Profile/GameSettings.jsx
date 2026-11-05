@@ -28,14 +28,13 @@ const GameSettings = ({ formProps }) => {
                     {...formProps.getFieldProps('hideInterrupts')}
                     isSelected={formProps.values.hideInterrupts}
                 >
-                    Hide whether I have interrupts (a short wait in any interrupt window I might
-                    use)
+                    Hide whether I have interrupts
                 </Switch>
                 <Switch
                     {...formProps.getFieldProps('hideReactions')}
                     isSelected={formProps.values.hideReactions}
                 >
-                    Hide whether I have reactions (a short wait in any reaction window I might use)
+                    Hide whether I have reactions
                 </Switch>
             </div>
         </Panel>
