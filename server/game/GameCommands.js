@@ -108,8 +108,8 @@ class GameCommands {
         return this.game.togglePromptedActionWindow(playerName, windowName, !!toggle);
     }
 
-    toggleHideResponses(playerName, toggle) {
-        return this.game.toggleHideResponses(playerName, !!toggle);
+    toggleHideResponses(playerName, responseType, toggle) {
+        return this.game.toggleHideResponses(playerName, responseType, !!toggle);
     }
 
     isExistingSetting(playerName, settingsProperty, settingName) {

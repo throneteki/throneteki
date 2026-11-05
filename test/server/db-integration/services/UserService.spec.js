@@ -112,7 +112,7 @@ describe('Postgres UserService', function () {
             const user = await this.service.getUserByUsername('sTaRk');
 
             expect(user.username).toBe('Stark');
-            expect(user.getDetails().settings.hideResponses).toBe(true);
+            expect(user.getDetails().settings.hideInterrupts).toBe(true);
         });
 
         it('should find the user by email whatever the case', async function () {

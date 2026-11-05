@@ -231,18 +231,19 @@ cancel such as The Hand's Judgment.
   ([TriggeredAbilityWindow.js](../server/game/gamesteps/TriggeredAbilityWindow.js)). They see the
   window's question with a progress bar and Wait and "Don't ask again this phase" buttons; their
   opponent sees an ordinary wait. Wait pauses the bar and leaves the window open until they pass.
-  A player who really holds a response gets a prompt that never passes for them. A player who turns
-  off "Hide whether I can respond" gets no fake waits, so their opponents can tell when they really
-  hold a response. There is no cancel timer.
+  A player who really holds a response gets a prompt that never passes for them. "Hide whether I
+  have interrupts" and "Hide whether I have reactions" turn the fake waits off for interrupt or
+  reaction windows; with one off, opponents can tell when that player really holds that kind of
+  response. There is no cancel timer.
 - A choice made before anything is initiated (confirming a card action, choosing how to play a
   card, choosing attackers) leaves the opponent's prompt as it was, so it doesn't reveal which card
   or challenge is being considered
   ([menuprompt.js](../server/game/gamesteps/menuprompt.js) `beforeInitiation`, and the attacker
   prompt in [challengeflow.js](../server/game/gamesteps/challenge/challengeflow.js)).
 - "Don't ask again this phase" is offered whenever a window involves a card the player could hold
-  in a hidden zone. Until the next phase they get no fake waits and are not asked about cards in
-  hidden zones, even when they hold a legal response; they are still asked about cards in play or
-  in public piles.
+  in a hidden zone. Until the next phase they get no fake waits but are still asked whenever they
+  hold a response, so their opponents can tell when they do. Players accept that in exchange for
+  never missing a response they hold.
 - A player can always set a window as a stop. That doesn't depend on their hand, so it leaks
   nothing.
 - An action can only be initiated in an action window, on that player's turn in it. Outside manual

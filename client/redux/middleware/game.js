@@ -144,7 +144,12 @@ const gameMiddleware = (store) => {
                 action.payload.value
             );
         } else if (sendToggleHideResponsesMessage.match(action)) {
-            socket.emit('game', GameMessage.ToggleHideResponses, action.payload);
+            socket.emit(
+                'game',
+                GameMessage.ToggleHideResponses,
+                action.payload.option,
+                action.payload.value
+            );
         } else if (sendCardSizeChangeMessage.match(action)) {
             socket.emit('game', GameMessage.CardSizeChange, action.payload);
         } else if (sendCardClickedMessage.match(action)) {

@@ -110,7 +110,8 @@ const Profile = () => {
         chooseOrder: !!settings.keywordSettings.chooseOrder,
         chooseCards: !!settings.keywordSettings.chooseCards,
         promptDupes: !!settings.promptDupes,
-        hideResponses: settings.hideResponses ?? true,
+        hideInterrupts: settings.hideInterrupts ?? true,
+        hideReactions: settings.hideReactions ?? true,
         cardSize: settings.cardSize || 'normal'
     };
 
@@ -131,7 +132,8 @@ const Profile = () => {
                                 enableGravatar: values.enableGravatar,
                                 settings: {
                                     promptDupes: values.promptDupes,
-                                    hideResponses: values.hideResponses,
+                                    hideInterrupts: values.hideInterrupts,
+                                    hideReactions: values.hideReactions,
                                     keywordSettings: {
                                         chooseOrder: values.chooseOrder,
                                         chooseCards: values.chooseCards

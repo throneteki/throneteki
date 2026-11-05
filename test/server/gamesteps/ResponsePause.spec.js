@@ -1,7 +1,7 @@
 import PossibleResponders from '../../../server/game/PossibleResponders.js';
 import { deckBuilder } from '../../helpers/cards.js';
 
-describe('not being asked about responses for the rest of the phase', function () {
+describe('stopping response waits for the rest of the phase', function () {
     const PauseButton = "Don't ask again this phase";
 
     function setup(context, player2Hand) {
@@ -54,11 +54,9 @@ describe('not being asked about responses for the rest of the phase', function (
                 playRoar(this, this.secondRoar, this.serJaimeLannister);
             });
 
-            it('does not ask them again this phase, even with a legal cancel', function () {
-                expect(this.lannisportMerchant.location).toBe('play area');
-                expect(this.serJaimeLannister.location).toBe('play area');
-                expect(this.theHandsJudgment.location).toBe('hand');
-                expect(this.player1).isReadyToTakeAction();
+            it('still asks them while they hold a cancel, without the button', function () {
+                expect(this.player2).toAllowAbilityTrigger("The Hand's Judgment");
+                expect(this.player2).not.toHavePromptButton(PauseButton);
             });
         });
 
@@ -103,50 +101,12 @@ describe('not being asked about responses for the rest of the phase', function (
                 playRoar(this, this.secondRoar, this.serJaimeLannister);
             });
 
-            it('behaves exactly as it does for a player holding a cancel', function () {
+            it('does not give them a wait again this phase', function () {
                 expect(this.lannisportMerchant.location).toBe('play area');
                 expect(this.serJaimeLannister.location).toBe('play area');
                 expect(this.scheduled).toHaveLength(1);
                 expect(this.player1).isReadyToTakeAction();
             });
-        });
-    });
-
-    describe('when they can respond with a card their opponents can see', function () {
-        beforeEach(function () {
-            this.setupTest({
-                phase: 'challenge',
-                firstPlayer: 'player2',
-                player1: {
-                    faction: 'stark',
-                    inPlay: ['Northern Patriarch'],
-                    hand: ["The Hand's Judgment"]
-                },
-                player2: {
-                    faction: 'lannister',
-                    gold: 5,
-                    hand: [
-                        'Hear Me Roar!',
-                        'Hear Me Roar!',
-                        'Lannisport Merchant',
-                        'Ser Jaime Lannister (Core)'
-                    ]
-                }
-            });
-            [this.firstRoar, this.secondRoar] = this.player2.filterCardsByName(
-                'Hear Me Roar!',
-                'hand'
-            );
-            this.player2.clickCard(this.firstRoar);
-            this.player2.clickCard(this.lannisportMerchant);
-            this.player1.clickPrompt(PauseButton);
-            this.player2.clickCard(this.secondRoar);
-            this.player2.clickCard(this.serJaimeLannister);
-        });
-
-        it('still asks them about that card, but not the cards in their hand', function () {
-            expect(this.player1).toAllowAbilityTrigger(this.northernPatriarch);
-            expect(this.player1).not.toAllowAbilityTrigger("The Hand's Judgment");
         });
     });
 });

@@ -271,8 +271,10 @@ function sanitizeSettings(settings) {
         result.promptDupes = !!settings.promptDupes;
     }
 
-    if (Object.hasOwn(settings, 'hideResponses')) {
-        result.hideResponses = !!settings.hideResponses;
+    for (const key of ['hideInterrupts', 'hideReactions']) {
+        if (Object.hasOwn(settings, key)) {
+            result[key] = !!settings[key];
+        }
     }
 
     let background = pickString(settings.background, /^[A-Za-z0-9_-]{1,32}$/);

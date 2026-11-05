@@ -44,7 +44,7 @@ const gameSlice = createSlice({
             () => {}
         ),
         sendToggleHideResponsesMessage: create.preparedReducer(
-            (value) => ({ payload: value }),
+            (option, value) => ({ payload: { option, value } }),
             () => {}
         ),
         sendCardSizeChangeMessage: create.preparedReducer(

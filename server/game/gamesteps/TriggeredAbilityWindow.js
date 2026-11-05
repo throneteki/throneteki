@@ -37,27 +37,26 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         return this.getChoicesFor(player).length > 0;
     }
 
-    // A player who paused responses for the phase is only asked about cards their opponents can
-    // see, so whether they are asked never depends on what they hold.
     getChoicesFor(player) {
-        return this.abilityChoices.filter(
-            (choice) =>
-                choice.player === player &&
-                (!player.responsesPausedForPhase || !HiddenZones.includes(choice.card.location))
-        );
+        return this.abilityChoices.filter((choice) => choice.player === player);
     }
 
     /**
      * Whether the player must appear to consider this window although they have nothing to use:
      * a card they could hold in a hidden zone might respond. Since that depends only on public
-     * information, a player who really holds one looks the same.
+     * information, a player who really holds one looks the same. A player who paused the waits
+     * for the phase is only asked when they hold something, accepting that this shows.
      */
     isPossibleResponder(player) {
         return (
-            player.hideResponses &&
+            this.hidesResponsesFor(player) &&
             !player.responsesPausedForPhase &&
             this.game.getPossibleResponders().couldRespond(player, this.abilityType, this.event)
         );
+    }
+
+    hidesResponsesFor(player) {
+        return this.abilityType === 'reaction' ? player.hideReactions : player.hideInterrupts;
     }
 
     promptPossibleResponder(player) {
@@ -161,7 +160,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
 
     passAndPauseForPhase(player) {
         player.responsesPausedForPhase = true;
-        this.game.addMessage('{0} is not asked about responses for the rest of the phase', player);
+        this.game.addMessage('{0} stops response waits for the rest of the phase', player);
         this.pass();
     }
 
@@ -194,19 +193,22 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             mapCard: true
         }));
 
-        if (this.couldRespondFromHiddenZone(player)) {
+        if (this.shouldOfferPause(player)) {
             buttons.push(this.getPauseForPhaseButton());
         }
 
         return buttons;
     }
 
-    couldRespondFromHiddenZone(player) {
+    shouldOfferPause(player) {
         return (
-            this.getChoicesFor(player).some((choice) =>
+            !player.responsesPausedForPhase &&
+            (this.getChoicesFor(player).some((choice) =>
                 HiddenZones.includes(choice.card.location)
             ) ||
-            this.game.getPossibleResponders().couldRespond(player, this.abilityType, this.event)
+                this.game
+                    .getPossibleResponders()
+                    .couldRespond(player, this.abilityType, this.event))
         );
     }
 

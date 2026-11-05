@@ -1122,13 +1122,17 @@ class Game extends EventEmitter {
         player.promptedActionWindows[windowName] = toggle;
     }
 
-    toggleHideResponses(playerName, toggle) {
+    toggleHideResponses(playerName, responseType, toggle) {
         var player = this.getPlayerByName(playerName);
         if (!player) {
             return;
         }
 
-        player.hideResponses = toggle;
+        if (responseType === 'interrupts') {
+            player.hideInterrupts = toggle;
+        } else if (responseType === 'reactions') {
+            player.hideReactions = toggle;
+        }
     }
 
     cardSizeChange(playerName, value) {

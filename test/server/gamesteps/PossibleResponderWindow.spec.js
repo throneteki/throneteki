@@ -138,7 +138,7 @@ describe('cancel windows for a player without the timer', function () {
     });
 
     describe('in a reaction window', function () {
-        function setupReaction(context, player2Hand) {
+        function setupReaction(context, player2Hand, player2Settings = {}) {
             context.setupTest({
                 phase: 'marshal',
                 player2: { gold: 5, hand: player2Hand }
@@ -150,6 +150,7 @@ describe('cancel windows for a player without the timer', function () {
             context.scheduled = [];
             context.game.schedule = (delay, callback) =>
                 context.scheduled.push({ delay, callback });
+            Object.assign(context.player2.player, player2Settings);
 
             context.player1.clickPrompt('Done');
             context.player2.clickPrompt('Done');
@@ -187,6 +188,27 @@ describe('cancel windows for a player without the timer', function () {
                 expect(this.player1).isReadyToTakeAction();
             });
         });
+
+        describe('when they turn off hiding whether they have reactions', function () {
+            beforeEach(function () {
+                setupReaction(this, [], { hideReactions: false });
+            });
+
+            it('skips the window', function () {
+                expect(this.scheduled).toHaveLength(0);
+                expect(this.player1).isReadyToTakeAction();
+            });
+        });
+
+        describe('when they only turn off hiding whether they have interrupts', function () {
+            beforeEach(function () {
+                setupReaction(this, [], { hideInterrupts: false });
+            });
+
+            it('still gives them a fake wait', function () {
+                expect(this.scheduled).toHaveLength(1);
+            });
+        });
     });
 
     describe('when no card they could hold might cancel the event', function () {
@@ -202,10 +224,10 @@ describe('cancel windows for a player without the timer', function () {
         });
     });
 
-    describe('when they turn off hiding whether they can respond', function () {
+    describe('when they turn off hiding whether they have interrupts', function () {
         it('skips the window when they hold none', function () {
             setup(this, {});
-            this.player2.player.hideResponses = false;
+            this.player2.player.hideInterrupts = false;
             playRoar(this);
 
             expect(this.scheduled).toHaveLength(0);
@@ -215,10 +237,21 @@ describe('cancel windows for a player without the timer', function () {
 
         it('still prompts them when they hold one', function () {
             setup(this, { player2Hand: ["The Hand's Judgment"] });
-            this.player2.player.hideResponses = false;
+            this.player2.player.hideInterrupts = false;
             playRoar(this);
 
             expect(this.player2).toAllowAbilityTrigger("The Hand's Judgment");
+        });
+    });
+
+    describe('when they only turn off hiding whether they have reactions', function () {
+        it('still gives them a fake wait in an interrupt window', function () {
+            setup(this, {});
+            this.player2.player.hideReactions = false;
+            playRoar(this);
+
+            expect(this.scheduled).toHaveLength(1);
+            expect(this.player2).toHavePrompt(WindowTitle);
         });
     });
 });

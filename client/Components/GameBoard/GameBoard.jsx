@@ -231,11 +231,14 @@ const GameBoard = () => {
                 onPromptedActionWindowToggle={(option, value) =>
                     dispatch(sendTogglePromptedActionWindowMessage(option, value))
                 }
-                onHideResponsesToggle={(value) => dispatch(sendToggleHideResponsesMessage(value))}
+                onHideResponsesToggle={(option, value) =>
+                    dispatch(sendToggleHideResponsesMessage(option, value))
+                }
                 onCardSizeSettingChange={(value) => dispatch(sendCardSizeChangeMessage(value))}
                 promptDupes={userPlayer.promptDupes}
                 promptedActionWindows={userPlayer.promptedActionWindows}
-                hideResponses={userPlayer.hideResponses}
+                hideInterrupts={userPlayer.hideInterrupts}
+                hideReactions={userPlayer.hideReactions}
                 cardSizeSetting={userPlayer.cardSize}
             />
         </>

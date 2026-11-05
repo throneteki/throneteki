@@ -20,7 +20,8 @@ const GameConfiguration = ({
     actionWindows,
     keywordSettings,
     promptDupes,
-    hideResponses,
+    hideInterrupts,
+    hideReactions,
     cardSizeSetting,
     onKeywordSettingToggle,
     onHideResponsesToggle,
@@ -52,16 +53,28 @@ const GameConfiguration = ({
                     <div className='grid sm:grid-cols-2 gap-2'>{windowsToRender}</div>
                 </Panel>
                 <Panel title={'Responses'}>
-                    <Switch
-                        onValueChange={(value) =>
-                            onHideResponsesToggle && onHideResponsesToggle(value)
-                        }
-                        name='hideResponses'
-                        isSelected={hideResponses !== false}
-                        isDisabled={isSpectating}
-                    >
-                        {'Hide whether I can respond'}
-                    </Switch>
+                    <div className='flex flex-col gap-2'>
+                        <Switch
+                            onValueChange={(value) =>
+                                onHideResponsesToggle && onHideResponsesToggle('interrupts', value)
+                            }
+                            name='hideInterrupts'
+                            isSelected={hideInterrupts !== false}
+                            isDisabled={isSpectating}
+                        >
+                            {'Hide whether I have interrupts'}
+                        </Switch>
+                        <Switch
+                            onValueChange={(value) =>
+                                onHideResponsesToggle && onHideResponsesToggle('reactions', value)
+                            }
+                            name='hideReactions'
+                            isSelected={hideReactions !== false}
+                            isDisabled={isSpectating}
+                        >
+                            {'Hide whether I have reactions'}
+                        </Switch>
+                    </div>
                 </Panel>
                 <Panel title='Card Sizing'>
                     <RadioGroup

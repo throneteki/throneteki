@@ -14,7 +14,8 @@ const GameConfigurationModal = ({
     onCardSizeSettingChange,
     promptDupes,
     promptedActionWindows,
-    hideResponses,
+    hideInterrupts,
+    hideReactions,
     cardSizeSetting
 }) => {
     return (
@@ -28,7 +29,8 @@ const GameConfigurationModal = ({
                             actionWindows={promptedActionWindows}
                             keywordSettings={keywordSettings}
                             promptDupes={promptDupes}
-                            hideResponses={hideResponses}
+                            hideInterrupts={hideInterrupts}
+                            hideReactions={hideReactions}
                             cardSizeSetting={cardSizeSetting}
                             onKeywordSettingToggle={onKeywordSettingToggle}
                             onHideResponsesToggle={onHideResponsesToggle}

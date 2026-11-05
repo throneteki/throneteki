@@ -19,7 +19,8 @@ const defaultSettings = {
     background: 'BG1',
     cardSize: 'normal',
     promptDupes: false,
-    hideResponses: true
+    hideInterrupts: true,
+    hideReactions: true
 };
 
 function getUserWithDefaultsSet(user) {
