@@ -18,6 +18,28 @@ on:
                 type: string
                 description: Arguments for the copy, e.g. --collections games abuse_events --since 2026-11-01
                 default: ''
+    workflow_call:
+        inputs:
+            environment:
+                type: string
+                required: true
+            ref:
+                type: string
+                description: The commit to deploy the charts from
+                default: ''
+            image_tag:
+                type: string
+                description: The image tag to deploy, overriding the environment's
+                default: ''
+            stop_lobby:
+                type: boolean
+                default: false
+            copy_from_mongo:
+                type: boolean
+                default: false
+            copy_from_mongo_args:
+                type: string
+                default: ''
 jobs:
     deploy:
         runs-on: self-hosted
@@ -25,23 +47,25 @@ jobs:
         steps:
             - name: Checkout repo
               uses: actions/checkout@v3
+              with:
+                  ref: ${{ inputs.ref }}
 
             - name: Deploy Lobby
               run: |
                   # Determine namespace and environment based on environment
-                  ENV=$(echo "${{ github.event.inputs.environment }}" | tr '[:upper:]' '[:lower:]')
+                  ENV=$(echo "${{ inputs.environment }}" | tr '[:upper:]' '[:lower:]')
 
-                  if [ "${{ github.event.inputs.environment }}" = "Production" ]; then
+                  if [ "${{ inputs.environment }}" = "Production" ]; then
                     NAMESPACE="throneteki"
                     APP_NAME="The Iron Throne"
                     ENV_SUBDOMAIN="production"
                     ORIGIN="https://theironthrone.net"
-                  elif [ "${{ github.event.inputs.environment }}" = "Development" ]; then
+                  elif [ "${{ inputs.environment }}" = "Development" ]; then
                     NAMESPACE="throneteki-development"
                     APP_NAME="The Iron Throne"
                     ENV_SUBDOMAIN="dev"
                     ORIGIN="https://dev.theironthrone.net"
-                  elif [ "${{ github.event.inputs.environment }}" = "Playtesting" ]; then
+                  elif [ "${{ inputs.environment }}" = "Playtesting" ]; then
                     NAMESPACE="throneteki-playtesting"
                     APP_NAME="The Iron Throne Playtesting"
                     ENV_SUBDOMAIN="playtesting"
@@ -85,6 +109,9 @@ jobs:
                       HELM_IMAGE_FLAGS+=" --set-string image.tag=$TAG"
                     fi
                   fi
+                  if [ -n "${{ inputs.image_tag }}" ]; then
+                    HELM_IMAGE_FLAGS+=" --set-string image.tag=${{ inputs.image_tag }}"
+                  fi
 
                   MISSING=""
                   [ -n "${{ secrets.DB_HOST }}" ] || MISSING+=" DB_HOST"
@@ -93,7 +120,7 @@ jobs:
                   [ -n "${{ secrets.DB_MIGRATOR_USER }}" ] || MISSING+=" DB_MIGRATOR_USER"
                   [ -n "${{ secrets.DB_MIGRATOR_PASSWORD }}" ] || MISSING+=" DB_MIGRATOR_PASSWORD"
                   if [ -n "$MISSING" ]; then
-                    echo "::error::The ${{ github.event.inputs.environment }} environment is missing the database secrets:$MISSING"
+                    echo "::error::The ${{ inputs.environment }} environment is missing the database secrets:$MISSING"
                     exit 1
                   fi
 

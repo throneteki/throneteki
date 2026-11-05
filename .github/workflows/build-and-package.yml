@@ -4,7 +4,7 @@
 name: Build, test and package
 on:
     push:
-        branches: ['master', 'development-*', 'playtesting']
+        branches: ['master', 'development-*', 'playtesting', 'feature/**']
         paths-ignore:
             - '.github/workflows/**'
             - 'infrastructure/**'
@@ -98,7 +98,7 @@ jobs:
               run: npm run test:db
     package:
         name: Push Package
-        if: ${{ github.repository == vars.PACKAGEABLE_REPOSITORY && (github.ref_name == 'master' || github.ref_name == 'playtesting') && github.event_name == 'push' }}
+        if: ${{ github.repository == vars.PACKAGEABLE_REPOSITORY && (github.ref_name == 'master' || github.ref_name == 'playtesting' || github.ref_name == vars.DEV_BRANCH) && github.event_name == 'push' }}
         runs-on: ubuntu-latest
         needs: ['build', 'database']
         steps:
@@ -128,6 +128,20 @@ jobs:
               uses: gittools/actions/gitversion/execute@v0.9.14
               with:
                   additionalArguments: /overrideconfig mode=Mainline
+            - name: Determine image tags
+              id: tags
+              # sha-<commit> is what Auto Deploy to Development deploys. Only master and playtesting
+              # move latest, which production pulls.
+              run: |
+                  if [ "${{ github.ref_name }}" = "master" ] || [ "${{ github.ref_name }}" = "playtesting" ]; then
+                    CHANNEL=latest
+                  else
+                    CHANNEL=dev
+                  fi
+                  for IMAGE in lobby node; do
+                    REPO=${{ secrets.DOCKERHUB_USERNAME }}/throneteki-$IMAGE
+                    echo "$IMAGE=$REPO:$CHANNEL,$REPO:${{ steps.determine_version.outputs.semVer }},$REPO:sha-${{ github.sha }}" >> $GITHUB_OUTPUT
+                  done
             - name: Build and push lobby
               uses: docker/build-push-action@v3
               with:
@@ -138,7 +152,7 @@ jobs:
                       HCAPTCHA_SITE_KEY=${{ secrets.HCAPTCHA_SITE_KEY }}
                       PATREON_CLIENT_ID=${{ secrets.PATREON_CLIENTID }}
                   push: true
-                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/throneteki-lobby:latest, ${{ secrets.DOCKERHUB_USERNAME }}/throneteki-lobby:${{ steps.determine_version.outputs.semVer }}
+                  tags: ${{ steps.tags.outputs.lobby }}
             - name: Build and push node
               uses: docker/build-push-action@v3
               with:
@@ -146,4 +160,4 @@ jobs:
                       "VERSION=${{ steps.determine_version.outputs.semVer }}"
                   push: true
                   file: server/gamenode/Dockerfile
-                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/throneteki-node:latest, ${{ secrets.DOCKERHUB_USERNAME }}/throneteki-node:${{ steps.determine_version.outputs.semVer }}
+                  tags: ${{ steps.tags.outputs.node }}

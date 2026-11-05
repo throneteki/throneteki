@@ -1,0 +1,32 @@
+# Deploys to development after a successful build of the branch named by the DEV_BRANCH repository
+# variable (master if unset). GitHub only runs workflow_run workflows from the default branch, so
+# this file and the deploy workflows it calls take effect from master.
+name: Auto Deploy to Development
+on:
+    workflow_run:
+        workflows: ['Build, test and package']
+        branches: ['master', 'feature/**']
+        types: [completed]
+
+concurrency: deploy-development
+
+jobs:
+    deploy-lobby:
+        name: Deploy Lobby to Development
+        if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == (vars.DEV_BRANCH || 'master') }}
+        uses: ./.github/workflows/deploy-lobby.yml
+        with:
+            environment: Development
+            ref: ${{ github.event.workflow_run.head_sha }}
+            image_tag: sha-${{ github.event.workflow_run.head_sha }}
+        secrets: inherit
+
+    deploy-node:
+        name: Deploy Game Nodes to Development
+        needs: deploy-lobby
+        uses: ./.github/workflows/deploy-node.yml
+        with:
+            environment: Development
+            ref: ${{ github.event.workflow_run.head_sha }}
+            image_tag: sha-${{ github.event.workflow_run.head_sha }}
+        secrets: inherit
