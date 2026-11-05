@@ -1,4 +1,4 @@
-# Player stats and Wrapped
+# Player stats and the White Book
 
 ## Monthly stats
 
@@ -13,7 +13,7 @@ menu). The API only returns the logged-in player's own stats.
   other way than reaching 15 (concession, opponents eliminated, time) with 10+ power while every
   opponent has 4 or less. It uses final power (`game_players.power`), so it covers every game. The
   rule is in [DominantWin.js](../server/services/DominantWin.js), once in JavaScript for stats and
-  once in SQL for Wrapped's rankings; `PlayerStats.spec.js` checks the two agree.
+  once in SQL for the White Book's rankings; `PlayerStats.spec.js` checks the two agree.
 - **Hours played:** start to finish, capped at 3 hours a game.
 - **Fastest win:** the fewest rounds in a win on power. Rounds come from the in-game stats, so only
   games since those were recorded count. Melee wins don't name an opponent.
@@ -22,7 +22,7 @@ menu). The API only returns the logged-in player's own stats.
   only for the player's own decks (not standalone decks). Decks are kept by id and named when the
   stats are read, so a renamed deck shows its new name and a deleted one shows as "Deleted deck".
 - **Opponents:** kept by user id and named when the stats are read (`UserStatsService.withNames()`),
-  so a cached month or Wrapped never shows an account that has since been disabled. Disabled opponents' games still count towards the totals. In melee, the
+  so a cached month or White Book page never shows an account that has since been disabled. Disabled opponents' games still count towards the totals. In melee, the
   nemesis is whoever won the most games the player was in.
 - **In the game:** from `game_players.stats` ([GameStats.js](../server/game/GameStats.js)). Games
   without stats, or where manual actions were used, are left out, and the page says how many games
@@ -41,15 +41,17 @@ with that deck, from `game_players.deck_id`, counted the same way as the stats p
 keeps its id, so the record carries on across edits. Only the owner sees it, and it is only worked out
 for the deck list, not when a deck is loaded for a game.
 
-## Wrapped
+## The White Book
 
-Once a year each player with 10+ games gets a Wrapped report, worked out by a script because it ranks
+The yearly report is called the White Book, and each player's report is their page in it. In the code it is still called Wrapped (`WrappedService`, `user_wrapped`, `npm run wrapped`).
+
+Once a year each player with 10+ games gets a page in the White Book, worked out by a script because it ranks
 players against each other. It covers 1 January up to the day the script runs (or `--to`), and is
-saved in `user_wrapped`. The page is `/wrapped/:year`, isn't linked from any menu, and needs a login
-(logged-out visitors are sent to `/login?return=/wrapped/:year` and back). It only shows snapshots of
+saved in `user_wrapped`. The page is `/white-book/:year`, isn't linked from any menu, and needs a login
+(logged-out visitors are sent to `/login?return=/white-book/:year` and back). It only shows snapshots of
 the current `WrappedVersion` in [WrappedService.js](../server/services/WrappedService.js).
 
-Each player only has one Wrapped. It can be seen, and is emailed, for two months after it was
+Each player only has one page. It can be seen, and is emailed, for two months after it was
 generated (`AvailableForSql`); after that the page says it is no longer available. Generating
 everyone's for a year deletes earlier years' snapshots.
 
@@ -75,7 +77,7 @@ the SES settings.
 # 1. Check the counts and a sample snapshot (changes nothing)
 npm run wrapped -- --year 2026 --to 2026-12-15
 
-# 2. Generate your own and look at /wrapped/2026
+# 2. Generate your own and look at /white-book/2026
 npm run wrapped -- --year 2026 --to 2026-12-15 --user <username> --apply
 
 # 3. Generate everyone's

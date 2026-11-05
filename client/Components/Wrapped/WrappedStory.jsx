@@ -5,8 +5,15 @@ import { faChevronLeft, faChevronRight, faShareNodes } from '@fortawesome/free-s
 import { toast } from 'react-toastify';
 
 import Logo from '../../assets/img/main_header_logo.png';
-import useWrappedCards from './useWrappedCards';
+import useWrappedCards, { Gold, Ink } from './useWrappedCards';
 import { renderCard, shareImage } from './shareCard';
+
+const PageBackground = 'radial-gradient(ellipse at 50% 35%, #fbf6e9 0%, #f1e6c9 55%, #e1cfa3 100%)';
+const CoverBackground =
+    'radial-gradient(ellipse at 50% 30%, #fdfcf8 0%, #f0ece2 50%, #d9d2c1 100%)';
+
+// The site logo is light, for the dark header, so it's darkened to read on parchment
+const InkLogo = { filter: 'brightness(0.3) sepia(0.6)' };
 
 const WrappedStory = ({ wrapped, username }) => {
     const cards = useWrappedCards(wrapped, username);
@@ -50,8 +57,8 @@ const WrappedStory = ({ wrapped, username }) => {
             const blob = await renderCard(frameRef.current);
             const result = await shareImage(
                 blob,
-                `throneteki-wrapped-${wrapped.year}-${card.key}.png`,
-                `My ${wrapped.year} on The Iron Throne`
+                `white-book-${wrapped.year}-${card.key}.png`,
+                `My ${wrapped.year} page in the White Book`
             );
 
             if (result === 'downloaded') {
@@ -72,16 +79,34 @@ const WrappedStory = ({ wrapped, username }) => {
                 style={{
                     width: 'min(100%, calc((100dvh - 10rem) * 9 / 16))',
                     containerType: 'inline-size',
-                    background: card.background
+                    background: card.cover ? CoverBackground : PageBackground
                 }}
             >
-                <div className='absolute inset-x-[5cqw] top-[4cqw] z-10 flex gap-[1.2cqw]'>
+                <div
+                    className='pointer-events-none absolute inset-[4cqw] rounded-[1.5cqw]'
+                    style={{
+                        border: `${card.cover ? 1.4 : 0.9}cqw double ${Gold}`,
+                        boxShadow: 'inset 0 0 6cqw rgba(120, 90, 40, 0.18)'
+                    }}
+                />
+                <div
+                    className='absolute right-[11cqw] top-0 z-10 h-[15cqw] w-[6.5cqw] shadow-[0_0.6cqw_1.2cqw_rgba(42,31,20,0.35)]'
+                    style={{
+                        background: card.accent,
+                        clipPath: 'polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%)'
+                    }}
+                />
+                <div
+                    className='absolute left-[10cqw] right-[22cqw] top-[1.8cqw] z-10 flex gap-[1cqw]'
+                    data-share-exclude
+                >
                     {cards.map((item, itemIndex) => (
                         <div
                             key={item.key}
-                            className={`h-[0.9cqw] flex-1 rounded-full ${
-                                itemIndex <= index ? 'bg-white/90' : 'bg-white/30'
-                            }`}
+                            className='h-[0.7cqw] flex-1 rounded-full'
+                            style={{
+                                background: itemIndex <= index ? `${Ink}bb` : `${Ink}26`
+                            }}
                         />
                     ))}
                 </div>
@@ -90,14 +115,29 @@ const WrappedStory = ({ wrapped, username }) => {
                     key={card.key}
                     className='absolute inset-0 motion-safe:animate-[wrapped-in_350ms_ease-out]'
                 >
-                    <div className='relative h-full px-[8cqw] pb-[14cqw] pt-[12cqw]'>
+                    <div className='relative h-full px-[11cqw] pb-[15cqw] pt-[14cqw]'>
                         {card.content}
                     </div>
                 </div>
 
-                <div className='absolute inset-x-[8cqw] bottom-[5cqw] z-10 flex items-end justify-between gap-[3cqw] text-[3.4cqw] leading-[1.2] text-white/70'>
-                    <img alt='The Iron Throne' className='h-[3cqw] w-auto opacity-85' src={Logo} />
-                    {card.note && <span className='shrink-0 text-right'>{card.note}</span>}
+                <div
+                    className="absolute inset-x-[10cqw] bottom-[7cqw] z-10 flex items-end justify-between gap-[3cqw] font-['EB_Garamond'] text-[3.6cqw] italic leading-[1.2]"
+                    style={{ color: Gold }}
+                >
+                    <img
+                        alt='The Iron Throne'
+                        className='h-[2.8cqw] w-auto'
+                        src={Logo}
+                        style={InkLogo}
+                    />
+                    {!card.cover && (
+                        <span className='flex shrink-0 flex-col items-end gap-[0.8cqw] text-right'>
+                            {card.note && <span>{card.note}</span>}
+                            <span>
+                                Page {index} of {cards.length - 1}
+                            </span>
+                        </span>
+                    )}
                 </div>
 
                 <button
@@ -134,7 +174,7 @@ const WrappedStory = ({ wrapped, username }) => {
                     startContent={!isSharing && <FontAwesomeIcon icon={faShareNodes} />}
                     onPress={share}
                 >
-                    Share this card
+                    Share this page
                 </Button>
                 <Button
                     aria-label='Next'

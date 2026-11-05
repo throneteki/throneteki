@@ -337,7 +337,7 @@ describe('Player stats', function () {
             expect(first).toEqual(jasmine.objectContaining({ recipients: 1, sent: 1, failed: 0 }));
             expect(this.emailService.sendEmail).toHaveBeenCalledWith(
                 'ned@example.test',
-                'Your 2026 on The Iron Throne is ready',
+                'Your 2026 page in the White Book is ready',
                 jasmine.any(String),
                 jasmine.objectContaining({ html: jasmine.any(String) })
             );

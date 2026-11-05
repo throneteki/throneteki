@@ -41,13 +41,13 @@ export const init = function (server) {
             if (!result) {
                 return res
                     .status(404)
-                    .send({ success: false, message: 'No Wrapped for this year' });
+                    .send({ success: false, message: 'No page in the White Book for this year' });
             }
 
             if (result.expired) {
                 return res
                     .status(410)
-                    .send({ success: false, message: 'This Wrapped is no longer available' });
+                    .send({ success: false, message: 'This White Book is no longer available' });
             }
 
             res.send({ success: true, data: { wrapped: result.wrapped } });

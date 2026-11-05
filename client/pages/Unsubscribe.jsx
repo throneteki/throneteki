@@ -33,8 +33,8 @@ const Unsubscribe = ({ id, token }) => {
                     />
                 )}
                 <p className='m-0 leading-5'>
-                    Stop occasional emails, such as your yearly Wrapped? Emails about your account,
-                    like password resets, will still be sent.
+                    Stop occasional emails, such as your yearly page in the White Book? Emails about
+                    your account, like password resets, will still be sent.
                 </p>
                 <Button
                     color='primary'
