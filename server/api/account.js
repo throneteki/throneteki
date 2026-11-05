@@ -264,8 +264,7 @@ function sanitizeSettings(settings) {
     }
 
     let result = {
-        keywordSettings: pickBooleans(settings.keywordSettings, ['chooseOrder', 'chooseCards']),
-        timerSettings: pickBooleans(settings.timerSettings, ['events', 'abilities'])
+        keywordSettings: pickBooleans(settings.keywordSettings, ['chooseOrder', 'chooseCards'])
     };
 
     if (Object.hasOwn(settings, 'promptDupes')) {
@@ -274,11 +273,6 @@ function sanitizeSettings(settings) {
 
     if (Object.hasOwn(settings, 'hideResponses')) {
         result.hideResponses = !!settings.hideResponses;
-    }
-
-    let windowTimer = Number(settings.windowTimer);
-    if (Number.isFinite(windowTimer)) {
-        result.windowTimer = Math.min(Math.max(Math.round(windowTimer), 0), 60);
     }
 
     let background = pickString(settings.background, /^[A-Za-z0-9_-]{1,32}$/);

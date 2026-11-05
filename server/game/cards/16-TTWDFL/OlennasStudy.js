@@ -11,13 +11,15 @@ class OlennasStudy extends DrawCard {
         });
 
         this.persistentEffect({
+            match: (card) => card.isMatch({ type: 'character', unique: false }),
+            targetController: 'any',
+            effect: ability.effects.cannotBeDeclaredAsAttackerIn({ challengeType: 'intrigue' })
+        });
+        this.persistentEffect({
             condition: (context) => context.game.isDuringChallenge({ challengeType: 'intrigue' }),
             match: (card) => card.isMatch({ type: 'character', unique: false }),
             targetController: 'any',
-            effect: [
-                ability.effects.cannotBeDeclaredAsAttacker(),
-                ability.effects.cannotBeDeclaredAsDefender()
-            ]
+            effect: ability.effects.cannotBeDeclaredAsDefender()
         });
     }
 }

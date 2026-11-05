@@ -11,6 +11,7 @@ import CardSelector from '../CardSelector.js';
  * multiSelect        - boolean that ensures that the selected cards are sent as
  *                      an array, even if the numCards limit is 1.
  * additionalButtons  - array of additional buttons for the prompt.
+ * hideDoneButton     - when true, the done button is not shown.
  * doneButtonFirst    - when true, the done button is shown before the additional
  *                      buttons.
  * additionalControls - array of additional controls for the prompt.
@@ -141,12 +142,20 @@ class SelectCardPrompt extends UiPrompt {
             menuTitle:
                 this.activePromptTitleFunc(this.context) ||
                 this.selector.defaultActivePromptTitle(),
-            buttons: this.properties.doneButtonFirst
-                ? [this.getDoneButton(), ...this.properties.additionalButtons]
-                : this.properties.additionalButtons.concat([this.getDoneButton()]),
+            buttons: this.getButtons(),
             controls: this.properties.additionalControls,
             promptTitle: this.properties.source ? this.properties.source.name : undefined
         };
+    }
+
+    getButtons() {
+        if (this.properties.hideDoneButton) {
+            return this.properties.additionalButtons;
+        }
+
+        return this.properties.doneButtonFirst
+            ? [this.getDoneButton(), ...this.properties.additionalButtons]
+            : this.properties.additionalButtons.concat([this.getDoneButton()]);
     }
 
     canCancel() {

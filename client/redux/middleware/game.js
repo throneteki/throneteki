@@ -22,7 +22,7 @@ import {
     sendToggleManualModeMessage,
     sendReportProblemMessage,
     sendTogglePromptedActionWindowMessage,
-    sendToggleTimerSetting,
+    sendToggleHideResponsesMessage,
     sendCardSizeChangeMessage,
     startGameConnecting
 } from '../reducers/game';
@@ -40,7 +40,7 @@ const GameMessage = Object.freeze({
     ToggleKeywordSetting: 'toggleKeywordSetting',
     ToggleDupes: 'toggleDupes',
     TogglePromptedActionWindow: 'togglePromptedActionWindow',
-    ToggleTimerSetting: 'toggleTimerSetting',
+    ToggleHideResponses: 'toggleHideResponses',
     CardSizeChange: 'cardSizeChange',
     CardClicked: 'cardClicked',
     MenuItemClick: 'menuItemClick',
@@ -143,13 +143,8 @@ const gameMiddleware = (store) => {
                 action.payload.option,
                 action.payload.value
             );
-        } else if (sendToggleTimerSetting.match(action)) {
-            socket.emit(
-                'game',
-                GameMessage.ToggleTimerSetting,
-                action.payload.option,
-                action.payload.value
-            );
+        } else if (sendToggleHideResponsesMessage.match(action)) {
+            socket.emit('game', GameMessage.ToggleHideResponses, action.payload);
         } else if (sendCardSizeChangeMessage.match(action)) {
             socket.emit('game', GameMessage.CardSizeChange, action.payload);
         } else if (sendCardClickedMessage.match(action)) {

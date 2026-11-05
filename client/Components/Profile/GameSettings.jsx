@@ -16,7 +16,7 @@ const GameSettings = ({ formProps }) => {
                     {...formProps.getFieldProps('chooseCards')}
                     isSelected={formProps.values.chooseCards}
                 >
-                    Make keywords optional
+                    Ask before resolving challenge keywords
                 </Switch>
                 <Switch
                     {...formProps.getFieldProps('promptDupes')}

@@ -6,20 +6,16 @@ describe('TriggeredAbilityWindow', function () {
             setPrompt: vi.fn(),
             cancelPrompt: vi.fn(),
             user: vi.fn(),
-            isTimerEnabled: vi.fn(),
             isPlaying: vi.fn()
         };
         this.player2Spy = {
             setPrompt: vi.fn(),
             cancelPrompt: vi.fn(),
             user: vi.fn(),
-            isTimerEnabled: vi.fn(),
             isPlaying: vi.fn()
         };
 
-        this.player1Spy.noTimer = true;
         this.player1Spy.isPlaying.mockReturnValue(true);
-        this.player2Spy.noTimer = true;
         this.player2Spy.isPlaying.mockReturnValue(true);
 
         this.gameSpy = {

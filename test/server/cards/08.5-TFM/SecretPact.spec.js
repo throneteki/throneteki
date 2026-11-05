@@ -56,4 +56,37 @@ describe('Secret Pact', function () {
             expect(this.player2).isReadyToTakeAction();
         });
     });
+
+    describe('when the attached character is the only one that could attack you', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: { faction: 'martell', inPlay: ['Red Mountains'] },
+                player2: {
+                    inPlay: [
+                        {
+                            card: 'Tumblestone Knight',
+                            attachments: [{ card: 'Secret Pact', owner: 'player1' }]
+                        }
+                    ]
+                }
+            });
+        });
+
+        it('stops the opponent initiating a challenge against you', function () {
+            this.player1.clickPrompt('Done');
+
+            expect(this.player2).toHaveDisabledPromptButton('Military');
+            expect(this.player2).toHaveDisabledPromptButton('Power');
+            expect(this.player2).not.toHaveDisabledPromptButton('Done');
+        });
+
+        it('lets the opponent pass when they must initiate a military challenge against you', function () {
+            this.player1.clickMenu(this.redMountains, 'Force military challenge');
+            this.player1.clickPrompt('Done');
+
+            expect(this.player2).toHaveDisabledPromptButton('Military');
+            expect(this.player2).not.toHaveDisabledPromptButton('Done');
+        });
+    });
 });

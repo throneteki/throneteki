@@ -1122,13 +1122,13 @@ class Game extends EventEmitter {
         player.promptedActionWindows[windowName] = toggle;
     }
 
-    toggleTimerSetting(playerName, settingName, toggle) {
+    toggleHideResponses(playerName, toggle) {
         var player = this.getPlayerByName(playerName);
         if (!player) {
             return;
         }
 
-        player.timerSettings[settingName] = toggle;
+        player.hideResponses = toggle;
     }
 
     cardSizeChange(playerName, value) {

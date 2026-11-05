@@ -1,7 +1,7 @@
 import DeckValidator from '../../deck-helper/DeckValidator.js';
 import cards from './cards/index.js';
 
-const HiddenZones = ['hand', 'shadows', 'draw deck'];
+export const HiddenZones = ['hand', 'shadows', 'draw deck'];
 const ListenerMethods = ['on', 'once', 'addListener', 'prependListener', 'removeListener', 'off'];
 
 class PossibleResponders {

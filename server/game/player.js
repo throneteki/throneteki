@@ -9,7 +9,6 @@ import AttachmentPrompt from './gamesteps/attachmentprompt.js';
 import AllowedChallenges from './AllowedChallenges.js';
 import PlayableLocation from './playablelocation.js';
 import PlayActionPrompt from './gamesteps/playactionprompt.js';
-import Settings from '../settings.js';
 import MinMaxProperty from './PropertyTypes/MinMaxProperty.js';
 import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
 import GoldSource from './GoldSource.js';
@@ -734,11 +733,6 @@ class Player extends Spectator {
         this.firstPlayer = false;
         this.selectedPlot = undefined;
 
-        if (this.resetTimerAtEndOfRound) {
-            this.noTimer = false;
-            this.timerPausedForRound = false;
-        }
-
         this.gainedGold = 0;
         this.drawnCards = 0;
         this.gainedPower = 0;
@@ -1317,20 +1311,6 @@ class Player extends Spectator {
         };
     }
 
-    disableTimerForRound() {
-        this.noTimer = true;
-        this.timerPausedForRound = true;
-        this.resetTimerAtEndOfRound = true;
-    }
-
-    isTimerEnabled() {
-        return !this.noTimer && this.user.settings.windowTimer !== 0;
-    }
-
-    getWindowTimerDelay() {
-        return (this.user.settings.windowTimer ?? Settings.defaultSettings.windowTimer) * 1000;
-    }
-
     addSecondsToClock(seconds) {
         if (this.chessClock && seconds) {
             this.chessClock.modify(seconds);
@@ -1375,7 +1355,7 @@ class Player extends Spectator {
             cardSize: this.cardSize,
             promptDupes: this.promptDupes,
             promptedActionWindows: this.promptedActionWindows,
-            timerSettings: this.timerSettings,
+            hideResponses: this.hideResponses,
             keywordSettings: this.keywordSettings,
             ...promptState,
             isPlaying: this.isPlaying(),

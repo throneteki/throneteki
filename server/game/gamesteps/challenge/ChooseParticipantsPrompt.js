@@ -50,7 +50,8 @@ class ChooseParticipantsPrompt extends BaseStep {
             card.controller === this.choosingPlayer &&
             card.canParticipate({
                 attacking: this.attacking,
-                challengeType: this.challenge.challengeType
+                challengeType: this.challenge.challengeType,
+                challenge: this.challenge
             })
         );
     }

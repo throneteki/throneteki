@@ -108,12 +108,8 @@ class GameCommands {
         return this.game.togglePromptedActionWindow(playerName, windowName, !!toggle);
     }
 
-    toggleTimerSetting(playerName, settingName, toggle) {
-        if (!this.isExistingSetting(playerName, 'timerSettings', settingName)) {
-            return;
-        }
-
-        return this.game.toggleTimerSetting(playerName, settingName, !!toggle);
+    toggleHideResponses(playerName, toggle) {
+        return this.game.toggleHideResponses(playerName, !!toggle);
     }
 
     isExistingSetting(playerName, settingsProperty, settingName) {

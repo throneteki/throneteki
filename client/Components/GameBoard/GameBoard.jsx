@@ -15,7 +15,7 @@ import {
     sendToggleDupesMessage,
     sendToggleKeywordSettingMessage,
     sendTogglePromptedActionWindowMessage,
-    sendToggleTimerSetting
+    sendToggleHideResponsesMessage
 } from '../../redux/reducers/game';
 
 import { DndContext, DragOverlay, MouseSensor, TouchSensor, useSensor } from '@dnd-kit/core';
@@ -81,7 +81,6 @@ const GameBoard = () => {
 
     const onCardClick = useCallback(
         (card) => {
-            //stopAbilityTimer();
             dispatch(sendCardClickedMessage(card.uuid));
         },
         [dispatch]
@@ -232,13 +231,11 @@ const GameBoard = () => {
                 onPromptedActionWindowToggle={(option, value) =>
                     dispatch(sendTogglePromptedActionWindowMessage(option, value))
                 }
-                onTimerSettingToggle={(option, value) =>
-                    dispatch(sendToggleTimerSetting(option, value))
-                }
+                onHideResponsesToggle={(value) => dispatch(sendToggleHideResponsesMessage(value))}
                 onCardSizeSettingChange={(value) => dispatch(sendCardSizeChangeMessage(value))}
                 promptDupes={userPlayer.promptDupes}
                 promptedActionWindows={userPlayer.promptedActionWindows}
-                timerSettings={userPlayer.timerSettings}
+                hideResponses={userPlayer.hideResponses}
                 cardSizeSetting={userPlayer.cardSize}
             />
         </>

@@ -10,11 +10,11 @@ class HonorBound extends DrawCard {
             effect: ability.effects.modifyStrength(2)
         });
         this.whileAttached({
+            effect: ability.effects.cannotBeDeclaredAsAttackerIn({ challengeType: 'intrigue' })
+        });
+        this.whileAttached({
             condition: (context) => context.game.isDuringChallenge({ challengeType: 'intrigue' }),
-            effect: [
-                ability.effects.cannotBeDeclaredAsAttacker(),
-                ability.effects.cannotBeDeclaredAsDefender()
-            ]
+            effect: ability.effects.cannotBeDeclaredAsDefender()
         });
     }
 }

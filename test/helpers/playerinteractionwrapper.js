@@ -8,7 +8,6 @@ class PlayerInteractionWrapper {
         this.player = player;
         this.key = key;
 
-        player.noTimer = true;
         if (!keepUser) {
             player.user = {
                 settings: {}

@@ -2,9 +2,9 @@ import ForcedTriggeredAbilityWindow from '../../../server/game/gamesteps/ForcedT
 
 describe('ForcedTriggeredAbilityWindow', function () {
     beforeEach(function () {
-        this.player1Spy = { isTimerEnabled: vi.fn() };
+        this.player1Spy = {};
         this.player1Spy.name = 'player1';
-        this.player2Spy = { isTimerEnabled: vi.fn() };
+        this.player2Spy = {};
         this.player2Spy.name = 'player2';
 
         this.gameSpy = {

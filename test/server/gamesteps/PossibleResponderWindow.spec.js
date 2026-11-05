@@ -64,16 +64,15 @@ describe('cancel windows for a player without the timer', function () {
                 expect(opponentView(this)).toEqual(ViewWhileConsidering);
             });
 
-            it('shows Skip before Wait', function () {
+            it('shows Wait and the button to stop being asked this phase, without Skip', function () {
                 expect(this.player2.player.promptState.buttons.map((b) => b.text)).toEqual([
-                    'Skip',
-                    'Wait'
+                    'Wait',
+                    "Don't ask again this phase"
                 ]);
             });
 
             it('shows them the same window, with nothing to choose', function () {
                 expect(this.player2).toHavePrompt(WindowTitle);
-                expect(this.player2).toHavePromptButton('Skip');
                 expect(this.player2).toHavePromptButton('Wait');
                 expect(this.player2.player.promptState.controls).toContainEqual(
                     expect.objectContaining({
@@ -104,10 +103,11 @@ describe('cancel windows for a player without the timer', function () {
                 expect(this.player1).isReadyToTakeAction();
             });
 
-            it('lets them pass before the delay ends', function () {
-                this.player2.clickPrompt('Skip');
+            it('lets them stop being asked for the rest of the phase', function () {
+                this.player2.clickPrompt("Don't ask again this phase");
 
                 expect(this.lannisportMerchant.location).toBe('play area');
+                expect(this.player2.player.responsesPausedForPhase).toBe(true);
 
                 this.scheduled[0].callback();
 
@@ -119,7 +119,7 @@ describe('cancel windows for a player without the timer', function () {
                 this.player2.clickPrompt('Wait');
 
                 expect(this.player2).toHavePromptButton('Pass');
-                expect(this.player2).not.toHavePromptButton('Skip');
+                expect(this.player2).not.toHavePromptButton('Wait');
                 expect(this.player2.player.promptState.controls).toContainEqual(
                     expect.objectContaining({ type: 'response-delay', paused: true })
                 );
@@ -219,19 +219,6 @@ describe('cancel windows for a player without the timer', function () {
             playRoar(this);
 
             expect(this.player2).toAllowAbilityTrigger("The Hand's Judgment");
-        });
-    });
-
-    describe('when they use the cancel timer', function () {
-        beforeEach(function () {
-            setup(this, {});
-            this.player2.player.noTimer = false;
-            playRoar(this);
-        });
-
-        it('shows the timer prompt as before', function () {
-            expect(this.player2).toHavePromptButton("Don't ask again until end of round");
-            expect(this.scheduled.map((item) => item.delay)).toEqual([10000]);
         });
     });
 });

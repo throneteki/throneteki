@@ -66,6 +66,10 @@ against the rules, which is what lets a game run with manual mode off
    function (`this-in-ability`).
 10. **No manual workarounds.** Don't leave parts of a card for players to handle with chat commands. If
     something can't be implemented properly, stop and say what engine support is missing.
+11. **Attack restrictions for some challenges.** For "cannot be declared as an attacker in X
+    challenges", use `ability.effects.cannotBeDeclaredAsAttackerIn(matchers)` with challenge
+    matchers, not a `condition` on `isDuringChallenge`. It is also checked before a challenge is
+    initiated, so a challenge no character could attack in is not offered.
 
 ## Checks
 

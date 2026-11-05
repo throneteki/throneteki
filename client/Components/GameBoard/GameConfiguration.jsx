@@ -20,10 +20,10 @@ const GameConfiguration = ({
     actionWindows,
     keywordSettings,
     promptDupes,
-    timerSettings,
+    hideResponses,
     cardSizeSetting,
     onKeywordSettingToggle,
-    onTimerSettingToggle,
+    onHideResponsesToggle,
     onCardSizeSettingChange,
     onActionWindowToggle,
     onPromptDupesToggle
@@ -51,29 +51,17 @@ const GameConfiguration = ({
                 <Panel title={'Action window defaults'}>
                     <div className='grid sm:grid-cols-2 gap-2'>{windowsToRender}</div>
                 </Panel>
-                <Panel title={'Timed interrupt window'}>
-                    <div className='flex flex-col gap-2'>
-                        <Switch
-                            onValueChange={(value) =>
-                                onTimerSettingToggle && onTimerSettingToggle('events', value)
-                            }
-                            name='timerSettings.events'
-                            isSelected={timerSettings.events}
-                            isDisabled={isSpectating}
-                        >
-                            {'Show timer for events'}
-                        </Switch>
-                        <Switch
-                            onValueChange={(value) =>
-                                onTimerSettingToggle && onTimerSettingToggle('abilities', value)
-                            }
-                            name='timerSettings.abilities'
-                            isSelected={timerSettings.abilities}
-                            isDisabled={isSpectating}
-                        >
-                            {'Show timer for card abilities'}
-                        </Switch>
-                    </div>
+                <Panel title={'Responses'}>
+                    <Switch
+                        onValueChange={(value) =>
+                            onHideResponsesToggle && onHideResponsesToggle(value)
+                        }
+                        name='hideResponses'
+                        isSelected={hideResponses !== false}
+                        isDisabled={isSpectating}
+                    >
+                        {'Hide whether I can respond'}
+                    </Switch>
                 </Panel>
                 <Panel title='Card Sizing'>
                     <RadioGroup
@@ -112,7 +100,7 @@ const GameConfiguration = ({
                             isSelected={keywordSettings.chooseCards}
                             isDisabled={isSpectating}
                         >
-                            {'Make keywords optional'}
+                            {'Ask before resolving challenge keywords'}
                         </Switch>
                         <Switch
                             onValueChange={(value) =>

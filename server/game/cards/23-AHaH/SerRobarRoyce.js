@@ -11,12 +11,13 @@ class SerRobarRoyce extends DrawCard {
         });
 
         this.persistentEffect({
+            match: this,
+            effect: ability.effects.cannotBeDeclaredAsAttackerIn({ number: 1 })
+        });
+        this.persistentEffect({
             condition: (context) => context.game.isDuringChallenge({ number: 1 }),
             match: this,
-            effect: [
-                ability.effects.cannotBeDeclaredAsAttacker(),
-                ability.effects.cannotBeDeclaredAsDefender()
-            ]
+            effect: ability.effects.cannotBeDeclaredAsDefender()
         });
     }
 }

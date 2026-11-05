@@ -8,10 +8,9 @@ describe('Bowen Marsh', function () {
         this.player1.triggerAbility('Bowen Marsh');
         this.player1.clickCard(this.hedgeKnight);
         this.player1.clickPrompt('Military');
-        this.player1.clickPrompt('Military');
     });
 
     it('makes a character unable to be declared as an attacker in the chosen challenge type this phase', function () {
-        expect(this.player1).not.toAllowSelect(this.hedgeKnight);
+        expect(this.player1).toHaveDisabledPromptButton('Military');
     });
 });

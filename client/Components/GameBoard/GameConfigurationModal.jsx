@@ -10,11 +10,11 @@ const GameConfigurationModal = ({
     onKeywordSettingToggle,
     onPromptDupesToggle,
     onPromptedActionWindowToggle,
-    onTimerSettingToggle,
+    onHideResponsesToggle,
     onCardSizeSettingChange,
     promptDupes,
     promptedActionWindows,
-    timerSettings,
+    hideResponses,
     cardSizeSetting
 }) => {
     return (
@@ -28,10 +28,10 @@ const GameConfigurationModal = ({
                             actionWindows={promptedActionWindows}
                             keywordSettings={keywordSettings}
                             promptDupes={promptDupes}
-                            timerSettings={timerSettings}
+                            hideResponses={hideResponses}
                             cardSizeSetting={cardSizeSetting}
                             onKeywordSettingToggle={onKeywordSettingToggle}
-                            onTimerSettingToggle={onTimerSettingToggle}
+                            onHideResponsesToggle={onHideResponsesToggle}
                             onCardSizeSettingChange={onCardSizeSettingChange}
                             onActionWindowToggle={onPromptedActionWindowToggle}
                             onPromptDupesToggle={onPromptDupesToggle}

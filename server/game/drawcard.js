@@ -512,11 +512,14 @@ class DrawCard extends BaseCard {
         return flags.every((flag) => !this.hasFlag(flag));
     }
 
-    canParticipate({ attacking, challengeType }) {
+    canParticipate({ attacking, challengeType, challenge }) {
         return (
             this.getType() === 'character' &&
             this.canDeclareAsParticipant({ attacking, challengeType }) &&
-            this.allowGameAction(attacking ? 'declareAsAttacker' : 'declareAsDefender') &&
+            this.allowGameAction(
+                attacking ? 'declareAsAttacker' : 'declareAsDefender',
+                challenge && { challenge }
+            ) &&
             !this.isParticipating()
         );
     }

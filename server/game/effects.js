@@ -253,6 +253,15 @@ const Effects = {
         };
     },
     cannotBeDeclaredAsAttacker: cannotEffect('declareAsAttacker'),
+    // Checked against the challenge being declared, or one a player is choosing whether to
+    // initiate, so a challenge the character could not attack in is not offered.
+    cannotBeDeclaredAsAttackerIn: function (matchers) {
+        return cannotEffect('declareAsAttacker')((declaration, context) => {
+            const challenge = declaration?.challenge ?? context.game.currentChallenge;
+            const resolved = typeof matchers === 'function' ? matchers(context) : matchers;
+            return !!challenge && challenge.isMatch(resolved);
+        });
+    },
     cannotBeDeclaredAsDefender: cannotEffect('declareAsDefender'),
     cannotParticipate: cannotEffect('participateInChallenge'),
     doesNotKneelAsAttacker: function ({ challengeType = 'any' } = {}) {

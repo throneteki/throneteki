@@ -23,9 +23,8 @@ class BowenMarsh extends DrawCard {
                 gameAction: (challengeType) =>
                     GameActions.lastingEffect((context) => ({
                         duration: 'untilEndOfPhase',
-                        condition: () => context.game.isDuringChallenge({ challengeType }),
                         match: context.target,
-                        effect: ability.effects.cannotBeDeclaredAsAttacker()
+                        effect: ability.effects.cannotBeDeclaredAsAttackerIn({ challengeType })
                     }))
             })
         });

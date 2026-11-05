@@ -16,16 +16,10 @@ const defaultKeywordSettings = {
 };
 
 const defaultSettings = {
-    windowTimer: 10,
     background: 'BG1',
     cardSize: 'normal',
     promptDupes: false,
     hideResponses: true
-};
-
-const defaultTimerSettings = {
-    events: true,
-    abilities: false
 };
 
 function getUserWithDefaultsSet(user) {
@@ -40,11 +34,6 @@ function getUserWithDefaultsSet(user) {
         {},
         defaultKeywordSettings,
         userToReturn.settings.keywordSettings
-    );
-    userToReturn.settings.timerSettings = Object.assign(
-        {},
-        defaultTimerSettings,
-        userToReturn.settings.timerSettings
     );
     userToReturn.permissions = Object.assign({}, userToReturn.permissions);
     userToReturn.promptedActionWindows = Object.assign(

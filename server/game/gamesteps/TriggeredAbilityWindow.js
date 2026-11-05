@@ -1,22 +1,9 @@
 import BaseAbilityWindow from './BaseAbilityWindow.js';
-import CancelTimer from './CancelTimer.js';
+import { HiddenZones } from '../PossibleResponders.js';
 import SelectCardPrompt from './selectcardprompt.js';
 import TriggeredAbilityWindowTitles from './TriggeredAbilityWindowTitles.js';
 
 class TriggeredAbilityWindow extends BaseAbilityWindow {
-    constructor(game, properties) {
-        super(game, properties);
-
-        this.cancelTimer = new CancelTimer(this.event, this.abilityType);
-        this.forceWindowPerPlayer = {};
-
-        for (const player of game.getPlayersInFirstPlayerOrder()) {
-            if (this.cancelTimer.isEnabled(player)) {
-                this.forceWindowPerPlayer[player.name] = true;
-            }
-        }
-    }
-
     continue() {
         if (this.hasAttachedEvents()) {
             this.openWindowForAttachedEvents();
@@ -47,22 +34,28 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
     }
 
     shouldPrompt(player) {
-        return (
-            !!this.forceWindowPerPlayer[player.name] ||
-            this.abilityChoices.some((choice) => choice.player === player) ||
-            (this.abilityChoices.length > 0 && this.cancelTimer.isEnabled(player))
+        return this.getChoicesFor(player).length > 0;
+    }
+
+    // A player who paused responses for the phase is only asked about cards their opponents can
+    // see, so whether they are asked never depends on what they hold.
+    getChoicesFor(player) {
+        return this.abilityChoices.filter(
+            (choice) =>
+                choice.player === player &&
+                (!player.responsesPausedForPhase || !HiddenZones.includes(choice.card.location))
         );
     }
 
     /**
      * Whether the player must appear to consider this window although they have nothing to use:
-     * the timer doesn't cover it, and a card they could hold in a hidden zone might respond. Since
-     * that depends only on public information, a player who really holds one looks the same.
+     * a card they could hold in a hidden zone might respond. Since that depends only on public
+     * information, a player who really holds one looks the same.
      */
     isPossibleResponder(player) {
         return (
             player.hideResponses &&
-            !this.cancelTimer.isEnabled(player) &&
+            !player.responsesPausedForPhase &&
             this.game.getPossibleResponders().couldRespond(player, this.abilityType, this.event)
         );
     }
@@ -87,17 +80,24 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
                     text: 'Wait',
                     arg: 'wait',
                     pausesTimer: true
-                }
+                },
+                this.getPauseForPhaseButton()
             ],
-            doneButtonText: 'Skip',
+            hideDoneButton: true,
+            doneButtonText: 'Pass',
             doneButtonFirst: true,
             onCancel: () => this.pass(),
             onMenuCommand: (selectingPlayer, arg) => {
                 if (arg === 'wait') {
                     waitForPass = true;
-                    prompt.properties.doneButtonText = 'Pass';
+                    prompt.properties.hideDoneButton = false;
                     this.pauseTimer(prompt);
                     return false;
+                }
+
+                if (arg === 'passAndPauseForPhase') {
+                    this.passAndPauseForPhase(selectingPlayer);
+                    return true;
                 }
 
                 return false;
@@ -112,25 +112,16 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         });
     }
 
-    /**
-     * Filters out players who are no longer playing, have paused the timer for this window, or
-     * have no valid choices
-     */
     filterPlayers(players) {
         return players.filter(
             (player) =>
                 player.isPlaying() &&
-                !this.cancelTimer.isPausedFor(player) &&
-                (this.cancelTimer.isEnabled(player) ||
-                    this.abilityChoices.some((abilityChoice) => abilityChoice.player === player) ||
-                    this.isPossibleResponder(player))
+                (this.shouldPrompt(player) || this.isPossibleResponder(player))
         );
     }
 
     promptPlayer(player) {
-        let cardsForPlayer = this.abilityChoices
-            .filter((choice) => choice.player === player)
-            .map((choice) => choice.card);
+        let cardsForPlayer = this.getChoicesFor(player).map((choice) => choice.card);
 
         let unclickableCards = cardsForPlayer.filter((card) => card.location === 'draw deck');
         const pileCards = cardsForPlayer.filter(
@@ -140,11 +131,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
                     (other) => other.name === card.name && other.location === card.location
                 ) === index
         );
-        const timed = this.cancelTimer.isEnabled(player);
-        const delay = timed ? player.getWindowTimerDelay() : undefined;
-        let timerStopped = false;
-
-        const prompt = this.game.promptForSelect(player, {
+        this.game.promptForSelect(player, {
             activePromptTitle: TriggeredAbilityWindowTitles.getTitle(
                 this.abilityType,
                 this.event.getPrimaryEvents()
@@ -153,25 +140,15 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             cardCondition: (card) => cardsForPlayer.includes(card),
             cardType: ['agenda', 'attachment', 'character', 'event', 'location', 'plot', 'title'],
             additionalButtons: this.getButtons(player, [...unclickableCards, ...pileCards]),
-            additionalControls: [
-                ...(timed ? [this.getResponseDelayControl(delay)] : []),
-                ...this.getAdditionalPromptControls(player)
-            ],
+            additionalControls: this.getAdditionalPromptControls(player),
             doneButtonText: 'Pass',
             onSelect: (player, card) => this.chooseCardToTrigger(player, card),
             onCancel: () => this.pass(),
             onMenuCommand: (player, arg) => {
-                if (arg === 'stopTimer') {
-                    timerStopped = true;
-                    this.pauseTimer(prompt);
-                    return false;
-                }
-
                 if (arg === 'pass') {
                     this.pass();
-                } else if (arg === 'passAndPauseForRound') {
-                    player.disableTimerForRound();
-                    this.pass();
+                } else if (arg === 'passAndPauseForPhase') {
+                    this.passAndPauseForPhase(player);
                 } else {
                     let card = cardsForPlayer.find((c) => c.uuid === arg);
                     this.chooseCardToTrigger(player, card);
@@ -180,16 +157,16 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
                 return true;
             }
         });
+    }
 
-        if (timed) {
-            this.game.afterDelay(delay, () => {
-                if (!prompt.isComplete() && !timerStopped) {
-                    prompt.onMenuCommand(player, 'pass');
-                }
-            });
-        }
+    passAndPauseForPhase(player) {
+        player.responsesPausedForPhase = true;
+        this.game.addMessage('{0} is not asked about responses for the rest of the phase', player);
+        this.pass();
+    }
 
-        this.forceWindowPerPlayer[player.name] = false;
+    getPauseForPhaseButton() {
+        return { text: "Don't ask again this phase", arg: 'passAndPauseForPhase' };
     }
 
     getResponseDelayControl(delay) {
@@ -206,24 +183,31 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
                 control.type === 'response-delay' ? { ...control, paused: true } : control
         );
         prompt.properties.additionalButtons = prompt.properties.additionalButtons.filter(
-            (button) => !['stopTimer', 'wait'].includes(button.arg)
+            (button) => button.arg !== 'wait'
         );
     }
 
     getButtons(player, listedCards) {
-        let buttons = listedCards.map((card) => {
-            return { text: `${card.name} (${card.location})`, card: card, mapCard: true };
-        });
+        const buttons = listedCards.map((card) => ({
+            text: `${card.name} (${card.location})`,
+            card: card,
+            mapCard: true
+        }));
 
-        if (this.cancelTimer.isEnabled(player)) {
-            buttons.push({ text: 'I need more time', arg: 'stopTimer', pausesTimer: true });
-            buttons.push({
-                text: "Don't ask again until end of round",
-                arg: 'passAndPauseForRound'
-            });
+        if (this.couldRespondFromHiddenZone(player)) {
+            buttons.push(this.getPauseForPhaseButton());
         }
 
         return buttons;
+    }
+
+    couldRespondFromHiddenZone(player) {
+        return (
+            this.getChoicesFor(player).some((choice) =>
+                HiddenZones.includes(choice.card.location)
+            ) ||
+            this.game.getPossibleResponders().couldRespond(player, this.abilityType, this.event)
+        );
     }
 
     getAdditionalPromptControls(player) {

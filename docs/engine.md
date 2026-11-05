@@ -228,21 +228,21 @@ cancel such as The Hand's Judgment.
   with phantom card instances against the player's gold and visible board.
 - In a triggered window, a player who could respond from a hidden zone but has nothing is shown the
   same window with nothing to choose, and it passes for them after a random 1 to 3 seconds
-  ([TriggeredAbilityWindow.js](../server/game/gamesteps/TriggeredAbilityWindow.js)). They see
-  window's question with a progress bar and Wait and Skip buttons; their opponent sees an ordinary
-  wait. Wait pauses the bar and leaves the window open until they pass. Players using the cancel
-  timer keep the timer prompt. A player who turns off "Hide whether I can respond" in their profile
-  gets no fake waits, so their opponents can tell when they really hold a response.
-- The cancel timer runs on the server: it passes for the player after their profile's window timer
-  unless they choose "I need more time", and shows the same progress bar as the wait above. "I need
-  more time" pauses the bar.
+  ([TriggeredAbilityWindow.js](../server/game/gamesteps/TriggeredAbilityWindow.js)). They see the
+  window's question with a progress bar and Wait and "Don't ask again this phase" buttons; their
+  opponent sees an ordinary wait. Wait pauses the bar and leaves the window open until they pass.
+  A player who really holds a response gets a prompt that never passes for them. A player who turns
+  off "Hide whether I can respond" gets no fake waits, so their opponents can tell when they really
+  hold a response. There is no cancel timer.
 - A choice made before anything is initiated (confirming a card action, choosing how to play a
   card, choosing attackers) leaves the opponent's prompt as it was, so it doesn't reveal which card
   or challenge is being considered
   ([menuprompt.js](../server/game/gamesteps/menuprompt.js) `beforeInitiation`, and the attacker
   prompt in [challengeflow.js](../server/game/gamesteps/challenge/challengeflow.js)).
-- "Don't ask again until end of round" means the player is not offered the windows the cancel
-  timer covers until the next round, even when they hold a legal cancel.
+- "Don't ask again this phase" is offered whenever a window involves a card the player could hold
+  in a hidden zone. Until the next phase they get no fake waits and are not asked about cards in
+  hidden zones, even when they hold a legal response; they are still asked about cards in play or
+  in public piles.
 - A player can always set a window as a stop. That doesn't depend on their hand, so it leaks
   nothing.
 - An action can only be initiated in an action window, on that player's turn in it. Outside manual
