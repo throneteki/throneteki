@@ -1,11 +1,19 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class WinterfellCrypt extends DrawCard {
+    // Winterfell Crypt (02082)
+    // Reaction: After a unique [stark] character you control is killed or sacrificed during the
+    // challenges phase, sacrifice Winterfell Crypt to choose a character with equal or lower
+    // printed STR. At the end of the phase, if that character is still in play, shuffle it back
+    // into its owner's deck.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onSacrificed: (event) => this.triggerCondition(event.cardStateWhenSacrificed),
-                onCharacterKilled: (event) => this.triggerCondition(event.cardStateWhenKilled)
+                onSacrificed: (event, context) =>
+                    context.source.triggerCondition(event.cardStateWhenSacrificed),
+                onCharacterKilled: (event, context) =>
+                    context.source.triggerCondition(event.cardStateWhenKilled)
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
@@ -14,20 +22,27 @@ class WinterfellCrypt extends DrawCard {
                     card.getType() === 'character' &&
                     card.getPrintedStrength() <= context.event.card.getPrintedStrength()
             },
-            handler: (context) => {
-                this.atEndOfPhase((ability) => ({
-                    match: context.target,
-                    condition: () => ['play area', 'duplicate'].includes(context.target.location),
-                    effect: ability.effects.shuffleIntoDeckIfStillInPlay()
-                }));
-
-                this.game.addMessage(
-                    '{0} sacrifices {1} to choose {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} sacrifices {source} to choose {target}',
+            gameAction: GameActions.delayedEffect((context) => {
+                const card = context.target;
+                return {
+                    duration: 'untilTriggered',
+                    title: card.name,
+                    when: { onAtEndOfPhase: () => true },
+                    until: { onCardLeftPlay: (event) => event.card === card },
+                    gameAction: GameActions.ifCondition({
+                        condition: () => ['play area', 'duplicate'].includes(card.location),
+                        thenAction: {
+                            message:
+                                '{player} resolves the delayed effect from {source}: {gameAction}',
+                            gameAction: GameActions.shuffleIntoDeck({
+                                cards: [card],
+                                allowSave: true
+                            })
+                        }
+                    })
+                };
+            })
         });
     }
 

@@ -1,15 +1,19 @@
 import Player from '../../../server/game/player.js';
 import DrawCard from '../../../server/game/drawcard.js';
+import { executeTestEvent, resolveGameAction } from '../../helpers/gameactiontesthelper.js';
 
 describe('Player', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', [
-            'addMessage',
-            'queueSimpleStep',
-            'raiseEvent',
-            'resolveEvent'
-        ]);
-        this.gameSpy.queueSimpleStep.and.callFake((step) => step());
+        this.gameSpy = {
+            addMessage: vi.fn(),
+            queueSimpleStep: vi.fn(),
+            raiseEvent: vi.fn(),
+            resolveEvent: vi.fn((event) => executeTestEvent(event))
+        };
+        this.gameSpy.resolveGameAction = vi.fn((action, props) =>
+            resolveGameAction(this.gameSpy, action, props)
+        );
+        this.gameSpy.queueSimpleStep.mockImplementation((step) => step());
         this.player = new Player('1', { username: 'Player 1', settings: {} }, true, this.gameSpy);
         this.player.deck = {};
         this.player.initialise();
@@ -21,13 +25,13 @@ describe('Player', function () {
         );
         this.attachmentOwner.initialise();
         this.attachment = new DrawCard(this.attachmentOwner, {});
-        spyOn(this.attachment, 'canAttach').and.returnValue(true);
+        vi.spyOn(this.attachment, 'canAttach').mockReturnValue(true);
         this.card = new DrawCard(this.player, {});
         this.card.location = 'play area';
         this.player.cardsInPlay.push(this.card);
         this.player.attach(this.player, this.attachment, this.card);
 
-        this.gameSpy.raiseEvent.and.callFake((name, params, handler) => {
+        this.gameSpy.raiseEvent.mockImplementation((name, params, handler) => {
             if (handler) {
                 handler(params);
             }
@@ -36,13 +40,13 @@ describe('Player', function () {
 
     describe('removeAttachment', function () {
         beforeEach(function () {
-            spyOn(this.attachment, 'leavesPlay');
-            spyOn(this.attachment, 'isTerminal');
+            vi.spyOn(this.attachment, 'leavesPlay').mockImplementation(() => {});
+            vi.spyOn(this.attachment, 'isTerminal').mockImplementation(() => {});
         });
 
         describe('when the attachment is terminal', function () {
             beforeEach(function () {
-                this.attachment.isTerminal.and.returnValue(true);
+                this.attachment.isTerminal.mockReturnValue(true);
                 this.player.removeAttachment(this.attachment);
             });
 
@@ -66,7 +70,7 @@ describe('Player', function () {
 
         describe('when the attachment is not terminal', function () {
             beforeEach(function () {
-                this.attachment.isTerminal.and.returnValue(false);
+                this.attachment.isTerminal.mockReturnValue(false);
                 this.player.removeAttachment(this.attachment);
             });
 

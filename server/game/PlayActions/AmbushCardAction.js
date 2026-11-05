@@ -1,6 +1,8 @@
 import BaseAbility from '../baseability.js';
 import Costs from '../costs.js';
 import Message from '../Message.js';
+import { Requirements } from '../Constants/index.js';
+import PutIntoPlay from '../GameActions/PutIntoPlay.js';
 
 class AmbushCardAction extends BaseAbility {
     constructor() {
@@ -14,14 +16,49 @@ class AmbushCardAction extends BaseAbility {
         return true;
     }
 
-    meetsRequirements(context) {
+    isRelevant({ game, player, source }) {
         return (
-            context.game.currentPhase === 'challenge' &&
-            context.source.isAmbush() &&
-            context.player.isCardInPlayableLocation(context.source, 'ambush') &&
-            context.player.canPutIntoPlay(context.source, 'ambush') &&
-            context.source.getType() !== 'event'
+            game.currentPhase !== 'setup' &&
+            source.getType() !== 'event' &&
+            source.isAmbush() &&
+            player.isCardInPlayableLocation(source, 'ambush')
         );
+    }
+
+    getUnmetRequirement(context) {
+        if (context.game.currentPhase !== 'challenge') {
+            return Requirements.phase;
+        }
+
+        const timingRequirement = context.game.getActionTimingRequirement(context.player);
+        if (timingRequirement) {
+            return timingRequirement;
+        }
+
+        if (!context.source.isAmbush() || context.source.getType() === 'event') {
+            return Requirements.condition;
+        }
+
+        if (!context.player.isCardInPlayableLocation(context.source, 'ambush')) {
+            return Requirements.location;
+        }
+
+        if (!context.player.canPutIntoPlay(context.source, 'ambush')) {
+            return Requirements.restriction;
+        }
+
+        if (
+            context.source.getType() === 'attachment' &&
+            !PutIntoPlay.canChangeGameState({
+                player: context.player,
+                card: context.source,
+                playingType: 'ambush'
+            })
+        ) {
+            return Requirements.target;
+        }
+
+        return undefined;
     }
 
     executeHandler(context) {

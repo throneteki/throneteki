@@ -2,13 +2,18 @@ import ChatCommands from '../../../server/game/chatcommands.js';
 
 describe('ChatCommands', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'addAlert']);
+        this.gameSpy = {
+            addMessage: vi.fn(),
+            addAlert: vi.fn(),
+            manualActions: { record: vi.fn(), addCards: vi.fn() },
+            manualMode: { allows: () => true }
+        };
 
-        this.playerSpy = jasmine.createSpyObj('player', [
-            'drawCardsToHand',
-            'discardAtRandom',
-            'discardFromDraw'
-        ]);
+        this.playerSpy = {
+            drawCardsToHand: vi.fn(),
+            discardAtRandom: vi.fn(),
+            discardFromDraw: vi.fn()
+        };
         this.chatCommands = new ChatCommands(this.gameSpy);
     });
 
@@ -96,14 +101,15 @@ describe('ChatCommands', function () {
 
         describe('with a /power command', function () {
             beforeEach(function () {
-                this.gameSpy.promptForSelect = jasmine.createSpy('promptForSelect');
+                this.gameSpy.promptForSelect = vi.fn();
                 this.card = { power: 2, getType: () => 'character' };
 
                 this.setPower = (args) => {
                     this.chatCommands.executeCommand(this.playerSpy, '/power', args);
-                    this.gameSpy.promptForSelect.calls
-                        .mostRecent()
-                        .args[1].onSelect(this.playerSpy, this.card);
+                    this.gameSpy.promptForSelect.mock.lastCall[1].onSelect(
+                        this.playerSpy,
+                        this.card
+                    );
                 };
             });
 
@@ -119,7 +125,7 @@ describe('ChatCommands', function () {
                 expect(this.card.power).toBe(99);
                 expect(this.gameSpy.addAlert).toHaveBeenCalledWith(
                     'danger',
-                    jasmine.any(String),
+                    expect.any(String),
                     this.playerSpy,
                     this.card,
                     99
@@ -174,7 +180,7 @@ describe('ChatCommands', function () {
 
                     expect(this.playerSpy.discardFromDraw).toHaveBeenCalledWith(
                         1,
-                        jasmine.any(Function)
+                        expect.any(Function)
                     );
                 });
             });

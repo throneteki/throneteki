@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Highgarden extends DrawCard {
+    // Highgarden (01192)
+    // Challenges Action: Kneel Highgarden and pay 1 gold to choose an attacking character. Stand
+    // that character and remove it from the challenge.
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove character from challenge',
@@ -12,16 +16,12 @@ class Highgarden extends DrawCard {
                     card.location === 'play area' &&
                     card.isAttacking()
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.currentChallenge.removeFromChallenge(context.target);
-                this.game.addMessage(
-                    '{0} kneels {1} and pays 1 gold to stand and remove {2} from the challenge',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} kneels {source} and pays 1 gold to stand and remove {target} from the challenge',
+            gameAction: GameActions.simultaneously([
+                GameActions.standCard((context) => ({ card: context.target })),
+                GameActions.removeFromChallenge((context) => ({ card: context.target }))
+            ])
         });
     }
 }

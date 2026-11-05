@@ -1,15 +1,20 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Melisandre extends DrawCard {
+    // Melisandre (01047)
+    // Reaction: After you marshal or play a R'hllor card, choose and kneel a character. (Limit once
+    // per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
+                onCardEntersPlay: (event, context) =>
                     event.playingType === 'marshal' &&
-                    event.card.controller === this.controller &&
+                    event.card.controller === context.source.controller &&
                     event.card.hasTrait("R'hllor"),
-                onCardPlayed: (event) =>
-                    event.card.controller === this.controller && event.card.hasTrait("R'hllor")
+                onCardPlayed: (event, context) =>
+                    event.card.controller === context.source.controller &&
+                    event.card.hasTrait("R'hllor")
             },
             limit: ability.limit.perRound(1),
             target: {
@@ -19,16 +24,8 @@ class Melisandre extends DrawCard {
                     !card.kneeled,
                 gameAction: 'kneel'
             },
-            handler: (context) => {
-                this.controller.kneelCard(context.target);
-
-                this.game.addMessage(
-                    '{0} uses {1} to kneel {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to kneel {target}',
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target }))
         });
     }
 }

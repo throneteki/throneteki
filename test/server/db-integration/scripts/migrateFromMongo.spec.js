@@ -327,7 +327,7 @@ describe('copyFromMongo', function () {
         const deck = await this.deckService.getById(objectId(60));
 
         expect(deck).toEqual(
-            jasmine.objectContaining({
+            expect.objectContaining({
                 username: 'Stark',
                 agenda: '01027',
                 plotCards: [{ cardcode: '01001', count: 1 }],
@@ -364,7 +364,7 @@ describe('copyFromMongo', function () {
 
         expect(game.winner).toBe('Stark');
         expect(game.players[0]).toEqual(
-            jasmine.objectContaining({ name: 'Stark', agenda: 'Fealty', power: 15 })
+            expect.objectContaining({ name: 'Stark', agenda: 'Fealty', power: 15 })
         );
         expect(game.players[1].agendas).toEqual(['Banner of the Lion']);
         expect(this.report.games.skipped['game id is already used by an earlier game'].count).toBe(

@@ -1,43 +1,40 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ForTheNorth extends DrawCard {
-    setupCardAbilities() {
+    // For the North! (01157)
+    // Play only during a [military] challenge.
+    // Action: Choose a participating [stark] character. Until the end of the challenge, that
+    // character gets +2 STR. If you win the challenge, draw 1 card.
+    setupCardAbilities(ability) {
         this.action({
             title: 'Give +2 STR to character',
-            condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),
+            condition: (context) => context.game.isDuringChallenge({ challengeType: 'military' }),
             target: {
                 cardCondition: (card) => card.isParticipating() && card.isFaction('stark')
             },
-            handler: (context) => {
-                this.selectedCard = context.target;
-                this.untilEndOfChallenge((ability) => ({
+            message:
+                '{player} plays {source} to give +2 STR to {target} until the end of the challenge',
+            gameAction: GameActions.simultaneously([
+                GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfChallenge',
                     match: context.target,
                     effect: ability.effects.modifyStrength(2)
-                }));
-                this.game.once('afterChallenge', this.afterChallenge.bind(this));
-
-                this.game.addMessage(
-                    '{0} plays {1} to give +2 STR to {2} until the end of the challenge',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+                })),
+                GameActions.delayedEffect({
+                    duration: 'untilEndOfChallenge',
+                    when: {
+                        afterChallenge: (event, context) =>
+                            event.challenge.winner === context.player
+                    },
+                    message: '{player} draws 1 card for {source}',
+                    gameAction: GameActions.drawCards((context) => ({
+                        player: context.player,
+                        amount: 1
+                    }))
+                })
+            ])
         });
-    }
-
-    afterChallenge(event) {
-        if (!this.selectedCard) {
-            return;
-        }
-
-        if (event.challenge.winner === this.controller && this.controller.canDraw()) {
-            this.controller.drawCardsToHand(1);
-
-            this.game.addMessage('{0} draws 1 card because of {1}', this.controller, this);
-        }
-
-        this.selectedCard = undefined;
     }
 }
 

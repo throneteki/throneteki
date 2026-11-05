@@ -2,15 +2,19 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TheRedFork extends DrawCard {
+    // The Red Fork (25058)
+    // Reaction: After you win a [military] challenge by 5 or more STR, put The Red Fork into play
+    // from your discard pile.
+    // +2 Initiative.
     setupCardAbilities() {
         this.plotModifiers({
             initiative: 2
         });
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.isMatch({
-                        winner: this.controller,
+                        winner: context.source.controller,
                         by5: true,
                         challengeType: 'military'
                     })

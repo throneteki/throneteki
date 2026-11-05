@@ -1,27 +1,12 @@
 import GameAction from './GameAction.js';
-import HandlerGameActionWrapper from './HandlerGameActionWrapper.js';
+import AcknowledgeRevealedCards from './AcknowledgeRevealedCards.js';
 import AbilityMessage from '../AbilityMessage.js';
-import AcknowledgeRevealCardsPrompt from '../gamesteps/AcknowledgeRevealCardsPrompt.js';
 import Message from '../Message.js';
 
 class RevealCards extends GameAction {
     constructor() {
         super('revealCards');
-        this.defaultWhileRevealed = new HandlerGameActionWrapper({
-            handler: (context) => {
-                if (context.revealed.length > 0) {
-                    // TODO: Replace the below with a separate Card Reveal UI (and don't show the cards in their respective locations). This would clean up effects which simply reveal a single card.
-                    context.game.queueStep(
-                        new AcknowledgeRevealCardsPrompt(
-                            context.game,
-                            context.revealed,
-                            context.revealingPlayer,
-                            context.source
-                        )
-                    );
-                }
-            }
-        });
+        this.defaultWhileRevealed = AcknowledgeRevealedCards;
     }
 
     message({ player, cards, context }) {
@@ -86,8 +71,8 @@ class RevealCards extends GameAction {
             const revealing = visible.filter((card) => !this.isImmune({ card, context }));
 
             // Make all valid targets visible + highlighted before actual reveal for cards with 'onCardRevealed' interrupts (eg. Alla Tyrell, Sweetrobin, etc.)
-            context.preRevealFunc = (card) => visible.includes(card);
-            context.game.cardVisibility.addRule(context.preRevealFunc);
+            const preRevealRule = (card) => visible.includes(card);
+            context.game.cardVisibility.addRule(preRevealRule);
             this.highlightCards(visible, context);
 
             // TODO: Maybe remove these messages entirely, and ensure that reveal messages is only handled by the message function (eg. '{player} {gameAction}').
@@ -104,7 +89,8 @@ class RevealCards extends GameAction {
                 abilityMessage.output(context.game, context);
             }
 
-            context.revealed = [];
+            const revealed = [];
+            context.revealed = revealed;
             for (const card of revealing) {
                 const revealEventParams = {
                     card,
@@ -115,22 +101,22 @@ class RevealCards extends GameAction {
 
                 event.thenAttachEvent(
                     this.event('onCardRevealed', revealEventParams, (event) => {
-                        context.revealed.push(event.card);
+                        revealed.push(event.card);
                     })
                 );
             }
+
+            const revealRule = (card) => revealed.includes(card);
 
             // Clear all pre-reveals, and re-reveal actually revealed cards.
             // Eg. A triggered "Alla Tyrell" will be pre-revealed, but not re-revealed
             const visibleEvent = this.event('__PLACEHOLDER_EVENT__', {}, () => {
                 // Disable pre-reveals
-                context.game.cardVisibility.removeRule(context.preRevealFunc);
-                delete context.preRevealFunc;
+                context.game.cardVisibility.removeRule(preRevealRule);
 
                 // Enable actually revealed
-                context.revealFunc = (card) => context.revealed.includes(card);
-                context.game.cardVisibility.addRule(context.revealFunc);
-                this.highlightCards(context.revealed, context);
+                context.game.cardVisibility.addRule(revealRule);
+                this.highlightCards(revealed, context);
             });
             event.thenAttachEvent(visibleEvent);
 
@@ -144,9 +130,8 @@ class RevealCards extends GameAction {
             // Finally, clear all regularly revealed cards
             visibleEvent.thenExecute(() => {
                 context.game.queueSimpleStep(() => {
-                    context.game.cardVisibility.removeRule(context.revealFunc);
+                    context.game.cardVisibility.removeRule(revealRule);
                     this.clearHighlightedCards(context);
-                    delete context.revealFunc;
                 });
             });
         });

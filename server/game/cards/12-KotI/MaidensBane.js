@@ -1,11 +1,15 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MaidensBane extends DrawCard {
+    // Maiden's Bane (12019)
+    // Reaction: After you win an unopposed challenge, kneel Maiden's Bane to choose and stand an
+    // attacking character. Then, if that character is a Captain, stand Maiden's Bane.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.isMatch({ winner: this.controller, unopposed: true })
+                afterChallenge: (event, context) =>
+                    event.challenge.isMatch({ winner: context.player, unopposed: true })
             },
             cost: ability.costs.kneelSelf(),
             target: {
@@ -17,14 +21,13 @@ class MaidensBane extends DrawCard {
                 gameAction: 'stand'
             },
             message: '{player} kneels {source} to stand {target}',
-            handler: (context) => {
-                context.player.standCard(context.target);
-
-                if (context.target.hasTrait('Captain')) {
-                    this.game.addMessage('Then {0} stands {1}', context.player, this);
-                    context.player.standCard(this);
-                }
-            }
+            gameAction: GameActions.standCard((context) => ({ card: context.target })).then(
+                (context) => ({
+                    condition: () => context.target.hasTrait('Captain'),
+                    message: '{player} then stands {source}',
+                    gameAction: GameActions.standCard((context) => ({ card: context.source }))
+                })
+            )
         });
     }
 }

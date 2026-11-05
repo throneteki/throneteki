@@ -1,6 +1,12 @@
 import TitleCard from '../../TitleCard.js';
 
 class MasterOfLaws extends TitleCard {
+    // Master of Laws (01210)
+    // Supported by Hand of the King
+    // Supports: Master of Coin
+    // Rivals: Master of Whispers, Master of Ships
+    // Increase the number of cards you draw in the draw phase by 1.
+    // +1 Reserve.
     setupCardAbilities(ability) {
         this.supports('Master of Coin');
         this.rivals('Master of Whispers', 'Master of Ships');

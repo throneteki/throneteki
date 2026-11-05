@@ -1,9 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class CerseisAttendant extends DrawCard {
+    // Cersei's Attendant (06049)
+    // While Cersei's Attendant is participating in a challenge against an opponent with no cards in
+    // his or her hand, Cersei's Attendant gains insight.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.opponentHasNoCardsInHand(),
+            condition: (context) => context.source.opponentHasNoCardsInHand(),
             match: this,
             effect: ability.effects.addKeyword('insight')
         });

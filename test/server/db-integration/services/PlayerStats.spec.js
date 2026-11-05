@@ -206,7 +206,7 @@ describe('Player stats', function () {
 
             const stats = await this.statsService.getMonth(this.ned._id, '2026-10', new Date());
             expect(stats.decks).toEqual([
-                jasmine.objectContaining({ name: "Ned's deck", games: 3, wins: 2 })
+                expect.objectContaining({ name: "Ned's deck", games: 3, wins: 2 })
             ]);
         });
 
@@ -258,7 +258,7 @@ describe('Player stats', function () {
             }
 
             this.wrappedService = new WrappedService();
-            this.emailService = { sendEmail: jasmine.createSpy('sendEmail').and.resolveTo(true) };
+            this.emailService = { sendEmail: vi.fn().mockResolvedValue(true) };
             this.wrappedEmailService = new WrappedEmailService(config, this.emailService);
         });
 
@@ -274,7 +274,7 @@ describe('Player stats', function () {
 
             const result = await this.wrappedService.generate({ year: 2026, to: '2026-12-15' });
 
-            expect(result).toEqual(jasmine.objectContaining({ eligible: 2, saved: 2, failed: 0 }));
+            expect(result).toEqual(expect.objectContaining({ eligible: 2, saved: 2, failed: 0 }));
 
             const { wrapped } = await this.wrappedService.getForUser(this.ned._id, 2026);
             expect(wrapped.games).toBe(13);
@@ -334,12 +334,12 @@ describe('Player stats', function () {
             expect(await this.wrappedEmailService.unsubscribe(cersei._id, 'wrong')).toBe(false);
 
             const first = await this.wrappedEmailService.send({ year: 2026, perSecond: 1000 });
-            expect(first).toEqual(jasmine.objectContaining({ recipients: 1, sent: 1, failed: 0 }));
+            expect(first).toEqual(expect.objectContaining({ recipients: 1, sent: 1, failed: 0 }));
             expect(this.emailService.sendEmail).toHaveBeenCalledWith(
                 'ned@example.test',
                 'Your 2026 page in the White Book is ready',
-                jasmine.any(String),
-                jasmine.objectContaining({ html: jasmine.any(String) })
+                expect.any(String),
+                expect.objectContaining({ html: expect.any(String) })
             );
 
             await this.wrappedService.generate({ year: 2026, to: '2026-12-31' });

@@ -1,70 +1,56 @@
 describe('Obella Sand', function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck1 = this.buildDeck('martell', [
-                'A Noble Cause',
-                'Obella Sand',
-                'Obella Sand'
-            ]);
-            const deck2 = this.buildDeck('martell', ['A Noble Cause', 'House Dayne Knight']);
-
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck2);
-            this.startGame();
-            this.keepStartingHands();
-
-            [this.obella1, this.obella2] = this.player1.filterCardsByName('Obella Sand', 'hand');
-            this.opponentCharacter = this.player2.findCardByName('House Dayne Knight', 'hand');
-
-            this.player1.clickCard(this.obella1);
-            this.player2.clickCard(this.opponentCharacter);
-
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player2);
-
-            this.completeMarshalPhase();
-
-            this.player2Object.faction.modifyPower(1);
+    function setup(context, obella) {
+        context.setupTest({
+            phase: 'challenge',
+            player1: { faction: 'martell', [obella]: ['Obella Sand'] },
+            player2: {
+                faction: 'martell',
+                inPlay: ['House Dayne Knight'],
+                power: 1
+            }
         });
+        context.player1.clickPrompt('Done');
+    }
 
-        describe('when killed by military claim', function () {
-            beforeEach(function () {
-                this.unopposedChallenge(this.player2, 'Military', 'House Dayne Knight');
-                this.player2.clickPrompt('Apply Claim');
+    it('moves 1 power from the winning opponent and shuffles itself into your deck after being killed for military claim', function () {
+        setup(this, 'inPlay');
+        this.unopposedChallenge(this.player2, 'Military', this.houseDayneKnight);
+        this.player1.clickCard(this.obellaSand);
+        this.player1.triggerAbility('Obella Sand');
+        expect(this.obellaSand.location).toBe('draw deck');
+        expect(this.player1Object.faction.power).toBe(1);
+        expect(this.player2Object.faction.power).toBe(1);
+    });
 
-                this.player1.clickCard(this.obella1);
+    it('moves 1 power from the winning opponent and shuffles itself into your deck after being discarded for intrigue claim', function () {
+        setup(this, 'hand');
+        this.unopposedChallenge(this.player2, 'Intrigue', this.houseDayneKnight);
+        this.player1.triggerAbility('Obella Sand');
+        expect(this.obellaSand.location).toBe('draw deck');
+        expect(this.player1Object.faction.power).toBe(1);
+        expect(this.player2Object.faction.power).toBe(1);
+    });
+});
 
-                this.player1.triggerAbility('Obella Sand');
-            });
-
-            it('should shuffle Obella back into the deck', function () {
-                expect(this.player1Object.drawDeck).toContain(this.obella1);
-            });
-
-            it('should move 1 power', function () {
-                expect(this.player1Object.faction.power).toBe(1);
-                expect(this.player2Object.faction.power).toBe(1); // 1 initial + 1 unopposed - 1 stolen
-            });
+describe('Obella Sand killed for claim satisfied after the challenges', function () {
+    it("moves power from the player whose claim it was (Maester Aemon's controller)", function () {
+        this.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player2',
+            player1: { power: 2, inPlay: ['Maester Aemon (WotW)'] },
+            player2: { faction: 'martell', inPlay: ['Obella Sand'] }
         });
+        this.player2.clickPrompt('Done');
+        this.player1.clickPrompt('Done');
+        this.player1.triggerAbility('Maester Aemon');
+        this.player1.clickPrompt('Military');
+        this.player2.clickCard(this.obellaSand);
+        this.player2.triggerAbility(this.obellaSand);
 
-        describe('when discarded by intrigue claim', function () {
-            beforeEach(function () {
-                this.unopposedChallenge(this.player2, 'Intrigue', 'House Dayne Knight');
-                this.player2.clickPrompt('Apply Claim');
-
-                // This should be a prompt for Obella2, who was in hand
-                this.player1.triggerAbility('Obella Sand');
-            });
-
-            it('should shuffle Obella back into the deck', function () {
-                expect(this.player1Object.drawDeck).toContain(this.obella2);
-            });
-
-            it('should move 1 power', function () {
-                expect(this.player1Object.faction.power).toBe(1);
-                expect(this.player2Object.faction.power).toBe(1); // 1 initial + 1 unopposed - 1 stolen
-            });
-        });
+        expect(this.game.getPlainTextLog()).toContain(
+            'player2 uses Obella Sand and moves 1 power from House Stark to House Martell'
+        );
+        expect(this.player2Object.faction.power).toBe(1);
+        expect(this.obellaSand.location).toBe('draw deck');
     });
 });

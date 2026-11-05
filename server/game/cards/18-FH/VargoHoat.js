@@ -4,33 +4,30 @@ import { Tokens } from '../../Constants/index.js';
 import { flatten } from '../../../Array.js';
 
 class VargoHoat extends DrawCard {
+    // Vargo Hoat (18017)
+    // Bestow (2).
+    // Reaction: After a card with bestow enters play, it gains 1 gold. (Limit twice per phase.)
+    // Action: Move 1 gold from Vargo Hoat to a character with 2 or less gold. Until the end of the
+    // phase, Vargo Hoat gains that character's keywords.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
                 onCardEntersPlay: (event) =>
                     event.card.getType() !== 'plot' && event.card.isBestow()
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.placeToken((context) => ({
-                        card: context.event.card,
-                        token: Tokens.gold
-                    })),
-                    context
-                );
-                this.game.addMessage(
-                    '{0} uses {1} to have {2} gain 1 gold',
-                    this.controller,
-                    this,
-                    context.event.card
-                );
+            message: {
+                format: '{player} uses {source} to have {card} gain 1 gold',
+                args: { card: (context) => context.event.card }
             },
+            gameAction: GameActions.placeToken((context) => ({
+                card: context.event.card,
+                token: Tokens.gold
+            })),
             limit: ability.limit.perPhase(2)
         });
-
         this.action({
             title: 'Move 1 gold to character',
-            condition: () => this.hasToken(Tokens.gold),
+            condition: (context) => context.source.hasToken(Tokens.gold),
             target: {
                 type: 'select',
                 cardCondition: (card) =>
@@ -38,28 +35,25 @@ class VargoHoat extends DrawCard {
                     card.getType() === 'character' &&
                     (!card.hasToken(Tokens.gold) || card.tokens[Tokens.gold] < 3)
             },
-            handler: (context) => {
-                this.game.transferGold({ from: this, to: context.target, amount: 1 });
-                //adding the untilEndOfPhase effect in a step after the resolution of this handler function
-                //to work around timing issues in case the transfer of gold leads to the target gaining a keyword
-                //(for example Golden Company)
-                this.game.queueSimpleStep(() => {
-                    this.untilEndOfPhase((ability) => ({
-                        match: this,
-                        effect: flatten(
-                            context.target
-                                .getKeywords()
-                                .map((keyword) => ability.effects.addKeyword(keyword))
-                        )
-                    }));
-                });
-                this.game.addMessage(
-                    "{0} uses {1} to move 1 gold from {1} to {2} to have {1} gain {2}'s keywords",
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                "{player} uses {source} to move 1 gold from {source} to {target} to have {source} gain {target}'s keywords",
+            gameAction: GameActions.transferGold((context) => ({
+                from: context.source,
+                to: context.target,
+                amount: 1
+            })).then({
+                // The keywords are read once the gold has moved, as gold can give the target a
+                // keyword (for example Golden Company)
+                gameAction: GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfPhase',
+                    match: context.source,
+                    effect: flatten(
+                        context.parentContext.target
+                            .getKeywords()
+                            .map((keyword) => ability.effects.addKeyword(keyword))
+                    )
+                }))
+            })
         });
     }
 }

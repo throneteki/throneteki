@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Ice extends DrawCard {
+    // Ice (01153)
+    // [stark] character only.
+    // Attached character gets +2 STR.
+    // Reaction: After you win a [military] challenge in which attached character is participating,
+    // sacrifice Ice to choose and kill a character controlled by the losing opponent.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'stark' });
         this.whileAttached({
@@ -8,28 +14,21 @@ class Ice extends DrawCard {
         });
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
                     event.challenge.challengeType === 'military' &&
-                    event.challenge.isParticipating(this.parent)
+                    event.challenge.isParticipating(context.source.parent)
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
-                    card.controller === this.game.currentChallenge.loser &&
+                    card.controller === context.event.challenge.loser &&
                     card.getType() === 'character',
                 gameAction: 'kill'
             },
-            handler: (context) => {
-                context.target.owner.killCharacter(context.target);
-                this.game.addMessage(
-                    '{0} sacrifices {1} to kill {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} sacrifices {source} to kill {target}',
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 }

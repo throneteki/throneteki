@@ -1,22 +1,48 @@
 import BaseAbility from '../baseability.js';
-import Costs from '../costs.js';
+import { Requirements } from '../Constants/index.js';
 
 class SetupCardAction extends BaseAbility {
     constructor() {
         super({
-            abilitySourceType: 'game',
-            cost: [Costs.payPrintedGoldCost(), Costs.playLimited()]
+            abilitySourceType: 'game'
         });
         this.title = 'Setup';
     }
 
-    meetsRequirements(context) {
+    isRelevant({ game, player, source }) {
         return (
-            context.player.readyToStart &&
-            context.game.currentPhase === 'setup' &&
-            context.player.hand.includes(context.source) &&
-            context.source.getType() !== 'event'
+            game.currentPhase === 'setup' &&
+            source.getType() !== 'event' &&
+            player.hand.includes(source)
         );
+    }
+
+    getUnmetRequirement(context) {
+        if (context.game.currentPhase !== 'setup') {
+            return Requirements.phase;
+        }
+
+        if (!context.player.readyToStart || context.player.setup) {
+            return Requirements.player;
+        }
+
+        if (context.source.getType() === 'event') {
+            return Requirements.condition;
+        }
+
+        if (!context.player.hand.includes(context.source)) {
+            return Requirements.location;
+        }
+
+        const placement = context.player.getSetupPlacement({ inPlay: [context.source] });
+        if (
+            placement.cost > context.player.setupGold ||
+            placement.limited > context.player.maxLimited
+        ) {
+            return Requirements.cost;
+        }
+
+        return undefined;
     }
 
     executeHandler(context) {

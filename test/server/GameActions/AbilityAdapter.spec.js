@@ -2,7 +2,7 @@ import AbilityAdapter from '../../../server/game/GameActions/AbilityAdapter.js';
 
 describe('AbilityAdapter', function () {
     beforeEach(function () {
-        this.internalActionSpy = jasmine.createSpyObj('action', ['allow', 'createEvent']);
+        this.internalActionSpy = { allow: vi.fn(), createEvent: vi.fn() };
         this.context = { props: 'external' };
     });
 
@@ -17,7 +17,7 @@ describe('AbilityAdapter', function () {
                 this.adapter.allow(this.context);
 
                 expect(this.internalActionSpy.allow).toHaveBeenCalledWith(
-                    jasmine.objectContaining({
+                    expect.objectContaining({
                         props: 'internal',
                         context: this.context
                     })
@@ -25,7 +25,7 @@ describe('AbilityAdapter', function () {
             });
 
             it('should return the value of the internal allow call', function () {
-                this.internalActionSpy.allow.and.returnValue('INTERNAL ALLOW VALUE');
+                this.internalActionSpy.allow.mockReturnValue('INTERNAL ALLOW VALUE');
 
                 expect(this.adapter.allow(this.context)).toBe('INTERNAL ALLOW VALUE');
             });
@@ -36,7 +36,7 @@ describe('AbilityAdapter', function () {
                 this.adapter.createEvent(this.context);
 
                 expect(this.internalActionSpy.createEvent).toHaveBeenCalledWith(
-                    jasmine.objectContaining({
+                    expect.objectContaining({
                         props: 'internal',
                         context: this.context
                     })
@@ -44,14 +44,14 @@ describe('AbilityAdapter', function () {
             });
 
             it('should return the value of the internal createEvent call', function () {
-                this.internalActionSpy.createEvent.and.returnValue('INTERNAL CREATE EVENT');
+                this.internalActionSpy.createEvent.mockReturnValue('INTERNAL CREATE EVENT');
 
                 expect(this.adapter.createEvent(this.context)).toBe('INTERNAL CREATE EVENT');
             });
 
             it('adds each post-execution handler to the created event', function () {
-                const eventSpy = jasmine.createSpyObj('event', ['thenExecute']);
-                this.internalActionSpy.createEvent.and.returnValue(eventSpy);
+                const eventSpy = { thenExecute: vi.fn() };
+                this.internalActionSpy.createEvent.mockReturnValue(eventSpy);
 
                 this.adapter.thenExecute('my-func1').thenExecute('my-func2');
                 this.adapter.createEvent(this.context);
@@ -77,8 +77,8 @@ describe('AbilityAdapter', function () {
     describe('when passed a properties factory method', function () {
         beforeEach(function () {
             this.transformedProperties = { props: 'transformed' };
-            this.propertyFactory = jasmine.createSpy('propertyFactory');
-            this.propertyFactory.and.returnValue(this.transformedProperties);
+            this.propertyFactory = vi.fn();
+            this.propertyFactory.mockReturnValue(this.transformedProperties);
             this.adapter = new AbilityAdapter(this.internalActionSpy, this.propertyFactory);
         });
 
@@ -93,7 +93,7 @@ describe('AbilityAdapter', function () {
                 this.adapter.allow(this.context);
 
                 expect(this.internalActionSpy.allow).toHaveBeenCalledWith(
-                    jasmine.objectContaining({
+                    expect.objectContaining({
                         props: 'transformed',
                         context: this.context
                     })
@@ -101,7 +101,7 @@ describe('AbilityAdapter', function () {
             });
 
             it('should return the value of the internal allow call', function () {
-                this.internalActionSpy.allow.and.returnValue('INTERNAL ALLOW VALUE');
+                this.internalActionSpy.allow.mockReturnValue('INTERNAL ALLOW VALUE');
 
                 expect(this.adapter.allow(this.context)).toBe('INTERNAL ALLOW VALUE');
             });
@@ -118,7 +118,7 @@ describe('AbilityAdapter', function () {
                 this.adapter.createEvent(this.context);
 
                 expect(this.internalActionSpy.createEvent).toHaveBeenCalledWith(
-                    jasmine.objectContaining({
+                    expect.objectContaining({
                         props: 'transformed',
                         context: this.context
                     })
@@ -126,7 +126,7 @@ describe('AbilityAdapter', function () {
             });
 
             it('should return the value of the internal createEvent call', function () {
-                this.internalActionSpy.createEvent.and.returnValue('INTERNAL CREATE EVENT');
+                this.internalActionSpy.createEvent.mockReturnValue('INTERNAL CREATE EVENT');
 
                 expect(this.adapter.createEvent(this.context)).toBe('INTERNAL CREATE EVENT');
             });

@@ -1,6 +1,8 @@
 import DrawCard from '../../drawcard.js';
 
 class SelyseBaratheon extends DrawCard {
+    // Selyse Baratheon (14008)
+    // Reduce the cost of each R'hllor attachment you marshal by 3.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',

@@ -35,6 +35,11 @@ class AttachmentValidityCheck {
     }
 
     filterInvalidAttachments() {
+        // Cards set up facedown are checked once they are revealed.
+        if (this.game.currentPhase === 'setup') {
+            return [];
+        }
+
         let attachmentsInPlay = this.game.filterCardsInPlay(
             (card) => card.parent && card.getType() === 'attachment' && !card.isBeingRemoved
         );

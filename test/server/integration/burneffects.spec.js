@@ -168,7 +168,7 @@ describe('burn effects', function () {
                 this.str4 = this.dragon;
 
                 this.player1.clickCard(this.quentyn);
-                this.player2Object.gold = 20;
+                this.player2Object.setupGold = 20;
                 this.player2.clickCard(this.str0);
                 this.player2.clickCard(this.str1);
                 this.player2.clickCard(this.str2);

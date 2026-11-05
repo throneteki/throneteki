@@ -1,66 +1,55 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class DornishRevenge extends DrawCard {
-    setupCardAbilities() {
+    // Dornish Revenge (06096)
+    // Reaction: After you initiate a challenge, choose a character controlled by the defending
+    // player. That character must be declared as a defender for this challenge, if able. If you win
+    // this challenge by 5 or more STR, the losing opponent must choose and kill a defending
+    // character.
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onChallengeInitiated: (event) => event.challenge.attackingPlayer === this.controller
+                onChallengeInitiated: (event, context) =>
+                    event.challenge.attackingPlayer === context.player
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.controller === this.game.currentChallenge.defendingPlayer
+                    card.controller === context.event.challenge.defendingPlayer
             },
-            handler: (context) => {
-                this.untilEndOfChallenge((ability) => ({
+            message:
+                '{player} plays {source} to force {target} to be declared as a defender this challenge, if able',
+            gameAction: GameActions.simultaneously([
+                GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfChallenge',
                     match: context.target,
                     effect: ability.effects.mustBeDeclaredAsDefender()
-                }));
-
-                this.game.addMessage(
-                    '{0} plays {1} to force {2} to be declared as a defender this challenge, if able',
-                    this.controller,
-                    this,
-                    context.target
-                );
-
-                this.game.once('afterChallenge:interrupt', (event) =>
-                    this.resolveIfWinBy5(event.challenge)
-                );
-            }
-        });
-    }
-
-    resolveIfWinBy5(challenge) {
-        if (challenge.winner !== this.controller || challenge.strengthDifference < 5) {
-            return;
-        }
-
-        let opponent = challenge.defendingPlayer;
-
-        this.game.addMessage(
-            '{0} uses {1} to have {2} choose and kill a defending character',
-            this.controller,
-            this,
-            opponent
-        );
-
-        this.game.promptForSelect(opponent, {
-            activePromptTitle: 'Select a character to kill',
-            source: this,
-            cardCondition: (card) =>
-                card.location === 'play area' &&
-                card.getType() === 'character' &&
-                card.controller !== this.controller &&
-                card.isDefending(),
-            gameAction: 'kill',
-            onSelect: (p, card) => {
-                card.controller.killCharacter(card);
-                this.game.addMessage('{0} chooses to kill {1}', opponent, card);
-
-                return true;
-            }
+                })),
+                GameActions.delayedEffect({
+                    duration: 'untilEndOfChallenge',
+                    when: {
+                        afterChallenge: (event, context) =>
+                            event.challenge.winner === context.player &&
+                            event.challenge.strengthDifference >= 5
+                    },
+                    message: {
+                        format: '{player} uses {source} to have {loser} choose and kill a defending character',
+                        args: { loser: (context) => context.event.challenge.loser }
+                    },
+                    gameAction: GameActions.chooseCards({
+                        player: (context) => context.event.challenge.loser,
+                        title: 'Select a character to kill',
+                        cardCondition: (card, context) =>
+                            card.location === 'play area' &&
+                            card.getType() === 'character' &&
+                            card.controller === context.choosingPlayer &&
+                            card.isDefending(),
+                        gameAction: (card) => GameActions.kill({ card })
+                    })
+                })
+            ])
         });
     }
 }

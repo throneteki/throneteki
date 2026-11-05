@@ -1,19 +1,20 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class CrossroadsSellsword extends DrawCard {
+    // Crossroads Sellsword (03029)
+    // Interrupt: When Crossroads Sellsword is killed during the challenges phase, gain 2 gold.
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCharacterKilled: (event) =>
-                    event.card === this &&
-                    this.controller === event.card.controller &&
-                    this.game.currentPhase === 'challenge' &&
-                    this.controller.canGainGold()
+                onCharacterKilled: (event, context) =>
+                    event.card === context.source &&
+                    context.source.controller === event.card.controller &&
+                    context.game.currentPhase === 'challenge' &&
+                    context.source.controller.canGainGold()
             },
-            handler: () => {
-                let gold = this.game.addGold(this.controller, 2);
-                this.game.addMessage('{0} uses {1} to gain {2} gold', this.controller, this, gold);
-            }
+            message: '{player} uses {source} to gain 2 gold',
+            gameAction: GameActions.gainGold((context) => ({ player: context.player, amount: 2 }))
         });
     }
 }

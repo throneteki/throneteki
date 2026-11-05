@@ -1,25 +1,20 @@
 import DrawCard from '../../drawcard.js';
-import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheMander extends DrawCard {
+    // The Mander (01193)
+    // Reaction: After you win a challenge by 5 or more STR, kneel The Mander to draw 2 cards.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.strengthDifference >= 5 &&
-                    this.controller.canDraw()
+                    context.source.controller.canDraw()
             },
             cost: ability.costs.kneelSelf(),
-            handler: () => {
-                let cards = this.controller.drawCardsToHand(2).length;
-                this.game.addMessage(
-                    '{0} kneels {1} to draw {2}',
-                    this.controller,
-                    this,
-                    TextHelper.count(cards, 'card')
-                );
-            }
+            message: '{player} kneels {source} to draw 2 cards',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 2 }))
         });
     }
 }

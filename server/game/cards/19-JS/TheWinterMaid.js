@@ -1,49 +1,41 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheWinterMaid extends DrawCard {
+    // "The Winter Maid" (19012)
+    // Interrupt: When a plot card is revealed, that plot card gains the Winter trait until the end
+    // of the round. If there are no Summer plot cards revealed, return "The Winter Maid" to your
+    // hand instead of placing it in your discard pile. (Max 1 per phase.)
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
                 onPlotsRevealed: () => true
             },
             max: ability.limit.perPhase(1),
-            handler: (context) => {
-                let buttons = context.event.plots.map((plot) => {
-                    return { method: 'plotSelected', card: plot, mapCard: true };
-                });
-
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: 'Select plot',
-                        buttons: buttons
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.simultaneously([
+                GameActions.chooseCards({
+                    title: 'Select plot',
+                    cardCondition: (card, context) => context.event.plots.includes(card),
+                    gameAction: (card) =>
+                        GameActions.lastingEffect(() => ({
+                            duration: 'untilEndOfRound',
+                            match: card,
+                            effect: ability.effects.addTrait('Winter')
+                        }))
+                }),
+                GameActions.ifCondition({
+                    condition: (context) =>
+                        !context.game.anyPlotHasTraitDuringPlotInterrupt('Summer'),
+                    thenAction: {
+                        message:
+                            '{player} returns {source} to their hand instead of their discard pile',
+                        gameAction: GameActions.returnCardToHand((context) => ({
+                            card: context.source
+                        }))
+                    }
+                })
+            ])
         });
-    }
-
-    plotSelected(player, card) {
-        if (this.controller !== player) {
-            return false;
-        }
-
-        this.untilEndOfRound((ability) => ({
-            match: card,
-            effect: ability.effects.addTrait('Winter')
-        }));
-        this.game.addMessage('{0} uses {1} to give the Winter trait to {2}', player, this, card);
-
-        if (!this.game.anyPlotHasTraitDuringPlotInterrupt('Summer')) {
-            this.game.addMessage(
-                '{0} uses {1} to return {1} to their hand instead of their discard pile',
-                player,
-                this
-            );
-            player.moveCard(this, 'hand');
-        }
-
-        return true;
     }
 }
 

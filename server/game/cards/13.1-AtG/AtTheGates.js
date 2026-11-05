@@ -2,6 +2,10 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class AtTheGates extends PlotCard {
+    // At the Gates (13020)
+    // When Revealed: Search your deck for a limited location with printed cost 1 or lower, reveal
+    // it, and add it to your hand (put it into play instead if there are no City plot cards in your
+    // used pile). Shuffle your deck.
     setupCardAbilities() {
         this.whenRevealed({
             message:

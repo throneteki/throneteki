@@ -268,9 +268,11 @@ const CardPile = ({
     }
 
     let menu;
-    // If popup is available, that should always be a menu item
-    // Note: If popup is disabled, default Card menu will be used
-    if (!disablePopup) {
+    // A top card with something to do gets a menu that includes the popup toggle; otherwise a click
+    // on it opens the popup. If popup is disabled, the default Card menu is used.
+    const topCardHasAction =
+        topCard?.selectable || topCard?.canPlay || topCard?.menu?.some((item) => !item.disabled);
+    if (!disablePopup && topCardHasAction) {
         menu = [
             {
                 hideable: true,
@@ -283,6 +285,8 @@ const CardPile = ({
         // Note: If CardPiles ever become available in locations where "Select Card" is always an option (such as "play area"), this will need to be permenantly enabled for those cards
         if (topCard?.selectable) {
             menu.push({ hideable: true, command: 'click', text: 'Select Card' });
+        } else if (topCard?.canPlay) {
+            menu.push({ command: 'click', text: 'Use' });
         }
     }
 

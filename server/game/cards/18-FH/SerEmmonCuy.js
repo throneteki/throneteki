@@ -1,31 +1,34 @@
 import DrawCard from '../../drawcard.js';
 import { Tokens } from '../../Constants/index.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerEmmonCuy extends DrawCard {
+    // Ser Emmon Cuy (18016)
+    // Bestow (1).
+    // Reaction: After you initiate a challenge, discard 1 gold from Ser Emmon Cuy to raise the
+    // claim value on your revealed plot card by 1 until the end of the challenge. Then, if he has
+    // no gold, kill him. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onChallengeInitiated: (event) => event.challenge.attackingPlayer === this.controller
+                onChallengeInitiated: (event, context) =>
+                    event.challenge.attackingPlayer === context.player
             },
             limit: ability.limit.perPhase(1),
             cost: ability.costs.discardGold(),
-            handler: () => {
-                this.untilEndOfChallenge((ability) => ({
-                    match: (card) => card === this.controller.activePlot,
+            message:
+                '{player} discards 1 gold from {source} to raise their claim value until the end of the challenge',
+            gameAction: GameActions.simultaneously([
+                GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfChallenge',
+                    match: (card) => card === context.player.activePlot,
                     effect: ability.effects.modifyClaim(1)
-                }));
-
-                this.game.addMessage(
-                    '{0} discards 1 gold from {1} to raise their claim value until the end of the challenge',
-                    this.controller,
-                    this
-                );
-
-                if (this.canBeKilled() && !this.hasToken(Tokens.gold)) {
-                    this.game.killCharacter(this);
-                    this.game.addMessage('{0} then kills {1}', this.controller, this);
-                }
-            }
+                }))
+            ]).then({
+                condition: (context) => !context.source.hasToken(Tokens.gold),
+                message: 'Then {player} kills {source}',
+                gameAction: GameActions.kill((context) => ({ card: context.source }))
+            })
         });
     }
 }

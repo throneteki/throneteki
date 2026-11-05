@@ -1,25 +1,22 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BendTheKnee extends DrawCard {
+    // Bend the Knee (09026)
+    // Play only if you control a standing King character.
+    // Action: Choose and kneel a Lord or Lady character.
     setupCardAbilities() {
         this.action({
             title: 'Kneel Lord or Lady',
-            condition: () => this.hasStandingKingCharacter(),
+            condition: (context) => context.source.hasStandingKingCharacter(),
             target: {
                 cardCondition: (card) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
                     (card.hasTrait('Lord') || card.hasTrait('Lady'))
             },
-            handler: (context) => {
-                context.target.controller.kneelCard(context.target);
-                this.game.addMessage(
-                    '{0} plays {1} to kneel {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} plays {source} to kneel {target}',
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target }))
         });
     }
 

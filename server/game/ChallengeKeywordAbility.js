@@ -1,4 +1,5 @@
 import BaseAbility from './baseability.js';
+import { Requirements } from './Constants/index.js';
 
 class ChallengeKeywordAbility extends BaseAbility {
     constructor(title, properties) {
@@ -22,13 +23,20 @@ class ChallengeKeywordAbility extends BaseAbility {
         return true;
     }
 
-    meetsRequirements(context) {
-        return (
-            context.source.hasKeyword(this.title) &&
-            context.source.allowGameAction(this.title, context) &&
-            this.meetsKeywordRequirements(context) &&
-            this.getTriggerAmount(context) > 0
-        );
+    getUnmetRequirement(context) {
+        if (!context.source.hasKeyword(this.title) || !this.meetsKeywordRequirements(context)) {
+            return Requirements.condition;
+        }
+
+        if (!context.source.allowGameAction(this.title.toLowerCase(), context)) {
+            return Requirements.cannotTrigger;
+        }
+
+        if (this.getTriggerAmount(context) <= 0) {
+            return Requirements.noEffect;
+        }
+
+        return undefined;
     }
 }
 

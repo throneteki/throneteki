@@ -15,6 +15,10 @@ class BaseCardSelector {
      * to be selected.
      * @param {string} properties.gameAction
      * the game action checked for immunity purposes on potential target cards.
+     * @param {Function} properties.gameActionFilter
+     * optional function that takes a potential selection (shaped as the selector's value, so a
+     * card or an array of cards) and the ability context, and returns whether the ability's game
+     * action could change the game state if it were chosen.
      * @param {boolean} properties.singleController
      * indicates that all cards selected must belong to the same controller.
      * @param {boolean} properties.isCardEffect
@@ -28,6 +32,7 @@ class BaseCardSelector {
         );
         this.cardType = properties.cardType;
         this.gameAction = properties.gameAction;
+        this.gameActionFilter = properties.gameActionFilter;
         this.singleController = properties.singleController;
         this.isCardEffect = properties.isCardEffect;
         this.optional = !!properties.optional;
@@ -53,7 +58,9 @@ class BaseCardSelector {
         return (
             this.cardType.includes(card.getType()) &&
             this.cardCondition(card, context) &&
-            this.isAllowedForGameAction(card, context)
+            this.isAllowedForGameAction(card, context) &&
+            (!this.gameActionFilter ||
+                this.gameActionFilter(this.formatSelectParam([card]), context))
         );
     }
 
@@ -149,6 +156,18 @@ class BaseCardSelector {
      */
     hasReachedLimit() {
         return false;
+    }
+
+    /**
+     * Returns whether another card can be added to the currently selected cards without going
+     * over the selector's limit.
+     * @param {BaseCard[]} selectedCards
+     * @param {BaseCard} card
+     * @param {integer} numPlayers
+     * @returns {boolean}
+     */
+    canAddToSelection(selectedCards, card, numPlayers, context) {
+        return !this.hasReachedLimit(selectedCards, numPlayers, context);
     }
 
     /**

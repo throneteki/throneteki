@@ -1,28 +1,36 @@
 import Player from '../../../server/game/player.js';
+import { executeTestEvent, resolveGameAction } from '../../helpers/gameactiontesthelper.js';
 
 describe('Player', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['on', 'raiseEvent']);
+        this.gameSpy = {
+            on: vi.fn(),
+            raiseEvent: vi.fn(),
+            resolveEvent: vi.fn((event) => executeTestEvent(event))
+        };
+        this.gameSpy.resolveGameAction = vi.fn((action, props) =>
+            resolveGameAction(this.gameSpy, action, props)
+        );
 
         this.player = new Player('1', { username: 'Player 1', settings: {} }, true, this.gameSpy);
         this.player.initialise();
 
-        this.selectedPlotSpy = jasmine.createSpyObj('plot', [
-            'createSnapshot',
-            'moveTo',
-            'applyPersistentEffects',
-            'hasFlag'
-        ]);
+        this.selectedPlotSpy = {
+            createSnapshot: vi.fn(),
+            moveTo: vi.fn(),
+            applyPersistentEffects: vi.fn(),
+            hasFlag: vi.fn()
+        };
         this.selectedPlotSpy.uuid = '111';
         this.selectedPlotSpy.location = 'plot deck';
         this.selectedPlotSpy.controller = this.player;
         this.selectedPlotSpy.owner = this.player;
-        this.anotherPlotSpy = jasmine.createSpyObj('plot', [
-            'createSnapshot',
-            'moveTo',
-            'applyPersistentEffects',
-            'hasFlag'
-        ]);
+        this.anotherPlotSpy = {
+            createSnapshot: vi.fn(),
+            moveTo: vi.fn(),
+            applyPersistentEffects: vi.fn(),
+            hasFlag: vi.fn()
+        };
         this.anotherPlotSpy.uuid = '222';
         this.anotherPlotSpy.location = 'plot deck';
         this.anotherPlotSpy.controller = this.player;

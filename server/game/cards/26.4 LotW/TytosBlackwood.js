@@ -1,11 +1,16 @@
 import DrawCard from '../../drawcard.js';
 
 class TytosBlackwood extends DrawCard {
+    // Tytos Blackwood (26071)
+    // Renown.
+    // While Tytos Blackwood is participating in a challenge, treat each other character without
+    // power as if its printed text box were blank (except for Traits).
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'any',
-            condition: () => this.isParticipating(),
-            match: (card) => card.getType() === 'character' && card !== this && card.power === 0,
+            condition: (context) => context.source.isParticipating(),
+            match: (card, context) =>
+                card.getType() === 'character' && card !== context.source && card.power === 0,
             effect: ability.effects.blankExcludingTraits
         });
     }

@@ -1,158 +1,85 @@
 describe('Tywin Lannister (LoCR)', function () {
-    integration(function () {
+    describe('when a single card is discarded from a deck', function () {
         beforeEach(function () {
-            const deck1 = this.buildDeck('lannister', [
-                'Sneak Attack',
-                'Tywin Lannister (LoCR)',
-                'Jojen Reed',
-                'Cersei Lannister (Core)',
-                'Hedge Knight'
-            ]);
-            const deck2 = this.buildDeck('lannister', [
-                'Sneak Attack',
-                'The Tickler',
-                'The Reader (TRtW)',
-                'Cersei Lannister (Core)',
-                'Hedge Knight'
-            ]);
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck2);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.player1.clickCard('Tywin Lannister', 'hand');
-            this.player1.clickCard('Jojen Reed', 'hand');
-            this.player2.clickCard('The Tickler', 'hand');
-            this.player2.clickCard('The Reader', 'hand');
-            this.completeSetup();
-            this.selectFirstPlayer(this.player1);
-
-            // Move remaining cards back to draw deck so we have something to discard
-            for (const card of this.player1Object.hand) {
-                this.player1Object.moveCard(card, 'draw deck');
-            }
-
-            for (const card of this.player2Object.hand) {
-                this.player2Object.moveCard(card, 'draw deck');
-            }
+            this.setupTest({
+                phase: 'challenge',
+                player1: {
+                    faction: 'lannister',
+                    inPlay: ['Tywin Lannister (LoCR)'],
+                    drawDeck: ['Cersei Lannister (Core)', 'Hedge Knight']
+                },
+                player2: { faction: 'lannister', inPlay: ['The Tickler'] }
+            });
+            this.player1.togglePromptedActionWindow('dominance', true);
+            this.player2.togglePromptedActionWindow('dominance', true);
+            this.completeChallengesPhase();
+            this.player1.clickPrompt('Pass');
+            this.player2.clickMenu(this.theTickler, 'Discard opponents top card');
+            this.player1.triggerAbility('Tywin Lannister');
         });
 
-        describe('when a single card discard occurs', function () {
-            beforeEach(function () {
-                this.cersei = this.player1.findCardByName('Cersei Lannister');
-                this.knight = this.player1.findCardByName('Hedge Knight');
-
-                this.player1.togglePromptedActionWindow('dominance', true);
-
-                this.completeMarshalPhase();
-                this.completeChallengesPhase();
-                this.player2.clickMenu('The Tickler', 'Discard opponents top card');
-            });
-
-            it('should allow Tywin to choose to trigger', function () {
-                this.player1.triggerAbility('Tywin Lannister');
-                this.player1.clickPrompt('Hedge Knight');
-                expect(this.cersei.location).toBe('draw deck');
-                expect(this.knight.location).toBe('discard pile');
-            });
+        it('instead looks at the top 2 cards of that deck and discards 1', function () {
+            expect(this.player1).toBeAbleToSelect(this.cerseiLannister);
+            expect(this.player1).toBeAbleToSelect(this.hedgeKnight);
+            this.player1.clickCard(this.hedgeKnight);
+            expect(this.cerseiLannister.location).toBe('draw deck');
+            expect(this.hedgeKnight.location).toBe('discard pile');
         });
 
-        describe('when a multiple card discard occurs', function () {
-            beforeEach(function () {
-                this.cersei = this.player1.findCardByName('Cersei Lannister');
-                this.knight = this.player1.findCardByName('Hedge Knight');
-
-                this.completeMarshalPhase();
-
-                // Challenge prompt for Player 1
-                this.player1.clickPrompt('Done');
-
-                // Challenge prompt for Player 2
-                this.player2.clickPrompt('Power');
-                this.player2.clickCard('The Reader', 'play area');
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
-
-                // Player 1 does not oppose
-                this.player1.clickPrompt('Done');
-
-                this.skipActionWindow();
-
-                // Trigger The Reader
-                this.player2.triggerAbility('The Reader');
-                this.player2.clickPrompt('Discard 3 cards');
-            });
-
-            it('should not allow Tywin to choose to trigger', function () {
-                expect(this.player1).not.toAllowAbilityTrigger('Tywin Lannister');
-            });
+        it('can discard the original card', function () {
+            this.player1.clickCard(this.cerseiLannister);
+            expect(this.cerseiLannister.location).toBe('discard pile');
+            expect(this.hedgeKnight.location).toBe('draw deck');
         });
+    });
 
-        describe('when 1 card is discarded from multiple decks simultaneously', function () {
-            beforeEach(function () {
-                this.cerseiP1 = this.player1.findCardByName('Cersei Lannister');
-                this.knightP1 = this.player1.findCardByName('Hedge Knight');
-                this.cerseiP2 = this.player2.findCardByName('Cersei Lannister');
-                this.knightP2 = this.player2.findCardByName('Hedge Knight');
-
-                this.completeMarshalPhase();
-
-                // Kneel & Stand Jojen to trigger his ability
-                this.player1.clickCard('Jojen Reed', 'play area');
-                this.player1.clickCard('Jojen Reed', 'play area');
-                this.player1.triggerAbility('Jojen Reed');
-
-                // Choose to discard cards
-                this.player1.clickPrompt('Discard revealed cards');
-            });
-
-            it('should allow Tywin to trigger for each players discard', function () {
-                // Trigger on player1's discard
-                this.player1.triggerAbility('Tywin Lannister');
-                // Need to choose which discard you want to trigger on first, since this is simultaneous
-                this.player1.clickCard(this.player1Object.drawDeck[0]);
-                this.player1.clickPrompt('Hedge Knight');
-
-                // Trigger on player2's discard
-                this.player1.triggerAbility('Tywin Lannister');
-                this.player1.clickPrompt('Hedge Knight');
-
-                expect(this.cerseiP1.location).toBe('draw deck');
-                expect(this.knightP1.location).toBe('discard pile');
-                expect(this.cerseiP2.location).toBe('draw deck');
-                expect(this.knightP2.location).toBe('discard pile');
-            });
+    it('does not trigger when more than 1 card is discarded from a deck', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { faction: 'lannister', inPlay: ['Tywin Lannister (LoCR)'] },
+            player2: { faction: 'greyjoy', inPlay: ['The Reader (TRtW)'] }
         });
+        this.player1.clickPrompt('Done');
+        this.unopposedChallenge(this.player2, 'Power', this.theReader);
+        this.player2.triggerAbility('The Reader');
+        this.player2.clickPrompt('Discard 3 cards');
+        expect(this.player1).not.toAllowAbilityTrigger('Tywin Lannister');
+    });
 
-        describe('when pillage occurs', function () {
-            beforeEach(function () {
-                this.cersei = this.player2.findCardByName('Cersei Lannister');
-                this.knight = this.player2.findCardByName('Hedge Knight');
-
-                this.completeMarshalPhase();
-
-                // Challenge prompt for Player 1
-                this.player1.clickPrompt('Power');
-                this.player1.clickCard('Tywin Lannister', 'play area');
-                this.player1.clickPrompt('Done');
-
-                this.skipActionWindow();
-
-                // Player 2 does not oppose
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
-
-                this.player1.clickPrompt('Apply Claim');
-            });
-
-            it('should allow Tywin to choose to trigger', function () {
-                this.player1.triggerAbility('Tywin Lannister');
-                this.player1.clickPrompt('Hedge Knight');
-                expect(this.cersei.location).toBe('draw deck');
-                expect(this.knight.location).toBe('discard pile');
-            });
+    it('triggers for each deck when 1 card is discarded from several decks at once', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                faction: 'lannister',
+                inPlay: ['Tywin Lannister (LoCR)', { card: 'Jojen Reed', kneeling: true }],
+                drawDeck: ['Cersei Lannister (Core)', 'Hedge Knight']
+            },
+            player2: { drawDeck: ['Burned Men', 'Winterfell Steward'] }
         });
+        this.completeChallengesPhase();
+        this.player1.triggerAbility('Jojen Reed');
+        this.player1.clickPrompt('Discard revealed cards');
+        this.player1.triggerAbility('Tywin Lannister');
+        this.player1.clickCard(this.cerseiLannister);
+        this.player1.clickCard(this.hedgeKnight);
+        this.player1.triggerAbility('Tywin Lannister');
+        this.player1.clickCard(this.winterfellSteward);
+        expect(this.cerseiLannister.location).toBe('draw deck');
+        expect(this.hedgeKnight.location).toBe('discard pile');
+        expect(this.burnedMen.location).toBe('draw deck');
+        expect(this.winterfellSteward.location).toBe('discard pile');
+    });
+
+    it('triggers on pillage', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { faction: 'lannister', inPlay: ['Tywin Lannister (LoCR)'] },
+            player2: { drawDeck: ['Cersei Lannister (Core)', 'Hedge Knight'] }
+        });
+        this.unopposedChallenge(this.player1, 'Power', this.tywinLannister);
+        this.player1.triggerAbility('Tywin Lannister');
+        this.player1.clickCard(this.hedgeKnight);
+        expect(this.cerseiLannister.location).toBe('draw deck');
+        expect(this.hedgeKnight.location).toBe('discard pile');
     });
 });

@@ -1,16 +1,17 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LionsOfTheRock extends PlotCard {
+    // Lions of the Rock (05046)
+    // Reaction: After the challenges phase begins, gain 3 gold.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPhaseStarted: (event) =>
-                    event.phase === 'challenge' && this.controller.canGainGold()
+                onPhaseStarted: (event, context) =>
+                    event.phase === 'challenge' && context.source.controller.canGainGold()
             },
-            handler: () => {
-                let gold = this.game.addGold(this.controller, 3);
-                this.game.addMessage('{0} uses {1} to gain {2} gold', this.controller, this, gold);
-            }
+            message: '{player} uses {source} to gain 3 gold',
+            gameAction: GameActions.gainGold((context) => ({ player: context.player, amount: 3 }))
         });
     }
 }

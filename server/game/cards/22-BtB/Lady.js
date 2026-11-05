@@ -1,13 +1,19 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Lady extends DrawCard {
+    // Lady (22017)
+    // No attachments.
+    // Interrupt: When another Direwolf card or Sansa Stark would leave play, kill Lady to save that
+    // card.
     setupCardAbilities(ability) {
-        let leftPlayCondition = (event) =>
+        let leftPlayCondition = (event, context) =>
             event.allowSave &&
             event.card.canBeSaved() &&
-            event.card !== this &&
+            event.card !== context.source &&
             (event.card.hasTrait('Direwolf') || event.card.name === 'Sansa Stark');
         this.interrupt({
+            canCancel: true,
             when: {
                 onCharacterKilled: leftPlayCondition,
                 onCardDiscarded: leftPlayCondition,
@@ -17,15 +23,11 @@ class Lady extends DrawCard {
                 onCardPutIntoShadows: leftPlayCondition
             },
             cost: ability.costs.killSelf(),
-            handler: (context) => {
-                context.event.saveCard();
-                this.game.addMessage(
-                    '{0} kills {1} to save {2}',
-                    context.player,
-                    this,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} kills {source} to save {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 }

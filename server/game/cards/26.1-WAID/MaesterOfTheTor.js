@@ -2,10 +2,14 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MaesterOfTheTor extends DrawCard {
+    // Maester of the Tor (26007)
+    // Shadow (2).
+    // Reaction: After Maester of the Tor comes out of shadows, place the top card of your deck in
+    // shadows.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             message: '{player} uses {source} to place the top card of their deck into shadows',
             gameAction: GameActions.placeCard((context) => ({

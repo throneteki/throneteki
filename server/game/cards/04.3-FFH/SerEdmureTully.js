@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerEdmureTully extends DrawCard {
+    // Ser Edmure Tully (04041)
+    // Reaction: After a character gains power, move 1 power from that character to a House Tully
+    // character. (Limit once per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
@@ -14,16 +18,15 @@ class SerEdmureTully extends DrawCard {
                     card.getType() === 'character' &&
                     card.hasTrait('House Tully')
             },
-            handler: (context) => {
-                this.game.movePower(context.event.card, context.target, 1);
-                this.game.addMessage(
-                    '{0} uses {1} to move 1 power from {2} to {3}',
-                    this.controller,
-                    this,
-                    context.event.card,
-                    context.target
-                );
-            }
+            message: {
+                format: '{player} uses {source} to move 1 power from {card} to {target}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.movePower((context) => ({
+                from: context.event.card,
+                to: context.target,
+                amount: 1
+            }))
         });
     }
 }

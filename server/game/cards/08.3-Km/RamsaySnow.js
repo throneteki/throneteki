@@ -2,10 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class RamsaySnow extends DrawCard {
+    // Ramsay Snow (08041)
+    // Forced Reaction: After Ramsay Snow enters play, each player sacrifices a character, if able.
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             target: {
                 choosingPlayer: 'each',
@@ -13,22 +15,11 @@ class RamsaySnow extends DrawCard {
                 cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.controller === context.choosingPlayer &&
-                    card.getType() === 'character'
-            },
-            handler: (context) => {
-                let selections = context.targets.selections.filter(
-                    (selection) => !!selection.value
-                );
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        selections.map((selection) =>
-                            GameActions.sacrificeCard({
-                                player: selection.choosingPlayer,
-                                card: selection.value
-                            })
-                        )
-                    )
-                );
+                    card.getType() === 'character',
+                gameAction: GameActions.sacrificeCard((context) => ({
+                    card: context.target,
+                    player: context.target.controller
+                }))
             }
         });
     }

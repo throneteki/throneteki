@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class JonArryn extends DrawCard {
+    // Jon Arryn (23001)
+    // Insight. Renown.
+    // Jon Arryn cannot be saved.
+    // Forced Interrupt: When Jon Arryn is killed, each player may either: draw 2 cards, or gain 1
+    // power for their faction.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
@@ -10,7 +15,7 @@ class JonArryn extends DrawCard {
 
         this.forcedInterrupt({
             when: {
-                onCharacterKilled: (event) => event.card === this
+                onCharacterKilled: (event, context) => event.card === context.source
             },
             message:
                 '{player} is forced by {source} to allow each player to either draw 2 cards or gain 1 power for their faction',
@@ -24,7 +29,7 @@ class JonArryn extends DrawCard {
                                 gameAction: GameActions.drawCards((context) => ({
                                     player: context.choosingPlayer,
                                     amount: 2,
-                                    source: this
+                                    source: context.source
                                 }))
                             },
                             'Gain 1 power': {

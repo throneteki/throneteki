@@ -17,8 +17,12 @@ class MoveCardEventGenerator {
         return this.event('onCardLeftPlay', params, (event) => {
             event.card.leavesPlay();
 
+            // Removing attachments and duplicates is a consequence of leaving play, not an
+            // effect, so it can't be saved.
             for (const attachment of event.card.attachments || []) {
-                event.thenAttachEvent(this.createRemoveAttachmentEvent(attachment));
+                event.thenAttachEvent(
+                    this.createRemoveAttachmentEvent(attachment, { allowSave: false })
+                );
             }
 
             for (const dupe of event.card.dupes || []) {
@@ -29,16 +33,16 @@ class MoveCardEventGenerator {
         });
     }
 
-    createRemoveAttachmentEvent(attachment) {
+    createRemoveAttachmentEvent(attachment, { allowSave = true } = {}) {
         attachment.isBeingRemoved = true;
 
         if (attachment.isTerminal()) {
-            return this.createDiscardCardEvent({ card: attachment }).thenExecute(() => {
+            return this.createDiscardCardEvent({ card: attachment, allowSave }).thenExecute(() => {
                 attachment.isBeingRemoved = false;
             });
         }
 
-        return this.createReturnCardToHandEvent({ card: attachment }).thenExecute(() => {
+        return this.createReturnCardToHandEvent({ card: attachment, allowSave }).thenExecute(() => {
             attachment.isBeingRemoved = false;
         });
     }
@@ -48,8 +52,10 @@ class MoveCardEventGenerator {
         allowSave = true,
         isPillage = false,
         isRandom = false,
+        claimWinner,
         source,
-        orderable
+        orderable,
+        destination = 'discard pile'
     }) {
         let params = {
             card: card,
@@ -57,15 +63,20 @@ class MoveCardEventGenerator {
             originalLocation: card.location,
             isPillage: !!isPillage,
             isRandom: !!isRandom,
+            isClaim: !!claimWinner,
             source: source,
-            snapshotName: 'cardStateWhenDiscarded'
+            snapshotName: 'cardStateWhenDiscarded',
+            destination
         };
+        if (claimWinner) {
+            params.claimWinner = claimWinner;
+        }
         const discardEvent = this.event('onCardDiscarded', params, (event) => {
             event.thenAttachEvent(
                 this.createPlaceCardEvent({
                     card: event.card,
                     player: event.card.controller,
-                    location: 'discard pile',
+                    location: event.destination,
                     orderable
                 })
             );
@@ -82,6 +93,7 @@ class MoveCardEventGenerator {
         let params = {
             card: card,
             allowSave: allowSave,
+            originalLocation: card.location,
             snapshotName: 'cardStateWhenReturned'
         };
         const returnEvent = this.event('onCardReturnedToHand', params, (event) => {
@@ -137,7 +149,7 @@ class MoveCardEventGenerator {
                     playingType === 'setup' && event.card.getPrintedType() === 'attachment';
 
                 let originalFacedownState = event.card.facedown;
-                event.card.facedown = game.currentPhase === 'setup';
+                event.card.facedown = playingType === 'setup';
                 event.card.new = true;
                 player.placeCardInPile({
                     card: event.card,

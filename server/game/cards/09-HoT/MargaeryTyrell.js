@@ -1,43 +1,38 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MargaeryTyrell extends DrawCard {
+    // Margaery Tyrell (09006)
+    // While Margaery Tyrell is attacking, she gets +1 STR for each defending character.
+    // Reaction: After Margaery Tyrell is declared as an attacker, choose and kneel a character
+    // controlled by the defending player. That character is participating in the challenge as a
+    // defender.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isAttacking(),
-            match: this,
-            effect: ability.effects.dynamicStrength(() => this.getDefendingCharacters())
+            condition: (context) => context.source.isAttacking(),
+            match: (card, context) => card === context.source,
+            effect: ability.effects.dynamicStrength((card) =>
+                card.game.isDuringChallenge() ? card.game.currentChallenge.defenders.length : 0
+            )
         });
 
         this.reaction({
             when: {
-                onDeclaredAsAttacker: (event) => event.card === this
+                onDeclaredAsAttacker: (event, context) => event.card === context.source
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.controller === this.game.currentChallenge.defendingPlayer
+                    card.controller === context.game.currentChallenge.defendingPlayer
             },
-            handler: (context) => {
-                context.target.controller.kneelCard(context.target);
-                this.game.currentChallenge.addDefender(context.target);
-
-                this.game.addMessage(
-                    '{0} uses {1} to kneel {2} and have them participate in the current challenge as a defender',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} uses {source} to kneel {target} and have them participate in the current challenge as a defender',
+            gameAction: GameActions.simultaneously([
+                GameActions.kneelCard((context) => ({ card: context.target })),
+                GameActions.addToChallenge((context) => ({ card: context.target }))
+            ])
         });
-    }
-
-    getDefendingCharacters() {
-        if (!this.game.isDuringChallenge()) {
-            return 0;
-        }
-
-        return this.game.currentChallenge.defenders.length;
     }
 }
 

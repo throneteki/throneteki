@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Silence extends DrawCard {
+    // Silence (12016)
+    // Challenges Action: Kneel Silence to put a Warship location into play from your hand. Then, if
+    // you control Euron Crow's Eye, stand him.
+    // +2 Initiative.
     setupCardAbilities(ability) {
         this.plotModifiers({
             initiative: 2
@@ -26,24 +30,19 @@ class Silence extends DrawCard {
                 }
             },
             message: '{player} uses and kneels {source} to put {target} into play',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoPlay((context) => ({
-                        player: context.player,
-                        card: context.target
-                    })).then({
-                        condition: (context) => !!getEuron(context.player),
-                        message: {
-                            format: 'Then {player} stands {euron}',
-                            args: { euron: (context) => getEuron(context.player) }
-                        },
-                        gameAction: GameActions.standCard((context) => ({
-                            card: getEuron(context.player)
-                        }))
-                    }),
-                    context
-                );
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            })).then((context) => ({
+                condition: (context) => !!getEuron(context.player),
+                message: {
+                    format: 'Then {player} stands {euron}',
+                    args: { euron: (context) => getEuron(context.player) }
+                },
+                gameAction: GameActions.standCard((context) => ({
+                    card: getEuron(context.player)
+                }))
+            }))
         });
     }
 }

@@ -1,10 +1,15 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheHound extends DrawCard {
+    // The Hound (09029)
+    // No attachments except Weapon.
+    // Reaction: After The Hound enters play, choose a Knight character without attachments and
+    // return it to its owner's hand.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             target: {
                 cardCondition: (card) =>
@@ -13,15 +18,8 @@ class TheHound extends DrawCard {
                     card.hasTrait('Knight') &&
                     card.attachments.length === 0
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    "{0} uses {1} to return {2} to its owner's hand",
-                    this.controller,
-                    this,
-                    context.target
-                );
-                context.target.owner.returnCardToHand(context.target);
-            }
+            message: "{player} uses {source} to return {target} to its owner's hand",
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 }

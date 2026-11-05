@@ -10,7 +10,9 @@ class CheckReserve extends GameAction {
         // TODO: This should be an event that checks reserve for an individual
         // player, but with the World Cup going on, we don't want to make any
         // disruptive larger scale changes
-        return this.event('__PLACEHOLDER_EVENT__', {}, () => {
+        // The prompt is queued after the event resolves so that cards drawn by simultaneous
+        // actions are in hand before reserve is checked.
+        return this.event('__PLACEHOLDER_EVENT__', {}, () => true).thenExecute(() => {
             context.game.queueStep(new DiscardToReservePrompt(context.game, context.source));
         });
     }

@@ -1,12 +1,15 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WhiteGraces extends DrawCard {
+    // White Graces (26093)
+    // Interrupt: When White Graces is discarded from your hand or deck, place it on a unique Lady
+    // or Grace character as a duplicate instead of placing it in your discard pile.
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCardDiscarded: (event) =>
-                    event.card === this &&
-                    this.controller.canPutIntoPlay(this) &&
+                onCardDiscarded: (event, context) =>
+                    event.card === context.source &&
                     ['draw deck', 'hand'].includes(event.originalLocation)
             },
             location: ['hand', 'draw deck'],
@@ -22,12 +25,13 @@ class WhiteGraces extends DrawCard {
                 }
             },
             message: '{player} uses {source} to put it into play as a duplicate on {target}',
-            handler: (context) => {
-                context.event.replaceHandler(() => {
-                    this.controller.removeCardFromPile(this);
-                    context.target.addDuplicate(this);
-                });
-            }
+            gameAction: GameActions.replaceEvent((context) => ({
+                event: context.event,
+                replacement: GameActions.placeAsDuplicate({
+                    card: context.source,
+                    parent: context.target
+                })
+            }))
         });
     }
 }

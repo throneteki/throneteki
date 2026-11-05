@@ -1,10 +1,14 @@
 import DrawCard from '../../drawcard.js';
 
 class TheGreenblood extends DrawCard {
+    // The Greenblood (04116)
+    // Each [martell] character you control gets +1 STR for each Summer plot card revealed.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.getType() === 'character' && card.isFaction('martell'),
-            effect: ability.effects.dynamicStrength(() => this.numOfSummerPlotsRevealed())
+            effect: ability.effects.dynamicStrength((card, context) =>
+                context.source.numOfSummerPlotsRevealed()
+            )
         });
     }
 

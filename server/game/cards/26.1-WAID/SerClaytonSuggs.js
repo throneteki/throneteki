@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerClaytonSuggs extends DrawCard {
+    // Ser Clayton Suggs (26001)
+    // Reaction: After power is gained by or moved to a character, that character gets +1 STR or -1
+    // STR until the end of the phase. (Limit 3 times per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
@@ -9,31 +13,27 @@ class SerClaytonSuggs extends DrawCard {
             },
             limit: ability.limit.perPhase(3),
             choices: {
-                'Give +1 STR': (context) => {
-                    this.untilEndOfPhase((ability) => ({
+                'Give +1 STR': {
+                    message: {
+                        format: '{player} uses {source} to give {character} +1 STR until the end of the phase',
+                        args: { character: (context) => context.event.target || context.event.card }
+                    },
+                    gameAction: GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
                         match: context.event.target || context.event.card,
                         effect: ability.effects.modifyStrength(1)
-                    }));
-
-                    this.game.addMessage(
-                        '{0} uses {1} to give {2} +1 STR until the end of the phase',
-                        this.controller,
-                        this,
-                        context.event.target || context.event.card
-                    );
+                    }))
                 },
-                'Give -1 STR': (context) => {
-                    this.untilEndOfPhase((ability) => ({
+                'Give -1 STR': {
+                    message: {
+                        format: '{player} uses {source} to give {character} -1 STR until the end of the phase',
+                        args: { character: (context) => context.event.target || context.event.card }
+                    },
+                    gameAction: GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
                         match: context.event.target || context.event.card,
                         effect: ability.effects.modifyStrength(-1)
-                    }));
-
-                    this.game.addMessage(
-                        '{0} uses {1} to give {2} -1 STR until the end of the phase',
-                        this.controller,
-                        this,
-                        context.event.target || context.event.card
-                    );
+                    }))
                 }
             }
         });

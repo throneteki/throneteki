@@ -48,6 +48,14 @@ class GameCommands {
         return this.game.concede(playerName);
     }
 
+    reportProblem(playerName) {
+        if (!this.game.getPlayerByName(playerName)) {
+            return;
+        }
+
+        return this.game.getProblemReport(playerName);
+    }
+
     drop(playerName, cardId, source, target) {
         return this.game.drop(playerName, cardId, source, target);
     }
@@ -84,6 +92,10 @@ class GameCommands {
         return this.game.toggleKeywordSetting(playerName, settingName, !!toggle);
     }
 
+    toggleManualMode(playerName) {
+        return this.game.toggleManualMode(playerName);
+    }
+
     toggleMuteSpectators(playerName) {
         return this.game.toggleMuteSpectators(playerName);
     }
@@ -96,12 +108,8 @@ class GameCommands {
         return this.game.togglePromptedActionWindow(playerName, windowName, !!toggle);
     }
 
-    toggleTimerSetting(playerName, settingName, toggle) {
-        if (!this.isExistingSetting(playerName, 'timerSettings', settingName)) {
-            return;
-        }
-
-        return this.game.toggleTimerSetting(playerName, settingName, !!toggle);
+    toggleHideResponses(playerName, responseType, toggle) {
+        return this.game.toggleHideResponses(playerName, responseType, !!toggle);
     }
 
     isExistingSetting(playerName, settingsProperty, settingName) {

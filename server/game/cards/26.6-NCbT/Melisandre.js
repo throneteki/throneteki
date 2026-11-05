@@ -2,9 +2,14 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Melisandre extends DrawCard {
+    // Melisandre (26101)
+    // Shadow (5). Stealth.
+    // Each participating character without shadow gets -1 STR.
+    // Challenges Action: Choose a character with STR 1 or lower and place it in shadows. (Limit
+    // once per phase.)
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge(),
+            condition: (context) => context.game.isDuringChallenge(),
             match: (card) => card.isParticipating() && !card.isShadow(),
             targetController: 'any',
             effect: ability.effects.modifyStrength(-1)
@@ -23,12 +28,7 @@ class Melisandre extends DrawCard {
                 }
             },
             message: '{player} uses {source} to place {target} in shadows',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoShadows((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.putIntoShadows((context) => ({ card: context.target }))
         });
     }
 }

@@ -2,51 +2,51 @@ import CardMatcher from '../../server/game/CardMatcher.js';
 
 describe('CardMatcher', function () {
     beforeEach(function () {
-        this.cardSpy = jasmine.createSpyObj('card', [
-            'getType',
-            'hasTrait',
-            'isAttacking',
-            'isDefending',
-            'isParticipating',
-            'isUnique',
-            'isLimited',
-            'isLoyal'
-        ]);
+        this.cardSpy = {
+            getType: vi.fn(),
+            hasTrait: vi.fn(),
+            isAttacking: vi.fn(),
+            isDefending: vi.fn(),
+            isParticipating: vi.fn(),
+            isUnique: vi.fn(),
+            isLimited: vi.fn(),
+            isLoyal: vi.fn()
+        };
     });
 
     describe('.isMatch', function () {
         describe('attacking', function () {
             it('returns true if the card is attacking', function () {
-                this.cardSpy.isAttacking.and.returnValue(true);
+                this.cardSpy.isAttacking.mockReturnValue(true);
                 expect(CardMatcher.isMatch(this.cardSpy, { attacking: true })).toBe(true);
             });
 
             it('returns false if the card is not attacking', function () {
-                this.cardSpy.isAttacking.and.returnValue(false);
+                this.cardSpy.isAttacking.mockReturnValue(false);
                 expect(CardMatcher.isMatch(this.cardSpy, { attacking: true })).toBe(false);
             });
         });
 
         describe('defending', function () {
             it('returns true if the card is defending', function () {
-                this.cardSpy.isDefending.and.returnValue(true);
+                this.cardSpy.isDefending.mockReturnValue(true);
                 expect(CardMatcher.isMatch(this.cardSpy, { defending: true })).toBe(true);
             });
 
             it('returns false if the card is not defending', function () {
-                this.cardSpy.isDefending.and.returnValue(false);
+                this.cardSpy.isDefending.mockReturnValue(false);
                 expect(CardMatcher.isMatch(this.cardSpy, { defending: true })).toBe(false);
             });
         });
 
         describe('participating', function () {
             it('returns true if the card is participating', function () {
-                this.cardSpy.isParticipating.and.returnValue(true);
+                this.cardSpy.isParticipating.mockReturnValue(true);
                 expect(CardMatcher.isMatch(this.cardSpy, { participating: true })).toBe(true);
             });
 
             it('returns false if the card is not participating', function () {
-                this.cardSpy.isParticipating.and.returnValue(false);
+                this.cardSpy.isParticipating.mockReturnValue(false);
                 expect(CardMatcher.isMatch(this.cardSpy, { participating: true })).toBe(false);
             });
         });
@@ -57,7 +57,7 @@ describe('CardMatcher', function () {
             let controller = { controller: 1 };
             this.context = { player: controller };
             this.cardSpy.controller = controller;
-            this.cardSpy.getType.and.returnValue('character');
+            this.cardSpy.getType.mockReturnValue('character');
         });
 
         describe('defaults', function () {
@@ -70,7 +70,7 @@ describe('CardMatcher', function () {
             });
 
             it('should not match non-characters', function () {
-                this.cardSpy.getType.and.returnValue('location');
+                this.cardSpy.getType.mockReturnValue('location');
                 expect(this.matcher(this.cardSpy, this.context)).toBe(false);
             });
         });
@@ -155,10 +155,10 @@ describe('CardMatcher', function () {
                 };
                 // Need to 'strictly' define function to ensure it's scope is within the proxy
                 // created in the checker (eg. "this" will refer to the proxy, rather than this test's context)
-                this.cardSpy.getType.and.callFake(function () {
+                this.cardSpy.getType.mockImplementation(function () {
                     return this.cardData.type;
                 });
-                this.cardSpy.hasTrait.and.callFake(function (trait) {
+                this.cardSpy.hasTrait.mockImplementation(function (trait) {
                     return this.traits.contains(trait);
                 });
             });

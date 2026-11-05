@@ -6,6 +6,7 @@ import { allowedCardSizes } from '../Profile/CardSizeSettings';
 const windows = [
     { name: 'plot', label: 'Plots revealed' },
     { name: 'draw', label: 'Draw phase' },
+    { name: 'marshal', label: 'Marshaling phase' },
     { name: 'challengeBegin', label: 'Before challenge' },
     { name: 'attackersDeclared', label: 'Attackers declared' },
     { name: 'defendersDeclared', label: 'Defenders declared' },
@@ -19,10 +20,11 @@ const GameConfiguration = ({
     actionWindows,
     keywordSettings,
     promptDupes,
-    timerSettings,
+    hideInterrupts,
+    hideReactions,
     cardSizeSetting,
     onKeywordSettingToggle,
-    onTimerSettingToggle,
+    onHideResponsesToggle,
     onCardSizeSettingChange,
     onActionWindowToggle,
     onPromptDupesToggle
@@ -50,27 +52,27 @@ const GameConfiguration = ({
                 <Panel title={'Action window defaults'}>
                     <div className='grid sm:grid-cols-2 gap-2'>{windowsToRender}</div>
                 </Panel>
-                <Panel title={'Timed interrupt window'}>
+                <Panel title={'Responses'}>
                     <div className='flex flex-col gap-2'>
                         <Switch
                             onValueChange={(value) =>
-                                onTimerSettingToggle && onTimerSettingToggle('events', value)
+                                onHideResponsesToggle && onHideResponsesToggle('interrupts', value)
                             }
-                            name='timerSettings.events'
-                            isSelected={timerSettings.events}
+                            name='hideInterrupts'
+                            isSelected={hideInterrupts !== false}
                             isDisabled={isSpectating}
                         >
-                            {'Show timer for events'}
+                            {'Hide whether I have interrupts'}
                         </Switch>
                         <Switch
                             onValueChange={(value) =>
-                                onTimerSettingToggle && onTimerSettingToggle('abilities', value)
+                                onHideResponsesToggle && onHideResponsesToggle('reactions', value)
                             }
-                            name='timerSettings.abilities'
-                            isSelected={timerSettings.abilities}
+                            name='hideReactions'
+                            isSelected={hideReactions !== false}
                             isDisabled={isSpectating}
                         >
-                            {'Show timer for card abilities'}
+                            {'Hide whether I have reactions'}
                         </Switch>
                     </div>
                 </Panel>
@@ -111,7 +113,7 @@ const GameConfiguration = ({
                             isSelected={keywordSettings.chooseCards}
                             isDisabled={isSpectating}
                         >
-                            {'Make keywords optional'}
+                            {'Ask before resolving challenge keywords'}
                         </Switch>
                         <Switch
                             onValueChange={(value) =>

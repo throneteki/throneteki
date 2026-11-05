@@ -1,67 +1,71 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class PaidOff extends DrawCard {
+    // Paid Off (02071)
+    // Opponent's character only. Ambush (1).
+    // Reaction: After you win an [intrigue] challenge, kneel attached character. Then, that
+    // character's controller may give you 1 gold from his or her gold pool to stand that character.
     setupCardAbilities() {
         this.attachmentRestriction({ controller: 'opponent' });
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'intrigue' &&
-                    !this.parent.kneeled &&
-                    event.challenge.winner === this.controller
+                    !context.source.parent.kneeled &&
+                    event.challenge.winner === context.player
             },
-            handler: () => {
-                this.parent.controller.kneelCard(this.parent);
-                this.game.addMessage(
-                    '{0} uses {1} to kneel {2}',
-                    this.controller,
-                    this,
-                    this.parent
-                );
-
-                let player = this.parent.controller;
-                if (player.getSpendableGold({ activePlayer: player }) < 1) {
-                    this.cancel(player);
-                    return false;
-                }
-
-                this.game.promptWithMenu(player, this, {
-                    activePrompt: {
-                        menuTitle: 'Pay 1 gold to stand ' + this.parent.name,
-                        buttons: [
-                            { text: 'Yes', method: 'stand' },
-                            { text: 'No', method: 'cancel' }
-                        ]
+            message: {
+                format: '{player} uses {source} to kneel {parent}',
+                args: { parent: (context) => context.source.parent }
+            },
+            gameAction: GameActions.kneelCard((context) => ({ card: context.source.parent })).then({
+                gameAction: GameActions.ifCondition({
+                    condition: (context) => {
+                        const player = context.source.parent.controller;
+                        return player.getSpendableGold({ activePlayer: player }) >= 1;
                     },
-                    source: this
-                });
-            }
+                    thenAction: GameActions.choose({
+                        player: (context) => context.source.parent.controller,
+                        title: (context) => `Pay 1 gold to stand ${context.source.parent.name}`,
+                        choices: {
+                            Yes: {
+                                message: {
+                                    format: '{choosingPlayer} pays 1 gold for {source} to stand {parent}',
+                                    args: { parent: (context) => context.source.parent }
+                                },
+                                gameAction: GameActions.simultaneously([
+                                    GameActions.transferGold((context) => ({
+                                        from: context.source.parent.controller,
+                                        to: context.player,
+                                        amount: 1
+                                    })),
+                                    GameActions.standCard((context) => ({
+                                        card: context.source.parent
+                                    }))
+                                ])
+                            },
+                            No: remainsKneeled('{choosingPlayer}')
+                        }
+                    }),
+                    elseAction: remainsKneeled('{controller}')
+                })
+            })
         });
     }
+}
 
-    stand(player) {
-        if (player.getSpendableGold({ activePlayer: player }) < 1) {
-            return false;
-        }
-
-        this.game.transferGold({ from: player, to: this.controller, amount: 1 });
-        player.standCard(this.parent);
-
-        this.game.addMessage('{0} pays 1 gold for {1} to stand {2}', player, this, this.parent);
-
-        return true;
-    }
-
-    cancel(player) {
-        this.game.addMessage(
-            '{0} does not pay 1 gold for {1} so {2} remains kneeled',
-            player,
-            this,
-            this.parent
-        );
-
-        return true;
-    }
+function remainsKneeled(payer) {
+    return {
+        message: {
+            format: payer + ' does not pay 1 gold for {source} so {parent} remains kneeled',
+            args: {
+                controller: (context) => context.source.parent.controller,
+                parent: (context) => context.source.parent
+            }
+        },
+        gameAction: GameActions.decline()
+    };
 }
 
 PaidOff.code = '02071';

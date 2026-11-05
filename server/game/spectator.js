@@ -7,8 +7,8 @@ class Spectator {
         this.id = id;
         this.cardSize = this.user.settings?.cardSize;
         this.promptDupes = user.settings?.promptDupes;
-        this.timerSettings = user.settings?.timerSettings || {};
-        this.timerSettings.windowTimer = user.settings?.windowTimer;
+        this.hideInterrupts = user.settings?.hideInterrupts ?? true;
+        this.hideReactions = user.settings?.hideReactions ?? true;
         this.keywordSettings = user.settings?.keywordSettings;
         this.promptedActionWindows = user.promptedActionWindows;
         this.promptState = new PlayerPromptState();
@@ -38,7 +38,8 @@ class Spectator {
             name: this.name,
             cardSize: this.cardSize,
             promptDupes: this.promptDupes,
-            timerSettings: this.timerSettings,
+            hideInterrupts: this.hideInterrupts,
+            hideReactions: this.hideReactions,
             keywordSettings: this.keywordSettings,
             promptedActionWindows: this.promptedActionWindows,
             ...promptState,

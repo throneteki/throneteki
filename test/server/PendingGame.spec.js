@@ -15,15 +15,15 @@ describe('PendingGame', function () {
 
         it('should not allow a blocked user to join the game', function () {
             this.game.join(2, this.blockedUser, '', () => true);
-            expect(Object.values(this.game.getPlayersAndSpectators())).not.toContain(
-                jasmine.objectContaining({ user: this.blockedUser })
+            expect(Object.values(this.game.getPlayersAndSpectators())).not.toContainEqual(
+                expect.objectContaining({ user: this.blockedUser })
             );
         });
 
         it('should not allow a blocked user to watch the game', function () {
             this.game.watch(2, this.blockedUser, '', () => true);
-            expect(Object.values(this.game.getPlayersAndSpectators())).not.toContain(
-                jasmine.objectContaining({ user: this.blockedUser })
+            expect(Object.values(this.game.getPlayersAndSpectators())).not.toContainEqual(
+                expect.objectContaining({ user: this.blockedUser })
             );
         });
     });

@@ -43,7 +43,7 @@ const gameSlice = createSlice({
             (option, value) => ({ payload: { option, value } }),
             () => {}
         ),
-        sendToggleTimerSetting: create.preparedReducer(
+        sendToggleHideResponsesMessage: create.preparedReducer(
             (option, value) => ({ payload: { option, value } }),
             () => {}
         ),
@@ -68,6 +68,8 @@ const gameSlice = createSlice({
         ),
         sendGameChatMessage: () => {},
         sendToggleMuteSpectatorsMessage: () => {},
+        sendToggleManualModeMessage: () => {},
+        sendReportProblemMessage: () => {},
         sendChangeStatMessage: create.preparedReducer(
             (type, amount) => ({ payload: { type, amount } }),
             () => {}
@@ -87,7 +89,7 @@ export const {
     sendToggleKeywordSettingMessage,
     sendToggleDupesMessage,
     sendTogglePromptedActionWindowMessage,
-    sendToggleTimerSetting,
+    sendToggleHideResponsesMessage,
     sendCardSizeChangeMessage,
     sendCardClickedMessage,
     sendButtonClickedMessage,
@@ -97,6 +99,8 @@ export const {
     sendDragDropMessage,
     sendGameChatMessage,
     sendToggleMuteSpectatorsMessage,
+    sendToggleManualModeMessage,
+    sendReportProblemMessage,
     sendChangeStatMessage,
     sendLeaveGameMessage,
     sendConcedeMessage

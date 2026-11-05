@@ -9,7 +9,6 @@ import GameBackgroundOption from '../Components/Profile/GameBackgroundOption';
 import { useSaveProfileMutation, useVerifyAuthenticationQuery } from '../redux/middleware/api';
 import ProfileMain from '../Components/Profile/ProfileMain';
 import ActionWindowOptions from '../Components/Profile/ActionWindowOptions';
-import TimerSettings from '../Components/Profile/TimerSettings';
 import GameSettings from '../Components/Profile/GameSettings';
 import BlankBg from '../assets/img/bgs/blank.png';
 import Background1 from '../assets/img/bgs/background.png';
@@ -28,6 +27,7 @@ const backgrounds = [
 const defaultActionWindows = {
     plot: false,
     draw: false,
+    marshal: false,
     challengeBegin: false,
     attackersDeclared: true,
     defendersDeclared: true,
@@ -122,9 +122,8 @@ const Profile = () => {
         chooseOrder: !!settings.keywordSettings.chooseOrder,
         chooseCards: !!settings.keywordSettings.chooseCards,
         promptDupes: !!settings.promptDupes,
-        windowTimer: settings.windowTimer || 5,
-        timerAbilities: !!settings.timerSettings.abilities,
-        timerEvents: settings.timerSettings.events,
+        hideInterrupts: settings.hideInterrupts ?? true,
+        hideReactions: settings.hideReactions ?? true,
         cardSize: settings.cardSize || 'normal'
     };
 
@@ -151,14 +150,11 @@ const Profile = () => {
                                         : undefined,
                                 settings: {
                                     promptDupes: values.promptDupes,
-                                    windowTimer: values.windowTimer,
+                                    hideInterrupts: values.hideInterrupts,
+                                    hideReactions: values.hideReactions,
                                     keywordSettings: {
                                         chooseOrder: values.chooseOrder,
                                         chooseCards: values.chooseCards
-                                    },
-                                    timerSettings: {
-                                        abilities: values.timerAbilities,
-                                        events: values.timerEvents
                                     },
                                     background: selectedBackground,
                                     cardSize: values.cardSize
@@ -185,10 +181,7 @@ const Profile = () => {
                         <ProfileMain user={user} formProps={formProps} />
                         <ActionWindowOptions formProps={formProps} />
                         <GameSettings formProps={formProps} />
-                        <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
-                            <TimerSettings formProps={formProps} />
-                            <CardSizeSettings user={user} formProps={formProps} />
-                        </div>
+                        <CardSizeSettings user={user} formProps={formProps} />
                         <Panel title='Game Board Background'>
                             <div className='grid sm:grid-cols-3 gap-2'>
                                 {backgrounds.map((background) => (

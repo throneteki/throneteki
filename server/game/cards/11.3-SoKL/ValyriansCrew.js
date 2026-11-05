@@ -1,57 +1,58 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ValyriansCrew extends DrawCard {
+    // Valyrian's Crew (11047)
+    // Stealth.
+    // You may marshal or play facedown cards attached to Valyrian's Crew as if they were in your
+    // hand.
+    // Reaction: After you win a challenge in which Valyrian's Crew is attacking, attach the top
+    // card of the losing opponent's deck to Valyrian's Crew facedown under your control, as an
+    // attachment with terminal.
     setupCardAbilities(ability) {
         this.persistentEffect({
             effect: [
                 ability.effects.canMarshal(
-                    (card) => this.isFacedownAttachment(card) && card.getPrintedType() !== 'event'
+                    (card, context) =>
+                        isFacedownAttachment(card, context) && card.getPrintedType() !== 'event'
                 ),
-                ability.effects.canMarshalIntoShadows((card) => this.isFacedownAttachment(card)),
+                ability.effects.canMarshalIntoShadows((card, context) =>
+                    isFacedownAttachment(card, context)
+                ),
                 ability.effects.canPlay(
-                    (card) => this.isFacedownAttachment(card) && card.getPrintedType() === 'event'
+                    (card, context) =>
+                        isFacedownAttachment(card, context) && card.getPrintedType() === 'event'
                 )
             ]
         });
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isAttacking()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player && context.source.isAttacking()
             },
-            handler: (context) => {
-                let opponent = context.event.challenge.loser;
-                let topCard = opponent.drawDeck[0];
-
-                context.player.attach(context.player, topCard, this, 'play', true);
-                this.lastingEffect(() => ({
-                    condition: () => !!topCard.parent,
-                    targetLocation: 'any',
-                    match: topCard,
-                    effect: [
-                        ability.effects.setCardType('attachment'),
-                        ability.effects.addKeyword('Terminal')
-                    ]
-                }));
-
-                this.game.addMessage(
-                    "{0} uses {1} to attach the top card of {2}'s deck under {1}",
-                    context.player,
-                    this,
-                    opponent
-                );
-            }
+            message: {
+                format: "{player} uses {source} to attach the top card of {opponent}'s deck under {source}",
+                args: { opponent: (context) => context.event.challenge.loser }
+            },
+            gameAction: GameActions.attach((context) => ({
+                player: context.player,
+                attachment: context.event.challenge.loser.drawDeck[0],
+                target: context.source,
+                facedown: true,
+                asAttachment: { keywords: ['Terminal'] }
+            }))
         });
     }
+}
 
-    isFacedownAttachment(card) {
-        return (
-            card.facedown &&
-            card.controller === this.controller &&
-            card.getType() === 'attachment' &&
-            this.attachments.includes(card)
-        );
-    }
+function isFacedownAttachment(card, context) {
+    return (
+        card.facedown &&
+        card.controller === context.source.controller &&
+        card.getType() === 'attachment' &&
+        context.source.attachments.includes(card)
+    );
 }
 
 ValyriansCrew.code = '11047';

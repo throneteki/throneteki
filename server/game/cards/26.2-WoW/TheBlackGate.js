@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheBlackGate extends DrawCard {
+    // The Black Gate (26030)
+    // Action: Kneel The Black Gate and sacrifice a [thenightswatch] character to put a character
+    // with equal or lower printed cost that shares a Trait with that character into play from your
+    // hand or shadows area.
     setupCardAbilities(ability) {
         this.action({
             title: 'Sacrifice character',
@@ -10,16 +14,18 @@ class TheBlackGate extends DrawCard {
                 ability.costs.sacrifice({ faction: 'thenightswatch', type: 'character' })
             ],
             target: {
-                location: ['hand', 'shadow'],
-                controller: 'current',
-                type: 'character',
-                condition: (card, context) =>
-                    GameActions.putIntoPlay({ card }).allow(context) &&
-                    (!context.costs.sacrifice ||
-                        (card
-                            .getTraits()
-                            .some((trait) => context.costs.sacrifice.hasTrait(trait)) &&
-                            card.getPrintedCost() <= context.costs.sacrifice.getPrintedCost()))
+                cardCondition: {
+                    location: ['hand', 'shadows'],
+                    controller: 'current',
+                    type: 'character',
+                    condition: (card, context) =>
+                        GameActions.putIntoPlay({ card }).allow(context) &&
+                        (!context.costs.sacrifice ||
+                            (card
+                                .getTraits()
+                                .some((trait) => context.costs.sacrifice.hasTrait(trait)) &&
+                                card.getPrintedCost() <= context.costs.sacrifice.getPrintedCost()))
+                }
             },
             message: {
                 format: '{player} kneels {costs.kneel} and sacrifices {costs.sacrifice} to put {target} into play from {location}',
@@ -28,12 +34,7 @@ class TheBlackGate extends DrawCard {
                         context.target.location === 'hand' ? 'their hand' : 'shadows'
                 }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoPlay((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({ card: context.target }))
         });
     }
 }

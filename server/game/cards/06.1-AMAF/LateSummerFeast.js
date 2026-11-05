@@ -1,46 +1,31 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LateSummerFeast extends PlotCard {
+    // Late Summer Feast (06020)
+    // Forced Reaction: After you win a challenge, the losing opponent may draw 1 card.
     setupCardAbilities() {
+        const loser = (context) => context.event.challenge.loser;
+
         this.forcedReaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && event.challenge.loser.canDraw()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player && event.challenge.loser.canDraw()
             },
-            handler: (context) => {
-                let otherPlayer = context.event.challenge.loser;
-
-                this.game.addMessage(
-                    '{0} is forced by {1} to allow {2} to draw 1 card',
-                    this.controller,
-                    this,
-                    otherPlayer
-                );
-                this.game.promptWithMenu(otherPlayer, this, {
-                    activePrompt: {
-                        menuTitle: 'Draw 1 card from ' + this.name + '?',
-                        buttons: [
-                            { text: 'Yes', method: 'draw' },
-                            { text: 'No', method: 'pass' }
-                        ]
-                    },
-                    source: this
-                });
-            }
+            message: {
+                format: '{player} is forced by {source} to let {loser} draw 1 card',
+                args: { loser }
+            },
+            gameAction: GameActions.may({
+                player: loser,
+                title: (context) => `Draw 1 card from ${context.source.name}?`,
+                message: '{choosingPlayer} draws 1 card',
+                gameAction: GameActions.drawCards((context) => ({
+                    player: loser(context),
+                    amount: 1
+                }))
+            })
         });
-    }
-
-    draw(otherPlayer) {
-        otherPlayer.drawCardsToHand(1);
-        this.game.addMessage('{0} draws 1 card', otherPlayer);
-
-        return true;
-    }
-
-    pass(otherPlayer) {
-        this.game.addMessage('{0} declines to draw 1 card', otherPlayer);
-
-        return true;
     }
 }
 

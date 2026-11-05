@@ -1,7 +1,12 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheFaithsDecree extends DrawCard {
-    setupCardAbilities() {
+    // The Faith's Decree (13059)
+    // Play only if you control a The Seven character or location.
+    // Action: Name a non-agenda, non-plot card. Until the end of the phase, each opponent cannot
+    // trigger card abilities of cards with that name.
+    setupCardAbilities(ability) {
         this.action({
             title: 'Prevent abilities',
             condition: (context) =>
@@ -9,30 +14,21 @@ class TheFaithsDecree extends DrawCard {
                     type: ['character', 'location'],
                     trait: 'The Seven'
                 }),
-            handler: (context) => {
-                this.game.promptForCardName({
-                    player: context.player,
-                    match: (cardData) => !['agenda', 'plot'].includes(cardData.type),
-                    onSelect: (player, cardName) => this.selectCardName(player, cardName),
-                    source: this
-                });
-            }
+            message: '{player} plays {source} to name a card',
+            gameAction: GameActions.nameCard({
+                match: (cardData) => !['agenda', 'plot'].includes(cardData.type),
+                message:
+                    '{player} names {cardName} to prevent opponents from triggering its abilities',
+                gameAction: GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfPhase',
+                    targetController: 'opponent',
+                    effect: ability.effects.cannotTriggerCardAbilities(
+                        (triggered) =>
+                            triggered.card.name.toLowerCase() === context.namedCard.toLowerCase()
+                    )
+                }))
+            })
         });
-    }
-
-    selectCardName(player, cardName) {
-        this.game.addMessage(
-            '{0} plays {1} to prevent opponents from triggering {2}',
-            player,
-            this,
-            cardName
-        );
-        this.untilEndOfPhase((ability) => ({
-            targetController: 'opponent',
-            effect: ability.effects.cannotTriggerCardAbilities(
-                (ability) => ability.card.name === cardName
-            )
-        }));
     }
 }
 

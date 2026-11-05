@@ -2,12 +2,16 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class IPledgeMyLifeAndHonor extends DrawCard {
+    // I Pledge My Life and Honor (20024)
+    // Reaction: After you win a challenge as the defending player, search the top 10 cards of your
+    // deck for a [thenightswatch] character and put it into play. Shuffle your deck. Then,
+    // sacrifice a character that shares a Trait with that character.
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    event.challenge.defendingPlayer === this.controller
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    event.challenge.defendingPlayer === context.source.controller
             },
             message:
                 '{player} plays {source} to search the top 10 cards of their deck for a The Nights Watch character',
@@ -34,12 +38,7 @@ class IPledgeMyLifeAndHonor extends DrawCard {
                         }
                     },
                     message: 'Then, {player} sacrifices {target}',
-                    handler: (context) => {
-                        this.game.resolveGameAction(
-                            GameActions.sacrificeCard((context) => ({ card: context.target })),
-                            context
-                        );
-                    }
+                    gameAction: GameActions.sacrificeCard((context) => ({ card: context.target }))
                 })
             })
         });

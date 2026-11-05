@@ -1,22 +1,22 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TheKnightOfFlowers extends DrawCard {
-    setupCardAbilities() {
+    // The Knight of Flowers (09007)
+    // Renown.
+    // Reaction: After you play an event, The Knight of Flowers gets +2 STR until the end of the
+    // phase.
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPlayed: (event) => event.player === this.controller
+                onCardPlayed: (event, context) => event.player === context.source.controller
             },
-            handler: () => {
-                this.game.addMessage(
-                    '{0} uses {1} to gain +2 STR until the end of the phase',
-                    this.controller,
-                    this
-                );
-                this.untilEndOfPhase((ability) => ({
-                    match: this,
-                    effect: ability.effects.modifyStrength(2)
-                }));
-            }
+            message: '{player} uses {source} to gain +2 STR until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.source,
+                effect: ability.effects.modifyStrength(2)
+            }))
         });
     }
 }

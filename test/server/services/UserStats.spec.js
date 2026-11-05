@@ -192,7 +192,7 @@ describe('UserStatsService', function () {
             expect(summary.detailed.challengesWon).toEqual({ military: 4, intrigue: 2, power: 6 });
             expect(summary.detailed.mvp.code).toBe('01028');
             expect(summary.detailed.favouritePlot).toEqual(
-                jasmine.objectContaining({ code: '01001', revealed: 4 })
+                expect.objectContaining({ code: '01001', revealed: 4 })
             );
             expect(summary.detailed.cards.map((card) => card.code)).toEqual(['01042', '01028']);
         });

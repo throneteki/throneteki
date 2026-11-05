@@ -1,11 +1,14 @@
 import DrawCard from '../../drawcard.js';
 
 class SamwellTarly extends DrawCard {
+    // Samwell Tarly (07012)
+    // While Samwell Tarly is participating in a challenge, treat each other participating
+    // non-Steward character as if its printed text box were blank (except for Traits).
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isParticipating(),
-            match: (card) =>
-                card !== this &&
+            condition: (context) => context.source.isParticipating(),
+            match: (card, context) =>
+                card !== context.source &&
                 card.isParticipating() &&
                 !card.hasTrait('Steward') &&
                 card.getType() === 'character',

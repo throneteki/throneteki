@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class BlessedByTheMaiden extends DrawCard {
+    // Blessed by the Maiden (08064)
+    // Character you control only.
+    // Attached character gains The Seven trait and "No attachments except Blessing."
     setupCardAbilities(ability) {
         this.attachmentRestriction({ controller: 'current' });
         this.whileAttached({

@@ -2,10 +2,14 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MaceTyrell extends DrawCard {
+    // Mace Tyrell (08103)
+    // Reaction: After Mace Tyrell is knelt, draw 2 cards. Then, choose a card in your hand and
+    // place it on top of your deck.
+    // +1 Income.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardKneeled: (event) => event.card === this
+                onCardKneeled: (event, context) => event.card === context.source
             },
             message: '{player} uses {source} to draw 2 cards',
             gameAction: GameActions.drawCards((context) => ({
@@ -17,14 +21,9 @@ class MaceTyrell extends DrawCard {
                     cardCondition: { location: 'hand', controller: 'current' }
                 },
                 message: 'Then {player} places a card on top of their deck',
-                handler: (context) => {
-                    this.game.resolveGameAction(
-                        GameActions.returnCardToDeck((context) => ({
-                            card: context.target
-                        })),
-                        context
-                    );
-                }
+                gameAction: GameActions.returnCardToDeck((context) => ({
+                    card: context.target
+                }))
             })
         });
         this.plotModifiers({

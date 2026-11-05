@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MountainsMan extends DrawCard {
+    // Mountain's Man (20013)
+    // [lannister] character only.
+    // Attached character gains the House Clegane trait.
+    // Reaction: After attached character discards a card using pillage, choose and kneel a card
+    // with lower printed cost than that card's.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'lannister' });
         this.whileAttached({
@@ -8,7 +14,8 @@ class MountainsMan extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardDiscarded: (event) => event.isPillage && event.source === this.parent
+                onCardDiscarded: (event, context) =>
+                    event.isPillage && event.source === context.source.parent
             },
             target: {
                 cardCondition: (card, context) =>
@@ -18,9 +25,7 @@ class MountainsMan extends DrawCard {
                 gameAction: 'kneel'
             },
             message: '{player} uses {source} to kneel {target}',
-            handler: (context) => {
-                context.target.controller.kneelCard(context.target);
-            }
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target }))
         });
     }
 }

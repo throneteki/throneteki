@@ -1,10 +1,20 @@
 import GameAction from './GameAction.js';
+import Message from '../Message.js';
 import Shuffle from './Shuffle.js';
 import ReturnCardToDeck from './ReturnCardToDeck.js';
 
 class ShuffleIntoDeck extends GameAction {
     constructor() {
         super('shuffleIntoDeck');
+    }
+
+    message({ cards }) {
+        return Message.fragment(
+            cards.length === 1
+                ? "shuffles {cards} into its owner's deck"
+                : "shuffles {cards} into their owners' decks",
+            { cards }
+        );
     }
 
     canChangeGameState({ cards }) {

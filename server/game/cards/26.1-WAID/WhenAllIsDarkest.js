@@ -2,13 +2,17 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class WhenAllIsDarkest extends DrawCard {
+    // When All Is Darkest (26010)
+    // Shadow (2).
+    // Reaction: After a character comes out of shadows, kneel your faction card to take control of
+    // that character.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) =>
+                onCardOutOfShadows: (event, context) =>
                     event.card.getType() === 'character' &&
                     GameActions.takeControl({
-                        player: this.controller,
+                        player: context.source.controller,
                         card: event.card
                     }).allow()
             },

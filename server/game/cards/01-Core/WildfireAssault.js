@@ -1,6 +1,10 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WildfireAssault extends PlotCard {
+    // Wildfire Assault (01026)
+    // When Revealed: Each player chooses up to 3 characters he or she controls. Kill each character
+    // not chosen (cannot be saved).
     setupCardAbilities() {
         this.whenRevealed({
             target: {
@@ -14,34 +18,24 @@ class WildfireAssault extends PlotCard {
                     card.controller === context.choosingPlayer &&
                     card.getType() === 'character'
             },
-            handler: (context) => {
-                let characters = [];
-
-                for (let selection of context.targets.selections) {
-                    let player = selection.choosingPlayer;
-                    let selectedCards = selection.value || [];
-                    let charactersInPlay = player.filterCardsInPlay(
-                        (card) => card.getType() === 'character'
-                    );
-                    let toKill = charactersInPlay.filter((card) => !selectedCards.includes(card));
-
-                    characters = characters.concat(toKill);
-
-                    if (toKill.length === 0) {
-                        this.game.addMessage(
-                            '{0} does not kill any characters for {1}',
-                            player,
-                            this
-                        );
-                    } else {
-                        this.game.addMessage('{0} kills {1} for {2}', player, toKill, this);
-                    }
-                }
-
-                this.game.killCharacters(characters, { allowSave: false });
-            }
+            message: {
+                format: '{player} uses {source} to kill {characters}',
+                args: { characters: (context) => notChosen(context) }
+            },
+            gameAction: GameActions.simultaneously((context) =>
+                notChosen(context).map((card) => GameActions.kill({ card, allowSave: false }))
+            )
         });
     }
+}
+
+function notChosen(context) {
+    return context.targets.selections.flatMap((selection) => {
+        const chosen = selection.value || [];
+        return selection.choosingPlayer.filterCardsInPlay(
+            (card) => card.getType() === 'character' && !chosen.includes(card)
+        );
+    });
 }
 
 WildfireAssault.code = '01026';

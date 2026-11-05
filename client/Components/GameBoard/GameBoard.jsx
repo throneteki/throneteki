@@ -15,7 +15,7 @@ import {
     sendToggleDupesMessage,
     sendToggleKeywordSettingMessage,
     sendTogglePromptedActionWindowMessage,
-    sendToggleTimerSetting
+    sendToggleHideResponsesMessage
 } from '../../redux/reducers/game';
 
 import { DndContext, DragOverlay, MouseSensor, TouchSensor, useSensor } from '@dnd-kit/core';
@@ -81,7 +81,6 @@ const GameBoard = () => {
 
     const onCardClick = useCallback(
         (card) => {
-            //stopAbilityTimer();
             dispatch(sendCardClickedMessage(card.uuid));
         },
         [dispatch]
@@ -100,8 +99,9 @@ const GameBoard = () => {
         const otherPlayers =
             others.length > 0
                 ? others.map(defaultPlayerInfo)
-                : Array.from({ length: (currentGame?.maxPlayers || 2) - 1 }, (_, index) =>
-                      defaultPlayerInfo({ seatNo: index + 2 })
+                : Array.from(
+                      { length: Math.max((currentGame?.maxPlayers || 2) - 1, 1) },
+                      (_, index) => defaultPlayerInfo({ seatNo: index + 2 })
                   );
 
         const allPlayers = players.concat(currentGame?.spectators);
@@ -231,13 +231,14 @@ const GameBoard = () => {
                 onPromptedActionWindowToggle={(option, value) =>
                     dispatch(sendTogglePromptedActionWindowMessage(option, value))
                 }
-                onTimerSettingToggle={(option, value) =>
-                    dispatch(sendToggleTimerSetting(option, value))
+                onHideResponsesToggle={(option, value) =>
+                    dispatch(sendToggleHideResponsesMessage(option, value))
                 }
                 onCardSizeSettingChange={(value) => dispatch(sendCardSizeChangeMessage(value))}
                 promptDupes={userPlayer.promptDupes}
                 promptedActionWindows={userPlayer.promptedActionWindows}
-                timerSettings={userPlayer.timerSettings}
+                hideInterrupts={userPlayer.hideInterrupts}
+                hideReactions={userPlayer.hideReactions}
                 cardSizeSetting={userPlayer.cardSize}
             />
         </>

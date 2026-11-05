@@ -2,14 +2,14 @@ import PlaceCardUnderneath from '../../../server/game/GameActions/PlaceCardUnder
 
 describe('PlaceCardUnderneath', function () {
     beforeEach(function () {
-        this.controllerSpy = jasmine.createSpyObj('player', ['removeCardFromPile']);
+        this.controllerSpy = { removeCardFromPile: vi.fn() };
         this.controllerSpy.drawDeck = [];
 
-        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction']);
+        this.cardSpy = { allowGameAction: vi.fn() };
         this.cardSpy.location = 'hand';
         this.cardSpy.controller = this.controllerSpy;
 
-        this.parentSpy = jasmine.createSpyObj('parent', ['addChildCard']);
+        this.parentSpy = { addChildCard: vi.fn() };
         this.parentSpy.controller = this.controllerSpy;
         this.parentSpy.underneath = [];
 
@@ -18,7 +18,7 @@ describe('PlaceCardUnderneath', function () {
 
     describe('allow()', function () {
         beforeEach(function () {
-            this.cardSpy.allowGameAction.and.returnValue(true);
+            this.cardSpy.allowGameAction.mockReturnValue(true);
         });
 
         describe('when the card is being placed under a card in a different location', function () {
@@ -53,7 +53,7 @@ describe('PlaceCardUnderneath', function () {
         });
     });
 
-    xdescribe('createEvent()', function () {
+    describe.skip('createEvent()', function () {
         beforeEach(function () {
             this.event = PlaceCardUnderneath.createEvent(this.props);
         });

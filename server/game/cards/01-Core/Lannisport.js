@@ -1,18 +1,19 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Lannisport extends DrawCard {
+    // Lannisport (01098)
+    // Reaction: After you win an [intrigue] challenge, draw 1 card.
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'intrigue' &&
-                    event.challenge.winner === this.controller &&
-                    this.controller.canDraw()
+                    event.challenge.winner === context.source.controller &&
+                    context.source.controller.canDraw()
             },
-            handler: () => {
-                this.controller.drawCardsToHand(1);
-                this.game.addMessage('{0} uses {1} to draw 1 card', this.controller, this);
-            }
+            message: '{player} uses {source} to draw 1 card',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });
     }
 }

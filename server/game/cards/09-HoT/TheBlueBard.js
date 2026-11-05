@@ -2,10 +2,13 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheBlueBard extends DrawCard {
+    // The Blue Bard (09010)
+    // Interrupt: When the Blue Bard leaves play, search the top 10 cards of your deck for any
+    // number of Song events, reveal them, and add them to your hand. Shuffle your deck.
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCardLeftPlay: (event) => event.card === this
+                onCardLeftPlay: (event, context) => event.card === context.source
             },
             message:
                 '{player} uses {source} to search the top 10 cards of their deck for any number of Song events',

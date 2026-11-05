@@ -1,43 +1,44 @@
 import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class NoGodlessMan extends DrawCard {
+    // No Godless Man (20010)
+    // Reaction: After you win a [power] challenge in which you control a participating Drowned God
+    // character, for every 5 STR by which you won the challenge, draw 1 card and discard 1 card at
+    // random from the losing opponent’s hand. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.hasParticipatingDrownedGod(this.controller) &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
                     event.challenge.challengeType === 'power' &&
                     event.challenge.strengthDifference >= 5 &&
-                    (this.controller.canDraw() || event.challenge.loser.hand.length > 0)
+                    context.player.anyCardsInPlay(
+                        (card) =>
+                            card.isParticipating() &&
+                            card.hasTrait('Drowned God') &&
+                            card.getType() === 'character'
+                    )
             },
             max: ability.limit.perChallenge(1),
-            handler: (context) => {
-                let number = Math.trunc(this.game.currentChallenge.strengthDifference / 5);
-                this.game.addMessage(
-                    "{0} uses {1} to draw {2} and discard {2} from {3}'s hand",
-                    context.player,
-                    this,
-                    TextHelper.count(number, 'card'),
-                    context.event.challenge.loser
-                );
-
-                context.event.challenge.loser.discardAtRandom(number);
-
-                context.player.drawCardsToHand(number);
-            }
+            message: {
+                format: '{player} plays {source} to draw {cards}',
+                args: { cards: (context) => TextHelper.count(godlessCount(context), 'card') }
+            },
+            gameAction: GameActions.simultaneously((context) => [
+                GameActions.discardAtRandom({
+                    player: context.event.challenge.loser,
+                    amount: godlessCount(context)
+                }),
+                GameActions.drawCards({ player: context.player, amount: godlessCount(context) })
+            ])
         });
     }
+}
 
-    hasParticipatingDrownedGod(player) {
-        return player.anyCardsInPlay(
-            (card) =>
-                card.isParticipating() &&
-                card.hasTrait('Drowned God') &&
-                card.getType() === 'character'
-        );
-    }
+function godlessCount(context) {
+    return Math.trunc(context.event.challenge.strengthDifference / 5);
 }
 
 NoGodlessMan.code = '20010';

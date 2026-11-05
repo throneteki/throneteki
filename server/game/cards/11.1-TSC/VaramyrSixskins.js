@@ -1,100 +1,76 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class VaramyrSixskins extends DrawCard {
-    setupCardAbilities() {
+    // Varamyr Sixskins (11001)
+    // Reaction: After the challenges phase begins, until the end of the phase, Varamyr Sixskins
+    // gains (choose one):
+    // - the Bear trait and gets +5 STR.
+    // - the Eagle trait, an [intrigue] icon, and insight.
+    // - the Cat trait, a [power] icon, and stealth.
+    // - the Wolf trait and intimidate, and gets +2 STR.
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 onPhaseStarted: (event) => event.phase === 'challenge'
             },
-            handler: () => {
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Choose one',
-                        buttons: [
-                            { text: 'Bear', method: 'bearSelected' },
-                            { text: 'Eagle', method: 'eagleSelected' },
-                            { text: 'Cat', method: 'catSelected' },
-                            { text: 'Wolf', method: 'wolfSelected' }
-                        ]
+            gameAction: GameActions.choose({
+                title: 'Choose one',
+                choices: {
+                    Bear: {
+                        message:
+                            '{player} uses {source} and has it gain the Bear trait and 5 STR until the end of the phase',
+                        gameAction: GameActions.lastingEffect((context) => ({
+                            duration: 'untilEndOfPhase',
+                            match: context.source,
+                            effect: [
+                                ability.effects.addTrait('Bear'),
+                                ability.effects.modifyStrength(5)
+                            ]
+                        }))
                     },
-                    source: this
-                });
-            }
+                    Eagle: {
+                        message:
+                            '{player} uses {source} and has it gain the Eagle trait, an intrigue icon and insight until the end of the phase',
+                        gameAction: GameActions.lastingEffect((context) => ({
+                            duration: 'untilEndOfPhase',
+                            match: context.source,
+                            effect: [
+                                ability.effects.addTrait('Eagle'),
+                                ability.effects.addIcon('intrigue'),
+                                ability.effects.addKeyword('insight')
+                            ]
+                        }))
+                    },
+                    Cat: {
+                        message:
+                            '{player} uses {source} and has it gain the Cat trait, a power icon and stealth until the end of the phase',
+                        gameAction: GameActions.lastingEffect((context) => ({
+                            duration: 'untilEndOfPhase',
+                            match: context.source,
+                            effect: [
+                                ability.effects.addTrait('Cat'),
+                                ability.effects.addIcon('power'),
+                                ability.effects.addKeyword('stealth')
+                            ]
+                        }))
+                    },
+                    Wolf: {
+                        message:
+                            '{player} uses {source} and has it gain the Wolf trait, intimidate and 2 STR until the end of the phase',
+                        gameAction: GameActions.lastingEffect((context) => ({
+                            duration: 'untilEndOfPhase',
+                            match: context.source,
+                            effect: [
+                                ability.effects.addTrait('Wolf'),
+                                ability.effects.modifyStrength(2),
+                                ability.effects.addKeyword('intimidate')
+                            ]
+                        }))
+                    }
+                }
+            })
         });
-    }
-
-    bearSelected() {
-        this.untilEndOfPhase((ability) => ({
-            match: this,
-            effect: [ability.effects.addTrait('Bear'), ability.effects.modifyStrength(5)]
-        }));
-
-        this.game.addMessage(
-            '{0} uses {1} and has it gain the Bear trait and 5 STR until the end of the phase',
-            this.controller,
-            this
-        );
-
-        return true;
-    }
-
-    eagleSelected() {
-        this.untilEndOfPhase((ability) => ({
-            match: this,
-            effect: [
-                ability.effects.addTrait('Eagle'),
-                ability.effects.addIcon('intrigue'),
-                ability.effects.addKeyword('insight')
-            ]
-        }));
-
-        this.game.addMessage(
-            '{0} uses {1} and has it gain the Eagle trait, an {2} icon and insight until the end of the phase',
-            this.controller,
-            this,
-            'intrigue'
-        );
-
-        return true;
-    }
-
-    catSelected() {
-        this.untilEndOfPhase((ability) => ({
-            match: this,
-            effect: [
-                ability.effects.addTrait('Cat'),
-                ability.effects.addIcon('power'),
-                ability.effects.addKeyword('stealth')
-            ]
-        }));
-
-        this.game.addMessage(
-            '{0} uses {1} and has it gain the Cat trait, an {2} icon and stealth until the end of the phase',
-            this.controller,
-            this,
-            'power'
-        );
-
-        return true;
-    }
-
-    wolfSelected() {
-        this.untilEndOfPhase((ability) => ({
-            match: this,
-            effect: [
-                ability.effects.addTrait('Wolf'),
-                ability.effects.modifyStrength(2),
-                ability.effects.addKeyword('intimidate')
-            ]
-        }));
-
-        this.game.addMessage(
-            '{0} uses {1} and has it gain the Wolf trait, intimidate and 2 STR until the end of the phase',
-            this.controller,
-            this
-        );
-
-        return true;
     }
 }
 

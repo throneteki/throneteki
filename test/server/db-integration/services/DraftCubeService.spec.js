@@ -20,11 +20,11 @@ describe('Postgres DraftCubeService', function () {
         });
 
         expect(created).toEqual({
-            _id: jasmine.any(String),
+            _id: expect.any(String),
             name: 'Starter Cube',
             packDefinitions,
             starterDeck: { plotCards: [] },
-            lastUpdated: jasmine.any(Date)
+            lastUpdated: expect.any(Date)
         });
 
         await this.service.update({ id: created._id, name: 'Renamed Cube', packDefinitions });

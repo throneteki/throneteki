@@ -2,14 +2,17 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ThoughAllMenDoDespiseUs extends DrawCard {
+    // Though All Men Do Despise Us (20009)
+    // Reaction: After no defenders are declared, each attacking Raider character gains 1 power.
+    // (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                onDefendersDeclared: (event) =>
-                    event.player !== this.controller &&
+                onDefendersDeclared: (event, context) =>
+                    event.player !== context.source.controller &&
                     event.numOfDefendingCharacters === 0 &&
-                    this.hasAttackingRaider()
+                    context.source.hasAttackingRaider()
             },
             message: '{player} uses {source} to have each attacking Raider character gain 1 power',
             gameAction: GameActions.simultaneously((context) =>

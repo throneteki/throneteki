@@ -37,7 +37,11 @@ class ChooseParticipantsPrompt extends BaseStep {
             cardCondition: (card) => this.canParticipate(card),
             mustSelect: forcedParticipants,
             onSelect: (player, participants) => this.chooseParticipants(participants),
-            onCancel: () => this.chooseParticipants([])
+            onCancel: () => {
+                if (!this.chooseParticipants([])) {
+                    this.continue();
+                }
+            }
         });
     }
 
@@ -46,7 +50,8 @@ class ChooseParticipantsPrompt extends BaseStep {
             card.controller === this.choosingPlayer &&
             card.canParticipate({
                 attacking: this.attacking,
-                challengeType: this.challenge.challengeType
+                challengeType: this.challenge.challengeType,
+                challenge: this.challenge
             })
         );
     }
@@ -86,7 +91,8 @@ class ChooseParticipantsPrompt extends BaseStep {
                 min === 1
                     ? this.properties.messages.notEnoughSingular
                     : this.properties.messages.notEnoughPlural;
-            this.game.addAlert('danger', message, this.choosingPlayer, min);
+            this.game.addAlert('warning', message, this.choosingPlayer, min);
+            return false;
         }
 
         this.onSelect(participants);

@@ -1,18 +1,15 @@
 import PlotCard from '../../plotcard.js';
-import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class YouWinOrYouDie extends PlotCard {
+    // You Win Or You Die (08120)
+    // When Revealed: Draw 2 cards.
     setupCardAbilities() {
         this.whenRevealed({
-            handler: (context) => {
-                let cards = context.player.drawCardsToHand(2).length;
-                this.game.addMessage(
-                    '{0} uses {1} to draw {2}',
-                    context.player,
-                    this,
-                    TextHelper.count(cards, 'card')
-                );
-            }
+            gameAction: GameActions.drawCards((context) => ({
+                player: context.player,
+                amount: 2
+            }))
         });
     }
 }

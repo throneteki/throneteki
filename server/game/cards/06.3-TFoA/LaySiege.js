@@ -1,31 +1,26 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LaySiege extends DrawCard {
+    // Lay Siege (06059)
+    // Action: Choose and kneel a location. Then, if that location is Contested, discard it from
+    // play.
     setupCardAbilities() {
         this.action({
             title: 'Kneel or discard location',
             target: {
                 activePromptTitle: 'Select a location',
                 cardCondition: (card) =>
-                    card.location === 'play area' && card.getType() === 'location' && !card.kneeled,
-                gameAction: 'kneel'
+                    card.location === 'play area' && card.getType() === 'location'
             },
-            handler: (context) => {
-                this.controller.kneelCard(context.target);
-                let sacMessage = '';
-
-                if (context.target.hasTrait('Contested')) {
-                    context.target.controller.discardCard(context.target);
-                    sacMessage = ' and then discard it from play';
-                }
-                this.game.addMessage(
-                    '{0} uses {1} to kneel {2}{3}',
-                    this.controller,
-                    this,
-                    context.target,
-                    sacMessage
-                );
-            }
+            message: '{player} plays {source} to kneel {target}',
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target })).then({
+                condition: (context) => context.parentContext.target.hasTrait('Contested'),
+                message: 'Then {player} discards {target} from play',
+                gameAction: GameActions.discardCard((context) => ({
+                    card: context.parentContext.target
+                }))
+            })
         });
     }
 }

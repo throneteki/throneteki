@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class EliasLance extends DrawCard {
+    // Elia's Lance (20019)
+    // Sand Snake character only. Ambush (2).
+    // If attached character is Elia Sand, she gains stealth.
+    // Reaction: After you lose a challenge in which attached character is attacking, the winning
+    // opponent must choose and return a defending character to its owner’s hand.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Sand Snake' });
 
@@ -12,8 +17,9 @@ class EliasLance extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller && this.parent.isAttacking()
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.source.controller &&
+                    context.source.parent.isAttacking()
             },
             target: {
                 choosingPlayer: (player, context) => player === context.event.challenge.winner,
@@ -27,12 +33,7 @@ class EliasLance extends DrawCard {
                 format: '{player} uses {source} to have {winner} return {target} to their hand',
                 args: { winner: (context) => context.event.challenge.winner }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.returnCardToHand((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 }

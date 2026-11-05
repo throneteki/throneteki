@@ -2,7 +2,7 @@ import Game from '../../../server/game/game.js';
 
 describe('Game', function () {
     beforeEach(function () {
-        this.gameRouter = jasmine.createSpyObj('gameRouter', ['playerLeft', 'gameOver']);
+        this.gameRouter = { playerLeft: vi.fn(), gameOver: vi.fn() };
         this.game = new Game(
             { allowSpectators: true, owner: {}, maxPlayers: 2 },
             { router: this.gameRouter }
@@ -173,11 +173,13 @@ describe('Game', function () {
             });
 
             it('should initially wait for the player to reconnect', function () {
-                spyOn(this.game.disconnectHandler, 'waitForReconnect').and.callFake(() => true);
+                vi.spyOn(this.game.disconnectHandler, 'waitForReconnect').mockImplementation(
+                    () => true
+                );
                 this.game.disconnect(this.player1.name);
                 expect(this.game.disconnectHandler.waitForReconnect).toHaveBeenCalledWith(
                     this.player1,
-                    jasmine.any(Function)
+                    expect.any(Function)
                 );
             });
 
@@ -188,7 +190,7 @@ describe('Game', function () {
             describe('and they have disconnected beyond the wait period', function () {
                 beforeEach(function () {
                     // Call "handler" without waiting
-                    spyOn(this.game.disconnectHandler, 'waitForReconnect').and.callFake(
+                    vi.spyOn(this.game.disconnectHandler, 'waitForReconnect').mockImplementation(
                         (player, handler) => handler(player)
                     );
                 });
@@ -337,7 +339,7 @@ describe('Game', function () {
             });
 
             it('should return true if everyone has disconnected for a long period of time', function () {
-                spyOn(this.game.disconnectHandler, 'waitForReconnect').and.callFake(
+                vi.spyOn(this.game.disconnectHandler, 'waitForReconnect').mockImplementation(
                     (player, handler) => handler(player)
                 );
                 this.game.disconnect('foo');

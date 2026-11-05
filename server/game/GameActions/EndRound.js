@@ -10,7 +10,12 @@ class EndRound extends GameAction {
     }
 
     createEvent({ game }) {
+        game.beginEndingDuration('untilEndOfRound');
         return this.event('onRoundEnded', { game }, (event) => {
+            event.game.effectEngine.unapplyAndRemove(
+                (effect) => effect.duration === 'untilEndOfRound'
+            );
+            event.game.effectEngine.expireDelayedEffects('untilEndOfRound');
             event.game.addAlert('endofround', 'End of round {0}', event.game.round);
 
             const playersInPowerOrder = event.game

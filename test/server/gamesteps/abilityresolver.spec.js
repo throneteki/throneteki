@@ -1,54 +1,61 @@
 import AbilityResolver from '../../../server/game/gamesteps/abilityresolver.js';
+import { executeTestEvent, resolveGameAction } from '../../helpers/gameactiontesthelper.js';
 
 describe('AbilityResolver', function () {
     beforeEach(function () {
-        this.game = jasmine.createSpyObj('game', [
-            'addAlert',
-            'markActionAsTaken',
-            'popAbilityContext',
-            'pushAbilityContext',
-            'raiseEvent',
-            'resolveEvent',
-            'reportError'
-        ]);
-        this.game.raiseEvent.and.callFake((name, params, handler) => {
+        this.game = {
+            addAlert: vi.fn(),
+            markActionAsTaken: vi.fn(),
+            popAbilityContext: vi.fn(),
+            pushAbilityContext: vi.fn(),
+            raiseEvent: vi.fn(),
+            resolveEvent: vi.fn((event) => executeTestEvent(event)),
+            reportError: vi.fn()
+        };
+        this.game.resolveGameAction = vi.fn((action, props) =>
+            resolveGameAction(this.game, action, props)
+        );
+        this.game.raiseEvent.mockImplementation((name, params, handler) => {
             if (handler) {
                 handler(params);
             }
         });
-        this.game.reportError.and.callFake((error) => {
+        this.game.reportError.mockImplementation((error) => {
             throw error;
         });
-        this.ability = jasmine.createSpyObj('ability', [
-            'incrementLimit',
-            'isAction',
-            'isCardAbility',
-            'isForcedAbility',
-            'isPlayableEventAbility',
-            'needsChoosePlayer',
-            'outputMessage',
-            'resolveCosts',
-            'payCosts',
-            'resolveTargets',
-            'executeHandler',
-            'shouldHideSourceInMessage'
-        ]);
-        this.ability.isCardAbility.and.returnValue(true);
-        this.ability.resolveCosts.and.returnValue([]);
-        this.ability.resolveTargets.and.returnValue([]);
-        this.player = jasmine.createSpyObj('player', ['moveCard']);
-        this.source = jasmine.createSpyObj('source', ['createSnapshot', 'getType']);
+        this.ability = {
+            incrementLimit: vi.fn(),
+            isAction: vi.fn(),
+            isCardAbility: vi.fn(),
+            isForcedAbility: vi.fn(),
+            isPlayableEventAbility: vi.fn(),
+            needsChoosePlayer: vi.fn(),
+            outputMessage: vi.fn(),
+            resolveCosts: vi.fn(),
+            payCosts: vi.fn(),
+            resolveTargets: vi.fn(),
+            executeHandler: vi.fn(),
+            shouldHideSourceInMessage: vi.fn()
+        };
+        this.ability.isCardAbility.mockReturnValue(true);
+        this.ability.resolveCosts.mockReturnValue([]);
+        this.ability.resolveTargets.mockReturnValue([]);
+        this.player = {
+            moveCard: vi.fn(),
+            placeCardInPile: vi.fn(({ card, location }) => this.player.moveCard(card, location))
+        };
+        this.source = { createSnapshot: vi.fn(), getType: vi.fn() };
         this.source.owner = this.player;
-        let targets = jasmine.createSpyObj('targets', [
-            'getTargets',
-            'hasTargets',
-            'setSelections',
-            'updateTargets',
-            'getTargetsToValidate'
-        ]);
-        targets.hasTargets.and.returnValue(true);
-        targets.getTargets.and.returnValue([]);
-        targets.getTargetsToValidate.and.returnValue([]);
+        let targets = {
+            getTargets: vi.fn(),
+            hasTargets: vi.fn(),
+            setSelections: vi.fn(),
+            updateTargets: vi.fn(),
+            getTargetsToValidate: vi.fn()
+        };
+        targets.hasTargets.mockReturnValue(true);
+        targets.getTargets.mockReturnValue([]);
+        targets.getTargetsToValidate.mockReturnValue([]);
         this.context = { foo: 'bar', player: this.player, source: this.source, targets: targets };
         this.resolver = new AbilityResolver(this.game, this.ability, this.context);
     });
@@ -56,7 +63,7 @@ describe('AbilityResolver', function () {
     describe('continue()', function () {
         describe('when the ability is an action', function () {
             beforeEach(function () {
-                this.ability.isAction.and.returnValue(true);
+                this.ability.isAction.mockReturnValue(true);
                 this.resolver.continue();
             });
 
@@ -67,7 +74,7 @@ describe('AbilityResolver', function () {
 
         describe('when all costs can be paid', function () {
             beforeEach(function () {
-                this.ability.resolveCosts.and.returnValue([
+                this.ability.resolveCosts.mockReturnValue([
                     { resolved: true, value: true },
                     { resolved: true, value: true }
                 ]);
@@ -85,19 +92,19 @@ describe('AbilityResolver', function () {
             it('should not raise the onCardPlayed event', function () {
                 expect(this.game.raiseEvent).not.toHaveBeenCalledWith(
                     'onCardPlayed',
-                    jasmine.any(Object)
+                    expect.any(Object)
                 );
             });
         });
 
         describe('when the ability is a card ability', function () {
             beforeEach(function () {
-                this.ability.resolveCosts.and.returnValue([
+                this.ability.resolveCosts.mockReturnValue([
                     { resolved: true, value: true },
                     { resolved: true, value: true }
                 ]);
-                this.ability.isPlayableEventAbility.and.returnValue(true);
-                this.ability.isCardAbility.and.returnValue(true);
+                this.ability.isPlayableEventAbility.mockReturnValue(true);
+                this.ability.isCardAbility.mockReturnValue(true);
                 this.resolver.continue();
             });
 
@@ -112,27 +119,27 @@ describe('AbilityResolver', function () {
                         targetsToValidate: [],
                         originalLocation: undefined
                     },
-                    jasmine.any(Function)
+                    expect.any(Function)
                 );
             });
         });
 
         describe('when the ability is not a card ability', function () {
             beforeEach(function () {
-                this.ability.resolveCosts.and.returnValue([
+                this.ability.resolveCosts.mockReturnValue([
                     { resolved: true, value: true },
                     { resolved: true, value: true }
                 ]);
-                this.ability.isPlayableEventAbility.and.returnValue(true);
-                this.ability.isCardAbility.and.returnValue(false);
+                this.ability.isPlayableEventAbility.mockReturnValue(true);
+                this.ability.isCardAbility.mockReturnValue(false);
                 this.resolver.continue();
             });
 
             it('should not raise the onCardAbilityInitiated event', function () {
                 expect(this.game.raiseEvent).not.toHaveBeenCalledWith(
                     'onCardAbilityInitiated',
-                    jasmine.any(Object),
-                    jasmine.any(Function)
+                    expect.any(Object),
+                    expect.any(Function)
                 );
             });
         });
@@ -141,11 +148,11 @@ describe('AbilityResolver', function () {
             beforeEach(function () {
                 this.source.eventPlacementLocation = 'event placement location';
                 this.source.location = 'being played';
-                this.ability.resolveCosts.and.returnValue([
+                this.ability.resolveCosts.mockReturnValue([
                     { resolved: true, value: true },
                     { resolved: true, value: true }
                 ]);
-                this.ability.isPlayableEventAbility.and.returnValue(true);
+                this.ability.isPlayableEventAbility.mockReturnValue(true);
             });
 
             it('should move the card to the specified event location', function () {
@@ -156,10 +163,20 @@ describe('AbilityResolver', function () {
                 );
             });
 
+            it('should place the card at the bottom when requested', function () {
+                this.source.eventPlacementBottom = true;
+                this.resolver.continue();
+                expect(this.player.placeCardInPile).toHaveBeenCalledWith({
+                    card: this.source,
+                    location: 'event placement location',
+                    bottom: true
+                });
+            });
+
             it('should raise the onCardPlayed event', function () {
                 this.resolver.continue();
                 expect(this.game.resolveEvent).toHaveBeenCalledWith(
-                    jasmine.objectContaining({ name: 'onCardPlayed', card: this.source })
+                    expect.objectContaining({ name: 'onCardPlayed', card: this.source })
                 );
             });
 
@@ -178,7 +195,7 @@ describe('AbilityResolver', function () {
 
         describe('when not all costs can be paid', function () {
             beforeEach(function () {
-                this.ability.resolveCosts.and.returnValue([
+                this.ability.resolveCosts.mockReturnValue([
                     { resolved: true, value: true },
                     { resolved: true, value: false }
                 ]);
@@ -197,7 +214,7 @@ describe('AbilityResolver', function () {
         describe('when a cost cannot be immediately resolved', function () {
             beforeEach(function () {
                 this.canPayResult = { resolved: false };
-                this.ability.resolveCosts.and.returnValue([this.canPayResult]);
+                this.ability.resolveCosts.mockReturnValue([this.canPayResult]);
                 this.resolver.continue();
             });
 
@@ -254,7 +271,7 @@ describe('AbilityResolver', function () {
                     value: null,
                     targetingType: 'choose'
                 };
-                this.ability.resolveTargets.and.returnValue([this.targetResult]);
+                this.ability.resolveTargets.mockReturnValue([this.targetResult]);
                 this.resolver.continue();
             });
 
@@ -280,8 +297,8 @@ describe('AbilityResolver', function () {
                     describe('and the target name is arbitrary', function () {
                         beforeEach(function () {
                             this.targetResult.name = 'foo';
-                            this.context.targets.getTargets.and.returnValue([this.target]);
-                            this.context.targets.getTargetsToValidate.and.returnValue([
+                            this.context.targets.getTargets.mockReturnValue([this.target]);
+                            this.context.targets.getTargetsToValidate.mockReturnValue([
                                 this.target
                             ]);
                             this.resolver.continue();
@@ -289,7 +306,7 @@ describe('AbilityResolver', function () {
 
                         it('should set target selections', function () {
                             expect(this.context.targets.setSelections).toHaveBeenCalledWith([
-                                jasmine.objectContaining({ name: 'foo', value: this.target })
+                                expect.objectContaining({ name: 'foo', value: this.target })
                             ]);
                         });
 
@@ -312,7 +329,7 @@ describe('AbilityResolver', function () {
                                     targetsToValidate: [this.target],
                                     originalLocation: this.context.originalLocation
                                 },
-                                jasmine.any(Function)
+                                expect.any(Function)
                             );
                         });
                     });
@@ -326,7 +343,7 @@ describe('AbilityResolver', function () {
 
                         it('should set target selections', function () {
                             expect(this.context.targets.setSelections).toHaveBeenCalledWith([
-                                jasmine.objectContaining({ value: this.target })
+                                expect.objectContaining({ value: this.target })
                             ]);
                         });
 
@@ -360,8 +377,8 @@ describe('AbilityResolver', function () {
         describe('when an exception occurs', function () {
             beforeEach(function () {
                 this.error = new Error('something bad');
-                this.game.reportError.and.callFake(() => {});
-                this.ability.resolveCosts.and.callFake(() => {
+                this.game.reportError.mockImplementation(() => {});
+                this.ability.resolveCosts.mockImplementation(() => {
                     throw this.error;
                 });
             });
@@ -376,7 +393,7 @@ describe('AbilityResolver', function () {
 
             it('should report the error', function () {
                 this.resolver.continue();
-                expect(this.game.reportError).toHaveBeenCalledWith(jasmine.any(Error));
+                expect(this.game.reportError).toHaveBeenCalledWith(expect.any(Error));
             });
 
             describe('when the current ability context is for this ability', function () {

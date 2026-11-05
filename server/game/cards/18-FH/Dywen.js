@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
 
 class Dywen extends DrawCard {
+    // Dywen (18009)
+    // Stealth.
+    // Each [thenightswatch] character you control with stealth does not kneel when declared as an
+    // attacker during a [military] challenge.
+    // +1 Reserve.
     setupCardAbilities(ability) {
         this.plotModifiers({
             reserve: 1
@@ -9,8 +14,8 @@ class Dywen extends DrawCard {
         this.persistentEffect({
             //the condition is somehow necessary to reapply the effect to cards entering play after Dywen
             condition: () => true,
-            match: (card) =>
-                card.controller === this.controller &&
+            match: (card, context) =>
+                card.controller === context.source.controller &&
                 card.isFaction('thenightswatch') &&
                 card.getType() === 'character' &&
                 card.hasKeyword('Stealth'),

@@ -12,6 +12,10 @@ class CardTextDefinition {
         const actions = this.actionDefinitions.map((definition) => card.action(definition));
 
         for (const action of actions) {
+            action.gained = true;
+        }
+
+        for (const action of actions) {
             if (action.isEventListeningLocation(card.location)) {
                 action.registerEvents();
             }

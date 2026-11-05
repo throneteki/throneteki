@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class MinersPick extends DrawCard {
+    // Miner's Pick (11046)
+    // Builder or Steward character only.
+    // Attached character gets +1 STR.
+    // +1 Income.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: ['Builder', 'Steward'] });
         this.whileAttached({

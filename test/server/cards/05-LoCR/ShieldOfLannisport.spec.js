@@ -1,58 +1,71 @@
 describe('Shield of Lannisport', function () {
-    integration(function () {
+    describe('when marshaled', function () {
         beforeEach(function () {
-            const deck = this.buildDeck('greyjoy', [
-                'A Noble Cause',
-                'Shield of Lannisport',
-                'Tyrion Lannister (Core)',
-                'Cersei Lannister (Core)',
-                'Ser Lancel Lannister (LoCR)'
-            ]);
-
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.tyrion = this.player1.findCardByName('Tyrion Lannister', 'hand');
-
-            this.player1.clickCard(this.tyrion);
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player1);
-
-            // Attach Shield to Tyrion
-            this.player1.clickCard('Shield of Lannisport', 'hand');
-            this.player1.clickCard(this.tyrion);
-        });
-
-        it('should grant +2 STR and renown', function () {
-            expect(this.tyrion.getStrength()).toBe(6);
-            expect(this.tyrion.hasKeyword('Renown')).toBe(true);
-        });
-
-        describe('when another Lord or Lady is in play', function () {
-            describe('and they are of cost 4 or more', function () {
-                beforeEach(function () {
-                    this.player1.clickCard('Cersei Lannister', 'hand');
-                });
-
-                it('should remove the bonuses', function () {
-                    expect(this.tyrion.getStrength()).toBe(4);
-                    expect(this.tyrion.hasKeyword('Renown')).toBe(false);
-                });
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    faction: 'lannister',
+                    hand: ['Shield of Lannisport'],
+                    inPlay: ['Tommen Baratheon (LoCR)', 'Lannisport Moneylender', 'Hedge Knight']
+                }
             });
 
-            describe('and they are below cost 4', function () {
-                beforeEach(function () {
-                    this.player1.clickCard('Ser Lancel Lannister', 'hand');
-                });
+            this.player1.clickCard(this.shieldOfLannisport);
+        });
 
-                it('should retain the bonuses', function () {
-                    expect(this.tyrion.getStrength()).toBe(6);
-                    expect(this.tyrion.hasKeyword('Renown')).toBe(true);
-                });
+        it('can only be attached to a [lannister] Lord or Lady', function () {
+            expect(this.player1).toBeAbleToSelect(this.tommenBaratheon);
+            expect(this.player1).not.toBeAbleToSelect(this.lannisportMoneylender);
+            expect(this.player1).not.toBeAbleToSelect(this.hedgeKnight);
+
+            this.player1.clickCard(this.tommenBaratheon);
+
+            expect(this.tommenBaratheon.attachments).toContain(this.shieldOfLannisport);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
+
+    describe('while you control no other Lord or Lady with printed cost 4 or higher', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    faction: 'lannister',
+                    inPlay: [
+                        { card: 'Tommen Baratheon (LoCR)', attachments: ['Shield of Lannisport'] },
+                        'Taena Merryweather (LoCR)'
+                    ]
+                }
             });
+        });
+
+        it('gives the attached character +2 STR and renown, and gives +1 income', function () {
+            expect(this.tommenBaratheon.getStrength()).toBe(4);
+            expect(this.tommenBaratheon.hasKeyword('renown')).toBe(true);
+            expect(this.taenaMerryweather.getStrength()).toBe(2);
+            expect(this.player1Object.getIncome()).toBe(6);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
+
+    describe('while you control another Lord or Lady with printed cost 4 or higher', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    faction: 'lannister',
+                    inPlay: [
+                        { card: 'Tommen Baratheon (LoCR)', attachments: ['Shield of Lannisport'] },
+                        'Ser Harys Swyft (FH)'
+                    ]
+                }
+            });
+        });
+
+        it('gives no STR or renown', function () {
+            expect(this.tommenBaratheon.getStrength()).toBe(2);
+            expect(this.tommenBaratheon.hasKeyword('renown')).toBe(false);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

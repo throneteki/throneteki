@@ -35,11 +35,12 @@ class DetermineDominance extends BaseStep {
             if (result.totalTied) {
                 result.difference = 0;
                 this.game.addMessage('There was a tie for dominance');
-                const choosingPlayer = this.game
-                    .getPlayers()
-                    .find((player) => player.choosesWinnerForDominanceTies);
-                if (choosingPlayer) {
-                    // If a player can choose winner for ties, prompt
+                this.game.chooseTieWinnerController('dominance', (choosingPlayer) => {
+                    if (!choosingPlayer) {
+                        this.applyResult(event, result);
+                        return;
+                    }
+
                     const prompt = new ChoosePlayerPrompt(this.game, choosingPlayer, {
                         condition: (player) =>
                             potentialWinners.map((pw) => pw.player).includes(player),
@@ -58,10 +59,7 @@ class DetermineDominance extends BaseStep {
                     });
 
                     this.game.queueStep(prompt);
-                } else {
-                    // Otherwise, nobody wins dominance
-                    this.applyResult(event, result);
-                }
+                });
             } else if (potentialWinners.length > 0) {
                 result.player = potentialWinners[0].player;
                 result.difference =

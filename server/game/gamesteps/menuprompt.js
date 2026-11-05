@@ -13,6 +13,11 @@ import UiPrompt from './uiprompt.js';
  *                      used to provide a default waitingPromptTitle, if missing
  * hideSourceFromOpponents - boolean that indicates whether an opponent should be
  *                      able to see the card a player is using.
+ * beforeInitiation   - boolean that indicates the player is choosing whether or how to
+ *                      use a card, so nothing has been initiated yet: their card clicks
+ *                      do nothing until they answer, so a second click doesn't open
+ *                      another prompt, and opponents keep the prompt they had, so they
+ *                      can't tell which card is being considered.
  */
 class MenuPrompt extends UiPrompt {
     constructor(game, player, context, properties) {
@@ -73,6 +78,10 @@ class MenuPrompt extends UiPrompt {
         return true;
     }
 
+    onCardClicked(player) {
+        return !!this.properties.beforeInitiation && player === this.player;
+    }
+
     getButton(method, arg) {
         return (
             this.properties.activePrompt.buttons &&
@@ -85,6 +94,10 @@ class MenuPrompt extends UiPrompt {
 
     getPlayer() {
         return this.player;
+    }
+
+    getPromptablePlayers() {
+        return this.properties.beforeInitiation ? [this.player] : super.getPromptablePlayers();
     }
 }
 

@@ -2,64 +2,57 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Gendry extends DrawCard {
+    // Gendry (02068)
+    // Reaction: After you win dominance, Gendry gains 1 power.
+    // Forced Reaction: After an opponent wins dominance, you may discard 1 power from Gendry. If
+    // you do not, sacrifice a Bastard character.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onDominanceDetermined: (event) =>
-                    this.controller === event.winner && this.allowGameAction('gainPower')
+                onDominanceDetermined: (event, context) => context.player === event.winner
             },
             message: '{player} uses {source} to gain power on {source}',
-            gameAction: GameActions.gainPower({ card: this, amount: 1 })
+            gameAction: GameActions.gainPower((context) => ({ card: context.source, amount: 1 }))
         });
-
         this.forcedReaction({
             when: {
-                onDominanceDetermined: (event) => event.winner && this.controller !== event.winner
+                onDominanceDetermined: (event, context) =>
+                    event.winner && context.player !== event.winner
             },
-            handler: () => {
-                if (this.power < 1) {
-                    this.sacrificeBastard(this.controller);
-                    return;
-                }
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Discard a power from ' + this.name + '?',
-                        buttons: [
-                            { text: 'Yes', method: 'discardPower' },
-                            { text: 'No', method: 'sacrificeBastard' }
-                        ]
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.ifCondition({
+                condition: (context) => context.source.power >= 1,
+                thenAction: GameActions.choose({
+                    title: (context) => `Discard a power from ${context.source.name}?`,
+                    choices: {
+                        Yes: {
+                            message: '{player} is forced to discard a power from {source}',
+                            gameAction: GameActions.discardPower((context) => ({
+                                card: context.source,
+                                amount: 1
+                            }))
+                        },
+                        No: sacrificeBastard()
+                    }
+                }),
+                elseAction: sacrificeBastard()
+            })
         });
     }
+}
 
-    discardPower(player) {
-        this.modifyPower(-1);
-        this.game.addMessage('{0} is forced to discard a power from {1}', player, this);
-
-        return true;
-    }
-
-    sacrificeBastard(player) {
-        this.game.promptForSelect(player, {
-            cardCondition: (card) =>
+function sacrificeBastard() {
+    return {
+        message: '{player} is forced by {source} to sacrifice a Bastard character',
+        gameAction: GameActions.chooseCards({
+            title: 'Select a Bastard character',
+            cardCondition: (card, context) =>
                 card.location === 'play area' &&
                 card.hasTrait('Bastard') &&
                 card.getType() === 'character' &&
-                card.controller === this.controller,
-            source: this,
-            onSelect: (player, card) => {
-                card.controller.sacrificeCard(card);
-                this.game.addMessage('{0} is forced by {1} to sacrifice {2}', player, this, card);
-                return true;
-            }
-        });
-
-        return true;
-    }
+                card.controller === context.player,
+            gameAction: (card) => GameActions.sacrificeCard({ card })
+        })
+    };
 }
 
 Gendry.code = '02068';

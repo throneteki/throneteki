@@ -1,8 +1,28 @@
 import GameAction from './GameAction.js';
+import Message from '../Message.js';
 
 class ReturnGoldToTreasury extends GameAction {
     constructor() {
         super('returnGoldToTreasury');
+    }
+
+    message({ player, amount = 1, context }) {
+        return this.describe(player, Math.min(player.gold, amount), context);
+    }
+
+    resultMessage(props, event) {
+        return this.hasResult(event)
+            ? this.describe(event.player, event.amount, props.context)
+            : '';
+    }
+
+    describe(player, amount, context) {
+        return context && context.player === player
+            ? Message.fragment('returns {amount} gold to the treasury', { amount })
+            : Message.fragment("returns {amount} of {player}'s gold to the treasury", {
+                  amount,
+                  player
+              });
     }
 
     canChangeGameState({ player, amount = 1 }) {

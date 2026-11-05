@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TakeTheBlack extends DrawCard {
+    // Take the Black (01139)
+    // Dominance Action: Choose a non-unique character with printed cost 6 or lower. Take control of
+    // that character. (Max 1 per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Take control of character',
@@ -15,9 +19,10 @@ class TakeTheBlack extends DrawCard {
                 }
             },
             message: '{player} plays {source} to take control of {target}',
-            handler: (context) => {
-                this.game.takeControl(context.player, context.target);
-            }
+            gameAction: GameActions.takeControl((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 }

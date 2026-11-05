@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MaesterColemon extends DrawCard {
+    // Maester Colemon (23024)
+    // Dominance Action: Kneel Maester Colemon to choose a Condition or Item attachment and move it
+    // to another eligible character.
     setupCardAbilities(ability) {
         this.action({
             title: 'Move attachment',
@@ -11,35 +15,23 @@ class MaesterColemon extends DrawCard {
                 cardCondition: {
                     type: 'attachment',
                     location: 'play area',
-                    trait: ['Condition', 'Item'],
-                    condition: (card) =>
-                        this.game.anyCardsInPlay(
-                            (c) =>
-                                c.getType() === 'character' &&
-                                c !== card.parent &&
-                                card.controller.canAttach(card, c)
-                        ) /* TODO: Remove this last condition once select gameAction implemented */
+                    trait: ['Condition', 'Item']
                 }
             },
             message: {
-                format: '{player} kneels {costs.kneel} to move {target} from {parent} to another elibile character',
+                format: '{player} kneels {costs.kneel} to move {target} from {parent} to another eligible character',
                 args: { parent: (context) => context.target.parent }
             },
-            handler: (context) => {
-                const attachment = context.target;
-
-                this.game.promptForSelect(context.player, {
-                    cardCondition: (newParent) =>
-                        newParent.getType() === 'character' &&
-                        newParent !== attachment.parent &&
-                        attachment.controller.canAttach(attachment, newParent) &&
-                        newParent.location === 'play area',
-                    onSelect: (player, newParent) => {
-                        attachment.controller.attach(attachment.controller, attachment, newParent);
-                        return true;
-                    }
-                });
-            }
+            gameAction: GameActions.chooseCards({
+                title: 'Select a character',
+                cardCondition: { location: 'play area', type: 'character' },
+                gameAction: (card, context) =>
+                    GameActions.attach({
+                        player: context.target.controller,
+                        attachment: context.target,
+                        target: card
+                    })
+            })
         });
     }
 }

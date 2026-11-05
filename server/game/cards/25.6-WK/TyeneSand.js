@@ -2,10 +2,15 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TyeneSand extends DrawCard {
+    // Tyene Sand (25107)
+    // Stealth.
+    // Reaction: After you lose dominance, move 1 power from the winning opponent's faction card to
+    // a character you control.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onDominanceDetermined: (event) => event.winner && this.controller !== event.winner
+                onDominanceDetermined: (event, context) =>
+                    event.winner && context.source.controller !== event.winner
             },
             target: {
                 cardCondition: {
@@ -24,16 +29,11 @@ class TyeneSand extends DrawCard {
                 format: "{player} uses {source} to move 1 power from {winner}'s faction card to {target}",
                 args: { winner: (context) => context.event.winner }
             },
-            handler: (context) => {
-                context.game.resolveGameAction(
-                    GameActions.movePower((context) => ({
-                        from: context.event.winner.faction,
-                        to: context.target,
-                        amount: 1
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.movePower((context) => ({
+                from: context.event.winner.faction,
+                to: context.target,
+                amount: 1
+            }))
         });
     }
 }

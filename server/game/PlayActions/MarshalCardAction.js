@@ -1,5 +1,7 @@
 import BaseAbility from '../baseability.js';
 import Costs from '../costs.js';
+import { Requirements } from '../Constants/index.js';
+import PutIntoPlay from '../GameActions/PutIntoPlay.js';
 
 class MarshalCardAction extends BaseAbility {
     constructor() {
@@ -14,17 +16,51 @@ class MarshalCardAction extends BaseAbility {
         return true;
     }
 
-    meetsRequirements(context) {
-        var { game, player, source } = context;
-
+    isRelevant({ game, player, source }) {
         return (
-            game.currentPhase === 'marshal' &&
+            game.currentPhase !== 'setup' &&
             source.getType() !== 'event' &&
-            player.allowMarshal &&
-            player.isCardInPlayableLocation(source, 'marshal') &&
             !player.canDuplicate(source) &&
-            player.canPutIntoPlay(source, 'marshal')
+            player.isCardInPlayableLocation(source, 'marshal')
         );
+    }
+
+    getUnmetRequirement(context) {
+        const { game, player, source } = context;
+
+        if (game.currentPhase !== 'marshal') {
+            return Requirements.phase;
+        }
+
+        const timingRequirement = game.getActionTimingRequirement(player);
+        if (timingRequirement) {
+            return timingRequirement;
+        }
+
+        if (source.getType() === 'event' || player.canDuplicate(source)) {
+            return Requirements.condition;
+        }
+
+        if (!player.isCardInPlayableLocation(source, 'marshal')) {
+            return Requirements.location;
+        }
+
+        if (!player.allowMarshal || !player.canPutIntoPlay(source, 'marshal')) {
+            return Requirements.restriction;
+        }
+
+        if (
+            source.getType() === 'attachment' &&
+            !PutIntoPlay.canChangeGameState({
+                player: player,
+                card: source,
+                playingType: 'marshal'
+            })
+        ) {
+            return Requirements.target;
+        }
+
+        return undefined;
     }
 
     executeHandler(context) {

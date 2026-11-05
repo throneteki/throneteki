@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class DoranMartell extends DrawCard {
+    // Doran Martell (23007)
+    // Insight. Shadow (5).
+    // Each card you control in shadows gains shadow (X). X is that card's printed cost.
+    // Reaction: After you lose dominance, look at the top 2 cards of your deck. Place 1 in shadows,
+    // and the other on the bottom of your deck.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetLocation: 'shadows',
@@ -9,43 +14,40 @@ class DoranMartell extends DrawCard {
                 `Shadow (${card.translateXValue(card.getPrintedCost())})`
             ])
         });
-
         this.reaction({
             when: {
-                onDominanceDetermined: (event) => event.winner && this.controller !== event.winner
+                onDominanceDetermined: (event, context) =>
+                    event.winner && context.player !== event.winner
             },
             message: '{player} uses {source} to look at the top 2 cards of their deck',
             gameAction: GameActions.lookAtDeck((context) => ({
                 player: context.player,
                 lookingAt: context.player,
-                // TODO: Add 'whileLooking' option & select instead of choosing with 'then'
                 amount: 2
             })).then({
                 gameAction: GameActions.choose({
                     title: 'Select card to place in shadows',
                     message:
                         '{choosingPlayer} places 1 card in shadows, and places the other on the bottom of their deck',
-                    choices: (context) => this.buildChoices(context.event.topCards)
+                    choices: (context) => buildChoices(context.event.topCards)
                 })
             })
         });
     }
+}
 
-    buildChoices(topCards) {
-        return topCards.reduce((choices, card) => {
-            let actions = [GameActions.placeCard({ card, location: 'shadows' })];
-
-            let otherCard = topCards.find((c) => c !== card);
-            if (otherCard) {
-                actions.push(
-                    GameActions.placeCard({ card: otherCard, location: 'draw deck', bottom: true })
-                );
-            }
-
-            choices[card.uuid] = { card, gameAction: GameActions.simultaneously(actions) };
-            return choices;
-        }, {});
-    }
+function buildChoices(topCards) {
+    return topCards.reduce((choices, card) => {
+        let actions = [GameActions.placeCard({ card, location: 'shadows' })];
+        let otherCard = topCards.find((c) => c !== card);
+        if (otherCard) {
+            actions.push(
+                GameActions.placeCard({ card: otherCard, location: 'draw deck', bottom: true })
+            );
+        }
+        choices[card.uuid] = { card, gameAction: GameActions.simultaneously(actions) };
+        return choices;
+    }, {});
 }
 
 DoranMartell.code = '23007';
