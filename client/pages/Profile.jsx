@@ -10,9 +10,9 @@ import { useSaveProfileMutation, useVerifyAuthenticationQuery } from '../redux/m
 import ProfileMain from '../Components/Profile/ProfileMain';
 import ActionWindowOptions from '../Components/Profile/ActionWindowOptions';
 import GameSettings from '../Components/Profile/GameSettings';
-import BlankBg from '../assets/img/bgs/blank.png';
-import Background1 from '../assets/img/bgs/background.png';
-import Background2 from '../assets/img/bgs/background2.png';
+import BlankBg from '../assets/img/bgs/blank.webp';
+import Background1 from '../assets/img/bgs/background.webp';
+import Background2 from '../assets/img/bgs/background2.webp';
 import { setAuthTokens, setUser } from '../redux/reducers/auth';
 import { toast } from 'react-toastify';
 import CardSizeSettings from '../Components/Profile/CardSizeSettings';
