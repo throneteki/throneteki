@@ -2,7 +2,6 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import classNames from 'classnames';
 import { useSelector } from 'react-redux';
 import { useDraggable } from '@dnd-kit/core';
-import CardMenu from './CardMenu';
 import CardCounters from './CardCounters';
 import SquishableCardPanel from './SquishableCardPanel';
 import CardTiledList from './CardTiledList';
@@ -18,18 +17,12 @@ import { cardClass, standardiseCardSize } from '../../util';
 import { Tooltip } from '@heroui/react';
 import { getActionRequirementReason, isNotableRequirement } from './actionRequirementReasons';
 
-// Opening one card menu closes any other that is open.
-const cardMenus = new EventTarget();
-let nextMenuId = 0;
-
 const Card = ({
     card,
     className,
     disableHover,
     hideTokens,
-    menu = [{ hideable: true, command: 'click', text: 'Select Card' }],
     onClick,
-    onMenuItemClick,
     orientation = 'vertical',
     size,
     source,
@@ -38,37 +31,8 @@ const Card = ({
     forceFaceup = false,
     cardStackIndex = 200
 }) => {
-    const [showMenu, setShowMenu] = useState(false);
     const [showUnderneath, setShowUnderneath] = useState(false);
-    const menuIdRef = useRef(null);
     const cardRef = useRef(null);
-    if (menuIdRef.current === null) {
-        menuIdRef.current = ++nextMenuId;
-    }
-
-    useEffect(() => {
-        if (!showMenu) {
-            return;
-        }
-
-        const onOtherMenuOpened = (event) => {
-            if (event.detail !== menuIdRef.current) {
-                setShowMenu(false);
-            }
-        };
-        const onDocumentMouseDown = (event) => {
-            if (!cardRef.current?.contains(event.target)) {
-                setShowMenu(false);
-            }
-        };
-
-        cardMenus.addEventListener('open', onOtherMenuOpened);
-        document.addEventListener('mousedown', onDocumentMouseDown);
-        return () => {
-            cardMenus.removeEventListener('open', onOtherMenuOpened);
-            document.removeEventListener('mousedown', onDocumentMouseDown);
-        };
-    }, [showMenu]);
 
     const hasUnderneathPopup = card.childCards?.length > 0 && card.type !== 'agenda';
     const hasSelectableUnderneath =
@@ -111,54 +75,14 @@ const Card = ({
         data: { type: ItemTypes.CARD, card, orientation, source, key: key }
     });
 
-    const isAllowedMenuSource = useCallback(
-        () => ['play area', 'agenda', 'revealed plots'].includes(source),
-        [source]
-    );
-
-    const handleMenuItemClick = useCallback(
-        (menuItem) => {
-            if (onMenuItemClick) {
-                onMenuItemClick(card, menuItem);
-                setShowMenu(!showMenu);
-            }
-        },
-        [card, onMenuItemClick, showMenu]
-    );
-
-    const getMenu = useCallback(() => {
-        const retMenu = [...menu] || [];
-
-        if (card.menu) {
-            retMenu.push(...card.menu);
-        }
-
-        return retMenu;
-    }, [card.menu, menu]);
-
-    const shouldShowMenu = useCallback(
-        () =>
-            getMenu().some((item) => item.command !== 'click' && !item.disabled) &&
-            isAllowedMenuSource(),
-        [getMenu, isAllowedMenuSource]
-    );
-
     const handleClick = useCallback(
         (event) => {
             event.preventDefault();
             event.stopPropagation();
 
-            if (shouldShowMenu()) {
-                if (!showMenu) {
-                    cardMenus.dispatchEvent(new CustomEvent('open', { detail: menuIdRef.current }));
-                }
-                setShowMenu(!showMenu);
-                return;
-            }
-
             onClick && onClick(card);
         },
-        [card, onClick, shouldShowMenu, showMenu]
+        [card, onClick]
     );
 
     const getCountersForCard = (card) => {
@@ -224,7 +148,6 @@ const Card = ({
                     wrapped={false}
                     hideTokens
                     onClick={onClick}
-                    onMenuItemClick={onMenuItemClick}
                     size={size}
                 />
             );
@@ -249,7 +172,6 @@ const Card = ({
                     card={dupeCopy}
                     wrapped={false}
                     onClick={onClick}
-                    onMenuItemClick={onMenuItemClick}
                     size={size}
                     facedown={forceFaceup ? false : card.facedown}
                     hideTokens
@@ -335,7 +257,6 @@ const Card = ({
                         numColumns={Math.min(cards.length, 5)}
                         numRows={1.2}
                         onCardClick={onClick}
-                        onMenuItemClick={onMenuItemClick}
                         size={size}
                         source='underneath'
                     />
@@ -486,13 +407,12 @@ const Card = ({
                     <CardHoverable
                         code={card.code}
                         notes={availabilityNotes}
-                        isDisabled={isDragging || showMenu}
+                        isDisabled={isDragging}
                         touchDelay={250}
                     >
                         {image}
                     </CardHoverable>
                 )}
-                {showMenu && <CardMenu menu={getMenu()} onMenuItemClick={handleMenuItemClick} />}
                 {getCardOrder()}
                 {getUnderneathBadge()}
                 {getUnderneathPopup()}

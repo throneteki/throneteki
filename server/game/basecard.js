@@ -379,16 +379,6 @@ class BaseCard {
         this.xValueDefinition = new XValueDefinition({ max, min, value });
     }
 
-    doAction(player, arg) {
-        var action = this.abilities.actions[arg];
-
-        if (!action) {
-            return;
-        }
-
-        action.execute(player, arg);
-    }
-
     createSnapshot() {
         let clone = new BaseCard(this.owner, this.cardData);
 
@@ -733,20 +723,6 @@ class BaseCard {
         }
     }
 
-    getMenu(player) {
-        if (player.isSpectator()) {
-            return;
-        }
-
-        let actionIndexPairs = this.abilities.actions.map((action, index) => [action, index]);
-        let menuActionPairs = actionIndexPairs.filter((pair) => {
-            let action = pair[0];
-            return action.allowPlayer(player) && !action.isClickToActivate() && action.allowMenu();
-        });
-
-        return menuActionPairs.map(([action, index]) => action.getMenuItem(index, player));
-    }
-
     getUnavailableActions(player) {
         if (player.isSpectator()) {
             return undefined;
@@ -1059,7 +1035,6 @@ class BaseCard {
             controlled: this.owner !== this.controller && this.getType() !== 'title',
             facedown: this.facedown,
             factionStatus: this.getFactionStatus(),
-            menu: this.game.manualMode.enabled ? this.getMenu(activePlayer) : undefined,
             unavailableActions: selectingCards
                 ? undefined
                 : this.getUnavailableActions(activePlayer),

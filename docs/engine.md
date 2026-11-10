@@ -100,8 +100,9 @@ chooses targets, then raises `onCardAbilityInitiated`, which is where cancels in
 
 - **Requirements.** An ability can be used when `getUnmetRequirement` returns nothing. Otherwise it
   returns a reason from [Constants/Requirements.js](../server/game/Constants/Requirements.js)
-  (`'phase'`, `'limit'`, `'cost'`, `'target'`, `'noEffect'`, `'window'`, ...). Card menus carry the
-  reason, and the client shows a readable version. Override `getUnmetRequirement`, not
+  (`'phase'`, `'limit'`, `'cost'`, `'target'`, `'noEffect'`, `'window'`, ...). Card summaries
+  carry the reason in `unavailableActions`, and the client shows a readable version when the card
+  is hovered. Override `getUnmetRequirement`, not
   `meetsRequirements`.
 - **Targets.** A card is a legal target only if its `cardCondition` passes and the target's game
   action could change it, so immunity, "cannot" and state checks apply without repeating them.

@@ -23,7 +23,6 @@ const CardPile = ({
     disableHover,
     numColumns,
     numRows,
-    onMenuItemClick: propsOnMenuItemClick,
     size,
     popupMenu,
     title,
@@ -50,6 +49,8 @@ const CardPile = ({
         return topCard.selectable && (!cards || cards.every((card) => card.unselectable));
     }, [cards, topCard]);
 
+    const topCardHasAction = !!(topCard?.selectable || topCard?.canPlay);
+
     const updatePopupVisibility = useCallback(
         (value) => {
             setShowPopup(value);
@@ -73,7 +74,7 @@ const CardPile = ({
     );
 
     const onTopCardClick = useCallback(() => {
-        if (disablePopup || isTopCardSelectable) {
+        if (disablePopup || isTopCardSelectable || topCardHasAction) {
             if (propsOnCardClick && topCard) {
                 propsOnCardClick(topCard);
             }
@@ -86,6 +87,7 @@ const CardPile = ({
         showPopup,
         disablePopup,
         isTopCardSelectable,
+        topCardHasAction,
         propsOnCardClick,
         topCard,
         updatePopupVisibility
@@ -112,19 +114,6 @@ const CardPile = ({
             }
         },
         [closeOnClick, propsOnCardClick, updatePopupVisibility]
-    );
-
-    const onMenuItemClick = useCallback(
-        (card, menuItem) => {
-            if (menuItem.showPopup !== undefined) {
-                updatePopupVisibility(menuItem.showPopup);
-            }
-
-            if (propsOnMenuItemClick) {
-                propsOnMenuItemClick(card, menuItem);
-            }
-        },
-        [updatePopupVisibility, propsOnMenuItemClick]
     );
 
     const onPopupMenuItemClick = useCallback(
@@ -160,7 +149,6 @@ const CardPile = ({
         const listProps = {
             disableHover: disableHover,
             onCardClick: onCardClick,
-            onMenuItemClick: onMenuItemClick,
             size: size,
             source: source,
             numColumns,
@@ -235,7 +223,6 @@ const CardPile = ({
     }, [
         disableHover,
         onCardClick,
-        onMenuItemClick,
         size,
         source,
         numColumns,
@@ -267,29 +254,6 @@ const CardPile = ({
         };
     }
 
-    let menu;
-    // A top card with something to do gets a menu that includes the popup toggle; otherwise a click
-    // on it opens the popup. If popup is disabled, the default Card menu is used.
-    const topCardHasAction =
-        topCard?.selectable || topCard?.canPlay || topCard?.menu?.some((item) => !item.disabled);
-    if (!disablePopup && topCardHasAction) {
-        menu = [
-            {
-                hideable: true,
-                showPopup: !showPopup,
-                text: `${showPopup ? 'Close' : 'Open'} Popup`
-            }
-        ];
-
-        // Additionally, if the top card is currently selectable, that also needs to be an option
-        // Note: If CardPiles ever become available in locations where "Select Card" is always an option (such as "play area"), this will need to be permenantly enabled for those cards
-        if (topCard?.selectable) {
-            menu.push({ hideable: true, command: 'click', text: 'Select Card' });
-        } else if (topCard?.canPlay) {
-            menu.push({ command: 'click', text: 'Use' });
-        }
-    }
-
     return (
         <LabelledGameArea
             ref={areaRef}
@@ -298,15 +262,14 @@ const CardPile = ({
             className={retClassName}
             onClick={onCollectionClick}
             disableBackground={disableBackground}
+            labelClickable={!disablePopup && topCardHasAction}
         >
             {retTopCard ? (
                 <Card
                     card={retTopCard}
                     source={source}
                     disableHover={hiddenTopCard}
-                    menu={menu}
                     onClick={onTopCardClick}
-                    onMenuItemClick={onMenuItemClick}
                     orientation={orientation}
                     size={size}
                 />

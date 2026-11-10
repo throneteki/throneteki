@@ -1127,7 +1127,7 @@ Cost reducer match predicates receive `(card, context)`, where `context.source` 
 providing the reducer. Use that context when matching the current controller's faction.
 
 An action that reduces a cost sets `clickToActivate: true`, so clicking the card uses it without
-the confirmation menu other actions get. Clicking it again after use refunds costs that can be
+the confirmation prompt other actions get. Clicking it again after use refunds costs that can be
 refunded (kneeling the card itself) and ends the lasting effects it created, so the card needs no
 check of its own. Set `undoable: false` when the action does more than that, such as discarding
 cards (Queen of Meereen). Specs use these actions with `clickCard`, not `clickMenu`.

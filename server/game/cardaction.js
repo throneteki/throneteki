@@ -8,8 +8,7 @@ import { Requirements } from './Constants/index.js';
  * Represents an action ability provided by card text.
  *
  * Properties:
- * title        - string that is used within the card menu associated with this
- *                action.
+ * title        - string shown on the action's button when the card is clicked.
  * condition    - optional function that should return true when the action is
  *                allowed, false otherwise. It should generally be used to check
  *                if the action can modify game state (step #1 in ability
@@ -29,7 +28,7 @@ import { Requirements } from './Constants/index.js';
  * anyPlayer    - boolean indicating that the action may be executed by a player
  *                other than the card's controller. Defaults to false.
  * clickToActivate - boolean that indicates the action should be activated when
- *                   the card is clicked, without a confirmation menu. Use it for actions
+ *                   the card is clicked, without a confirmation prompt. Use it for actions
  *                   that reduce a cost. Clicking the card again after it was used
  *                   refunds its costs and ends the lasting effects it created.
  * undoable     - boolean, defaulting to true, that indicates a click-to-activate action
@@ -98,7 +97,7 @@ class CardAction extends BaseAbility {
         return properties.phase;
     }
 
-    allowMenu() {
+    allowCardClick() {
         return (
             ['play area', 'agenda', 'active plot'].includes(this.location) &&
             this.card.getPrintedType() !== 'event' &&
@@ -193,19 +192,6 @@ class CardAction extends BaseAbility {
         this.game.resolveAbility(this, context);
 
         return true;
-    }
-
-    getMenuItem(arg, player) {
-        let context = this.createContext(player);
-        const unmetRequirement = this.getUnmetRequirement(context);
-        return {
-            text: this.title,
-            method: 'doAction',
-            arg: arg,
-            anyPlayer: !!this.anyPlayer,
-            disabled: !!unmetRequirement,
-            disabledReason: unmetRequirement
-        };
     }
 
     isAction() {

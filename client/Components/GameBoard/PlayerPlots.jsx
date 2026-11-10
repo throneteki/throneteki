@@ -7,7 +7,6 @@ import classNames from 'classnames';
 const PlayerPlots = ({
     plotDiscard,
     onCardClick,
-    onMenuItemClick,
     cardSize,
     isMe,
     activePlot,
@@ -27,7 +26,6 @@ const PlayerPlots = ({
                 numColumns={4}
                 numRows={2.2}
                 onCardClick={onCardClick}
-                onMenuItemClick={onMenuItemClick}
                 orientation='horizontal'
                 size={cardSize}
                 source='revealed plots'
@@ -93,7 +91,6 @@ const PlayerPlots = ({
     }, [
         plotDiscard,
         onCardClick,
-        onMenuItemClick,
         cardSize,
         isMe,
         activePlot,

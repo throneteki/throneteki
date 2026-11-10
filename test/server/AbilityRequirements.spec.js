@@ -81,9 +81,6 @@ describe('why an ability is unavailable', function () {
 
             expect(this.bastardInHiding.location).toBe('discard pile');
             expect(this.player1.actionUnavailableReason(this.oldForestHunter)).toBe('limit');
-            expect(this.oldForestHunter.getMenu(this.player1.player)).toEqual([
-                expect.objectContaining({ disabled: true, disabledReason: 'limit' })
-            ]);
             expect(this.player1).isReadyToTakeAction();
         });
     });

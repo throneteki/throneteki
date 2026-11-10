@@ -193,7 +193,7 @@ Other references:
 this.player1.clickPrompt('Done');
 this.player1.clickCard(this.eddardStark); // select, play, marshal or use, depending on the prompt
 this.player1.clickCard('Eddard Stark', 'hand'); // by name and location
-this.player1.clickMenu(this.card, 'Menu item text');
+this.player1.clickMenu(this.card, 'Action title');
 this.player1.triggerAbility("The Hand's Judgment"); // in an interrupt or reaction window
 
 // Plots and first player
@@ -315,14 +315,16 @@ the first player is chosen (see [Confiscation.spec.js](../test/server/cards/01-C
 ### Actions
 
 ```javascript
-this.player1.clickMenu(this.card, 'Menu item text'); // menu actions
+this.player1.clickMenu(this.card, 'Action title'); // clicks the card and chooses the action
 this.player1.clickCard(this.card); // actions activated by clicking the card
 ```
 
-In a game, clicking a card with a usable action opens a menu with a Cancel button, so a stray
+In a game, clicking a card with a usable action opens a prompt with a Cancel button, so a stray
 click can be backed out: "Use <card name>?" when the card has a single usable action, which
 `clickCard` confirms for you, and "Choose an action" when it has several, where you choose one
-with `clickPrompt`. Cost reducers (`clickToActivate`) are used straight away, without a menu.
+with `clickPrompt`. In manual mode the prompt also offers Kneel or Stand. Cost reducers
+(`clickToActivate`) are used straight away, without a prompt. `clickMenu` does nothing when the
+action can't be used, so pair it with `actionUnavailableReason`.
 
 When an action shouldn't be available, assert the reason with `actionUnavailableReason` rather
 than only checking that nothing happened: it shows the action failed for the right reason, not

@@ -1,11 +1,4 @@
 describe('clicking a card with an action', function () {
-    function summary(context, card) {
-        const state = context.game.getState(context.player1.player.name);
-        return state.players[context.player1.player.name].cardPiles.cardsInPlay.find(
-            (cardState) => cardState.uuid === card.uuid
-        );
-    }
-
     describe('when the card has one usable action', function () {
         beforeEach(function () {
             this.setupTest({
@@ -15,10 +8,6 @@ describe('clicking a card with an action', function () {
                     drawDeck: ['Winterfell Steward']
                 }
             });
-        });
-
-        it('sends no menu while manual mode is off', function () {
-            expect(summary(this, this.gatesOfWinterfell).menu).toBeUndefined();
         });
 
         describe('and the player clicks it', function () {
@@ -104,6 +93,43 @@ describe('clicking a card with an action', function () {
 
             expect(this.highgarden.kneeled).toBe(false);
             expect(this.player1).isReadyToTakeAction();
+        });
+    });
+
+    describe('while manual mode is on', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                gameOptions: { manualMode: true },
+                player1: {
+                    inPlay: ['Gates of Winterfell'],
+                    drawDeck: ['Winterfell Steward']
+                }
+            });
+
+            this.game.cardClicked(this.player1.name, this.gatesOfWinterfell.uuid);
+            this.game.continue();
+        });
+
+        it('offers the action alongside kneeling the card', function () {
+            expect(this.player1).toHavePrompt('Choose an action');
+            expect(this.player1).toHavePromptButton('Reveal top card of deck');
+            expect(this.player1).toHavePromptButton('Kneel');
+            expect(this.player1).toHavePromptButton('Cancel');
+        });
+
+        it('uses the action when chosen', function () {
+            this.player1.clickPrompt('Reveal top card of deck');
+
+            expect(this.gatesOfWinterfell.kneeled).toBe(true);
+            expect(this.winterfellSteward.location).toBe('hand');
+        });
+
+        it('kneels the card without using the action when chosen', function () {
+            this.player1.clickPrompt('Kneel');
+
+            expect(this.gatesOfWinterfell.kneeled).toBe(true);
+            expect(this.winterfellSteward.location).toBe('draw deck');
         });
     });
 });

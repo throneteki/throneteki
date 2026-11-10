@@ -634,7 +634,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        if (!this.manualMode.enabled && this.useCardAction(player, card)) {
+        if (this.useCardAction(player, card)) {
             return;
         }
 
@@ -647,7 +647,7 @@ class Game extends EventEmitter {
             .filter(
                 ({ action }) =>
                     action.allowPlayer(player) &&
-                    action.allowMenu() &&
+                    action.allowCardClick() &&
                     action.meetsRequirements(action.createContext(player))
             );
 
@@ -665,9 +665,19 @@ class Game extends EventEmitter {
             return { text: action.title, method };
         });
 
+        if (this.manualMode.enabled && this.canToggleKneel(player, card)) {
+            handlers.toggleKneel = () => {
+                if (this.manualMode.allows(player)) {
+                    this.toggleKneel(player, card);
+                }
+                return true;
+            };
+            buttons.push({ text: card.kneeled ? 'Stand' : 'Kneel', method: 'toggleKneel' });
+        }
+
         this.promptWithMenu(player, handlers, {
             activePrompt: {
-                menuTitle: usable.length === 1 ? `Use ${card.name}?` : 'Choose an action',
+                menuTitle: buttons.length === 1 ? `Use ${card.name}?` : 'Choose an action',
                 buttons: [...buttons, { text: 'Cancel', method: 'cancel', cancel: true }]
             },
             source: card,
@@ -676,19 +686,21 @@ class Game extends EventEmitter {
         return true;
     }
 
-    defaultCardClick(player, card) {
+    canToggleKneel(player, card) {
         if (card.facedown || card.controller !== player) {
-            return;
+            return false;
         }
 
-        if (card.location !== 'play area' && !['faction', 'agenda'].includes(card.getType())) {
-            return;
-        }
+        return card.location === 'play area' || ['faction', 'agenda'].includes(card.getType());
+    }
 
-        if (!this.manualMode.allows(player)) {
-            return;
+    defaultCardClick(player, card) {
+        if (this.canToggleKneel(player, card) && this.manualMode.allows(player)) {
+            this.toggleKneel(player, card);
         }
+    }
 
+    toggleKneel(player, card) {
         this.manualActions.record(player, card.kneeled ? 'stand' : 'kneel', { cards: [card] });
 
         let action = card.kneeled
@@ -701,55 +713,6 @@ class Game extends EventEmitter {
 
             this.addAlert('danger', '{0} {1} {2}', player, standStatus, cardFragment);
         });
-    }
-
-    cardHasMenuItem(card, player, menuItem) {
-        let menu = card.getMenu(player) || [];
-        return menu.some((m) => {
-            return m.method === menuItem.method;
-        });
-    }
-
-    callCardMenuCommand(card, player, menuItem) {
-        if (!card || !card[menuItem.method] || !this.cardHasMenuItem(card, player, menuItem)) {
-            return;
-        }
-
-        card[menuItem.method](player, menuItem.arg);
-    }
-
-    menuItemClick(sourcePlayer, cardId, menuItem) {
-        var player = this.getPlayerByName(sourcePlayer);
-
-        if (!player) {
-            return;
-        }
-
-        if (menuItem.command === 'click') {
-            this.cardClicked(sourcePlayer, cardId);
-            return;
-        }
-
-        let card = this.allCards.find((card) => card.uuid === cardId);
-
-        if (!card) {
-            return;
-        }
-
-        switch (card.location) {
-            case 'active plot':
-                this.callCardMenuCommand(player.activePlot, player, menuItem);
-                break;
-            //agenda and play area can behave the same now as the alliance agenda allows you to have more than one agenda card that are clickable
-            case 'agenda':
-            case 'play area':
-                if (card.controller !== player && !menuItem.anyPlayer) {
-                    return;
-                }
-
-                this.callCardMenuCommand(card, player, menuItem);
-                break;
-        }
     }
 
     showDrawDeck(playerName, newValue) {

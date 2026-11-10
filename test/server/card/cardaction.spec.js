@@ -447,30 +447,6 @@ describe('CardAction', function () {
         });
     });
 
-    describe('getMenuItem()', function () {
-        beforeEach(function () {
-            this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
-            this.menuItem = this.action.getMenuItem('arg', this.playerSpy);
-        });
-
-        it('returns the menu item format', function () {
-            expect(this.menuItem).toEqual(
-                expect.objectContaining({ text: 'Do the thing', method: 'doAction', arg: 'arg' })
-            );
-        });
-
-        it('returns whether the menu item is for any player', function () {
-            // The client passes this back to the server and is checked before
-            // executing menu items that are requested by a non-controlling
-            // player (e.g. Bronn).
-            expect(this.menuItem['anyPlayer']).toBeDefined();
-        });
-
-        it('should include whether the menu item is disabled', function () {
-            expect(this.menuItem['disabled']).toBeDefined();
-        });
-    });
-
     describe('executeHandler()', function () {
         beforeEach(function () {
             this.player = { player: true };

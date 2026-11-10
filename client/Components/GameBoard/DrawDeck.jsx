@@ -11,7 +11,6 @@ const DrawDeck = ({
     cardCount,
     revealTopCard,
     onCardClick,
-    onMenuItemClick,
     popupLocation,
     popupId,
     size,
@@ -71,7 +70,6 @@ const DrawDeck = ({
             numColumns={7}
             numRows={3.2}
             onCardClick={onCardClick}
-            onMenuItemClick={onMenuItemClick}
             onPopupChange={handlePopupChange}
             popupLocation={popupLocation}
             popupId={popupId}

@@ -82,37 +82,6 @@ describe('BaseCard', function () {
         });
     });
 
-    describe('doAction()', function () {
-        describe('when there is no action for the card', function () {
-            beforeEach(function () {
-                this.card.abilities.actions = [];
-            });
-
-            it('does not crash', function () {
-                expect(() => this.card.doAction('player', 0)).not.toThrow();
-            });
-        });
-
-        describe('when there are actions for the card', function () {
-            beforeEach(function () {
-                this.actionSpy1 = { execute: vi.fn() };
-                this.actionSpy2 = { execute: vi.fn() };
-                this.card.abilities.actions = [this.actionSpy1, this.actionSpy2];
-            });
-
-            it('should call execute on the action with the appropriate index', function () {
-                this.card.doAction('player', 1);
-                expect(this.actionSpy2.execute).toHaveBeenCalledWith('player', 1);
-            });
-
-            it('should handle out of bounds indices', function () {
-                this.card.doAction('player', 3);
-                expect(this.actionSpy1.execute).not.toHaveBeenCalled();
-                expect(this.actionSpy2.execute).not.toHaveBeenCalled();
-            });
-        });
-    });
-
     describe('getSummary', function () {
         describe('when is visible to the active player', function () {
             beforeEach(function () {

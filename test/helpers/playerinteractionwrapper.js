@@ -214,29 +214,30 @@ class PlayerInteractionWrapper {
         }
     }
 
-    clickMenu(card, menuText) {
+    clickMenu(card, actionTitle) {
         if (typeof card === 'string') {
             card = this.findCardByName(card);
         }
 
-        var items = card.getMenu(this.player).filter((item) => item.text === menuText);
+        const action = card.abilities.actions.find(
+            (action) =>
+                action.title === actionTitle &&
+                action.allowPlayer(this.player) &&
+                action.allowCardClick()
+        );
 
-        if (items.length === 0) {
-            throw new Error(`Card ${card.name} does not have a menu item "${menuText}"`);
+        if (!action) {
+            throw new Error(`Card ${card.name} does not have an action "${actionTitle}"`);
         }
 
-        this.game.menuItemClick(this.player.name, card.uuid, items[0]);
+        if (!action.meetsRequirements(action.createContext(this.player))) {
+            return;
+        }
+
+        this.game.cardClicked(this.player.name, card.uuid);
         this.game.continue();
         this.checkUnserializableGameState();
-    }
-
-    hasEnabledMenu(card, menuText) {
-        if (typeof card === 'string') {
-            card = this.findCardByName(card);
-        }
-
-        const items = card.getMenu(this.player).filter((item) => item.text === menuText);
-        return items.some((item) => !item.disabled);
+        this.clickPrompt(actionTitle);
     }
 
     /**

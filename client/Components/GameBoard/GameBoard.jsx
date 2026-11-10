@@ -8,7 +8,6 @@ import GameConfigurationModal from './GameConfigurationModal';
 import { navigate } from '../../redux/reducers/navigation';
 import {
     sendCardClickedMessage,
-    sendCardMenuItemClickedMessage,
     sendCardSizeChangeMessage,
     sendDragDropMessage,
     sendGameChatMessage,
@@ -86,11 +85,6 @@ const GameBoard = () => {
         [dispatch]
     );
 
-    const onMenuItemClick = useCallback(
-        (card, menuItem) => dispatch(sendCardMenuItemClickedMessage(card.uuid, menuItem)),
-        [dispatch]
-    );
-
     const { thisPlayer, otherPlayers, userPlayer } = useMemo(() => {
         const players = Object.values(currentGame?.players);
         const thisPlayer = defaultPlayerInfo(currentGame?.players[user?.username] || players[0]);
@@ -134,7 +128,6 @@ const GameBoard = () => {
                 otherPlayer={otherPlayers[0]}
                 userPlayer={userPlayer}
                 onCardClick={onCardClick}
-                onMenuItemClick={onMenuItemClick}
                 onSettingsClick={() => setShowModal(!showModal)}
                 onChatToggle={() => setShowGameChat(!showGameChat)}
                 unreadMessages={unreadMessages}
@@ -148,7 +141,6 @@ const GameBoard = () => {
                 otherPlayers={otherPlayers}
                 userPlayer={userPlayer}
                 onCardClick={onCardClick}
-                onMenuItemClick={onMenuItemClick}
                 onSettingsClick={() => setShowModal(!showModal)}
                 onChatToggle={() => setShowGameChat(!showGameChat)}
                 unreadMessages={unreadMessages}

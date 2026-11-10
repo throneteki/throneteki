@@ -64,14 +64,6 @@ class GameCommands {
         return this.game.menuButton(playerName, arg, method, promptId);
     }
 
-    menuItemClick(playerName, cardId, menuItem) {
-        if (!menuItem || typeof menuItem !== 'object') {
-            return;
-        }
-
-        return this.game.menuItemClick(playerName, cardId, menuItem);
-    }
-
     showDrawDeck(playerName, newValue) {
         return this.game.showDrawDeck(playerName, newValue);
     }

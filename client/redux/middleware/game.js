@@ -8,7 +8,6 @@ import {
     receiveResponseTime,
     sendButtonClickedMessage,
     sendCardClickedMessage,
-    sendCardMenuItemClickedMessage,
     sendChangeStatMessage,
     sendConcedeMessage,
     sendDragDropMessage,
@@ -43,7 +42,6 @@ const GameMessage = Object.freeze({
     ToggleHideResponses: 'toggleHideResponses',
     CardSizeChange: 'cardSizeChange',
     CardClicked: 'cardClicked',
-    MenuItemClick: 'menuItemClick',
     ShowDrawDeck: 'showDrawDeck',
     ShuffleDeck: 'shuffleDeck',
     DragDrop: 'drop',
@@ -161,13 +159,6 @@ const gameMiddleware = (store) => {
                 action.payload.arg,
                 action.payload.method,
                 action.payload.promptId
-            );
-        } else if (sendCardMenuItemClickedMessage.match(action)) {
-            socket.emit(
-                'game',
-                GameMessage.MenuItemClick,
-                action.payload.cardId,
-                action.payload.menuItem
             );
         } else if (sendShowDrawDeckMessage.match(action)) {
             socket.emit('game', GameMessage.ShowDrawDeck, action.payload.visible);

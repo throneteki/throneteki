@@ -56,10 +56,6 @@ const gameSlice = createSlice({
             (promptId, command, method, arg) => ({ payload: { promptId, command, method, arg } }),
             () => {}
         ),
-        sendCardMenuItemClickedMessage: create.preparedReducer(
-            (cardId, menuItem) => ({ payload: { cardId, menuItem } }),
-            () => {}
-        ),
         sendShowDrawDeckMessage: () => {},
         sendShuffleDeckMessage: () => {},
         sendDragDropMessage: create.preparedReducer(
@@ -93,7 +89,6 @@ export const {
     sendCardSizeChangeMessage,
     sendCardClickedMessage,
     sendButtonClickedMessage,
-    sendCardMenuItemClickedMessage,
     sendShowDrawDeckMessage,
     sendShuffleDeckMessage,
     sendDragDropMessage,
