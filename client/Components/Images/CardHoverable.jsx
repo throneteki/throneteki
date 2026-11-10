@@ -1,25 +1,31 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import classNames from 'classnames';
-import { CardHoverContext } from './CardHoverContext';
+import { cardHoverStore, useCardHover } from './cardHoverStore';
+
+const isTouchLike = (state) => state.type === 'touch';
 
 const CardHoverable = ({ touchDelay = 0, className, children, code, notes, isDisabled }) => {
-    const { type, setType, setCode, setNotes } = useContext(CardHoverContext);
+    const owner = useRef({}).current;
     const holdTimeout = useRef(null);
+    const touchActive = useCardHover(isTouchLike);
 
     const wrapperClassName = useMemo(
         () =>
             classNames(className, {
-                'select-none': ['touch', 'pen'].includes(type) // Disables text selection on touch/pen devices, but not desktop
+                'select-none': touchActive // Disables text selection on touch/pen devices, but not desktop
             }),
-        [className, type]
+        [className, touchActive]
+    );
+
+    const show = useCallback(
+        (type) => cardHoverStore.show(owner, { type, code, notes }),
+        [owner, code, notes]
     );
 
     const clear = useCallback(() => {
-        setType(null);
-        setCode(null);
-        setNotes(null);
+        cardHoverStore.clear(owner);
         clearTimeout(holdTimeout.current);
-    }, [setCode, setNotes, setType]);
+    }, [owner]);
 
     useEffect(() => {
         if (isDisabled) {
@@ -42,11 +48,9 @@ const CardHoverable = ({ touchDelay = 0, className, children, code, notes, isDis
                 if (['touch', 'pen'].includes(e.pointerType)) {
                     e.preventDefault();
                     e.stopPropagation();
-                } else if (!type) {
+                } else if (!cardHoverStore.getState().type) {
                     // If pointer is within element whilst disabled & then is re-enabled, this ensures we update on first pointer move
-                    setType('mouse');
-                    setCode(code);
-                    setNotes(notes);
+                    show('mouse');
                 }
             }}
             onPointerEnter={(e) => {
@@ -57,15 +61,9 @@ const CardHoverable = ({ touchDelay = 0, className, children, code, notes, isDis
                     e.preventDefault();
                     e.stopPropagation();
 
-                    holdTimeout.current = setTimeout(() => {
-                        setType('touch');
-                        setCode(code);
-                        setNotes(notes);
-                    }, touchDelay);
+                    holdTimeout.current = setTimeout(() => show('touch'), touchDelay);
                 } else {
-                    setType('mouse');
-                    setCode(code);
-                    setNotes(notes);
+                    show('mouse');
                 }
             }}
             onPointerLeave={() => {

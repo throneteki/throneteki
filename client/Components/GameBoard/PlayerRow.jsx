@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import classNames from 'classnames';
+import { useRenderCount } from '../../perf';
 
 import Card from './Card';
 import CardPile from './CardPile';
@@ -39,6 +40,7 @@ const PlayerRow = ({
     mustShowPlotSelection,
     showHiddenPiles = false
 }) => {
+    useRenderCount('PlayerRow');
     const renderDroppablePile = useCallback(
         (source, cards) => {
             if (isMe) {

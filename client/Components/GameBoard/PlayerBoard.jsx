@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import classNames from 'classnames';
+import { useRenderCount } from '../../perf';
 import Card from './Card';
 import { standardiseCardSize } from '../../util';
 import Droppable from './Droppable';
@@ -13,6 +14,7 @@ const PlayerBoard = ({
     cardSize,
     className
 }) => {
+    useRenderCount('PlayerBoard');
     const getCardRows = useCallback(() => {
         let groupedCards = cardsInPlay.reduce((group, card) => {
             (group[card.type] = group[card.type] || []).push(card);

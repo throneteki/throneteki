@@ -25,6 +25,8 @@ import CardImage from '../Images/CardImage';
 import ErrorMessage from '../Site/ErrorMessage';
 import JoustGameBoardLayout from './GameBoardLayouts/JoustGameBoardLayout';
 import MeleeGameBoardLayout from './GameBoardLayouts/MeleeGameBoardLayout';
+import { ManualModeContext } from './ManualModeContext';
+import { useRenderCount } from '../../perf';
 
 const placeholderPlayer = {
     activePlot: null,
@@ -54,6 +56,7 @@ const defaultPlayerInfo = (source) => {
 };
 
 const GameBoard = () => {
+    useRenderCount('GameBoard');
     const dispatch = useDispatch();
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const user = useSelector((state) => state.auth.user);
@@ -112,6 +115,40 @@ const GameBoard = () => {
             distance: 10
         }
     });
+    const sensors = useMemo(() => [mouseSensor, touchSensor], [mouseSensor, touchSensor]);
+
+    const onSettingsClick = useCallback(() => setShowModal((show) => !show), []);
+    const onChatToggle = useCallback(() => setShowGameChat((show) => !show), []);
+    const onChatClose = useCallback(() => setShowGameChat(false), []);
+    const onSendChat = useCallback((message) => dispatch(sendGameChatMessage(message)), [dispatch]);
+    const onModalClose = useCallback(() => setShowModal(false), []);
+
+    const onDragStart = useCallback((event) => {
+        const card = event.active.data.current?.card;
+        if (card) {
+            const orientation = event.active.data.current?.orientation;
+            setDraggingDetail({ card, orientation });
+        }
+    }, []);
+
+    const onDragEnd = useCallback(
+        (event) => {
+            setDraggingDetail(null);
+            if (!event.over || event.active.data.current.type !== ItemTypes.CARD) {
+                return;
+            }
+            dispatch(
+                sendDragDropMessage(
+                    event.active.data.current.card.uuid,
+                    event.active.data.current.source,
+                    event.over.data.current.source
+                )
+            );
+        },
+        [dispatch]
+    );
+
+    const onDragCancel = useCallback(() => setDraggingDetail(null), []);
 
     const onCardClick = useCallback(
         (card) => {
@@ -167,8 +204,9 @@ const GameBoard = () => {
                 otherPlayer={otherPlayers[0]}
                 userPlayer={userPlayer}
                 onCardClick={onCardClick}
-                onSettingsClick={() => setShowModal(!showModal)}
-                onChatToggle={() => setShowGameChat(!showGameChat)}
+                onMenuItemClick={onMenuItemClick}
+                onSettingsClick={onSettingsClick}
+                onChatToggle={onChatToggle}
                 unreadMessages={unreadMessages}
                 isDragging={!!draggingDetail}
             />
@@ -180,8 +218,9 @@ const GameBoard = () => {
                 otherPlayers={otherPlayers}
                 userPlayer={userPlayer}
                 onCardClick={onCardClick}
-                onSettingsClick={() => setShowModal(!showModal)}
-                onChatToggle={() => setShowGameChat(!showGameChat)}
+                onMenuItemClick={onMenuItemClick}
+                onSettingsClick={onSettingsClick}
+                onChatToggle={onChatToggle}
                 unreadMessages={unreadMessages}
                 isDragging={!!draggingDetail}
             />
@@ -200,29 +239,14 @@ const GameBoard = () => {
             <div className={boardClass}>
                 <div className='overflow-auto basis-full'>
                     <DndContext
-                        sensors={[mouseSensor, touchSensor]}
-                        onDragStart={(event) => {
-                            const card = event.active.data.current?.card;
-                            if (card) {
-                                const orientation = event.active.data.current?.orientation;
-                                setDraggingDetail({ card, orientation });
-                            }
-                        }}
-                        onDragEnd={(event) => {
-                            if (!event.over || event.active.data.current.type !== ItemTypes.CARD) {
-                                return;
-                            }
-                            setDraggingDetail(null);
-                            dispatch(
-                                sendDragDropMessage(
-                                    event.active.data.current.card.uuid,
-                                    event.active.data.current.source,
-                                    event.over.data.current.source
-                                )
-                            );
-                        }}
+                        sensors={sensors}
+                        onDragStart={onDragStart}
+                        onDragEnd={onDragEnd}
+                        onDragCancel={onDragCancel}
                     >
-                        {gameBoard}
+                        <ManualModeContext.Provider value={!!currentGame.manualMode}>
+                            {gameBoard}
+                        </ManualModeContext.Provider>
                         <DragOverlay className={'opacity-50'} dropAnimation={null}>
                             {draggingDetail && (
                                 <CardImage
@@ -243,10 +267,10 @@ const GameBoard = () => {
                 <GameChat
                     className='shrink-0 grow-0'
                     isOpen={showGameChat}
-                    onClose={() => setShowGameChat(false)}
+                    onClose={onChatClose}
                     onUnreadMessagesChange={setUnreadMessages}
                     messages={currentGame.messages}
-                    onSendChat={(message) => dispatch(sendGameChatMessage(message))}
+                    onSendChat={onSendChat}
                     muted={!thisPlayer && currentGame.muteSpectators}
                     inputRef={chatInputRef}
                 />
@@ -254,7 +278,7 @@ const GameBoard = () => {
             <GameConfigurationModal
                 isOpen={showModal}
                 isSpectating={user.username !== thisPlayer.name}
-                onClose={() => setShowModal(false)}
+                onClose={onModalClose}
                 keywordSettings={userPlayer.keywordSettings}
                 onKeywordSettingToggle={(option, value) =>
                     dispatch(sendToggleKeywordSettingMessage(option, value))

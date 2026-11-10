@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, original } from '@reduxjs/toolkit';
+import { reuseUnchanged } from '../reuseUnchanged';
 
 const initialState = {
     games: [],
@@ -162,7 +163,10 @@ const lobbySlice = createSlice({
                 return { payload: { game, username } };
             },
             (state, action) => {
-                state.currentGame = action.payload.game;
+                state.currentGame = reuseUnchanged(
+                    state.currentGame && original(state.currentGame),
+                    action.payload.game
+                );
                 const username = action.payload.username;
 
                 if (!state.currentGame) {

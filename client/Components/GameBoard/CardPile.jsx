@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import classNames from 'classnames';
+import { useRenderCount } from '../../perf';
 
 import Card from './Card';
 import CardTiledList from './CardTiledList';
@@ -37,6 +38,7 @@ const CardPile = ({
     showCards,
     selected
 }) => {
+    useRenderCount('CardPile');
     const [showPopup, setShowPopup] = useState(cards && cards.some((card) => card.selectable));
     const prevCards = useRef(cards);
     const areaRef = useRef(null);
@@ -244,15 +246,51 @@ const CardPile = ({
 
     const retCardCount = cardCount || (cards ? cards.length : '0');
     const headerText = title ? title + ' (' + retCardCount + ')' : '';
-    let retTopCard = topCard || (cards ? cards[0] : null);
-    if (retTopCard && hiddenTopCard) {
-        retTopCard = {
-            facedown: true,
-            selected,
-            uuid: retTopCard.uuid,
-            unselectable: retTopCard.unselectable
-        };
-    }
+    const shownTopCard = topCard || (cards ? cards[0] : null);
+    const hiddenUuid = shownTopCard?.uuid;
+    const hiddenUnselectable = shownTopCard?.unselectable;
+    const retTopCard = useMemo(
+        () =>
+            shownTopCard && hiddenTopCard
+                ? {
+                      facedown: true,
+                      selected,
+                      uuid: hiddenUuid,
+                      unselectable: hiddenUnselectable
+                  }
+                : shownTopCard,
+        [shownTopCard, hiddenTopCard, selected, hiddenUuid, hiddenUnselectable]
+    );
+
+    // A top card with something to do gets a menu that includes the popup toggle; otherwise a click
+    // on it opens the popup. If popup is disabled, the default Card menu is used.
+    const topCardHasAction =
+        topCard?.selectable || topCard?.canPlay || topCard?.menu?.some((item) => !item.disabled);
+    const topCardSelectable = !!topCard?.selectable;
+    const topCardCanPlay = !!topCard?.canPlay;
+    const menu = useMemo(() => {
+        if (disablePopup || !topCardHasAction) {
+            return undefined;
+        }
+
+        const popupMenuItems = [
+            {
+                hideable: true,
+                showPopup: !showPopup,
+                text: `${showPopup ? 'Close' : 'Open'} Popup`
+            }
+        ];
+
+        // Additionally, if the top card is currently selectable, that also needs to be an option
+        // Note: If CardPiles ever become available in locations where "Select Card" is always an option (such as "play area"), this will need to be permenantly enabled for those cards
+        if (topCardSelectable) {
+            popupMenuItems.push({ hideable: true, command: 'click', text: 'Select Card' });
+        } else if (topCardCanPlay) {
+            popupMenuItems.push({ command: 'click', text: 'Use' });
+        }
+
+        return popupMenuItems;
+    }, [disablePopup, topCardHasAction, showPopup, topCardSelectable, topCardCanPlay]);
 
     return (
         <LabelledGameArea

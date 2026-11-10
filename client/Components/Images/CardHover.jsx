@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import CardImage from './CardImage';
 import { Spinner } from '@heroui/react';
-import { CardHoverContext } from './CardHoverContext';
+import { useCardHover } from './cardHoverStore';
 import classNames from 'classnames';
 import { createPortal } from 'react-dom';
 
@@ -10,9 +10,7 @@ const CardHover = ({ children, size = '3x-large' }) => {
     const spinnerRef = useRef(null);
     const mousePosRef = useRef({ x: 0, y: 0 });
 
-    const [type, setType] = useState(null);
-    const [code, setCode] = useState(null);
-    const [notes, setNotes] = useState(null);
+    const { type, code, notes } = useCardHover();
 
     const [isLoading, setIsLoading] = useState(false);
     const [imageSize, setImageSize] = useState({});
@@ -79,7 +77,7 @@ const CardHover = ({ children, size = '3x-large' }) => {
     });
 
     return (
-        <CardHoverContext.Provider value={{ type, setType, code, setCode, setNotes }}>
+        <>
             <div
                 onPointerMove={mousePosHandler}
                 onPointerEnter={mousePosHandler}
@@ -128,7 +126,7 @@ const CardHover = ({ children, size = '3x-large' }) => {
                     </div>,
                     document.querySelector('[data-overlay-container="true"]')
                 )}
-        </CardHoverContext.Provider>
+        </>
     );
 };
 

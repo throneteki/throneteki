@@ -1,6 +1,5 @@
 export const ItemTypes = {
-    CARD: 'card',
-    PANEL: 'panel'
+    CARD: 'card'
 };
 
 export const GameFormats = [

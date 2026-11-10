@@ -1,6 +1,5 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { memo, useState, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import classNames from 'classnames';
-import { useSelector } from 'react-redux';
 import { useDraggable } from '@dnd-kit/core';
 import CardCounters from './CardCounters';
 import SquishableCardPanel from './SquishableCardPanel';
@@ -16,12 +15,22 @@ import CardImage from '../Images/CardImage';
 import { cardClass, standardiseCardSize } from '../../util';
 import { Tooltip } from '@heroui/react';
 import { getActionRequirementReason, isNotableRequirement } from './actionRequirementReasons';
+import { ManualModeContext } from './ManualModeContext';
+import { useRenderCount } from '../../perf';
 
-const Card = ({
+// Opening one card menu closes any other that is open.
+const cardMenus = new EventTarget();
+let nextMenuId = 0;
+
+const defaultMenu = [{ hideable: true, command: 'click', text: 'Select Card' }];
+const noDrag = {};
+
+const CardView = ({
     card,
     className,
     disableHover,
     hideTokens,
+    menu = defaultMenu,
     onClick,
     orientation = 'vertical',
     size,
@@ -29,10 +38,19 @@ const Card = ({
     style,
     wrapped = true,
     forceFaceup = false,
-    cardStackIndex = 200
+    cardStackIndex = 200,
+    drag = noDrag
 }) => {
+    useRenderCount('Card');
+    const { attributes, listeners, setNodeRef, isDragging } = drag;
+    const [showMenu, setShowMenu] = useState(false);
     const [showUnderneath, setShowUnderneath] = useState(false);
     const cardRef = useRef(null);
+
+    const dupeCards = useMemo(
+        () => (card.dupes || []).map((dupe) => ({ ...dupe, facedown: card.facedown })),
+        [card.dupes, card.facedown]
+    );
 
     const hasUnderneathPopup = card.childCards?.length > 0 && card.type !== 'agenda';
     const hasSelectableUnderneath =
@@ -43,8 +61,6 @@ const Card = ({
             setShowUnderneath(true);
         }
     }, [hasSelectableUnderneath]);
-
-    const key = `card-${card.uuid}-${source}`;
 
     const shortNames = {
         count: 'x',
@@ -68,12 +84,37 @@ const Card = ({
 
     const standardisedSize = standardiseCardSize(size);
 
-    const manualMode = useSelector((state) => state.lobby.currentGame?.manualMode);
-    const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-        id: useUniqueId(key),
-        disabled: !manualMode,
-        data: { type: ItemTypes.CARD, card, orientation, source, key: key }
-    });
+    const isAllowedMenuSource = useCallback(
+        () => ['play area', 'agenda', 'revealed plots'].includes(source),
+        [source]
+    );
+
+    const handleMenuItemClick = useCallback(
+        (menuItem) => {
+            if (onMenuItemClick) {
+                onMenuItemClick(card, menuItem);
+                setShowMenu(!showMenu);
+            }
+        },
+        [card, onMenuItemClick, showMenu]
+    );
+
+    const getMenu = useCallback(() => {
+        const retMenu = [...menu] || [];
+
+        if (card.menu) {
+            retMenu.push(...card.menu);
+        }
+
+        return retMenu;
+    }, [card.menu, menu]);
+
+    const shouldShowMenu = useCallback(
+        () =>
+            getMenu().some((item) => item.command !== 'click' && !item.disabled) &&
+            isAllowedMenuSource(),
+        [getMenu, isAllowedMenuSource]
+    );
 
     const handleClick = useCallback(
         (event) => {
@@ -159,17 +200,13 @@ const Card = ({
             return null;
         }
 
-        return card.dupes.map((dupe) => {
-            const dupeCopy = Object.assign({}, dupe);
-
-            dupeCopy.facedown = card.facedown;
-
+        return dupeCards.map((dupe) => {
             return (
                 <Card
                     key={dupe.uuid}
                     className={`duplicate-${standardisedSize}`}
                     source={source}
-                    card={dupeCopy}
+                    card={dupe}
                     wrapped={false}
                     onClick={onClick}
                     size={size}
@@ -436,5 +473,45 @@ const Card = ({
         getCard()
     );
 };
+
+const DraggableCard = (props) => {
+    const { card, orientation, source } = props;
+    const key = `card-${card.uuid}-${source}`;
+    const drag = useDraggable({
+        id: useUniqueId(key),
+        data: { type: ItemTypes.CARD, card, orientation, source, key }
+    });
+
+    return <CardView {...props} drag={drag} />;
+};
+
+const shallowEqualStyle = (a, b) => {
+    if (a === b) {
+        return true;
+    }
+    if (!a || !b) {
+        return false;
+    }
+    const keys = Object.keys(a);
+    return keys.length === Object.keys(b).length && keys.every((key) => Object.is(a[key], b[key]));
+};
+
+const propsEqual = (previous, next) => {
+    const keys = Object.keys(previous);
+    return (
+        keys.length === Object.keys(next).length &&
+        keys.every((key) =>
+            key === 'style'
+                ? shallowEqualStyle(previous.style, next.style)
+                : Object.is(previous[key], next[key])
+        )
+    );
+};
+
+const Card = memo(function Card(props) {
+    const manualMode = useContext(ManualModeContext);
+
+    return manualMode ? <DraggableCard {...props} /> : <CardView {...props} />;
+}, propsEqual);
 
 export default Card;
