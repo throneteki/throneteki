@@ -294,8 +294,8 @@ attackers or defenders were declared, from a report ID or a spec
 Rules readings and design choices that stand until changed:
 
 - Outside manual mode an ability can't be cancelled once it is resolving (Rules Reference:
-  Initiating Abilities). Prompts before that point (confirming a card action or an event played
-  from hand, choosing how to play a card, choosing cost cards) keep Cancel; target, player and choice prompts during resolution
+  Initiating Abilities). Prompts before that point (confirming a card action, choosing how to
+  play a card, choosing cost cards) keep Cancel; target, player and choice prompts during resolution
   don't. A choice is still declinable when the text says "may": keyword targets (stealth,
   intimidate, assault) are `declinable`, and a `GameActions.choose` with a `cancelMessage` keeps its
   skip button.

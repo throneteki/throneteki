@@ -583,8 +583,7 @@ class Player extends Spectator {
             return false;
         }
 
-        const confirm = card.getPrintedType() === 'event' && !this.game.manualMode.enabled;
-        if (playActions.length === 1 && !confirm) {
+        if (playActions.length === 1) {
             this.game.resolveAbility(playActions[0], context);
         } else {
             this.game.queueStep(new PlayActionPrompt(this.game, this, playActions, context));

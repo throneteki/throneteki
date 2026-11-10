@@ -16,14 +16,9 @@ class PlayActionPrompt extends BaseStep {
             return button;
         });
 
-        const menuTitle =
-            this.playActions.length === 1
-                ? `Play ${this.context.source.name}?`
-                : 'Play ' + this.context.source.name + ':';
-
         this.game.promptWithMenu(this.player, this, {
             activePrompt: {
-                menuTitle,
+                menuTitle: 'Play ' + this.context.source.name + ':',
                 buttons: [...buttons, { text: 'Cancel', method: 'cancel', cancel: true }]
             },
             source: this.context.source,

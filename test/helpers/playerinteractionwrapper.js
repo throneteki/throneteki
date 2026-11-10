@@ -201,12 +201,11 @@ class PlayerInteractionWrapper {
         this.game.continue();
         this.checkUnserializableGameState();
 
-        // A card with a single usable action, or an event with one way to play it, asks for
-        // confirmation first. Card specs treat the click as using it; CardActionClick.spec.js and
-        // EventPlayConfirm.spec.js cover the confirmation itself.
+        // A card with a single usable action asks for confirmation first. Card specs treat the
+        // click as using it; CardActionClick.spec.js covers the confirmation itself.
         const prompt = this.currentPrompt();
         if (
-            [`Use ${card.name}?`, `Play ${card.name}?`].includes(prompt.menuTitle) &&
+            prompt.menuTitle === `Use ${card.name}?` &&
             prompt.buttons.length === 2 &&
             prompt.buttons[1].text === 'Cancel'
         ) {
