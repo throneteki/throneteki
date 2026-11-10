@@ -2,16 +2,17 @@ import React, { useCallback } from 'react';
 import classNames from 'classnames';
 import { useRenderCount } from '../../perf';
 import Card from './Card';
-import { standardiseCardSize } from '../../util';
 import Droppable from './Droppable';
-import { getCardDimensions } from '../../util';
+import { cardHeight } from '../../cardScale';
+
+const boardStyle = { minHeight: cardHeight };
 
 const PlayerBoard = ({
     isDroppable,
     cardsInPlay,
     rowDirection,
     onCardClick,
-    cardSize,
+    onMenuItemClick,
     className
 }) => {
     useRenderCount('PlayerBoard');
@@ -57,7 +58,7 @@ const PlayerBoard = ({
             return row.map((card) => {
                 const dupeOffset = maxDupe - (card.dupes?.length || 0);
                 const dupeOffsets = Array.from({ length: dupeOffset }, (_, i) => (
-                    <div key={i} className={`duplicate-offset-${standardiseCardSize(cardSize)}`} />
+                    <div key={i} className='card-duplicate-offset' />
                 ));
                 return (
                     <div key={card.uuid} className='flex flex-col'>
@@ -66,14 +67,14 @@ const PlayerBoard = ({
                             card={card}
                             disableHover={card.facedown && !card.code}
                             onClick={onCardClick}
-                            size={cardSize}
+                            onMenuItemClick={onMenuItemClick}
                             source='play area'
                         />
                     </div>
                 );
             });
         },
-        [onCardClick, cardSize]
+        [onCardClick, onMenuItemClick]
     );
 
     const renderRows = useCallback(
@@ -99,9 +100,8 @@ const PlayerBoard = ({
             'our-side': rowDirection === 'default'
         }
     );
-    const cardDimensions = getCardDimensions(cardSize);
     const content = (
-        <div className={wrapperClassName} style={{ minHeight: `${cardDimensions.height}rem` }}>
+        <div className={wrapperClassName} style={boardStyle}>
             {renderRows(rows)}
         </div>
     );

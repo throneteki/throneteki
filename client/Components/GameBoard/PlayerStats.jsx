@@ -94,7 +94,7 @@ const PlayerStats = ({
     );
 
     const wrapperClassName = classNames(
-        'relative border-1 border-default-100 bg-black/35 border-x-0',
+        'relative hud-zoom border-1 border-default-100 bg-black/35 border-x-0',
         className
     );
     return (

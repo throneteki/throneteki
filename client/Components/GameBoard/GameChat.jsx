@@ -37,7 +37,7 @@ const GameChat = ({
                 className,
                 'overflow-hidden transition-[width] duration-500 border-l-1 border-default-100',
                 {
-                    'w-full md:w-96': isOpen,
+                    'w-full md:w-[calc(var(--ui-scale,1)*24rem)]': isOpen,
                     'w-0': !isOpen
                 }
             ),
@@ -46,7 +46,7 @@ const GameChat = ({
 
     return (
         <div className={drawerClass}>
-            <div className='flex flex-col bg-black/75 w-full h-full min-w-96'>
+            <div className='flex flex-col hud-zoom bg-black/75 w-full h-full min-w-96'>
                 <div className='flex p-2 gap-2 justify-end items-center'>
                     <span className='w-full text-large font-bold'>Game Log</span>
                     <Button

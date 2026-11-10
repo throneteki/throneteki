@@ -67,7 +67,6 @@ const MeleeGameBoardLayout = ({
                         title={player.title}
                         side={side}
                         sideNo={sideNo}
-                        cardSize={userPlayer.cardSize}
                         plotDeck={player.cardPiles.plotDeck}
                         plotDiscard={player.cardPiles.plotDiscard}
                         activePlot={player.activePlot}
@@ -81,7 +80,6 @@ const MeleeGameBoardLayout = ({
                             cardsInPlay={player.cardPiles.cardsInPlay}
                             onCardClick={onCardClick}
                             rowDirection={side === 'bottom' ? 'default' : 'reverse'}
-                            cardSize={userPlayer.cardSize}
                         />
                         <SideBoardPanel
                             player={player}

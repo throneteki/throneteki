@@ -24,7 +24,6 @@ import {
     sendCancelProblemReportMessage,
     sendTogglePromptedActionWindowMessage,
     sendToggleHideResponsesMessage,
-    sendCardSizeChangeMessage,
     startGameConnecting
 } from '../reducers/game';
 import { receiveClearGameState, receiveGameState } from '../reducers/lobby';
@@ -42,7 +41,6 @@ const GameMessage = Object.freeze({
     ToggleDupes: 'toggleDupes',
     TogglePromptedActionWindow: 'togglePromptedActionWindow',
     ToggleHideResponses: 'toggleHideResponses',
-    CardSizeChange: 'cardSizeChange',
     CardClicked: 'cardClicked',
     ShowDrawDeck: 'showDrawDeck',
     ShuffleDeck: 'shuffleDeck',
@@ -152,8 +150,6 @@ const gameMiddleware = (store) => {
                 action.payload.option,
                 action.payload.value
             );
-        } else if (sendCardSizeChangeMessage.match(action)) {
-            socket.emit('game', GameMessage.CardSizeChange, action.payload);
         } else if (sendCardClickedMessage.match(action)) {
             socket.emit('game', GameMessage.CardClicked, action.payload);
         } else if (sendButtonClickedMessage.match(action)) {

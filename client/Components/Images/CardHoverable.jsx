@@ -4,18 +4,10 @@ import { cardHoverStore, useCardHover } from './cardHoverStore';
 
 const isTouchLike = (state) => state.type === 'touch';
 
-const CardHoverable = ({ touchDelay = 0, className, children, code, notes, isDisabled }) => {
+export const useCardHoverHandlers = ({ touchDelay = 0, code, notes, isDisabled }) => {
     const owner = useRef({}).current;
     const holdTimeout = useRef(null);
     const touchActive = useCardHover(isTouchLike);
-
-    const wrapperClassName = useMemo(
-        () =>
-            classNames(className, {
-                'select-none': touchActive // Disables text selection on touch/pen devices, but not desktop
-            }),
-        [className, touchActive]
-    );
 
     const show = useCallback(
         (type) => cardHoverStore.show(owner, { type, code, notes }),
@@ -38,10 +30,9 @@ const CardHoverable = ({ touchDelay = 0, className, children, code, notes, isDis
         };
     }, [isDisabled, clear]);
 
-    return (
-        <span
-            className={wrapperClassName || null}
-            onPointerMove={(e) => {
+    const handlers = useMemo(
+        () => ({
+            onPointerMove: (e) => {
                 if (isDisabled) {
                     return;
                 }
@@ -52,8 +43,8 @@ const CardHoverable = ({ touchDelay = 0, className, children, code, notes, isDis
                     // If pointer is within element whilst disabled & then is re-enabled, this ensures we update on first pointer move
                     show('mouse');
                 }
-            }}
-            onPointerEnter={(e) => {
+            },
+            onPointerEnter: (e) => {
                 if (isDisabled) {
                     return;
                 }
@@ -65,14 +56,38 @@ const CardHoverable = ({ touchDelay = 0, className, children, code, notes, isDis
                 } else {
                     show('mouse');
                 }
-            }}
-            onPointerLeave={() => {
+            },
+            onPointerLeave: () => {
                 if (isDisabled) {
                     return;
                 }
                 clear();
-            }}
-        >
+            }
+        }),
+        [isDisabled, show, clear, touchDelay]
+    );
+
+    return { handlers, touchActive };
+};
+
+const CardHoverable = ({ touchDelay = 0, className, children, code, notes, isDisabled }) => {
+    const { handlers, touchActive } = useCardHoverHandlers({
+        touchDelay,
+        code,
+        notes,
+        isDisabled
+    });
+
+    const wrapperClassName = useMemo(
+        () =>
+            classNames(className, {
+                'select-none': touchActive // Disables text selection on touch/pen devices, but not desktop
+            }),
+        [className, touchActive]
+    );
+
+    return (
+        <span className={wrapperClassName || null} {...handlers}>
             {children}
         </span>
     );

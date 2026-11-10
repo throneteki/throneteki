@@ -62,7 +62,6 @@ const JoustGameBoardLayout = ({
                         spectating={!thisPlayer}
                         title={player.title}
                         side={side}
-                        cardSize={userPlayer.cardSize}
                         plotDeck={player.cardPiles.plotDeck}
                         plotDiscard={player.cardPiles.plotDiscard}
                         activePlot={player.activePlot}
@@ -76,7 +75,6 @@ const JoustGameBoardLayout = ({
                             cardsInPlay={player.cardPiles.cardsInPlay}
                             onCardClick={onCardClick}
                             rowDirection={side === 'bottom' ? 'default' : 'reverse'}
-                            cardSize={userPlayer.cardSize}
                         />
                         <SideBoardPanel
                             player={player}

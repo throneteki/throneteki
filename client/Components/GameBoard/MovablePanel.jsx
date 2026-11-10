@@ -48,7 +48,7 @@ const MovablePanel = ({
         <div ref={panelRef} className={wrapperClass}>
             <div
                 ref={handleRef}
-                className='flex justify-end border-b-1 border-foreground border-transparent bg-primary p-1.5 text-center font-bold text-white opacity-100 h-auto touch-none cursor-grab select-none'
+                className='flex justify-end hud-zoom border-b-1 border-foreground border-transparent bg-primary p-1.5 text-center font-bold text-white opacity-100 h-auto touch-none cursor-grab select-none'
                 onClick={(event) => event.stopPropagation()}
             >
                 <span className='flex-1 text-center'>{title}</span>

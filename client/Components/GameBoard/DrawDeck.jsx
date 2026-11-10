@@ -13,7 +13,6 @@ const DrawDeck = ({
     onCardClick,
     popupLocation,
     popupId,
-    size,
     spectating,
     onPopupChange,
     onShuffleClick
@@ -74,7 +73,6 @@ const DrawDeck = ({
             popupLocation={popupLocation}
             popupId={popupId}
             popupMenu={drawDeckPopupMenu}
-            size={size}
             source='draw deck'
             title='Draw'
             playerName={playerName}

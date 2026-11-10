@@ -1,6 +1,7 @@
 import { heroui } from '@heroui/react';
 import plugin from 'tailwindcss/plugin';
-import { cardSizes } from './client/constants';
+
+const scaled = (rem) => `calc(var(--font-scale, var(--text-scale, 1)) * ${rem}rem)`;
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -11,16 +12,15 @@ export default {
     ],
     theme: {
         fontSize: {
-            xs: ['0.6rem', '0.6rem'],
-            sm: ['0.8rem', '0.8rem'],
-            base: ['1rem', '1rem'],
-            xl: ['1.25rem', '1.25rem'],
-            '2xl': ['1.563rem', '1.563rem'],
-            '3xl': ['1.953rem', '1.953rem'],
-            '4xl': ['2.441rem', '2.441rem'],
-            '5xl': ['3.052rem', '3.052rem']
+            xs: [scaled(0.6), scaled(0.6)],
+            sm: [scaled(0.8), scaled(0.8)],
+            base: [scaled(1), scaled(1)],
+            xl: [scaled(1.25), scaled(1.25)],
+            '2xl': [scaled(1.563), scaled(1.563)],
+            '3xl': [scaled(1.953), scaled(1.953)],
+            '4xl': [scaled(2.441), scaled(2.441)],
+            '5xl': [scaled(3.052), scaled(3.052)]
         },
-        cardSize: cardSizes,
         textStroke: {
             sm: 0.15,
             md: 0.3,
@@ -64,6 +64,20 @@ export default {
     },
     plugins: [
         heroui({
+            layout: {
+                fontSize: {
+                    tiny: scaled(0.75),
+                    small: scaled(0.875),
+                    medium: scaled(1),
+                    large: scaled(1.125)
+                },
+                lineHeight: {
+                    tiny: scaled(1),
+                    small: scaled(1.25),
+                    medium: scaled(1.5),
+                    large: scaled(1.75)
+                }
+            },
             themes: {
                 dark: {
                     colors: {
@@ -98,7 +112,7 @@ export default {
                 }
             }
         }),
-        plugin(function ({ matchUtilities, theme }) {
+        plugin(function ({ addUtilities, matchUtilities, theme }) {
             matchUtilities(
                 {
                     'text-shadow': (value) => ({
@@ -107,44 +121,57 @@ export default {
                 },
                 { values: theme('textShadow') }
             );
-            matchUtilities(
-                {
-                    card: (value) => ({
-                        width: `${value[0]}rem`,
-                        height: `${value[1]}rem`,
-                        'border-radius': `${value[0] / 16}rem`
-                    }),
-                    'card-horizontal': (value) => ({
-                        width: `${value[1]}rem`,
-                        height: `${value[0]}rem`,
-                        'border-radius': `${value[0] / 16}rem`
-                    }),
-                    'card-rotated': (value) => {
-                        const translateValue = (value[0] - value[1]) / 2;
-                        return {
-                            transform: `rotate(90deg) translate(${translateValue}rem, ${translateValue}rem)`
-                        };
-                    },
-                    'card-kneeled': (value) => ({
-                        'margin-bottom': `${value[1] - value[0]}rem`
-                    }),
-                    attachment: (value) => ({
-                        'margin-top': `${value[1] * -0.9}rem`
-                    }),
-                    duplicate: (value) => ({
-                        'margin-bottom': `${value[1] * -0.9}rem`
-                    }),
-                    'duplicate-offset': (value) => ({
-                        'margin-top': `${value[1] * 0.1}rem`
-                    }),
-                    'additional-agenda': (value) => ({
-                        'margin-left': `-${value[0] / 2}rem`
-                    })
+            addUtilities({
+                '.hud-zoom': {
+                    zoom: 'var(--ui-scale, 1)',
+                    '--font-scale': '1',
+                    'font-size': '1rem'
                 },
-                {
-                    values: theme('cardSize')
+                '.hud-text': {
+                    'font-size': 'calc(var(--text-scale, 1) * 1rem)'
+                },
+                '.card-text': {
+                    'font-size': 'calc(var(--card-scale, 1) * 0.875rem)',
+                    'line-height': '1.25'
+                },
+                '.card-text-sm': {
+                    'font-size': 'calc(var(--card-scale, 1) * 0.75rem)',
+                    'line-height': '1.25'
+                },
+                '.card-text-xs': {
+                    'font-size': 'calc(var(--card-scale, 1) * 0.625rem)',
+                    'line-height': '1.25'
+                },
+                '.card-box': {
+                    width: 'calc(var(--card-scale, 1) * 4rem)',
+                    height: 'calc(var(--card-scale, 1) * 5.6rem)',
+                    'border-radius': 'calc(var(--card-scale, 1) * 0.25rem)'
+                },
+                '.card-box-horizontal': {
+                    width: 'calc(var(--card-scale, 1) * 5.6rem)',
+                    height: 'calc(var(--card-scale, 1) * 4rem)',
+                    'border-radius': 'calc(var(--card-scale, 1) * 0.25rem)'
+                },
+                '.card-box-rotated': {
+                    transform:
+                        'rotate(90deg) translate(calc(var(--card-scale, 1) * -0.8rem), calc(var(--card-scale, 1) * -0.8rem))'
+                },
+                '.card-box-kneeled': {
+                    'margin-bottom': 'calc(var(--card-scale, 1) * 1.6rem)'
+                },
+                '.card-attachment': {
+                    'margin-top': 'calc(var(--card-scale, 1) * -5.04rem)'
+                },
+                '.card-duplicate': {
+                    'margin-bottom': 'calc(var(--card-scale, 1) * -5.04rem)'
+                },
+                '.card-duplicate-offset': {
+                    'margin-top': 'calc(var(--card-scale, 1) * 0.56rem)'
+                },
+                '.card-additional-agenda': {
+                    'margin-left': 'calc(var(--card-scale, 1) * -2rem)'
                 }
-            );
+            });
             matchUtilities(
                 {
                     'text-stroke': (value) => ({
@@ -157,19 +184,5 @@ export default {
                 }
             );
         })
-    ],
-    safelist: [
-        {
-            pattern: /card-+/
-        },
-        {
-            pattern: /attachment-+/
-        },
-        {
-            pattern: /duplicate-+/
-        },
-        {
-            pattern: /additional-agenda-+/
-        }
     ]
 };

@@ -7,7 +7,7 @@ import './Counter.css';
 const Counter = ({ name, cancel, fade, icon, shortName, value, className }) => {
     const getClassName = useCallback(() => {
         return classNames(
-            'p-0 text-sm w-6 h-6 flex justify-center items-center rounded-md',
+            'p-0 card-text w-[var(--counter-size)] h-[var(--counter-size)] flex justify-center items-center rounded-md',
             `${name}-token`,
             {
                 'bg-success-100/85': name === 'dupe',

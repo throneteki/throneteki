@@ -7,7 +7,7 @@ import classNames from 'classnames';
 const PlayerPlots = ({
     plotDiscard,
     onCardClick,
-    cardSize,
+    onMenuItemClick,
     isMe,
     activePlot,
     plotDeck,
@@ -27,7 +27,6 @@ const PlayerPlots = ({
                 numRows={2.2}
                 onCardClick={onCardClick}
                 orientation='horizontal'
-                size={cardSize}
                 source='revealed plots'
                 popupLocation={isMe ? 'bottom' : 'top'}
                 title='Used Plots'
@@ -55,7 +54,6 @@ const PlayerPlots = ({
                 titlePosition={direction !== 'reverse' && activePlot ? 'bottom left' : 'top left'}
                 popupLocation={isMe ? 'bottom' : 'top'}
                 topCard={showSelectedPlot ? selectedPlot : null}
-                size={cardSize}
                 disableBackground={true}
                 selected={!!selectedPlot}
             />
@@ -91,7 +89,7 @@ const PlayerPlots = ({
     }, [
         plotDiscard,
         onCardClick,
-        cardSize,
+        onMenuItemClick,
         isMe,
         activePlot,
         plotDeck,

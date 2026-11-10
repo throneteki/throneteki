@@ -1,19 +1,9 @@
 import React, { useMemo } from 'react';
 
 import Card from './Card';
-import { cardClass, getCardDimensions } from '../../util';
+import { cardBoxClass } from '../../cardScale';
 
-// This is super manual and explicit so that tailwindcss realises we are using these css classes and doesn't filter them out
-// Change this list at your peril
-const columnClassMap = {
-    1: 'grid-cols-1',
-    2: 'grid-cols-2',
-    3: 'grid-cols-3',
-    4: 'grid-cols-4',
-    5: 'grid-cols-5',
-    6: 'grid-cols-6',
-    7: 'grid-cols-7'
-};
+const gapRem = 0.375;
 
 const CardTiledList = ({
     cards,
@@ -21,7 +11,7 @@ const CardTiledList = ({
     numColumns,
     numRows,
     onCardClick,
-    size,
+    onMenuItemClick,
     source,
     title,
     titleCount,
@@ -39,35 +29,43 @@ const CardTiledList = ({
                         key={card.uuid}
                         onClick={onCardClick}
                         orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}
-                        size={size}
                         source={source}
                     />
                 );
             })
         ) : (
-            <div className={cardClass(size)}></div>
+            <div className={cardBoxClass()}></div>
         );
-    }, [cards, disableHover, onCardClick, showCards, size, source]);
+    }, [cards, disableHover, onCardClick, onMenuItemClick, showCards, source]);
 
     const titleText = title && cards ? `${title} (${titleCount || cards.length})` : title;
 
-    const style = useMemo(() => {
-        if (numRows) {
-            const cardDimensions = getCardDimensions(size);
-            const rowHeight = cards.some((card) => card.type !== 'plot')
-                ? cardDimensions.height
-                : cardDimensions.width;
-            return {
-                maxHeight: `${rowHeight * numRows}rem`
-            };
-        }
-        return null;
-    }, [cards, numRows, size]);
+    const { style, containerStyle } = useMemo(() => {
+        const list = cards || [];
+        const hasPlot = list.some((card) => card.type === 'plot');
+        const hasOther = list.some((card) => card.type !== 'plot');
+        const columns = Math.max(1, Math.min(numColumns || list.length, list.length));
+        const cellRem = hasPlot ? 5.6 : 4;
+        const rowRem = hasOther || list.length === 0 ? 5.6 : 4;
+        const unit = (rem) => `calc(var(--card-scale, 1) * ${rem}rem)`;
+        const natural = unit(cellRem * columns + gapRem * (columns - 1));
+        return {
+            containerStyle: { padding: unit(0.5) },
+            style: {
+                gap: unit(gapRem),
+                gridTemplateColumns: `repeat(auto-fill, ${unit(cellRem)})`,
+                width: `min(${natural}, calc(100vw - 2rem))`,
+                ...(numRows && {
+                    maxHeight: unit(rowRem * numRows + gapRem * Math.ceil(numRows - 1))
+                })
+            }
+        };
+    }, [cards, numColumns, numRows]);
 
     return (
-        <div className='p-2'>
-            {titleText && <div>{titleText}</div>}
-            <div className={`gap-1.5 grid ${columnClassMap[numColumns]}`} style={style}>
+        <div style={containerStyle}>
+            {titleText && <div className='card-text'>{titleText}</div>}
+            <div className='grid' style={style}>
                 {cardList}
             </div>
         </div>

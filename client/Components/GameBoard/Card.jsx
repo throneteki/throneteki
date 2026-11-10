@@ -10,9 +10,9 @@ import { ItemTypes } from '../../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { useUniqueId } from '@dnd-kit/utilities';
-import CardHoverable from '../Images/CardHoverable';
-import CardImage from '../Images/CardImage';
-import { cardClass, standardiseCardSize } from '../../util';
+import { useCardHoverHandlers } from '../Images/CardHoverable';
+import CardFace from '../Images/CardFace';
+import { cardBoxClass } from '../../cardScale';
 import { Tooltip } from '@heroui/react';
 import { getActionRequirementReason, isNotableRequirement } from './actionRequirementReasons';
 import { ManualModeContext } from './ManualModeContext';
@@ -33,7 +33,6 @@ const CardView = ({
     menu = defaultMenu,
     onClick,
     orientation = 'vertical',
-    size,
     source,
     style,
     wrapped = true,
@@ -81,8 +80,6 @@ const CardView = ({
         tale: 'A',
         ghost: 'H'
     };
-
-    const standardisedSize = standardiseCardSize(size);
 
     const isAllowedMenuSource = useCallback(
         () => ['play area', 'agenda', 'revealed plots'].includes(source),
@@ -185,11 +182,11 @@ const CardView = ({
                     cardStackIndex={cardStackIndex--}
                     source={source}
                     card={attachment}
-                    className={`attachment-${standardisedSize}`}
+                    className='card-attachment'
                     wrapped={false}
                     hideTokens
                     onClick={onClick}
-                    size={size}
+                    onMenuItemClick={onMenuItemClick}
                 />
             );
         });
@@ -204,12 +201,12 @@ const CardView = ({
             return (
                 <Card
                     key={dupe.uuid}
-                    className={`duplicate-${standardisedSize}`}
+                    className='card-duplicate'
                     source={source}
                     card={dupe}
                     wrapped={false}
                     onClick={onClick}
-                    size={size}
+                    onMenuItemClick={onMenuItemClick}
                     facedown={forceFaceup ? false : card.facedown}
                     hideTokens
                 />
@@ -230,12 +227,8 @@ const CardView = ({
         return (
             // Using attachment class as to ensure underneath cards are visually shown underneath the stack
             // Attachments & card zIndex's consider these underneath cards to ensure this is rendered at bottom of attachment stack
-            <div
-                className={`relative attachment-${standardisedSize}`}
-                style={{ zIndex: cardStackIndex-- }}
-            >
+            <div className='relative card-attachment' style={{ zIndex: cardStackIndex-- }}>
                 <SquishableCardPanel
-                    cardSize={size}
                     cards={underneathCards}
                     className='underneath'
                     maxCards={maxCards}
@@ -255,7 +248,7 @@ const CardView = ({
             <button
                 type='button'
                 title='Cards underneath'
-                className='absolute bottom-1 right-1 z-[230] min-w-6 h-6 px-1 text-white bg-black/80 font-bold text-center rounded-md border-1'
+                className='pointer-events-auto absolute bottom-1 right-1 z-[230] card-text [--badge-size:calc(var(--card-scale,1)*1.5rem)] min-w-[var(--badge-size)] h-[var(--badge-size)] px-1 text-white bg-black/80 font-bold text-center rounded-md border-1'
                 onClick={(event) => {
                     event.stopPropagation();
                     setShowUnderneath(!showUnderneath);
@@ -294,7 +287,7 @@ const CardView = ({
                         numColumns={Math.min(cards.length, 5)}
                         numRows={1.2}
                         onCardClick={onClick}
-                        size={size}
+                        onMenuItemClick={onMenuItemClick}
                         source='underneath'
                     />
                 </div>
@@ -308,7 +301,7 @@ const CardView = ({
         }
 
         return (
-            <div className='absolute w-6 h-6 -ml-3 top-1 z-[230] left-1/2 text-white bg-black/80 font-bold text-center rounded-md border-1'>
+            <div className='absolute top-0 left-0 z-[230] flex items-center justify-center card-text [--badge-size:calc(var(--card-scale,1)*1.5rem)] min-w-[calc(var(--badge-size)*0.8)] h-[var(--badge-size)] px-0.5 text-white bg-black/90 font-bold rounded-br-md rounded-tl-[inherit]'>
                 {card.order}
             </div>
         );
@@ -362,93 +355,88 @@ const CardView = ({
             return 'shadow-[0_0_1px_2px] shadow-blue-100';
         }
     };
+    const isFaceup = forceFaceup || (!card.facedown && card.code);
+    const availabilityNotes = useMemo(
+        () =>
+            isFaceup
+                ? [
+                      ...(card.unavailableActions || []).map((action) => ({
+                          ...action,
+                          label: 'Unavailable'
+                      })),
+                      ...(card.unavailableTriggers || []).map((trigger) => ({
+                          ...trigger,
+                          label: 'Did not resolve'
+                      }))
+                  ]
+                      .filter((note) => isNotableRequirement(note.reason))
+                      .map((note) => ({
+                          ...note,
+                          reason: getActionRequirementReason(note.reason)
+                      }))
+                : [],
+        [isFaceup, card.unavailableActions, card.unavailableTriggers]
+    );
+
+    const { handlers: hoverHandlers, touchActive } = useCardHoverHandlers({
+        code: card.code,
+        notes: availabilityNotes,
+        isDisabled: !!disableHover || isDragging || showMenu,
+        touchDelay: 250
+    });
+
     const getCard = () => {
         if (!card) {
             return <div />;
         }
 
-        // Image class handles the rotating of knelt or horizontally placed vertical cards (eg. dead pile)
-        const imageClass = classNames(
-            'relative overflow-visible transition-all',
-            cardClass(
-                size,
-                (card.type !== 'plot' && orientation === 'horizontal') || card.kneeled
-                    ? 'rotated'
-                    : orientation
-            ),
+        // Handles the rotating of knelt or horizontally placed vertical cards (eg. dead pile)
+        const isRotated = (card.type !== 'plot' && orientation === 'horizontal') || card.kneeled;
+        const isInteractive = card.selectable || card.canPlay || shouldShowMenu();
+        const cardClassName = classNames(
+            'relative overflow-hidden pointer-events-auto touch-none transition-[transform,box-shadow,filter]',
+            cardBoxClass(isRotated ? 'rotated' : orientation),
             getHighlightClass(),
             {
                 'brightness-[.75] saturate-[.5]':
                     card.unselectable ||
-                    (card.canPlay === false && !card.selected && !card.selectable)
+                    (card.canPlay === false && !card.selected && !card.selectable),
+                'cursor-grabbing': isDragging,
+                'cursor-grab': !isDragging && !!listeners,
+                'cursor-pointer': !isDragging && !listeners && isInteractive,
+                'select-none': touchActive
             }
         );
-        const isFaceup = forceFaceup || (!card.facedown && card.code);
-        const availabilityNotes = isFaceup
-            ? [
-                  ...(card.unavailableActions || []).map((action) => ({
-                      ...action,
-                      label: 'Unavailable'
-                  })),
-                  ...(card.unavailableTriggers || []).map((trigger) => ({
-                      ...trigger,
-                      label: 'Did not resolve'
-                  }))
-              ]
-                  .filter((note) => isNotableRequirement(note.reason))
-                  .map((note) => ({
-                      ...note,
-                      reason: getActionRequirementReason(note.reason)
-                  }))
-            : [];
         const imageCode = isFaceup
             ? card.code
             : source === 'shadows'
               ? 'cardback_shadow'
               : 'cardback';
-        const image = (
-            <div
-                {...listeners}
-                {...attributes}
-                className={imageClass}
-                onClick={handleClick}
-                style={{ zIndex: cardStackIndex-- }}
-            >
-                {card.name && <span className='absolute left-0 top-0'>{card.name}</span>}
-                <CardImage
-                    ref={setNodeRef}
-                    className='absolute left-0 top-0 touch-none'
-                    size={size}
-                    code={imageCode}
-                    orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}
-                />
-                {!hideTokens && (
-                    <CardCounters
-                        counters={getCountersForCard(card)}
-                        isParentKneeled={card.kneeled}
-                    />
-                )}
-                {isFaceup && getAlertStatus()}
-            </div>
-        );
-        const wrapperClass = classNames(
-            'relative transition-all',
-            cardClass(size, orientation === 'vertical' && card.kneeled ? 'kneeled' : orientation),
+        const slotClassName = classNames(
+            'relative pointer-events-none transition-[width,height,margin]',
+            cardBoxClass(orientation === 'vertical' && card.kneeled ? 'kneeled' : orientation),
             className
         );
         return (
-            <div className={wrapperClass} ref={cardRef}>
-                {disableHover ? (
-                    image
-                ) : (
-                    <CardHoverable
-                        code={card.code}
-                        notes={availabilityNotes}
-                        isDisabled={isDragging}
-                        touchDelay={250}
-                    >
-                        {image}
-                    </CardHoverable>
+            <div className={slotClassName} ref={cardRef}>
+                <div
+                    {...listeners}
+                    {...attributes}
+                    {...hoverHandlers}
+                    ref={setNodeRef}
+                    className={cardClassName}
+                    onClick={handleClick}
+                    style={{ zIndex: cardStackIndex-- }}
+                >
+                    {card.name && <span className='absolute left-0 top-0'>{card.name}</span>}
+                    <CardFace code={imageCode} />
+                    {isFaceup && getAlertStatus()}
+                </div>
+                {!hideTokens && <CardCounters counters={getCountersForCard(card)} />}
+                {showMenu && (
+                    <div className='contents pointer-events-auto'>
+                        <CardMenu menu={getMenu()} onMenuItemClick={handleMenuItemClick} />
+                    </div>
                 )}
                 {getCardOrder()}
                 {getUnderneathBadge()}

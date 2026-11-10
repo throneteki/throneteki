@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { getCardDimensions } from '../../util';
+import { cardHeight } from '../../cardScale';
 
 import Card from './Card';
 import { useMemo } from 'react';
@@ -10,7 +10,6 @@ const SquishableCardPanel = ({
     cards,
     disableBackground = false,
     onCardClick,
-    cardSize,
     source,
     maxCards,
     title,
@@ -18,14 +17,6 @@ const SquishableCardPanel = ({
     className,
     groupVisibleCards
 }) => {
-    const getOverallDimensions = useCallback(() => {
-        const cardDimensions = getCardDimensions(cardSize);
-        return {
-            width: cardDimensions.width * maxCards,
-            height: cardDimensions.height
-        };
-    }, [cardSize, maxCards]);
-
     const hasMixOfVisibleCards = useCallback(
         () => cards.some((card) => !!card.code) && cards.some((card) => !card.code),
         [cards]
@@ -34,14 +25,8 @@ const SquishableCardPanel = ({
     const needsSquish = useMemo(() => cards && cards.length > maxCards, [cards, maxCards]);
 
     const cardsToRender = useMemo(() => {
-        const overallDimensions = getOverallDimensions();
-        const dimensions = getCardDimensions(cardSize);
         const handLength = cards ? cards.length : 0;
-        const cardWidth = dimensions.width;
-
-        const requiredWidth = handLength * cardWidth;
-        const overflow = requiredWidth - overallDimensions.width;
-        const offset = overflow / (handLength - 1);
+        const overlap = (handLength - maxCards) / (handLength - 1);
 
         let localCards = cards;
         if (groupVisibleCards && hasMixOfVisibleCards()) {
@@ -52,7 +37,7 @@ const SquishableCardPanel = ({
             let style = {};
             if (needsSquish) {
                 style = {
-                    left: `${(cardWidth - offset) * index}rem`
+                    left: `calc(var(--card-scale, 1) * 4rem * ${(1 - overlap) * index})`
                 };
             }
 
@@ -62,31 +47,30 @@ const SquishableCardPanel = ({
                     card={card}
                     disableHover={!card.code}
                     onClick={onCardClick}
-                    size={cardSize}
                     style={style}
                     source={source}
                 />
             );
         });
     }, [
-        getOverallDimensions,
-        cardSize,
         cards,
         groupVisibleCards,
         hasMixOfVisibleCards,
+        maxCards,
         needsSquish,
         onCardClick,
         source
     ]);
 
-    const dimensions = getOverallDimensions();
-
     const headerText = title ? title + ' (' + cardsToRender.length + ')' : '';
 
-    const style = {
-        width: dimensions.width + 'rem',
-        height: dimensions.height + 'rem'
-    };
+    const style = useMemo(
+        () => ({
+            width: `calc(var(--card-scale, 1) * ${4 * maxCards}rem)`,
+            height: cardHeight
+        }),
+        [maxCards]
+    );
 
     const retClassName = classNames('box-border relative', className);
 

@@ -116,7 +116,9 @@ const CardHover = ({ children, size = '3x-large' }) => {
                                 orientation={orientation}
                                 onLoad={(e) => {
                                     setOrientation(
-                                        e.target.width > e.target.height ? 'horizontal' : 'vertical'
+                                        e.target.naturalWidth > e.target.naturalHeight
+                                            ? 'horizontal'
+                                            : 'vertical'
                                     );
                                     setIsLoading(false);
                                 }}

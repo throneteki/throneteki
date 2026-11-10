@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import LoadingSpinner from '../Site/LoadingSpinner';
@@ -10,7 +10,7 @@ import { isShortcutEvent, keyboardShortcutsEnabled } from './keyboardShortcuts';
 import { navigate } from '../../redux/reducers/navigation';
 import {
     sendCardClickedMessage,
-    sendCardSizeChangeMessage,
+    sendCardMenuItemClickedMessage,
     sendDragDropMessage,
     sendGameChatMessage,
     sendToggleDupesMessage,
@@ -27,6 +27,9 @@ import JoustGameBoardLayout from './GameBoardLayouts/JoustGameBoardLayout';
 import MeleeGameBoardLayout from './GameBoardLayouts/MeleeGameBoardLayout';
 import { ManualModeContext } from './ManualModeContext';
 import { useRenderCount } from '../../perf';
+import { useHudScale } from './useHudScale';
+import { hudStore, useHud } from '../../hudStore';
+import { useImagePreload } from './useImagePreload';
 
 const placeholderPlayer = {
     activePlot: null,
@@ -99,6 +102,7 @@ const GameBoard = () => {
     }, [shortcutsEnabled]);
 
     const [draggingDetail, setDraggingDetail] = useState(null);
+    const boardAreaRef = useRef(null);
 
     const mouseSensor = useSensor(MouseSensor, {
         activationConstraint: {
@@ -175,6 +179,10 @@ const GameBoard = () => {
         return { thisPlayer, otherPlayers, userPlayer };
     }, [currentGame?.maxPlayers, currentGame?.players, currentGame?.spectators, user?.username]);
 
+    const hud = useHud();
+    useHudScale(hud, boardAreaRef, !!currentGame?.started);
+    useImagePreload(currentGame?.players);
+
     if (!currentGame || !currentGame.started) {
         return <LoadingSpinner label={'Waiting for server...'} />;
     }
@@ -192,7 +200,7 @@ const GameBoard = () => {
         return <LoadingSpinner label={'Waiting for game to have players or close...'} />;
     }
 
-    const boardClass = classNames('flex h-full overflow-x-hidden', {
+    const boardClass = classNames('flex h-full overflow-x-hidden hud-text', {
         'cursor-select': thisPlayer && thisPlayer.selectCard
     });
 
@@ -237,7 +245,7 @@ const GameBoard = () => {
     return (
         <>
             <div className={boardClass}>
-                <div className='overflow-auto basis-full'>
+                <div className='overflow-auto basis-full' ref={boardAreaRef}>
                     <DndContext
                         sensors={sensors}
                         onDragStart={onDragStart}
@@ -250,7 +258,6 @@ const GameBoard = () => {
                         <DragOverlay className={'opacity-50'} dropAnimation={null}>
                             {draggingDetail && (
                                 <CardImage
-                                    size={thisPlayer.cardSize}
                                     code={draggingDetail.card.code || 'cardback'}
                                     orientation={
                                         (draggingDetail.card.type !== 'plot' &&
@@ -290,12 +297,12 @@ const GameBoard = () => {
                 onHideResponsesToggle={(option, value) =>
                     dispatch(sendToggleHideResponsesMessage(option, value))
                 }
-                onCardSizeSettingChange={(value) => dispatch(sendCardSizeChangeMessage(value))}
+                onHudChange={hudStore.set.bind(hudStore)}
                 promptDupes={userPlayer.promptDupes}
                 promptedActionWindows={userPlayer.promptedActionWindows}
                 hideInterrupts={userPlayer.hideInterrupts}
                 hideReactions={userPlayer.hideReactions}
-                cardSizeSetting={userPlayer.cardSize}
+                hud={hud}
             />
             <KeyboardShortcutsModal
                 isOpen={showShortcuts}

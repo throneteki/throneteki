@@ -20,8 +20,7 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
         }
         const pos = `${position.includes('bottom') ? 'bottom' : 'top'}-0 ${position.includes('right') ? 'right' : 'left'}-0`;
         const labelClassName = classNames(
-            'absolute text-xs z-[210] leading-tight px-1 py-0.5 bg-black/40 rounded-md',
-            labelClickable ? 'cursor-pointer hover:bg-black/70' : 'pointer-events-none',
+            'absolute card-text-sm z-[210] leading-tight px-1 py-0.5 bg-black/40 rounded-md pointer-events-none',
             pos
         );
         return <div className={labelClassName}>{label}</div>;

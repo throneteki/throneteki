@@ -10,7 +10,7 @@ import LabelledGameArea from './LabelledGameArea';
 
 import { Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { cardClass } from '../../util';
+import { cardBoxClass } from '../../cardScale';
 
 const CardPile = ({
     cards,
@@ -24,7 +24,7 @@ const CardPile = ({
     disableHover,
     numColumns,
     numRows,
-    size,
+    onMenuItemClick: propsOnMenuItemClick,
     popupMenu,
     title,
     titlePosition,
@@ -151,7 +151,7 @@ const CardPile = ({
         const listProps = {
             disableHover: disableHover,
             onCardClick: onCardClick,
-            size: size,
+            onMenuItemClick: onMenuItemClick,
             source: source,
             numColumns,
             numRows
@@ -216,7 +216,7 @@ const CardPile = ({
             >
                 <div className={popupClass} onClick={(event) => event.stopPropagation()}>
                     {retPopupMenu}
-                    <Droppable source={source} size={size} className='overflow-auto'>
+                    <Droppable source={source} className='overflow-auto'>
                         {cardList}
                     </Droppable>
                 </div>
@@ -225,7 +225,7 @@ const CardPile = ({
     }, [
         disableHover,
         onCardClick,
-        size,
+        onMenuItemClick,
         source,
         numColumns,
         numRows,
@@ -309,10 +309,9 @@ const CardPile = ({
                     disableHover={hiddenTopCard}
                     onClick={onTopCardClick}
                     orientation={orientation}
-                    size={size}
                 />
             ) : (
-                <div className={cardClass(size, orientation)} />
+                <div className={cardBoxClass(orientation)} />
             )}
             {getPopup()}
         </LabelledGameArea>

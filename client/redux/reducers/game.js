@@ -47,10 +47,6 @@ const gameSlice = createSlice({
             (option, value) => ({ payload: { option, value } }),
             () => {}
         ),
-        sendCardSizeChangeMessage: create.preparedReducer(
-            (value) => ({ payload: value }),
-            () => {}
-        ),
         sendCardClickedMessage: () => {},
         sendButtonClickedMessage: create.preparedReducer(
             (promptId, command, method, arg) => ({ payload: { promptId, command, method, arg } }),
@@ -91,7 +87,6 @@ export const {
     sendToggleDupesMessage,
     sendTogglePromptedActionWindowMessage,
     sendToggleHideResponsesMessage,
-    sendCardSizeChangeMessage,
     sendCardClickedMessage,
     sendButtonClickedMessage,
     sendShowDrawDeckMessage,

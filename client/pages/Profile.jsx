@@ -5,11 +5,9 @@ import { Button } from '@heroui/react';
 import classNames from 'classnames';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import AlertPanel from '../Components/Site/AlertPanel';
-import { useSaveProfileMutation, useVerifyAuthenticationQuery } from '../redux/middleware/api';
-import { avatarUpdated, setAuthTokens, setUser } from '../redux/reducers/auth';
-import { defaultActionWindows } from '../constants';
-import { DefaultBackground } from '../../shared/backgrounds';
+import HudSettings from '../Components/Profile/HudSettings';
+import { normalizeHud } from '../hud';
+import { hudStore } from '../hudStore';
 import Page from './Page';
 import { keyboardShortcutsEnabled } from '../Components/GameBoard/keyboardShortcuts';
 import ProfileNav from '../Components/Profile/ProfileNav';
@@ -48,6 +46,19 @@ const Profile = ({ section }) => {
         skip: !user,
         refetchOnMountOrArgChange: true
     });
+    const emailUpdates = (currentUser ?? user)?.emailUpdates !== false;
+
+    useEffect(() => {
+        if (saveError) {
+            toast.error(
+                saveError.message || 'An error occured saving your profile. Please try again later.'
+            );
+        }
+    }, [saveError]);
+
+    useEffect(() => {
+        setSelectedBackground(user?.settings?.background || 'BG1');
+    }, [user?.settings?.background, user?.settings?.hud]);
 
     if (!user) {
         return (
@@ -96,12 +107,7 @@ const Profile = ({ section }) => {
         promptDupes: !!settings.promptDupes,
         hideInterrupts: settings.hideInterrupts ?? true,
         hideReactions: settings.hideReactions ?? true,
-        keyboardShortcuts: keyboardShortcutsEnabled(settings),
-        cardSize: settings.cardSize || 'normal',
-        background:
-            !settings.background || (settings.background === 'custom' && !user.customBackground)
-                ? DefaultBackground
-                : settings.background
+        hud: normalizeHud(settings)
     };
 
     const SectionComponent = sectionComponents[activeSection.key];
@@ -143,17 +149,15 @@ const Profile = ({ section }) => {
                                         chooseOrder: values.chooseOrder,
                                         chooseCards: values.chooseCards
                                     },
-                                    background: values.background,
-                                    cardSize: values.cardSize
+                                    background: selectedBackground,
+                                    hud: values.hud
                                 }
                             }
                         }).unwrap();
                         toast.success('Profile saved successfully');
 
                         dispatch(setUser(ret.data?.user ?? ret.user));
-                        if (avatarMayChange) {
-                            dispatch(avatarUpdated());
-                        }
+                        hudStore.reset();
                         if (ret.data?.token && ret.data?.refreshToken) {
                             dispatch(setAuthTokens(ret.data.token, ret.data.refreshToken));
                         }
@@ -175,78 +179,41 @@ const Profile = ({ section }) => {
                     }
                 }}
             >
-                {(formProps) => {
-                    const dirtySections = sectionsWithFields(
-                        changedFields(formProps.values, formProps.initialValues)
-                    );
-                    const errorSections =
-                        formProps.submitCount > 0
-                            ? sectionsWithFields(Object.keys(formProps.errors))
-                            : [];
-
-                    let status = 'No unsaved changes';
-                    let statusClass = 'text-default-500';
-                    if (errorSections.length > 0) {
-                        const names = ProfileSections.filter((s) => errorSections.includes(s.key))
-                            .map((s) => s.label)
-                            .join(', ');
-                        status = `Check the highlighted fields in ${names}`;
-                        statusClass = 'text-danger';
-                    } else if (formProps.dirty) {
-                        status = 'You have unsaved changes';
-                        statusClass = 'text-warning';
-                    }
-
-                    return (
-                        <form
-                            onSubmit={formProps.handleSubmit}
-                            className='grid items-start gap-3 lg:grid-cols-[13rem_minmax(0,1fr)]'
-                        >
-                            <ProfileNav
-                                user={user}
-                                activeSection={activeSection.key}
-                                dirtySections={dirtySections}
-                                errorSections={errorSections}
-                            />
-                            <section className='rounded-large border-2 border-primary bg-black/75 shadow-lg'>
-                                <header className='border-b border-default-200 px-4 py-3'>
-                                    <h1 className='text-large font-bold'>{activeSection.label}</h1>
-                                    <p className='text-small text-default-500'>
-                                        {activeSection.description}
-                                    </p>
-                                </header>
-                                <div className='flex max-w-4xl flex-col gap-6 p-4'>
-                                    <SectionComponent user={user} formProps={formProps} />
-                                </div>
-                                <div className='sticky bottom-0 z-10 flex flex-wrap items-center justify-end gap-2 rounded-b-large border-t border-default-200 bg-black px-4 py-3'>
-                                    <span
-                                        className={classNames(
-                                            'w-full text-small sm:mr-auto sm:w-auto',
-                                            statusClass
-                                        )}
-                                    >
-                                        {status}
-                                    </span>
-                                    <Button
-                                        variant='flat'
-                                        isDisabled={!formProps.dirty || isSaveLoading}
-                                        onPress={() => formProps.resetForm()}
-                                    >
-                                        Discard
-                                    </Button>
-                                    <Button
-                                        color='success'
-                                        type='submit'
-                                        isDisabled={!formProps.dirty}
-                                        isLoading={isSaveLoading}
-                                    >
-                                        Save changes
-                                    </Button>
-                                </div>
-                            </section>
-                        </form>
-                    );
-                }}
+                {(formProps) => (
+                    <form onSubmit={formProps.handleSubmit} className='flex flex-col gap-2'>
+                        <ProfileMain user={user} formProps={formProps} />
+                        <ActionWindowOptions formProps={formProps} />
+                        <GameSettings formProps={formProps} />
+                        <HudSettings
+                            value={formProps.values.hud}
+                            onChange={(hud) => formProps.setFieldValue('hud', hud)}
+                        />
+                        <Panel title='Game Board Background'>
+                            <div className='grid sm:grid-cols-3 gap-2'>
+                                {backgrounds.map((background) => (
+                                    <GameBackgroundOption
+                                        imageUrl={background.imageUrl}
+                                        key={background.name}
+                                        label={background.label}
+                                        name={background.name}
+                                        onSelect={(background) => setSelectedBackground(background)}
+                                        selected={selectedBackground === background.name}
+                                    />
+                                ))}
+                            </div>
+                        </Panel>
+                        <div className='w-full sticky bottom-6 z-50 mt-2 flex justify-center'>
+                            <Button
+                                className='w-1/2'
+                                color='success'
+                                type='submit'
+                                isLoading={isSaveLoading}
+                            >
+                                Save
+                            </Button>
+                        </div>
+                    </form>
+                )}
             </Formik>
         </Page>
     );

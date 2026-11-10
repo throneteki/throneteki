@@ -40,7 +40,6 @@ const DraftingTable = () => {
                     onMouseOut={onMouseOut}
                     onMouseOver={() => onMouseOver(cards[card])}
                     selected={index === chosenCardIndex}
-                    size={user.settings.cardSize}
                     orientation={cards[card].type === 'plot' ? 'horizontal' : 'vertical'}
                 />
             ));

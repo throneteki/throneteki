@@ -282,12 +282,40 @@ function sanitizeSettings(settings) {
         result.background = background;
     }
 
-    let cardSize = pickString(settings.cardSize, /^[a-z-]{1,16}$/);
-    if (cardSize) {
-        result.cardSize = cardSize;
+    let customBackgroundUrl = pickString(
+        settings.customBackgroundUrl,
+        /^[A-Za-z0-9_-]{1,64}\.(png|jpe?g|gif|webp)$/i
+    );
+    if (customBackgroundUrl) {
+        result.customBackgroundUrl = customBackgroundUrl;
+    }
+
+    let hud = sanitizeHud(settings.hud);
+    if (hud) {
+        result.hud = hud;
     }
 
     return result;
+}
+
+function sanitizeHud(hud) {
+    if (!hud || typeof hud !== 'object') {
+        return undefined;
+    }
+
+    let result = {};
+    for (const key of ['cards', 'interface']) {
+        let size = pickString(hud[key], /^(?:small|normal|large|\d{1,2}(?:\.\d{1,2})?)$/);
+        if (size) {
+            result[key] = size;
+        }
+    }
+
+    if (typeof hud.auto === 'boolean') {
+        result.auto = hud.auto;
+    }
+
+    return Object.keys(result).length > 0 ? result : undefined;
 }
 
 function sanitizePromptedActionWindows(windows) {

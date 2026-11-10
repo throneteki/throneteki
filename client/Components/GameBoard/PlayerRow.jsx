@@ -7,7 +7,6 @@ import CardPile from './CardPile';
 import SquishableCardPanel from './SquishableCardPanel';
 import DrawDeck from './DrawDeck';
 import Droppable from './Droppable';
-import { standardiseCardSize } from '../../util';
 import PlayerPlots from './PlayerPlots';
 
 const PlayerRow = ({
@@ -16,7 +15,6 @@ const PlayerRow = ({
     onCardClick,
     side,
     sideNo,
-    cardSize,
     isMe,
     playerName,
     title,
@@ -77,7 +75,7 @@ const PlayerRow = ({
             const additionalAgendas = agendas.slice(1);
             const agendaClass = (a) =>
                 classNames('agenda', `agenda-${a.code}`, {
-                    [`additional-agenda-${standardiseCardSize(cardSize)}`]: a !== agenda
+                    'card-additional-agenda': a !== agenda
                 });
 
             const retAgendas = [
@@ -110,7 +108,6 @@ const PlayerRow = ({
                                 disableHover={false}
                                 onClick={onCardClick}
                                 orientation='vertical'
-                                size={cardSize}
                             />
                         </div>
                     );
@@ -118,14 +115,13 @@ const PlayerRow = ({
             );
             return <div className='relative flex flex-row-reverse'>{retAgendas}</div>;
         },
-        [agendas, cardSize, renderDroppablePile, onCardClick]
+        [agendas, renderDroppablePile, onCardClick, onMenuItemClick]
     );
 
     const cardPileProps = {
         onCardClick,
         popupLocation: side,
         popupId: (sideNo ?? 1) === 1 ? side : `${side}-${sideNo}`, // Retain legacy top/bottom ids for first on each side
-        size: cardSize,
         playerName
     };
 
@@ -141,10 +137,9 @@ const PlayerRow = ({
                 disableHover={false}
                 onClick={onCardClick}
                 orientation='vertical'
-                size={cardSize}
             />
         );
-    }, [title, onCardClick, cardSize]);
+    }, [title, onCardClick, onMenuItemClick]);
 
     const retHand = (
         <SquishableCardPanel
@@ -154,7 +149,6 @@ const PlayerRow = ({
             onCardClick={onCardClick}
             source='hand'
             title='Hand'
-            cardSize={cardSize}
         />
     );
     const retDrawDeck = (
@@ -197,7 +191,6 @@ const PlayerRow = ({
     const retShadows = (
         <SquishableCardPanel
             cards={shadows}
-            cardSize={cardSize}
             maxCards={shadows.length === 0 ? 1 : 2}
             onCardClick={onCardClick}
             source='shadows'
@@ -212,7 +205,6 @@ const PlayerRow = ({
             orientation='horizontal'
             source='out of game'
             title='Out of Game'
-            size={cardSize}
             {...cardPileProps}
         />
     );
@@ -220,7 +212,6 @@ const PlayerRow = ({
     return (
         <div className={wrapperClassName}>
             <PlayerPlots
-                cardSize={cardSize}
                 onCardClick={onCardClick}
                 direction={side === 'bottom' ? 'default' : 'reverse'}
                 isMe={isMe}
@@ -237,7 +228,6 @@ const PlayerRow = ({
                 topCard={faction}
                 disablePopup
                 onCardClick={onCardClick}
-                size={cardSize}
                 orientation={faction && faction.kneeled ? 'horizontal' : 'vertical'}
             />
             {getAgendas(cardPileProps)}

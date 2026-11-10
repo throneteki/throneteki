@@ -1,7 +1,19 @@
 import React from 'react';
-import { Radio, RadioGroup, Switch } from '@heroui/react';
+import { Switch } from '@heroui/react';
 import Panel from '../Site/Panel';
-import { ActionWindows, CardSizeOptions } from '../../constants';
+import HudSettings from '../Profile/HudSettings';
+
+const windows = [
+    { name: 'plot', label: 'Plots revealed' },
+    { name: 'draw', label: 'Draw phase' },
+    { name: 'marshal', label: 'Marshaling phase' },
+    { name: 'challengeBegin', label: 'Before challenge' },
+    { name: 'attackersDeclared', label: 'Attackers declared' },
+    { name: 'defendersDeclared', label: 'Defenders declared' },
+    { name: 'dominance', label: 'Dominance phase' },
+    { name: 'standing', label: 'Standing phase' },
+    { name: 'taxation', label: 'Taxation phase' }
+];
 
 const GameConfiguration = ({
     isSpectating,
@@ -10,10 +22,10 @@ const GameConfiguration = ({
     promptDupes,
     hideInterrupts,
     hideReactions,
-    cardSizeSetting,
+    hud,
     onKeywordSettingToggle,
     onHideResponsesToggle,
-    onCardSizeSettingChange,
+    onHudChange,
     onActionWindowToggle,
     onPromptDupesToggle
 }) => {
@@ -64,21 +76,7 @@ const GameConfiguration = ({
                         </Switch>
                     </div>
                 </Panel>
-                <Panel title='Card Sizing'>
-                    <RadioGroup
-                        value={cardSizeSetting}
-                        onValueChange={(value) =>
-                            onCardSizeSettingChange && onCardSizeSettingChange(value)
-                        }
-                        orientation='horizontal'
-                    >
-                        {CardSizeOptions.map(({ name, label }) => (
-                            <Radio key={name} value={name}>
-                                {label}
-                            </Radio>
-                        ))}
-                    </RadioGroup>
-                </Panel>
+                <HudSettings value={hud} onChange={onHudChange} />
                 <Panel title={'Other Settings'}>
                     <div className='flex flex-col gap-2'>
                         <Switch
