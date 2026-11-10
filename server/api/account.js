@@ -311,8 +311,10 @@ function sanitizeHud(hud) {
         }
     }
 
-    if (typeof hud.auto === 'boolean') {
-        result.auto = hud.auto;
+    for (const key of ['auto', 'animations']) {
+        if (typeof hud[key] === 'boolean') {
+            result[key] = hud[key];
+        }
     }
 
     return Object.keys(result).length > 0 ? result : undefined;

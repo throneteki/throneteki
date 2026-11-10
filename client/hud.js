@@ -6,7 +6,7 @@ const sizeKinds = {
 export const hudKinds = Object.keys(sizeKinds);
 export const hudSizeNames = ['small', 'normal', 'large'];
 
-export const defaultHud = { cards: 'normal', interface: 'normal', auto: true };
+export const defaultHud = { cards: 'normal', interface: 'normal', auto: true, animations: true };
 
 const legacyCardSizes = {
     small: 0.6,
@@ -64,8 +64,10 @@ export const normalizeHud = (settings) => {
         if (interfaceSize) {
             result.interface = String(interfaceSize);
         }
-        if (typeof hud.auto === 'boolean') {
-            result.auto = hud.auto;
+        for (const key of ['auto', 'animations']) {
+            if (typeof hud[key] === 'boolean') {
+                result[key] = hud[key];
+            }
         }
         return result;
     }

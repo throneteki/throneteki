@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import LoadingSpinner from '../Site/LoadingSpinner';
@@ -29,6 +29,8 @@ import { ManualModeContext } from './ManualModeContext';
 import { useRenderCount } from '../../perf';
 import { useHudScale } from './useHudScale';
 import { hudStore, useHud } from '../../hudStore';
+import { MotionConfig } from 'framer-motion';
+import { useMotionEnabled } from '../../motion';
 import { useImagePreload } from './useImagePreload';
 
 const placeholderPlayer = {
@@ -181,6 +183,11 @@ const GameBoard = () => {
 
     const hud = useHud();
     useHudScale(hud, boardAreaRef, !!currentGame?.started);
+    const motionEnabled = useMotionEnabled();
+    useLayoutEffect(() => {
+        document.documentElement.dataset.motion = motionEnabled ? 'on' : 'off';
+        return () => delete document.documentElement.dataset.motion;
+    }, [motionEnabled]);
     useImagePreload(currentGame?.players);
 
     if (!currentGame || !currentGame.started) {
@@ -244,44 +251,45 @@ const GameBoard = () => {
 
     return (
         <>
-            <div className={boardClass}>
-                <div className='overflow-auto basis-full' ref={boardAreaRef}>
-                    <DndContext
-                        sensors={sensors}
-                        onDragStart={onDragStart}
-                        onDragEnd={onDragEnd}
-                        onDragCancel={onDragCancel}
-                    >
-                        <ManualModeContext.Provider value={!!currentGame.manualMode}>
-                            {gameBoard}
-                        </ManualModeContext.Provider>
-                        <DragOverlay className={'opacity-50'} dropAnimation={null}>
-                            {draggingDetail && (
-                                <CardImage
-                                    code={draggingDetail.card.code || 'cardback'}
-                                    orientation={
-                                        (draggingDetail.card.type !== 'plot' &&
-                                            draggingDetail.orientation === 'horizontal') ||
-                                        draggingDetail.card.kneeled
-                                            ? 'rotated'
-                                            : draggingDetail.orientation
-                                    }
-                                />
-                            )}
-                        </DragOverlay>
-                    </DndContext>
+            <MotionConfig reducedMotion={motionEnabled ? 'user' : 'always'}>
+                <div className={boardClass}>
+                    <div className='overflow-auto basis-full' ref={boardAreaRef}>
+                        <DndContext
+                            sensors={sensors}
+                            onDragStart={onDragStart}
+                            onDragEnd={onDragEnd}
+                            onDragCancel={onDragCancel}
+                        >
+                            <ManualModeContext.Provider value={!!currentGame.manualMode}>
+                                {gameBoard}
+                            </ManualModeContext.Provider>
+                            <DragOverlay className={'opacity-50'} dropAnimation={null}>
+                                {draggingDetail && (
+                                    <CardImage
+                                        code={draggingDetail.card.code || 'cardback'}
+                                        orientation={
+                                            (draggingDetail.card.type !== 'plot' &&
+                                                draggingDetail.orientation === 'horizontal') ||
+                                            draggingDetail.card.kneeled
+                                                ? 'rotated'
+                                                : draggingDetail.orientation
+                                        }
+                                    />
+                                )}
+                            </DragOverlay>
+                        </DndContext>
+                    </div>
+                    <GameChat
+                        className='shrink-0 grow-0'
+                        isOpen={showGameChat}
+                        onClose={onChatClose}
+                        onUnreadMessagesChange={setUnreadMessages}
+                        messages={currentGame.messages}
+                        onSendChat={onSendChat}
+                        muted={!thisPlayer && currentGame.muteSpectators}
+                    />
                 </div>
-                <GameChat
-                    className='shrink-0 grow-0'
-                    isOpen={showGameChat}
-                    onClose={onChatClose}
-                    onUnreadMessagesChange={setUnreadMessages}
-                    messages={currentGame.messages}
-                    onSendChat={onSendChat}
-                    muted={!thisPlayer && currentGame.muteSpectators}
-                    inputRef={chatInputRef}
-                />
-            </div>
+            </MotionConfig>
             <GameConfigurationModal
                 isOpen={showModal}
                 isSpectating={user.username !== thisPlayer.name}

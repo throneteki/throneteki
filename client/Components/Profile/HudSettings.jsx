@@ -1,6 +1,7 @@
 import React from 'react';
 import { Radio, RadioGroup, Slider, Switch } from '@heroui/react';
 import Panel from '../Site/Panel';
+import { useBrowserReducedMotion } from '../../motion';
 import { hudSizeNames, hudSizeRange, resolveHudSize } from '../../hud';
 
 const groups = [
@@ -63,6 +64,7 @@ const SizeGroup = ({ kind, label, description, value, onChange }) => {
 
 const HudSettings = ({ value, onChange }) => {
     const update = (changes) => onChange && onChange({ ...value, ...changes });
+    const reducedMotion = useBrowserReducedMotion();
 
     return (
         <Panel title='HUD Settings'>
@@ -72,6 +74,17 @@ const HudSettings = ({ value, onChange }) => {
                     <div className='text-xs text-default-500'>
                         Combines the sizes below with your screen size: smaller on phones, larger on
                         big monitors.
+                    </div>
+                </Switch>
+                <Switch
+                    isSelected={value.animations !== false}
+                    onValueChange={(animations) => update({ animations })}
+                >
+                    <div>Animate the gameboard</div>
+                    <div className='text-xs text-default-500'>
+                        {reducedMotion
+                            ? 'Your browser asks for reduced motion, so animations stay off.'
+                            : 'Cards and effects move between states instead of changing instantly.'}
                     </div>
                 </Switch>
                 <div className='grid gap-4 sm:grid-cols-2'>

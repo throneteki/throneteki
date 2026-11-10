@@ -40,15 +40,22 @@ describe('isHudSize', function () {
 describe('normalizeHud', function () {
     it('defaults everything to normal with auto on', function () {
         expect(normalizeHud(undefined)).toEqual(defaultHud);
-        expect(normalizeHud({})).toEqual({ cards: 'normal', interface: 'normal', auto: true });
+        expect(normalizeHud({})).toEqual({
+            cards: 'normal',
+            interface: 'normal',
+            auto: true,
+            animations: true
+        });
     });
 
     it('keeps valid saved values and ignores invalid ones', function () {
         expect(normalizeHud({ hud: { cards: 'large', interface: 'bogus', auto: false } })).toEqual({
             cards: 'large',
             interface: 'normal',
-            auto: false
+            auto: false,
+            animations: true
         });
+        expect(normalizeHud({ hud: { animations: false } }).animations).toBe(false);
     });
 
     it('migrates the earlier separate elements and text sizes', function () {
