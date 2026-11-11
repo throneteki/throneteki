@@ -458,14 +458,16 @@ const HowToPlay = () => {
                         The Iron Throne does not rank and/or match players by skill level in any
                         way. There are three categories (beginner, casual and competitive) to be
                         chosen when creating a game which gives an indication of what to expect, but
-                        it doesn&apos;t enforce anything. Even though personal stats are not being
-                        tracked, most players still very much appreciate a formal concede by
-                        clicking the ‘Concede’ button and typing ‘gg’ before leaving a game. The
-                        reality of quick and anonymous online games dictates this won’t always
-                        happen though, as evidenced by regular complaining in the main lobby about
-                        people leaving without conceding. Our advice is to just move on to the next
-                        game since in the end, conceding or not doesn’t really impact anything.
-                        Happy gaming!
+                        it doesn&apos;t enforce anything. Your results are recorded on your Stats
+                        page so you can look back on your games, but they are just for you: they
+                        aren&apos;t used to rank you, match you or compare you with anyone else, so
+                        there&apos;s no need to worry about them. Most players still very much
+                        appreciate a formal concede by clicking the ‘Concede’ button and typing
+                        ‘gg’ before leaving a game. The reality of quick and anonymous online games
+                        dictates this won’t always happen though, as evidenced by regular
+                        complaining in the main lobby about people leaving without conceding. Our
+                        advice is to just move on to the next game since in the end, a win, a loss
+                        or an opponent leaving early doesn’t really matter. Happy gaming!
                     </p>
                 </div>
             </Panel>
