@@ -1,7 +1,7 @@
 /*eslint no-console:0 */
 import fs from 'fs';
 
-import jimp from 'jimp';
+import { Jimp } from 'jimp';
 
 class CardgameDbImageSource {
     constructor() {
@@ -46,9 +46,9 @@ class CardgameDbImageSource {
                 'image for ' +
                 card.code
         );
-        jimp.read(url)
+        Jimp.read(url)
             .then((lenna) => {
-                lenna.write(imagePath);
+                return lenna.write(imagePath);
             })
             .catch((err) => {
                 console.log(`Error converting image for ${card.code}: ${err}`);
