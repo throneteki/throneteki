@@ -33,9 +33,11 @@ const CardPile = ({
     popupLocation = 'bottom',
     popupId,
     className,
+    style,
     cardCount,
     orientation = 'vertical',
     hiddenTopCard,
+    hideUnderCard,
     showCards,
     selected,
     flipDeck,
@@ -48,7 +50,7 @@ const CardPile = ({
 
     useLayoutEffect(
         () =>
-            registerPile(popupId || source, {
+            registerPile(`${popupId || ''}:${source}`, {
                 el: areaRef.current,
                 source,
                 uuids: new Map((cards || []).map((card, index) => [card.uuid, index]))
@@ -255,6 +257,14 @@ const CardPile = ({
         onPopupMenuItemClick
     ]);
 
+    // A sideways card is laid out as an upright one, so the area is held to the height of a sideways card
+    const areaStyle = useMemo(
+        () =>
+            orientation === 'horizontal'
+                ? { height: 'calc(var(--card-scale, 1) * 4rem)', ...style }
+                : style,
+        [orientation, style]
+    );
     const retClassName = classNames('flex w-fit h-fit', className);
 
     const retCardCount = cardCount || (cards ? cards.length : '0');
@@ -276,11 +286,18 @@ const CardPile = ({
     );
 
     // The card under the top one is drawn too, so it is already there when the top card is taken away
-    const nextCard = !topCard && cards ? cards[1] : null;
+    const nextCard = cards
+        ? topCard
+            ? cards.find((card) => card.uuid !== topCard.uuid)
+            : cards[1]
+        : null;
     const nextUuid = nextCard?.uuid;
     const retNextCard = useMemo(
-        () => (nextCard && hiddenTopCard ? { facedown: true, uuid: nextUuid } : nextCard),
-        [nextCard, hiddenTopCard, nextUuid]
+        () =>
+            nextCard && (hiddenTopCard || hideUnderCard)
+                ? { facedown: true, uuid: nextUuid }
+                : nextCard,
+        [nextCard, hiddenTopCard, hideUnderCard, nextUuid]
     );
 
     return (
@@ -289,6 +306,7 @@ const CardPile = ({
             label={headerText}
             position={titlePosition}
             className={retClassName}
+            style={areaStyle}
             onClick={onCollectionClick}
             disableBackground={disableBackground}
             labelClickable={!disablePopup && topCardHasAction}
@@ -303,7 +321,8 @@ const CardPile = ({
                                 source={source}
                                 disableHover
                                 orientation={orientation}
-                                flip={!hiddenTopCard}
+                                under
+                                flip={!hiddenTopCard && !hideUnderCard}
                                 flipFrom={flipFrom}
                             />
                         </div>

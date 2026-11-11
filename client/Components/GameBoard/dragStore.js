@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import { captureCards, setDropOrigin, setFlipIgnored } from '../../flip';
-import { validTargets } from './dropTargets';
+import { canDrop } from './dropTargets';
 import { cardHoverStore } from '../Images/cardHoverStore';
 
 const idle = { uuid: null, source: null, type: null, over: null, ghost: null, version: 0 };
@@ -25,9 +25,17 @@ export const incomingTarget = (current) =>
     current.uuid &&
     current.over &&
     current.over !== current.source &&
-    validTargets[current.source]?.includes(current.over)
+    canDrop(current.source, current.over, current.type)
         ? current.over
         : null;
+
+// A card held where it was dropped flies back from there when the move is not accepted
+const heldAt = (ghost) =>
+    ghost && {
+        rect: ghost.rect,
+        source: ghost.target,
+        rot: ghost.orientation === 'rotated' ? 90 : 0
+    };
 
 export const nextOver = (current, over) => over ?? current.over;
 
@@ -72,8 +80,9 @@ export const dragStore = {
         if (!state.uuid) {
             return;
         }
-        if (origin) {
-            setDropOrigin({ uuid: state.uuid, ...origin });
+        const back = origin ?? heldAt(state.ghost);
+        if (back) {
+            setDropOrigin({ uuid: state.uuid, ...back });
         }
         captureCards();
         dragStore.finish();
@@ -98,5 +107,6 @@ export const useIncomingType = (area) =>
 export const useIsCarried = (uuid) =>
     useSyncExternalStore(subscribe, () => !!uuid && state.uuid === uuid);
 export const useDragSource = () => useSyncExternalStore(subscribe, () => state.source);
+export const useDragType = () => useSyncExternalStore(subscribe, () => state.type);
 export const useDragGhost = () => useSyncExternalStore(subscribe, () => state.ghost);
 export const useDragVersion = () => useSyncExternalStore(subscribe, () => state.version);

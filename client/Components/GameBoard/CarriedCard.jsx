@@ -1,4 +1,5 @@
 import React, { useLayoutEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import CardImage from '../Images/CardImage';
 
 // The card follows the pointer straight from pointer events, so layout changes while dragging cannot offset it
@@ -20,10 +21,15 @@ const CarriedCard = ({ code, orientation, start, grab, rectRef }) => {
         return () => window.removeEventListener('pointermove', onMove);
     }, [grab, rectRef, start]);
 
-    return (
+    return createPortal(
         <div ref={ref} className='fixed left-0 top-0 z-[400] pointer-events-none'>
-            <CardImage code={code} orientation={orientation} />
-        </div>
+            <CardImage
+                code={code}
+                orientation={orientation}
+                className='scale-105 shadow-[0_14px_22px_rgba(0,0,0,0.5)]'
+            />
+        </div>,
+        document.querySelector('[data-overlay-container="true"]') || document.body
     );
 };
 

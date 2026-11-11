@@ -1,4 +1,5 @@
 import { cardImageSrc } from './imageCache';
+import { liftFrames, slapConfig, slapFrames, slapsInto } from './tableFeel';
 
 export const flipConfig = {
     duration: 380,
@@ -34,6 +35,7 @@ export const measureCards = (root = document) => {
             from: el.dataset.flipFrom,
             parent: el.parentElement?.closest('[data-flip]')?.dataset.flip,
             source: el.dataset.flipSource,
+            under: el.dataset.flipUnder !== undefined,
             rot: Number(el.dataset.flipRot) || 0,
             z: el.dataset.flipZ === undefined ? undefined : Number(el.dataset.flipZ)
         });
@@ -124,6 +126,9 @@ export const planFlip = ({
         }
 
         const origin = now.from && decks.get(now.from);
+        if (!origin && (now.under || findPile(uuid))) {
+            continue;
+        }
         if (!origin) {
             plan.push({ type: 'fade', uuid, el: now.el, travel: true, toSource: now.source });
             continue;
@@ -149,7 +154,11 @@ export const planFlip = ({
             continue;
         }
 
-        const pile = findPile(uuid) || returnedToDeck(was, decks);
+        const found = findPile(uuid);
+        if (found && found.source === was.source) {
+            continue;
+        }
+        const pile = found || returnedToDeck(was, decks);
         plan.push(
             pile
                 ? {
@@ -409,15 +418,85 @@ const turnFacedown = (el, { delay, duration }) => {
     });
 };
 
-const animateGhost = ({ el, rect, dx, dy, delay, duration, returning }) => {
+// The card is lifted off the table while it travels, then lands with a small settle
+const liftCard = (el, { delay, duration, toSource }) => {
+    const surface = el.querySelector('[data-flip-slot] > [data-card-surface]');
+    if (!surface) {
+        return;
+    }
+
+    const frames = liftFrames({ uuid: el.dataset.flip, toSource });
+    const options = { id: 'flip', duration, delay, easing: 'linear', fill: 'backwards' };
+    surface.animate(frames.card, options);
+
+    const shadow = el.querySelector('[data-flip-slot] > [data-card-shadow]');
+    shadow?.animate(frames.card, options);
+    shadow?.animate(frames.lift, { ...options, pseudoElement: '::after' });
+};
+
+const slapTotal = slapConfig.move + slapConfig.settle;
+const slapShare = slapConfig.move / slapTotal;
+
+// The card lands on the table: a bounce and a settle on top of the move
+const bounceCard = (el, { delay, toSource }) => {
+    const surface = el.querySelector('[data-flip-slot] > [data-card-surface]');
+    if (!surface) {
+        return;
+    }
+
+    const frames = slapFrames({ uuid: el.dataset.flip, toSource });
+    const options = {
+        id: 'flip',
+        duration: frames.total,
+        delay,
+        easing: 'linear',
+        fill: 'backwards'
+    };
+    surface.animate(frames.card, options);
+
+    const shadow = el.querySelector('[data-flip-slot] > [data-card-shadow]');
+    shadow?.animate(frames.shadow, options);
+    shadow?.animate(frames.lift, { ...options, pseudoElement: '::after' });
+};
+
+// A fast move that stops suddenly, then holds still while the card bounces
+const slapKeyframes = (item) => {
+    const frames = keyframesFor(item);
+    const end = frames[frames.length - 1];
+    const lead = frames.slice(0, -1).map((frame) => ({ ...frame }));
+    lead[0].offset = 0;
+    lead[lead.length - 1].easing = slapConfig.easing;
+
+    return [...lead, { ...end, offset: slapShare }, { ...end, offset: 1 }];
+};
+
+const animateGhost = ({ el, rect, dx, dy, delay, duration, returning, toSource }) => {
     detach(el, rect);
+    const slap = !returning && slapsInto(toSource);
+    if (slap) {
+        bounceCard(el, { delay, toSource });
+    } else {
+        liftCard(el, { delay, duration, toSource });
+    }
     if (returning) {
         turnFacedown(el, { delay, duration });
     }
-    const animation = el.animate(
-        [{ transform: 'translate(0, 0)' }, { transform: `translate(${dx}px, ${dy}px)` }],
-        { duration, delay, easing: flipConfig.easing, fill: 'both' }
-    );
+    const end = { transform: `translate(${dx}px, ${dy}px)` };
+    const animation = slap
+        ? el.animate(
+              [
+                  { transform: 'translate(0, 0)', offset: 0, easing: slapConfig.easing },
+                  { ...end, offset: slapShare },
+                  { ...end, offset: 1 }
+              ],
+              { duration: slapTotal, delay, easing: 'linear', fill: 'both' }
+          )
+        : el.animate([{ transform: 'translate(0, 0)' }, end], {
+              duration,
+              delay,
+              easing: flipConfig.easing,
+              fill: 'both'
+          });
     animation.onfinish = () => el.remove();
 };
 
@@ -462,14 +541,27 @@ const landingPoint = 0.7;
 
 // A card in flight is lifted above the board, then drops to the level it rests at as it nears its place,
 // so it passes behind the cards that are above that place (the cards to its right in a hand)
-export const landingFrames = (item) =>
+export const landingFrames = (item, point = landingPoint) =>
     item.type === 'move' && item.travel && !item.nested
         ? [
               { zIndex: '205', offset: 0 },
-              { zIndex: '205', offset: landingPoint, easing: 'steps(1, jump-start)' },
+              { zIndex: '205', offset: point, easing: 'steps(1, jump-start)' },
               { zIndex: String(restingLevel), offset: 1 }
           ]
         : null;
+
+// Cards still on their way to a place are left to finish, so a later update never cuts a flight short
+const flights = new Map();
+
+const inFlight = () => {
+    const now = performance.now();
+    for (const [uuid, end] of flights) {
+        if (end <= now) {
+            flights.delete(uuid);
+        }
+    }
+    return new Set(flights.keys());
+};
 
 export const playPendingFlip = (root = document) => {
     const before = pending;
@@ -478,16 +570,20 @@ export const playPendingFlip = (root = document) => {
         return;
     }
 
+    const flying = inFlight();
     root.querySelectorAll('[data-flip]').forEach((el) => {
-        el.getAnimations()
+        if (flying.has(el.dataset.flip)) {
+            return;
+        }
+        el.getAnimations({ subtree: true })
             .filter((animation) => animation.id === 'flip')
             .forEach((animation) => animation.cancel());
     });
 
     const after = measureCards(root);
-    if (ignored) {
-        before.delete(ignored);
-        after.delete(ignored);
+    for (const uuid of [ignored, ...flying]) {
+        before.delete(uuid);
+        after.delete(uuid);
     }
 
     const plan = planFlip({ before, after, decks: measureDecks(root), findPile });
@@ -506,20 +602,33 @@ export const playPendingFlip = (root = document) => {
             continue;
         }
 
-        item.el.animate(keyframesFor(item), {
+        const slap =
+            item.type === 'move' && item.travel && !item.nested && slapsInto(item.toSource);
+        const duration = slap ? slapTotal : item.duration;
+        const easing = slap ? 'linear' : flipConfig.easing;
+        item.el.animate(slap ? slapKeyframes(item) : keyframesFor(item), {
             id: 'flip',
-            duration: item.duration,
-            easing: flipConfig.easing,
+            duration,
+            easing,
             delay: item.delay,
             fill: 'backwards'
         });
 
-        const landing = landingFrames(item);
+        if (item.type === 'move' && item.travel && !item.nested) {
+            flights.set(item.uuid, performance.now() + item.delay + duration);
+            if (slap) {
+                bounceCard(item.el, item);
+            } else {
+                liftCard(item.el, item);
+            }
+        }
+
+        const landing = landingFrames(item, slap ? slapShare * 0.85 : undefined);
         if (landing) {
             item.el.animate(landing, {
                 id: 'flip',
-                duration: item.duration,
-                easing: flipConfig.easing,
+                duration,
+                easing,
                 delay: item.delay,
                 fill: 'backwards'
             });

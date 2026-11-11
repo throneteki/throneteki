@@ -4,6 +4,7 @@ import Card from './Card';
 import { cardBoxClass } from '../../cardScale';
 
 const gapRem = 0.375;
+const unit = (rem) => `calc(var(--card-scale, 1) * ${rem}rem)`;
 
 const CardTiledList = ({
     cards,
@@ -48,7 +49,6 @@ const CardTiledList = ({
         const columns = Math.max(1, numColumns || list.length);
         const cellRem = hasPlot ? 5.6 : 4;
         const rowRem = hasOther || list.length === 0 ? 5.6 : 4;
-        const unit = (rem) => `calc(var(--card-scale, 1) * ${rem}rem)`;
         const natural = unit(cellRem * columns + gapRem * (columns - 1));
         return {
             containerStyle: { padding: unit(0.5) },
@@ -66,7 +66,11 @@ const CardTiledList = ({
 
     return (
         <div style={containerStyle}>
-            {titleText && <div className='text-sm'>{titleText}</div>}
+            {titleText && (
+                <div className='text-sm' style={{ paddingBottom: unit(0.5) }}>
+                    {titleText}
+                </div>
+            )}
             <div className='grid' style={style}>
                 {cardList}
             </div>

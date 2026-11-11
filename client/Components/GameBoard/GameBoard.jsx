@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
@@ -40,6 +41,7 @@ import { MotionConfig } from 'framer-motion';
 import { useMotionEnabled } from '../../motion';
 import { holdFlip, playPendingFlip } from '../../flip';
 import { dragStore, useDragGhost, useDragVersion } from './dragStore';
+import { canDrop } from './dropTargets';
 import { useImagePreload } from './useImagePreload';
 
 const placeholderPlayer = {
@@ -218,7 +220,12 @@ const GameBoard = () => {
             }
 
             const target = event.over?.data.current?.source;
-            if (!rect || !target || target === detail.source) {
+            if (
+                !rect ||
+                !target ||
+                target === detail.source ||
+                !canDrop(detail.source, target, detail.card.type)
+            ) {
                 dragStore.settle(origin);
                 return;
             }
@@ -228,7 +235,8 @@ const GameBoard = () => {
                     uuid: detail.card.uuid,
                     code: detail.card.code || 'cardback',
                     orientation: rotated ? 'rotated' : detail.orientation,
-                    rect
+                    rect,
+                    target
                 },
                 origin
             );
@@ -401,14 +409,16 @@ const GameBoard = () => {
                     />
                 </div>
             </MotionConfig>
-            {dragGhost && (
-                <div
-                    className='fixed z-[400] pointer-events-none'
-                    style={{ left: dragGhost.rect.left, top: dragGhost.rect.top }}
-                >
-                    <CardImage code={dragGhost.code} orientation={dragGhost.orientation} />
-                </div>
-            )}
+            {dragGhost &&
+                createPortal(
+                    <div
+                        className='fixed z-[400] pointer-events-none'
+                        style={{ left: dragGhost.rect.left, top: dragGhost.rect.top }}
+                    >
+                        <CardImage code={dragGhost.code} orientation={dragGhost.orientation} />
+                    </div>,
+                    document.querySelector('[data-overlay-container="true"]') || document.body
+                )}
             <GameConfigurationModal
                 isOpen={showModal}
                 isSpectating={user.username !== thisPlayer.name}

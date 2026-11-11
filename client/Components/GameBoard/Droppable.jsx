@@ -4,8 +4,8 @@ import classNames from 'classnames';
 import { useDroppable } from '@dnd-kit/core';
 import { ItemTypes } from '../../constants';
 import { useUniqueId } from '@dnd-kit/utilities';
-import { useDragSource } from './dragStore';
-import { validTargets } from './dropTargets';
+import { useDragSource, useDragType } from './dragStore';
+import { canDrop as canDropOn } from './dropTargets';
 
 const Droppable = ({ className, children, source }) => {
     const { isOver, active, setNodeRef } = useDroppable({
@@ -16,14 +16,11 @@ const Droppable = ({ className, children, source }) => {
     });
 
     const dragSource = useDragSource();
+    const dragType = useDragType();
 
     const canDrop = useMemo(() => {
-        return (
-            active &&
-            validTargets[dragSource] &&
-            validTargets[dragSource].some((target) => target === source)
-        );
-    }, [active, dragSource, source]);
+        return active && canDropOn(dragSource, source, dragType);
+    }, [active, dragSource, dragType, source]);
 
     const innerClass = classNames(
         'pointer-events-none absolute top-0 left-0 h-full w-full rounded-md opacity-50 z-[240]',

@@ -17,6 +17,7 @@ import { Tooltip } from '@heroui/react';
 import { getActionRequirementReason, isNotableRequirement } from './actionRequirementReasons';
 import { ManualModeContext } from './ManualModeContext';
 import { useIsCarried } from './dragStore';
+import { restingAngle } from '../../tableFeel';
 import { useRenderCount } from '../../perf';
 
 // Opening one card menu closes any other that is open.
@@ -39,6 +40,7 @@ const CardView = ({
     wrapped = true,
     flip = false,
     flipFrom,
+    under = false,
     shell = false,
     forceFaceup = false,
     cardStackIndex = 200,
@@ -393,6 +395,8 @@ const CardView = ({
     const isRotated =
         !!card && ((card.type !== 'plot' && orientation === 'horizontal') || card.kneeled);
 
+    const resting = restingAngle(card?.uuid, source) || undefined;
+
     const getCard = () => {
         if (!card) {
             return <div />;
@@ -435,6 +439,14 @@ const CardView = ({
                 data-flip-rot={flip && !wrapped ? (isRotated ? 90 : 0) : undefined}
             >
                 <div
+                    data-card-shadow=''
+                    className={classNames(
+                        'card-shadow',
+                        cardBoxClass(isRotated ? 'rotated' : orientation)
+                    )}
+                    style={{ zIndex: cardStackIndex, rotate: resting }}
+                />
+                <div
                     {...listeners}
                     {...attributes}
                     {...hoverHandlers}
@@ -442,7 +454,7 @@ const CardView = ({
                     data-card-surface=''
                     className={cardClassName}
                     onClick={handleClick}
-                    style={{ zIndex: cardStackIndex-- }}
+                    style={{ zIndex: cardStackIndex--, rotate: resting }}
                 >
                     {card.name && <span className='absolute left-0 top-0'>{card.name}</span>}
                     <CardFace code={imageCode} />
@@ -473,6 +485,7 @@ const CardView = ({
             data-flip={flip && !shell ? card.uuid : undefined}
             data-flip-from={flip ? flipFrom : undefined}
             data-flip-source={flip ? source : undefined}
+            data-flip-under={flip && under ? '' : undefined}
             data-flip-rot={flip ? (isRotated ? 90 : 0) : undefined}
         >
             {getDupes()}

@@ -102,3 +102,23 @@ html.card-dragging,
 html.card-dragging * {
     cursor: grabbing !important;
 }
+
+/* The resting shadow of a card, with a deeper one that only shows while the card is lifted */
+.card-shadow {
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    box-shadow:
+        0 1px 1px rgba(0, 0, 0, 0.45),
+        0 2px 5px rgba(0, 0, 0, 0.35);
+}
+
+.card-shadow::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 14px 22px rgba(0, 0, 0, 0.45);
+    opacity: 0;
+}

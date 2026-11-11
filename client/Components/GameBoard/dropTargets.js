@@ -67,3 +67,23 @@ export const validTargets = {
     ],
     shadows: ['dead pile', 'discard pile', 'draw deck', 'hand', 'out of game', 'play area']
 };
+
+const drawDeckTypes = ['attachment', 'character', 'event', 'location'];
+
+// Mirrors the server's DropCommand, so a card that would be refused cannot be dropped there at all
+const allowedTypes = {
+    agenda: drawDeckTypes,
+    'dead pile': ['character'],
+    'discard pile': drawDeckTypes,
+    'draw deck': drawDeckTypes,
+    hand: drawDeckTypes,
+    'out of game': [...drawDeckTypes, 'plot'],
+    'play area': ['attachment', 'character', 'location'],
+    'plot deck': ['plot'],
+    'revealed plots': ['plot'],
+    shadows: drawDeckTypes
+};
+
+export const canDrop = (from, to, type) =>
+    !!validTargets[from]?.includes(to) &&
+    (type === undefined || type === null || (allowedTypes[to]?.includes(type) ?? true));
