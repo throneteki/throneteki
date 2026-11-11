@@ -9,7 +9,7 @@ describe('SetupCardAction', function () {
             setupGold: 8,
             maxLimited: 1
         };
-        this.cardSpy = { getType: vi.fn() };
+        this.cardSpy = { getType: vi.fn(), hasPrintedCost: vi.fn().mockReturnValue(true) };
         this.context = {
             game: this.gameSpy,
             player: this.playerSpy,

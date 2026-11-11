@@ -13,6 +13,7 @@ class SetupCardAction extends BaseAbility {
         return (
             game.currentPhase === 'setup' &&
             source.getType() !== 'event' &&
+            source.hasPrintedCost() &&
             player.hand.includes(source)
         );
     }
@@ -26,7 +27,7 @@ class SetupCardAction extends BaseAbility {
             return Requirements.player;
         }
 
-        if (context.source.getType() === 'event') {
+        if (context.source.getType() === 'event' || !context.source.hasPrintedCost()) {
             return Requirements.condition;
         }
 

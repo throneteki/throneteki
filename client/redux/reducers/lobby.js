@@ -163,6 +163,13 @@ const lobbySlice = createSlice({
                     return;
                 }
 
+                // After a reload the game state can arrive before checkauth has loaded the user.
+                // It is only sent to the game's players and spectators, so keep it.
+                if (!username) {
+                    state.newGame = !state.currentGame.started;
+                    return;
+                }
+
                 if (
                     state.currentGame?.spectators.some((spectator) => spectator.name === username)
                 ) {
