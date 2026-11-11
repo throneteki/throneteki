@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SansaStark extends DrawCard {
+    // Sansa Stark (01147)
+    // Sansa Stark enters play knelt.
+    // Reaction: After Sansa Stark stands, gain 1 power for your faction. (Limit once per round.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',
@@ -10,18 +14,15 @@ class SansaStark extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardStood: (event) => event.card === this && this.controller.canGainFactionPower()
+                onCardStood: (event, context) =>
+                    event.card === context.source && context.player.canGainFactionPower()
             },
             limit: ability.limit.perRound(1),
-            handler: () => {
-                this.game.addPower(this.controller, 1);
-
-                this.game.addMessage(
-                    '{0} uses {1} to gain 1 power for their faction',
-                    this.controller,
-                    this
-                );
-            }
+            message: '{player} uses {source} to gain 1 power for their faction',
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.player.faction,
+                amount: 1
+            }))
         });
     }
 }

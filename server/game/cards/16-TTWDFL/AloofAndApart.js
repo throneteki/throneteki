@@ -1,6 +1,10 @@
 import AgendaCard from '../../agendacard.js';
 
 class AloofAndApart extends AgendaCard {
+    // Aloof and Apart (16027)
+    // Reduce the cost of the first character with printed cost 6 or higher you marshal each round
+    // by 2.
+    // Each character you control with printed cost 6 or higher gains prized 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',

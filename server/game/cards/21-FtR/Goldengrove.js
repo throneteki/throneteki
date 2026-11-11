@@ -2,13 +2,16 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Goldengrove extends DrawCard {
+    // Goldengrove (21024)
+    // Action: Kneel Goldengrove or a Small Council character to choose another card you own with
+    // equal or lower printed cost. Stand that card and take control of it. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand and take control',
             limit: ability.limit.perRound(2),
             cost: ability.costs.kneel(
-                (card) =>
-                    card === this ||
+                (card, context) =>
+                    card === context.source ||
                     (card.hasTrait('Small Council') && card.getType() === 'character')
             ),
             target: {
@@ -23,17 +26,13 @@ class Goldengrove extends DrawCard {
                 format: '{player} uses {source} and kneels {kneltCard} to stand and take control of {target}',
                 args: { kneltCard: (context) => context.costs.kneel }
             },
-            handler: (context) => {
-                let gameActions = [];
-                gameActions.push(GameActions.standCard({ card: context.target }));
-                gameActions.push(
-                    GameActions.takeControl((context) => ({
-                        player: context.player,
-                        card: context.target
-                    }))
-                );
-                this.game.resolveGameAction(GameActions.simultaneously(gameActions), context);
-            }
+            gameAction: GameActions.simultaneously([
+                GameActions.standCard((context) => ({ card: context.target })),
+                GameActions.takeControl((context) => ({
+                    player: context.player,
+                    card: context.target
+                }))
+            ])
         });
     }
 }

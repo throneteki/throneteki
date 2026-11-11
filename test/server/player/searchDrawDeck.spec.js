@@ -1,7 +1,7 @@
 import Player from '../../../server/game/player.js';
 
 describe('the Player', () => {
-    var game = jasmine.createSpyObj('game', ['raiseEvent']);
+    var game = { raiseEvent: vi.fn() };
 
     var player = new Player('1', { username: 'Player 1', settings: {} }, true, game);
     var drawDeck = [{ name: 'foo' }, { name: 'bar' }, { name: 'baz' }, { name: 'ball' }];

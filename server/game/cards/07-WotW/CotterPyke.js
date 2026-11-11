@@ -1,11 +1,17 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class CotterPyke extends DrawCard {
-    setupCardAbilities() {
+    // Cotter Pyke (07004)
+    // Stealth.
+    // Reaction: After Cotter Pyke bypasses a character using stealth, if there is a Winter plot
+    // card revealed, choose a [thenightswatch] character and have it gain stealth until the end of
+    // the phase.
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onBypassedByStealth: (event) =>
-                    event.source === this && this.game.anyPlotHasTrait('Winter')
+                onBypassedByStealth: (event, context) =>
+                    event.source === context.source && context.game.anyPlotHasTrait('Winter')
             },
             target: {
                 cardCondition: (card) =>
@@ -13,19 +19,13 @@ class CotterPyke extends DrawCard {
                     card.getType() === 'character' &&
                     card.location === 'play area'
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.addKeyword('Stealth')
-                }));
-
-                this.game.addMessage(
-                    '{0} uses {1} to have {2} gain stealth until the end of the phase',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} uses {source} to have {target} gain stealth until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.addKeyword('Stealth')
+            }))
         });
     }
 }

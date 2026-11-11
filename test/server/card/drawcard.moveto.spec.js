@@ -4,10 +4,10 @@ import { Tokens } from '../../../server/game/Constants/index.js';
 describe('DrawCard', function () {
     beforeEach(function () {
         this.testCard = { code: '111', label: 'test 1(some pack)', name: 'test 1' };
-        this.gameSpy = jasmine.createSpyObj('game', ['raiseEvent']);
+        this.gameSpy = { raiseEvent: vi.fn() };
         this.card = new DrawCard({ game: this.gameSpy }, this.testCard);
-        spyOn(this.card.events, 'register');
-        spyOn(this.card.events, 'unregisterAll');
+        vi.spyOn(this.card.events, 'register').mockImplementation(() => {});
+        vi.spyOn(this.card.events, 'unregisterAll').mockImplementation(() => {});
     });
 
     describe('moveTo()', function () {
@@ -39,11 +39,8 @@ describe('DrawCard', function () {
 
             describe('when moving the card within the same parent', function () {
                 beforeEach(function () {
-                    this.card.parent = jasmine.createSpyObj('parent1', ['removeChildCard']);
-                    this.card.moveTo(
-                        'play area',
-                        jasmine.createSpyObj('parent2', ['removeChildCard'])
-                    );
+                    this.card.parent = { removeChildCard: vi.fn() };
+                    this.card.moveTo('play area', { removeChildCard: vi.fn() });
                 });
 
                 it('should not remove any power on the card', function () {

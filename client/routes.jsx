@@ -28,6 +28,9 @@ import BanlistAdmin from './pages/BanlistAdmin';
 import EventsAdmin from './pages/EventsAdmin';
 import DraftingTable from './Components/Drafting/DraftingTable';
 import EventEditor from './pages/EventsAdmin/EventEditor';
+import Stats from './pages/Stats';
+import Unsubscribe from './pages/Unsubscribe';
+import Wrapped from './pages/Wrapped';
 
 const routes = [
     { path: '/', action: () => <Lobby key='lobby' /> },
@@ -42,7 +45,7 @@ const routes = [
     { path: '/decks', action: () => <Decks key='decks' /> },
     { path: '/decks/new', action: () => <AddDeck key='adddecks' /> },
     {
-        path: '/decks/edit/:id([a-f\\d]{24})',
+        path: '/decks/edit/:id([a-f\\d]{24}|\\d+)',
         action: (context) => <EditDeck key='editdeck' deckId={context.params.id} />
     },
     { path: '/forgot', action: () => <ForgotPassword key='forgotpassword' /> },
@@ -77,6 +80,17 @@ const routes = [
         )
     },
     { path: '/security', action: () => <Security key='security' /> },
+    { path: '/stats', action: () => <Stats key='stats' /> },
+    {
+        path: '/unsubscribe',
+        action: (context) => (
+            <Unsubscribe key='unsubscribe' id={context.params.id} token={context.params.token} />
+        )
+    },
+    {
+        path: '/white-book/:year(\\d{4})',
+        action: (context) => <Wrapped key='wrapped' year={context.params.year} />
+    },
     { path: '/users', action: () => <UserAdmin key='useradmin' />, permission: 'canManageUsers' },
     { path: '/nodes', action: () => <NodesAdmin key='nodesadmin' />, permission: 'canManageNodes' },
     { path: '/privacy', action: () => <Privacy key='privacy' /> },

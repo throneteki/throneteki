@@ -2,18 +2,18 @@ import GainPower from '../../../server/game/GameActions/GainPower.js';
 
 describe('GainPower', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['']);
-        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'getPowerToGain']);
+        this.gameSpy = {};
+        this.cardSpy = { allowGameAction: vi.fn(), getPowerToGain: vi.fn() };
         this.cardSpy.controller = { gainedPower: 0 };
         this.cardSpy.game = this.gameSpy;
         this.cardSpy.power = 0;
         this.props = { card: this.cardSpy, amount: 3 };
-        this.cardSpy.getPowerToGain.and.returnValue(3);
+        this.cardSpy.getPowerToGain.mockReturnValue(3);
     });
 
     describe('allow()', function () {
         beforeEach(function () {
-            this.cardSpy.allowGameAction.and.returnValue(true);
+            this.cardSpy.allowGameAction.mockReturnValue(true);
         });
 
         for (let location of ['active plot', 'faction', 'play area']) {

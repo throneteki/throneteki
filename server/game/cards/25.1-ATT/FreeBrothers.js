@@ -2,10 +2,13 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class FreeBrothers extends DrawCard {
+    // Free Brothers (25013)
+    // Reaction: After Free Brothers enters play, search your deck for an Ally character with
+    // printed cost 3 or lower and place it in your discard pile. Shuffle your deck.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             message:
                 '{player} uses {source} to search their deck for an Ally character with printed cost 3 or lower',

@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class WolfDreams extends DrawCard {
+    // Wolf Dreams (02042)
+    // Action: Kneel your faction card to search your deck for a Direwolf card, reveal it, and add
+    // it to your hand. Shuffle your deck.
     setupCardAbilities(ability) {
         this.action({
             title: 'Search for a Direwolf',

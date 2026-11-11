@@ -1,62 +1,36 @@
 describe('Maester Aemon (WotW)', function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck = this.buildDeck('thenightswatch', [
-                'Sneak Attack',
-                'Maester Aemon (WotW)',
-                'The Seastone Chair',
-                'Steward at the Wall'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.intrigueCharacter = this.player2.findCardByName('Steward at the Wall', 'hand');
-
-            this.player1.clickCard('Maester Aemon', 'hand');
-            this.player1.clickCard('The Seastone Chair', 'hand');
-            this.player2.clickCard(this.intrigueCharacter);
-
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player2);
-
-            this.completeMarshalPhase();
-
-            this.unopposedChallenge(this.player2, 'Intrigue', this.intrigueCharacter);
-
-            this.player2.clickPrompt('Apply Claim');
-            this.player2.clickPrompt('Done');
-            this.player1.clickPrompt('Done');
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            firstPlayer: 'player2',
+            player1: {
+                plot: 'Sneak Attack',
+                inPlay: ['Maester Aemon (WotW)', 'The Seastone Chair']
+            },
+            player2: { inPlay: ['Steward at the Wall'] }
         });
+        this.unopposedChallenge(this.player2, 'Intrigue', this.stewardAtTheWall);
+        this.player2.clickPrompt('Done');
+        this.player1.clickPrompt('Done');
+        this.player1.triggerAbility('Maester Aemon');
+    });
 
-        describe('when the challenge phase ends', function () {
-            beforeEach(function () {
-                this.player1.triggerAbility('Maester Aemon');
-            });
+    it('offers the challenge types not initiated against you this phase when the challenges phase ends', function () {
+        expect(this.player1).toHavePromptButton('Military');
+        expect(this.player1).toHavePromptButton('Power');
+        expect(this.player1).not.toHavePromptButton('Intrigue');
+    });
 
-            it('should prompt to apply claim for challenges not initiated against the player', function () {
-                expect(this.player1).toHavePromptButton('Military');
-                expect(this.player1).toHavePromptButton('Power');
-                expect(this.player1).not.toHavePromptButton('Intrigue');
-            });
+    it('has the opponent satisfy the claim of the chosen type', function () {
+        this.player1.clickPrompt('Military');
+        expect(this.player2).toHavePrompt('Select 2 characters to fulfill military claim');
+        this.player2.clickCard(this.stewardAtTheWall);
+        this.player2.clickPrompt('Done');
+        expect(this.stewardAtTheWall.location).toBe('dead pile');
+    });
 
-            it('should allow claim of their choice to be applied', function () {
-                this.player1.clickPrompt('Military');
-
-                expect(this.player2).toHavePrompt('Select 2 characters to fulfill military claim');
-
-                this.player2.clickCard(this.intrigueCharacter);
-                this.player2.clickPrompt('Done');
-
-                expect(this.intrigueCharacter.location).toBe('dead pile');
-            });
-
-            it('should not trigger cards that react to claim being applied for / during a challenge', function () {
-                this.player1.clickPrompt('Military');
-                expect(this.player1).not.toAllowAbilityTrigger('The Seastone Chair');
-            });
-        });
+    it('does not trigger cards that react to claim being applied during a challenge', function () {
+        this.player1.clickPrompt('Military');
+        expect(this.player1).not.toAllowAbilityTrigger('The Seastone Chair');
     });
 });

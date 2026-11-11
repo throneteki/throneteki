@@ -34,9 +34,16 @@ class IfGameAction extends GameAction {
         return action.gameAction.allow(context);
     }
 
+    logsOwnMessage() {
+        return true;
+    }
+
     createEvent(context) {
         const action = this.getAction(context);
-        action.message.output(context.game, { ...context, gameAction: action.gameAction });
+        action.message.output(
+            context.game,
+            Object.assign(Object.create(context), { gameAction: action.gameAction })
+        );
         return action.gameAction.createEvent(context);
     }
 

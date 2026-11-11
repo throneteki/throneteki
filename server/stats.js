@@ -2,20 +2,17 @@
 
 import _ from 'underscore';
 
-import monk from 'monk';
-import GameService from './services/GameService.js';
 import ServiceFactory from './services/ServiceFactory.js';
+import db from './db/index.js';
 
-let configService = ServiceFactory.configService();
-let db = monk(configService.getValue('dbPath'));
-let gameService = new GameService(db);
+let gameService = ServiceFactory.gameService();
 
 let args = process.argv.slice(2);
 
 if (_.size(args) < 2) {
     console.error('Must provide start and end date');
 
-    db.close();
+    db.shutdown();
 }
 
 console.info('Running stats between', args[0], 'and', args[1]);
@@ -206,5 +203,5 @@ gameService
 
         console.info(rejected);
     })
-    .then(() => db.close())
-    .catch(() => db.close());
+    .then(() => db.shutdown())
+    .catch(() => db.shutdown());

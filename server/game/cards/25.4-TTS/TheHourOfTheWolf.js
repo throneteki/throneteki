@@ -2,6 +2,8 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class TheHourOfTheWolf extends PlotCard {
+    // The Hour of the Wolf (25072)
+    // When Revealed: Each player sacrifices a non-loyal character, if able.
     setupCardAbilities() {
         this.whenRevealed({
             target: {
@@ -12,21 +14,12 @@ class TheHourOfTheWolf extends PlotCard {
                     type: 'character',
                     loyal: false,
                     controller: 'choosingPlayer'
-                }
+                },
+                gameAction: GameActions.sacrificeCard((context) => ({ card: context.target }))
             },
             message: {
                 format: '{player} uses {source} to have each player sacrifice {targets}',
                 args: { targets: (context) => context.targets.getTargets() }
-            },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously((context) =>
-                        context.targets
-                            .getTargets()
-                            .map((card) => GameActions.sacrificeCard({ card }))
-                    ),
-                    context
-                );
             }
         });
     }

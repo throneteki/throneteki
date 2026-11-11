@@ -3,32 +3,32 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class Harrenhal extends DrawCard {
+    // Harrenhal (16021)
+    // Prized 2.
+    // If Harrenhal has 3 or more ghost tokens on it, sacrifice it.
+    // Interrupt: When the effects of a non-plot, non-agenda triggered ability would initiate, kill
+    // a character you own and control to cancel those effects. Place a ghost token on Harrenhal.
+    // (Limit once per phase.)
     setupCardAbilities(ability) {
-        // TODO: Technically this should not be reaction
-        this.forcedReaction({
-            cannotBeCanceled: true,
-            when: {
-                onTokenPlaced: (event) => event.card === this && this.tokens[Tokens.ghost] >= 3
-            },
-            message: '{player} is forced to sacrifice {source}',
-            gameAction: GameActions.sacrificeCard({
-                card: this
-            })
+        this.stateCheck({
+            condition: (context) => context.source.tokens[Tokens.ghost] >= 3,
+            message: '{player} sacrifices {source} as it has 3 or more ghost tokens',
+            gameAction: GameActions.sacrificeCard((context) => ({ card: context.source }))
         });
 
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: (event) =>
+                onCardAbilityInitiated: (event, context) =>
                     event.ability.isTriggeredAbility() &&
                     !['agenda', 'plot'].includes(event.source.getType()) &&
-                    (event.ability.isForcedAbility() || event.source.controller !== this.controller)
+                    (event.ability.isForcedAbility() || event.player !== context.player)
             },
             cost: ability.costs.kill(
-                (card) =>
+                (card, context) =>
                     card.getType() === 'character' &&
-                    card.controller === this.controller &&
-                    card.owner === this.controller
+                    card.controller === context.player &&
+                    card.owner === context.player
             ),
             message: {
                 format: '{player} uses {source} and kills {killedCharacter} to cancel {event} and place a ghost token on {source}',
@@ -41,7 +41,7 @@ class Harrenhal extends DrawCard {
                 GameActions.cancelEffects({ event: context.event }),
                 GameActions.placeToken({
                     amount: 1,
-                    card: this,
+                    card: context.source,
                     token: Tokens.ghost
                 })
             ])

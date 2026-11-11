@@ -1,80 +1,65 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
-import Message from '../../Message.js';
 
 class SamwellTarly extends DrawCard {
+    // Samwell Tarly (22013)
+    // Reaction: After you win a challenge in which Samwell Tarly is participating, if your reserve
+    // value is:
+    // - 6 or higher, draw 1 card.
+    // - 8 or higher, gain 1 power for your faction.
+    // - 10 or higher, choose and stand another character that shares a Trait with him, if able.
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.isParticipating() &&
-                    this.satisfiableBonuses().length > 0
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player && context.source.isParticipating()
             },
-            handler: () => {
-                let bonuses = this.satisfiableBonuses();
-                if (bonuses.includes('stand')) {
-                    this.game.promptForSelect(this.controller, {
-                        cardCondition: (card) => this.canStandCharacter(card),
-                        onSelect: (player, card) => this.activateBonuses(bonuses, card),
-                        onCancel: () => this.activateBonuses(bonuses, null),
-                        source: this
-                    });
-                    return;
-                }
-
-                this.activateBonuses(bonuses, null);
-            }
+            gameAction: GameActions.simultaneously([
+                GameActions.ifCondition({
+                    condition: (context) => context.player.getReserve() >= 6,
+                    thenAction: {
+                        message: '{player} uses {source} to draw 1 card',
+                        gameAction: GameActions.drawCards((context) => ({
+                            player: context.player,
+                            amount: 1
+                        }))
+                    }
+                }),
+                GameActions.ifCondition({
+                    condition: (context) => context.player.getReserve() >= 8,
+                    thenAction: {
+                        message: '{player} uses {source} to gain 1 power for their faction',
+                        gameAction: GameActions.gainPower((context) => ({
+                            card: context.player.faction,
+                            amount: 1
+                        }))
+                    }
+                }),
+                GameActions.ifCondition({
+                    condition: (context) => context.player.getReserve() >= 10,
+                    thenAction: {
+                        message:
+                            '{player} uses {source} to stand another character that shares a Trait with {source}',
+                        gameAction: GameActions.chooseCards({
+                            title: 'Select a character',
+                            cardCondition: (card, context) => canStand(card, context.source),
+                            gameAction: (card) => GameActions.standCard({ card })
+                        })
+                    }
+                })
+            ])
         });
     }
+}
 
-    canStandCharacter(card) {
-        return (
-            card !== this &&
-            card.location === 'play area' &&
-            card.getType() === 'character' &&
-            card.getTraits().some((trait) => this.hasTrait(trait) && card.kneeled)
-        );
-    }
-
-    satisfiableBonuses() {
-        let reserve = this.controller.getReserve();
-        let satisfiable = [];
-        if (reserve >= 6 && this.controller.canDraw()) {
-            satisfiable.push('draw');
-        }
-        if (reserve >= 8 && this.controller.canGainFactionPower()) {
-            satisfiable.push('power');
-        }
-        if (reserve >= 10 && this.game.anyCardsInPlay((card) => this.canStandCharacter(card))) {
-            satisfiable.push('stand');
-        }
-        return satisfiable;
-    }
-
-    activateBonuses(bonuses, otherCharacter) {
-        let bonusMessages = [];
-        let gameActions = [];
-
-        if (bonuses.includes('draw')) {
-            gameActions.push(GameActions.drawCards({ player: this.controller, amount: 1 }));
-            bonusMessages.push('draw 1 card');
-        }
-
-        if (bonuses.includes('power')) {
-            gameActions.push(GameActions.gainPower({ card: this.controller.faction, amount: 1 }));
-            bonusMessages.push('gain 1 power for their faction');
-        }
-
-        if (bonuses.includes('stand') && otherCharacter) {
-            gameActions.push(GameActions.standCard({ card: otherCharacter }));
-            bonusMessages.push(Message.fragment('stand {card}', { card: otherCharacter }));
-        }
-
-        this.game.addMessage('{0} uses {1} to {2}', this.controller, this, bonusMessages);
-        this.game.resolveGameAction(GameActions.simultaneously(gameActions));
-        return true;
-    }
+function canStand(card, samwell) {
+    return (
+        card !== samwell &&
+        card.location === 'play area' &&
+        card.getType() === 'character' &&
+        card.kneeled &&
+        card.getTraits().some((trait) => samwell.hasTrait(trait))
+    );
 }
 
 SamwellTarly.code = '22013';

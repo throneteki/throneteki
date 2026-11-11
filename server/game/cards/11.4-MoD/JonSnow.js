@@ -1,21 +1,26 @@
 import DrawCard from '../../drawcard.js';
 
 class JonSnow extends DrawCard {
+    // Jon Snow (11065)
+    // While you control a:
+    // - Builder character, Jon Snow gains stealth.
+    // - Ranger character, Jon Snow gains intimidate.
+    // - Steward character, Jon Snow gains insight.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.hasCharacterWithTrait('builder'),
+            condition: (context) => context.source.hasCharacterWithTrait('builder'),
             match: this,
             effect: ability.effects.addKeyword('stealth')
         });
 
         this.persistentEffect({
-            condition: () => this.hasCharacterWithTrait('ranger'),
+            condition: (context) => context.source.hasCharacterWithTrait('ranger'),
             match: this,
             effect: ability.effects.addKeyword('intimidate')
         });
 
         this.persistentEffect({
-            condition: () => this.hasCharacterWithTrait('steward'),
+            condition: (context) => context.source.hasCharacterWithTrait('steward'),
             match: this,
             effect: ability.effects.addKeyword('insight')
         });

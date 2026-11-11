@@ -1,4 +1,5 @@
 import AllowedChallenge from './AllowedChallenge.js';
+import ChallengeMatcher from './ChallengeMatcher.js';
 
 class AllowedChallenges {
     constructor(player) {
@@ -118,17 +119,36 @@ class AllowedChallenges {
         return this.allowedChallenges.some(
             (allowedChallenge) =>
                 allowedChallenge.isMatch(challengeType, opponent) &&
-                this.hasCardsToInitiate(allowedChallenge.challengeType)
+                this.hasCardsToInitiate(allowedChallenge.challengeType, opponent)
         );
     }
 
-    hasCardsToInitiate(challengeType) {
+    hasCardsToInitiate(challengeType, opponent) {
+        const challenge = this.prospectiveChallenge(challengeType, opponent);
         return this.player.anyCardsInPlay((card) =>
             card.canParticipate({
                 attacking: true,
-                challengeType
+                challengeType,
+                challenge
             })
         );
+    }
+
+    prospectiveChallenge(challengeType, opponent) {
+        return {
+            attackingPlayer: this.player,
+            initiatingPlayer: this.player,
+            defendingPlayer: opponent,
+            initiatedAgainstPlayer: opponent,
+            challengeType,
+            initiatedChallengeType: challengeType,
+            number: this.numInitiated + 1,
+            attackers: [],
+            defenders: [],
+            isMatch(matchers) {
+                return ChallengeMatcher.isMatch(this, matchers);
+            }
+        };
     }
 
     setMax(max) {

@@ -165,7 +165,8 @@ class User {
             promptedActionWindows: this.userData.promptedActionWindows,
             permissions: this.userData.permissions,
             verified: this.userData.verified,
-            enableGravatar: this.userData.enableGravatar
+            enableGravatar: this.userData.enableGravatar,
+            emailUpdates: this.userData.emailUpdates !== false
         };
 
         user = Settings.getUserWithDefaultsSet(user);
@@ -179,6 +180,22 @@ class User {
             name: this.username,
             role: this.role
         };
+    }
+
+    // Only what a game node needs to run a game; game nodes should never see emails, tokens etc.
+    getGameNodeDetails() {
+        let user = Settings.getUserWithDefaultsSet({
+            _id: this.userData._id,
+            username: this.userData.username,
+            settings: this.userData.settings,
+            promptedActionWindows: this.userData.promptedActionWindows,
+            permissions: this.userData.permissions,
+            blockList: this.userData.blockList
+        });
+
+        user.role = this.role;
+
+        return user;
     }
 
     getDetails() {

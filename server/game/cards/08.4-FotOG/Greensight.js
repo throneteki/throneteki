@@ -2,6 +2,9 @@ import AgendaCard from '../../agendacard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Greensight extends AgendaCard {
+    // Greensight (08079)
+    // Forced Reaction: After the draw phase begins, reveal the top card of each player's deck. You
+    // may kneel your faction card to discard those cards.
     setupCardAbilities() {
         this.forcedReaction({
             when: {
@@ -21,7 +24,7 @@ class Greensight extends AgendaCard {
                         },
                         gameAction: GameActions.simultaneously((context) =>
                             context.parentContext.revealed.map((card) =>
-                                GameActions.discardCard({ card, source: this })
+                                GameActions.discardCard({ card, source: context.source })
                             )
                         )
                     })

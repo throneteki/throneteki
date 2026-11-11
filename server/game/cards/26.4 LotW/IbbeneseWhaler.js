@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class IbbeneseWhaler extends DrawCard {
+    // Ibbenese Whaler (26078)
+    // Shadow (2).
+    // Reduce the cost to marshal your first card into shadows each round by 1.
+    // Taxation Action: If you have no cards in your hand, kneel and return Ibbenese Whaler to
+    // shadows to draw 2 cards.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',

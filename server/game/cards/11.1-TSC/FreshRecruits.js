@@ -3,6 +3,9 @@ import GameActions from '../../GameActions/index.js';
 import { availableToPair } from '../../../Array.js';
 
 class FreshRecruits extends DrawCard {
+    // Fresh Recruits (11007)
+    // Action: Search your deck for a Ranger character, a Builder character, and a Steward
+    // character, reveal them, and add them to your hand. Shuffle your deck.
     setupCardAbilities() {
         const selectableTraits = ['Ranger', 'Builder', 'Steward'];
         this.action({

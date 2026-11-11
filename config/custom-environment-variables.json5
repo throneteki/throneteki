@@ -1,0 +1,8 @@
+{
+    db: {
+        migrator: {
+            user: 'DB_MIGRATOR_USER',
+            password: 'DB_MIGRATOR_PASSWORD'
+        }
+    }
+}

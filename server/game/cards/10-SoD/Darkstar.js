@@ -2,10 +2,14 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Darkstar extends DrawCard {
+    // Darkstar (10004)
+    // Intimidate.
+    // Action: During a challenge in which Darkstar is attacking, sacrifice him to return each
+    // participating character to its owner's hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Return each participating character to hand',
-            condition: () => this.isAttacking(),
+            condition: (context) => context.source.isAttacking(),
             cost: ability.costs.sacrificeSelf(),
             message: {
                 format: "{player} sacrifices {costs.sacrifice} to return {participants} to its owner's hand",

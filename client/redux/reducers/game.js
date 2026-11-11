@@ -43,7 +43,7 @@ const gameSlice = createSlice({
             (option, value) => ({ payload: { option, value } }),
             () => {}
         ),
-        sendToggleTimerSetting: create.preparedReducer(
+        sendToggleHideResponsesMessage: create.preparedReducer(
             (option, value) => ({ payload: { option, value } }),
             () => {}
         ),
@@ -56,10 +56,6 @@ const gameSlice = createSlice({
             (promptId, command, method, arg) => ({ payload: { promptId, command, method, arg } }),
             () => {}
         ),
-        sendCardMenuItemClickedMessage: create.preparedReducer(
-            (cardId, menuItem) => ({ payload: { cardId, menuItem } }),
-            () => {}
-        ),
         sendShowDrawDeckMessage: () => {},
         sendShuffleDeckMessage: () => {},
         sendDragDropMessage: create.preparedReducer(
@@ -68,6 +64,8 @@ const gameSlice = createSlice({
         ),
         sendGameChatMessage: () => {},
         sendToggleMuteSpectatorsMessage: () => {},
+        sendToggleManualModeMessage: () => {},
+        sendReportProblemMessage: () => {},
         sendChangeStatMessage: create.preparedReducer(
             (type, amount) => ({ payload: { type, amount } }),
             () => {}
@@ -87,16 +85,17 @@ export const {
     sendToggleKeywordSettingMessage,
     sendToggleDupesMessage,
     sendTogglePromptedActionWindowMessage,
-    sendToggleTimerSetting,
+    sendToggleHideResponsesMessage,
     sendCardSizeChangeMessage,
     sendCardClickedMessage,
     sendButtonClickedMessage,
-    sendCardMenuItemClickedMessage,
     sendShowDrawDeckMessage,
     sendShuffleDeckMessage,
     sendDragDropMessage,
     sendGameChatMessage,
     sendToggleMuteSpectatorsMessage,
+    sendToggleManualModeMessage,
+    sendReportProblemMessage,
     sendChangeStatMessage,
     sendLeaveGameMessage,
     sendConcedeMessage

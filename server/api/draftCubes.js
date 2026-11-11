@@ -36,8 +36,8 @@ function validatePackDefinition(packDefinition) {
     return errors;
 }
 
-export const init = function (server, options) {
-    const draftCubesService = ServiceFactory.draftCubeService(options.db);
+export const init = function (server) {
+    const draftCubesService = ServiceFactory.draftCubeService();
 
     server.get(
         '/api/draft-cubes',

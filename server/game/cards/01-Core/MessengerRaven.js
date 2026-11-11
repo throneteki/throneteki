@@ -1,21 +1,18 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class MessengerRaven extends DrawCard {
+    // Messenger Raven (01130)
+    // No attachments.
+    // Dominance Action: Return Messenger Raven to your hand to draw 1 card.
     setupCardAbilities(ability) {
         this.action({
             title: 'Draw 1 card',
             phase: 'dominance',
-            condition: () => this.controller.canDraw(),
+            condition: (context) => context.source.controller.canDraw(),
             cost: ability.costs.returnSelfToHand(),
-            handler: (context) => {
-                context.player.drawCardsToHand(1);
-
-                this.game.addMessage(
-                    '{0} returns {1} to their hand to draw 1 card',
-                    context.player,
-                    this
-                );
-            }
+            message: '{player} returns {source} to their hand to draw 1 card',
+            gameAction: GameActions.drawCards((context) => ({ player: context.player, amount: 1 }))
         });
     }
 }

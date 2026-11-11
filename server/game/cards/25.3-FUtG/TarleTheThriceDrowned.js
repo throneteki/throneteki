@@ -2,13 +2,17 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TarleTheThriceDrowned extends DrawCard {
+    // Tarle the Thrice-Drowned (25043)
+    // Renown.
+    // Reaction: After a Drowned God character is placed in your dead pile, put it into play. Then,
+    // kill a character you control. (Limit once per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPlaced: (event) =>
+                onCardPlaced: (event, context) =>
                     event.card.location === 'dead pile' &&
                     event.card.getType() === 'character' &&
-                    event.card.controller === this.controller &&
+                    event.card.controller === context.source.controller &&
                     event.card.hasTrait('Drowned God')
             },
             limit: ability.limit.perRound(1),
@@ -26,12 +30,7 @@ class TarleTheThriceDrowned extends DrawCard {
                     gameAction: 'kill'
                 },
                 message: 'Then, {player} kills {target}',
-                handler: (context) => {
-                    this.game.resolveGameAction(
-                        GameActions.kill((context) => ({ card: context.target })),
-                        context
-                    );
-                }
+                gameAction: GameActions.kill((context) => ({ card: context.target }))
             })
         });
     }

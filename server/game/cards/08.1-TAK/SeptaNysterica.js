@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SeptaNysterica extends DrawCard {
+    // Septa Nysterica (08004)
+    // Action: Kneel Septa Nysterica to choose an attacking character with STR 4 or lower. Stand
+    // that character and remove it from the challenge.
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove character from challenge',
@@ -12,16 +16,11 @@ class SeptaNysterica extends DrawCard {
                     card.isAttacking() &&
                     card.getStrength() <= 4
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.currentChallenge.removeFromChallenge(context.target);
-                this.game.addMessage(
-                    '{0} kneels {1} to stand and remove {2} from the challenge',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} kneels {source} to stand and remove {target} from the challenge',
+            gameAction: GameActions.simultaneously([
+                GameActions.standCard((context) => ({ card: context.target })),
+                GameActions.removeFromChallenge((context) => ({ card: context.target }))
+            ])
         });
     }
 }

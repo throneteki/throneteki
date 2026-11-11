@@ -2,12 +2,16 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TorchAndOil extends DrawCard {
+    // Torch and Oil (26090)
+    // Reaction: After an opponent draws a card or marshals a card into shadows, kneel Torch and Oil
+    // to reveal that card. If it is a character, you may sacrifice Torch and Oil to discard that
+    // card and stand attached character.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardDrawn: (event) => event.player !== this.controller,
-                onCardPutIntoShadows: (event) =>
-                    event.player !== this.controller && event.reason === 'marshal'
+                onCardDrawn: (event, context) => event.player !== context.source.controller,
+                onCardPutIntoShadows: (event, context) =>
+                    event.player !== context.source.controller && event.reason === 'marshal'
             },
             cost: ability.costs.kneelSelf(),
             message: {
@@ -40,7 +44,7 @@ class TorchAndOil extends DrawCard {
                         gameAction: GameActions.sacrificeCard({ card: this }).then({
                             gameAction: GameActions.simultaneously([
                                 GameActions.discardCard((context) => ({
-                                    card: context.parentcontext.parentContext.revealed[0]
+                                    card: context.parentContext.parentContext.revealed[0]
                                 })),
                                 GameActions.standCard((context) => ({
                                     card: context.parentContext.cardStateWhenInitiated.parent

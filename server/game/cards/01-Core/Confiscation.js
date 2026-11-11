@@ -1,28 +1,19 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Confiscation extends PlotCard {
+    // Confiscation (01009)
+    // When Revealed: Choose an attachment, and discard it from play.
     setupCardAbilities() {
         this.whenRevealed({
             target: {
                 activePromptTitle: 'Select an attachment',
-                cardCondition: (card) => this.cardCondition(card)
+                cardCondition: (card) =>
+                    card.location === 'play area' && card.getType() === 'attachment'
             },
-            handler: (context) => {
-                let attachment = context.target;
-                attachment.owner.discardCard(attachment);
-
-                this.game.addMessage(
-                    '{0} uses {1} to discard {2}',
-                    context.player,
-                    this,
-                    attachment
-                );
-            }
+            message: '{player} uses {source} to discard {target}',
+            gameAction: GameActions.discardCard((context) => ({ card: context.target }))
         });
-    }
-
-    cardCondition(card) {
-        return card.location === 'play area' && card.getType() === 'attachment';
     }
 }
 

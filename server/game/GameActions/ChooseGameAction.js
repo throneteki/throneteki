@@ -1,15 +1,21 @@
 import GameAction from './GameAction.js';
 import AbilityChoicePrompt from '../gamesteps/AbilityChoicePrompt.js';
 import AbilityMessage from '../AbilityMessage.js';
-import HandlerGameActionWrapper from './HandlerGameActionWrapper.js';
+
+// The context can inherit its properties from a prototype (see BaseAbility.allowsTarget), which
+// spreading it would drop.
+function withChoosingPlayer(context, choosingPlayer) {
+    return Object.assign(Object.create(context), { choosingPlayer });
+}
 
 class ChooseGameAction extends GameAction {
-    constructor({ player, title, message, choices, cancelText, cancelMessage }) {
+    constructor({ player, title, message, choices, cancelable = true, cancelText, cancelMessage }) {
         super('choose');
         this.playerFunc = player || ((context) => context.player);
         this.title = title || ((context) => `Choose one for ${context.source.name}`);
         this.defaultMessage = AbilityMessage.create(message, this.specialArgs());
         this.choicesFunc = choices instanceof Function ? choices : () => choices;
+        this.cancelable = cancelable;
         this.cancelText = cancelText;
         this.cancelMessage = cancelMessage;
     }
@@ -30,16 +36,20 @@ class ChooseGameAction extends GameAction {
 
     allow(context) {
         const choosingPlayer = this.playerFunc(context);
-        let tempContext = { ...context, choosingPlayer };
+        let tempContext = withChoosingPlayer(context, choosingPlayer);
         const choices = this.createChoices(this.choicesFunc(tempContext));
         const validChoices = choices.filter((choice) => choice.condition(tempContext));
         return validChoices.length > 0;
     }
 
+    logsOwnMessage() {
+        return true;
+    }
+
     createEvent(context) {
         return this.event('onChoose', {}, (event) => {
             const choosingPlayer = this.playerFunc(context);
-            let tempContext = { ...context, choosingPlayer };
+            let tempContext = withChoosingPlayer(context, choosingPlayer);
             const title = this.title instanceof Function ? this.title(tempContext) : this.title;
             const choices = this.createChoices(this.choicesFunc(tempContext)); // If at least one choice is selectable (checked in 'allow'), then all should be selectable.
             const cancelText =
@@ -58,6 +68,7 @@ class ChooseGameAction extends GameAction {
                     choosingPlayer,
                     title,
                     choices,
+                    cancelable: this.cancelable,
                     cancelText,
                     cancelMessage,
                     gameActionResolver: (gameAction) => {
@@ -78,9 +89,11 @@ class ChooseGameAction extends GameAction {
                     ? AbilityMessage.create(action.message, this.specialArgs())
                     : this.defaultMessage;
             let card = action.gameAction && action.card;
+            let icon = action.gameAction && action.icon;
 
             choices.push({
                 text: text,
+                icon: icon,
                 gameAction: gameAction,
                 condition: condition,
                 message: message,
@@ -92,9 +105,8 @@ class ChooseGameAction extends GameAction {
     }
 
     buildGameAction(action) {
-        // Supporting legacy Choices as handlers
         if (typeof action === 'function') {
-            return new HandlerGameActionWrapper({ handler: action });
+            throw new Error('Use a gameAction for each choice instead of a function');
         }
         // Supporting properties-based choice
         if (action.gameAction) {

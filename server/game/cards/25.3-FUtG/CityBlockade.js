@@ -1,6 +1,8 @@
 import PlotCard from '../../plotcard.js';
 
 class CityBlockade extends PlotCard {
+    // City Blockade (25060)
+    // Limited cards cannot be marshaled, played, or put into play.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'any',

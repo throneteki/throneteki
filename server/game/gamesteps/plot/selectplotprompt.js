@@ -2,38 +2,49 @@ import AllPlayerPrompt from '../allplayerprompt.js';
 import { Flags } from '../../Constants/index.js';
 
 class SelectPlotPrompt extends AllPlayerPrompt {
-    completionCondition(player) {
-        if (player.mustRevealPlot) {
-            player.selectedPlot = player.mustRevealPlot;
-            //explicitly call clearSelectableCards so the selectable cards
-            //get reset for the next plot phase after cards are recycled
-            player.clearSelectableCards();
-        } else {
-            let selectableCards = player.getSelectableCards();
-            if (selectableCards.length === 1) {
-                player.selectedPlot = selectableCards[0];
-                //explicitly call clearSelectableCards so the selectable cards
-                //get reset for the next plot phase after cards are recycled
-                player.clearSelectableCards();
-            }
-        }
-
-        return !!player.selectedPlot || player.hasFlag(Flags.player.cannotRevealPlot);
+    constructor(game, firstPlayer = game.getFirstPlayer()) {
+        super(game);
+        this.firstPlayer = firstPlayer;
+        const players = game.getPlayers();
+        this.dependencies = new Map(
+            players.map((player) => [
+                player,
+                new Set(players.filter((other) => other.mustShowPlotSelection.includes(player)))
+            ])
+        );
     }
 
-    activePrompt(player) {
-        if (player.confirmingPlot) {
-            return {
-                menuTitle:
-                    'Show plot selection to ' +
-                    player.mustShowPlotSelection.map((p) => p.name).join(', ') +
-                    '?',
-                buttons: [
-                    { arg: 'plotconfirmed', text: 'Yes' },
-                    { arg: 'plotcancelled', text: 'No' }
-                ]
-            };
+    canChoose(player) {
+        return [...this.dependencies.get(player)].every(
+            (other) => other.selectedPlot || other.hasFlag(Flags.player.cannotRevealPlot)
+        );
+    }
+
+    completionCondition(player) {
+        if (player.hasFlag(Flags.player.cannotRevealPlot)) {
+            return true;
         }
+        if (!this.canChoose(player)) {
+            return false;
+        }
+        const forcedPlot = player.mustRevealPlot && player.getForcedPlot();
+        if (forcedPlot) {
+            player.selectedPlot = forcedPlot;
+            player.clearSelectableCards();
+        } else if (!player.selectedPlot) {
+            const selectable = player.getSelectableCards();
+            if (selectable.length === 1) {
+                this.selectPlot(player, selectable[0]);
+            }
+        }
+        return !!player.selectedPlot;
+    }
+
+    activeCondition(player) {
+        return !this.completionCondition(player) && this.canChoose(player);
+    }
+
+    activePrompt() {
         return {
             menuTitle: 'Select a plot',
             buttons: [{ arg: 'plotselected', text: 'Done' }],
@@ -42,90 +53,122 @@ class SelectPlotPrompt extends AllPlayerPrompt {
     }
 
     waitingPrompt(player) {
-        if (player.mustRevealPlot || player.hasFlag(Flags.player.cannotRevealPlot)) {
-            return {
-                menuTitle: 'Waiting for opponent(s) to select plot'
-            };
-        }
-
         return {
-            menuTitle: 'Waiting for opponent(s) to select plot',
-            buttons: [{ arg: 'changeplot', text: 'Change Plot' }]
+            menuTitle:
+                !player.selectedPlot && !this.canChoose(player)
+                    ? 'Waiting to look at chosen plots'
+                    : 'Waiting for opponent(s) to select plot'
         };
     }
 
-    onMenuCommand(player, arg) {
-        if (arg === 'changeplot') {
-            this.unSelectPlot(player, false);
-            return;
+    onCardClicked(player, card) {
+        if (card.getType() !== 'plot') {
+            return false;
         }
-
-        if (arg === 'plotconfirmed' && player.confirmingPlot) {
-            this.selectPlot(player, player.confirmingPlot);
-            delete player.confirmingPlot;
-            return;
+        if (this.activeCondition(player) && player.getSelectableCards().includes(card)) {
+            this.game.selectPlot(player, card);
         }
-
-        if (arg === 'plotcancelled' && player.confirmingPlot) {
-            delete player.confirmingPlot;
-            return;
-        }
-        let plot = player.plotDeck.find((card) => card.selected);
-
-        if (!plot) {
-            return;
-        }
-
-        if (player.mustShowPlotSelection.length > 0) {
-            player.confirmingPlot = plot;
-            return;
-        }
-
-        this.selectPlot(player, plot);
+        return true;
     }
 
-    unSelectPlot(player, forced = false) {
-        if (player.selectedPlot) {
-            player.selectedPlot = undefined;
-            if (forced) {
-                this.game.addMessage('{0} has been forced to cancel their plot selection', player);
-            } else {
-                this.game.addMessage('{0} has cancelled their plot selection', player);
-            }
-            // Force all players who must see this plot selection to unselect their current selection to prevent plot reveals
-            for (let p of player.mustShowPlotSelection) {
-                this.unSelectPlot(p, true);
-            }
+    onMenuCommand(player, arg) {
+        if (arg !== 'plotselected' || !this.activeCondition(player)) {
+            return;
+        }
+        const plot = player.getSelectableCards().find((card) => card.selected);
+        if (plot) {
+            this.selectPlot(player, plot);
         }
     }
 
     selectPlot(player, plot) {
         player.selectedPlot = plot;
         player.clearSelectableCards();
-
         this.game.addMessage('{0} has selected a plot', player);
     }
 
     highlightSelectableCards(player) {
-        let selectableCards = this.game.allCards.filter(
+        const cards = this.game.allCards.filter(
             (card) =>
                 card.getType() === 'plot' &&
                 card.location === 'plot deck' &&
                 card.controller === player &&
                 !card.hasFlag(Flags.card.notConsideredToBeInPlotDeck)
         );
-
         player.selectCard = true;
-        player.setSelectableCards(selectableCards);
+        player.setSelectableCards(cards);
+    }
+
+    findCycle(players) {
+        const visit = (player, path) => {
+            const index = path.indexOf(player);
+            if (index !== -1) {
+                return path.slice(index);
+            }
+            for (const dependency of this.dependencies.get(player)) {
+                if (players.includes(dependency)) {
+                    const cycle = visit(dependency, [...path, player]);
+                    if (cycle) {
+                        return cycle;
+                    }
+                }
+            }
+            return undefined;
+        };
+        for (const player of players) {
+            const cycle = visit(player, []);
+            if (cycle) {
+                return cycle;
+            }
+        }
+        return undefined;
     }
 
     continue() {
-        for (let player of this.getPromptablePlayers()) {
-            if (!this.completionCondition(player)) {
+        const pending = this.getPromptablePlayers().filter(
+            (player) => !this.completionCondition(player)
+        );
+        for (const player of pending) {
+            if (this.canChoose(player)) {
                 this.highlightSelectableCards(player);
+            } else {
+                player.clearSelectableCards();
             }
         }
-
+        if (pending.length && !pending.some((player) => this.canChoose(player))) {
+            const cycle = this.findCycle(pending);
+            if (cycle && !this.cyclePrompted) {
+                this.cyclePrompted = true;
+                this.game.promptWithMenu(
+                    this.firstPlayer,
+                    {
+                        chooseFirst: (_player, name) => {
+                            const chosen = cycle.find((player) => player.name === name);
+                            if (!chosen) {
+                                return false;
+                            }
+                            for (const other of cycle) {
+                                this.dependencies.get(chosen).delete(other);
+                            }
+                            this.cyclePrompted = false;
+                            return true;
+                        }
+                    },
+                    {
+                        activePrompt: {
+                            menuTitle: 'Choose who selects a plot first',
+                            buttons: cycle.map((player) => ({
+                                text: player.name,
+                                arg: player.name,
+                                method: 'chooseFirst'
+                            }))
+                        },
+                        waitingPromptTitle: 'Waiting for first player to order plot choices'
+                    }
+                );
+            }
+            return false;
+        }
         return super.continue();
     }
 }

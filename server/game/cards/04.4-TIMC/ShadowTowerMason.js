@@ -1,9 +1,13 @@
 import DrawCard from '../../drawcard.js';
 
 class ShadowTowerMason extends DrawCard {
+    // Shadow Tower Mason (04065)
+    // No attachments except Weapon.
+    // While you control 3 or more [thenightswatch] locations and/or attachments, Shadow Tower Mason
+    // gains a [military] and an [intrigue] icon.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.getCardCount() >= 3,
+            condition: (context) => context.source.getCardCount() >= 3,
             match: this,
             effect: [ability.effects.addIcon('military'), ability.effects.addIcon('intrigue')]
         });

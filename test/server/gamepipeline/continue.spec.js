@@ -21,8 +21,8 @@ describe('the GamePipeline', function () {
 
         describe('when a steps continue function returns false', function () {
             beforeEach(function () {
-                spyOn(this.step1, 'continue').and.returnValue(false);
-                spyOn(this.step2, 'continue').and.returnValue(true);
+                vi.spyOn(this.step1, 'continue').mockReturnValue(false);
+                vi.spyOn(this.step2, 'continue').mockReturnValue(true);
                 this.pipeline.initialise([this.step1, this.step2]);
             });
 
@@ -38,8 +38,8 @@ describe('the GamePipeline', function () {
 
         describe('when a steps continue function returns true', function () {
             beforeEach(function () {
-                spyOn(this.step1, 'continue').and.returnValue(true);
-                spyOn(this.step2, 'continue').and.returnValue(true);
+                vi.spyOn(this.step1, 'continue').mockReturnValue(true);
+                vi.spyOn(this.step2, 'continue').mockReturnValue(true);
                 this.pipeline.initialise([this.step1, this.step2]);
             });
 
@@ -56,8 +56,8 @@ describe('the GamePipeline', function () {
 
         describe('when a steps continue function lacks a return value', function () {
             beforeEach(function () {
-                spyOn(this.step1, 'continue').and.returnValue(undefined);
-                spyOn(this.step2, 'continue').and.returnValue(undefined);
+                vi.spyOn(this.step1, 'continue').mockReturnValue(undefined);
+                vi.spyOn(this.step2, 'continue').mockReturnValue(undefined);
                 this.pipeline.initialise([this.step1, this.step2]);
             });
 
@@ -74,11 +74,11 @@ describe('the GamePipeline', function () {
 
         describe('when a step queues more steps', function () {
             beforeEach(function () {
-                spyOn(this.step1, 'continue').and.callFake(() => {
+                vi.spyOn(this.step1, 'continue').mockImplementation(() => {
                     this.pipeline.queueStep(this.step2);
                     return false;
                 });
-                spyOn(this.step2, 'continue').and.returnValue(false);
+                vi.spyOn(this.step2, 'continue').mockReturnValue(false);
                 this.pipeline.initialise([this.step1]);
             });
 
@@ -99,16 +99,16 @@ describe('the GamePipeline', function () {
                 this.container = {
                     factory: () => this.step1
                 };
-                spyOn(this.container, 'factory').and.callThrough();
+                vi.spyOn(this.container, 'factory');
                 // Setup a failing step so execution can happen multiple times.
-                spyOn(this.step1, 'continue').and.returnValue(false);
+                vi.spyOn(this.step1, 'continue').mockReturnValue(false);
                 this.pipeline.initialise([this.container.factory]);
             });
 
             it('should only call the factory once', function () {
                 this.pipeline.continue();
                 this.pipeline.continue();
-                expect(this.container.factory.calls.count()).toBe(1);
+                expect(this.container.factory.mock.calls.length).toBe(1);
             });
 
             it('should inline the factory-created step', function () {

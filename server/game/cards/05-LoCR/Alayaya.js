@@ -1,25 +1,25 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Alayaya extends DrawCard {
+    // Alayaya (05013)
+    // Reaction: After you win a challenge in which Alayaya is participating, move 1 gold from the
+    // losing opponent's gold pool to your own.
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.isParticipating() &&
-                    event.challenge.loser.gold >= 1
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player && context.source.isParticipating()
             },
-            handler: (context) => {
-                let otherPlayer = context.event.challenge.loser;
-
-                this.game.transferGold({ from: otherPlayer, to: this.controller, amount: 1 });
-                this.game.addMessage(
-                    "{0} uses {1} to move 1 gold from {2}'s gold pool to their own",
-                    this.controller,
-                    this,
-                    otherPlayer
-                );
-            }
+            message: {
+                format: "{player} uses {source} to move 1 gold from {opponent}'s gold pool to their own",
+                args: { opponent: (context) => context.event.challenge.loser }
+            },
+            gameAction: GameActions.transferGold((context) => ({
+                from: context.event.challenge.loser,
+                to: context.player,
+                amount: 1
+            }))
         });
     }
 }

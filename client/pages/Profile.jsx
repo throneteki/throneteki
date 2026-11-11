@@ -6,15 +6,14 @@ import * as yup from 'yup';
 import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
 import GameBackgroundOption from '../Components/Profile/GameBackgroundOption';
-import { useSaveProfileMutation } from '../redux/middleware/api';
+import { useSaveProfileMutation, useVerifyAuthenticationQuery } from '../redux/middleware/api';
 import ProfileMain from '../Components/Profile/ProfileMain';
 import ActionWindowOptions from '../Components/Profile/ActionWindowOptions';
-import TimerSettings from '../Components/Profile/TimerSettings';
 import GameSettings from '../Components/Profile/GameSettings';
-import BlankBg from '../assets/img/bgs/blank.png';
-import Background1 from '../assets/img/bgs/background.png';
-import Background2 from '../assets/img/bgs/background2.png';
-import { setUser } from '../redux/reducers/auth';
+import BlankBg from '../assets/img/bgs/blank.webp';
+import Background1 from '../assets/img/bgs/background.webp';
+import Background2 from '../assets/img/bgs/background2.webp';
+import { setAuthTokens, setUser } from '../redux/reducers/auth';
 import { toast } from 'react-toastify';
 import CardSizeSettings from '../Components/Profile/CardSizeSettings';
 import Page from './Page';
@@ -28,6 +27,7 @@ const backgrounds = [
 const defaultActionWindows = {
     plot: false,
     draw: false,
+    marshal: false,
     challengeBegin: false,
     attackersDeclared: true,
     defendersDeclared: true,
@@ -44,6 +44,13 @@ const Profile = () => {
     );
 
     const [saveProfile, { isLoading: isSaveLoading, error: saveError }] = useSaveProfileMutation();
+    // The user in the store comes from the login token, which can be out of date (e.g. after unsubscribing from an
+    // email), so load the account as it is now before building the form
+    const { data: currentUser, isFetching: isLoadingUser } = useVerifyAuthenticationQuery('', {
+        skip: !user,
+        refetchOnMountOrArgChange: true
+    });
+    const emailUpdates = (currentUser ?? user)?.emailUpdates !== false;
 
     useEffect(() => {
         if (saveError) {
@@ -61,6 +68,10 @@ const Profile = () => {
         return (
             <AlertPanel variant='error' message='You must be logged in to update your profile' />
         );
+    }
+
+    if (isLoadingUser) {
+        return <p className='py-6 text-center'>Loading...</p>;
     }
 
     const schema = yup.object({
@@ -91,6 +102,7 @@ const Profile = () => {
             .string()
             .email('Please enter a valid email address')
             .required('You must specify an email address'),
+        currentPassword: yup.string(),
         password: yup.string().min(6, 'Password must be at least 6 characters'),
         passwordAgain: yup
             .string()
@@ -101,14 +113,17 @@ const Profile = () => {
 
     const initialValues = {
         enableGravatar: !!user.enableGravatar,
+        emailUpdates,
         email: user.email,
+        currentPassword: '',
+        password: '',
+        passwordAgain: '',
         actionWindows: user.promptedActionWindows || defaultActionWindows,
         chooseOrder: !!settings.keywordSettings.chooseOrder,
         chooseCards: !!settings.keywordSettings.chooseCards,
         promptDupes: !!settings.promptDupes,
-        windowTimer: settings.windowTimer || 5,
-        timerAbilities: !!settings.timerSettings.abilities,
-        timerEvents: settings.timerSettings.events,
+        hideInterrupts: settings.hideInterrupts ?? true,
+        hideReactions: settings.hideReactions ?? true,
         cardSize: settings.cardSize || 'normal'
     };
 
@@ -123,19 +138,23 @@ const Profile = () => {
                             username: user.username,
                             profile: {
                                 email: values.email,
-                                password: values.newPassword,
+                                currentPassword: values.currentPassword,
+                                password: values.password,
                                 promptedActionWindows: values.actionWindows,
                                 enableGravatar: values.enableGravatar,
+                                // Only sent when changed here, so saving a page loaded before
+                                // unsubscribing from an email doesn't turn emails back on
+                                emailUpdates:
+                                    values.emailUpdates !== emailUpdates
+                                        ? values.emailUpdates
+                                        : undefined,
                                 settings: {
                                     promptDupes: values.promptDupes,
-                                    windowTimer: values.windowTimer,
+                                    hideInterrupts: values.hideInterrupts,
+                                    hideReactions: values.hideReactions,
                                     keywordSettings: {
                                         chooseOrder: values.chooseOrder,
                                         chooseCards: values.chooseCards
-                                    },
-                                    timerSettings: {
-                                        abilities: values.timerAbilities,
-                                        events: values.timerEvents
                                     },
                                     background: selectedBackground,
                                     cardSize: values.cardSize
@@ -144,10 +163,14 @@ const Profile = () => {
                         }).unwrap();
                         toast.success('Profile saved successfully');
 
-                        dispatch(setUser(ret.user));
+                        dispatch(setUser(ret.data?.user ?? ret.user));
+                        if (ret.data?.token && ret.data?.refreshToken) {
+                            dispatch(setAuthTokens(ret.data.token, ret.data.refreshToken));
+                        }
                     } catch (err) {
                         toast.error(
-                            err.message ||
+                            err.data?.message ||
+                                err.message ||
                                 'An error occured saving your profile. Please try again later.'
                         );
                     }
@@ -158,10 +181,7 @@ const Profile = () => {
                         <ProfileMain user={user} formProps={formProps} />
                         <ActionWindowOptions formProps={formProps} />
                         <GameSettings formProps={formProps} />
-                        <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
-                            <TimerSettings formProps={formProps} />
-                            <CardSizeSettings user={user} formProps={formProps} />
-                        </div>
+                        <CardSizeSettings user={user} formProps={formProps} />
                         <Panel title='Game Board Background'>
                             <div className='grid sm:grid-cols-3 gap-2'>
                                 {backgrounds.map((background) => (

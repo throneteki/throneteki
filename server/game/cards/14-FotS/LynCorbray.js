@@ -2,19 +2,20 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class LynCorbray extends DrawCard {
+    // Lyn Corbray (14039)
+    // Stealth.
+    // Reaction: After an opponent initiates a [power] challenge against you, stand Lyn Corbray.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: (event) =>
+                onChallengeInitiated: (event, context) =>
                     event.challenge.isMatch({
-                        initiatedAgainstPlayer: this.controller,
+                        initiatedAgainstPlayer: context.source.controller,
                         initiatedChallengeType: 'power'
-                    }) && this.allowGameAction('stand')
+                    }) && context.source.allowGameAction('stand')
             },
             message: '{player} uses {source} to stand {source}',
-            handler: (context) => {
-                this.game.resolveGameAction(GameActions.standCard({ card: this }), context);
-            }
+            gameAction: GameActions.standCard((context) => ({ card: context.source }))
         });
     }
 }

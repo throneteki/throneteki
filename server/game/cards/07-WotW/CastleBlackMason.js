@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class CastleBlackMason extends DrawCard {
+    // Castle Black Mason (07009)
+    // No attachments except Weapon.
+    // Action: Kneel 2 Builder characters to search the top 10 cards of your deck for a location or
+    // attachment, reveal it, and add it to your hand. Shuffle your deck. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Search top 10 cards for location or attachment',

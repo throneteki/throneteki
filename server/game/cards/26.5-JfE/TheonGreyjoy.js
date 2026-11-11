@@ -2,10 +2,15 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheonGreyjoy extends DrawCard {
+    // Theon Greyjoy (26083)
+    // Forced Reaction: After a player collects income, they must choose and kill a character they
+    // control.
+    // Forced Interrupt: When Theon Greyjoy leaves play, each opponent gains 2 power for their
+    // faction.
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {
-                onCardLeftPlay: (event) => event.card === this
+                onCardLeftPlay: (event, context) => event.card === context.source
             },
             message: '{player} is forced by {source} to have each opponent gain 2 power',
             gameAction: GameActions.simultaneously((context) =>
@@ -32,12 +37,7 @@ class TheonGreyjoy extends DrawCard {
                 format: '{choosingPlayer} is forced by {source} to kill {target}',
                 args: { choosingPlayer: (context) => context.event.player }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.kill((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 }

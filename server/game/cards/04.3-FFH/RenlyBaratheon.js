@@ -1,19 +1,35 @@
 import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
+function anyOpponentControlsKing(source) {
+    return source.game.getPlayers().some((player) => {
+        if (player === source.controller) {
+            return false;
+        }
+
+        return player.anyCardsInPlay(
+            (card) => card.getType() === 'character' && card.hasTrait('King')
+        );
+    });
+}
+
 class RenlyBaratheon extends DrawCard {
+    // Renly Baratheon (04043)
+    // Insight. Renown.
+    // While an opponent controls a King character, Renly Baratheon cannot be saved.
+    // Reaction: After you draw a loyal card using insight, reveal it to draw 1 card.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.anyOpponentControlsKing(),
+            condition: (context) => anyOpponentControlsKing(context.source),
             match: this,
             effect: ability.effects.cannotBeSaved()
         });
 
         this.reaction({
             when: {
-                onCardsDrawn: (event) =>
+                onCardsDrawn: (event, context) =>
                     event.reason === 'insight' &&
-                    event.source.controller === this.controller &&
+                    event.source.controller === context.source.controller &&
                     event.cards[0].isLoyal()
             },
             cost: ability.costs.revealSpecific((context) => context.event.cards[0]),
@@ -23,18 +39,6 @@ class RenlyBaratheon extends DrawCard {
                 player: context.player,
                 amount: 1
             }))
-        });
-    }
-
-    anyOpponentControlsKing() {
-        return this.game.getPlayers().some((player) => {
-            if (player === this.controller) {
-                return false;
-            }
-
-            return player.anyCardsInPlay(
-                (card) => card.getType() === 'character' && card.hasTrait('King')
-            );
         });
     }
 }

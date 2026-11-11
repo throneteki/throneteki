@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SerImryFlorent extends DrawCard {
+    // Ser Imry Florent (14011)
+    // Action: Kill Ser Imry Florent to choose an opponent. You may sacrifice any number of
+    // locations. For each location sacrificed this way, that opponent must choose and kneel a
+    // standing character he or she controls.
     setupCardAbilities(ability) {
         this.action({
             title: 'Force kneel',
@@ -24,42 +28,26 @@ class SerImryFlorent extends DrawCard {
                 gameAction: 'sacrifice'
             },
             message: '{player} kills {source} to sacrifice {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        context.target.map((card) => GameActions.sacrificeCard({ card }))
-                    ).then((context) => ({
-                        player: context.opponent,
-                        target: {
-                            mode: 'exactly',
-                            numCards: Math.min(
-                                context.target.length,
-                                context.opponent.getNumberOfCardsInPlay(
-                                    (card) => card.getType() === 'character' && !card.kneeled
-                                )
-                            ),
-                            cardCondition: (card) =>
-                                card.getType() === 'character' &&
-                                !card.kneeled &&
-                                card.location === 'play area' &&
-                                card.controller === context.opponent,
-                            gameAction: 'kneel'
-                        },
-                        message: 'Then {player} kneels {target} for {source}',
-                        handler: (thenContext) => {
-                            this.game.resolveGameAction(
-                                GameActions.simultaneously(
-                                    thenContext.target.map((card) =>
-                                        GameActions.kneelCard({ card })
-                                    )
-                                ),
-                                thenContext
-                            );
-                        }
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) => GameActions.sacrificeCard({ card }))
+            ).then({
+                message: {
+                    format: 'Then {opponent} must kneel a standing character for each location sacrificed',
+                    args: { opponent: (context) => context.parentContext.opponent }
+                },
+                gameAction: GameActions.chooseCards({
+                    player: (context) => context.parentContext.opponent,
+                    mode: 'exactly',
+                    numCards: (context) => context.parentContext.target.length,
+                    title: 'Select characters to kneel',
+                    cardCondition: (card, context) =>
+                        card.getType() === 'character' &&
+                        !card.kneeled &&
+                        card.location === 'play area' &&
+                        card.controller === context.choosingPlayer,
+                    gameAction: (card) => GameActions.kneelCard({ card })
+                })
+            })
         });
     }
 }

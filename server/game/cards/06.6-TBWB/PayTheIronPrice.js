@@ -1,45 +1,42 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class PayTheIronPrice extends DrawCard {
+    // Pay The Iron Price (06112)
+    // Challenges Action: Choose an attachment in an opponent's discard pile, and put it into play
+    // under your control.
+    // Reaction: After you win an unopposed challenge, pay 1 gold to return Pay The Iron Price from
+    // your discard pile to your hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put attachment into play',
             phase: 'challenge',
             target: {
                 activePromptTitle: 'Select an attachment',
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'discard pile' &&
-                    card.controller !== this.controller &&
+                    card.controller !== context.player &&
                     card.getType() === 'attachment'
             },
-            handler: (context) => {
-                this.controller.putIntoPlay(context.target);
-                this.game.addMessage(
-                    "{0} plays {1} to put {2} into play from {3}'s discard pile under their control",
-                    this.controller,
-                    this,
-                    context.target,
-                    context.target.owner
-                );
-            }
+            message: {
+                format: "{player} plays {source} to put {target} into play from {owner}'s discard pile under their control",
+                args: { owner: (context) => context.target.owner }
+            },
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
-
         this.reaction({
             location: 'discard pile',
             when: {
-                afterChallenge: (event) =>
-                    this.controller === event.challenge.winner && event.challenge.isUnopposed()
+                afterChallenge: (event, context) =>
+                    context.player === event.challenge.winner && event.challenge.isUnopposed()
             },
             ignoreEventCosts: true,
             cost: ability.costs.payGold(1),
-            handler: () => {
-                this.game.addMessage(
-                    '{0} pays 1 gold to move {1} back to their hand',
-                    this.controller,
-                    this
-                );
-                this.controller.moveCard(this, 'hand');
-            }
+            message: '{player} pays 1 gold to return {source} to their hand',
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.source }))
         });
     }
 }

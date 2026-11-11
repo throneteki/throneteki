@@ -1,12 +1,14 @@
 import DrawCard from '../../drawcard.js';
 
 class SerParmenCrane extends DrawCard {
+    // Ser Parmen Crane (25035)
+    // While you control another Rainbow Guard character, Ser Parmen Crane gains renown.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.controller.anyCardsInPlay(
+            condition: (context) =>
+                context.source.controller.anyCardsInPlay(
                     (card) =>
-                        card !== this &&
+                        card !== context.source &&
                         card.getType() === 'character' &&
                         card.hasTrait('Rainbow Guard')
                 ),

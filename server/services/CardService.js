@@ -1,61 +1,17 @@
 import fs from 'fs';
 import path from 'path';
-import moment from 'moment';
+import {
+    compileLegalityLists,
+    setActiveLegalityLists
+} from '../../deck-helper/compileLegalityLists.js';
+import defaultDb from '../db/index.js';
 import logger from '../log.js';
-import startCase from 'lodash.startcase';
 
 const __dirname = import.meta.dirname;
 
-const defaultVariant = {
-    joust: 'standard',
-    melee: 'standard',
-    draft: 'valyrian'
-};
-
 class CardService {
-    constructor(db) {
-        this.cards = db.get('cards');
-        this.packs = db.get('packs');
-    }
-
-    replaceCards(cards) {
-        return this.cards.remove({}).then(() => this.cards.insert(cards));
-    }
-
-    replacePacks(cards) {
-        return this.packs.remove({}).then(() => this.packs.insert(cards));
-    }
-
-    getAllCards() {
-        return this.cards
-            .find({})
-            .then((result) => {
-                let cards = {};
-
-                for (let card of result) {
-                    cards[card.code] = card;
-                }
-
-                return cards;
-            })
-            .catch((err) => {
-                logger.info(err);
-            });
-    }
-
-    getTitleCards() {
-        return this.cards.find({ type: 'title' }).then((cards) => {
-            return cards.reduce((memo, card) => {
-                memo[card.code] = card;
-                return memo;
-            }, {});
-        });
-    }
-
-    getAllPacks() {
-        return this.packs.find({}).catch((err) => {
-            logger.info(err);
-        });
+    constructor(db = defaultDb) {
+        this.db = db;
     }
 
     getRestrictedList() {
@@ -76,7 +32,8 @@ class CardService {
     }
 
     async processLegality(format, variant, legality, event) {
-        if (!legality) {
+        // No legality provided, or full legality object provided
+        if (!legality || legality._id) {
             return legality;
         }
         // Custom legality (only for events)
@@ -93,60 +50,59 @@ class CardService {
     }
 
     compileLists(lists) {
-        // Sort by newest first
-        const sorted = lists.sort((a, b) => new Date(b.date) - new Date(a.date));
-        const compiled = [];
-        for (const legality of sorted) {
-            for (const list of legality.formats) {
-                const { name: lName, variant: lVariant, ...details } = list;
-                const format = lName;
-                const variant = lVariant ?? defaultVariant[format];
-                const version = legality.version;
-                const name = `${startCase(`${format} ${variant}`)} ${version}`;
-                const data = {
-                    _id: `${legality.code}_${format}_${variant}`,
-                    format,
-                    variant,
-                    name,
-                    version,
-                    date: legality.date,
-                    issuer: legality.issuer,
-                    official: true,
-                    active: false, // Actually set in setActiveLists,
-                    restricted: [],
-                    pods: [],
-                    banned: [],
-                    ...details
-                };
-                compiled.push(data);
-            }
-        }
-
+        const compiled = compileLegalityLists(lists);
         this.setActiveLists(compiled);
-
         return compiled;
     }
+
     setActiveLists(compiled) {
-        const today = moment().startOf('day');
+        return setActiveLegalityLists(compiled);
+    }
 
-        const closest = {};
+    replaceCards(cards) {
+        return this.replaceAll('cards', cards);
+    }
 
-        for (const item of compiled) {
-            const date = moment(item.date, 'YYYY-MM-DD');
+    replacePacks(packs) {
+        return this.replaceAll('packs', packs);
+    }
 
-            if (!date.isSameOrBefore(today)) continue;
+    replaceAll(table, items) {
+        return this.db.transaction(async (tx) => {
+            await tx.query(`DELETE FROM ${table}`);
+            await tx.query(
+                `INSERT INTO ${table} (code, data) SELECT item->>'code', item FROM jsonb_array_elements($1::jsonb) AS item`,
+                [JSON.stringify(items)]
+            );
+        });
+    }
 
-            const key = `${item.format}__${item.variant}`;
-            if (!closest[key] || date.isAfter(moment(closest[key].date, 'YYYY-MM-DD'))) {
-                closest[key] = item;
-            }
+    async getAllCards() {
+        try {
+            const rows = await this.db.query('SELECT data FROM cards');
+
+            return Object.fromEntries(rows.map((row) => [row.data.code, row.data]));
+        } catch (err) {
+            logger.info(err);
         }
+    }
 
-        for (const item of Object.values(closest)) {
-            item.active = true;
+    async getTitleCards() {
+        const rows = await this.db.query("SELECT data FROM cards WHERE data->>'type' = 'title'");
+
+        return Object.fromEntries(rows.map((row) => [row.data.code, row.data]));
+    }
+
+    async getAllPacks() {
+        try {
+            const rows = await this.db.query(
+                "SELECT data FROM packs ORDER BY data->>'releaseDate' NULLS LAST, code"
+            );
+
+            return rows.map((row) => row.data);
+        } catch (err) {
+            logger.info(err);
         }
-
-        return compiled;
     }
 }
 

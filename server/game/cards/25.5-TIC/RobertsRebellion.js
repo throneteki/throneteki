@@ -3,22 +3,28 @@ import PlotCard from '../../plotcard.js';
 import { ChallengeTracker } from '../../EventTrackers/ChallengeTracker.js';
 
 class RobertsRebellion extends PlotCard {
+    // Robert's Rebellion (25082)
+    // Forced Interrupt: When the challenges phase ends, if you have lost a [power] challenge this
+    // phase, discard 3 power from your faction card.
     setupCardAbilities() {
         this.tracker = ChallengeTracker.forRound(this.game);
 
         this.forcedInterrupt({
             when: {
-                onPhaseEnded: (event) =>
+                onPhaseEnded: (event, context) =>
                     event.phase === 'challenge' &&
-                    this.tracker.some({ loser: this.controller, challengeType: 'power' })
+                    context.source.tracker.some({
+                        loser: context.source.controller,
+                        challengeType: 'power'
+                    })
             },
             message: {
                 format: '{player} is forced to discard {amount} power from their faction card for {source}',
-                args: { amount: (context) => this.getPowerAmount(context) }
+                args: { amount: (context) => context.source.getPowerAmount(context) }
             },
             gameAction: GameActions.discardPower((context) => ({
                 card: context.player.faction,
-                amount: this.getPowerAmount(context)
+                amount: context.source.getPowerAmount(context)
             }))
         });
     }

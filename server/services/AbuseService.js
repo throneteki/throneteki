@@ -1,5 +1,8 @@
 import crypto from 'crypto';
+import defaultDb from '../db/index.js';
 import logger from '../log.js';
+import { idColumn } from '../db/ids.js';
+import { toCidr, toInet } from '../db/network.js';
 
 const RegistrationAttemptWindowMs = 60 * 60 * 1000;
 const RegistrationCooldownMs = 15 * 60 * 1000;
@@ -7,13 +10,35 @@ const RegistrationCooldownThreshold = 5;
 const RestrictionWindowMs = 7 * 24 * 60 * 60 * 1000;
 const DefaultRegistrationEventRetentionDays = 30;
 
+const SelectBlock = `
+    SELECT id::text AS "_id", scope, value, reason, source_user_id::text AS "sourceUserId", created_at AS "createdAt",
+        created_by AS "createdBy", expires_at AS "expiresAt", active, deactivated_at AS "deactivatedAt"
+    FROM abuse_blocks`;
+
+const SelectEvent = `
+    SELECT id::text AS "_id", type, username, user_id::text AS "userId", host(ip) AS ip, subnet::text AS subnet,
+        fingerprint_hash AS "fingerprintHash", email_domain AS "emailDomain", outcome, signals,
+        score_delta AS "scoreDelta", created_at AS "createdAt", created_by AS "createdBy"
+    FROM abuse_events`;
+
+function blockValueExpression(scope, value, index) {
+    if (scope === 'ip' && toInet(value)) {
+        return `host($${index}::inet)`;
+    }
+
+    if (scope === 'subnet' && toCidr(value)) {
+        return `network($${index}::inet)::text`;
+    }
+
+    return `$${index}`;
+}
+
 class AbuseService {
-    constructor(db, configService) {
-        this.users = db.get('users');
-        this.legacyBanlist = db.get('banlist');
-        this.abuseBlocks = db.get('abuse_blocks');
-        this.abuseEvents = db.get('abuse_events');
+    constructor(configService, userService, db = defaultDb) {
         this.configService = configService;
+
+        this.userService = userService;
+        this.db = db;
     }
 
     normalizeIp(ip) {
@@ -120,136 +145,6 @@ class AbuseService {
         return new Date(Date.now() + RestrictionWindowMs);
     }
 
-    isBlockActive(block) {
-        if (!block || block.active === false) {
-            return false;
-        }
-
-        if (!block.expiresAt) {
-            return true;
-        }
-
-        return new Date(block.expiresAt).getTime() > Date.now();
-    }
-
-    async getActiveBlocks() {
-        let blocks = [];
-        try {
-            blocks = await this.abuseBlocks.find({});
-        } catch (err) {
-            logger.error('Error fetching abuse blocks %s', err);
-        }
-
-        return blocks.filter((block) => this.isBlockActive(block));
-    }
-
-    async listBlocks() {
-        let blocks = [];
-        try {
-            blocks = await this.abuseBlocks.find({});
-        } catch (err) {
-            logger.error('Error fetching abuse blocks %s', err);
-        }
-
-        return blocks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    }
-
-    async createBlock(block) {
-        const entry = {
-            scope: block.scope || 'ip',
-            value: block.value,
-            reason: block.reason || 'Manual moderation action',
-            sourceUserId: block.sourceUserId,
-            createdAt: block.createdAt || new Date(),
-            createdBy: block.createdBy,
-            expiresAt: block.expiresAt || null,
-            active: block.active !== false
-        };
-
-        return this.abuseBlocks.insert(entry);
-    }
-
-    async deactivateBlock(id) {
-        return this.abuseBlocks.update(
-            { _id: id },
-            { $set: { active: false, deactivatedAt: new Date() } }
-        );
-    }
-
-    async logEvent(event) {
-        const entry = {
-            type: event.type,
-            username: event.username || null,
-            userId: event.userId || null,
-            ip: this.normalizeIp(event.ip) || null,
-            subnet: event.subnet || this.getSubnet(event.ip) || null,
-            fingerprintHash: event.fingerprintHash || null,
-            emailDomain: event.emailDomain || null,
-            outcome: event.outcome || 'allowed',
-            signals: event.signals || [],
-            scoreDelta: event.scoreDelta || 0,
-            createdAt: event.createdAt || new Date(),
-            createdBy: event.createdBy || null
-        };
-
-        try {
-            return await this.abuseEvents.insert(entry);
-        } catch (err) {
-            logger.error('Error adding abuse event %s %s', err, entry);
-            return undefined;
-        }
-    }
-
-    async cleanupOldRegistrationEvents() {
-        const retentionDays =
-            this.configService.getValue('registrationEventRetentionDays') ||
-            DefaultRegistrationEventRetentionDays;
-        const cutoff = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000);
-
-        try {
-            const result = await this.abuseEvents.remove({
-                type: { $in: ['registration_attempt', 'registration_preflight'] },
-                createdAt: { $lt: cutoff }
-            });
-
-            if (typeof result === 'number') {
-                return result;
-            }
-
-            if (Array.isArray(result)) {
-                return result.length;
-            }
-
-            return result?.deletedCount || 0;
-        } catch (err) {
-            logger.error('Error cleaning old registration events %s', err);
-            return 0;
-        }
-    }
-
-    async findRegistrationAttempts({ ip, subnet }) {
-        const windowStart = new Date(Date.now() - RegistrationAttemptWindowMs);
-        let attempts = [];
-
-        try {
-            attempts = await this.abuseEvents.find({
-                type: 'registration_attempt',
-                createdAt: { $gte: windowStart }
-            });
-        } catch (err) {
-            logger.error('Error fetching abuse events %s', err);
-        }
-
-        return attempts.filter((attempt) => {
-            return (
-                (ip && attempt.ip === ip) ||
-                (subnet && attempt.subnet === subnet) ||
-                (ip && attempt.signals && attempt.signals.includes(`ip:${ip}`)) ||
-                (subnet && attempt.signals && attempt.signals.includes(`subnet:${subnet}`))
-            );
-        });
-    }
-
     getRecentCooldownAttempts(attempts) {
         let sortedAttempts = [...attempts].sort(
             (left, right) =>
@@ -268,117 +163,6 @@ class AbuseService {
         }
 
         return recentAttempts;
-    }
-
-    buildLinkedEvidence(users, predicate, label) {
-        return users.filter(predicate).map((user) => ({
-            user,
-            evidence: [label]
-        }));
-    }
-
-    mergeLinkedUsers(linkGroups) {
-        const mergedUsers = new Map();
-
-        for (const group of linkGroups) {
-            for (const linkedUser of group) {
-                const key = linkedUser.user._id.toString();
-                if (!mergedUsers.has(key)) {
-                    mergedUsers.set(key, {
-                        user: linkedUser.user,
-                        evidence: []
-                    });
-                }
-
-                const current = mergedUsers.get(key);
-                current.evidence = [...new Set(current.evidence.concat(linkedUser.evidence))];
-            }
-        }
-
-        return Array.from(mergedUsers.values());
-    }
-
-    async findLinkedUsers({ ip, subnet, fingerprintHash, excludeUserId }) {
-        let users = [];
-
-        try {
-            users = await this.users.find({});
-        } catch (err) {
-            logger.error('Error fetching users for abuse lookup %s', err);
-            return [];
-        }
-
-        const filteredUsers = users.filter((user) => {
-            return !excludeUserId || user._id.toString() !== excludeUserId.toString();
-        });
-
-        const linkGroups = [
-            this.buildLinkedEvidence(
-                filteredUsers,
-                (user) =>
-                    !!ip &&
-                    [user.registerIp, user.registerIpNormalized, user.lastLoginIp]
-                        .filter(Boolean)
-                        .includes(ip),
-                'shared exact ip'
-            ),
-            this.buildLinkedEvidence(
-                filteredUsers,
-                (user) => !!subnet && [user.registerSubnet, user.lastLoginSubnet].includes(subnet),
-                'shared subnet'
-            ),
-            this.buildLinkedEvidence(
-                filteredUsers,
-                (user) => !!fingerprintHash && user.signupFingerprintHash === fingerprintHash,
-                'shared fingerprint'
-            )
-        ];
-
-        return this.mergeLinkedUsers(linkGroups);
-    }
-
-    async getMatchingBlocks({ ip, subnet, fingerprintHash, emailDomain }) {
-        const activeBlocks = await this.getActiveBlocks();
-        const matchingBlocks = activeBlocks.filter((block) => {
-            if (block.scope === 'ip') {
-                return block.value === ip;
-            }
-
-            if (block.scope === 'subnet') {
-                return block.value === subnet;
-            }
-
-            if (block.scope === 'fingerprint') {
-                return block.value === fingerprintHash;
-            }
-
-            if (block.scope === 'email_domain') {
-                return block.value === emailDomain;
-            }
-
-            return false;
-        });
-
-        if (ip) {
-            try {
-                const legacyEntry = await this.legacyBanlist.find({ ip });
-                if (legacyEntry[0]) {
-                    matchingBlocks.push({
-                        scope: 'ip',
-                        value: ip,
-                        reason: 'Legacy banlist',
-                        createdAt: legacyEntry[0].added,
-                        createdBy: legacyEntry[0].user,
-                        active: true,
-                        legacy: true
-                    });
-                }
-            } catch (err) {
-                logger.error('Error checking legacy banlist %s', err);
-            }
-        }
-
-        return matchingBlocks;
     }
 
     determineTrustState(riskScore) {
@@ -517,26 +301,6 @@ class AbuseService {
         };
     }
 
-    async updateUserState(username, fields) {
-        return this.users.update({ username }, { $set: fields });
-    }
-
-    async updateUserStateById(userId, fields) {
-        return this.users.update({ _id: userId }, { $set: fields });
-    }
-
-    async updateUserSessionMetadata(username, { ip, subnet }) {
-        return this.users.update(
-            { username },
-            {
-                $set: {
-                    lastLoginIp: this.normalizeIp(ip),
-                    lastLoginSubnet: subnet || this.getSubnet(ip)
-                }
-            }
-        );
-    }
-
     async assessLoginAttempt(user, { ip, fingerprint }) {
         const normalizedIp = this.normalizeIp(ip);
         const subnet = this.getSubnet(normalizedIp);
@@ -566,20 +330,6 @@ class AbuseService {
             fingerprintHash,
             linkedUsers
         };
-    }
-
-    async getRecentEventsForUser(user) {
-        let events = [];
-
-        try {
-            events = await this.abuseEvents.find({
-                $or: [{ username: user.username }, { userId: user._id }]
-            });
-        } catch (err) {
-            logger.error('Error fetching abuse events for user %s %s', user.username, err);
-        }
-
-        return events.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 20);
     }
 
     async getAbuseProfile(user) {
@@ -701,19 +451,13 @@ class AbuseService {
         }
 
         const nextFlags = [...new Set([...(user.riskFlags || []), 'blocked_cluster'])];
-        await this.users.update(
-            { username: user.username },
-            {
-                $set: {
-                    disabled: true,
-                    tokens: [],
-                    trustState: 'banned_evasion_review',
-                    banReason: reason || 'Blocked for repeated ban evasion',
-                    evasionReviewRequired: true,
-                    riskFlags: nextFlags
-                }
-            }
-        );
+        await this.applyClusterBan(user, {
+            disabled: true,
+            trustState: 'banned_evasion_review',
+            banReason: reason || 'Blocked for repeated ban evasion',
+            evasionReviewRequired: true,
+            riskFlags: nextFlags
+        });
 
         await this.logEvent({
             type: 'ban_applied',
@@ -724,6 +468,232 @@ class AbuseService {
             signals: nextFlags,
             createdBy: actor
         });
+    }
+
+    async getMatchingBlocks({ ip, subnet, fingerprintHash, emailDomain }) {
+        let matchingBlocks = [];
+
+        try {
+            matchingBlocks = await this.db.query(
+                `${SelectBlock}
+                WHERE active AND (expires_at IS NULL OR expires_at > now())
+                    AND ((scope = 'ip' AND value = host($1::inet))
+                        OR (scope = 'subnet' AND value = network($2::inet)::text)
+                        OR (scope = 'fingerprint' AND value = $3)
+                        OR (scope = 'email_domain' AND value = $4))
+                ORDER BY id`,
+                [toInet(ip), toCidr(subnet), fingerprintHash || null, emailDomain || null]
+            );
+        } catch (err) {
+            logger.error('Error fetching abuse blocks %s', err);
+        }
+
+        if (ip) {
+            try {
+                const legacyEntries = await this.db.query(
+                    'SELECT created_at, created_by FROM banlist WHERE ip = $1',
+                    [ip]
+                );
+
+                if (legacyEntries[0]) {
+                    matchingBlocks.push({
+                        scope: 'ip',
+                        value: ip,
+                        reason: 'Legacy banlist',
+                        createdAt: legacyEntries[0].created_at,
+                        createdBy: legacyEntries[0].created_by,
+                        active: true,
+                        legacy: true
+                    });
+                }
+            } catch (err) {
+                logger.error('Error checking legacy banlist %s', err);
+            }
+        }
+
+        return matchingBlocks;
+    }
+
+    async listBlocks() {
+        try {
+            return await this.db.query(`${SelectBlock} ORDER BY created_at DESC`);
+        } catch (err) {
+            logger.error('Error fetching abuse blocks %s', err);
+
+            return [];
+        }
+    }
+
+    async createBlock(block) {
+        const scope = block.scope || 'ip';
+        const rows = await this.db.query(
+            `INSERT INTO abuse_blocks (scope, value, reason, source_user_id, created_at, created_by, expires_at, active)
+            VALUES ($1, ${blockValueExpression(scope, block.value, 2)}, $3,
+                (SELECT id FROM users WHERE id::text = $4::text), $5, $6, $7, $8)
+            RETURNING id`,
+            [
+                scope,
+                block.value,
+                block.reason || 'Manual moderation action',
+                block.sourceUserId ?? null,
+                block.createdAt || new Date(),
+                block.createdBy || null,
+                block.expiresAt || null,
+                block.active !== false
+            ]
+        );
+
+        return (await this.db.query(`${SelectBlock} WHERE id = $1`, [rows[0].id]))[0];
+    }
+
+    async deactivateBlock(id) {
+        return this.db.query(
+            `UPDATE abuse_blocks SET active = false, deactivated_at = now() WHERE ${idColumn(id)} = $1`,
+            [String(id)]
+        );
+    }
+
+    async logEvent(event) {
+        const ip = this.normalizeIp(event.ip);
+        const entry = {
+            type: event.type,
+            username: event.username || null,
+            userId: event.userId || null,
+            ip: toInet(ip),
+            subnet: toCidr(event.subnet || this.getSubnet(event.ip)),
+            fingerprintHash: event.fingerprintHash || null,
+            emailDomain: event.emailDomain || null,
+            outcome: event.outcome || 'allowed',
+            signals: event.signals || [],
+            scoreDelta: event.scoreDelta || 0,
+            createdAt: event.createdAt || new Date(),
+            createdBy: event.createdBy || null
+        };
+
+        try {
+            const rows = await this.db.query(
+                `INSERT INTO abuse_events (type, username, user_id, ip, subnet, fingerprint_hash, email_domain,
+                    outcome, signals, score_delta, created_at, created_by)
+                VALUES ($1, $2, (SELECT id FROM users WHERE id::text = $3::text), $4, network($5::inet),
+                    $6, $7, $8, $9, $10, $11, $12)
+                RETURNING id`,
+                [
+                    entry.type,
+                    entry.username,
+                    entry.userId,
+                    entry.ip,
+                    entry.subnet,
+                    entry.fingerprintHash,
+                    entry.emailDomain,
+                    entry.outcome,
+                    entry.signals,
+                    entry.scoreDelta,
+                    entry.createdAt,
+                    entry.createdBy
+                ]
+            );
+
+            return { ...entry, _id: String(rows[0].id) };
+        } catch (err) {
+            logger.error('Error adding abuse event %s %s', err, entry);
+            return undefined;
+        }
+    }
+
+    async cleanupOldRegistrationEvents() {
+        const retentionDays =
+            this.configService.getValue('registrationEventRetentionDays') ||
+            DefaultRegistrationEventRetentionDays;
+
+        try {
+            const rows = await this.db.query(
+                `WITH deleted AS (
+                    DELETE FROM abuse_events
+                    WHERE type IN ('registration_attempt', 'registration_preflight')
+                        AND created_at < now() - make_interval(days => $1)
+                    RETURNING 1
+                ) SELECT count(*) AS count FROM deleted`,
+                [retentionDays]
+            );
+
+            return rows[0].count;
+        } catch (err) {
+            logger.error('Error cleaning old registration events %s', err);
+            return 0;
+        }
+    }
+
+    async findRegistrationAttempts({ ip, subnet }) {
+        const signals = [ip && `ip:${ip}`, subnet && `subnet:${subnet}`].filter(Boolean);
+
+        if (signals.length === 0) {
+            return [];
+        }
+
+        try {
+            return await this.db.query(
+                `${SelectEvent}
+                WHERE type = 'registration_attempt' AND created_at >= $1
+                    AND (ip = $2::inet OR subnet = network($3::inet) OR signals && $4::text[])
+                ORDER BY created_at`,
+                [
+                    new Date(Date.now() - RegistrationAttemptWindowMs),
+                    toInet(ip),
+                    toCidr(subnet),
+                    signals
+                ]
+            );
+        } catch (err) {
+            logger.error('Error fetching abuse events %s', err);
+
+            return [];
+        }
+    }
+
+    async getRecentEventsForUser(user) {
+        try {
+            return await this.db.query(
+                `${SelectEvent} WHERE username = $1 OR user_id::text = $2::text ORDER BY created_at DESC LIMIT 20`,
+                [user.username, user._id ?? null]
+            );
+        } catch (err) {
+            logger.error('Error fetching abuse events for user %s %s', user.username, err);
+
+            return [];
+        }
+    }
+
+    async findLinkedUsers(criteria) {
+        try {
+            return await this.userService.findLinkedUsers(criteria);
+        } catch (err) {
+            logger.error('Error fetching users for abuse lookup %s', err);
+
+            return [];
+        }
+    }
+
+    async updateUserState(username, fields) {
+        return this.userService.updateUserFields({ username }, fields);
+    }
+
+    async updateUserStateById(userId, fields) {
+        return this.userService.updateUserFields({ id: userId }, fields);
+    }
+
+    async updateUserSessionMetadata(username, { ip, subnet }) {
+        return this.userService.updateUserFields(
+            { username },
+            {
+                lastLoginIp: this.normalizeIp(ip),
+                lastLoginSubnet: subnet || this.getSubnet(ip)
+            }
+        );
+    }
+
+    async applyClusterBan(user, fields) {
+        await this.userService.updateUserFields({ username: user.username }, fields);
+        await this.userService.clearUserSessions(user.username);
     }
 }
 

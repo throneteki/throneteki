@@ -1,32 +1,33 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheQueenOfThorns extends DrawCard {
+    // The Queen of Thorns (01186)
+    // Reaction: After you win an [intrigue] challenge in which The Queen of Thorns is
+    // participating, put a [tyrell] character with printed cost 6 or lower into play from your
+    // hand.
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.isParticipating() &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isParticipating() &&
                     event.challenge.challengeType === 'intrigue'
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'hand' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.getPrintedCost() <= 6 &&
                     card.getType() === 'character' &&
                     card.isFaction('tyrell') &&
-                    this.controller.canPutIntoPlay(card)
+                    context.source.controller.canPutIntoPlay(card)
             },
-            handler: (context) => {
-                this.controller.putIntoPlay(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to put {2} in play from their hand',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to put {target} in play from their hand',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 }

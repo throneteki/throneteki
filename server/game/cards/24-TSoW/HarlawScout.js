@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class HarlawScout extends DrawCard {
+    // Harlaw Scout (24005)
+    // Shadow (1).
+    // Reaction: After an opponent discards 1 or more cards for reserve, gain 1 gold. (Limit twice
+    // per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
@@ -10,7 +14,8 @@ class HarlawScout extends DrawCard {
                         controller: event.cardStateWhenDiscarded.controller,
                         source: event.source
                     }),
-                    condition: (aggregate) => aggregate.source === 'reserve'
+                    condition: (aggregate, events, context) =>
+                        aggregate.source === 'reserve' && aggregate.controller !== context.player
                 }
             },
             limit: ability.limit.perRound(2),

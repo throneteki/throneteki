@@ -4,15 +4,15 @@ import fs from 'fs';
 
 import { mkdirp } from 'mkdirp';
 import path from 'path';
+import db from '../../db/index.js';
 import ServiceFactory from '../../services/ServiceFactory.js';
 
 class CardImport {
-    constructor(db, dataSource, imageSource, imageDir) {
-        this.db = db;
+    constructor(dataSource, imageSource, imageDir) {
         this.dataSource = dataSource;
         this.imageSource = imageSource;
         this.imageDir = imageDir;
-        this.cardService = ServiceFactory.cardService(db);
+        this.cardService = ServiceFactory.cardService();
     }
 
     async import() {
@@ -21,7 +21,7 @@ class CardImport {
         } catch (e) {
             console.log('Unable to fetch data', e);
         } finally {
-            this.db.close();
+            await db.shutdown();
         }
     }
 

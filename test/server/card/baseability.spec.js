@@ -3,7 +3,7 @@ import BaseAbility from '../../../server/game/baseability.js';
 describe('BaseAbility', function () {
     beforeEach(function () {
         this.properties = {};
-        this.gameSpy = jasmine.createSpyObj('game', ['popAbilityContext', 'pushAbilityContext']);
+        this.gameSpy = { popAbilityContext: vi.fn(), pushAbilityContext: vi.fn() };
     });
 
     describe('constructor', function () {
@@ -67,7 +67,7 @@ describe('BaseAbility', function () {
 
                 it('should set the target sub-property of targets', function () {
                     expect(this.ability.targets).toEqual([
-                        jasmine.objectContaining({ name: 'target' })
+                        expect.objectContaining({ name: 'target' })
                     ]);
                 });
             });
@@ -82,8 +82,8 @@ describe('BaseAbility', function () {
 
                 it('should set all targets', function () {
                     expect(this.ability.targets).toEqual([
-                        jasmine.objectContaining({ name: 'toKill' }),
-                        jasmine.objectContaining({ name: 'toSave' })
+                        expect.objectContaining({ name: 'toKill' }),
+                        expect.objectContaining({ name: 'toSave' })
                     ]);
                 });
             });
@@ -92,8 +92,8 @@ describe('BaseAbility', function () {
 
     describe('canPayCosts()', function () {
         beforeEach(function () {
-            this.cost1 = jasmine.createSpyObj('cost1', ['canPay']);
-            this.cost2 = jasmine.createSpyObj('cost1', ['canPay']);
+            this.cost1 = { canPay: vi.fn() };
+            this.cost2 = { canPay: vi.fn() };
             this.ability = new BaseAbility(this.properties);
             this.ability.cost = [this.cost1, this.cost2];
             this.context = { context: 1, game: this.gameSpy };
@@ -101,8 +101,8 @@ describe('BaseAbility', function () {
 
         describe('when all costs can be paid', function () {
             beforeEach(function () {
-                this.cost1.canPay.and.returnValue(true);
-                this.cost2.canPay.and.returnValue(true);
+                this.cost1.canPay.mockReturnValue(true);
+                this.cost2.canPay.mockReturnValue(true);
             });
 
             it('should call canPay with the context object', function () {
@@ -118,8 +118,8 @@ describe('BaseAbility', function () {
 
         describe('when any cost cannot be paid', function () {
             beforeEach(function () {
-                this.cost1.canPay.and.returnValue(true);
-                this.cost2.canPay.and.returnValue(false);
+                this.cost1.canPay.mockReturnValue(true);
+                this.cost2.canPay.mockReturnValue(false);
             });
 
             it('should return false', function () {
@@ -130,8 +130,8 @@ describe('BaseAbility', function () {
 
     describe('resolveCosts()', function () {
         beforeEach(function () {
-            this.noResolveCost = jasmine.createSpyObj('cost1', ['canPay']);
-            this.resolveCost = jasmine.createSpyObj('cost2', ['canPay', 'resolve']);
+            this.noResolveCost = { canPay: vi.fn() };
+            this.resolveCost = { canPay: vi.fn(), resolve: vi.fn() };
             this.ability = new BaseAbility(this.properties);
 
             this.context = { context: 1 };
@@ -140,7 +140,7 @@ describe('BaseAbility', function () {
         describe('when the cost does not have a resolve method', function () {
             beforeEach(function () {
                 this.ability.cost = [this.noResolveCost];
-                this.noResolveCost.canPay.and.returnValue('value1');
+                this.noResolveCost.canPay.mockReturnValue('value1');
 
                 this.results = this.ability.resolveCosts(this.context);
             });
@@ -157,7 +157,7 @@ describe('BaseAbility', function () {
         describe('when the cost has a resolve method', function () {
             beforeEach(function () {
                 this.ability.cost = [this.resolveCost];
-                this.resolveCost.resolve.and.returnValue({ resolved: false });
+                this.resolveCost.resolve.mockReturnValue({ resolved: false });
 
                 this.results = this.ability.resolveCosts(this.context);
             });
@@ -178,8 +178,8 @@ describe('BaseAbility', function () {
 
     describe('payCosts()', function () {
         beforeEach(function () {
-            this.cost1 = jasmine.createSpyObj('cost1', ['pay']);
-            this.cost2 = jasmine.createSpyObj('cost1', ['pay']);
+            this.cost1 = { pay: vi.fn() };
+            this.cost2 = { pay: vi.fn() };
             this.ability = new BaseAbility(this.properties);
             this.ability.cost = [this.cost1, this.cost2];
             this.context = { context: 1 };
@@ -194,23 +194,23 @@ describe('BaseAbility', function () {
 
     describe('canResolveTargets()', function () {
         beforeEach(function () {
-            this.cardCondition = jasmine.createSpy('cardCondition');
+            this.cardCondition = vi.fn();
             this.properties.target = { cardCondition: this.cardCondition };
             this.ability = new BaseAbility(this.properties);
 
-            this.card1 = jasmine.createSpyObj('card', ['allowGameAction', 'getType']);
-            this.card1.allowGameAction.and.returnValue(true);
-            this.card1.getType.and.returnValue('character');
-            this.card2 = jasmine.createSpyObj('card', ['allowGameAction', 'getType']);
-            this.card2.allowGameAction.and.returnValue(true);
-            this.card2.getType.and.returnValue('location');
+            this.card1 = { allowGameAction: vi.fn(), getType: vi.fn() };
+            this.card1.allowGameAction.mockReturnValue(true);
+            this.card1.getType.mockReturnValue('character');
+            this.card2 = { allowGameAction: vi.fn(), getType: vi.fn() };
+            this.card2.allowGameAction.mockReturnValue(true);
+            this.card2.getType.mockReturnValue('location');
             this.gameSpy.allCards = [this.card1, this.card2];
             this.context = { game: this.gameSpy };
         });
 
         describe('when there is a non-draw card', function () {
             beforeEach(function () {
-                this.card1.getType.and.returnValue('plot');
+                this.card1.getType.mockReturnValue('plot');
 
                 this.ability.canResolveTargets(this.context);
             });
@@ -223,7 +223,7 @@ describe('BaseAbility', function () {
 
         describe('when there is at least 1 matching card', function () {
             beforeEach(function () {
-                this.cardCondition.and.callFake((card) => card === this.card2);
+                this.cardCondition.mockImplementation((card) => card === this.card2);
             });
 
             it('should return true', function () {
@@ -233,7 +233,7 @@ describe('BaseAbility', function () {
 
         describe('when there are no matching cards', function () {
             beforeEach(function () {
-                this.cardCondition.and.returnValue(false);
+                this.cardCondition.mockReturnValue(false);
             });
 
             it('should return false', function () {
@@ -244,12 +244,13 @@ describe('BaseAbility', function () {
 
     describe('resolveTargets()', function () {
         beforeEach(function () {
-            this.gameSpy = jasmine.createSpyObj('game', [
-                'queueSimpleStep',
-                'promptForSelect',
-                'addAlert'
-            ]);
-            this.gameSpy.queueSimpleStep.and.callFake((func) => func());
+            this.gameSpy = {
+                queueSimpleStep: vi.fn(),
+                promptForSelect: vi.fn(),
+                addAlert: vi.fn(),
+                manualMode: { enabled: true }
+            };
+            this.gameSpy.queueSimpleStep.mockImplementation((func) => func());
             this.gameSpy.allCards = [];
             this.player = { player: 1 };
             this.source = { source: 1 };
@@ -265,8 +266,8 @@ describe('BaseAbility', function () {
 
         it('should return target results for each target', function () {
             expect(this.ability.resolveTargets(this.context)).toEqual([
-                jasmine.objectContaining({ resolved: false, name: 'target1', value: null }),
-                jasmine.objectContaining({ resolved: false, name: 'target2', value: null })
+                expect.objectContaining({ resolved: false, name: 'target1', value: null }),
+                expect.objectContaining({ resolved: false, name: 'target2', value: null })
             ]);
         });
 
@@ -274,23 +275,23 @@ describe('BaseAbility', function () {
             this.ability.resolveTargets(this.context);
             expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(
                 this.player,
-                jasmine.objectContaining({
+                expect.objectContaining({
                     source: this.source,
                     target: 1,
-                    onSelect: jasmine.any(Function),
-                    onCancel: jasmine.any(Function),
-                    selector: jasmine.any(Object),
+                    onSelect: expect.any(Function),
+                    onCancel: expect.any(Function),
+                    selector: expect.any(Object),
                     context: this.context
                 })
             );
             expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(
                 this.player,
-                jasmine.objectContaining({
+                expect.objectContaining({
                     source: this.source,
                     target: 2,
-                    onSelect: jasmine.any(Function),
-                    onCancel: jasmine.any(Function),
-                    selector: jasmine.any(Object),
+                    onSelect: expect.any(Function),
+                    onCancel: expect.any(Function),
+                    selector: expect.any(Object),
                     context: this.context
                 })
             );
@@ -300,8 +301,8 @@ describe('BaseAbility', function () {
             beforeEach(function () {
                 var results = this.ability.resolveTargets(this.context);
                 this.lastResult = results[1];
-                var call = this.gameSpy.promptForSelect.calls.mostRecent();
-                this.lastPromptProperties = call.args[1];
+                var call = this.gameSpy.promptForSelect.mock.lastCall;
+                this.lastPromptProperties = call[1];
             });
 
             describe('when a card is selected', function () {

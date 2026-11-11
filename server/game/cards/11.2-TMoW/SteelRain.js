@@ -4,6 +4,11 @@ import { availableToPair } from '../../../Array.js';
 import TextHelper from '../../TextHelper.js';
 
 class SteelRain extends DrawCard {
+    // "Steel Rain" (11032)
+    // Shadow (2).
+    // Action: Sacrifice any number of [greyjoy] locations. For each location sacrificed, search
+    // your deck for a different [greyjoy] location with equal or lower printed cost and put it into
+    // play. Shuffle your deck.
     setupCardAbilities(ability) {
         this.action({
             title: 'Search deck for GJ locations',
@@ -29,8 +34,11 @@ class SteelRain extends DrawCard {
                         availableToPair(
                             context.costs.sacrifice || [],
                             context.selectedCards,
-                            (sacrificed, card) => this.isSelectableLocationFor(sacrificed, card)
-                        ).some((available) => this.isSelectableLocationFor(available, card))
+                            (sacrificed, card) =>
+                                context.source.isSelectableLocationFor(sacrificed, card)
+                        ).some((available) =>
+                            context.source.isSelectableLocationFor(available, card)
+                        )
                 },
                 reveal: false,
                 message: '{player} puts {searchTarget} into play from their draw deck',

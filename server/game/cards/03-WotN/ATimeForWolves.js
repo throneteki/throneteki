@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class ATimeForWolves extends PlotCard {
+    // A Time For Wolves (03046)
+    // When Revealed: Search your deck for a Direwolf card, reveal it, and add it to your hand. If
+    // that card's printed cost is 3 or lower, you may put it into play instead. Shuffle your deck.
     setupCardAbilities() {
         this.whenRevealed({
             message: '{player} uses {source} to search their deck for a Direwolf card',

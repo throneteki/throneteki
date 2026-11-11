@@ -2,13 +2,18 @@ import AmbushCardAction from '../../../server/game/PlayActions/AmbushCardAction.
 
 describe('AmbushCardAction', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'on', 'removeListener']);
-        this.playerSpy = jasmine.createSpyObj('player', [
-            'canPutIntoPlay',
-            'isCardInPlayableLocation',
-            'putIntoPlay'
-        ]);
-        this.cardSpy = jasmine.createSpyObj('card', ['getType', 'isAmbush']);
+        this.gameSpy = {
+            addMessage: vi.fn(),
+            getActionTimingRequirement: vi.fn(),
+            on: vi.fn(),
+            removeListener: vi.fn()
+        };
+        this.playerSpy = {
+            canPutIntoPlay: vi.fn(),
+            isCardInPlayableLocation: vi.fn(),
+            putIntoPlay: vi.fn()
+        };
+        this.cardSpy = { getType: vi.fn(), isAmbush: vi.fn() };
         this.context = {
             costs: {},
             game: this.gameSpy,
@@ -21,10 +26,10 @@ describe('AmbushCardAction', function () {
     describe('meetsRequirements()', function () {
         beforeEach(function () {
             this.gameSpy.currentPhase = 'challenge';
-            this.playerSpy.isCardInPlayableLocation.and.returnValue(true);
-            this.playerSpy.canPutIntoPlay.and.returnValue(true);
-            this.cardSpy.getType.and.returnValue('character');
-            this.cardSpy.isAmbush.and.returnValue(true);
+            this.playerSpy.isCardInPlayableLocation.mockReturnValue(true);
+            this.playerSpy.canPutIntoPlay.mockReturnValue(true);
+            this.cardSpy.getType.mockReturnValue('character');
+            this.cardSpy.isAmbush.mockReturnValue(true);
         });
 
         describe('when all conditions are met', function () {
@@ -45,7 +50,7 @@ describe('AmbushCardAction', function () {
 
         describe('when the card is not in a playable location', function () {
             beforeEach(function () {
-                this.playerSpy.isCardInPlayableLocation.and.returnValue(false);
+                this.playerSpy.isCardInPlayableLocation.mockReturnValue(false);
             });
 
             it('should return false', function () {
@@ -55,7 +60,7 @@ describe('AmbushCardAction', function () {
 
         describe('when the card is an event', function () {
             beforeEach(function () {
-                this.cardSpy.getType.and.returnValue('event');
+                this.cardSpy.getType.mockReturnValue('event');
             });
 
             it('should return false', function () {
@@ -65,7 +70,7 @@ describe('AmbushCardAction', function () {
 
         describe('when the card is not an ambushable card', function () {
             beforeEach(function () {
-                this.cardSpy.isAmbush.and.returnValue(false);
+                this.cardSpy.isAmbush.mockReturnValue(false);
             });
 
             it('should return false', function () {
@@ -75,7 +80,7 @@ describe('AmbushCardAction', function () {
 
         describe('when the card cannot be put into play', function () {
             beforeEach(function () {
-                this.playerSpy.canPutIntoPlay.and.returnValue(false);
+                this.playerSpy.canPutIntoPlay.mockReturnValue(false);
             });
 
             it('should return false', function () {

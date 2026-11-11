@@ -2,6 +2,8 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class TheDefianceOfDuskendale extends PlotCard {
+    // The Defiance of Duskendale (23038)
+    // Reaction: After a location is knelt by assault, discard it from play.
     setupCardAbilities() {
         this.reaction({
             when: {

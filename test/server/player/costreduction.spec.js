@@ -2,33 +2,33 @@ import Player from '../../../server/game/player.js';
 
 describe('Player', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['drop']);
+        this.gameSpy = { drop: vi.fn() };
 
         this.player = new Player('1', { username: 'Test 1', settings: {} }, true, this.gameSpy);
 
-        this.reducerSpy = jasmine.createSpyObj('reducer', [
-            'canReduce',
-            'getAmount',
-            'markUsed',
-            'isExpired',
-            'unregisterEvents'
-        ]);
-        this.reducerSpy.getAmount.and.returnValue(1);
-        this.reducer2Spy = jasmine.createSpyObj('reducer2', [
-            'canReduce',
-            'getAmount',
-            'markUsed',
-            'isExpired',
-            'unregisterEvents'
-        ]);
-        this.cardSpy = jasmine.createSpyObj('card', ['getCost', 'getMinCost', 'getAmbushCost']);
+        this.reducerSpy = {
+            canReduce: vi.fn(),
+            getAmount: vi.fn(),
+            markUsed: vi.fn(),
+            isExpired: vi.fn(),
+            unregisterEvents: vi.fn()
+        };
+        this.reducerSpy.getAmount.mockReturnValue(1);
+        this.reducer2Spy = {
+            canReduce: vi.fn(),
+            getAmount: vi.fn(),
+            markUsed: vi.fn(),
+            isExpired: vi.fn(),
+            unregisterEvents: vi.fn()
+        };
+        this.cardSpy = { getCost: vi.fn(), getMinCost: vi.fn(), getAmbushCost: vi.fn() };
     });
 
     describe('markUsedReducers()', function () {
         beforeEach(function () {
             this.player.addCostReducer(this.reducerSpy);
             this.player.addCostReducer(this.reducer2Spy);
-            this.reducerSpy.canReduce.and.returnValue(true);
+            this.reducerSpy.canReduce.mockReturnValue(true);
             this.player.markUsedReducers('marshal', this.cardSpy);
         });
 
@@ -44,8 +44,8 @@ describe('Player', function () {
 
         describe('when marking the reducer as used causes it to expire', function () {
             beforeEach(function () {
-                this.reducerSpy.markUsed.and.callFake(() => {
-                    this.reducerSpy.isExpired.and.returnValue(true);
+                this.reducerSpy.markUsed.mockImplementation(() => {
+                    this.reducerSpy.isExpired.mockReturnValue(true);
                 });
                 this.player.markUsedReducers('marshal', this.cardSpy);
             });

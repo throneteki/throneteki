@@ -2,17 +2,17 @@ import CostReducer from '../../server/game/costreducer.js';
 
 describe('CostReducer', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['on', 'removeListener']);
+        this.gameSpy = { on: vi.fn(), removeListener: vi.fn() };
         this.source = {};
-        this.limitSpy = jasmine.createSpyObj('limit', [
-            'increment',
-            'isAtMax',
-            'isRepeatable',
-            'registerEvents',
-            'unregisterEvents'
-        ]);
+        this.limitSpy = {
+            increment: vi.fn(),
+            isAtMax: vi.fn(),
+            isRepeatable: vi.fn(),
+            registerEvents: vi.fn(),
+            unregisterEvents: vi.fn()
+        };
         this.properties = {
-            match: jasmine.createSpy('match')
+            match: vi.fn()
         };
     });
 
@@ -53,10 +53,10 @@ describe('CostReducer', function () {
     describe('canReduce()', function () {
         beforeEach(function () {
             this.card = {};
-            this.properties.match.and.returnValue(true);
+            this.properties.match.mockReturnValue(true);
             this.properties.playingTypes = ['marshal', 'ambush'];
             this.properties.limit = this.limitSpy;
-            this.limitSpy.isAtMax.and.returnValue(false);
+            this.limitSpy.isAtMax.mockReturnValue(false);
             this.reducer = new CostReducer(this.gameSpy, this.source, this.properties);
         });
 
@@ -68,7 +68,7 @@ describe('CostReducer', function () {
 
         describe('when the limit has been reached', function () {
             beforeEach(function () {
-                this.limitSpy.isAtMax.and.returnValue(true);
+                this.limitSpy.isAtMax.mockReturnValue(true);
             });
 
             it('should return false', function () {
@@ -84,7 +84,7 @@ describe('CostReducer', function () {
 
         describe('when the card fails the match function', function () {
             beforeEach(function () {
-                this.properties.match.and.returnValue(false);
+                this.properties.match.mockReturnValue(false);
             });
 
             it('should return false', function () {
@@ -155,32 +155,32 @@ describe('CostReducer', function () {
 
             describe('and the limit is not repeatable', function () {
                 beforeEach(function () {
-                    this.limitSpy.isRepeatable.and.returnValue(false);
+                    this.limitSpy.isRepeatable.mockReturnValue(false);
                 });
 
                 it('should return false when below the limit', function () {
-                    this.limitSpy.isAtMax.and.returnValue(false);
+                    this.limitSpy.isAtMax.mockReturnValue(false);
                     expect(this.reducer.isExpired()).toBe(false);
                 });
 
                 it('should return true when the limit has been reached', function () {
-                    this.limitSpy.isAtMax.and.returnValue(true);
+                    this.limitSpy.isAtMax.mockReturnValue(true);
                     expect(this.reducer.isExpired()).toBe(true);
                 });
             });
 
             describe('and the limit is repeatable', function () {
                 beforeEach(function () {
-                    this.limitSpy.isRepeatable.and.returnValue(true);
+                    this.limitSpy.isRepeatable.mockReturnValue(true);
                 });
 
                 it('should return false when below the limit', function () {
-                    this.limitSpy.isAtMax.and.returnValue(false);
+                    this.limitSpy.isAtMax.mockReturnValue(false);
                     expect(this.reducer.isExpired()).toBe(false);
                 });
 
                 it('should return false even when the limit has been reached', function () {
-                    this.limitSpy.isAtMax.and.returnValue(true);
+                    this.limitSpy.isAtMax.mockReturnValue(true);
                     expect(this.reducer.isExpired()).toBe(false);
                 });
             });

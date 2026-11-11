@@ -1,20 +1,23 @@
 import sample from 'lodash.sample';
 import Phase from './phase.js';
 import SimpleStep from './simplestep.js';
+import ChooseResolutionOrder from './ChooseResolutionOrder.js';
 import KeepOrMulliganPrompt from './setup/keepormulliganprompt.js';
 import SetupCardsPrompt from './setup/setupcardsprompt.js';
 import CheckAttachmentsPrompt from './setup/checkattachmentsprompt.js';
-import TextHelper from '../TextHelper.js';
+import RevealSetupCards from '../GameActions/RevealSetupCards.js';
+import FinishSetup from '../GameActions/FinishSetup.js';
 import { StartingHandSize } from '../Constants/index.js';
 
 class SetupPhase extends Phase {
     constructor(game) {
         super(game, 'setup');
         this.initialise([
+            new SimpleStep(game, () => this.randomFirstPlayer()),
             new SimpleStep(game, () => this.announceFactionAndAgenda()),
             new SimpleStep(game, () => this.prepareDecks()),
-            new SimpleStep(game, () => this.randomFirstPlayer()),
             new SimpleStep(game, () => this.turnOnEffects()),
+            new SimpleStep(game, () => this.resolveAgendaSetupAbilities()),
             new SimpleStep(game, () => this.drawSetupHand()),
             new KeepOrMulliganPrompt(game),
             new SimpleStep(game, () => this.startGame()),
@@ -28,7 +31,7 @@ class SetupPhase extends Phase {
     }
 
     announceFactionAndAgenda() {
-        for (const player of this.game.getPlayers()) {
+        for (const player of this.game.getPlayersInFirstPlayerOrder()) {
             player.createFactionAndAgendas();
             this.game.addMessage(
                 '{0} announces they are playing as {1} with {2}',
@@ -44,6 +47,7 @@ class SetupPhase extends Phase {
             player.prepareDecks();
         }
         this.game.gatherAllCards();
+        this.game.manualMode.decideAtStart();
         this.game.raiseEvent('onDecksPrepared');
     }
 
@@ -63,6 +67,25 @@ class SetupPhase extends Phase {
         }
     }
 
+    resolveAgendaSetupAbilities() {
+        const abilities = this.game
+            .getPlayers()
+            .flatMap((player) => player.agendas || [])
+            .flatMap((agenda) => agenda.abilities.agendaSetup);
+
+        this.game.queueStep(
+            new ChooseResolutionOrder(
+                this.game,
+                abilities.map((ability) => ({
+                    player: ability.card.controller,
+                    source: ability.card,
+                    canResolve: () => ability.canResolve(ability.createContext()),
+                    resolve: () => this.game.resolveAbility(ability, ability.createContext())
+                }))
+            )
+        );
+    }
+
     drawSetupHand() {
         for (const player of this.game.getPlayers()) {
             player.drawCardsToHand(StartingHandSize);
@@ -77,21 +100,7 @@ class SetupPhase extends Phase {
     }
 
     announceSetupCards() {
-        for (const player of this.game.getPlayers()) {
-            let cardsInShadow = player.shadows.length;
-            let cards = [...player.cardsInPlay];
-            player.flipSetupCardsFaceUp();
-
-            if (cardsInShadow > 0) {
-                cards.push(`${TextHelper.count(cardsInShadow, 'card')} into shadows`);
-            }
-
-            if (cards.length === 0) {
-                this.game.addMessage('{0} does not set up any cards', player);
-            } else {
-                this.game.addMessage('{0} sets up {1}', player, cards);
-            }
-        }
+        this.game.resolveGameAction(RevealSetupCards, { game: this.game });
     }
 
     setupDone() {
@@ -102,9 +111,8 @@ class SetupPhase extends Phase {
             }
 
             this.game.returnGoldToTreasury({ player: player, amount: player.gold });
-            player.revealSetupCards();
         }
-        this.game.raiseEvent('onSetupFinished');
+        this.game.resolveGameAction(FinishSetup, { game: this.game });
     }
 }
 

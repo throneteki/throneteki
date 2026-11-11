@@ -21,7 +21,6 @@ const CardTiledList = ({
     numColumns,
     numRows,
     onCardClick,
-    onMenuItemClick,
     size,
     source,
     title,
@@ -39,7 +38,6 @@ const CardTiledList = ({
                         disableHover={disableHover}
                         key={card.uuid}
                         onClick={onCardClick}
-                        onMenuItemClick={onMenuItemClick}
                         orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}
                         size={size}
                         source={source}
@@ -49,7 +47,7 @@ const CardTiledList = ({
         ) : (
             <div className={cardClass(size)}></div>
         );
-    }, [cards, disableHover, onCardClick, onMenuItemClick, showCards, size, source]);
+    }, [cards, disableHover, onCardClick, showCards, size, source]);
 
     const titleText = title && cards ? `${title} (${titleCount || cards.length})` : title;
 

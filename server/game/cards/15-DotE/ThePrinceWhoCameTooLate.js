@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ThePrinceWhoCameTooLate extends PlotCard {
+    // The Prince Who Came Too Late (15052)
+    // Standing Action: Search your deck for a character and put it into play. Shuffle your deck.
+    // (Limit once per round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Search your deck',

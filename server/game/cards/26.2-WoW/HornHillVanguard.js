@@ -1,12 +1,16 @@
 import DrawCard from '../../drawcard.js';
 
 class HornHillVanguard extends DrawCard {
+    // Horn Hill Vanguard (26035)
+    // Assault. Intimidate. No attachments.
+    // While Horn Hill Vanguard is attacking, it gets +1 STR for each standing [tyrell] character
+    // you control.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.isAttacking(),
+            condition: (context) => context.source.isAttacking(),
             match: this,
-            effect: ability.effects.dynamicStrength(() =>
-                this.controller.getNumberOfCardsInPlay({
+            effect: ability.effects.dynamicStrength((card, context) =>
+                context.source.controller.getNumberOfCardsInPlay({
                     faction: 'tyrell',
                     type: 'character',
                     kneeled: false

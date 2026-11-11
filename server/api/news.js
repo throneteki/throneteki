@@ -1,10 +1,10 @@
 import passport from 'passport';
-import NewsService from '../services/NewsService.js';
 import logger from '../log.js';
 import { wrapAsync } from '../util.js';
+import ServiceFactory from '../services/ServiceFactory.js';
 
-export const init = function (server, options) {
-    let newsService = new NewsService(options.db);
+export const init = function (server) {
+    let newsService = ServiceFactory.newsService();
 
     server.get('/api/news', function (_, res) {
         newsService

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LeftHandLew extends DrawCard {
+    // Left Hand Lew (19009)
+    // No attachments except Weapon.
+    // Action: Kneel Left Hand Lew to choose and stand a character owned by an opponent.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand character',
@@ -12,15 +16,8 @@ class LeftHandLew extends DrawCard {
                     card.kneeled &&
                     card.owner !== context.player
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.addMessage(
-                    '{0} kneels {1} to stand {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} kneels {source} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

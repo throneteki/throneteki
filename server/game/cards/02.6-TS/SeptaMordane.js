@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
 
 class SeptaMordane extends DrawCard {
+    // Septa Mordane (02101)
+    // While you control:
+    // - Sansa Stark, she gets +2 STR and gains renown.
+    // - Arya Stark, she gains an [intrigue] icon and "immune to opponents' plot effects."
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Sansa Stark',
@@ -12,7 +16,8 @@ class SeptaMordane extends DrawCard {
             effect: [
                 ability.effects.addIcon('intrigue'),
                 ability.effects.immuneTo(
-                    (card) => card.controller !== this.controller && card.getType() === 'plot'
+                    (card, arg, context) =>
+                        card.controller !== context.source.controller && card.getType() === 'plot'
                 )
             ]
         });

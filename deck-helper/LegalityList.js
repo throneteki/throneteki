@@ -15,13 +15,13 @@ class LegalityList {
 
         if (restrictedCardsOnList.length > 1) {
             errors.push(
-                `${this.rules.name} - Contains more than 1 card on the restricted list: ${restrictedCardsOnList.map((card) => card.name).join(', ')}`
+                `${this.rules.name} - Contains more than 1 card on the restricted list: ${restrictedCardsOnList.map((card) => card.label).join(', ')}`
             );
         }
 
         if (bannedCardsOnList.length > 0) {
             errors.push(
-                `${this.rules.name} - Contains cards on the banned list: ${bannedCardsOnList.map((card) => card.name).join(', ')}`
+                `${this.rules.name} - Contains cards on the banned list: ${bannedCardsOnList.map((card) => card.label).join(', ')}`
             );
         }
 
@@ -62,7 +62,7 @@ class LegalityList {
         const cardsOnList = cards.filter((card) => pod.cards.includes(card.code));
         if (cardsOnList.length > 0) {
             validation.errors.push(
-                `${this.rules.name} - Contains cards that cannot be used with "${restrictedCard.name}" from pod #${number}: ${cardsOnList.map((card) => card.name).join(', ')}`
+                `${this.rules.name} - Contains cards that cannot be used with "${restrictedCard.name}" from pod #${number}: ${cardsOnList.map((card) => card.label).join(', ')}`
             );
             validation.cards.push(...cardsOnList);
         }
@@ -79,7 +79,7 @@ class LegalityList {
         const cardsOnList = cards.filter((card) => pod.cards.includes(card.code));
         if (cardsOnList.length > 1) {
             validation.errors.push(
-                `${this.rules.name} - Contains multiple cards from pod #${number}: ${cardsOnList.map((card) => card.name).join(', ')}`
+                `${this.rules.name} - Contains multiple cards from pod #${number}: ${cardsOnList.map((card) => card.label).join(', ')}`
             );
             validation.cards.push(...cardsOnList);
         }

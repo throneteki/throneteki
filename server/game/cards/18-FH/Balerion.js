@@ -1,7 +1,12 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class Balerion extends DrawCard {
+    // Balerion (18018)
+    // Ambush (2). No attachments except Cat.
+    // Balerion cannot be killed.
+    // Action: Kneel Balerion to discard 1 gold from a card.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
@@ -14,15 +19,12 @@ class Balerion extends DrawCard {
                 activePromptTitle: 'Select a card',
                 cardCondition: (card) => card.hasToken(Tokens.gold)
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} kneels {1} to discard 1 gold from {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-                context.target.modifyToken(Tokens.gold, -1);
-            }
+            message: '{player} kneels {source} to discard 1 gold from {target}',
+            gameAction: GameActions.discardToken((context) => ({
+                card: context.target,
+                token: Tokens.gold,
+                amount: 1
+            }))
         });
     }
 }

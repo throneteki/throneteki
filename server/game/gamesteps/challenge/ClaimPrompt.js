@@ -10,7 +10,11 @@ class ClaimPrompt extends BaseStep {
     }
 
     continue() {
-        // TODO: Remove this prompt completely
+        if (!this.game.manualMode.enabled) {
+            this.applyClaim();
+            return;
+        }
+
         this.game.promptWithMenu(this.challenge.winner, this, {
             activePrompt: {
                 menuTitle: 'Perform before claim actions',

@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class LordProtectorOfTheVale extends DrawCard {
+    // Lord Protector of the Vale (23035)
+    // Lord character you control only.
+    // If attached character is Littlefinger, he gets +2 STR.
+    // Challenges Action: During a [power] challenge in which you control a participating House
+    // Arryn character, kneel Lord Protector of the Vale to have attached character contribute its
+    // STR to your side this challenge.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Lord', controller: 'current' });
 
@@ -14,10 +20,10 @@ class LordProtectorOfTheVale extends DrawCard {
             title: 'Contribute attached STR',
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
-            condition: () =>
-                this.game.isDuringChallenge() &&
-                this.game.currentChallenge.challengeType === 'power' &&
-                this.controller.anyCardsInPlay({
+            condition: (context) =>
+                context.game.isDuringChallenge() &&
+                context.game.currentChallenge.challengeType === 'power' &&
+                context.source.controller.anyCardsInPlay({
                     trait: 'House Arryn',
                     type: 'character',
                     participating: true
@@ -25,16 +31,15 @@ class LordProtectorOfTheVale extends DrawCard {
             message: {
                 format: "{player} kneels {source} to have {parent} contribute its STR (currently {str}) to {player}'s side of the challenge",
                 args: {
-                    parent: () => this.parent,
-                    str: () => this.parent.getStrength()
+                    parent: (context) => context.source.parent,
+                    str: (context) => context.source.parent.getStrength()
                 }
             },
-            gameAction: GameActions.genericHandler(() => {
-                this.untilEndOfChallenge((ability) => ({
-                    targetController: 'current',
-                    effect: ability.effects.contributeCharacterStrength(this.parent)
-                }));
-            })
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                targetController: 'current',
+                effect: ability.effects.contributeCharacterStrength(context.source.parent)
+            }))
         });
     }
 }

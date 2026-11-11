@@ -16,7 +16,8 @@ import { flatten } from '../Array.js';
  *                    corresponding values should be handler functions for those
  *                    events that return true when the effect should be
  *                    cancelled.
- * condition        - function that returns a boolean determining whether the
+ * condition        - function that takes the effect's context ({ game, source })
+ *                    and returns a boolean determining whether the
  *                    effect can be applied. Use with cards that have a
  *                    condition that must be met before applying a persistent
  *                    effect (e.g. "when there are more Summer plots revealed
@@ -34,8 +35,14 @@ import { flatten } from '../Array.js';
  */
 class Effect {
     constructor(game, source, properties) {
+        if (properties.duration?.startsWith('atEndOf')) {
+            throw new Error(
+                'Use GameActions.delayedEffect for actions at the end of a timing period'
+            );
+        }
         this.game = game;
         this.source = source;
+        this.copiedTextBoxId = properties.copiedTextBoxId;
         this.match = properties.match || (() => true);
         this.duration = properties.duration;
         this.until = properties.until || {};
@@ -49,7 +56,8 @@ class Effect {
         this.targets = [];
         this.appliedTargets = new Set();
         this.context = { game: game, source: source, effect: this };
-        this.active = !source.facedown;
+        this.active =
+            !source.facedown && !(this.duration === 'persistent' && source.isAnyBlank?.());
         this.isConditional =
             !!properties.condition ||
             (this.targetType === 'player' && typeof properties.match === 'function');
@@ -88,20 +96,18 @@ class Effect {
 
     hasEnded() {
         return (
-            this.duration === 'custom' && Object.keys(this.until).length === 0 && !this.condition()
+            this.duration === 'custom' &&
+            Object.keys(this.until).length === 0 &&
+            !this.condition(this.context)
         );
     }
 
     addTargets(targets) {
-        if (!this.active || !this.condition()) {
+        if (!this.active || !this.condition(this.context)) {
             return;
         }
 
-        if (
-            this.duration !== 'persistent' &&
-            typeof this.match !== 'function' &&
-            this.appliedInitialTargets
-        ) {
+        if (this.duration !== 'persistent' && !this.isConditional && this.appliedInitialTargets) {
             return;
         }
 
@@ -161,6 +167,10 @@ class Effect {
             return false;
         }
 
+        return this.passesTargetController(target);
+    }
+
+    passesTargetController(target) {
         if (this.targetType === 'card') {
             if (this.targetController === 'current') {
                 return target.controller === this.source.controller;
@@ -184,6 +194,16 @@ class Effect {
         }
 
         return true;
+    }
+
+    targetLeftPlay(target) {
+        if (!target.getGameElementType || target.getGameElementType() !== 'card') {
+            return false;
+        }
+
+        return (
+            !this.targetLocation.includes('any') && !this.targetLocation.includes(target.location)
+        );
     }
 
     removeTarget(card) {
@@ -231,12 +251,19 @@ class Effect {
     }
 
     clearInvalidTargets() {
-        if (!this.condition()) {
+        if (!this.condition(this.context)) {
             this.cancel();
             return;
         }
 
-        for (let target of this.targets) {
+        for (let target of [...this.targets]) {
+            if (this.duration !== 'persistent') {
+                if (this.targetLeftPlay(target)) {
+                    this.removeTarget(target);
+                }
+                continue;
+            }
+
             if (!this.isValidTarget(target)) {
                 this.removeTarget(target);
             }
@@ -270,7 +297,7 @@ class Effect {
         }
 
         if (this.isConditional) {
-            let newCondition = this.condition();
+            let newCondition = this.condition(this.context);
 
             if (!newCondition) {
                 this.cancel();
@@ -303,10 +330,6 @@ class Effect {
             this.effect.unapply(target, this.context);
             this.effect.apply(target, this.context);
         };
-    }
-
-    get order() {
-        return this.effect.order || 0;
     }
 }
 

@@ -1,6 +1,10 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheStranger extends PlotCard {
+    // The Stranger (20059)
+    // When Revealed: Each player chooses a character controlled by an opponent. Then, kill each
+    // character with the same printed cost as the chosen characters.
     setupCardAbilities() {
         this.whenRevealed({
             target: {
@@ -10,25 +14,23 @@ class TheStranger extends PlotCard {
                     card.getType() === 'character' &&
                     card.controller !== context.choosingPlayer
             },
-            handler: (context) => {
-                const uniqueCards = this.getChosenCards(context);
-                const printedCosts = uniqueCards.map((card) => card.getPrintedCost());
-                let characters = this.game.filterCardsInPlay(
-                    (card) =>
-                        printedCosts.includes(card.getPrintedCost()) &&
-                        card.getType() === 'character' &&
-                        card.hasPrintedCost()
-                );
-                this.game.killCharacters(characters);
-            }
+            message:
+                '{player} uses {source} to kill each character with the same printed cost as the chosen characters',
+            gameAction: GameActions.simultaneously((context) => {
+                const printedCosts = context.targets.selections
+                    .map((selection) => selection.value)
+                    .filter((card) => !!card)
+                    .map((card) => card.getPrintedCost());
+                return context.game
+                    .filterCardsInPlay(
+                        (card) =>
+                            card.getType() === 'character' &&
+                            card.hasPrintedCost() &&
+                            printedCosts.includes(card.getPrintedCost())
+                    )
+                    .map((card) => GameActions.kill({ card }));
+            })
         });
-    }
-
-    getChosenCards(context) {
-        const cards = context.targets.selections
-            .map((selection) => selection.value)
-            .filter((card) => !!card);
-        return [...new Set(cards)];
     }
 }
 

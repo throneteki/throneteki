@@ -2,11 +2,17 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class HarrenhalCupbearer extends DrawCard {
+    // Harrenhal Cupbearer (26017)
+    // Shadow (3).
+    // Reaction: After you win a challenge in which Harrenhal Cupbearer is participating, return it
+    // to shadows to choose and kneel a character with printed cost 5 or lower controlled by the
+    // losing opponent.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller && this.isParticipating()
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isParticipating()
             },
             cost: ability.costs.putSelfIntoShadows(),
             target: {
@@ -17,12 +23,7 @@ class HarrenhalCupbearer extends DrawCard {
                     GameActions.kneelCard({ card }).allow()
             },
             message: '{player} returns {costs.putIntoShadows} to shadows to kneel {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.kneelCard((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target }))
         });
     }
 }

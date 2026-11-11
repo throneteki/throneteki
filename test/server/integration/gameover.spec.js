@@ -40,7 +40,7 @@ describe('Game Over', function () {
                     const deck = this.buildDeck('stark', [
                         'Valar Morghulis',
                         'A Game of Thrones',
-                        'Jon Arryn',
+                        'Jon Arryn (AHaH)',
                         { name: 'Hedge Knight', count: 59 }
                     ]);
                     this.player1.selectDeck(deck);
@@ -282,7 +282,7 @@ describe('Game Over', function () {
                     const deck = this.buildDeck('stark', [
                         'A Noble Cause',
                         'Valar Morghulis',
-                        'Jon Arryn',
+                        'Jon Arryn (AHaH)',
                         { name: 'Hedge Knight', count: 60 }
                     ]);
                     this.player1.selectDeck(deck);
@@ -380,7 +380,7 @@ describe('Game Over', function () {
                 beforeEach(function () {
                     const deck = this.buildDeck('stark', [
                         'A Noble Cause',
-                        { name: 'Oldtown', count: 10 }
+                        { name: 'Oldtown (JtO)', count: 10 }
                     ]);
                     this.player1.selectDeck(deck);
                     this.player2.selectDeck(deck);

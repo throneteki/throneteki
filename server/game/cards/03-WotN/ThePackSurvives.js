@@ -1,12 +1,17 @@
 import DrawCard from '../../drawcard.js';
+import Message from '../../Message.js';
+import GameActions from '../../GameActions/index.js';
 
 class ThePackSurvives extends DrawCard {
+    // The Pack Survives (03023)
+    // Interrupt: When the effects of an opponent's event would initiate, sacrifice a Direwolf card
+    // or kneel 2 [stark] characters to cancel those effects.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: (event) =>
-                    event.source.getType() === 'event' && event.player !== this.controller
+                onCardAbilityInitiated: (event, context) =>
+                    event.source.getType() === 'event' && event.player !== context.player
             },
             cost: ability.costs.choose({
                 'Sacrifice Direwolf': ability.costs.sacrifice((card) => card.hasTrait('Direwolf')),
@@ -15,27 +20,19 @@ class ThePackSurvives extends DrawCard {
                     (card) => card.isFaction('stark') && card.getType() === 'character'
                 )
             }),
-            handler: (context) => {
-                context.event.cancel();
-
-                if (context.costs.sacrifice) {
-                    this.game.addMessage(
-                        '{0} plays {1} and sacrifices {2} to cancel {3}',
-                        this.controller,
-                        this,
-                        context.costs.sacrifice,
-                        context.event.source
-                    );
-                } else {
-                    this.game.addMessage(
-                        '{0} plays {1} and kneels {2} to cancel {3}',
-                        this.controller,
-                        this,
-                        context.costs.kneel,
-                        context.event.source
-                    );
+            message: {
+                format: '{player} plays {source} and {cost} to cancel {eventSource}',
+                args: {
+                    cost: (context) =>
+                        context.costs.sacrifice
+                            ? Message.fragment('sacrifices {card}', {
+                                  card: context.costs.sacrifice
+                              })
+                            : Message.fragment('kneels {cards}', { cards: context.costs.kneel }),
+                    eventSource: (context) => context.event.source
                 }
-            }
+            },
+            gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
         });
     }
 }

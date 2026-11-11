@@ -5,6 +5,7 @@ import Panel from '../Site/Panel';
 const windows = [
     { name: 'plot', label: 'Plots revealed' },
     { name: 'draw', label: 'Draw phase' },
+    { name: 'marshal', label: 'Marshaling phase' },
     { name: 'challengeBegin', label: 'Before challenge' },
     { name: 'attackersDeclared', label: 'Attackers declared' },
     { name: 'defendersDeclared', label: 'Defenders declared' },

@@ -1,69 +1,61 @@
 describe('Missandei', function () {
-    integration(function () {
+    describe('when she is discarded from your hand', function () {
         beforeEach(function () {
-            const deck1 = this.buildDeck('targaryen', [
-                'A Noble Cause',
-                'Missandei',
-                'Missandei',
-                'Missandei',
-                'Missandei',
-                'Missandei',
-                'Missandei',
-                'Missandei',
-                'Missandei',
-                'Missandei',
-                'Missandei',
-                'Missandei',
-                'Missandei'
-            ]);
-            const deck2 = this.buildDeck('lannister', ['A Noble Cause', "Ser Gregor's Marauders"]);
+            this.setupTest({
+                phase: 'challenge',
+                firstPlayer: 'player2',
+                player1: {
+                    faction: 'targaryen',
+                    hand: ['Missandei']
+                },
+                player2: {
+                    inPlay: ["Ser Gregor's Marauders"]
+                }
+            });
 
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck2);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.opponentPillager = this.player2.findCardByName("Ser Gregor's Marauders", 'hand');
-
-            this.player2.clickCard(this.opponentPillager);
-
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player2);
-
-            this.completeMarshalPhase();
+            this.unopposedChallenge(this.player2, 'Intrigue', this.serGregorsMarauders);
         });
 
-        describe('when Missandei is discarded from hand', function () {
-            beforeEach(function () {
-                this.unopposedChallenge(this.player2, 'Intrigue', this.opponentPillager);
-                this.player2.clickPrompt('Apply Claim');
+        it('puts her into play instead', function () {
+            this.player1.triggerAbility(this.missandei);
 
-                this.player1.triggerAbility('Missandei');
-            });
-
-            it('should put her into play', function () {
-                let missandei = this.player1.findCardByName('Missandei', 'play area');
-                expect(!!missandei).toBe(true);
-            });
+            expect(this.missandei.location).toBe('play area');
+            expect(this.game.getPlainTextLog()).toContain(
+                'player1 uses Missandei to put Missandei into play instead of placing it in their discard pile'
+            );
+            expect(this.player2).isReadyToTakeAction();
         });
 
-        describe('when Missandei is discarded from deck', function () {
-            beforeEach(function () {
-                this.unopposedChallenge(this.player2, 'Military', this.opponentPillager);
-                this.player2.clickPrompt('Apply Claim');
+        it('can be declined', function () {
+            this.player1.clickPrompt('Pass');
 
-                // No characters to kill
-                this.player1.clickPrompt('Done');
+            expect(this.missandei.location).toBe('discard pile');
+            expect(this.player2).isReadyToTakeAction();
+        });
+    });
 
-                // Pillage occurs, which would discard Missandei from deck
-                this.player1.triggerAbility('Missandei');
+    describe('when she is discarded from your deck', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                firstPlayer: 'player2',
+                player1: {
+                    faction: 'targaryen',
+                    drawDeck: ['Missandei']
+                },
+                player2: {
+                    inPlay: ["Ser Gregor's Marauders"]
+                }
             });
 
-            it('should put her into play', function () {
-                let missandei = this.player1.findCardByName('Missandei', 'play area');
-                expect(!!missandei).toBe(true);
-            });
+            this.unopposedChallenge(this.player2, 'Military', this.serGregorsMarauders);
+        });
+
+        it('puts her into play instead', function () {
+            this.player1.triggerAbility(this.missandei);
+
+            expect(this.missandei.location).toBe('play area');
+            expect(this.player2).isReadyToTakeAction();
         });
     });
 });

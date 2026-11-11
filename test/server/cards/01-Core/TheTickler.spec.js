@@ -1,47 +1,53 @@
 describe('The Tickler', function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck1 = this.buildDeck('lannister', ['Sneak Attack', 'The Tickler']);
-            const deck2 = this.buildDeck('lannister', [
-                'Sneak Attack',
-                'The Roseroad',
-                'The Roseroad'
-            ]);
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck2);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.player1.togglePromptedActionWindow('dominance', true);
-
-            this.player1.clickCard('The Tickler', 'hand');
-            this.player2.clickCard('The Roseroad', 'hand');
-            this.completeSetup();
-            this.selectFirstPlayer(this.player1);
-
-            // Move remaining cards back to draw deck.
-            for (const card of this.player2Object.hand) {
-                this.player2Object.moveCard(card, 'draw deck');
+    function setup(context, copies = true) {
+        context.setupTest({
+            phase: 'challenge',
+            player1: { inPlay: ['The Tickler', ...(copies ? ['The Roseroad'] : [])] },
+            player2: {
+                inPlay: copies ? ['The Roseroad', 'Hedge Knight'] : ['Hedge Knight'],
+                drawDeck: ['The Roseroad', 'House Maester']
             }
-
-            this.completeMarshalPhase();
-            this.completeChallengesPhase();
-
-            this.roseroad = this.player2.findCardByName('The Roseroad', 'play area');
-
-            this.player1.clickMenu('The Tickler', 'Discard opponents top card');
         });
+        context.ownCopy = copies
+            ? context.player1.findCardByName('The Roseroad', 'play area')
+            : undefined;
+        context.enemyCopy = copies
+            ? context.player2.findCardByName('The Roseroad', 'play area')
+            : undefined;
+        context.topCard = context.player2.findCardByName('The Roseroad', 'draw deck');
+        context.player1.togglePromptedActionWindow('dominance', true);
+        context.completeChallengesPhase();
+        context.player1.clickCard(context.theTickler);
+    }
 
-        it('should discard the top card of the opponents deck', function () {
-            expect(this.player2Object.drawDeck.length).toBe(0);
-            expect(this.player2Object.discardPile.length).toBe(1);
-        });
+    it('discards the top card and allows a copy controlled by either player', function () {
+        setup(this);
+        expect(this.topCard.location).toBe('discard pile');
+        expect(this.theTickler.kneeled).toBe(true);
+        expect(this.player1).toBeAbleToSelect(this.ownCopy);
+        expect(this.player1).toBeAbleToSelect(this.enemyCopy);
+        expect(this.player1).not.toBeAbleToSelect(this.theTickler);
+        expect(this.player1).not.toBeAbleToSelect(this.hedgeKnight);
+        this.player1.clickCard(this.enemyCopy);
+        expect(this.enemyCopy.location).toBe('discard pile');
+        expect(this.ownCopy.location).toBe('play area');
+        expect(this.hedgeKnight.location).toBe('play area');
+        expect(this.player2).isReadyToTakeAction();
+    });
 
-        it('should allow the Tickler to discard a card of the same name in play', function () {
-            this.player1.clickCard(this.roseroad);
+    it('allows declining the optional discard from play', function () {
+        setup(this);
+        this.player1.clickPrompt('Done');
+        expect(this.topCard.location).toBe('discard pile');
+        expect(this.ownCopy.location).toBe('play area');
+        expect(this.enemyCopy.location).toBe('play area');
+        expect(this.player2).isReadyToTakeAction();
+    });
 
-            expect(this.player2Object.discardPile.length).toBe(2);
-            expect(this.roseroad.location).toBe('discard pile');
-        });
+    it('finishes without a selection when there is no copy in play', function () {
+        setup(this, false);
+        expect(this.topCard.location).toBe('discard pile');
+        expect(this.hedgeKnight.location).toBe('play area');
+        expect(this.player2).isReadyToTakeAction();
     });
 });

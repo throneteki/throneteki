@@ -1,76 +1,52 @@
 describe('The King in the North', function () {
-    integration(function () {
-        beforeEach(function () {
-            const deck = this.buildDeck('lannister', [
-                'The King in the North (R)',
-                'Renly Baratheon (FotS)',
-                'Dornish Fiefdom',
-                'Hedge Knight',
-                'Tithe',
-                'Old Forest Hunter'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.king = this.player1.findCardByName('Renly Baratheon', 'hand');
-            this.location = this.player1.findCardByName('Dornish Fiefdom', 'hand');
-            this.neutral = this.player1.findCardByName('Hedge Knight', 'hand');
-            this.event = this.player1.findCardByName('Tithe', 'hand');
-            this.nonKing = this.player1.findCardByName('Old Forest Hunter', 'hand');
-
-            this.player1.clickCard(this.location);
-            this.player1.clickCard(this.neutral);
-
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player1);
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                plot: 'The King in the North (R)',
+                hand: ['Tithe', 'Hedge Knight'],
+                inPlay: [
+                    'Old Forest Hunter',
+                    'Renly Baratheon (FotS)',
+                    'Dornish Fiefdom',
+                    'House Maester'
+                ]
+            },
+            player2: {
+                inPlay: ['Dornish Fiefdom']
+            }
         });
 
-        describe('when you trigger a location ability', function () {
-            beforeEach(function () {
-                this.player1.clickMenu(this.location, 'Gain gold');
-            });
+        this.player1Location = this.player1.findCardByName('Dornish Fiefdom');
+        this.player2Location = this.player2.findCardByName('Dornish Fiefdom');
+    });
 
-            it('should not resolve', function () {
-                expect(this.player1Object.gold).toBe(5);
-            });
-        });
+    it('stops abilities on characters, locations and attachments without the King or Queen trait', function () {
+        expect(this.player1.actionUnavailableReason(this.oldForestHunter)).toBe('cannotTrigger');
+        expect(this.player1.actionUnavailableReason(this.player1Location)).toBe('cannotTrigger');
+        expect(this.player1Object.gold).toBe(5);
 
-        describe('when you trigger an event ability', function () {
-            beforeEach(function () {
-                this.player1.clickCard(this.event);
-                this.player1.clickCard(this.neutral);
-            });
+        this.player1.clickPrompt('Done');
 
-            it('should resolve as usual', function () {
-                expect(this.player1Object.gold).toBe(7);
-            });
-        });
+        expect(this.player2.actionUnavailableReason(this.player2Location)).toBe('cannotTrigger');
+        expect(this.player2).isReadyToTakeAction();
+    });
 
-        describe('when you trigger a non-king/queen character ability', function () {
-            beforeEach(function () {
-                this.player1.clickCard(this.nonKing);
-                this.player1.clickMenu(this.nonKing, 'Discard a card to gain 1 gold');
-            });
+    it('does not stop an event', function () {
+        this.player1.clickCard(this.tithe);
+        this.player1.clickCard(this.houseMaester);
 
-            it('should not resolve', function () {
-                expect(this.player1).toHavePrompt('Marshal your cards');
-                expect(this.player1Object.gold).toBe(3);
-            });
-        });
+        expect(this.houseMaester.kneeled).toBe(true);
+        expect(this.player1Object.gold).toBe(7);
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-        describe('when you trigger a king ability', function () {
-            beforeEach(function () {
-                this.player1.clickCard(this.king);
-                this.player1.clickMenu(this.king, 'Put character into play');
-            });
+    it('does not stop an ability on a King character', function () {
+        this.player1.clickMenu(this.renlyBaratheon, 'Put character into play');
+        this.player1.clickCard(this.hedgeKnight);
 
-            it('should resolve as usual', function () {
-                this.player1.clickCard(this.nonKing);
-                expect(this.nonKing.location).toBe('play area');
-            });
-        });
+        expect(this.hedgeKnight.location).toBe('play area');
+        expect(this.player1Object.faction.kneeled).toBe(true);
+        expect(this.player1).isReadyToTakeAction();
     });
 });

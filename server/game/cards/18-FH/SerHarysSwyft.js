@@ -1,26 +1,30 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
+const inPlayLocations = ['play area', 'active plot', 'faction', 'duplicate'];
+const inPlayCardTypes = ['attachment', 'character', 'faction', 'location', 'plot'];
+
 class SerHarysSwyft extends DrawCard {
+    // Ser Harys Swyft (18006)
+    // Action: Move 1 gold from your gold pool to a card without gold. (Limit twice per round.)
+    // +1 Income.
     setupCardAbilities(ability) {
         this.action({
             title: 'Move gold',
             limit: ability.limit.perRound(2),
-            condition: () => this.controller.getSpendableGold() >= 1,
             target: {
                 type: 'select',
+                cardType: inPlayCardTypes,
                 cardCondition: (card) =>
-                    card.location === 'play area' && !card.hasToken(Tokens.gold)
+                    inPlayLocations.includes(card.location) && !card.hasToken(Tokens.gold)
             },
-            handler: (context) => {
-                this.game.transferGold({ from: this.controller, to: context.target, amount: 1 });
-                this.game.addMessage(
-                    '{0} uses {1} to move 1 gold from their gold pool to {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to move 1 gold from their gold pool to {target}',
+            gameAction: GameActions.transferGold((context) => ({
+                from: context.player,
+                to: context.target,
+                amount: 1
+            }))
         });
         this.plotModifiers({
             gold: 1

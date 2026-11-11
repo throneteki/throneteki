@@ -39,9 +39,6 @@ const SideBoardPanel = ({ collapsable, player, userPlayer, isMe, side }) => {
                         )
                     }
                     phase={player.phase}
-                    // timerLimit={this.props.timerLimit}
-                    // timerStartTime={this.props.timerStartTime}
-                    // stopAbilityTimer={this.props.stopAbilityTimer}
                 />
             )}
         </div>

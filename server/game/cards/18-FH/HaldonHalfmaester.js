@@ -3,79 +3,69 @@ import { Tokens } from '../../Constants/index.js';
 import GameActions from '../../GameActions/index.js';
 
 class HaldonHalfmaester extends DrawCard {
+    // Haldon Halfmaester (18014)
+    // Reaction: After you win a challenge in which Haldon Halfmaester is participating, reveal the
+    // top card of your deck:
+    // - Place 1 gold from the treasury on a card with the same cardtype.
+    // - If it is an event, draw it.
+    // - If it is Aegon Targaryen, put him into play.
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    this.isParticipating() && event.challenge.isMatch({ winner: this.controller })
+                afterChallenge: (event, context) =>
+                    context.source.isParticipating() &&
+                    event.challenge.isMatch({ winner: context.player })
             },
             message: '{player} uses {source} to reveal the top card of their deck',
             gameAction: GameActions.revealTopCards((context) => ({
                 player: context.player
             })).then({
                 condition: (context) => context.parentContext.revealed.length > 0,
-                handler: (context) => {
-                    let topCard = context.parentContext.revealed[0];
-                    //place 1 gold on card of the same type
-                    if (
-                        ['character', 'location', 'attachment'].includes(topCard.getType()) &&
-                        this.game.anyCardsInPlay((card) => card.getType() === topCard.getType())
-                    ) {
-                        this.game.promptForSelect(context.player, {
-                            activePromptTitle: 'Select card to gain 1 gold',
-                            cardCondition: (card) =>
-                                card.getType() === topCard.getType() &&
-                                card.location === 'play area',
-                            source: this,
-                            onSelect: (player, card) => {
-                                this.continueHandler(card, context);
-                                return true;
-                            }
-                        });
-                    } else {
-                        this.continueHandler(null, context);
-                    }
-                }
+                gameAction: GameActions.simultaneously([
+                    GameActions.ifCondition({
+                        condition: (context) => revealedCard(context).getType() === 'event',
+                        thenAction: {
+                            message: 'Then {player} draws the revealed event',
+                            gameAction: GameActions.drawSpecific((context) => ({
+                                player: context.player,
+                                cards: [revealedCard(context)]
+                            }))
+                        }
+                    }),
+                    GameActions.ifCondition({
+                        condition: (context) => revealedCard(context).name === 'Aegon Targaryen',
+                        thenAction: {
+                            message: 'Then {player} puts Aegon Targaryen into play',
+                            gameAction: GameActions.putIntoPlay((context) => ({
+                                card: revealedCard(context)
+                            }))
+                        }
+                    }),
+                    GameActions.ifCondition({
+                        condition: (context) =>
+                            ['character', 'location', 'attachment'].includes(
+                                revealedCard(context).getType()
+                            ),
+                        thenAction: {
+                            message: 'Then {player} places 1 gold on a card with the same cardtype',
+                            gameAction: GameActions.chooseCards({
+                                title: 'Select card to gain 1 gold',
+                                cardCondition: (card, context) =>
+                                    card.location === 'play area' &&
+                                    card.getType() === revealedCard(context).getType(),
+                                gameAction: (card) =>
+                                    GameActions.placeToken({ card, token: Tokens.gold, amount: 1 })
+                            })
+                        }
+                    })
+                ])
             })
         });
     }
+}
 
-    continueHandler(goldCard, context) {
-        const gameAction = GameActions.simultaneously([
-            GameActions.ifCondition({
-                condition: (context) =>
-                    context.parentContext.revealed.some((card) => card.isMatch({ type: 'event' })),
-                thenAction: GameActions.drawSpecific((context) => ({
-                    player: context.player,
-                    cards: context.parentContext.revealed
-                }))
-            }),
-            GameActions.ifCondition({
-                condition: (context) =>
-                    context.parentContext.revealed.some((card) =>
-                        card.isMatch({ name: 'Aegon Targaryen' })
-                    ),
-                thenAction: GameActions.putIntoPlay((context) => ({
-                    card: context.parentContext.revealed.filter((card) =>
-                        card.isMatch({ name: 'Aegon Targaryen' })
-                    )[0]
-                }))
-            }),
-            GameActions.ifCondition({
-                condition: () => !!goldCard,
-                thenAction: GameActions.placeToken(() => ({
-                    card: goldCard,
-                    token: Tokens.gold,
-                    amount: 1
-                }))
-            })
-        ]);
-
-        if (gameAction.allow(context)) {
-            this.game.addMessage('{0} {1}', context.player, gameAction.message(context));
-            this.game.resolveGameAction(gameAction, context);
-        }
-    }
+function revealedCard(context) {
+    return context.parentContext.revealed[0];
 }
 
 HaldonHalfmaester.code = '18014';

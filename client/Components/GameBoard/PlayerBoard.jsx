@@ -10,7 +10,6 @@ const PlayerBoard = ({
     cardsInPlay,
     rowDirection,
     onCardClick,
-    onMenuItemClick,
     cardSize,
     className
 }) => {
@@ -65,7 +64,6 @@ const PlayerBoard = ({
                             card={card}
                             disableHover={card.facedown && !card.code}
                             onClick={onCardClick}
-                            onMenuItemClick={onMenuItemClick}
                             size={cardSize}
                             source='play area'
                         />
@@ -73,7 +71,7 @@ const PlayerBoard = ({
                 );
             });
         },
-        [onCardClick, onMenuItemClick, cardSize]
+        [onCardClick, cardSize]
     );
 
     const renderRows = useCallback(

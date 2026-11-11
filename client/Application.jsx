@@ -10,10 +10,10 @@ import { useVerifyAuthenticationQuery } from './redux/middleware/api';
 import { setAuthTokens, setUser } from './redux/reducers/auth';
 import { startConnecting } from './redux/reducers/lobby';
 import { navigate } from './redux/reducers/navigation';
-import Background from './assets/img/bgs/mainbg.png';
-import BlankBg from './assets/img/bgs/blank.png';
-import StandardBg from './assets/img/bgs/background.png';
-import WinterBg from './assets/img/bgs/background2.png';
+import Background from './assets/img/bgs/mainbg.webp';
+import BlankBg from './assets/img/bgs/blank.webp';
+import StandardBg from './assets/img/bgs/background.webp';
+import WinterBg from './assets/img/bgs/background2.webp';
 import LoadingSpinner from './Components/Site/LoadingSpinner';
 import CardHover from './Components/Images/CardHover';
 import ErrorMessage from './Components/Site/ErrorMessage';
@@ -73,6 +73,14 @@ const Application = () => {
             dispatch(setUser(data));
         }
     }, [data, dispatch]);
+
+    // Scenario games are created by the game node rather than from the lobby, so nothing else
+    // takes the players to the board.
+    useEffect(() => {
+        if (currentGame?.scenario && path !== '/play') {
+            dispatch(navigate('/play'));
+        }
+    }, [currentGame, dispatch, path]);
 
     let component = router.resolvePath({
         pathname: path,

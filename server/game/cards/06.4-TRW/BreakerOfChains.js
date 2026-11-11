@@ -1,34 +1,36 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BreakerOfChains extends DrawCard {
+    // Breaker of Chains (06074)
+    // Unique [targaryen] character only.
+    // Attached character gets +1 STR for each character you control with printed cost 2 or lower.
+    // Reaction: After attached character is declared as an attacker, put a character with printed
+    // cost 2 or lower into play from your hand.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'targaryen', unique: true });
 
         this.whileAttached({
-            effect: ability.effects.dynamicStrength(() => this.getSTRBoost())
+            effect: ability.effects.dynamicStrength((card, context) => context.source.getSTRBoost())
         });
 
         this.reaction({
             when: {
-                onDeclaredAsAttacker: (event) => event.card === this.parent
+                onDeclaredAsAttacker: (event, context) => event.card === context.source.parent
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'hand' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     card.getType() === 'character' &&
                     card.getPrintedCost() <= 2 &&
-                    this.controller.canPutIntoPlay(card)
+                    context.source.controller.canPutIntoPlay(card)
             },
-            handler: (context) => {
-                this.controller.putIntoPlay(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to put {2} into play',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to put {target} into play',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 

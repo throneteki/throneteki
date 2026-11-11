@@ -49,14 +49,22 @@ class Socket extends EventEmitter {
         }
 
         try {
-            callback(this, ...args);
+            const result = callback(this, ...args);
+
+            if (result && typeof result.catch === 'function') {
+                result.catch((err) => this.reportEventError(err, args));
+            }
         } catch (err) {
-            logger.info(err);
-            Sentry.configureScope((scope) => {
-                scope.setExtra('extra', args);
-            });
-            Sentry.captureException(err);
+            this.reportEventError(err, args);
         }
+    }
+
+    reportEventError(err, args) {
+        logger.info(err);
+        Sentry.configureScope((scope) => {
+            scope.setExtra('extra', args);
+        });
+        Sentry.captureException(err);
     }
 
     onAuthenticate(token) {

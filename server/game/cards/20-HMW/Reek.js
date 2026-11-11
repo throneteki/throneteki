@@ -2,87 +2,55 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Reek extends DrawCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
-
-        this.registerEvents(['onCardEntersPlay']);
-    }
-
-    onCardEntersPlay(event) {
-        let card = event.card;
-        if (card !== this && card.name !== 'Theon Greyjoy') {
-            return;
-        }
-
-        let theon = this.controller.cardsInPlay.find((card) => card.name === 'Theon Greyjoy');
-
-        if (!theon) {
-            return;
-        }
-
-        this.controller.sacrificeCard(this);
-    }
-
+    // Reek (20027)
+    // Shadow (2).
+    // If you control Theon Greyjoy, sacrifice Reek.
+    // Reaction: After you win an unopposed challenge in which you control an attacking House Bolton
+    // character, give control of Reek to the losing opponent. Then, choose a non-loyal character
+    // controlled by that player and take control of it.
     setupCardAbilities() {
+        this.stateCheck({
+            condition: (context) =>
+                context.player.anyCardsInPlay({ type: 'character', name: 'Theon Greyjoy' }),
+            message: '{player} sacrifices {source} as they control Theon Greyjoy',
+            gameAction: GameActions.sacrificeCard((context) => ({ card: context.source }))
+        });
+
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
                     event.challenge.isUnopposed() &&
-                    this.hasAttackingBolton()
+                    context.player.anyCardsInPlay({
+                        type: 'character',
+                        trait: 'House Bolton',
+                        attacking: true
+                    })
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} gives control of {1} to {2}',
-                    context.player,
-                    this,
-                    context.event.challenge.loser
-                );
-                this.game.resolveGameAction(
-                    GameActions.takeControl((context) => ({
-                        player: context.event.challenge.loser,
-                        card: this
-                    })).then((context) => ({
-                        handler: () => {
-                            this.game.promptForSelect(context.player, {
-                                cardCondition: (card) =>
-                                    card.location === 'play area' &&
-                                    card.getType() === 'character' &&
-                                    card.controller === context.event.challenge.loser &&
-                                    !card.isLoyal() &&
-                                    context.player.canControl(card),
-                                source: this,
-                                onSelect: (player, card) =>
-                                    this.onCardSelected(player, card, context)
-                            });
-                        }
-                    })),
-                    context
-                );
-            }
+            message: {
+                format: '{player} uses {source} to give control of {source} to {loser}',
+                args: { loser: (context) => context.event.challenge.loser }
+            },
+            gameAction: GameActions.takeControl((context) => ({
+                player: context.event.challenge.loser,
+                card: context.source
+            })).then({
+                target: {
+                    cardCondition: (card, context) =>
+                        card.location === 'play area' &&
+                        card.getType() === 'character' &&
+                        card.controller === context.parentContext.event.challenge.loser &&
+                        !card.isLoyal() &&
+                        context.player.canControl(card),
+                    gameAction: 'takeControl'
+                },
+                message: 'Then, {player} takes control of {target}',
+                gameAction: GameActions.takeControl((context) => ({
+                    player: context.player,
+                    card: context.target
+                }))
+            })
         });
-    }
-
-    onCardSelected(player, card, context) {
-        this.game.addMessage('{0} then takes control of {1}', context.player, card);
-        this.game.resolveGameAction(
-            GameActions.takeControl(() => ({
-                player: player,
-                card: card
-            })),
-            context
-        );
-
-        return true;
-    }
-
-    hasAttackingBolton() {
-        return this.controller.anyCardsInPlay(
-            (card) =>
-                card.isAttacking() &&
-                card.hasTrait('House Bolton') &&
-                card.getType() === 'character'
-        );
     }
 }
 

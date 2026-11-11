@@ -20,14 +20,24 @@ spec:
                 - name: migrate
                   image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
                   command:
-                      - sh
-                      - -c
-                      - |
-                          node server/scripts/convertevents.js && \
-                          node server/scripts/convertdecks.js
+                      - node
+                      - server/db/migrate.js
+                      - up
                   env:
                       - name: NODE_CONFIG
                         valueFrom:
                             secretKeyRef:
-                                name: throneteki-lobby-secret
+                                name: throneteki-migrate-secret
                                 key: node_config
+{{- if .Values.dbMigrator.user }}
+                      - name: DB_MIGRATOR_USER
+                        valueFrom:
+                            secretKeyRef:
+                                name: throneteki-migrate-secret
+                                key: migrator_user
+                      - name: DB_MIGRATOR_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: throneteki-migrate-secret
+                                key: migrator_password
+{{- end }}

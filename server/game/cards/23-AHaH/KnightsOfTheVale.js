@@ -1,6 +1,13 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class KnightsOfTheVale extends DrawCard {
+    // Knights of the Vale (23019)
+    // Assault. No attachments.
+    // Challenges Action: Kneel a neutral location with printed cost 1 or higher to choose a
+    // defending character that shares a Trait with Knights of the Vale. Until the end of the
+    // challenge, that character gets +2 STR. (+4 STR instead if your initiative value is 0.) (Limit
+    // once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character +STR',
@@ -16,20 +23,20 @@ class KnightsOfTheVale extends DrawCard {
                 cardCondition: {
                     type: 'character',
                     defending: true,
-                    controller: this.controller,
-                    condition: (card) => card.getTraits().some((trait) => this.hasTrait(trait))
+                    condition: (card, context) =>
+                        card.controller === context.player &&
+                        card.getTraits().some((trait) => context.source.hasTrait(trait))
                 }
             },
             message: {
                 format: '{player} uses {source} and kneels {costs.kneel} to give {target} +{amount} STR until the end of the challenge',
-                args: { amount: (context) => this.calculateSTR(context) }
+                args: { amount: (context) => context.source.calculateSTR(context) }
             },
-            handler: (context) => {
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(this.calculateSTR(context))
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                effect: ability.effects.modifyStrength(context.source.calculateSTR(context))
+            }))
         });
     }
 

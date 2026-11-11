@@ -4,8 +4,8 @@ import DrawCard from '../../../server/game/drawcard.js';
 
 describe('Challenge', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['applyGameAction', 'on', 'raiseEvent']);
-        this.gameSpy.applyGameAction.and.callFake((type, card, handler) => {
+        this.gameSpy = { applyGameAction: vi.fn(), on: vi.fn(), raiseEvent: vi.fn() };
+        this.gameSpy.applyGameAction.mockImplementation((type, card, handler) => {
             handler(card);
         });
 
@@ -35,8 +35,8 @@ describe('Challenge', function () {
     describe('determineWinner()', function () {
         describe('when the attacker has higher strength', function () {
             beforeEach(function () {
-                spyOn(this.attackerCard, 'getStrength').and.returnValue(5);
-                spyOn(this.defenderCard, 'getStrength').and.returnValue(4);
+                vi.spyOn(this.attackerCard, 'getStrength').mockReturnValue(5);
+                vi.spyOn(this.defenderCard, 'getStrength').mockReturnValue(4);
                 this.challenge.addAttackers([this.attackerCard]);
                 this.challenge.addDefenders([this.defenderCard]);
                 this.challenge.determineWinner();
@@ -53,8 +53,8 @@ describe('Challenge', function () {
 
         describe('when the attacker and defender have equal strength', function () {
             beforeEach(function () {
-                spyOn(this.attackerCard, 'getStrength').and.returnValue(5);
-                spyOn(this.defenderCard, 'getStrength').and.returnValue(5);
+                vi.spyOn(this.attackerCard, 'getStrength').mockReturnValue(5);
+                vi.spyOn(this.defenderCard, 'getStrength').mockReturnValue(5);
                 this.challenge.addAttackers([this.attackerCard]);
                 this.challenge.addDefenders([this.defenderCard]);
                 this.challenge.determineWinner();
@@ -71,8 +71,8 @@ describe('Challenge', function () {
 
         describe('when the defender has higher strength', function () {
             beforeEach(function () {
-                spyOn(this.attackerCard, 'getStrength').and.returnValue(4);
-                spyOn(this.defenderCard, 'getStrength').and.returnValue(5);
+                vi.spyOn(this.attackerCard, 'getStrength').mockReturnValue(4);
+                vi.spyOn(this.defenderCard, 'getStrength').mockReturnValue(5);
                 this.challenge.addAttackers([this.attackerCard]);
                 this.challenge.addDefenders([this.defenderCard]);
                 this.challenge.determineWinner();

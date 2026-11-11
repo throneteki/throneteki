@@ -1,92 +1,61 @@
-describe("Euron Crow's Eye", function () {
-    integration(function () {
+describe("Euron Crow's Eye (Core)", function () {
+    function setup(context, { player1InPlay = [], player2InPlay = [], player2Deck = [] } = {}) {
+        context.setupTest({
+            phase: 'challenge',
+            player1: { inPlay: ["Euron Crow's Eye (Core)", ...player1InPlay] },
+            player2: { inPlay: player2InPlay, drawDeck: player2Deck }
+        });
+        context.unopposedChallenge(context.player1, 'Power', context.euronCrowsEye);
+    }
+
+    describe('when pillage discards a non-location', function () {
         beforeEach(function () {
-            const deck1 = this.buildDeck('greyjoy', [
-                'Sneak Attack',
-                "Euron Crow's Eye (Core)",
-                'The Arbor'
-            ]);
-            const deck2 = this.buildDeck('tyrell', ['Sneak Attack', 'The Arbor', 'The Arbor']);
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck2);
-            this.startGame();
-            this.keepStartingHands();
-            this.player1.clickCard("Euron Crow's Eye", 'hand');
-            this.completeSetup();
-            this.selectFirstPlayer(this.player1);
-
-            this.ourArbor = this.player1.findCardByName('The Arbor', 'hand');
-            [this.theirArbor1, this.theirArbor2] = this.player2.filterCardsByName(
-                'The Arbor',
-                'hand'
-            );
+            setup(this, { player2Deck: ['Hedge Knight'] });
         });
 
-        describe('when there are no locations in discard', function () {
-            beforeEach(function () {
-                this.completeMarshalPhase();
-                this.unopposedChallenge(this.player1, 'power', "Euron Crow's Eye");
-                this.player1.clickPrompt('Apply Claim');
-            });
+        it('does not prompt', function () {
+            expect(this.player1).not.toAllowAbilityTrigger(this.euronCrowsEye);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 
-            it('should not prompt', function () {
-                expect(this.player1).not.toAllowAbilityTrigger("Euron Crow's Eye");
-            });
+    describe('when pillage discards a location that is not in play', function () {
+        beforeEach(function () {
+            setup(this, { player2Deck: ['The Arbor'] });
+            this.theirArbor = this.player2.findCardByName('The Arbor', 'discard pile');
         });
 
-        describe('when a locations would end up in discard', function () {
-            beforeEach(function () {
-                // Move one of the Arbors back to draw
-                this.player2Object.moveCard(this.theirArbor2, 'draw deck');
-            });
+        it("puts a location from the losing opponent's discard pile into play under your control", function () {
+            expect(this.player1).toAllowAbilityTrigger(this.euronCrowsEye);
 
-            describe('and the location is not in play already', function () {
-                beforeEach(function () {
-                    this.completeMarshalPhase();
-                    this.unopposedChallenge(this.player1, 'power', "Euron Crow's Eye");
-                    this.player1.clickPrompt('Apply Claim');
-                });
+            this.player1.triggerAbility(this.euronCrowsEye);
+            this.player1.clickCard(this.theirArbor);
 
-                it('should prompt', function () {
-                    expect(this.player1).toAllowAbilityTrigger("Euron Crow's Eye");
-                });
+            expect(this.theirArbor.location).toBe('play area');
+            expect(this.theirArbor.controller).toBe(this.player1Object);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 
-                it('should allow a location be put into play', function () {
-                    this.player1.triggerAbility("Euron Crow's Eye");
-                    this.player1.clickCard(this.theirArbor2);
+    describe('when the discarded location is already in play for the opponent', function () {
+        beforeEach(function () {
+            setup(this, { player2InPlay: ['The Arbor'], player2Deck: ['The Arbor'] });
+        });
 
-                    expect(this.theirArbor2.location).toBe('play area');
-                    expect(this.theirArbor2.controller).toBe(this.player1Object);
-                });
-            });
+        it('does not prompt', function () {
+            expect(this.player1).not.toAllowAbilityTrigger(this.euronCrowsEye);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 
-            describe('and the location is in play for the opponent', function () {
-                beforeEach(function () {
-                    this.player1.clickPrompt('Done');
-                    this.player2.clickCard(this.theirArbor1);
-                    this.player2.clickPrompt('Done');
-                    this.unopposedChallenge(this.player1, 'power', "Euron Crow's Eye");
-                    this.player1.clickPrompt('Apply Claim');
-                });
+    describe('when the discarded location is already in play for you', function () {
+        beforeEach(function () {
+            setup(this, { player1InPlay: ['The Arbor'], player2Deck: ['The Arbor'] });
+        });
 
-                it('should not prompt', function () {
-                    expect(this.player1).not.toAllowAbilityTrigger("Euron Crow's Eye");
-                });
-            });
-
-            describe('and the location is in play for the current player', function () {
-                beforeEach(function () {
-                    this.player1.clickCard(this.ourArbor);
-                    this.player1.clickPrompt('Done');
-                    this.player2.clickPrompt('Done');
-                    this.unopposedChallenge(this.player1, 'power', "Euron Crow's Eye");
-                    this.player1.clickPrompt('Apply Claim');
-                });
-
-                it('should not prompt', function () {
-                    expect(this.player1).not.toAllowAbilityTrigger("Euron Crow's Eye");
-                });
-            });
+        it('does not prompt', function () {
+            expect(this.player1).not.toAllowAbilityTrigger(this.euronCrowsEye);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

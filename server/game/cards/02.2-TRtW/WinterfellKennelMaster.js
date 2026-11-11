@@ -1,40 +1,41 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+
+function isStarkCardParticipatingInChallenge(source) {
+    return source.controller.anyCardsInPlay(
+        (card) => card.isParticipating() && card.isFaction('stark')
+    );
+}
+
+function isDirewolfOrHasAttachment(source, card) {
+    return (
+        card.hasTrait('Direwolf') ||
+        card.attachments.some((attachment) => attachment.hasTrait('Direwolf'))
+    );
+}
 
 class WinterfellKennelMaster extends DrawCard {
+    // Winterfell Kennel Master (02021)
+    // Challenges Action: If you control a participating [stark] character, kneel a Direwolf
+    // character or a character with a Direwolf attachment to have it participate in the current
+    // challenge on your side. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel a Direwolf to have it participate in the current challenge',
             phase: 'challenge',
             limit: ability.limit.perPhase(1),
-            condition: () => this.isStarkCardParticipatingInChallenge(),
+            condition: (context) => isStarkCardParticipatingInChallenge(context.source),
             cost: ability.costs.kneel(
-                (card) => this.isDirewolfOrHasAttachment(card) && card.canParticipateInChallenge()
+                (card, context) =>
+                    isDirewolfOrHasAttachment(context.source, card) &&
+                    card.canParticipateInChallenge()
             ),
-            handler: (context) => {
-                let card = context.costs.kneel;
-                this.game.currentChallenge.addParticipantToSide(context.player, card);
-
-                this.game.addMessage(
-                    '{0} uses {1} to kneel {2} and add them to the challenge',
-                    context.player,
-                    this,
-                    card
-                );
-            }
+            message: '{player} uses {source} to kneel {costs.kneel} and add them to the challenge',
+            gameAction: GameActions.addToChallenge((context) => ({
+                card: context.costs.kneel,
+                player: context.player
+            }))
         });
-    }
-
-    isStarkCardParticipatingInChallenge() {
-        return this.controller.anyCardsInPlay(
-            (card) => card.isParticipating() && card.isFaction('stark')
-        );
-    }
-
-    isDirewolfOrHasAttachment(card) {
-        return (
-            card.hasTrait('Direwolf') ||
-            card.attachments.some((attachment) => attachment.hasTrait('Direwolf'))
-        );
     }
 }
 

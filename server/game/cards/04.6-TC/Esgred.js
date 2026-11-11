@@ -1,34 +1,39 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Esgred extends DrawCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
-
-        this.registerEvents(['onCardEntersPlay']);
-    }
-
+    // Esgred (04111)
+    // Stealth.
+    // If you control Asha Greyjoy, sacrifice Esgred. Then, your Asha Greyjoy gains 1 power.
+    // Esgred may bypass an additional character using stealth.
     setupCardAbilities(ability) {
+        this.stateCheck({
+            condition: (context) => !!getAsha(context.player),
+            message: '{player} sacrifices {source} as they control Asha Greyjoy',
+            gameAction: GameActions.sacrificeCard((context) => ({ card: context.source })).then({
+                condition: (context) => !!getAsha(context.player),
+                message: {
+                    format: 'Then, {asha} gains 1 power',
+                    args: { asha: (context) => getAsha(context.player) }
+                },
+                gameAction: GameActions.gainPower((context) => ({
+                    card: getAsha(context.player),
+                    amount: 1
+                }))
+            })
+        });
+
         this.persistentEffect({
             match: this,
             effect: ability.effects.modifyKeywordTriggerAmount('stealth', 1)
         });
     }
+}
 
-    onCardEntersPlay(event) {
-        let card = event.card;
-        if (card !== this && card.name !== 'Asha Greyjoy') {
-            return;
-        }
-
-        let asha = this.controller.cardsInPlay.find((card) => card.name === 'Asha Greyjoy');
-
-        if (!asha) {
-            return;
-        }
-
-        this.controller.sacrificeCard(this);
-        asha.modifyPower(1);
-    }
+function getAsha(player) {
+    return player.cardsInPlay.find(
+        (card) => card.name === 'Asha Greyjoy' && card.getType() === 'character'
+    );
 }
 
 Esgred.code = '04111';

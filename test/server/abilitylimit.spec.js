@@ -3,7 +3,7 @@ import AbilityLimit from '../../server/game/abilitylimit.js';
 
 describe('AbilityLimit', function () {
     beforeEach(function () {
-        this.eventEmitterSpy = jasmine.createSpyObj('event emitter', ['on', 'removeListener']);
+        this.eventEmitterSpy = { on: vi.fn(), removeListener: vi.fn() };
 
         this.limit = AbilityLimit.repeatable(2, 'onEventForReset');
     });
@@ -13,6 +13,23 @@ describe('AbilityLimit', function () {
             this.limit.increment();
             expect(this.limit.useCount).toBe(1);
         });
+    });
+
+    it('evaluates a function-based maximum against the current context', function () {
+        const dynamicLimit = AbilityLimit.repeatable(
+            (context) => context.game.getOpponents(context.player).length,
+            'onEventForReset'
+        );
+        const context = {
+            player: {},
+            game: { getOpponents: vi.fn().mockReturnValue([{}, {}]) }
+        };
+        dynamicLimit.increment();
+        dynamicLimit.increment();
+
+        expect(dynamicLimit.isAtMax(context)).toBe(true);
+        context.game.getOpponents.mockReturnValue([{}, {}, {}]);
+        expect(dynamicLimit.isAtMax(context)).toBe(false);
     });
 
     describe('isAtMax', function () {
@@ -43,7 +60,7 @@ describe('AbilityLimit', function () {
             this.limit.registerEvents(this.eventEmitterSpy);
             expect(this.eventEmitterSpy.on).toHaveBeenCalledWith(
                 'onEventForReset',
-                jasmine.any(Function)
+                expect.any(Function)
             );
         });
     });
@@ -53,7 +70,7 @@ describe('AbilityLimit', function () {
             this.limit.unregisterEvents(this.eventEmitterSpy);
             expect(this.eventEmitterSpy.removeListener).toHaveBeenCalledWith(
                 'onEventForReset',
-                jasmine.any(Function)
+                expect.any(Function)
             );
         });
 

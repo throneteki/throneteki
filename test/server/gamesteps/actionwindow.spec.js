@@ -5,7 +5,7 @@ import Settings from '../../../server/settings.js';
 
 describe('ActionWindow', function () {
     beforeEach(function () {
-        this.gameService = jasmine.createSpyObj('gameService', ['save']);
+        this.gameService = { save: vi.fn() };
         this.game = new Game({ owner: {} }, { gameService: this.gameService });
         this.player1 = new Player(
             '1',

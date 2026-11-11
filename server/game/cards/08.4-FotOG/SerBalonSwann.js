@@ -1,21 +1,24 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerBalonSwann extends DrawCard {
+    // Ser Balon Swann (08069)
+    // Renown.
+    // Reaction: After a non-[lannister] Knight character enters play under your control, gain 2
+    // gold. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    event.card.controller === this.controller &&
+                onCardEntersPlay: (event, context) =>
+                    event.card.controller === context.source.controller &&
                     !event.card.isFaction('lannister') &&
                     event.card.hasTrait('knight') &&
                     event.card.getType() === 'character' &&
-                    this.controller.canGainGold()
+                    context.source.controller.canGainGold()
             },
             limit: ability.limit.perPhase(1),
-            handler: (context) => {
-                let gold = this.game.addGold(context.player, 2);
-                this.game.addMessage('{0} uses {1} to gain {2} gold', context.player, this, gold);
-            }
+            message: '{player} uses {source} to gain 2 gold',
+            gameAction: GameActions.gainGold((context) => ({ player: context.player, amount: 2 }))
         });
     }
 }

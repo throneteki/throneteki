@@ -1,103 +1,57 @@
-describe('At The Gates', function () {
-    integration(function () {
-        describe('vs Varys Riddle + Gates of the Moon', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('targaryen', [
-                    'At the Gates',
-                    "Varys's Riddle",
-                    'Gates of the Moon'
-                ]);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.gates1 = this.player1.findCardByName('Gates of the Moon');
-                this.gates2 = this.player2.findCardByName('Gates of the Moon');
-
-                this.completeSetup();
-
-                // Draw the Gates back into the deck
-                this.player1.dragCard(this.gates1, 'draw deck');
-                this.player2.dragCard(this.gates2, 'draw deck');
-
-                this.player1.selectPlot('At the Gates');
-                this.player2.selectPlot("Varys's Riddle");
-                this.selectFirstPlayer(this.player1);
-                this.selectPlotOrder(this.player1);
-
-                this.player1.clickCard(this.gates1);
-
-                this.player2.clickCard(this.gates2);
+describe('At the Gates', function () {
+    describe('when revealed with no City plot in your used pile', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'plot',
+                player1: {
+                    plotDeck: ['At the Gates'],
+                    drawDeck: ['Old Gate', 'Kingswood (CoW)', 'Golden Tooth', 'Hedge Knight']
+                }
             });
 
-            it('modifies income correctly', function () {
-                expect(this.player1Object.getIncome()).toBe(7);
-                expect(this.player2Object.getIncome()).toBe(8);
-            });
+            this.player1.selectPlot(this.atTheGates);
+            this.player2.selectPlot('Filler Plot');
+            this.selectFirstPlayer(this.player1);
         });
 
-        describe('w/ Pulling the Strings', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('targaryen', [
-                    'At the Gates',
-                    'Pulling the Strings',
-                    'A Noble Cause',
-                    'City of Spiders',
-                    'Gates of the Moon'
-                ]);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
+        it('puts a limited location with printed cost 1 or lower into play', function () {
+            expect(this.player1).toBeAbleToSelect(this.oldGate);
+            expect(this.player1).not.toBeAbleToSelect(this.kingswood);
+            expect(this.player1).not.toBeAbleToSelect(this.goldenTooth);
+            expect(this.player1).not.toBeAbleToSelect(this.hedgeKnight);
 
-                this.limitedCard = this.player1.findCardByName('Gates of the Moon');
+            this.player1.clickCard(this.oldGate);
 
-                this.atTheGates = this.player2.findCardByName('At the Gates');
+            expect(this.oldGate.location).toBe('play area');
+            expect(this.kingswood.location).not.toBe('play area');
+            expect(this.goldenTooth.location).not.toBe('play area');
+            expect(this.game.getPlainTextLog()).toContain(
+                'player1 uses At the Gates to search their deck for a limited location with printed cost 1 or lower'
+            );
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 
-                this.completeSetup();
-
-                // Draw the limited card back into the deck
-                this.player1.dragCard(this.limitedCard, 'draw deck');
-
-                // Drag At The Gates to used pile to be copied
-                this.player2.dragCard(this.atTheGates, 'revealed plots');
+    describe('when revealed with a City plot in your used pile', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: {
+                    plot: 'City of Wealth',
+                    plotDeck: ['At the Gates'],
+                    drawDeck: ['Old Gate']
+                }
             });
 
-            describe('when there is no City plot in your used pile', function () {
-                beforeEach(function () {
-                    this.player1.selectPlot('Pulling the Strings');
-                    this.player2.selectPlot('A Noble Cause');
-                    this.selectFirstPlayer(this.player1);
+            this.completeChallengesPhase();
+            this.player2.selectPlot('Filler Plot');
+            this.selectFirstPlayer(this.player1);
+            this.player1.clickCard(this.oldGate);
+        });
 
-                    this.player1.clickCard(this.atTheGates);
-
-                    this.player1.clickCard(this.limitedCard);
-                });
-
-                it('puts the card into play', function () {
-                    expect(this.limitedCard.location).toBe('play area');
-                });
-            });
-
-            describe('when there is a City plot in your used pile', function () {
-                beforeEach(function () {
-                    const ownCityPlot = this.player1.findCardByName('City of Spiders');
-                    this.player1.dragCard(ownCityPlot, 'revealed plots');
-
-                    this.player1.selectPlot('Pulling the Strings');
-                    this.player2.selectPlot('A Noble Cause');
-                    this.selectFirstPlayer(this.player1);
-
-                    this.player1.clickCard(this.atTheGates);
-
-                    this.player1.clickCard(this.limitedCard);
-                });
-
-                it('puts the card into hand', function () {
-                    expect(this.limitedCard.location).toBe('hand');
-                });
-            });
+        it('adds the location to your hand instead', function () {
+            expect(this.oldGate.location).toBe('hand');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

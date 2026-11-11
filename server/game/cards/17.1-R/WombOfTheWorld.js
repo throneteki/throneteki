@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class WombOfTheWorld extends DrawCard {
+    // Womb of the World (17132)
+    // Action: Kneel Womb of the World to reveal the top 5 cards of your deck. Put an eligible
+    // Dothraki character with the lowest printed cost revealed this way into play. Shuffle your
+    // deck. At the end of the phase, if that card is still in play, return it to your hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Reveal top 5 cards',
@@ -10,19 +14,43 @@ class WombOfTheWorld extends DrawCard {
             gameAction: GameActions.revealTopCards((context) => ({
                 player: context.player,
                 amount: 5,
-                whileRevealed: GameActions.genericHandler((context) => {
-                    this.game.promptForSelect(context.player, {
-                        activePromptTitle: 'Select a character',
-                        cardCondition: (card) =>
-                            context.revealed.includes(card) &&
-                            card.isMatch({ trait: 'Dothraki', type: 'character' }) &&
-                            card.getPrintedCost() ===
-                                this.lowestPrintedCost(context.revealed, context) &&
-                            context.player.canPutIntoPlay(card),
-                        onSelect: (player, card) => this.putCharacterIntoPlay(player, card),
-                        onCancel: (player) => this.promptToCancel(player),
-                        source: this
-                    });
+                whileRevealed: GameActions.chooseCards({
+                    title: 'Select a character',
+                    cardCondition: (card, context) =>
+                        context.revealed.includes(card) &&
+                        isEligible(card, context) &&
+                        card.getPrintedCost() === lowestPrintedCost(context),
+                    gameAction: (card, context) =>
+                        GameActions.putIntoPlay({
+                            card,
+                            player: context.player,
+                            dupeIsValid: true
+                        }).then({
+                            message: {
+                                format: '{player} puts {card} into play',
+                                args: { card: () => card }
+                            },
+                            gameAction: GameActions.delayedEffect(() => {
+                                return {
+                                    duration: 'untilTriggered',
+                                    title: card.name,
+                                    when: { onAtEndOfPhase: () => true },
+                                    until: { onCardLeftPlay: (event) => event.card === card },
+                                    gameAction: GameActions.ifCondition({
+                                        condition: () =>
+                                            ['play area', 'duplicate'].includes(card.location),
+                                        thenAction: {
+                                            message:
+                                                '{player} resolves the delayed effect from {source}: {gameAction}',
+                                            gameAction: GameActions.returnCardToHand({
+                                                card,
+                                                allowSave: true
+                                            })
+                                        }
+                                    })
+                                };
+                            })
+                        })
                 })
             })).then({
                 message: '{player} shuffles their deck',
@@ -30,39 +58,21 @@ class WombOfTheWorld extends DrawCard {
             })
         });
     }
+}
 
-    lowestPrintedCost(revealedCards, context) {
-        let filteredCards = revealedCards.filter(
-            (card) =>
-                card.isMatch({ trait: 'Dothraki', type: 'character' }) &&
-                context.player.canPutIntoPlay(card)
-        );
-        let costs = filteredCards.map((card) => card.getPrintedCost());
-        //reduce on empty array crashes so handle empty costs array
-        return costs.length === 0 ? -1 : costs.reduce((lowest, cost) => Math.min(lowest, cost));
-    }
+function isEligible(card, context) {
+    return (
+        card.isMatch({ trait: 'Dothraki', type: 'character' }) &&
+        context.player.canPutIntoPlay(card)
+    );
+}
 
-    putCharacterIntoPlay(player, card) {
-        player.putIntoPlay(card);
-        this.atEndOfPhase((ability) => ({
-            match: card,
-            condition: () => ['play area', 'duplicate'].includes(card.location),
-            targetLocation: 'any',
-            effect: ability.effects.returnToHandIfStillInPlay(true)
-        }));
-        this.game.addMessage('{0} uses {1} to put {2} into play', player, this, card);
-        return true;
-    }
-
-    promptToCancel(player) {
-        this.game.addAlert(
-            'warning',
-            '{0} uses {1} but does not put any character into play',
-            player,
-            this
-        );
-        return true;
-    }
+function lowestPrintedCost(context) {
+    return Math.min(
+        ...context.revealed
+            .filter((card) => isEligible(card, context))
+            .map((card) => card.getPrintedCost())
+    );
 }
 
 WombOfTheWorld.code = '17132';

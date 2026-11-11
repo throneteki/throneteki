@@ -2,13 +2,18 @@ import ChatCommands from '../../../server/game/chatcommands.js';
 
 describe('ChatCommands', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'addAlert']);
+        this.gameSpy = {
+            addMessage: vi.fn(),
+            addAlert: vi.fn(),
+            manualActions: { record: vi.fn(), addCards: vi.fn() },
+            manualMode: { allows: () => true }
+        };
 
-        this.playerSpy = jasmine.createSpyObj('player', [
-            'drawCardsToHand',
-            'discardAtRandom',
-            'discardFromDraw'
-        ]);
+        this.playerSpy = {
+            drawCardsToHand: vi.fn(),
+            discardAtRandom: vi.fn(),
+            discardFromDraw: vi.fn()
+        };
         this.chatCommands = new ChatCommands(this.gameSpy);
     });
 
@@ -94,6 +99,40 @@ describe('ChatCommands', function () {
             });
         });
 
+        describe('with a /power command', function () {
+            beforeEach(function () {
+                this.gameSpy.promptForSelect = vi.fn();
+                this.card = { power: 2, getType: () => 'character' };
+
+                this.setPower = (args) => {
+                    this.chatCommands.executeCommand(this.playerSpy, '/power', args);
+                    this.gameSpy.promptForSelect.mock.lastCall[1].onSelect(
+                        this.playerSpy,
+                        this.card
+                    );
+                };
+            });
+
+            it('should set the power of the selected card', function () {
+                this.setPower(['/power', '5']);
+
+                expect(this.card.power).toBe(5);
+            });
+
+            it('should set the power to at most 99', function () {
+                this.setPower(['/power', '1111111111111111000000000000000']);
+
+                expect(this.card.power).toBe(99);
+                expect(this.gameSpy.addAlert).toHaveBeenCalledWith(
+                    'danger',
+                    expect.any(String),
+                    this.playerSpy,
+                    this.card,
+                    99
+                );
+            });
+        });
+
         describe('with a /discard command', function () {
             describe('with no arguments', function () {
                 it('should discard 1 card', function () {
@@ -141,7 +180,7 @@ describe('ChatCommands', function () {
 
                     expect(this.playerSpy.discardFromDraw).toHaveBeenCalledWith(
                         1,
-                        jasmine.any(Function)
+                        expect.any(Function)
                     );
                 });
             });

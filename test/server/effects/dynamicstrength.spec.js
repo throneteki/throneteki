@@ -4,33 +4,35 @@ describe('Effects.dynamicStrength', function () {
     beforeEach(function () {
         this.context = {};
 
-        this.calculateMethod = jasmine.createSpy('calculateMethod');
+        this.calculateMethod = vi.fn();
 
-        this.card1 = jasmine.createSpyObj('card1', [
-            'addStrengthModifier',
-            'changeStrengthModifier',
-            'removeStrengthModifier'
-        ]);
+        this.card1 = {
+            addStrengthModifier: vi.fn(),
+            changeStrengthModifier: vi.fn(),
+            removeStrengthModifier: vi.fn()
+        };
         this.card1.uuid = '1111';
-        this.card2 = jasmine.createSpyObj('card2', [
-            'addStrengthModifier',
-            'changeStrengthModifier',
-            'removeStrengthModifier'
-        ]);
+        this.card2 = {
+            addStrengthModifier: vi.fn(),
+            changeStrengthModifier: vi.fn(),
+            removeStrengthModifier: vi.fn()
+        };
         this.card2.uuid = '2222';
 
         this.effect = Effects.dynamicStrength(this.calculateMethod);
 
-        this.context.game = jasmine.createSpyObj('game', ['applyGameAction']);
-        this.context.game.applyGameAction.and.callFake((action, card, callback) => callback(card));
+        this.context.game = { applyGameAction: vi.fn() };
+        this.context.game.applyGameAction.mockImplementation((action, card, callback) =>
+            callback(card)
+        );
         this.context.effect = this.effect;
     });
 
     describe('apply()', function () {
         beforeEach(function () {
-            this.calculateMethod.and.returnValue(3);
+            this.calculateMethod.mockReturnValue(3);
             this.effect.apply(this.card1, this.context);
-            this.calculateMethod.and.returnValue(4);
+            this.calculateMethod.mockReturnValue(4);
             this.effect.apply(this.card2, this.context);
         });
 
@@ -54,9 +56,9 @@ describe('Effects.dynamicStrength', function () {
 
     describe('reapply()', function () {
         beforeEach(function () {
-            this.calculateMethod.and.returnValue(3);
+            this.calculateMethod.mockReturnValue(3);
             this.effect.apply(this.card1, this.context);
-            this.calculateMethod.and.returnValue(4);
+            this.calculateMethod.mockReturnValue(4);
             this.effect.reapply(this.card1, this.context);
         });
 
@@ -71,9 +73,9 @@ describe('Effects.dynamicStrength', function () {
 
     describe('unapply()', function () {
         beforeEach(function () {
-            this.calculateMethod.and.returnValue(3);
+            this.calculateMethod.mockReturnValue(3);
             this.effect.apply(this.card1, this.context);
-            this.calculateMethod.and.returnValue(4);
+            this.calculateMethod.mockReturnValue(4);
             this.effect.apply(this.card2, this.context);
         });
 

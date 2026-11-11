@@ -1,24 +1,25 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Ghost extends DrawCard {
-    setupCardAbilities() {
+    // Ghost (01123)
+    // No attachments. Stealth.
+    // Reaction: After Ghost bypasses a character using stealth, that character cannot be declared
+    // as a defender for any challenges until the end of the phase.
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onBypassedByStealth: (event) => event.source === this
+                onBypassedByStealth: (event, context) => event.source === context.source
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to make {2} unable to be declared as a defender until the end of the phase',
-                    this.controller,
-                    this,
-                    context.event.target
-                );
-
-                this.untilEndOfPhase((ability) => ({
-                    match: context.event.target,
-                    effect: ability.effects.cannotBeDeclaredAsDefender()
-                }));
-            }
+            message: {
+                format: '{player} uses {source} to make {eventTarget} unable to be declared as a defender until the end of the phase',
+                args: { eventTarget: (context) => context.event.target }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.event.target,
+                effect: ability.effects.cannotBeDeclaredAsDefender()
+            }))
         });
     }
 }

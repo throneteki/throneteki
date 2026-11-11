@@ -2,7 +2,7 @@ import KneelCard from '../../../server/game/GameActions/KneelCard.js';
 
 describe('KneelCard', function () {
     beforeEach(function () {
-        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction']);
+        this.cardSpy = { allowGameAction: vi.fn() };
         this.cardSpy.kneeled = false;
         this.cardSpy.location = 'play area';
         this.props = { card: this.cardSpy };
@@ -10,7 +10,7 @@ describe('KneelCard', function () {
 
     describe('allow()', function () {
         beforeEach(function () {
-            this.cardSpy.allowGameAction.and.returnValue(true);
+            this.cardSpy.allowGameAction.mockReturnValue(true);
         });
 
         for (let location of ['faction', 'play area']) {

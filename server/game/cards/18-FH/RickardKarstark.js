@@ -2,6 +2,11 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class RickardKarstark extends DrawCard {
+    // Rickard Karstark (18011)
+    // Challenges Action: Kneel a The North location to have each player sacrifice a character or
+    // location. (Limit once per phase.)
+    // Reaction: After a Winter plot card is revealed, return a The North location from your discard
+    // pile to your hand. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Sacrifice character or location',
@@ -20,24 +25,19 @@ class RickardKarstark extends DrawCard {
                     card.controller === context.choosingPlayer &&
                     (card.getType() === 'character' || card.getType() === 'location')
             },
-            handler: (context) => {
-                let selections = context.targets.selections.filter(
-                    (selection) => !!selection.value
-                );
-
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        selections.map((selection) =>
-                            GameActions.sacrificeCard({
-                                player: selection.choosingPlayer,
-                                card: selection.value
-                            })
-                        )
+            message:
+                '{player} uses {source} and kneels {costs.kneel} to have each player sacrifice a character or location',
+            gameAction: GameActions.simultaneously((context) =>
+                context.targets.selections
+                    .filter((selection) => !!selection.value)
+                    .map((selection) =>
+                        GameActions.sacrificeCard({
+                            player: selection.choosingPlayer,
+                            card: selection.value
+                        })
                     )
-                );
-            }
+            )
         });
-
         this.reaction({
             when: {
                 onPlotsRevealed: (event) => event.plots.some((plot) => plot.hasTrait('Winter'))
@@ -50,15 +50,9 @@ class RickardKarstark extends DrawCard {
                     card.hasTrait('The North') &&
                     card.getType() === 'location'
             },
-            handler: (context) => {
-                context.player.moveCard(context.target, 'hand');
-                this.game.addMessage(
-                    '{0} uses {1} to move {2} from their discard pile to their hand',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message:
+                '{player} uses {source} to move {target} from their discard pile to their hand',
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
     }
 }

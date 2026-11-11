@@ -2,11 +2,16 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SpottedSylva extends DrawCard {
+    // Spotted Sylva (15031)
+    // Forced Reaction: After you lose a challenge in which Spotted Sylva is attacking, each player
+    // must choose a participating character he or she controls, if able, and return it to its
+    // owner's hand.
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller && this.isAttacking()
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.player &&
+                    event.challenge.isAttacking(context.source)
             },
             target: {
                 choosingPlayer: 'each',
@@ -15,31 +20,13 @@ class SpottedSylva extends DrawCard {
                     card.location === 'play area' &&
                     card.controller === context.choosingPlayer &&
                     card.getType() === 'character' &&
-                    card.isParticipating()
+                    card.isParticipating(),
+                gameAction: 'returnToHand'
             },
-            handler: (context) => {
-                let selections = context.targets.selections.filter(
-                    (selection) => !!selection.value
-                );
-                for (const selection of selections) {
-                    this.game.addMessage(
-                        '{0} returns {1} to their hand for {2}',
-                        selection.choosingPlayer,
-                        selection.value,
-                        this
-                    );
-                }
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        selections.map((selection) =>
-                            GameActions.returnCardToHand({
-                                player: selection.choosingPlayer,
-                                card: selection.value
-                            })
-                        )
-                    )
-                );
-            }
+            message: '{player} is forced by {source} to have each player return {target} to hand',
+            gameAction: GameActions.simultaneously((context) =>
+                context.targets.getTargets().map((card) => GameActions.returnCardToHand({ card }))
+            )
         });
     }
 }

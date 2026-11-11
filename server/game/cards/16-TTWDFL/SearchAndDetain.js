@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class SearchAndDetain extends PlotCard {
+    // Search and Detain (16034)
+    // When Revealed: Choose a card without attachments controlled by the first player. Return it to
+    // its owner's hand (cannot be saved).
     setupCardAbilities() {
         this.whenRevealed({
             target: {
@@ -11,15 +14,10 @@ class SearchAndDetain extends PlotCard {
                     card.controller.firstPlayer
             },
             message: '{player} uses {source} to return {target} to hand',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.returnCardToHand((context) => ({
-                        card: context.target,
-                        allowSave: false
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.returnCardToHand((context) => ({
+                card: context.target,
+                allowSave: false
+            }))
         });
     }
 }

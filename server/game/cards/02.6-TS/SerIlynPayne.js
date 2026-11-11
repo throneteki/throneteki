@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerIlynPayne extends DrawCard {
+    // Ser Ilyn Payne (02109)
+    // Marshaling Action: Kneel Ser Ilyn Payne to choose and kill a character with printed cost 3 or
+    // lower.
     setupCardAbilities(ability) {
         this.action({
             title: 'Kill a character',
@@ -13,16 +17,8 @@ class SerIlynPayne extends DrawCard {
                     card.getPrintedCost() <= 3,
                 gameAction: 'kill'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} kneels {1} to kill {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-
-                this.game.killCharacter(context.target);
-            }
+            message: '{player} kneels {source} to kill {target}',
+            gameAction: GameActions.kill((context) => ({ card: context.target }))
         });
     }
 }

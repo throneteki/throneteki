@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class Shaggydog extends DrawCard {
+    // Shaggydog (03014)
+    // No attachments.
+    // While you control Rickon Stark, he gets +2 STR and gains a [military] icon.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Rickon Stark',

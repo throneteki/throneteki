@@ -2,8 +2,8 @@ import DiscardPower from '../../../server/game/GameActions/DiscardPower.js';
 
 describe('DiscardPower', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['']);
-        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction']);
+        this.gameSpy = {};
+        this.cardSpy = { allowGameAction: vi.fn() };
         this.cardSpy.controller = 'PLAYER_OBJ';
         this.cardSpy.game = this.gameSpy;
         this.cardSpy.power = 1;
@@ -12,7 +12,7 @@ describe('DiscardPower', function () {
 
     describe('allow()', function () {
         beforeEach(function () {
-            this.cardSpy.allowGameAction.and.returnValue(true);
+            this.cardSpy.allowGameAction.mockReturnValue(true);
         });
 
         for (let location of ['active plot', 'faction', 'play area']) {

@@ -2,14 +2,21 @@ import AgendaCard from '../../agendacard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ValyrianSteel extends AgendaCard {
+    // Valyrian Steel (17152)
+    // Your minimum deck size is 75 cards. Your deck cannot include more than 1 copy of each
+    // attachment.
+    // Action: Kneel your faction card and pay X gold to put an attachment with printed cost X into
+    // play from your hand.
+    // Reaction: After an attachment enters play under your control, either: draw a card or gain 1
+    // gold. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Put attachment into play',
             cost: [
                 ability.costs.kneelFactionCard(),
                 ability.costs.payXGold(
-                    () => Math.min(...this.attachmentCosts()),
-                    () => Math.max(...this.attachmentCosts())
+                    (context) => Math.min(...attachmentCosts(context.player)),
+                    (context) => Math.max(...attachmentCosts(context.player))
                 )
             ],
             target: {
@@ -23,24 +30,21 @@ class ValyrianSteel extends AgendaCard {
                     (context.xValue === undefined || card.getPrintedCost() === context.xValue) &&
                     context.player.canPutIntoPlay(card)
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1}, kneels their faction card and pays {2} to put {3} into play',
-                    context.player,
-                    this,
-                    context.xValue,
-                    context.target
-                );
-                context.player.putIntoPlay(context.target);
-            }
+            message: {
+                format: '{player} uses {source}, kneels their faction card and pays {xValue} to put {target} into play',
+                args: { xValue: (context) => context.xValue }
+            },
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
-
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    event.card.controller === this.controller &&
+                onCardEntersPlay: (event, context) =>
+                    event.card.controller === context.player &&
                     event.card.getType() === 'attachment' &&
-                    (this.controller.canDraw() || this.controller.canGainGold())
+                    (context.player.canDraw() || context.player.canGainGold())
             },
             choices: {
                 'Gain 1 gold': {
@@ -61,13 +65,12 @@ class ValyrianSteel extends AgendaCard {
             limit: ability.limit.perPhase(1)
         });
     }
+}
 
-    attachmentCosts() {
-        const attachments = this.controller.hand.filter(
-            (card) => card.getType() === 'attachment' && card.hasPrintedCost()
-        );
-        return attachments.map((card) => card.getPrintedCost());
-    }
+function attachmentCosts(player) {
+    return player.hand
+        .filter((card) => card.getType() === 'attachment' && card.hasPrintedCost())
+        .map((card) => card.getPrintedCost());
 }
 
 ValyrianSteel.code = '17152';

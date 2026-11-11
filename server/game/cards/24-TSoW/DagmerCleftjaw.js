@@ -1,13 +1,17 @@
 import DrawCard from '../../drawcard.js';
 
 class DagmerCleftjaw extends DrawCard {
+    // Dagmer Cleftjaw (24004)
+    // Pillage. Shadow (4). Stealth.
+    // While there is a Winter plot card revealed, you may marshal Dagmer Cleftjaw into shadows from
+    // your dead pile as if he were in your hand.
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',
-            condition: () => this.game.anyPlotHasTrait('Winter'),
+            condition: (context) => context.game.anyPlotHasTrait('Winter'),
             targetController: 'current',
             effect: ability.effects.canMarshalIntoShadows(
-                (card) => card === this && card.location === 'dead pile'
+                (card, context) => card === context.source && card.location === 'dead pile'
             )
         });
     }

@@ -5,6 +5,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { matchCardByNameAndPack } from './cardutil.js';
+import { Factions } from '../../server/services/DeckService.js';
 
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
@@ -27,10 +28,11 @@ class DeckBuilder {
 
         this.cardsByCode = cards;
         this.cards = Object.values(this.cardsByCode);
+        addLabels(this.cards);
     }
 
-    buildDeck(faction, cardLabels) {
-        let allCards = this.createCardCounts(cardLabels);
+    buildDeck(faction, cardLabels, { strictNames = false } = {}) {
+        let allCards = this.createCardCounts(cardLabels, { strictNames });
 
         let agendas = allCards
             .filter((cardCount) => cardCount.card.type === 'agenda')
@@ -41,11 +43,16 @@ class DeckBuilder {
         if (agendas.length > 1) {
             // Assume multi-agenda decks are Alliance
             agenda = agendas.find((card) => card.name === 'Alliance');
+            if (!agenda) {
+                throw new Error(
+                    `A deck with several agendas needs Alliance: ${agendas.map((card) => card.name).join(', ')}`
+                );
+            }
             bannerCards = agendas.filter((card) => card.name !== 'Alliance');
         }
 
         return {
-            faction: { value: faction },
+            faction: Factions.find((entry) => entry.value === faction) || { value: faction },
             agenda: agenda,
             bannerCards: bannerCards,
             drawCards: allCards.filter((cardCount) =>
@@ -55,7 +62,7 @@ class DeckBuilder {
         };
     }
 
-    createCardCounts(cardLabels) {
+    createCardCounts(cardLabels, options) {
         let cardCounts = {};
         for (let label of cardLabels) {
             let cardName = label;
@@ -65,7 +72,7 @@ class DeckBuilder {
                 count = label.count;
             }
 
-            let cardData = this.getCard(cardName);
+            let cardData = this.getCard(cardName, options);
             if (cardCounts[cardData.code]) {
                 cardCounts[cardData.code].count += count;
             } else {
@@ -78,7 +85,7 @@ class DeckBuilder {
         return Object.values(cardCounts);
     }
 
-    getCard(codeOrLabelOrName) {
+    getCard(codeOrLabelOrName, { strictNames = false } = {}) {
         if (this.cardsByCode[codeOrLabelOrName]) {
             return this.cardsByCode[codeOrLabelOrName];
         }
@@ -94,12 +101,26 @@ class DeckBuilder {
             let matchingLabels = cardsByName
                 .map((card) => `${card.name} (${card.packCode})`)
                 .join('\n');
-            console.warn(
-                `Multiple cards match the name ${codeOrLabelOrName}. Use one of these instead:\n${matchingLabels}`
-            );
+            const message = `Multiple cards match the name ${codeOrLabelOrName}. Use one of these instead:\n${matchingLabels}`;
+            if (strictNames) {
+                throw new Error(message);
+            }
+            console.warn(message);
         }
 
         return cardsByName[0];
+    }
+}
+
+function addLabels(cards) {
+    const countsByName = new Map();
+    for (const card of cards) {
+        countsByName.set(card.name, (countsByName.get(card.name) || 0) + 1);
+    }
+
+    for (const card of cards) {
+        card.label =
+            countsByName.get(card.name) > 1 ? `${card.name} (${card.packCode})` : card.name;
     }
 }
 

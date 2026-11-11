@@ -1,11 +1,16 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Rhaegal extends DrawCard {
+    // Rhaegal (01164)
+    // No attachments.
+    // Reaction: After you win a challenge in which a Stormborn character you control is
+    // participating, choose and stand a Stormborn character. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.getWinnerCards().some((card) => card.hasTrait('Stormborn'))
             },
             limit: ability.limit.perPhase(1),
@@ -16,15 +21,8 @@ class Rhaegal extends DrawCard {
                     card.hasTrait('Stormborn') &&
                     card.kneeled
             },
-            handler: (context) => {
-                this.controller.standCard(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to stand {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

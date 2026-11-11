@@ -1,33 +1,33 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheWall extends DrawCard {
+    // The Wall (01137)
+    // Each [thenightswatch] character you control gets +1 STR.
+    // Forced Reaction: After you lose an unopposed challenge, kneel The Wall.
+    // Interrupt: When the challenges phase ends, kneel The Wall to gain 2 power for your faction.
     setupCardAbilities(ability) {
         this.forcedReaction({
             when: {
-                afterChallenge: (event) =>
-                    this.controller === event.challenge.loser &&
-                    !this.kneeled &&
+                afterChallenge: (event, context) =>
+                    context.source.controller === event.challenge.loser &&
+                    !context.source.kneeled &&
                     event.challenge.isUnopposed()
             },
-            handler: () => {
-                this.game.addMessage('{0} is forced to kneel {1}', this.controller, this);
-                this.controller.kneelCard(this);
-            }
+            message: '{player} is forced to kneel {source}',
+            gameAction: GameActions.kneelCard((context) => ({ card: context.source }))
         });
         this.interrupt({
             when: {
-                onPhaseEnded: (event) =>
-                    event.phase === 'challenge' && this.controller.canGainFactionPower()
+                onPhaseEnded: (event, context) =>
+                    event.phase === 'challenge' && context.source.controller.canGainFactionPower()
             },
             cost: ability.costs.kneelSelf(),
-            handler: () => {
-                this.game.addPower(this.controller, 2);
-                this.game.addMessage(
-                    '{0} kneels {1} to gain 2 power for their faction',
-                    this.controller,
-                    this
-                );
-            }
+            message: '{player} kneels {source} to gain 2 power for their faction',
+            gameAction: GameActions.gainPower((context) => ({
+                card: context.player.faction,
+                amount: 2
+            }))
         });
         this.persistentEffect({
             match: (card) => card.isFaction('thenightswatch') && card.getType() === 'character',

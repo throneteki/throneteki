@@ -18,11 +18,12 @@ class CostReducer {
             : [properties.playingTypes];
 
         // Reducers that reduce marshalling any card with no characteristic
-        // requirements should also reduce marshalling any card into shadows.
-        // See the following ruling on Hizdahr zo Loraq:
+        // requirements should also reduce marshalling any card into shadows, and are used up by
+        // marshalling a duplicate. See the following rulings on Hizdahr zo Loraq:
         // http://www.cardgamedb.com/forums/index.php?/topic/39948-ruling-hizdahr-zo-loraq/
+        // https://github.com/throneteki/throneteki/issues/2278
         if (!properties.match && playingTypes.includes('marshal')) {
-            return playingTypes.concat('marshalIntoShadows');
+            return playingTypes.concat('marshalIntoShadows', 'marshalDuplicate');
         }
 
         return playingTypes;
@@ -46,7 +47,7 @@ class CostReducer {
 
     getAmount(card) {
         if (typeof this.amount === 'function') {
-            return this.amount(card) || 0;
+            return this.amount(card, this.source) || 0;
         }
 
         return this.amount;

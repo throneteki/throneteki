@@ -2,12 +2,18 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class WanderingDisciple extends DrawCard {
+    // Wandering Disciple (26043)
+    // Shadow (3).
+    // Reaction: After Wandering Disciple comes out of shadows, put a non-unique Drowned God
+    // character into play from your dead pile. At the end of the phase, if that card is still in
+    // play, discard it from play.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             target: {
+                type: 'select',
                 cardCondition: (card, context) =>
                     card.controller === context.player &&
                     card.location === 'dead pile' &&
@@ -17,22 +23,25 @@ class WanderingDisciple extends DrawCard {
                     context.player.canPutIntoPlay(card)
             },
             message: '{player} uses {source} to put {target} into play from their dead pile',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoPlay((context) => ({
-                        card: context.target
-                    })).thenExecute((event) => {
-                        this.atEndOfPhase((ability) => ({
-                            match: event.card,
-                            condition: () =>
-                                ['play area', 'duplicate'].includes(event.card.location),
-                            targetLocation: 'any',
-                            effect: ability.effects.discardIfStillInPlay(true)
-                        }));
-                    }),
-                    context
-                );
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({ card: context.target })).then({
+                gameAction: GameActions.delayedEffect((context) => {
+                    const card = context.parentContext.target;
+                    return {
+                        duration: 'untilTriggered',
+                        title: card.name,
+                        when: { onAtEndOfPhase: () => true },
+                        until: { onCardLeftPlay: (event) => event.card === card },
+                        gameAction: GameActions.ifCondition({
+                            condition: () => ['play area', 'duplicate'].includes(card.location),
+                            thenAction: {
+                                message:
+                                    '{player} resolves the delayed effect from {source}: {gameAction}',
+                                gameAction: GameActions.discardCard({ card, allowSave: true })
+                            }
+                        })
+                    };
+                })
+            })
         });
     }
 }

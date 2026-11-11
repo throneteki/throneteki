@@ -1,14 +1,19 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class FamilyDutyHonor extends DrawCard {
+    // Family, Duty, Honor (20029)
+    // Interrupt: When a House Tully character you control would leave play, discard 1 power from
+    // that character to save it.
     setupCardAbilities(ability) {
-        let leftPlayCondition = (event) =>
+        let leftPlayCondition = (event, context) =>
             event.allowSave &&
             event.card.canBeSaved() &&
             event.card.hasTrait('House Tully') &&
-            event.card.controller === this.controller &&
+            event.card.controller === context.player &&
             event.card.getPower() > 0;
         this.interrupt({
+            canCancel: true,
             when: {
                 onCharacterKilled: leftPlayCondition,
                 onCardDiscarded: leftPlayCondition,
@@ -18,15 +23,11 @@ class FamilyDutyHonor extends DrawCard {
                 onCardPutIntoShadows: leftPlayCondition
             },
             cost: ability.costs.discardPower(1, (card, context) => card === context.event.card),
-            handler: (context) => {
-                context.event.saveCard();
-                this.game.addMessage(
-                    '{0} plays {1} and discards 1 power from {2} to save it',
-                    context.player,
-                    this,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} plays {source} and discards 1 power from {card} to save it',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.saveCard((context) => ({ event: context.event }))
         });
     }
 }

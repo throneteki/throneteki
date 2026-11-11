@@ -9,16 +9,16 @@ import { Flags } from '../../../server/game/Constants/index.js';
 
 describe('Challenge', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', [
-            'applyGameAction',
-            'on',
-            'raiseEvent',
-            'resolveGameAction'
-        ]);
-        this.gameSpy.applyGameAction.and.callFake((type, card, handler) => {
+        this.gameSpy = {
+            applyGameAction: vi.fn(),
+            on: vi.fn(),
+            raiseEvent: vi.fn(),
+            resolveGameAction: vi.fn()
+        };
+        this.gameSpy.applyGameAction.mockImplementation((type, card, handler) => {
             handler(card);
         });
-        this.gameSpy.resolveGameAction.and.callFake((action) => {
+        this.gameSpy.resolveGameAction.mockImplementation((action) => {
             const event = action.createEvent(action.propertyFactory);
             event.handler(event);
         });
@@ -46,8 +46,8 @@ describe('Challenge', function () {
         });
         this.gameSpy.currentChallenge = this.challenge;
 
-        spyOn(this.attackerCard, 'getStrength').and.returnValue(5);
-        spyOn(this.defenderCard, 'getStrength').and.returnValue(5);
+        vi.spyOn(this.attackerCard, 'getStrength').mockReturnValue(5);
+        vi.spyOn(this.defenderCard, 'getStrength').mockReturnValue(5);
 
         this.challenge.addAttackers([this.attackerCard]);
         this.challenge.addDefenders([this.defenderCard]);
@@ -140,7 +140,7 @@ describe('Challenge', function () {
 
             describe("and is a character contributing it's STR (6)", function () {
                 beforeEach(function () {
-                    spyOn(this.targetCard, 'getStrength').and.returnValue(6);
+                    vi.spyOn(this.targetCard, 'getStrength').mockReturnValue(6);
                 });
 
                 describe("towards the attacking player's side", function () {
@@ -230,7 +230,7 @@ describe('Challenge', function () {
             beforeEach(function () {
                 this.targetCard = new DrawCard(this.attackingPlayer, {});
 
-                spyOn(this.targetCard, 'getStrength').and.returnValue(5);
+                vi.spyOn(this.targetCard, 'getStrength').mockReturnValue(5);
 
                 this.challenge.addAttackers([this.targetCard]);
 
@@ -363,7 +363,7 @@ describe('Challenge', function () {
                 describe("then has it's STR raised (by 2)", function () {
                     beforeEach(function () {
                         this.previousTargetCardSTR = this.targetCard.getStrength();
-                        this.targetCard.getStrength.and.returnValue(
+                        this.targetCard.getStrength.mockReturnValue(
                             this.targetCard.getStrength() + 2
                         );
                         this.challenge.calculateStrength();

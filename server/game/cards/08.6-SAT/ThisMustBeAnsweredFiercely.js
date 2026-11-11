@@ -2,11 +2,14 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ThisMustBeAnsweredFiercely extends DrawCard {
+    // This Must Be Answered Fiercely! (08104)
+    // Reaction: After 3 or more characters are declared as attackers in a challenge against you,
+    // search your deck for a [tyrell] character and put it into play. Shuffle your deck.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: (event) =>
-                    event.challenge.initiatedAgainstPlayer === this.controller &&
+                onChallengeInitiated: (event, context) =>
+                    event.challenge.initiatedAgainstPlayer === context.source.controller &&
                     event.challenge.attackers.length >= 3
             },
             message: '{player} plays {source} to search their deck for a Tyrell character',

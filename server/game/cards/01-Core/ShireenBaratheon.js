@@ -1,10 +1,13 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class ShireenBaratheon extends DrawCard {
+    // Shireen Baratheon (01051)
+    // Interrupt: When Shireen Baratheon is killed, choose and kneel a character.
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCharacterKilled: (event) => event.card === this
+                onCharacterKilled: (event, context) => event.card === context.source
             },
             target: {
                 cardCondition: (card) =>
@@ -13,16 +16,8 @@ class ShireenBaratheon extends DrawCard {
                     !card.kneeled,
                 gameAction: 'kneel'
             },
-            handler: (context) => {
-                this.controller.kneelCard(context.target);
-
-                this.game.addMessage(
-                    '{0} uses {1} to kneel {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to kneel {target}',
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target }))
         });
     }
 }

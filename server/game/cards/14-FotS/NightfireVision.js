@@ -1,59 +1,46 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class NightfireVision extends DrawCard {
+    // Nightfire Visions (14024)
+    // Play only if you control a R'hllor character.
+    // Taxation Action: Name a Trait. If an opponent reveals a plot card with that Trait during the
+    // next plot phase, draw 3 cards.
     setupCardAbilities() {
         this.action({
-            condition: () =>
-                this.controller.anyCardsInPlay(
+            phase: 'taxation',
+            condition: (context) =>
+                context.player.anyCardsInPlay(
                     (card) => card.getType() === 'character' && card.hasTrait("R'hllor")
                 ),
-            phase: 'taxation',
-            handler: (context) => {
-                this.context = context;
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: 'Name a trait',
-                        controls: [
-                            { type: 'trait-name', command: 'menuButton', method: 'selectTraitName' }
-                        ]
+            message: '{player} plays {source} to name a trait',
+            gameAction: GameActions.nameTrait({
+                message: '{player} names the {trait} trait',
+                gameAction: GameActions.delayedEffect({
+                    duration: 'custom',
+                    when: {
+                        onPlotsRevealed: (event, context) =>
+                            context.game.currentPhase === 'plot' &&
+                            event.plots.some(
+                                (plot) =>
+                                    plot.controller !== context.player &&
+                                    plot.hasTrait(context.namedTrait)
+                            )
                     },
-                    source: this
-                });
-            }
+                    until: {
+                        onPhaseEnded: (event) => event.phase === 'plot'
+                    },
+                    message: {
+                        format: '{player} draws 3 cards for {source} as a plot with the {trait} trait was revealed',
+                        args: { trait: (context) => context.namedTrait }
+                    },
+                    gameAction: GameActions.drawCards((context) => ({
+                        player: context.player,
+                        amount: 3
+                    }))
+                })
+            })
         });
-    }
-
-    selectTraitName(player, traitName) {
-        this.game.addMessage('{0} plays {1} and names the {2} trait', player, this, traitName);
-        this.namedTrait = traitName;
-
-        this.game.once('onPlotsRevealed', (event) => this.handlePlotsRevealed(event));
-
-        return true;
-    }
-
-    handlePlotsRevealed(event) {
-        if (!this.namedTrait) {
-            return;
-        }
-
-        let player = this.context.player;
-
-        if (
-            player.canDraw() &&
-            event.plots.some((plot) => plot.controller !== player && plot.hasTrait(this.namedTrait))
-        ) {
-            let numCards = player.drawCardsToHand(3).length;
-            this.game.addMessage(
-                '{0} draws {1} cards for {2} due to a plot with trait {3} being revealed',
-                player,
-                numCards,
-                this,
-                this.namedTrait
-            );
-            this.namedTrait = null;
-            this.context = null;
-        }
     }
 }
 

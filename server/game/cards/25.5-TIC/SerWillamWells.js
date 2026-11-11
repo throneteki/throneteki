@@ -1,6 +1,10 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class SerWillamWells extends DrawCard {
+    // Ser Willam Wells (25087)
+    // Challenges Action: Kill Ser Willam Wells to choose a character. Until the end of the phase,
+    // that character loses a [military], an [intrigue], and a [power] icon.
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove icons from character',
@@ -11,16 +15,15 @@ class SerWillamWells extends DrawCard {
             },
             message:
                 '{player} kills {costs.kill} to remove a military, an intrigue, and a power icon from {target} until the end of the phase',
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: [
-                        ability.effects.removeIcon('military'),
-                        ability.effects.removeIcon('intrigue'),
-                        ability.effects.removeIcon('power')
-                    ]
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: [
+                    ability.effects.removeIcon('military'),
+                    ability.effects.removeIcon('intrigue'),
+                    ability.effects.removeIcon('power')
+                ]
+            }))
         });
     }
 }

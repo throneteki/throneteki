@@ -2,14 +2,10 @@
 
 import fs from 'fs';
 import _ from 'underscore';
-import monk from 'monk';
-
-import GameService from '../services/GameService.js';
 import ServiceFactory from '../services/ServiceFactory.js';
+import db from '../db/index.js';
 
-let configService = ServiceFactory.configService();
-let db = monk(configService.getValue('dbPath'));
-let gameService = new GameService(db);
+let gameService = ServiceFactory.gameService();
 
 const from = getArg('from');
 const to = getArg('to');
@@ -304,10 +300,10 @@ gameService
             }
         }
     })
-    .then(() => db.close())
+    .then(() => db.shutdown())
     .catch((ex) => {
         console.log(ex.stack);
-        db.close();
+        db.shutdown();
     });
 
 function getArg(name, defaultVal = undefined) {

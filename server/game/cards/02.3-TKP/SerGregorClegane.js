@@ -1,53 +1,52 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SerGregorClegane extends DrawCard {
+    // Ser Gregor Clegane (02049)
+    // Pillage. Renown.
+    // Reaction: After Ser Gregor Clegane discards a character using pillage, place that card in its
+    // owner's dead pile. Then, you may choose and kill a character with printed cost equal to that
+    // card's printed cost.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardDiscarded: (event) =>
+                onCardDiscarded: (event, context) =>
                     event.isPillage &&
-                    event.source === this &&
+                    event.source === context.source &&
                     event.card.getType() === 'character' &&
                     event.card.location === 'discard pile'
             },
-            handler: (context) => {
-                let discarded = context.event.card;
-                discarded.controller.moveCard(discarded, 'dead pile');
-                this.game.addMessage(
-                    "{0} uses {1} to place {2} in {3}'s dead pile",
-                    this.controller,
-                    this,
-                    discarded,
-                    discarded.controller
-                );
-
-                if (!this.game.allCards.some((card) => this.cardCondition(discarded, card))) {
-                    return;
+            message: {
+                format: "{player} uses {source} to place {discarded} in {owner}'s dead pile",
+                args: {
+                    discarded: (context) => context.event.card,
+                    owner: (context) => context.event.card.owner
                 }
-
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: (card) => this.cardCondition(discarded, card),
-                    source: this,
-                    gameAction: 'kill',
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
-            }
+            },
+            gameAction: GameActions.placeCard((context) => ({
+                card: context.event.card,
+                location: 'dead pile'
+            })).then({
+                condition: (context) =>
+                    context.game.anyCardsInPlay((card) =>
+                        sameCost(card, context.parentContext.event.card)
+                    ),
+                target: {
+                    optional: true,
+                    cardCondition: (card, context) =>
+                        card.location === 'play area' &&
+                        sameCost(card, context.parentContext.event.card),
+                    gameAction: 'kill'
+                },
+                message: 'Then {player} uses {source} to kill {target}',
+                gameAction: GameActions.kill((context) => ({ card: context.target }))
+            })
         });
     }
+}
 
-    cardCondition(discarded, card) {
-        return (
-            card.location === 'play area' &&
-            card.getType() === 'character' &&
-            card.getPrintedCost() === discarded.getPrintedCost()
-        );
-    }
-
-    onCardSelected(player, card) {
-        this.game.addMessage('{0} uses {1} to kill {2}', this.controller, this, card);
-        card.controller.killCharacter(card);
-        return true;
-    }
+function sameCost(card, discarded) {
+    return card.getType() === 'character' && card.getPrintedCost() === discarded.getPrintedCost();
 }
 
 SerGregorClegane.code = '02049';

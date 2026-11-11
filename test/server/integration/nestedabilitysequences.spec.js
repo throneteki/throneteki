@@ -93,7 +93,7 @@ describe('nested ability sequences', function () {
                     this.player1.clickPrompt('Pass');
 
                     expect(this.player1).toHavePrompt('Select a character');
-                    this.player1.clickPrompt('Done');
+                    this.player1.clickPrompt('Cancel');
 
                     expect(this.player1).toAllowAbilityTrigger('Robb Stark');
                     expect(this.player1).toAllowAbilityTrigger('Catelyn Stark');

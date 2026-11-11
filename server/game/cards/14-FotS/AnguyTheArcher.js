@@ -1,10 +1,13 @@
 import DrawCard from '../../drawcard.js';
 
 class AnguyTheArcher extends DrawCard {
+    // Anguy the Archer (14041)
+    // While you control no loyal characters, Anguy the Archer does not kneel when declared as an
+    // attacker or defender in a [military] challenge.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                !this.controller.anyCardsInPlay(
+            condition: (context) =>
+                !context.source.controller.anyCardsInPlay(
                     (card) => card.getType() === 'character' && card.isLoyal()
                 ),
             match: this,

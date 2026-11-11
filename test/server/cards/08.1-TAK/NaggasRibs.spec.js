@@ -1,112 +1,81 @@
 describe("Nagga's Ribs", function () {
-    integration(function () {
+    describe('when a character is discarded', function () {
         beforeEach(function () {
-            const deck1 = this.buildDeck('greyjoy', [
-                'Marched to the Wall',
-                'A Noble Cause',
-                'Theon Greyjoy (Core)',
-                'Theon Greyjoy (Core)',
-                "Nagga's Ribs"
-            ]);
-
-            const deck2 = this.buildDeck('thenightswatch', [
-                'A Noble Cause',
-                'Hedge Knight',
-                'Now My Watch Begins',
-                "Mutiny At Craster's Keep"
-            ]);
-
-            this.player1.selectDeck(deck1);
-            this.player2.selectDeck(deck2);
-            this.startGame();
-            this.keepStartingHands();
-
-            [this.character1, this.character2] = this.player1.filterCardsByName(
-                'Theon Greyjoy',
-                'hand'
-            );
-
-            this.player1.clickCard(this.character1);
-            this.player1.clickCard("Nagga's Ribs", 'hand');
-
-            this.player2.clickCard('Hedge Knight', 'hand');
-            this.completeSetup();
+            this.setupTest({
+                phase: 'plot',
+                player1: {
+                    plotDeck: ['Marched to the Wall'],
+                    inPlay: ['Theon Greyjoy (Core)', "Nagga's Ribs"]
+                },
+                player2: { inPlay: ['Hedge Knight'] }
+            });
+            this.player1.selectPlot('Marched to the Wall');
+            this.player2.selectPlot('Filler Plot');
+            this.selectFirstPlayer(this.player1);
+            this.player1.clickCard(this.theonGreyjoy);
+            this.player2.clickCard(this.hedgeKnight);
+            this.player1.triggerAbility("Nagga's Ribs");
         });
 
-        describe('when a character is discarded', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('Marched to the Wall');
-                this.selectFirstPlayer(this.player1);
+        it('moves it to your dead pile', function () {
+            expect(this.theonGreyjoy.location).toBe('dead pile');
+            expect(this.hedgeKnight.location).toBe('discard pile');
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 
-                this.player1.clickCard('Theon Greyjoy', 'play area');
-                this.player2.clickCard('Hedge Knight', 'play area');
-
-                this.player1.triggerAbility("Nagga's Ribs");
+    describe('when a dupe is discarded', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: { inPlay: [{ card: 'Theon Greyjoy (Core)', dupes: 1 }, "Nagga's Ribs"] },
+                player2: { inPlay: ['Hedge Knight'], hand: ["Mutiny At Craster's Keep"] }
             });
-
-            it('should move the card to the dead pile', function () {
-                expect(this.character1.location).toBe('dead pile');
-            });
+            [this.dupe] = this.theonGreyjoy.dupes;
+            this.player2.togglePromptedActionWindow('dominance', true);
+            this.completeChallengesPhase();
+            this.player1.clickPrompt('Pass');
+            this.player2.clickCard(this.mutinyAtCrastersKeep);
+            this.player2.clickCard(this.hedgeKnight);
+            this.player2.clickCard(this.theonGreyjoy);
+            this.player1.triggerAbility("Nagga's Ribs");
         });
 
-        describe('when a dupe is discarded', function () {
-            beforeEach(function () {
-                this.player2.togglePromptedActionWindow('dominance', true);
+        it('moves the dupe to your dead pile', function () {
+            expect(this.dupe.location).toBe('dead pile');
+            expect(this.theonGreyjoy.location).toBe('play area');
+        });
+    });
 
-                this.player1.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player1);
-
-                this.player1.clickCard(this.character2);
-                this.completeMarshalPhase();
-                this.completeChallengesPhase();
-
-                this.player2.clickCard("Mutiny At Craster's Keep", 'hand');
-                this.player2.clickCard('Hedge Knight', 'play area');
-                this.player2.clickCard(this.character1);
-
-                this.player1.triggerAbility("Nagga's Ribs");
+    describe('vs Now My Watch Begins', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: { inPlay: ['Theon Greyjoy (Core)', "Nagga's Ribs"] },
+                player2: {
+                    inPlay: ['Hedge Knight'],
+                    hand: ["Mutiny At Craster's Keep", 'Now My Watch Begins']
+                }
             });
-
-            it('should move the dupe to the dead pile', function () {
-                expect(this.character2.location).toBe('dead pile');
-            });
+            this.player2.togglePromptedActionWindow('dominance', true);
+            this.completeChallengesPhase();
+            this.player1.clickPrompt('Pass');
+            this.player2.clickCard(this.mutinyAtCrastersKeep);
+            this.player2.clickCard(this.hedgeKnight);
+            this.player2.clickCard(this.theonGreyjoy);
         });
 
-        describe('vs Now My Watch Begins', function () {
-            beforeEach(function () {
-                this.player2.togglePromptedActionWindow('dominance', true);
+        it('is not offered once Now My Watch Begins has taken the character', function () {
+            this.player1.clickPrompt('Pass');
+            this.player2.triggerAbility('Now My Watch Begins');
 
-                this.player1.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player1);
+            expect(this.player1).not.toAllowAbilityTrigger("Nagga's Ribs");
+        });
 
-                this.completeMarshalPhase();
-                this.completeChallengesPhase();
+        it("stops Now My Watch Begins once Nagga's Ribs has moved the character", function () {
+            this.player1.triggerAbility("Nagga's Ribs");
 
-                this.player2.clickCard("Mutiny At Craster's Keep", 'hand');
-                this.player2.clickCard('Hedge Knight', 'play area');
-                this.player2.clickCard(this.character1);
-            });
-
-            describe('when Now My Watch Begins is triggered first', function () {
-                beforeEach(function () {
-                    this.player1.clickPrompt('Pass');
-                    this.player2.triggerAbility('Now My Watch Begins');
-                });
-
-                it("should not prompt for Nagga's Ribs", function () {
-                    expect(this.player1).not.toAllowAbilityTrigger("Nagga's Ribs");
-                });
-            });
-
-            describe('when Now My Watch Begins is triggered first', function () {
-                beforeEach(function () {
-                    this.player1.triggerAbility("Nagga's Ribs");
-                });
-
-                it('should not prompt for Now My Watch Begins', function () {
-                    expect(this.player2).not.toAllowAbilityTrigger('Now My Watch Begins');
-                });
-            });
+            expect(this.player2).not.toAllowAbilityTrigger('Now My Watch Begins');
         });
     });
 });

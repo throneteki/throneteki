@@ -2,10 +2,10 @@ import SimultaneousAction from '../../../server/game/GameActions/SimultaneousAct
 
 describe('SimultaneousAction', function () {
     beforeEach(function () {
-        this.actionSpy1 = jasmine.createSpyObj('action', ['allow', 'createEvent']);
-        this.actionSpy1.createEvent.and.returnValue({ resolved: true });
-        this.actionSpy2 = jasmine.createSpyObj('action', ['allow', 'createEvent']);
-        this.actionSpy2.createEvent.and.returnValue({ resolved: true });
+        this.actionSpy1 = { allow: vi.fn(), createEvent: vi.fn() };
+        this.actionSpy1.createEvent.mockReturnValue({ resolved: true });
+        this.actionSpy2 = { allow: vi.fn(), createEvent: vi.fn() };
+        this.actionSpy2.createEvent.mockReturnValue({ resolved: true });
         this.context = { props: 'external' };
     });
 
@@ -16,15 +16,15 @@ describe('SimultaneousAction', function () {
 
         describe('allow()', function () {
             it('returns true if at least one action is allowed', function () {
-                this.actionSpy1.allow.and.returnValue(false);
-                this.actionSpy2.allow.and.returnValue(true);
+                this.actionSpy1.allow.mockReturnValue(false);
+                this.actionSpy2.allow.mockReturnValue(true);
 
                 expect(this.action.allow(this.context)).toBe(true);
             });
 
             it('returns false if all actions are not allowed', function () {
-                this.actionSpy1.allow.and.returnValue(false);
-                this.actionSpy2.allow.and.returnValue(false);
+                this.actionSpy1.allow.mockReturnValue(false);
+                this.actionSpy2.allow.mockReturnValue(false);
 
                 expect(this.action.allow(this.context)).toBe(false);
             });
@@ -32,8 +32,8 @@ describe('SimultaneousAction', function () {
 
         describe('createEvent()', function () {
             beforeEach(function () {
-                this.actionSpy1.allow.and.returnValue(false);
-                this.actionSpy2.allow.and.returnValue(true);
+                this.actionSpy1.allow.mockReturnValue(false);
+                this.actionSpy2.allow.mockReturnValue(true);
                 this.event = this.action.createEvent(this.context);
             });
 
@@ -54,8 +54,8 @@ describe('SimultaneousAction', function () {
 
     describe('when passed a factory method', function () {
         beforeEach(function () {
-            this.actionFactorySpy = jasmine.createSpy('factory');
-            this.actionFactorySpy.and.returnValue([this.actionSpy1, this.actionSpy2]);
+            this.actionFactorySpy = vi.fn();
+            this.actionFactorySpy.mockReturnValue([this.actionSpy1, this.actionSpy2]);
             this.action = new SimultaneousAction(this.actionFactorySpy);
         });
 
@@ -67,15 +67,15 @@ describe('SimultaneousAction', function () {
             });
 
             it('returns true if at least one action is allowed', function () {
-                this.actionSpy1.allow.and.returnValue(false);
-                this.actionSpy2.allow.and.returnValue(true);
+                this.actionSpy1.allow.mockReturnValue(false);
+                this.actionSpy2.allow.mockReturnValue(true);
 
                 expect(this.action.allow(this.context)).toBe(true);
             });
 
             it('returns false if all actions are not allowed', function () {
-                this.actionSpy1.allow.and.returnValue(false);
-                this.actionSpy2.allow.and.returnValue(false);
+                this.actionSpy1.allow.mockReturnValue(false);
+                this.actionSpy2.allow.mockReturnValue(false);
 
                 expect(this.action.allow(this.context)).toBe(false);
             });
@@ -83,8 +83,8 @@ describe('SimultaneousAction', function () {
 
         describe('createEvent()', function () {
             beforeEach(function () {
-                this.actionSpy1.allow.and.returnValue(false);
-                this.actionSpy2.allow.and.returnValue(true);
+                this.actionSpy1.allow.mockReturnValue(false);
+                this.actionSpy2.allow.mockReturnValue(true);
                 this.event = this.action.createEvent(this.context);
             });
 

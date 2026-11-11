@@ -1,53 +1,34 @@
 import DrawCard from '../../drawcard.js';
-import ChallengeTypes from '../../ChallengeTypes.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
+import GameActions from '../../GameActions/index.js';
 
 class LysasLetter extends DrawCard {
-    setupCardAbilities() {
-        this.tracker = ChallengeTracker.forPhase(this.game);
+    // Lysa's Letter (23036)
+    // Reaction: After the challenges phase begins, choose a player and a challenge type. Until the
+    // end of the phase, if that player has not initiated a challenge of that type this phase, set
+    // the claim value on their revealed plot card to 0.
+    setupCardAbilities(ability) {
+        const tracker = ChallengeTracker.forPhase(this.game);
 
         this.reaction({
             when: {
                 onPhaseStarted: (event) => event.phase === 'challenge'
             },
-            choosePlayer: () => true,
-            handler: (context) => {
-                this.chosenPlayer = context.chosenPlayer;
-                // TODO: Add "chooseChallengeIcon" as a pre-handler choice, as this should be known prior to cancel windows
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: 'Select a challenge type',
-                        buttons: ChallengeTypes.asButtons({ method: 'setChallengeType' })
-                    },
-                    source: this
-                });
-            }
+            choosePlayer: true,
+            gameAction: GameActions.chooseChallengeType({
+                message:
+                    '{player} uses {source} to choose {chosenPlayer} and name {challengeType} challenges',
+                gameAction: (challengeType) =>
+                    GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
+                        condition: () =>
+                            !tracker.some({ attackingPlayer: context.chosenPlayer, challengeType }),
+                        match: (card) => card === context.chosenPlayer.activePlot,
+                        targetController: context.chosenPlayer,
+                        effect: ability.effects.setClaim(0)
+                    }))
+            })
         });
-    }
-
-    setChallengeType(player, challengeType) {
-        this.game.addMessage(
-            '{0} uses {1} to choose {2} and name {3} challenges',
-            player,
-            this,
-            this.chosenPlayer,
-            challengeType
-        );
-
-        this.untilEndOfPhase((ability) => ({
-            condition: () =>
-                !this.challengeTypesInitiated(this.chosenPlayer).includes(challengeType),
-            match: (card) => card === this.chosenPlayer.activePlot,
-            targetController: this.chosenPlayer,
-            effect: ability.effects.setClaim(0)
-        }));
-
-        return true;
-    }
-
-    challengeTypesInitiated(player) {
-        let challengesInitiated = this.tracker.filter({ attackingPlayer: player });
-        return challengesInitiated.map((challenge) => challenge.challengeType);
     }
 }
 

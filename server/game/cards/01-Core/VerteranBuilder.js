@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class VerteranBuilder extends DrawCard {
+    // Veteran Builder (01134)
+    // No attachments except Weapon.
+    // Action: Sacrifice Veteran Builder to choose and stand a location.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand a location',
@@ -10,16 +14,8 @@ class VerteranBuilder extends DrawCard {
                 cardCondition: (card) =>
                     card.location === 'play area' && card.getType() === 'location'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} sacrifices {1} to stand {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-
-                context.player.standCard(context.target);
-            }
+            message: '{player} sacrifices {source} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

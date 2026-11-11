@@ -6,6 +6,19 @@ on:
                 type: environment
                 description: Select the environment
                 default: Production
+    workflow_call:
+        inputs:
+            environment:
+                type: string
+                required: true
+            ref:
+                type: string
+                description: The commit to deploy the charts from
+                default: ''
+            image_tag:
+                type: string
+                description: The image tag to deploy, overriding the environment's
+                default: ''
 
 jobs:
     deploy:
@@ -14,22 +27,24 @@ jobs:
         steps:
             - name: Checkout repo
               uses: actions/checkout@v3
+              with:
+                  ref: ${{ inputs.ref }}
 
             - name: Deploy Game Nodes
               run: |
-                  ENV=$(echo "${{ github.event.inputs.environment }}" | tr '[:upper:]' '[:lower:]')
+                  ENV=$(echo "${{ inputs.environment }}" | tr '[:upper:]' '[:lower:]')
 
-                  if [ "${{ github.event.inputs.environment }}" = "Production" ]; then
+                  if [ "${{ inputs.environment }}" = "Production" ]; then
                     NAMESPACE="throneteki"
                     REPLICAS=2
                     SCALE_INCREMENT=2
                     ENV_SUBDOMAIN="production"
-                  elif [ "${{ github.event.inputs.environment }}" = "Development" ]; then
+                  elif [ "${{ inputs.environment }}" = "Development" ]; then
                     NAMESPACE="throneteki-development"
                     REPLICAS=1
                     SCALE_INCREMENT=1
                     ENV_SUBDOMAIN="dev"
-                  elif [ "${{ github.event.inputs.environment }}" = "Playtesting" ]; then
+                  elif [ "${{ inputs.environment }}" = "Playtesting" ]; then
                     NAMESPACE="throneteki-playtesting"
                     REPLICAS=1
                     SCALE_INCREMENT=1
@@ -68,6 +83,9 @@ jobs:
                       TAG="${{ vars.NODE_IMAGE_TAG }}"
                       HELM_IMAGE_FLAGS+=" --set-string image.tag=$TAG"
                     fi
+                  fi
+                  if [ -n "${{ inputs.image_tag }}" ]; then
+                    HELM_IMAGE_FLAGS+=" --set-string image.tag=${{ inputs.image_tag }}"
                   fi
 
                   cat > /tmp/node-secrets.yaml <<EOF

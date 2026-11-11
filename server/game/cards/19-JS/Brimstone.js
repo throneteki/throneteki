@@ -1,11 +1,16 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Brimstone extends DrawCard {
+    // Brimstone (19008)
+    // Each Sand Snake character you control gets +1 STR.
+    // Challenges Action: Kneel Brimstone and return a Sand Snake character to your hand to gain 1
+    // gold.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: (card) =>
+            match: (card, context) =>
                 card.getType() === 'character' &&
-                card.controller === this.controller &&
+                card.controller === context.source.controller &&
                 card.hasTrait('Sand Snake'),
             effect: ability.effects.modifyStrength(1)
         });
@@ -19,15 +24,9 @@ class Brimstone extends DrawCard {
                     (card) => card.getType() === 'character' && card.hasTrait('Sand Snake')
                 )
             ],
-            handler: (context) => {
-                this.game.addGold(context.player, 1);
-                this.game.addMessage(
-                    '{0} kneels {1} and returns {2} to their hand to gain 1 gold',
-                    context.player,
-                    this,
-                    context.costs.returnToHand
-                );
-            }
+            message:
+                '{player} kneels {source} and returns {costs.returnToHand} to their hand to gain 1 gold',
+            gameAction: GameActions.gainGold((context) => ({ player: context.player, amount: 1 }))
         });
     }
 }

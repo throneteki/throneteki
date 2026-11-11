@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Muster extends DrawCard {
+    // Muster (00019)
+    // Marshaling Action: Kneel a Knight character to search your deck for a Knight character,
+    // reveal it, and add it to your hand. Shuffle your deck.
+    // Draft format only.
     setupCardAbilities(ability) {
         this.action({
             title: 'Search deck for Knight',

@@ -2,15 +2,19 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class TheBlueFork extends DrawCard {
+    // The Blue Fork (25098)
+    // Reaction: After you win a [power] challenge by 5 or more STR, put The Blue Fork into play
+    // from your discard pile.
+    // +2 Reserve.
     setupCardAbilities() {
         this.plotModifiers({
             reserve: 2
         });
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.isMatch({
-                        winner: this.controller,
+                        winner: context.source.controller,
                         by5: true,
                         challengeType: 'power'
                     })

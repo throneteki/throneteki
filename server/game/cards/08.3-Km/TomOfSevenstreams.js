@@ -1,31 +1,29 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TomOfSevenstreams extends DrawCard {
+    // Tom of Sevenstreams (08057)
+    // Reaction: After you play a Song event, choose and stand a non-loyal character you control.
+    // (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPlayed: (event) =>
-                    event.card.hasTrait('Song') && event.card.controller === this.controller
+                onCardPlayed: (event, context) =>
+                    event.card.hasTrait('Song') &&
+                    event.card.controller === context.source.controller
             },
             limit: ability.limit.perPhase(1),
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.controller === this.controller &&
+                    card.controller === context.source.controller &&
                     !card.isLoyal() &&
                     card.kneeled,
                 gameAction: 'stand'
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to stand {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

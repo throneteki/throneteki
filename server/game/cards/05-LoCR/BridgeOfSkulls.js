@@ -1,35 +1,37 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 import { ChallengeTracker } from '../../EventTrackers/index.js';
 
+function hasInitiatedMilitaryChallenge(tracker, player, opponent) {
+    return tracker.some({
+        attackingPlayer: opponent,
+        defendingPlayer: player,
+        challengeType: 'military'
+    });
+}
+
 class BridgeOfSkulls extends DrawCard {
+    // Bridge of Skulls (05032)
+    // Interrupt: When the challenges phase ends, choose an opponent who did not initiate a military
+    // challenge against you this phase. That player discards one card at random from his or her
+    // hand.
     setupCardAbilities() {
-        this.tracker = ChallengeTracker.forPhase(this.game);
+        const tracker = ChallengeTracker.forPhase(this.game);
 
         this.interrupt({
             when: {
                 onPhaseEnded: (event) => event.phase === 'challenge'
             },
-            chooseOpponent: (player) => !this.hasInitiatedMilitaryChallenge(player),
-            handler: (context) => {
-                let opponent = context.opponent;
-
-                opponent.discardAtRandom(1);
-
-                this.game.addMessage(
-                    "{0} uses {1} to discard 1 card at random from {2}'s hand",
-                    this.controller,
-                    this,
-                    opponent
-                );
-            }
-        });
-    }
-
-    hasInitiatedMilitaryChallenge(opponent) {
-        return this.tracker.some({
-            attackingPlayer: opponent,
-            defendingPlayer: this.controller,
-            challengeType: 'military'
+            chooseOpponent: (player, context) =>
+                !hasInitiatedMilitaryChallenge(tracker, context.player, player),
+            message: {
+                format: "{player} uses {source} to discard 1 card at random from {opponent}'s hand",
+                args: { opponent: (context) => context.opponent }
+            },
+            gameAction: GameActions.discardAtRandom((context) => ({
+                player: context.opponent,
+                amount: 1
+            }))
         });
     }
 }

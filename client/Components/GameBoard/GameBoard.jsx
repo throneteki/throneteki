@@ -8,14 +8,13 @@ import GameConfigurationModal from './GameConfigurationModal';
 import { navigate } from '../../redux/reducers/navigation';
 import {
     sendCardClickedMessage,
-    sendCardMenuItemClickedMessage,
     sendCardSizeChangeMessage,
     sendDragDropMessage,
     sendGameChatMessage,
     sendToggleDupesMessage,
     sendToggleKeywordSettingMessage,
     sendTogglePromptedActionWindowMessage,
-    sendToggleTimerSetting
+    sendToggleHideResponsesMessage
 } from '../../redux/reducers/game';
 
 import { DndContext, DragOverlay, MouseSensor, TouchSensor, useSensor } from '@dnd-kit/core';
@@ -56,6 +55,7 @@ const GameBoard = () => {
     const dispatch = useDispatch();
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const user = useSelector((state) => state.auth.user);
+    const token = useSelector((state) => state.auth.token);
 
     const [showGameChat, setShowGameChat] = useState(window.innerWidth > 768);
     const [unreadMessages, setUnreadMessages] = useState(0);
@@ -81,14 +81,8 @@ const GameBoard = () => {
 
     const onCardClick = useCallback(
         (card) => {
-            //stopAbilityTimer();
             dispatch(sendCardClickedMessage(card.uuid));
         },
-        [dispatch]
-    );
-
-    const onMenuItemClick = useCallback(
-        (card, menuItem) => dispatch(sendCardMenuItemClickedMessage(card.uuid, menuItem)),
         [dispatch]
     );
 
@@ -100,8 +94,9 @@ const GameBoard = () => {
         const otherPlayers =
             others.length > 0
                 ? others.map(defaultPlayerInfo)
-                : Array.from({ length: (currentGame?.maxPlayers || 2) - 1 }, (_, index) =>
-                      defaultPlayerInfo({ seatNo: index + 2 })
+                : Array.from(
+                      { length: Math.max((currentGame?.maxPlayers || 2) - 1, 1) },
+                      (_, index) => defaultPlayerInfo({ seatNo: index + 2 })
                   );
 
         const allPlayers = players.concat(currentGame?.spectators);
@@ -111,6 +106,10 @@ const GameBoard = () => {
 
     if (!currentGame || !currentGame.started) {
         return <LoadingSpinner label={'Waiting for server...'} />;
+    }
+
+    if (!user && token) {
+        return <LoadingSpinner label={'Loading your account...'} />;
     }
 
     if (!user) {
@@ -134,7 +133,6 @@ const GameBoard = () => {
                 otherPlayer={otherPlayers[0]}
                 userPlayer={userPlayer}
                 onCardClick={onCardClick}
-                onMenuItemClick={onMenuItemClick}
                 onSettingsClick={() => setShowModal(!showModal)}
                 onChatToggle={() => setShowGameChat(!showGameChat)}
                 unreadMessages={unreadMessages}
@@ -148,7 +146,6 @@ const GameBoard = () => {
                 otherPlayers={otherPlayers}
                 userPlayer={userPlayer}
                 onCardClick={onCardClick}
-                onMenuItemClick={onMenuItemClick}
                 onSettingsClick={() => setShowModal(!showModal)}
                 onChatToggle={() => setShowGameChat(!showGameChat)}
                 unreadMessages={unreadMessages}
@@ -231,13 +228,14 @@ const GameBoard = () => {
                 onPromptedActionWindowToggle={(option, value) =>
                     dispatch(sendTogglePromptedActionWindowMessage(option, value))
                 }
-                onTimerSettingToggle={(option, value) =>
-                    dispatch(sendToggleTimerSetting(option, value))
+                onHideResponsesToggle={(option, value) =>
+                    dispatch(sendToggleHideResponsesMessage(option, value))
                 }
                 onCardSizeSettingChange={(value) => dispatch(sendCardSizeChangeMessage(value))}
                 promptDupes={userPlayer.promptDupes}
                 promptedActionWindows={userPlayer.promptedActionWindows}
-                timerSettings={userPlayer.timerSettings}
+                hideInterrupts={userPlayer.hideInterrupts}
+                hideReactions={userPlayer.hideReactions}
                 cardSizeSetting={userPlayer.cardSize}
             />
         </>

@@ -2,15 +2,15 @@ import Player from '../../../server/game/player.js';
 
 describe('Player', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['raiseEvent']);
+        this.gameSpy = { raiseEvent: vi.fn() };
         this.player = new Player('1', { username: 'Player 1', settings: {} }, true, this.gameSpy);
         this.player.initialise();
 
-        this.cardSpy = jasmine.createSpyObj('card', ['allowAttachment']);
-        this.cardSpy.allowAttachment.and.returnValue(true);
+        this.cardSpy = { allowAttachment: vi.fn() };
+        this.cardSpy.allowAttachment.mockReturnValue(true);
         this.cardSpy.location = 'play area';
-        this.attachmentSpy = jasmine.createSpyObj('attachment', ['canAttach']);
-        this.attachmentSpy.canAttach.and.returnValue(true);
+        this.attachmentSpy = { canAttach: vi.fn() };
+        this.attachmentSpy.canAttach.mockReturnValue(true);
     });
 
     describe('canAttach()', function () {
@@ -32,7 +32,7 @@ describe('Player', function () {
 
         describe('when the card does not allow the attachment', function () {
             beforeEach(function () {
-                this.cardSpy.allowAttachment.and.returnValue(false);
+                this.cardSpy.allowAttachment.mockReturnValue(false);
             });
 
             it('should return false', function () {
@@ -42,7 +42,7 @@ describe('Player', function () {
 
         describe('when the attachment cannot be attached to the card', function () {
             beforeEach(function () {
-                this.attachmentSpy.canAttach.and.returnValue(false);
+                this.attachmentSpy.canAttach.mockReturnValue(false);
             });
 
             it('should return false', function () {

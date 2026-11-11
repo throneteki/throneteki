@@ -40,14 +40,12 @@ class MaintenanceService {
     async runCleanup() {
         let expiredUnverifiedAccounts = await this.userService.deleteExpiredUnverifiedAccounts();
         let removedRefreshTokens = await this.userService.cleanupRefreshTokens();
-        let removedLegacySessions = await this.userService.cleanupLegacySessions();
         let removedRegistrationEvents = await this.abuseService.cleanupOldRegistrationEvents();
 
         logger.info(
-            'Maintenance cleanup complete: expired_unverified=%s refresh_tokens=%s legacy_sessions=%s registration_events=%s',
+            'Maintenance cleanup complete: expired_unverified=%s refresh_tokens=%s registration_events=%s',
             expiredUnverifiedAccounts,
             removedRefreshTokens,
-            removedLegacySessions,
             removedRegistrationEvents
         );
     }

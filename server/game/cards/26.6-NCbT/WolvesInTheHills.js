@@ -1,50 +1,36 @@
-import ChallengeTypes from '../../ChallengeTypes.js';
 import DrawCard from '../../drawcard.js';
-import SatisfyClaim from '../../gamesteps/challenge/SatisfyClaim.js';
+import GameActions from '../../GameActions/index.js';
 
 class WolvesInTheHills extends DrawCard {
+    // "Wolves in the Hills" (26112)
+    // Interrupt: When claim is applied for a challenge, return an attacking Direwolf character or
+    // an attacking character with a Direwolf attachment to your hand to apply claim of another
+    // challenge type instead.
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
                 onClaimApplied: () => true
             },
-            cost: ability.costs.returnToHand((card) => this.isValidCharacter(card)),
+            cost: ability.costs.returnToHand(
+                (card) =>
+                    card.getType() === 'character' &&
+                    card.isAttacking() &&
+                    (card.hasTrait('Direwolf') ||
+                        card.attachments.some((attachment) => attachment.hasTrait('Direwolf')))
+            ),
             message:
                 '{player} plays {source} and returns {costs.returnToHand} to their hand to change the apply claim of a different challenge type instead',
-            handler: (context) => {
-                this.context = context;
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: 'Name a challenge type',
-                        buttons: ChallengeTypes.asButtons({ method: 'challengeSelected' }).filter(
-                            (button) => context.event.challengeType !== button.arg
-                        )
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.chooseChallengeType({
+                title: 'Name a challenge type',
+                exclude: (context) => context.event.claim.challengeType,
+                message: '{player} applies {challengeType} claim instead',
+                gameAction: (challengeType) =>
+                    GameActions.changeClaimType((context) => ({
+                        event: context.event,
+                        challengeType
+                    }))
+            })
         });
-    }
-
-    isValidCharacter(card) {
-        return (
-            card.getType() === 'character' &&
-            card.isParticipating() &&
-            (card.hasTrait('Direwolf') ||
-                card.attachments.some((attachment) => attachment.hasTrait('Direwolf')))
-        );
-    }
-
-    challengeSelected(player, challenge) {
-        this.game.addMessage('{0} applies {1} claim instead', player, challenge);
-
-        this.context.replaceHandler((event) => {
-            event.claim.challengeType = challenge;
-
-            this.game.queueStep(new SatisfyClaim(this.game, event.claim));
-        });
-
-        return true;
     }
 }
 

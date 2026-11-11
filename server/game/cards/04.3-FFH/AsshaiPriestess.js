@@ -1,10 +1,15 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class AsshaiPriestess extends DrawCard {
+    // Asshai Priestess (04047)
+    // Reaction: After you marshal Asshai Priestess, choose and kneel a character with STR 2 or
+    // lower.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this && event.playingType === 'marshal'
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source && event.playingType === 'marshal'
             },
             target: {
                 cardCondition: (card) =>
@@ -14,15 +19,8 @@ class AsshaiPriestess extends DrawCard {
                     !card.kneeled,
                 gameAction: 'kneel'
             },
-            handler: (context) => {
-                this.controller.kneelCard(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to kneel {2}',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to kneel {target}',
+            gameAction: GameActions.kneelCard((context) => ({ card: context.target }))
         });
     }
 }

@@ -1,6 +1,10 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class DesmeraRedwyne extends DrawCard {
+    // Desmera Redwyne (09013)
+    // Reaction: After a character is removed from a challenge, pay 1 gold to give that character +2
+    // STR or -1 STR until the end of the phase.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
@@ -8,31 +12,27 @@ class DesmeraRedwyne extends DrawCard {
             },
             cost: ability.costs.payGold(1),
             choices: {
-                'Give +2 STR': (context) => {
-                    this.untilEndOfPhase((ability) => ({
+                'Give +2 STR': {
+                    message: {
+                        format: '{player} uses {source} and pays 1 gold to give {character} +2 STR until the end of the phase',
+                        args: { character: (context) => context.event.card }
+                    },
+                    gameAction: GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
                         match: context.event.card,
                         effect: ability.effects.modifyStrength(2)
-                    }));
-
-                    this.game.addMessage(
-                        '{0} uses {1} and pays 1 gold to give {2} +2 STR until the end of the phase',
-                        this.controller,
-                        this,
-                        context.event.card
-                    );
+                    }))
                 },
-                'Give -1 STR': (context) => {
-                    this.untilEndOfPhase((ability) => ({
+                'Give -1 STR': {
+                    message: {
+                        format: '{player} uses {source} and pays 1 gold to give {character} -1 STR until the end of the phase',
+                        args: { character: (context) => context.event.card }
+                    },
+                    gameAction: GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
                         match: context.event.card,
                         effect: ability.effects.modifyStrength(-1)
-                    }));
-
-                    this.game.addMessage(
-                        '{0} uses {1} and pays 1 gold to give {2} -1 STR until the end of the phase',
-                        this.controller,
-                        this,
-                        context.event.card
-                    );
+                    }))
                 }
             }
         });

@@ -1,0 +1,62 @@
+import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
+
+class ForAllTheNightsToCome extends DrawCard {
+    // For All the Nights to Come (27030)
+    // Reaction: After you win a challenge by 5 or more STR, choose a Builder character, a Ranger
+    // character, and a Steward character. Each of those characters gains 1 power. (Max 1 per
+    // phase.)
+    setupCardAbilities(ability) {
+        this.reaction({
+            when: {
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    event.challenge.strengthDifference >= 5
+            },
+            max: ability.limit.perPhase(1),
+            targets: {
+                builder: {
+                    cardCondition: (card, context) =>
+                        context.source.hasTraitAndCanGainPower(card, 'Builder')
+                },
+                ranger: {
+                    cardCondition: (card, context) =>
+                        context.source.hasTraitAndCanGainPower(card, 'Ranger')
+                },
+                steward: {
+                    cardCondition: (card, context) =>
+                        context.source.hasTraitAndCanGainPower(card, 'Steward')
+                }
+            },
+            message: {
+                format: '{player} plays {source} to have {targets} each gain 1 power',
+                args: { targets: (context) => context.source.getCharactersToGainPower(context) }
+            },
+            gameAction: GameActions.simultaneously((context) =>
+                context.source
+                    .getCharactersToGainPower(context)
+                    .map((card) => GameActions.gainPower({ card }))
+            )
+        });
+    }
+
+    hasTraitAndCanGainPower(card, trait) {
+        return (
+            card.location === 'play area' &&
+            card.getType() === 'character' &&
+            card.hasTrait(trait) &&
+            GameActions.gainPower({ card }).allow()
+        );
+    }
+
+    getCharactersToGainPower(context) {
+        // A character with multiple of the traits may fill multiple slots, but only gains 1 power
+        return [
+            ...new Set([context.targets.builder, context.targets.ranger, context.targets.steward])
+        ];
+    }
+}
+
+ForAllTheNightsToCome.code = '27030';
+
+export default ForAllTheNightsToCome;

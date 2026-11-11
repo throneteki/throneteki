@@ -30,7 +30,9 @@ const Login = () => {
 
                 toast.success('Logged in successfully');
 
-                dispatch(navigate('/'));
+                // Only return to a page on this site, so a crafted link can't send people elsewhere
+                const returnTo = new URLSearchParams(window.location.search).get('return');
+                dispatch(navigate(/^\/(?![/\\])/.test(returnTo || '') ? returnTo : '/'));
             } catch (err) {
                 toast.error(err || 'An error occured logging in. Please try again later.');
             }

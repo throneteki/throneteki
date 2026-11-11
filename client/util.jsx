@@ -105,3 +105,6 @@ export const cardClass = (size, orientation = 'vertical') => {
 
     return classes.join(' ');
 };
+
+// sessionStorage key holding the OAuth state for an in-progress Patreon link
+export const PatreonStateKey = 'patreonOAuthState';

@@ -1,18 +1,18 @@
 import redis from 'redis';
 import logger from './log.js';
 import EventEmitter from 'events';
-import GameService from './services/GameService.js';
 import ServiceFactory from './services/ServiceFactory.js';
 import { detectBinary } from './util.js';
 
 class GameRouter extends EventEmitter {
-    constructor(db) {
+    constructor() {
         super();
 
         let configService = ServiceFactory.configService();
 
         this.workers = {};
-        this.gameService = new GameService(db);
+        this.gameService = ServiceFactory.gameService();
+        this.problemReportService = ServiceFactory.problemReportService();
 
         this.subscriber = redis.createClient(configService.getValue('redisUrl'));
         this.keyPrefix = configService.getValue('redisKeyPrefix');
@@ -28,6 +28,16 @@ class GameRouter extends EventEmitter {
         });
 
         setInterval(this.checkTimeouts.bind(this), 1000 * 60);
+        const problemReportCleanup = setInterval(
+            () =>
+                this.problemReportService
+                    .deleteExpired()
+                    .catch((error) =>
+                        logger.error('Unable to clean up expired problem reports %s', error)
+                    ),
+            60 * 60 * 1000
+        );
+        problemReportCleanup.unref?.();
     }
 
     onError(err) {
@@ -52,7 +62,8 @@ class GameRouter extends EventEmitter {
     }
 
     addSpectator(game, user) {
-        this.sendCommand(game.node.identity, 'SPECTATOR', { game: game, user: user });
+        // The node only needs to know which game; the pending game holds full user records
+        this.sendCommand(game.node.identity, 'SPECTATOR', { game: { id: game.id }, user: user });
     }
 
     getNextAvailableGameNode() {
@@ -248,6 +259,27 @@ class GameRouter extends EventEmitter {
 
                 this.emit('onPlayerLeft', message.arg.gameId, message.arg.player);
 
+                break;
+            case 'REPORTPROBLEM':
+                if (!worker || !message.arg?.gameId || !message.arg?.report?.id) {
+                    logger.warn('Invalid problem report received from worker %s', identity);
+                    break;
+                }
+
+                this.problemReportService
+                    .create(message.arg.report)
+                    .then(() =>
+                        this.sendCommand(identity, 'PROBLEMREPORTSAVED', {
+                            gameId: message.arg.gameId,
+                            reportId: message.arg.report.id
+                        })
+                    )
+                    .catch((error) => {
+                        logger.error('Unable to save problem report %s', error);
+                        this.sendCommand(identity, 'PROBLEMREPORTFAILED', {
+                            gameId: message.arg.gameId
+                        });
+                    });
                 break;
         }
 

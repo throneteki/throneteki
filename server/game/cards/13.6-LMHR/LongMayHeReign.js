@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LongMayHeReign extends DrawCard {
+    // Long May He Reign (13108)
+    // King character only.
+    // Attached character cannot be killed.
+    // Forced Reaction: After you lose a [power] challenge as the defending player, sacrifice Long
+    // May He Reign.
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'King' });
         this.whileAttached({
@@ -8,19 +14,13 @@ class LongMayHeReign extends DrawCard {
         });
         this.forcedReaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.loser === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.loser === context.source.controller &&
                     event.challenge.challengeType === 'power' &&
-                    event.challenge.defendingPlayer === this.controller
+                    event.challenge.defendingPlayer === context.source.controller
             },
-            handler: () => {
-                this.game.addMessage(
-                    '{0} is forced by {1} to sacrifice {1}',
-                    this.controller,
-                    this
-                );
-                this.controller.sacrificeCard(this);
-            }
+            message: '{player} is forced by {source} to sacrifice {source}',
+            gameAction: GameActions.sacrificeCard((context) => ({ card: context.source }))
         });
     }
 }
