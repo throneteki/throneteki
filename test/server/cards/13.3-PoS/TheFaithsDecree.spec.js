@@ -8,6 +8,7 @@ describe("The Faith's Decree", function () {
                 inPlay: ['Veteran Builder', { card: 'The Roseroad', kneeling: true }]
             }
         });
+        this.player2.clickPrompt('Pass');
         this.player1.clickCard(this.theFaithsDecree);
         this.player1.nameCard('Veteran Builder');
         expect(this.player2).toHavePrompt('Initiate an action');

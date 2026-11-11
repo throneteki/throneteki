@@ -56,6 +56,7 @@ describe('Defiance after a character joins a challenge without being declared', 
 
         expect(this.serDavosSeaworth.kneeled).toBe(false);
         expect(this.bastardInHiding.kneeled).toBe(true);
+        this.player1.clickPrompt('Pass');
         expect(this.player2).isReadyToTakeAction();
     });
 });

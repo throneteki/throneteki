@@ -1,9 +1,9 @@
 import ActionWindow from '../actionwindow.js';
 import ChallengeTypes from '../../ChallengeTypes.js';
 
-// The action window before each challenge (Appendix I, between 4.1 and 4.2). The active player's
-// turn in it is choosing a challenge, which is their pass: the choice stands only if every other
-// player then passes.
+// The action window before each challenge (Appendix I, between 4.1 and 4.2). Every other player
+// who stops at it has their turn before the active player, whose turn is choosing a challenge: that
+// choice closes the window, and an action taken while choosing gives the others another turn.
 class ChallengeActionWindow extends ActionWindow {
     constructor(game, phase, activePlayer, { otherPlayers = true } = {}) {
         super(game, 'Before challenge', 'challengeBegin');
@@ -11,6 +11,16 @@ class ChallengeActionWindow extends ActionWindow {
         this.activePlayer = activePlayer;
         this.otherPlayers = otherPlayers;
         this.choice = null;
+    }
+
+    lazyFetchPlayers() {
+        if (!this.players) {
+            this.players = this.activePlayerLast(this.game.getPlayersInFirstPlayerOrder());
+        }
+    }
+
+    activePlayerLast(players) {
+        return players.filter((player) => player !== this.activePlayer).concat([this.activePlayer]);
     }
 
     skipCondition(player) {
@@ -81,7 +91,7 @@ class ChallengeActionWindow extends ActionWindow {
 
     markActionAsTaken(player) {
         this.choice = null;
-        super.markActionAsTaken(player);
+        this.setPlayers(this.activePlayerLast(this.rotatedPlayerOrder(player)));
     }
 }
 
