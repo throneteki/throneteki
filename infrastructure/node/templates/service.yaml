@@ -23,6 +23,8 @@ spec:
     selector:
         app: game-node
         statefulset.kubernetes.io/pod-name: node-{{$i}}
+    # A draining node reports not ready but must keep serving the games it holds
+    publishNotReadyAddresses: true
     ports:
         - port: 80
           targetPort: 80

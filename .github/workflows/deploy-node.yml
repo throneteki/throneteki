@@ -20,6 +20,10 @@ on:
                 description: The image tag to deploy, overriding the environment's
                 default: ''
 
+concurrency:
+    group: deploy-node-${{ inputs.environment }}
+    cancel-in-progress: false
+
 jobs:
     deploy:
         runs-on: self-hosted
@@ -103,9 +107,14 @@ jobs:
                     socketioPort: 80
                   EOF
 
+                  # Keep whatever is running now, including temporary pods left by a deploy that
+                  # failed part way, so helm does not remove pods that still hold games
+                  CURRENT_REPLICAS=$(kubectl get statefulset node -n $NAMESPACE -o jsonpath='{.spec.replicas}' 2>/dev/null || true)
+                  CURRENT_REPLICAS=${CURRENT_REPLICAS:-$REPLICAS}
+
                   helm upgrade --install game-node ./infrastructure/node \
                     --set namespace=$NAMESPACE \
-                    --set replicaCount=$REPLICAS \
+                    --set replicaCount=$CURRENT_REPLICAS \
                     --set environment=$ENV_SUBDOMAIN \
                     --set deployTime=$DEPLOY_TIME \
                     $HELM_IMAGE_FLAGS \
@@ -114,47 +123,111 @@ jobs:
 
                   rm /tmp/node-secrets.yaml
 
-                  echo "Starting graceful rollout..."
-
-                  NEW_REPLICAS=$((REPLICAS + SCALE_INCREMENT))
-                  echo "Scaling up to $NEW_REPLICAS replicas..."
-                  kubectl scale statefulset node -n $NAMESPACE --replicas=$NEW_REPLICAS
-
-                  for i in $(seq $REPLICAS $((NEW_REPLICAS - 1))); do
-                    NEW_POD="node-$i"
-                    echo "Waiting for $NEW_POD to become ready..."
-                    kubectl wait --for=condition=ready pod/$NEW_POD -n $NAMESPACE --timeout=30m
-                    echo "$NEW_POD is ready."
+                  GENERATION=$(kubectl get statefulset node -n $NAMESPACE -o jsonpath='{.metadata.generation}')
+                  until [ "$(kubectl get statefulset node -n $NAMESPACE -o jsonpath='{.status.observedGeneration}')" = "$GENERATION" ]; do
+                    sleep 2
                   done
+                  UPDATE_REVISION=$(kubectl get statefulset node -n $NAMESPACE -o jsonpath='{.status.updateRevision}')
+                  echo "Rolling out revision $UPDATE_REVISION"
 
-                  OLD_PODS=$(kubectl get pods -n $NAMESPACE -l app=game-node -o jsonpath='{.items[*].metadata.name}' | tr ' ' '\n' | sort | head -n $REPLICAS)
-                  echo "Old pods: $OLD_PODS"
+                  pod_exists() {
+                    kubectl get pod "$1" -n $NAMESPACE >/dev/null 2>&1
+                  }
 
-                  echo "Sending SIGTERM to all old pods to start draining..."
-                  for POD in $OLD_PODS; do
-                    echo "Signaling $POD..."
-                    kubectl exec -n $NAMESPACE $POD -- /bin/sh -c "kill -TERM \$(pidof node)" || true
-                  done
+                  pod_revision() {
+                    kubectl get pod "$1" -n $NAMESPACE -o jsonpath='{.metadata.labels.controller-revision-hash}' 2>/dev/null || true
+                  }
 
-                  echo "Waiting for all old pods to drain..."
-                  for POD in $OLD_PODS; do
-                    echo "Monitoring $POD..."
-                    ATTEMPTS=0
-                    while [ $ATTEMPTS -lt 540 ]; do
-                      GAMES=$(kubectl exec -n $NAMESPACE $POD -- wget -q -O- http://localhost:9000/health/games 2>/dev/null || echo "error")
-                      if [ "$GAMES" = "error" ]; then
-                        echo "$POD: Health check failed; assuming node shutting down."
-                        break
+                  wait_for_new_pod() {
+                    local POD=$1
+                    echo "Waiting for $POD to be ready on the new revision..."
+                    for ATTEMPT in $(seq 1 360); do
+                      READY=$(kubectl get pod "$POD" -n $NAMESPACE -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}' 2>/dev/null || true)
+                      if [ "$(pod_revision $POD)" = "$UPDATE_REVISION" ] && [ "$READY" = "True" ]; then
+                        echo "$POD is ready."
+                        return 0
                       fi
-                      if [ "$GAMES" = "0" ]; then
-                        echo "$POD: All games finished."
-                        break
-                      fi
-                      echo "$POD: Still running $GAMES games... ($ATTEMPTS/540)"
-                      ATTEMPTS=$((ATTEMPTS + 1))
-                      sleep 10
+                      sleep 5
                     done
+                    echo "$POD did not become ready."
+                    return 1
+                  }
+
+                  # Stops new games on each pod, then waits until each has no games left. The pods
+                  # keep running and serving their games until they are removed.
+                  drain() {
+                    for POD in "$@"; do
+                      echo "Draining $POD..."
+                      RESULT=$(kubectl exec -n $NAMESPACE $POD -- wget -q -O- --post-data='' http://localhost:9000/health/drain 2>/dev/null || echo "error")
+                      if [ "$RESULT" = "error" ]; then
+                        # Nodes from before the drain endpoint drain on SIGTERM and exit when empty
+                        echo "$POD has no drain endpoint; sending SIGTERM."
+                        kubectl exec -n $NAMESPACE $POD -- /bin/sh -c "kill -TERM \$(pidof node)" || true
+                      fi
+                    done
+
+                    for POD in "$@"; do
+                      ATTEMPTS=0
+                      while [ $ATTEMPTS -lt 540 ]; do
+                        if ! pod_exists $POD; then
+                          echo "$POD is gone."
+                          break
+                        fi
+                        GAMES=$(kubectl exec -n $NAMESPACE $POD -- wget -q -O- http://localhost:9000/health/games 2>/dev/null || echo "error")
+                        if [ "$GAMES" = "0" ]; then
+                          echo "$POD: All games finished."
+                          break
+                        fi
+                        echo "$POD: Still running $GAMES games... ($ATTEMPTS/540)"
+                        ATTEMPTS=$((ATTEMPTS + 1))
+                        sleep 10
+                      done
+                      if [ $ATTEMPTS -ge 540 ]; then
+                        echo "$POD: Timed out waiting for games to finish."
+                      fi
+                    done
+                  }
+
+                  TEMP_REPLICAS=$((REPLICAS + SCALE_INCREMENT))
+                  if [ "$CURRENT_REPLICAS" -lt "$TEMP_REPLICAS" ]; then
+                    echo "Scaling up to $TEMP_REPLICAS replicas..."
+                    kubectl scale statefulset node -n $NAMESPACE --replicas=$TEMP_REPLICAS
+                  fi
+                  for i in $(seq $REPLICAS $((TEMP_REPLICAS - 1))); do
+                    POD="node-$i"
+                    until pod_exists $POD; do sleep 2; done
+                    echo "Waiting for $POD to become ready..."
+                    kubectl wait --for=condition=ready pod/$POD -n $NAMESPACE --timeout=30m
                   done
+
+                  OLD_PODS=""
+                  for i in $(seq 0 $((REPLICAS - 1))); do
+                    POD="node-$i"
+                    if pod_exists $POD && [ "$(pod_revision $POD)" != "$UPDATE_REVISION" ]; then
+                      OLD_PODS="$OLD_PODS $POD"
+                    fi
+                  done
+                  echo "Replacing:$OLD_PODS"
+
+                  if [ -n "$OLD_PODS" ]; then
+                    drain $OLD_PODS
+                    for POD in $OLD_PODS; do
+                      echo "Replacing $POD..."
+                      kubectl delete pod $POD -n $NAMESPACE --ignore-not-found --wait=true
+                    done
+                  fi
+                  for i in $(seq 0 $((REPLICAS - 1))); do
+                    POD="node-$i"
+                    until pod_exists $POD; do sleep 2; done
+                    wait_for_new_pod $POD
+                  done
+
+                  TEMP_PODS=""
+                  for i in $(seq $REPLICAS $((TEMP_REPLICAS - 1))); do
+                    TEMP_PODS="$TEMP_PODS node-$i"
+                  done
+                  echo "Draining temporary pods:$TEMP_PODS"
+                  drain $TEMP_PODS
 
                   echo "Scaling back down to $REPLICAS replicas..."
                   kubectl scale statefulset node -n $NAMESPACE --replicas=$REPLICAS

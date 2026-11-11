@@ -17,6 +17,7 @@ class HealthServer {
         process.on('SIGTERM', () => {
             logger.info('Received SIGTERM - starting graceful shutdown');
             this.startDraining();
+            this.exitWhenEmpty();
         });
     }
 
@@ -32,8 +33,13 @@ class HealthServer {
         if (this.gameServer && this.gameServer.gameSocket) {
             this.gameServer.gameSocket.setDraining(true);
         }
+    }
 
-        // Start checking for game completion
+    exitWhenEmpty() {
+        if (this.drainCheckInterval) {
+            return;
+        }
+
         this.drainCheckInterval = setInterval(() => {
             const numGames = this.getNumGames();
             logger.info(`Draining: ${numGames} games still active`);
@@ -66,6 +72,8 @@ class HealthServer {
                 this.handleReady(res);
             } else if (url === '/health/games') {
                 this.handleGames(res);
+            } else if (url === '/health/drain' && req.method === 'POST') {
+                this.handleDrain(res);
             } else {
                 res.writeHead(404, { 'Content-Type': 'text/plain' });
                 res.end('Not Found');
@@ -99,6 +107,15 @@ class HealthServer {
                 numGames: this.getNumGames()
             })
         );
+    }
+
+    // Drains without exiting, so the deploy can remove the pod once it is empty. A node that exited
+    // would be restarted in the same pod and start accepting games again.
+    handleDrain(res) {
+        this.startDraining();
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ draining: true, numGames: this.getNumGames() }));
     }
 
     handleGames(res) {
