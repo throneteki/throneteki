@@ -1,6 +1,8 @@
 import http from 'http';
 import logger from '../log.js';
 
+const LoopbackAddresses = ['127.0.0.1', '::1', '::ffff:127.0.0.1'];
+
 class HealthServer {
     constructor(gameServer, port = 9000) {
         this.gameServer = gameServer;
@@ -17,6 +19,7 @@ class HealthServer {
         process.on('SIGTERM', () => {
             logger.info('Received SIGTERM - starting graceful shutdown');
             this.startDraining();
+            this.exitWhenEmpty();
         });
     }
 
@@ -32,8 +35,13 @@ class HealthServer {
         if (this.gameServer && this.gameServer.gameSocket) {
             this.gameServer.gameSocket.setDraining(true);
         }
+    }
 
-        // Start checking for game completion
+    exitWhenEmpty() {
+        if (this.drainCheckInterval) {
+            return;
+        }
+
         this.drainCheckInterval = setInterval(() => {
             const numGames = this.getNumGames();
             logger.info(`Draining: ${numGames} games still active`);
@@ -66,6 +74,8 @@ class HealthServer {
                 this.handleReady(res);
             } else if (url === '/health/games') {
                 this.handleGames(res);
+            } else if (url === '/health/drain' && req.method === 'POST') {
+                this.handleDrain(req, res);
             } else {
                 res.writeHead(404, { 'Content-Type': 'text/plain' });
                 res.end('Not Found');
@@ -99,6 +109,22 @@ class HealthServer {
                 numGames: this.getNumGames()
             })
         );
+    }
+
+    // Drains without exiting, so the deploy can remove the pod once it is empty. A node that exited
+    // would be restarted in the same pod and start accepting games again. Only reachable from inside
+    // the pod (the deploy uses kubectl exec), since the health port is open to the cluster.
+    handleDrain(req, res) {
+        if (!LoopbackAddresses.includes(req.socket.remoteAddress)) {
+            res.writeHead(403, { 'Content-Type': 'text/plain' });
+            res.end('Forbidden');
+            return;
+        }
+
+        this.startDraining();
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ draining: true, numGames: this.getNumGames() }));
     }
 
     handleGames(res) {

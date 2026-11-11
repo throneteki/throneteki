@@ -8,11 +8,10 @@ spec:
     serviceName: node
     # prettier-ignore
     replicas: {{ .Values.replicaCount }}
-    # Rolling update strategy: create new pods before terminating old ones
+    # The deploy workflow replaces each pod once its games have finished, so a template change must
+    # not restart pods by itself
     updateStrategy:
-        type: RollingUpdate
-        rollingUpdate:
-            partition: 0
+        type: OnDelete
     podManagementPolicy: Parallel
     selector:
         matchLabels:
