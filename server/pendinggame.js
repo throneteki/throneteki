@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import _ from 'underscore';
 import crypto from 'crypto';
 import logger from './log.js';
@@ -11,7 +11,7 @@ class PendingGame {
         this.instance = instance;
         this.players = {};
         this.spectators = {};
-        this.id = uuid.v1();
+        this.id = uuidv1();
         this.name = details.name;
         this.event = details.event || { _id: 'none' };
         this.restrictedList = details.restrictedList;

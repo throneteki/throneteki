@@ -1,11 +1,11 @@
 import BaseStep from './basestep.js';
-import uuid from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 
 class UiPrompt extends BaseStep {
     constructor(game) {
         super(game);
         this.completed = false;
-        this.promptId = uuid.v1();
+        this.promptId = uuidv1();
     }
 
     isComplete() {

@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import BaseStep from './basestep.js';
 import { Requirements } from '../Constants/index.js';
 
@@ -39,7 +39,7 @@ class BaseAbilityWindow extends BaseStep {
         this.game.recordUnavailableAbility?.(ability, context);
 
         this.abilityChoices.push({
-            id: uuid.v1(),
+            id: uuidv1(),
             player: context.player,
             ability: ability,
             card: ability.card,

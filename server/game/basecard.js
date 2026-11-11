@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import AbilityContext from './AbilityContext.js';
 import AbilityDsl from './abilitydsl.js';
 import AgendaSetupAbility from './AgendaSetupAbility.js';
@@ -55,7 +55,7 @@ class BaseCard {
         this.game = this.owner.game;
         this.cardData = cardData;
 
-        this.uuid = uuid.v1();
+        this.uuid = uuidv1();
         this.code = cardData.code;
         this.facedown = false;
         this.keywords = new KeywordsProperty();
@@ -162,7 +162,7 @@ class BaseCard {
 
     copyTextBoxFrom(card) {
         this.clearCopiedTextBox();
-        const copyId = uuid.v1();
+        const copyId = uuidv1();
         this.copiedTextBoxId = copyId;
         this.copiedTextBoxActions = card.abilities.actions.map((ability) =>
             this.cloneCopiedAbility(ability)

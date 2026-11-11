@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import BaseStep from './basestep.js';
 
 /**
@@ -8,7 +8,7 @@ import BaseStep from './basestep.js';
 class ChooseResolutionOrder extends BaseStep {
     constructor(game, choices) {
         super(game);
-        this.choices = choices.map((choice) => ({ id: uuid.v1(), ...choice }));
+        this.choices = choices.map((choice) => ({ id: uuidv1(), ...choice }));
     }
 
     continue() {

@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import { matchCardByNameAndPack } from './cardutil.js';
 import { detectBinary } from '../../server/util.js';
 
@@ -328,7 +328,7 @@ class PlayerInteractionWrapper {
     }
 
     reconnect() {
-        let newSocket = { id: uuid.v1() };
+        let newSocket = { id: uuidv1() };
         this.game.reconnect(newSocket, this.player.name);
     }
 
