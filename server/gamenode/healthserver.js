@@ -1,6 +1,8 @@
 import http from 'http';
 import logger from '../log.js';
 
+const LoopbackAddresses = ['127.0.0.1', '::1', '::ffff:127.0.0.1'];
+
 class HealthServer {
     constructor(gameServer, port = 9000) {
         this.gameServer = gameServer;
@@ -73,7 +75,7 @@ class HealthServer {
             } else if (url === '/health/games') {
                 this.handleGames(res);
             } else if (url === '/health/drain' && req.method === 'POST') {
-                this.handleDrain(res);
+                this.handleDrain(req, res);
             } else {
                 res.writeHead(404, { 'Content-Type': 'text/plain' });
                 res.end('Not Found');
@@ -110,8 +112,15 @@ class HealthServer {
     }
 
     // Drains without exiting, so the deploy can remove the pod once it is empty. A node that exited
-    // would be restarted in the same pod and start accepting games again.
-    handleDrain(res) {
+    // would be restarted in the same pod and start accepting games again. Only reachable from inside
+    // the pod (the deploy uses kubectl exec), since the health port is open to the cluster.
+    handleDrain(req, res) {
+        if (!LoopbackAddresses.includes(req.socket.remoteAddress)) {
+            res.writeHead(403, { 'Content-Type': 'text/plain' });
+            res.end('Forbidden');
+            return;
+        }
+
         this.startDraining();
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
