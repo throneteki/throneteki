@@ -14,6 +14,10 @@ class PossibleResponders {
     }
 
     couldRespond(player, abilityType, event) {
+        if (this.game.currentPhase === 'setup') {
+            return false;
+        }
+
         const eventNames = new Set(event.getConcurrentEvents().map((e) => e.name));
         const candidates = this.getCandidates(player);
 

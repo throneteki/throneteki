@@ -211,6 +211,30 @@ describe('cancel windows for a player without the timer', function () {
         });
     });
 
+    describe('during setup', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'setup',
+                player1: { faction: 'greyjoy', hand: ['Iron Fleet Scout'] },
+                player2: { faction: 'greyjoy' }
+            });
+
+            this.game.possibleResponders = new PossibleResponders(this.game, {
+                cardData: [deckBuilder.getCard('Eager Deckhand')]
+            });
+            this.scheduled = [];
+            this.game.schedule = (delay, callback) => this.scheduled.push({ delay, callback });
+
+            this.player1.clickCard(this.ironFleetScout);
+        });
+
+        it('does not open a window for cards set up', function () {
+            expect(this.scheduled).toHaveLength(0);
+            expect(this.player1).toHavePrompt('Select setup cards');
+            expect(this.player2).toHavePrompt('Select setup cards');
+        });
+    });
+
     describe('when no card they could hold might cancel the event', function () {
         beforeEach(function () {
             setup(this, { pool: ['Hear Me Roar!'] });
