@@ -2,7 +2,7 @@ import React from 'react';
 import Counter from './Counter';
 
 const containerStyle = {
-    '--counter-size': 'calc(var(--card-scale, 1) * 1.5rem)'
+    '--counter-size': 'calc(var(--ui-scale, 1) * 1.5rem)'
 };
 
 const CardCounters = ({ counters }) => {

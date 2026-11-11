@@ -35,7 +35,11 @@ class CardVisibility {
     }
 
     isPublicRule(card) {
-        return OpenInformationLocations.includes(card.location) && !card.facedown;
+        return (
+            (OpenInformationLocations.includes(card.location) ||
+                this.game.pendingAttachments?.has(card)) &&
+            !card.facedown
+        );
     }
 
     isControllerRule(card, player) {

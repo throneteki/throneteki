@@ -5,9 +5,12 @@ import Card from './Card';
 import { useMemo } from 'react';
 import LabelledGameArea from './LabelledGameArea';
 import classNames from 'classnames';
+import { useMotionEnabled } from '../../motion';
+import { useStagedArrivals } from './useStagedArrivals';
+import { useHiddenDragUuid, useIncomingSlot } from './dragStore';
 
 const SquishableCardPanel = ({
-    cards,
+    cards: allCards,
     disableBackground = false,
     onCardClick,
     source,
@@ -15,30 +18,50 @@ const SquishableCardPanel = ({
     title,
     titlePosition,
     className,
-    groupVisibleCards
+    groupVisibleCards,
+    flipFrom,
+    stagedArrivals = false,
+    redeal = false
 }) => {
+    const motionEnabled = useMotionEnabled();
+    const staged = useStagedArrivals(allCards, stagedArrivals && motionEnabled, redeal);
+    const draggedUuid = useHiddenDragUuid();
+    const incoming = useIncomingSlot(source);
+    const cards = useMemo(
+        () => (draggedUuid ? staged.filter((card) => card.uuid !== draggedUuid) : staged),
+        [staged, draggedUuid]
+    );
+
     const hasMixOfVisibleCards = useCallback(
         () => cards.some((card) => !!card.code) && cards.some((card) => !card.code),
         [cards]
     );
 
-    const needsSquish = useMemo(() => cards && cards.length > maxCards, [cards, maxCards]);
+    const slotCount = cards.length + (incoming ? 1 : 0);
+    const needsSquish = slotCount > maxCards;
 
     const cardsToRender = useMemo(() => {
-        const handLength = cards ? cards.length : 0;
+        const handLength = slotCount;
         const overlap = (handLength - maxCards) / (handLength - 1);
 
-        let localCards = cards;
+        // The carried card stays mounted, just out of the layout, so its touch is never lost
+        let localCards = staged;
         if (groupVisibleCards && hasMixOfVisibleCards()) {
-            localCards = [...cards].sort((a, b) => (a.facedown && !b.facedown ? -1 : 1));
+            localCards = [...staged].sort((a, b) => (a.facedown && !b.facedown ? -1 : 1));
         }
 
-        return localCards.map((card, index) => {
+        let shown = 0;
+        return localCards.map((card) => {
             let style = {};
-            if (needsSquish) {
+            if (card.uuid === draggedUuid) {
+                style = { display: 'none' };
+            } else if (needsSquish) {
                 style = {
-                    left: `calc(var(--card-scale, 1) * 4rem * ${(1 - overlap) * index})`
+                    left: `calc(var(--card-scale, 1) * 4rem * ${(1 - overlap) * shown})`
                 };
+            }
+            if (card.uuid !== draggedUuid) {
+                shown++;
             }
 
             return (
@@ -49,20 +72,25 @@ const SquishableCardPanel = ({
                     onClick={onCardClick}
                     style={style}
                     source={source}
+                    flip
+                    flipFrom={flipFrom}
                 />
             );
         });
     }, [
-        cards,
+        staged,
+        draggedUuid,
+        slotCount,
         groupVisibleCards,
         hasMixOfVisibleCards,
         maxCards,
         needsSquish,
         onCardClick,
-        source
+        source,
+        flipFrom
     ]);
 
-    const headerText = title ? title + ' (' + cardsToRender.length + ')' : '';
+    const headerText = title ? title + ' (' + cards.length + ')' : '';
 
     const style = useMemo(
         () => ({

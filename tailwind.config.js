@@ -131,15 +131,15 @@ export default {
                     'font-size': 'calc(var(--text-scale, 1) * 1rem)'
                 },
                 '.card-text': {
-                    'font-size': 'calc(var(--card-scale, 1) * 0.875rem)',
+                    'font-size': 'calc(var(--text-scale, 1) * 0.875rem)',
                     'line-height': '1.25'
                 },
                 '.card-text-sm': {
-                    'font-size': 'calc(var(--card-scale, 1) * 0.75rem)',
+                    'font-size': 'calc(var(--text-scale, 1) * 0.75rem)',
                     'line-height': '1.25'
                 },
                 '.card-text-xs': {
-                    'font-size': 'calc(var(--card-scale, 1) * 0.625rem)',
+                    'font-size': 'calc(var(--text-scale, 1) * 0.625rem)',
                     'line-height': '1.25'
                 },
                 '.card-box': {

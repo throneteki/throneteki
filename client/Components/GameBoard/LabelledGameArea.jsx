@@ -10,7 +10,8 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
         children,
         style,
         onClick,
-        labelClickable = false
+        labelClickable = false,
+        ...rest
     },
     ref
 ) {
@@ -20,7 +21,8 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
         }
         const pos = `${position.includes('bottom') ? 'bottom' : 'top'}-0 ${position.includes('right') ? 'right' : 'left'}-0`;
         const labelClassName = classNames(
-            'absolute card-text-sm z-[210] leading-tight px-1 py-0.5 bg-black/40 rounded-md pointer-events-none',
+            'absolute text-xs z-[210] leading-tight px-1 py-0.5 bg-black/40 rounded-md',
+            labelClickable ? 'cursor-pointer hover:bg-black/70' : 'pointer-events-none',
             pos
         );
         return <div className={labelClassName}>{label}</div>;
@@ -28,7 +30,7 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
 
     const areaClassName = classNames('relative', className);
     return (
-        <div ref={ref} className={areaClassName} onClick={onClick} style={style}>
+        <div ref={ref} className={areaClassName} onClick={onClick} style={style} {...rest}>
             {!disableBackground && (
                 <div className='absolute border-2 border-default-100/55 bg-black/55 w-full h-full rounded-md' />
             )}

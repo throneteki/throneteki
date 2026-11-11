@@ -36,13 +36,18 @@ const PlayerRow = ({
     activePlot,
     selectedPlot,
     mustShowPlotSelection,
-    showHiddenPiles = false
+    showHiddenPiles = false,
+    setupPhase = false
 }) => {
     useRenderCount('PlayerRow');
     const renderDroppablePile = useCallback(
         (source, cards) => {
             if (isMe) {
-                return <Droppable source={source}>{cards}</Droppable>;
+                return (
+                    <Droppable source={source} className='self-start'>
+                        {cards}
+                    </Droppable>
+                );
             }
 
             return cards;
@@ -149,6 +154,9 @@ const PlayerRow = ({
             onCardClick={onCardClick}
             source='hand'
             title='Hand'
+            flipFrom={playerName}
+            stagedArrivals
+            redeal={setupPhase}
         />
     );
     const retDrawDeck = (
@@ -215,6 +223,7 @@ const PlayerRow = ({
                 onCardClick={onCardClick}
                 direction={side === 'bottom' ? 'default' : 'reverse'}
                 isMe={isMe}
+                playerName={playerName}
                 plotDeck={plotDeck}
                 plotDiscard={plotDiscard}
                 activePlot={activePlot}

@@ -132,6 +132,8 @@ class Game extends EventEmitter {
         this.restrictedListData = options.restrictedListData || [];
         this.remainingPhases = [];
         this.cardVisibility = new CardVisibility(this);
+        // Attachments waiting for their target to be chosen: shown to everyone, and to the client as being played
+        this.pendingAttachments = new Set();
         this.stats = new GameStats(this);
         this.manualActions = new ManualActions(this);
         this.manualMode = new ManualMode(this, options.manualMode ?? details.manualMode ?? 'auto');
@@ -1193,6 +1195,7 @@ class Game extends EventEmitter {
 
     beginRound() {
         this.finishEndingDuration('untilEndOfRound');
+        this.pendingAttachments.clear();
         // Reset phases to the standard game flow.
         this.remainingPhases = Phases.names();
 

@@ -75,6 +75,7 @@ const DrawDeck = ({
             popupMenu={drawDeckPopupMenu}
             source='draw deck'
             title='Draw'
+            flipDeck={playerName}
             playerName={playerName}
         />
     );

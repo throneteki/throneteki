@@ -85,6 +85,9 @@ body {
     }
 }
 
+[data-rescaling] *,
+[data-rescaling] *::before,
+[data-rescaling] *::after,
 [data-motion='off'] *,
 [data-motion='off'] *::before,
 [data-motion='off'] *::after {
@@ -93,4 +96,9 @@ body {
     animation-duration: 0s !important;
     animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
+}
+
+html.card-dragging,
+html.card-dragging * {
+    cursor: grabbing !important;
 }

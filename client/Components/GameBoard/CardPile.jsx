@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef } from 'react';
 import classNames from 'classnames';
 import { useRenderCount } from '../../perf';
 
@@ -11,6 +11,7 @@ import LabelledGameArea from './LabelledGameArea';
 import { Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { cardBoxClass } from '../../cardScale';
+import { registerPile } from '../../flip';
 
 const CardPile = ({
     cards,
@@ -36,12 +37,24 @@ const CardPile = ({
     orientation = 'vertical',
     hiddenTopCard,
     showCards,
-    selected
+    selected,
+    flipDeck,
+    flipFrom
 }) => {
     useRenderCount('CardPile');
     const [showPopup, setShowPopup] = useState(cards && cards.some((card) => card.selectable));
     const prevCards = useRef(cards);
     const areaRef = useRef(null);
+
+    useLayoutEffect(
+        () =>
+            registerPile(popupId || source, {
+                el: areaRef.current,
+                source,
+                uuids: new Map((cards || []).map((card, index) => [card.uuid, index]))
+            }),
+        [cards, popupId, source]
+    );
 
     const isTopCardSelectable = useMemo(() => {
         if (!topCard) {
@@ -262,35 +275,13 @@ const CardPile = ({
         [shownTopCard, hiddenTopCard, selected, hiddenUuid, hiddenUnselectable]
     );
 
-    // A top card with something to do gets a menu that includes the popup toggle; otherwise a click
-    // on it opens the popup. If popup is disabled, the default Card menu is used.
-    const topCardHasAction =
-        topCard?.selectable || topCard?.canPlay || topCard?.menu?.some((item) => !item.disabled);
-    const topCardSelectable = !!topCard?.selectable;
-    const topCardCanPlay = !!topCard?.canPlay;
-    const menu = useMemo(() => {
-        if (disablePopup || !topCardHasAction) {
-            return undefined;
-        }
-
-        const popupMenuItems = [
-            {
-                hideable: true,
-                showPopup: !showPopup,
-                text: `${showPopup ? 'Close' : 'Open'} Popup`
-            }
-        ];
-
-        // Additionally, if the top card is currently selectable, that also needs to be an option
-        // Note: If CardPiles ever become available in locations where "Select Card" is always an option (such as "play area"), this will need to be permenantly enabled for those cards
-        if (topCardSelectable) {
-            popupMenuItems.push({ hideable: true, command: 'click', text: 'Select Card' });
-        } else if (topCardCanPlay) {
-            popupMenuItems.push({ command: 'click', text: 'Use' });
-        }
-
-        return popupMenuItems;
-    }, [disablePopup, topCardHasAction, showPopup, topCardSelectable, topCardCanPlay]);
+    // The card under the top one is drawn too, so it is already there when the top card is taken away
+    const nextCard = !topCard && cards ? cards[1] : null;
+    const nextUuid = nextCard?.uuid;
+    const retNextCard = useMemo(
+        () => (nextCard && hiddenTopCard ? { facedown: true, uuid: nextUuid } : nextCard),
+        [nextCard, hiddenTopCard, nextUuid]
+    );
 
     return (
         <LabelledGameArea
@@ -301,15 +292,34 @@ const CardPile = ({
             onClick={onCollectionClick}
             disableBackground={disableBackground}
             labelClickable={!disablePopup && topCardHasAction}
+            data-flip-deck={flipDeck}
         >
             {retTopCard ? (
-                <Card
-                    card={retTopCard}
-                    source={source}
-                    disableHover={hiddenTopCard}
-                    onClick={onTopCardClick}
-                    orientation={orientation}
-                />
+                <div className='relative'>
+                    {retNextCard && (
+                        <div key={retNextCard.uuid} className='absolute left-0 top-0'>
+                            <Card
+                                card={retNextCard}
+                                source={source}
+                                disableHover
+                                orientation={orientation}
+                                flip={!hiddenTopCard}
+                                flipFrom={flipFrom}
+                            />
+                        </div>
+                    )}
+                    <div key={retTopCard.uuid} className='relative'>
+                        <Card
+                            card={retTopCard}
+                            source={source}
+                            disableHover={hiddenTopCard}
+                            onClick={onTopCardClick}
+                            orientation={orientation}
+                            flip={!hiddenTopCard}
+                            flipFrom={flipFrom}
+                        />
+                    </div>
+                </div>
             ) : (
                 <div className={cardBoxClass(orientation)} />
             )}

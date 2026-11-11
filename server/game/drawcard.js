@@ -641,6 +641,7 @@ class DrawCard extends BaseCard {
 
         let publicSummary = {
             attached: !!this.parent,
+            beingAttached: !!this.game.pendingAttachments?.has(this),
             attachments: this.attachments.map((attachment) => {
                 return attachment.getSummary(activePlayer);
             }),

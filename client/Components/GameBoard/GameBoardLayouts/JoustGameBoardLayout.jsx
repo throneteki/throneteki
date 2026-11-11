@@ -1,6 +1,8 @@
 import React, { useCallback } from 'react';
 import PlayerRow from '../PlayerRow';
 import PlayerBoard from '../PlayerBoard';
+import { findPendingAttachment, withoutPendingAttachment } from '../pendingAttachment';
+import { findLeftBehind } from '../leftBehind';
 import { sendShowDrawDeckMessage, sendShuffleDeckMessage } from '../../../redux/reducers/game';
 import { useDispatch } from 'react-redux';
 import PlayerStats from '../PlayerStats';
@@ -42,7 +44,8 @@ const JoustGameBoardLayout = ({
                     <PlayerRow
                         agendas={player.agendas}
                         faction={player.faction}
-                        hand={player.cardPiles.hand}
+                        hand={withoutPendingAttachment(player.cardPiles.hand)}
+                        setupPhase={player.phase === 'setup'}
                         isMe={isMe}
                         playerName={player.user?.username}
                         numDrawCards={player.numDrawCards}
@@ -73,6 +76,8 @@ const JoustGameBoardLayout = ({
                         <PlayerBoard
                             isDroppable={isMe}
                             cardsInPlay={player.cardPiles.cardsInPlay}
+                            pendingAttachment={findPendingAttachment(player.cardPiles.hand)}
+                            leftBehind={findLeftBehind(player.cardPiles)}
                             onCardClick={onCardClick}
                             rowDirection={side === 'bottom' ? 'default' : 'reverse'}
                         />

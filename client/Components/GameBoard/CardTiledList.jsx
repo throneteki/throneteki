@@ -44,7 +44,8 @@ const CardTiledList = ({
         const list = cards || [];
         const hasPlot = list.some((card) => card.type === 'plot');
         const hasOther = list.some((card) => card.type !== 'plot');
-        const columns = Math.max(1, Math.min(numColumns || list.length, list.length));
+        // A pile keeps the width of its full column count, so an empty or small pile is not just as wide as its title
+        const columns = Math.max(1, numColumns || list.length);
         const cellRem = hasPlot ? 5.6 : 4;
         const rowRem = hasOther || list.length === 0 ? 5.6 : 4;
         const unit = (rem) => `calc(var(--card-scale, 1) * ${rem}rem)`;
@@ -55,6 +56,7 @@ const CardTiledList = ({
                 gap: unit(gapRem),
                 gridTemplateColumns: `repeat(auto-fill, ${unit(cellRem)})`,
                 width: `min(${natural}, calc(100vw - 2rem))`,
+                minHeight: unit(rowRem),
                 ...(numRows && {
                     maxHeight: unit(rowRem * numRows + gapRem * Math.ceil(numRows - 1))
                 })
@@ -64,7 +66,7 @@ const CardTiledList = ({
 
     return (
         <div style={containerStyle}>
-            {titleText && <div className='card-text'>{titleText}</div>}
+            {titleText && <div className='text-sm'>{titleText}</div>}
             <div className='grid' style={style}>
                 {cardList}
             </div>

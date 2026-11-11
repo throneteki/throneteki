@@ -247,6 +247,11 @@ cancel such as The Hand's Judgment.
   have interrupts" and "Hide whether I have reactions" turn the fake waits off for interrupt or
   reaction windows; with one off, opponents can tell when that player really holds that kind of
   response. There is no cancel timer.
+- An attachment waiting for its target to be chosen stays in its location (usually the hand), but
+  everyone can see it and its summary has `beingAttached` set while the prompt is open
+  ([attachmentprompt.js](../server/game/gamesteps/attachmentprompt.js)). The client uses it to show
+  the card on the board while the target is chosen. It is not a location, so no rule that looks at
+  where the card is changes.
 - A choice made before anything is initiated (confirming a card action, choosing how to play a
   card, choosing attackers) leaves the opponent's prompt as it was, so it doesn't reveal which card
   or challenge is being considered

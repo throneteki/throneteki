@@ -19,9 +19,16 @@ import {
     sendToggleHideResponsesMessage
 } from '../../redux/reducers/game';
 
-import { DndContext, DragOverlay, MouseSensor, TouchSensor, useSensor } from '@dnd-kit/core';
-import { ItemTypes } from '../../constants';
+import {
+    DndContext,
+    MouseSensor,
+    TouchSensor,
+    pointerWithin,
+    rectIntersection,
+    useSensor
+} from '@dnd-kit/core';
 import CardImage from '../Images/CardImage';
+import CarriedCard from './CarriedCard';
 import ErrorMessage from '../Site/ErrorMessage';
 import JoustGameBoardLayout from './GameBoardLayouts/JoustGameBoardLayout';
 import MeleeGameBoardLayout from './GameBoardLayouts/MeleeGameBoardLayout';
@@ -31,6 +38,8 @@ import { useHudScale } from './useHudScale';
 import { hudStore, useHud } from '../../hudStore';
 import { MotionConfig } from 'framer-motion';
 import { useMotionEnabled } from '../../motion';
+import { holdFlip, playPendingFlip } from '../../flip';
+import { dragStore, useDragGhost, useDragVersion } from './dragStore';
 import { useImagePreload } from './useImagePreload';
 
 const placeholderPlayer = {
@@ -59,6 +68,18 @@ const defaultPlayerInfo = (source) => {
     player.cardPiles = Object.assign({}, placeholderPlayer.cardPiles, player.cardPiles);
     return player;
 };
+
+const isRotated = (card, orientation) =>
+    (card.type !== 'plot' && orientation === 'horizontal') || !!card.kneeled;
+
+// The area under the pointer decides where the card is, falling back to the area the card overlaps
+const detectCollisions = (args) => {
+    const underPointer = pointerWithin(args);
+    return underPointer.length > 0 ? underPointer : rectIntersection(args);
+};
+
+// The hidden drop zones that appear when a drag starts shift the board; keep the carried card with the pointer instead of scrolling to compensate
+const autoScrollOptions = { layoutShiftCompensation: false };
 
 const GameBoard = () => {
     useRenderCount('GameBoard');
@@ -104,6 +125,10 @@ const GameBoard = () => {
     }, [shortcutsEnabled]);
 
     const [draggingDetail, setDraggingDetail] = useState(null);
+    const draggedRef = useRef(null);
+    const carriedRectRef = useRef(null);
+    const dragGhost = useDragGhost();
+    const dragVersion = useDragVersion();
     const boardAreaRef = useRef(null);
 
     const mouseSensor = useSensor(MouseSensor, {
@@ -130,31 +155,95 @@ const GameBoard = () => {
     const onModalClose = useCallback(() => setShowModal(false), []);
 
     const onDragStart = useCallback((event) => {
-        const card = event.active.data.current?.card;
-        if (card) {
-            const orientation = event.active.data.current?.orientation;
-            setDraggingDetail({ card, orientation });
+        const data = event.active.data.current;
+        if (!data?.card) {
+            return;
         }
+
+        const pointer = event.activatorEvent.touches?.[0] ?? event.activatorEvent;
+        const surface = event.activatorEvent.target?.closest?.('[data-card-surface]');
+        const rect =
+            (surface || event.active.rect.current.initial).getBoundingClientRect?.() ??
+            event.active.rect.current.initial;
+        const start = { x: pointer.clientX, y: pointer.clientY };
+        draggedRef.current = {
+            card: data.card,
+            orientation: data.orientation,
+            source: data.source,
+            start,
+            grab: {
+                x: start.x - rect.left,
+                y: start.y - rect.top,
+                width: rect.width,
+                height: rect.height
+            }
+        };
+        setDraggingDetail(draggedRef.current);
+        dragStore.start(data.card.uuid, data.source, data.card.type);
+        document.documentElement.classList.add('card-dragging');
+    }, []);
+
+    const onDragOver = useCallback(
+        (event) => dragStore.setOver(event.over?.data.current?.source ?? null),
+        []
+    );
+
+    const finishCarrying = useCallback(() => {
+        const detail = draggedRef.current;
+        const carried = carriedRectRef.current;
+        carriedRectRef.current = null;
+        draggedRef.current = null;
+        setDraggingDetail(null);
+        document.documentElement.classList.remove('card-dragging');
+
+        if (!detail) {
+            return {};
+        }
+
+        const rect = carried && { ...carried };
+        const rotated = isRotated(detail.card, detail.orientation);
+        return {
+            detail,
+            rect,
+            rotated,
+            origin: rect && { rect, source: detail.source, rot: rotated ? 90 : 0 }
+        };
     }, []);
 
     const onDragEnd = useCallback(
         (event) => {
-            setDraggingDetail(null);
-            if (!event.over || event.active.data.current.type !== ItemTypes.CARD) {
+            const { detail, rect, rotated, origin } = finishCarrying(event);
+            if (!detail) {
                 return;
             }
-            dispatch(
-                sendDragDropMessage(
-                    event.active.data.current.card.uuid,
-                    event.active.data.current.source,
-                    event.over.data.current.source
-                )
+
+            const target = event.over?.data.current?.source;
+            if (!rect || !target || target === detail.source) {
+                dragStore.settle(origin);
+                return;
+            }
+
+            dragStore.drop(
+                {
+                    uuid: detail.card.uuid,
+                    code: detail.card.code || 'cardback',
+                    orientation: rotated ? 'rotated' : detail.orientation,
+                    rect
+                },
+                origin
             );
+            dispatch(sendDragDropMessage(detail.card.uuid, detail.source, target));
         },
-        [dispatch]
+        [dispatch, finishCarrying]
     );
 
-    const onDragCancel = useCallback(() => setDraggingDetail(null), []);
+    const onDragCancel = useCallback(
+        (event) => {
+            const { origin } = finishCarrying(event);
+            dragStore.settle(origin);
+        },
+        [finishCarrying]
+    );
 
     const onCardClick = useCallback(
         (card) => {
@@ -184,6 +273,22 @@ const GameBoard = () => {
     const hud = useHud();
     useHudScale(hud, boardAreaRef, !!currentGame?.started);
     const motionEnabled = useMotionEnabled();
+    const boardStarted = !!currentGame?.started;
+    useLayoutEffect(() => {
+        if (boardStarted) {
+            holdFlip(1500);
+        }
+    }, [boardStarted]);
+    useLayoutEffect(() => {
+        if (dragStore.hasGhost()) {
+            dragStore.finish();
+            return;
+        }
+        playPendingFlip();
+    }, [currentGame?.players]);
+    useLayoutEffect(() => {
+        playPendingFlip();
+    }, [dragVersion]);
     useLayoutEffect(() => {
         document.documentElement.dataset.motion = motionEnabled ? 'on' : 'off';
         return () => delete document.documentElement.dataset.motion;
@@ -253,30 +358,36 @@ const GameBoard = () => {
         <>
             <MotionConfig reducedMotion={motionEnabled ? 'user' : 'always'}>
                 <div className={boardClass}>
-                    <div className='overflow-auto basis-full' ref={boardAreaRef}>
+                    <div
+                        className='overflow-auto basis-full [scrollbar-gutter:stable]'
+                        ref={boardAreaRef}
+                    >
                         <DndContext
                             sensors={sensors}
+                            collisionDetection={detectCollisions}
+                            autoScroll={autoScrollOptions}
                             onDragStart={onDragStart}
+                            onDragOver={onDragOver}
                             onDragEnd={onDragEnd}
                             onDragCancel={onDragCancel}
                         >
                             <ManualModeContext.Provider value={!!currentGame.manualMode}>
                                 {gameBoard}
                             </ManualModeContext.Provider>
-                            <DragOverlay className={'opacity-50'} dropAnimation={null}>
-                                {draggingDetail && (
-                                    <CardImage
-                                        code={draggingDetail.card.code || 'cardback'}
-                                        orientation={
-                                            (draggingDetail.card.type !== 'plot' &&
-                                                draggingDetail.orientation === 'horizontal') ||
-                                            draggingDetail.card.kneeled
-                                                ? 'rotated'
-                                                : draggingDetail.orientation
-                                        }
-                                    />
-                                )}
-                            </DragOverlay>
+                            {draggingDetail && (
+                                <CarriedCard
+                                    key={draggingDetail.card.uuid}
+                                    code={draggingDetail.card.code || 'cardback'}
+                                    orientation={
+                                        isRotated(draggingDetail.card, draggingDetail.orientation)
+                                            ? 'rotated'
+                                            : draggingDetail.orientation
+                                    }
+                                    start={draggingDetail.start}
+                                    grab={draggingDetail.grab}
+                                    rectRef={carriedRectRef}
+                                />
+                            )}
                         </DndContext>
                     </div>
                     <GameChat
@@ -290,6 +401,14 @@ const GameBoard = () => {
                     />
                 </div>
             </MotionConfig>
+            {dragGhost && (
+                <div
+                    className='fixed z-[400] pointer-events-none'
+                    style={{ left: dragGhost.rect.left, top: dragGhost.rect.top }}
+                >
+                    <CardImage code={dragGhost.code} orientation={dragGhost.orientation} />
+                </div>
+            )}
             <GameConfigurationModal
                 isOpen={showModal}
                 isSpectating={user.username !== thisPlayer.name}

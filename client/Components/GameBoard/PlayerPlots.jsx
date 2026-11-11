@@ -13,7 +13,8 @@ const PlayerPlots = ({
     plotDeck,
     selectedPlot,
     mustShowPlotSelection,
-    direction
+    direction,
+    playerName
 }) => {
     const renderPlotPiles = useCallback(() => {
         const showSelectedPlot = mustShowPlotSelection && !!selectedPlot;
@@ -33,6 +34,7 @@ const PlayerPlots = ({
                 titlePosition={direction === 'reverse' && plotsInFront ? 'bottom left' : 'top left'}
                 topCard={activePlot}
                 disableBackground={true}
+                flipFrom={`plots:${playerName}`}
             />
         );
 
@@ -56,6 +58,7 @@ const PlayerPlots = ({
                 topCard={showSelectedPlot ? selectedPlot : null}
                 disableBackground={true}
                 selected={!!selectedPlot}
+                flipDeck={`plots:${playerName}`}
             />
         );
 
@@ -95,7 +98,8 @@ const PlayerPlots = ({
         plotDeck,
         selectedPlot,
         mustShowPlotSelection,
-        direction
+        direction,
+        playerName
     ]);
 
     return (

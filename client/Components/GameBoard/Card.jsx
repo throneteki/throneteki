@@ -16,6 +16,7 @@ import { cardBoxClass } from '../../cardScale';
 import { Tooltip } from '@heroui/react';
 import { getActionRequirementReason, isNotableRequirement } from './actionRequirementReasons';
 import { ManualModeContext } from './ManualModeContext';
+import { useIsCarried } from './dragStore';
 import { useRenderCount } from '../../perf';
 
 // Opening one card menu closes any other that is open.
@@ -36,13 +37,16 @@ const CardView = ({
     source,
     style,
     wrapped = true,
+    flip = false,
+    flipFrom,
+    shell = false,
     forceFaceup = false,
     cardStackIndex = 200,
     drag = noDrag
 }) => {
     useRenderCount('Card');
     const { attributes, listeners, setNodeRef, isDragging } = drag;
-    const [showMenu, setShowMenu] = useState(false);
+    const isCarried = useIsCarried(card?.uuid);
     const [showUnderneath, setShowUnderneath] = useState(false);
     const cardRef = useRef(null);
 
@@ -186,7 +190,7 @@ const CardView = ({
                     wrapped={false}
                     hideTokens
                     onClick={onClick}
-                    onMenuItemClick={onMenuItemClick}
+                    flip={flip}
                 />
             );
         });
@@ -206,7 +210,7 @@ const CardView = ({
                     card={dupe}
                     wrapped={false}
                     onClick={onClick}
-                    onMenuItemClick={onMenuItemClick}
+                    flip={flip}
                     facedown={forceFaceup ? false : card.facedown}
                     hideTokens
                 />
@@ -248,7 +252,7 @@ const CardView = ({
             <button
                 type='button'
                 title='Cards underneath'
-                className='pointer-events-auto absolute bottom-1 right-1 z-[230] card-text [--badge-size:calc(var(--card-scale,1)*1.5rem)] min-w-[var(--badge-size)] h-[var(--badge-size)] px-1 text-white bg-black/80 font-bold text-center rounded-md border-1'
+                className='pointer-events-auto absolute bottom-1 right-1 z-[230] card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[var(--badge-size)] h-[var(--badge-size)] px-1 text-white bg-black/80 font-bold text-center rounded-md border-1'
                 onClick={(event) => {
                     event.stopPropagation();
                     setShowUnderneath(!showUnderneath);
@@ -301,7 +305,7 @@ const CardView = ({
         }
 
         return (
-            <div className='absolute top-0 left-0 z-[230] flex items-center justify-center card-text [--badge-size:calc(var(--card-scale,1)*1.5rem)] min-w-[calc(var(--badge-size)*0.8)] h-[var(--badge-size)] px-0.5 text-white bg-black/90 font-bold rounded-br-md rounded-tl-[inherit]'>
+            <div className='absolute top-0 left-0 z-[230] flex items-center justify-center card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[calc(var(--badge-size)*0.8)] h-[var(--badge-size)] px-0.5 text-white bg-black/90 font-bold rounded-br-md rounded-tl-[inherit]'>
                 {card.order}
             </div>
         );
@@ -385,14 +389,16 @@ const CardView = ({
         touchDelay: 250
     });
 
+    // Handles the rotating of knelt or horizontally placed vertical cards (eg. dead pile)
+    const isRotated =
+        !!card && ((card.type !== 'plot' && orientation === 'horizontal') || card.kneeled);
+
     const getCard = () => {
         if (!card) {
             return <div />;
         }
 
-        // Handles the rotating of knelt or horizontally placed vertical cards (eg. dead pile)
-        const isRotated = (card.type !== 'plot' && orientation === 'horizontal') || card.kneeled;
-        const isInteractive = card.selectable || card.canPlay || shouldShowMenu();
+        const isInteractive = card.selectable || card.canPlay;
         const cardClassName = classNames(
             'relative overflow-hidden pointer-events-auto touch-none transition-[transform,box-shadow,filter]',
             cardBoxClass(isRotated ? 'rotated' : orientation),
@@ -415,15 +421,25 @@ const CardView = ({
         const slotClassName = classNames(
             'relative pointer-events-none transition-[width,height,margin]',
             cardBoxClass(orientation === 'vertical' && card.kneeled ? 'kneeled' : orientation),
-            className
+            className,
+            { invisible: shell || isDragging || isCarried }
         );
         return (
-            <div className={slotClassName} ref={cardRef}>
+            <div
+                className={slotClassName}
+                ref={cardRef}
+                data-flip-slot={flip && wrapped ? '' : undefined}
+                data-flip={flip && !wrapped ? card.uuid : undefined}
+                data-flip-source={flip && !wrapped ? 'attached' : undefined}
+                data-flip-z={flip && !wrapped ? cardStackIndex : undefined}
+                data-flip-rot={flip && !wrapped ? (isRotated ? 90 : 0) : undefined}
+            >
                 <div
                     {...listeners}
                     {...attributes}
                     {...hoverHandlers}
                     ref={setNodeRef}
+                    data-card-surface=''
                     className={cardClassName}
                     onClick={handleClick}
                     style={{ zIndex: cardStackIndex-- }}
@@ -451,7 +467,14 @@ const CardView = ({
     });
 
     return wrapped ? (
-        <div className={wrapperClass} style={style}>
+        <div
+            className={wrapperClass}
+            style={style}
+            data-flip={flip && !shell ? card.uuid : undefined}
+            data-flip-from={flip ? flipFrom : undefined}
+            data-flip-source={flip ? source : undefined}
+            data-flip-rot={flip ? (isRotated ? 90 : 0) : undefined}
+        >
             {getDupes()}
             {getCard()}
             {getAttachments()}

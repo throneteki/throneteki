@@ -4,76 +4,8 @@ import classNames from 'classnames';
 import { useDroppable } from '@dnd-kit/core';
 import { ItemTypes } from '../../constants';
 import { useUniqueId } from '@dnd-kit/utilities';
-
-const validTargets = {
-    hand: [
-        'play area',
-        'discard pile',
-        'draw deck',
-        'dead pile',
-        'out of game',
-        'agenda',
-        'shadows'
-    ],
-    'play area': [
-        'discard pile',
-        'hand',
-        'draw deck',
-        'dead pile',
-        'out of game',
-        'agenda',
-        'shadows'
-    ],
-    'discard pile': [
-        'dead pile',
-        'hand',
-        'draw deck',
-        'play area',
-        'out of game',
-        'agenda',
-        'shadows'
-    ],
-    'dead pile': [
-        'hand',
-        'draw deck',
-        'play area',
-        'discard pile',
-        'out of game',
-        'agenda',
-        'shadows'
-    ],
-    'draw deck': [
-        'hand',
-        'discard pile',
-        'dead pile',
-        'play area',
-        'out of game',
-        'agenda',
-        'shadows'
-    ],
-    'plot deck': ['revealed plots', 'out of game'],
-    'revealed plots': ['plot deck', 'out of game'],
-    'out of game': [
-        'plot deck',
-        'revealed plots',
-        'draw deck',
-        'play area',
-        'discard pile',
-        'hand',
-        'dead pile',
-        'shadows'
-    ],
-    agenda: [
-        'hand',
-        'play area',
-        'draw deck',
-        'discard pile',
-        'dead pile',
-        'out of game',
-        'shadows'
-    ],
-    shadows: ['dead pile', 'discard pile', 'draw deck', 'hand', 'out of game', 'play area']
-};
+import { useDragSource } from './dragStore';
+import { validTargets } from './dropTargets';
 
 const Droppable = ({ className, children, source }) => {
     const { isOver, active, setNodeRef } = useDroppable({
@@ -83,23 +15,22 @@ const Droppable = ({ className, children, source }) => {
         }
     });
 
+    const dragSource = useDragSource();
+
     const canDrop = useMemo(() => {
         return (
             active &&
-            validTargets[active.data.current.source] &&
-            validTargets[active.data.current.source].some((target) => target === source)
+            validTargets[dragSource] &&
+            validTargets[dragSource].some((target) => target === source)
         );
-    }, [active, source]);
+    }, [active, dragSource, source]);
 
     const innerClass = classNames(
-        'pointer-events-none absolute top-0 left-0 h-full w-full opacity-50 z-[240]',
+        'pointer-events-none absolute top-0 left-0 h-full w-full rounded-md opacity-50 z-[240]',
         {
             'bg-success-500': isOver && canDrop,
             'bg-danger-500':
-                isOver &&
-                active?.data.type === ItemTypes.CARD &&
-                !canDrop &&
-                source !== active?.data.current.source,
+                isOver && active?.data.type === ItemTypes.CARD && !canDrop && source !== dragSource,
             'bg-warning-500': !isOver && canDrop
         }
     );

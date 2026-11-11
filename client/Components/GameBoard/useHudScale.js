@@ -1,7 +1,10 @@
 import { useLayoutEffect } from 'react';
 import { computeAutoCardScale, settleAutoCardScale } from '../../cardScale';
 import { computeHudScales, computeScreenScale } from '../../hud';
+import { holdFlip } from '../../flip';
 
+const rescaleHold = 400;
+let rescaleTimer = null;
 const properties = { cards: ['--card-scale'], interface: ['--ui-scale', '--text-scale'] };
 
 export const useHudScale = (hud, containerRef, ready = true) => {
@@ -24,10 +27,20 @@ export const useHudScale = (hud, containerRef, ready = true) => {
                 cardFit: cardFit ?? 1,
                 screen: computeScreenScale({ width: window.innerWidth, height: window.innerHeight })
             });
+            let changed = false;
             for (const kind of Object.keys(properties)) {
-                properties[kind].forEach((property) =>
-                    root.style.setProperty(property, String(scales[kind]))
-                );
+                properties[kind].forEach((property) => {
+                    const value = String(scales[kind]);
+                    changed ||= root.style.getPropertyValue(property) !== value;
+                    root.style.setProperty(property, value);
+                });
+            }
+            if (changed) {
+                // Resizing the board is not a card moving: nothing should glide or animate because of it
+                holdFlip(rescaleHold);
+                root.dataset.rescaling = '';
+                clearTimeout(rescaleTimer);
+                rescaleTimer = setTimeout(() => delete root.dataset.rescaling, rescaleHold);
             }
         };
 
