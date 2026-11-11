@@ -138,8 +138,8 @@ Things to know:
 - `actionWindows` stops a player at action windows, for example
   `player2: { actionWindows: { challengeBegin: true } }`. Set it in `setupTest` rather than after a
   window has opened, which does not put skipped players back. An action is only allowed on the
-  player's turn in an open window: the active player can act while choosing a challenge, and the
-  other player acts in the before-challenge window after the active player chooses.
+  player's turn in an open window: the other player acts in the before-challenge window before the
+  active player chooses a challenge, and the active player can act while choosing.
 - `gameOptions: { manualMode: true }` allows chat commands, for specs of manual controls only. A
   spec that uses it cannot verify a card.
 

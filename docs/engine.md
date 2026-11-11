@@ -258,10 +258,11 @@ cancel such as The Hand's Judgment.
   action in player order, and the window closes only after every player passes in a row (Appendix
   I, 3.2).
 - **Before each challenge** is an action window
-  ([ChallengeActionWindow.js](../server/game/gamesteps/challenge/ChallengeActionWindow.js)). The
-  active player's turn in it is choosing a challenge, so they can always take actions there. Choosing
-  a challenge type, or Done, is their pass: the choice stands once every other player who stops at
-  the window passes, and if another player takes an action the active player chooses again.
+  ([ChallengeActionWindow.js](../server/game/gamesteps/challenge/ChallengeActionWindow.js)), and it
+  is over before the challenge is chosen. Every other player who stops at the window has their turn
+  first, in player order. The active player's turn comes last and is choosing a challenge type, or
+  Done, which closes the window; they can take actions while choosing, and each action gives the
+  others who stop at the window another turn before they choose.
 - The "action outside a window" and "action during another player's turn" warnings can only appear
   in manual mode.
 
