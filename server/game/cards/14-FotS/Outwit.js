@@ -1,6 +1,10 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Outwit extends PlotCard {
+    // Outwit (14047)
+    // Interrupt: When the effects of a when revealed ability would initiate, kneel your faction
+    // card and a unique Maester character to cancel those effects.
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,
@@ -23,9 +27,7 @@ class Outwit extends PlotCard {
                     plot: (context) => context.event.source
                 }
             },
-            handler: (context) => {
-                context.event.cancel();
-            }
+            gameAction: GameActions.cancelEffects((context) => ({ event: context.event }))
         });
     }
 }

@@ -1,6 +1,9 @@
 import DrawCard from '../../drawcard.js';
 
 class TheRoseroad extends DrawCard {
+    // The Roseroad (01040)
+    // Limited.
+    // +1 Income.
     setupCardAbilities() {
         this.plotModifiers({
             gold: 1

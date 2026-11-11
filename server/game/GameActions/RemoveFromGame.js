@@ -1,4 +1,5 @@
 import GameAction from './GameAction.js';
+import Message from '../Message.js';
 import LeavePlay from './LeavePlay.js';
 import MoveCardEventGenerator from './MoveCardEventGenerator.js';
 
@@ -7,11 +8,17 @@ class RemoveFromGame extends GameAction {
         super('removeFromGame');
     }
 
+    message({ card, facedown = false }) {
+        return facedown
+            ? Message.fragment('removes a card from the game facedown')
+            : Message.fragment('removes {card} from the game', { card });
+    }
+
     canChangeGameState({ card }) {
         return card.location !== 'out of game';
     }
 
-    createEvent({ card, player, allowSave = true }) {
+    createEvent({ card, player, allowSave = true, facedown = false }) {
         player = player || card.controller;
         const params = {
             allowSave,
@@ -20,13 +27,17 @@ class RemoveFromGame extends GameAction {
             snapshotName: 'cardStateWhenRemoved'
         };
         const removeEvent = this.event('onCardRemovedFromGame', params, (event) => {
-            event.thenAttachEvent(
-                MoveCardEventGenerator.createPlaceCardEvent({
-                    card: event.card,
-                    player: event.player,
-                    location: 'out of game'
-                })
-            );
+            const placeEvent = MoveCardEventGenerator.createPlaceCardEvent({
+                card: event.card,
+                player: event.player,
+                location: 'out of game'
+            });
+            if (facedown) {
+                placeEvent.thenExecute(() => {
+                    event.card.facedown = true;
+                });
+            }
+            event.thenAttachEvent(placeEvent);
         });
 
         if (['play area', 'duplicate'].includes(card.location)) {

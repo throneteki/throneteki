@@ -1,12 +1,22 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class KnightOfTheReach extends DrawCard {
+    // Knight of the Reach (06023)
+    // Reaction: After you win a challenge in which Knight of the Reach is attacking or defending
+    // alone, choose a Lady character. That character gains 1 power.
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.isMatch({ winner: this.controller, attackingAlone: this }) ||
-                    event.challenge.isMatch({ winner: this.controller, defendingAlone: this })
+                afterChallenge: (event, context) =>
+                    event.challenge.isMatch({
+                        winner: context.source.controller,
+                        attackingAlone: context.source
+                    }) ||
+                    event.challenge.isMatch({
+                        winner: context.source.controller,
+                        defendingAlone: context.source
+                    })
             },
             target: {
                 cardCondition: (card) =>
@@ -15,15 +25,8 @@ class KnightOfTheReach extends DrawCard {
                     card.getType() === 'character',
                 gameAction: 'gainPower'
             },
-            handler: (context) => {
-                context.target.modifyPower(1);
-                this.game.addMessage(
-                    '{0} uses {1} to have {2} gain 1 power',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to have {target} gain 1 power',
+            gameAction: GameActions.gainPower((context) => ({ card: context.target, amount: 1 }))
         });
     }
 }

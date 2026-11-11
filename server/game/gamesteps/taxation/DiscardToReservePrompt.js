@@ -1,4 +1,5 @@
 import BaseStep from '../basestep.js';
+import GameActions from '../../GameActions/index.js';
 
 class DiscardToReservePrompt extends BaseStep {
     constructor(game, source) {
@@ -34,6 +35,7 @@ class DiscardToReservePrompt extends BaseStep {
             cardCondition: (card) => card.location === 'hand' && card.controller === currentPlayer,
             onSelect: (player, cards) => this.discardCards(player, cards),
             onCancel: (player) => this.cancelSelection(player),
+            canCancel: this.game.manualMode.enabled,
             source: this.source
         });
     }
@@ -42,14 +44,21 @@ class DiscardToReservePrompt extends BaseStep {
         // Reverse the order selection so that the first card selected ends up
         // on the top of the discard pile.
         cards = cards.reverse();
-        player.discardCards(
-            cards,
-            false,
-            () => {
-                this.game.addMessage('{0} discards {1} to meet reserve', player, cards);
-            },
-            { source: 'reserve' }
+        const event = this.game.resolveGameAction(
+            GameActions.simultaneously(
+                cards.map((card) =>
+                    GameActions.discardCard({
+                        card,
+                        allowSave: false,
+                        source: 'reserve',
+                        orderable: false
+                    })
+                )
+            )
         );
+        event.thenExecute(() => {
+            this.game.addMessage('{0} discards {1} to meet reserve', player, cards);
+        });
         return true;
     }
 

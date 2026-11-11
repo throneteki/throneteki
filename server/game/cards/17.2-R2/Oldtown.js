@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Oldtown extends DrawCard {
+    // Oldtown (17175)
+    // Dominance Action: Name a cardtype (character, location, attachment, or event). Then, reveal
+    // the top card of your deck. If the revealed card has that cardtype, draw it and gain 1 power
+    // for your faction. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Reveal top card of deck',

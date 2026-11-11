@@ -16,13 +16,25 @@ const GameSettings = ({ formProps }) => {
                     {...formProps.getFieldProps('chooseCards')}
                     isSelected={formProps.values.chooseCards}
                 >
-                    Make keywords optional
+                    Ask before resolving challenge keywords
                 </Switch>
                 <Switch
                     {...formProps.getFieldProps('promptDupes')}
                     isSelected={formProps.values.promptDupes}
                 >
                     Prompt before using dupes to save
+                </Switch>
+                <Switch
+                    {...formProps.getFieldProps('hideInterrupts')}
+                    isSelected={formProps.values.hideInterrupts}
+                >
+                    Hide whether I have interrupts
+                </Switch>
+                <Switch
+                    {...formProps.getFieldProps('hideReactions')}
+                    isSelected={formProps.values.hideReactions}
+                >
+                    Hide whether I have reactions
                 </Switch>
             </div>
         </Panel>

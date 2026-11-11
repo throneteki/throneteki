@@ -1,4 +1,5 @@
 import GameAction from './GameAction.js';
+import Message from '../Message.js';
 
 class MovePower extends GameAction {
     constructor() {
@@ -7,6 +8,24 @@ class MovePower extends GameAction {
 
     isImmune({ from, context }) {
         super.isImmune({ card: from, context });
+    }
+
+    message({ from, to, amount = 1 }) {
+        return Message.fragment('moves {amount} power from {from} to {to}', {
+            amount: Math.min(from.power, amount),
+            from,
+            to
+        });
+    }
+
+    resultMessage(props, event) {
+        return this.hasResult(event)
+            ? Message.fragment('moves {amount} power from {from} to {to}', {
+                  amount: event.power,
+                  from: event.source,
+                  to: event.target
+              })
+            : '';
     }
 
     canChangeGameState({ from, to, amount = 1 }) {

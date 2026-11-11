@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Pyke extends DrawCard {
+    // Pyke (22006)
+    // Each Warship location in your hand gains ambush (X). X is 1 less than that card's printed
+    // cost.
+    // Reaction: After a [greyjoy] location enters play under your control, choose another
+    // non-loyal, non-limited card with equal or lower printed cost. Kneel Pyke to place that card
+    // on top of its owner's deck. Then, at the end of the phase, that player draws 1 card.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetLocation: 'hand',
@@ -10,8 +16,8 @@ class Pyke extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    event.card.controller === this.controller &&
+                onCardEntersPlay: (event, context) =>
+                    event.card.controller === context.player &&
                     event.card.isFaction('greyjoy') &&
                     event.card.getType() === 'location'
             },
@@ -24,29 +30,26 @@ class Pyke extends DrawCard {
                     !card.isLimited() &&
                     !card.isLoyal()
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    "{0} kneels {1} to place {2} on top of {3}'s deck",
-                    context.player,
-                    this,
-                    context.target,
-                    context.target.owner
-                );
-                this.game
-                    .resolveGameAction(GameActions.returnCardToDeck({ card: context.target }))
-                    .thenExecute(() => {
-                        this.game.once('onAtEndOfPhase', () => {
-                            if (context.target.owner.canDraw()) {
-                                context.target.owner.drawCardsToHand(1);
-                                this.game.addMessage(
-                                    '{0} draws 1 card for {1}',
-                                    context.target.owner,
-                                    this
-                                );
-                            }
-                        });
-                    });
-            }
+            message: {
+                format: "{player} kneels {source} to place {target} on top of {owner}'s deck",
+                args: { owner: (context) => context.target.owner }
+            },
+            gameAction: GameActions.returnCardToDeck((context) => ({ card: context.target })).then({
+                gameAction: GameActions.delayedEffect({
+                    duration: 'untilEndOfRound',
+                    when: {
+                        onAtEndOfPhase: () => true
+                    },
+                    message: {
+                        format: '{owner} draws 1 card for {source}',
+                        args: { owner: (context) => context.parentContext.target.owner }
+                    },
+                    gameAction: GameActions.drawCards((context) => ({
+                        player: context.parentContext.target.owner,
+                        amount: 1
+                    }))
+                })
+            })
         });
     }
 }

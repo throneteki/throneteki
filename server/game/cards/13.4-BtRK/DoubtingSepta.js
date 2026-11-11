@@ -2,12 +2,15 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class DoubtingSepta extends DrawCard {
+    // Doubting Septa (13069)
+    // Reaction: After you win an [intrigue] challenge, sacrifice Doubting Septa to choose a
+    // character or location you control. That card gains 1 power.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'intrigue' &&
-                    event.challenge.winner === this.controller
+                    event.challenge.winner === context.source.controller
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
@@ -18,12 +21,7 @@ class DoubtingSepta extends DrawCard {
                     card.canGainPower()
             },
             message: '{player} sacrifices {source} to have {target} gain 1 power',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.gainPower({ card: context.target, amount: 1 }),
-                    context
-                );
-            }
+            gameAction: GameActions.gainPower((context) => ({ card: context.target, amount: 1 }))
         });
     }
 }

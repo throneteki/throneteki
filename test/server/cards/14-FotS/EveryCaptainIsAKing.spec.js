@@ -1,60 +1,21 @@
 describe('Every Captain is a King', function () {
-    integration(function () {
-        describe('when declared in a power challenge', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('greyjoy', [
-                    'Sailing the Summer Sea',
-                    'The Drumm',
-                    'Every Captain is a King'
-                ]);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.captain = this.player1.findCardByName('The Drumm', 'hand');
-                this.player1.clickCard(this.captain);
-
-                this.completeSetup();
-
-                this.selectFirstPlayer(this.player1);
-
-                this.completeMarshalPhase();
-
-                this.player1.clickCard('Every Captain is a King', 'hand');
-
-                this.player1.clickPrompt('Power');
-                this.player1.clickCard(this.captain);
-                this.player1.clickPrompt('Done');
-
-                this.skipActionWindow();
-
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
-
-                this.player1.clickPrompt('Apply Claim');
-            });
-
-            it('does not kneel the captin', function () {
-                expect(this.captain.kneeled).toBe(false);
-            });
-
-            it('does not kneel the captain for a second challenge', function () {
-                this.player1.clickPrompt('Power');
-                this.player1.clickCard(this.captain);
-                this.player1.clickPrompt('Done');
-
-                this.skipActionWindow();
-
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
-
-                this.player1.clickPrompt('Apply Claim');
-
-                expect(this.captain.kneeled).toBe(false);
-            });
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { inPlay: ['The Drumm'], hand: ['Every Captain is a King'] }
         });
+        this.player1.clickCard(this.everyCaptainIsAKing);
+    });
+
+    it('gives each Captain you control the King trait', function () {
+        expect(this.theDrumm.hasTrait('King')).toBe(true);
+        expect(this.player1).isReadyToTakeAction();
+    });
+
+    it('stops each Captain you control kneeling when declared as an attacker in a power challenge', function () {
+        this.unopposedChallenge(this.player1, 'Power', this.theDrumm);
+
+        expect(this.theDrumm.kneeled).toBe(false);
+        expect(this.player1).isReadyToTakeAction();
     });
 });

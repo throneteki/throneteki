@@ -1,52 +1,41 @@
 describe('House Florent Knight', function () {
-    integration(function () {
+    describe('when there is a lower strength character out', function () {
         beforeEach(function () {
-            const deck = this.buildDeck('tyrell', [
-                'Trading with the Pentoshi',
-                'House Florent Knight',
-                'Hedge Knight'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-            this.completeSetup();
-
-            this.florentKnight = this.player2.findCardByName('House Florent Knight', 'hand');
+            this.setupTest({
+                phase: 'marshal',
+                player1: { hand: ['Hedge Knight'] },
+                player2: { hand: ['House Florent Knight'] }
+            });
+            this.player1.clickCard(this.hedgeKnight);
+            this.player1.clickPrompt('Done');
+            this.player2.clickCard(this.houseFlorentKnight);
         });
 
-        describe('when there is a lower strength character out', function () {
-            beforeEach(function () {
-                this.selectFirstPlayer(this.player1);
-                this.selectPlotOrder(this.player1);
+        it('discards the character with the lowest STR in play', function () {
+            expect(this.player2).toBeAbleToSelect(this.hedgeKnight);
+            expect(this.player2).not.toBeAbleToSelect(this.houseFlorentKnight);
 
-                this.hedgeKnight = this.player1.findCardByName('Hedge Knight', 'hand');
+            this.player2.clickCard(this.hedgeKnight);
 
-                this.player1.clickCard(this.hedgeKnight);
-                this.player1.clickPrompt('Done');
+            expect(this.hedgeKnight.location).toBe('discard pile');
+            expect(this.player2).isReadyToTakeAction();
+        });
+    });
 
-                this.player2.clickCard(this.florentKnight);
+    describe('when House Florent Knight would be the lowest strength', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'marshal',
+                player1: { hand: ['House Florent Knight'] }
             });
-
-            it('should allow that character to be discarded', function () {
-                this.player2.clickCard(this.hedgeKnight);
-
-                expect(this.hedgeKnight.location).toBe('discard pile');
-            });
+            this.player1.clickCard(this.houseFlorentKnight);
         });
 
-        describe('when House Florent Knight would be the lowest strength', function () {
-            beforeEach(function () {
-                this.selectFirstPlayer(this.player2);
-                this.selectPlotOrder(this.player2);
+        it('discards House Florent Knight', function () {
+            this.player1.clickCard(this.houseFlorentKnight);
 
-                this.player2.clickCard(this.florentKnight);
-            });
-
-            it('should require HFK to be discarded', function () {
-                this.player2.clickCard(this.florentKnight);
-                expect(this.florentKnight.location).toBe('discard pile');
-            });
+            expect(this.houseFlorentKnight.location).toBe('discard pile');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

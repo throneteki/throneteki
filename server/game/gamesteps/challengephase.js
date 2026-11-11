@@ -3,7 +3,7 @@ import SimpleStep from './simplestep.js';
 import Challenge from '../challenge.js';
 import ChallengeFlow from './challenge/challengeflow.js';
 import ChallengeTypes from '../ChallengeTypes.js';
-import ActionWindow from './actionwindow.js';
+import ChallengeActionWindow from './challenge/ChallengeActionWindow.js';
 import { ChallengeTracker } from '../EventTrackers/index.js';
 
 class ChallengePhase extends Phase {
@@ -25,32 +25,27 @@ class ChallengePhase extends Phase {
         }
     }
 
-    promptForChallenge() {
+    // A challenge abandoned before it was initiated (no attackers, or no opponent chosen) returns
+    // to choosing a challenge without offering the other players a new action window.
+    promptForChallenge({ actionWindow = true } = {}) {
         if (this.remainingPlayers.length === 0) {
             return true;
         }
 
-        this.game.queueStep(new ActionWindow(this.game, 'Before challenge', 'challengeBegin'));
-
         const currentPlayer = this.remainingPlayers[0];
-        const buttons = ChallengeTypes.asButtons((challengeType) => ({
-            method: 'chooseChallengeType',
-            disabled: () => !this.allowChallengeType(currentPlayer, challengeType)
-        }));
-
-        this.game.promptWithMenu(currentPlayer, this, {
-            activePrompt: {
-                menuTitle: '',
-                buttons: buttons.concat([
-                    {
-                        text: 'Done',
-                        method: 'completeChallenges',
-                        disabled: () => this.mustInitiateChallenge(currentPlayer)
-                    }
-                ])
-            },
-            waitingPromptTitle: 'Waiting for opponent to initiate challenge'
+        const window = new ChallengeActionWindow(this.game, this, currentPlayer, {
+            otherPlayers: actionWindow
         });
+        this.game.queueStep(window);
+        this.game.queueSimpleStep(() => this.resolveChoice(currentPlayer, window.choice));
+    }
+
+    resolveChoice(player, choice) {
+        if (choice === 'done' || !player.isPlaying()) {
+            this.completeChallenges(player);
+        } else if (choice) {
+            this.chooseChallengeType(player, choice);
+        }
     }
 
     allowChallengeType(player, challengeType) {
@@ -91,7 +86,7 @@ class ChallengePhase extends Phase {
                 this.initiateChallenge(attackingPlayer, opponent, challengeType);
             },
             onCancel: () => {
-                this.promptForChallenge();
+                this.promptForChallenge({ actionWindow: false });
             }
         });
 
@@ -104,18 +99,77 @@ class ChallengePhase extends Phase {
             return;
         }
 
-        let challenge = new Challenge(this.game, {
-            attackingPlayer: attackingPlayer,
-            defendingPlayer: defendingPlayer,
-            challengeType: challengeType,
-            number: this.tracker.count({ attackingPlayer }) + 1,
-            totalNumber: this.tracker.count({}) + 1
-        });
+        let challenge = this.createChallenge(attackingPlayer, defendingPlayer, challengeType);
         this.game.currentChallenge = challenge;
         this.game.currentChallengeStep = new ChallengeFlow(this.game, challenge);
         this.game.queueStep(this.game.currentChallengeStep);
         this.game.queueSimpleStep(() => this.cleanupChallenge());
+        this.game.queueSimpleStep(() =>
+            this.promptForChallenge({ actionWindow: challenge.wasInitiated })
+        );
+    }
+
+    /**
+     * Records a challenge that was initiated earlier in the phase, for a game restored from a
+     * problem report. Nothing triggers: only the trackers and each player's used challenges see it.
+     */
+    restoreFinishedChallenge({ attackingPlayer, defendingPlayer, challengeType }) {
+        const challenge = this.createChallenge(attackingPlayer, defendingPlayer, challengeType);
+        challenge.initiateChallenge();
+        this.game.emit('onChallengeInitiated', { challenge });
+        challenge.finish();
+    }
+
+    /**
+     * Replaces the prompt to choose a challenge with a challenge restored from a problem report,
+     * resuming at the action window after attackers or defenders were declared. Nothing triggers
+     * while it is rebuilt.
+     */
+    restoreChallenge({
+        attackingPlayer,
+        defendingPlayer,
+        challengeType,
+        currentType = challengeType,
+        declaredAttackers,
+        attackers,
+        declaredDefenders,
+        defenders,
+        resumeAt
+    }) {
+        this.pipeline.cancelStep();
+        const index = this.remainingPlayers.indexOf(attackingPlayer);
+        if (index > 0) {
+            this.remainingPlayers.splice(0, index);
+        }
+
+        const challenge = this.createChallenge(attackingPlayer, defendingPlayer, challengeType);
+        challenge.initiateChallenge();
+        this.game.emit('onChallengeInitiated', { challenge });
+        challenge.challengeType = currentType;
+        challenge.declareAttackers(declaredAttackers);
+        challenge.addAttackers(attackers.filter((card) => !declaredAttackers.includes(card)));
+        if (resumeAt === 'defendersDeclared') {
+            challenge.declareDefenders(declaredDefenders);
+            challenge.addDefenders(defenders.filter((card) => !declaredDefenders.includes(card)));
+            challenge.defendersDeclared = true;
+        }
+
+        this.game.currentChallenge = challenge;
+        this.game.currentChallengeStep = new ChallengeFlow(this.game, challenge, { resumeAt });
+        this.game.queueStep(this.game.currentChallengeStep);
+        this.game.queueSimpleStep(() => this.cleanupChallenge());
         this.game.queueSimpleStep(() => this.promptForChallenge());
+        this.game.effectEngine.reapplyStateDependentEffects();
+    }
+
+    createChallenge(attackingPlayer, defendingPlayer, challengeType) {
+        return new Challenge(this.game, {
+            attackingPlayer,
+            defendingPlayer,
+            challengeType,
+            number: this.tracker.count({ attackingPlayer }) + 1,
+            totalNumber: this.tracker.count({}) + 1
+        });
     }
 
     cleanupChallenge() {
@@ -126,6 +180,7 @@ class ChallengePhase extends Phase {
         this.game.currentChallenge = null;
         this.game.currentChallengeStep = null;
         this.game.raiseEvent('onChallengeFinished', { challenge: challenge });
+        this.game.queueSimpleStep(() => this.game.finishEndingDuration('untilEndOfChallenge'));
     }
 
     completeChallenges(player) {

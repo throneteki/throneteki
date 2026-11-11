@@ -1,6 +1,7 @@
 const defaultWindows = {
     plot: false,
     draw: false,
+    marshal: false,
     challengeBegin: false,
     attackersDeclared: true,
     defendersDeclared: true,
@@ -15,15 +16,11 @@ const defaultKeywordSettings = {
 };
 
 const defaultSettings = {
-    windowTimer: 10,
     background: 'BG1',
     cardSize: 'normal',
-    promptDupes: false
-};
-
-const defaultTimerSettings = {
-    events: true,
-    abilities: false
+    promptDupes: false,
+    hideInterrupts: true,
+    hideReactions: true
 };
 
 function getUserWithDefaultsSet(user) {
@@ -39,11 +36,6 @@ function getUserWithDefaultsSet(user) {
         defaultKeywordSettings,
         userToReturn.settings.keywordSettings
     );
-    userToReturn.settings.timerSettings = Object.assign(
-        {},
-        defaultTimerSettings,
-        userToReturn.settings.timerSettings
-    );
     userToReturn.permissions = Object.assign({}, userToReturn.permissions);
     userToReturn.promptedActionWindows = Object.assign(
         {},
@@ -58,5 +50,6 @@ function getUserWithDefaultsSet(user) {
 }
 
 export default {
+    defaultSettings,
     getUserWithDefaultsSet: getUserWithDefaultsSet
 };

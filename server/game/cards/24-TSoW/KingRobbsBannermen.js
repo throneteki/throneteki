@@ -1,10 +1,14 @@
 import DrawCard from '../../drawcard.js';
 
 class KingRobbsBannermen extends DrawCard {
+    // King Robb's Bannermen (24016)
+    // Assault. No attachments except Direwolf.
+    // While you control a [stark] King character, King Robb’s Bannermen may target an additional
+    // location using assault.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.controller.anyCardsInPlay(
+            condition: (context) =>
+                context.source.controller.anyCardsInPlay(
                     (card) => card.isFaction('stark') && card.hasTrait('King')
                 ),
             match: this,

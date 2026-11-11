@@ -1,39 +1,45 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheStarrySept extends DrawCard {
-    setupCardAbilities() {
+    // The Starry Sept (12042)
+    // Action: Move 1 power from The Starry Sept to a character. Until the end of the phase, treat
+    // that character as if its printed text box were blank (except for Traits).
+    // Reaction: After you win a [power] challenge, The Starry Sept gains 1 power.
+    setupCardAbilities(ability) {
         this.action({
             title: 'Move 1 power + blank',
-            condition: () => this.power > 0,
+            condition: (context) => context.source.power > 0,
             target: {
                 cardCondition: (card) =>
                     card.getType() === 'character' && card.location === 'play area'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} uses {1} to move 1 power to {2} and blank them until the end of the phase',
-                    context.player,
-                    this,
-                    context.target
-                );
-                this.game.movePower(this, context.target, 1);
-                this.untilEndOfPhase((ability) => ({
+            message:
+                '{player} uses {source} to move 1 power to {target} and blank them until the end of the phase',
+            gameAction: GameActions.simultaneously([
+                GameActions.movePower((context) => ({
+                    from: context.source,
+                    to: context.target,
+                    amount: 1
+                })),
+                GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfPhase',
                     match: context.target,
                     effect: ability.effects.blankExcludingTraits
-                }));
-            }
+                }))
+            ])
         });
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.isMatch({ winner: this.controller, challengeType: 'power' }) &&
-                    this.canGainPower()
+                afterChallenge: (event, context) =>
+                    event.challenge.isMatch({
+                        winner: context.source.controller,
+                        challengeType: 'power'
+                    }) && context.source.canGainPower()
             },
-            handler: (context) => {
-                this.game.addMessage('{0} uses {1} to have {1} gain 1 power', context.player, this);
-                this.modifyPower(1);
-            }
+            message: '{player} uses {source} to have {source} gain 1 power',
+            gameAction: GameActions.gainPower((context) => ({ card: context.source, amount: 1 }))
         });
     }
 }

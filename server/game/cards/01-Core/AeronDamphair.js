@@ -1,24 +1,24 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class AeronDamphair extends DrawCard {
+    // Aeron Damphair (01065)
+    // Reaction: After you win dominance, put an Ironborn character into play from your dead pile.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onDominanceDetermined: (event) => this.controller === event.winner
+                onDominanceDetermined: (event, context) =>
+                    context.source.controller === event.winner
             },
             target: {
                 activePromptTitle: 'Select character',
-                cardCondition: (card) => this.cardCondition(card)
+                cardCondition: (card, context) => context.source.cardCondition(card)
             },
-            handler: (context) => {
-                context.player.putIntoPlay(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to put {2} into play from their dead pile',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} uses {source} to put {target} into play from their dead pile',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            }))
         });
     }
 

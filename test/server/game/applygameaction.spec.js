@@ -2,19 +2,19 @@ import Game from '../../../server/game/game.js';
 
 describe('Game', function () {
     beforeEach(function () {
-        this.gameService = jasmine.createSpyObj('gameService', ['save']);
+        this.gameService = { save: vi.fn() };
         this.game = new Game({ owner: {} }, 'Test Game', { gameService: this.gameService });
 
-        this.card1 = jasmine.createSpyObj('card', ['allowGameAction']);
-        this.card2 = jasmine.createSpyObj('card', ['allowGameAction']);
-        this.handler = jasmine.createSpy('handler');
+        this.card1 = { allowGameAction: vi.fn() };
+        this.card2 = { allowGameAction: vi.fn() };
+        this.handler = vi.fn();
     });
 
     describe('applyGameAction()', function () {
         describe('when passed a single card', function () {
             describe('and the action is allowed', function () {
                 beforeEach(function () {
-                    this.card1.allowGameAction.and.returnValue(true);
+                    this.card1.allowGameAction.mockReturnValue(true);
 
                     this.game.applyGameAction('kill', this.card1, this.handler);
                 });
@@ -30,7 +30,7 @@ describe('Game', function () {
 
             describe('and the action is not allowed', function () {
                 beforeEach(function () {
-                    this.card1.allowGameAction.and.returnValue(false);
+                    this.card1.allowGameAction.mockReturnValue(false);
 
                     this.game.applyGameAction('kill', this.card1, this.handler);
                 });
@@ -44,8 +44,8 @@ describe('Game', function () {
         describe('when passed an array of cards', function () {
             describe('and the action is allowed for all cards', function () {
                 beforeEach(function () {
-                    this.card1.allowGameAction.and.returnValue(true);
-                    this.card2.allowGameAction.and.returnValue(true);
+                    this.card1.allowGameAction.mockReturnValue(true);
+                    this.card2.allowGameAction.mockReturnValue(true);
 
                     this.game.applyGameAction('kill', [this.card1, this.card2], this.handler);
                 });
@@ -62,8 +62,8 @@ describe('Game', function () {
 
             describe('and the action is not allowed on some of the cards', function () {
                 beforeEach(function () {
-                    this.card1.allowGameAction.and.returnValue(false);
-                    this.card2.allowGameAction.and.returnValue(true);
+                    this.card1.allowGameAction.mockReturnValue(false);
+                    this.card2.allowGameAction.mockReturnValue(true);
 
                     this.game.applyGameAction('kill', [this.card1, this.card2], this.handler);
                 });
@@ -75,8 +75,8 @@ describe('Game', function () {
 
             describe('and the action is not allowed on any of the cards', function () {
                 beforeEach(function () {
-                    this.card1.allowGameAction.and.returnValue(false);
-                    this.card2.allowGameAction.and.returnValue(false);
+                    this.card1.allowGameAction.mockReturnValue(false);
+                    this.card2.allowGameAction.mockReturnValue(false);
 
                     this.game.applyGameAction('kill', [this.card1, this.card2], this.handler);
                 });

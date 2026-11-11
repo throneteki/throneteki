@@ -24,8 +24,8 @@ describe('the GamePipeline', function () {
                     cancelStep: function () {},
                     isComplete: function () {}
                 };
-                spyOn(this.step, 'cancelStep');
-                spyOn(this.step, 'isComplete');
+                vi.spyOn(this.step, 'cancelStep').mockImplementation(() => {});
+                vi.spyOn(this.step, 'isComplete').mockImplementation(() => {});
                 this.pipeline.initialise([this.step]);
             });
 
@@ -35,13 +35,13 @@ describe('the GamePipeline', function () {
             });
 
             it('should keep the step if it is not complete', function () {
-                this.step.isComplete.and.returnValue(false);
+                this.step.isComplete.mockReturnValue(false);
                 this.pipeline.cancelStep();
                 expect(this.pipeline.length).toBe(1);
             });
 
             it('should remove the step if it is complete', function () {
-                this.step.isComplete.and.returnValue(true);
+                this.step.isComplete.mockReturnValue(true);
                 this.pipeline.cancelStep();
                 expect(this.pipeline.length).toBe(0);
             });

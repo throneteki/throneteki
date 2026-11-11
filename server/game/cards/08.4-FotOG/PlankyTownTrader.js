@@ -1,32 +1,36 @@
 import DrawCard from '../../drawcard.js';
+import { Tokens } from '../../Constants/index.js';
+import GameActions from '../../GameActions/index.js';
 
 class PlankyTownTrader extends DrawCard {
-    setupCardAbilities() {
+    // Planky Town Trader (08075)
+    // Bestow (5).
+    // Interrupt: When Planky Town Trader leaves play, put a non-[martell] character with printed
+    // cost X or lower into play from your hand. X is the number of gold on Planky Town Trader.
+    // Until the end of the phase, that character cannot leave play.
+    setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onCardLeftPlay: (event) => event.card === this
+                onCardLeftPlay: (event, context) => event.card === context.source
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'hand' &&
-                    card.controller === this.controller &&
+                    card.controller === context.player &&
                     card.getType() === 'character' &&
                     !card.isFaction('martell') &&
-                    card.getPrintedCost() <= this.tokens.gold
+                    card.getPrintedCost() <= (context.source.tokens[Tokens.gold] || 0)
             },
-            handler: (context) => {
-                context.player.putIntoPlay(context.target);
-                this.game.addMessage(
-                    '{0} uses {1} to put {2} into play from their hand',
-                    context.player,
-                    this,
-                    context.target
-                );
-
-                //"Cannot leave play" is not possible at the moment, so these are the general ways
-                //through which cards leave play instead
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
+            message:
+                '{player} uses {source} to put {target} into play from their hand, and it cannot leave play until the end of the phase',
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            })).then({
+                // "Cannot leave play" is not an effect yet, so these are the ways a card leaves play.
+                gameAction: GameActions.lastingEffect((context) => ({
+                    duration: 'untilEndOfPhase',
+                    match: context.parentContext.target,
                     effect: [
                         ability.effects.cannotBeKilled(),
                         ability.effects.cannotBeDiscarded(),
@@ -36,13 +40,8 @@ class PlankyTownTrader extends DrawCard {
                         ability.effects.cannotBeSacrificed(),
                         ability.effects.cannotBeReturnedToDeck()
                     ]
-                }));
-
-                this.game.addMessage(
-                    'Until the end of the phase, {0} cannot leave play',
-                    context.target
-                );
-            }
+                }))
+            })
         });
     }
 }

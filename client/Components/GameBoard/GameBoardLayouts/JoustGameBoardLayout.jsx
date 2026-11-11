@@ -12,7 +12,6 @@ const JoustGameBoardLayout = ({
     otherPlayer,
     userPlayer,
     onCardClick,
-    onMenuItemClick,
     onSettingsClick,
     onChatToggle,
     unreadMessages,
@@ -57,7 +56,6 @@ const JoustGameBoardLayout = ({
                         deadPile={player.cardPiles.deadPile}
                         drawDeck={player.cardPiles.drawDeck}
                         onCardClick={onCardClick}
-                        onMenuItemClick={onMenuItemClick}
                         outOfGamePile={player.cardPiles.outOfGamePile}
                         revealTopCard={player.revealTopCard}
                         shadows={player.cardPiles.shadows}
@@ -77,7 +75,6 @@ const JoustGameBoardLayout = ({
                             isDroppable={isMe}
                             cardsInPlay={player.cardPiles.cardsInPlay}
                             onCardClick={onCardClick}
-                            onMenuItemClick={onMenuItemClick}
                             rowDirection={side === 'bottom' ? 'default' : 'reverse'}
                             cardSize={userPlayer.cardSize}
                         />
@@ -98,7 +95,6 @@ const JoustGameBoardLayout = ({
             onChatToggle,
             unreadMessages,
             onCardClick,
-            onMenuItemClick,
             isDragging,
             dispatch
         ]

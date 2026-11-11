@@ -1,44 +1,45 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
+function isParticipatingLannister(source, card) {
+    return card.getType() === 'character' && card.isFaction('lannister') && card.isParticipating();
+}
+
 class TowerOfTheHand extends DrawCard {
+    // Tower of the Hand (03030)
+    // Reaction: After you win an [intrigue] challenge, kneel Tower of the Hand and return a
+    // participating [lannister] character to your hand to choose a character with lower printed
+    // cost controlled by the losing opponent. Return that character to its owner's hand.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.challengeType === 'intrigue' &&
-                    event.challenge.winner === this.controller
+                    event.challenge.winner === context.source.controller
             },
             cost: [
                 ability.costs.kneelSelf(),
-                ability.costs.returnToHand((card) => this.isParticipatingLannister(card))
+                ability.costs.returnToHand((card, context) =>
+                    isParticipatingLannister(context.source, card)
+                )
             ],
             target: {
                 cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.controller === this.game.currentChallenge.loser &&
+                    card.controller === context.game.currentChallenge.loser &&
                     (!context.costs.returnToHand ||
                         card.getPrintedCost() < context.costs.returnToHand.getPrintedCost())
             },
-            handler: (context) => {
-                let returnedCostCard = context.costs.returnToHand;
-                context.target.owner.returnCardToHand(context.target);
-                this.game.addMessage(
-                    "{0} kneels {1} and returns {2} to their hand to return {3} to {4}'s hand",
-                    this.controller,
-                    this,
-                    returnedCostCard,
-                    context.target,
-                    context.target.owner
-                );
-            }
+            message: {
+                format: "{player} kneels {source} and returns {returnedCostCard} to their hand to return {target} to {owner}'s hand",
+                args: {
+                    returnedCostCard: (context) => context.costs.returnToHand,
+                    owner: (context) => context.target.owner
+                }
+            },
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
-    }
-
-    isParticipatingLannister(card) {
-        return (
-            card.getType() === 'character' && card.isFaction('lannister') && card.isParticipating()
-        );
     }
 }
 

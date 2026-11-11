@@ -1,10 +1,12 @@
 import DrawCard from '../../drawcard.js';
 
 class HouseManderlyKnight extends DrawCard {
+    // House Manderly Knight (04101)
+    // While there is a Winter plot card revealed, House Manderly Knight gets +2 STR.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.game
+            condition: (context) =>
+                context.game
                     .getPlayers()
                     .some((player) => player.activePlot && player.activePlot.hasTrait('Winter')),
             match: this,

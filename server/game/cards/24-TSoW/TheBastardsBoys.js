@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheBastardsBoys extends DrawCard {
+    // The Bastard's Boys (24017)
+    // Assault.
+    // Challenges Action: Sacrifice The Bastard's Boys to put a House Bolton or non-[stark]
+    // character with printed cost 5 or lower into play from your hand.
     setupCardAbilities(ability) {
         this.action({
             title: 'Sacrifice to put character into play',
@@ -19,12 +23,7 @@ class TheBastardsBoys extends DrawCard {
             cost: ability.costs.sacrificeSelf(),
             message:
                 '{player} sacrifices {costs.sacrifice} to put {target} into play from their hand',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoPlay({ card: context.target }),
-                    context
-                );
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({ card: context.target }))
         });
     }
 }

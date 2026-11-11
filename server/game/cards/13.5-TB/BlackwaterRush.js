@@ -1,10 +1,16 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class BlackwaterRush extends DrawCard {
+    // Blackwater Rush (13088)
+    // Shadow (2).
+    // Reaction: After a card you control comes out of shadows, kneel Blackwater Rush to choose a
+    // [baratheon] character. That character gains 1 power.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card.controller === this.controller
+                onCardOutOfShadows: (event, context) =>
+                    event.card.controller === context.source.controller
             },
             cost: ability.costs.kneelSelf(),
             target: {
@@ -14,16 +20,8 @@ class BlackwaterRush extends DrawCard {
                     card.isFaction('baratheon') &&
                     card.canGainPower()
             },
-            handler: (context) => {
-                context.target.modifyPower(1);
-
-                this.game.addMessage(
-                    '{0} kneels {1} to have {2} gain one power.',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} kneels {source} to have {target} gain one power.',
+            gameAction: GameActions.gainPower((context) => ({ card: context.target, amount: 1 }))
         });
     }
 }

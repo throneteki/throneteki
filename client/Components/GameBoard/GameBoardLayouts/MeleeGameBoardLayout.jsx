@@ -12,7 +12,6 @@ const MeleeGameBoardLayout = ({
     otherPlayers,
     userPlayer,
     onCardClick,
-    onMenuItemClick,
     onSettingsClick,
     onChatToggle,
     unreadMessages,
@@ -61,7 +60,6 @@ const MeleeGameBoardLayout = ({
                         deadPile={player.cardPiles.deadPile}
                         drawDeck={player.cardPiles.drawDeck}
                         onCardClick={onCardClick}
-                        onMenuItemClick={onMenuItemClick}
                         outOfGamePile={player.cardPiles.outOfGamePile}
                         revealTopCard={player.revealTopCard}
                         shadows={player.cardPiles.shadows}
@@ -82,7 +80,6 @@ const MeleeGameBoardLayout = ({
                             isDroppable={isMe}
                             cardsInPlay={player.cardPiles.cardsInPlay}
                             onCardClick={onCardClick}
-                            onMenuItemClick={onMenuItemClick}
                             rowDirection={side === 'bottom' ? 'default' : 'reverse'}
                             cardSize={userPlayer.cardSize}
                         />
@@ -102,7 +99,6 @@ const MeleeGameBoardLayout = ({
             isDragging,
             onCardClick,
             onChatToggle,
-            onMenuItemClick,
             onSettingsClick,
             thisPlayer,
             userPlayer,

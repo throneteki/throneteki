@@ -2,10 +2,10 @@ import CardVisibility from '../../server/game/CardVisibility.js';
 
 describe('CardVisibility', function () {
     beforeEach(function () {
-        this.specator = jasmine.createSpyObj('spectator', ['isSpectator']);
-        this.specator.isSpectator.and.returnValue(true);
-        this.controller = jasmine.createSpyObj('controller', ['isSpectator']);
-        this.opponent = jasmine.createSpyObj('opponent', ['isSpectator']);
+        this.specator = { isSpectator: vi.fn() };
+        this.specator.isSpectator.mockReturnValue(true);
+        this.controller = { isSpectator: vi.fn() };
+        this.opponent = { isSpectator: vi.fn() };
         this.card = { location: 'play area', facedown: false, controller: this.controller };
         this.gameSpy = { game: true };
 

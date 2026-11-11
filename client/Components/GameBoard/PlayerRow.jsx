@@ -13,7 +13,6 @@ const PlayerRow = ({
     className,
     outOfGamePile,
     onCardClick,
-    onMenuItemClick,
     side,
     sideNo,
     cardSize,
@@ -108,7 +107,6 @@ const PlayerRow = ({
                                 source={source}
                                 disableHover={false}
                                 onClick={onCardClick}
-                                onMenuItemClick={onMenuItemClick}
                                 orientation='vertical'
                                 size={cardSize}
                             />
@@ -118,12 +116,11 @@ const PlayerRow = ({
             );
             return <div className='relative flex flex-row-reverse'>{retAgendas}</div>;
         },
-        [agendas, cardSize, renderDroppablePile, onCardClick, onMenuItemClick]
+        [agendas, cardSize, renderDroppablePile, onCardClick]
     );
 
     const cardPileProps = {
         onCardClick,
-        onMenuItemClick,
         popupLocation: side,
         popupId: (sideNo ?? 1) === 1 ? side : `${side}-${sideNo}`, // Retain legacy top/bottom ids for first on each side
         size: cardSize,
@@ -141,12 +138,11 @@ const PlayerRow = ({
                 source={'title'}
                 disableHover={false}
                 onClick={onCardClick}
-                onMenuItemClick={onMenuItemClick}
                 orientation='vertical'
                 size={cardSize}
             />
         );
-    }, [title, onCardClick, onMenuItemClick, cardSize]);
+    }, [title, onCardClick, cardSize]);
 
     const retHand = (
         <SquishableCardPanel
@@ -224,7 +220,6 @@ const PlayerRow = ({
             <PlayerPlots
                 cardSize={cardSize}
                 onCardClick={onCardClick}
-                onMenuItemClick={onMenuItemClick}
                 direction={side === 'bottom' ? 'default' : 'reverse'}
                 isMe={isMe}
                 plotDeck={plotDeck}

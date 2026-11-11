@@ -1,74 +1,41 @@
 import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
-import KneelCard from '../../GameActions/KneelCard.js';
+
+function isMilitaryCharacter(card) {
+    return (
+        card.location === 'play area' && card.getType() === 'character' && card.hasIcon('military')
+    );
+}
 
 class ForcedMarch extends PlotCard {
+    // Forced March (17154)
+    // When Revealed: Kneel X characters you control with a [military] icon. Then, each opponent
+    // must choose and kneel X characters they control with a [military] icon, if able.
     setupCardAbilities() {
-        const isStandingAndKneelableMilIcon = (card) => {
-            return (
-                card.isMatch({ type: 'character' }) &&
-                card.hasIcon('military') &&
-                KneelCard.allow({ card })
-            );
-        };
-
         this.whenRevealed({
             target: {
-                type: 'select',
                 mode: 'unlimited',
+                activePromptTitle: 'Select characters',
                 cardCondition: (card, context) =>
-                    isStandingAndKneelableMilIcon(card) && card.controller === context.player
+                    isMilitaryCharacter(card) && card.controller === context.player,
+                gameAction: 'kneel'
             },
             message: '{player} uses {source} to kneel {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously((context) =>
-                        context.target.map((card) => GameActions.kneelCard({ card }))
-                    ).then((preThenContext) => ({
-                        handler: (context) => {
-                            const charactersWithMilIcon = preThenContext.target.length;
-                            for (let opponent of this.game.getOpponents(context.player)) {
-                                let numCards = Math.min(
-                                    charactersWithMilIcon,
-                                    opponent.getNumberOfCardsInPlay(isStandingAndKneelableMilIcon)
-                                );
-
-                                if (numCards === 0) {
-                                    continue;
-                                }
-
-                                this.game.promptForSelect(opponent, {
-                                    source: this,
-                                    cardCondition: (card) =>
-                                        isStandingAndKneelableMilIcon(card) &&
-                                        card.controller === opponent,
-                                    gameAction: 'kneel',
-                                    mode: 'exactly',
-                                    numCards: numCards,
-                                    onSelect: (player, cards) =>
-                                        this.onCardsSelected(player, cards),
-                                    onCancel: (player) => this.onCancel(player)
-                                });
-                            }
-                        }
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) => GameActions.kneelCard({ card }))
+            ).then({
+                gameAction: GameActions.chooseCards({
+                    players: (context) => context.game.getOpponents(context.player),
+                    title: (context) =>
+                        `Select ${context.parentContext.target.length} characters to kneel`,
+                    mode: 'exactly',
+                    numCards: (context) => context.parentContext.target.length,
+                    cardCondition: (card, context) =>
+                        isMilitaryCharacter(card) && card.controller === context.choosingPlayer,
+                    gameAction: (card) => GameActions.kneelCard({ card })
+                })
+            })
         });
-    }
-
-    onCardsSelected(player, cards) {
-        this.game.addMessage('Then {0} kneels {1} for {2}', player, cards, this);
-        this.game.resolveGameAction(
-            GameActions.simultaneously(cards.map((card) => GameActions.kneelCard({ card })))
-        );
-        return true;
-    }
-
-    onCancel(player) {
-        this.game.addAlert('danger', '{0} did not select characters for {1}', player, this);
-        return true;
     }
 }
 

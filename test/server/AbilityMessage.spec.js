@@ -2,7 +2,7 @@ import AbilityMessage from '../../server/game/AbilityMessage.js';
 
 describe('AbilityMessage', function () {
     beforeEach(function () {
-        this.outputterSpy = jasmine.createSpyObj('outputter', ['addMessage', 'addAlert']);
+        this.outputterSpy = { addMessage: vi.fn(), addAlert: vi.fn() };
         this.context = {
             player: 'PLAYER_OBJ',
             source: 'SOURCE_OBJ',
@@ -24,7 +24,7 @@ describe('AbilityMessage', function () {
 
         describe('when a function is passed', function () {
             it('creates an object that wraps the function', function () {
-                let spy = jasmine.createSpy('outputFunc');
+                let spy = vi.fn();
                 let message = AbilityMessage.create(spy);
                 message.output(this.outputterSpy, this.context);
 
@@ -104,15 +104,15 @@ describe('AbilityMessage', function () {
             it('translates named arguments to their numeric values', function () {
                 expect(this.outputterSpy.addMessage).toHaveBeenCalledWith(
                     '{0} uses {1} to kill {2}',
-                    jasmine.anything(),
-                    jasmine.anything(),
-                    jasmine.anything()
+                    expect.anything(),
+                    expect.anything(),
+                    expect.anything()
                 );
             });
 
             it('passes the arguments in the correct order', function () {
                 expect(this.outputterSpy.addMessage).toHaveBeenCalledWith(
-                    jasmine.any(String),
+                    expect.any(String),
                     'PLAYER_OBJ',
                     'SOURCE_OBJ',
                     'TARGET_OBJ'
@@ -131,16 +131,16 @@ describe('AbilityMessage', function () {
             it('translates named arguments to their numeric values', function () {
                 expect(this.outputterSpy.addMessage).toHaveBeenCalledWith(
                     "{0} uses {1} to look at {3}'s hand",
-                    jasmine.anything(),
-                    jasmine.anything(),
-                    jasmine.anything(),
-                    jasmine.anything()
+                    expect.anything(),
+                    expect.anything(),
+                    expect.anything(),
+                    expect.anything()
                 );
             });
 
             it('passes the arguments in the correct order', function () {
                 expect(this.outputterSpy.addMessage).toHaveBeenCalledWith(
-                    jasmine.any(String),
+                    expect.any(String),
                     'PLAYER_OBJ',
                     'SOURCE_OBJ',
                     'TARGET_OBJ',
@@ -160,16 +160,16 @@ describe('AbilityMessage', function () {
             it('translates named arguments to their numeric values', function () {
                 expect(this.outputterSpy.addMessage).toHaveBeenCalledWith(
                     "{0} uses {1} to look at {3}'s hand",
-                    jasmine.anything(),
-                    jasmine.anything(),
-                    jasmine.anything(),
-                    jasmine.anything()
+                    expect.anything(),
+                    expect.anything(),
+                    expect.anything(),
+                    expect.anything()
                 );
             });
 
             it('passes the arguments in the correct order', function () {
                 expect(this.outputterSpy.addMessage).toHaveBeenCalledWith(
-                    jasmine.any(String),
+                    expect.any(String),
                     'PLAYER_OBJ',
                     'SOURCE_OBJ',
                     'TARGET_OBJ',
@@ -194,18 +194,18 @@ describe('AbilityMessage', function () {
             it('translates selection arguments to their numeric values', function () {
                 expect(this.outputterSpy.addMessage).toHaveBeenCalledWith(
                     '{3} chooses {4} to {5}',
-                    jasmine.anything(),
-                    jasmine.anything(),
-                    jasmine.anything(),
-                    jasmine.anything(),
-                    jasmine.anything(),
-                    jasmine.anything()
+                    expect.anything(),
+                    expect.anything(),
+                    expect.anything(),
+                    expect.anything(),
+                    expect.anything(),
+                    expect.anything()
                 );
             });
 
             it('passes the arguments in the correct order', function () {
                 expect(this.outputterSpy.addMessage).toHaveBeenCalledWith(
-                    jasmine.any(String),
+                    expect.any(String),
                     'PLAYER_OBJ',
                     'SOURCE_OBJ',
                     'TARGET_OBJ',
@@ -231,17 +231,17 @@ describe('AbilityMessage', function () {
             it('translates named arguments to their numeric values', function () {
                 expect(this.outputterSpy.addMessage).toHaveBeenCalledWith(
                     "{0} uses {1} to place {2} in {4}'s {3}",
-                    jasmine.anything(),
-                    jasmine.anything(),
-                    jasmine.anything(),
-                    jasmine.anything(),
-                    jasmine.anything()
+                    expect.anything(),
+                    expect.anything(),
+                    expect.anything(),
+                    expect.anything(),
+                    expect.anything()
                 );
             });
 
             it('passes the arguments in the correct order', function () {
                 expect(this.outputterSpy.addMessage).toHaveBeenCalledWith(
-                    jasmine.any(String),
+                    expect.any(String),
                     'PLAYER_OBJ',
                     'SOURCE_OBJ',
                     'TARGET_OBJ',

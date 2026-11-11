@@ -2,10 +2,14 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheQueenOfThorns extends DrawCard {
+    // The Queen of Thorns (09004)
+    // Insight.
+    // Reaction: After The Queen of Thorns is knelt, discard an event from your hand to search your
+    // deck for an event, reveal it, and add it to your hand. Shuffle your deck.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardKneeled: (event) => event.card === this
+                onCardKneeled: (event, context) => event.card === context.source
             },
             cost: ability.costs.discardFromHand((card) => card.getType() === 'event'),
             message:

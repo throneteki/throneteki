@@ -1,23 +1,27 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TradeRoutes extends PlotCard {
+    // Trade Routes (17160)
+    // When Revealed: Choose a player. Gain 1 gold for each location that player controls.
     setupCardAbilities() {
         this.whenRevealed({
             choosePlayer: () => true,
-            handler: (context) => {
-                let playerLocations = context.chosenPlayer.getNumberOfCardsInPlay(
+            message: {
+                format: '{player} uses {source} to choose {chosenPlayer} and gain {amount} gold',
+                args: {
+                    amount: (context) =>
+                        context.chosenPlayer.getNumberOfCardsInPlay(
+                            (card) => card.getType() === 'location'
+                        )
+                }
+            },
+            gameAction: GameActions.gainGold((context) => ({
+                player: context.player,
+                amount: context.chosenPlayer.getNumberOfCardsInPlay(
                     (card) => card.getType() === 'location'
-                );
-                let gold = playerLocations;
-                gold = this.game.addGold(context.player, gold);
-                this.game.addMessage(
-                    '{0} uses {1} to choose {2} and gain {3} gold',
-                    context.player,
-                    this,
-                    context.chosenPlayer,
-                    gold
-                );
-            }
+                )
+            }))
         });
     }
 }

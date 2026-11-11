@@ -2,11 +2,13 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class KingsLanding extends DrawCard {
+    // King's Landing (16020)
+    // Reaction: After you marshal a location, draw 1 card. (Limit 3 times per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    event.card.controller === this.controller &&
+                onCardEntersPlay: (event, context) =>
+                    event.card.controller === context.source.controller &&
                     event.card.getType() === 'location' &&
                     event.playingType === 'marshal'
             },

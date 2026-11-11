@@ -3,17 +3,13 @@ import DropCommand from '../../../server/game/ServerCommands/DropCommand.js';
 describe('DropCommand', () => {
     describe('execute()', function () {
         beforeEach(function () {
-            this.gameSpy = jasmine.createSpyObj('game', ['addAlert', 'killCharacter']);
-            this.playerSpy = jasmine.createSpyObj('player', [
-                'discardCard',
-                'moveCard',
-                'putIntoPlay'
-            ]);
+            this.gameSpy = { addAlert: vi.fn(), killCharacter: vi.fn() };
+            this.playerSpy = { discardCard: vi.fn(), moveCard: vi.fn(), putIntoPlay: vi.fn() };
 
-            this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'getType']);
-            this.cardSpy.allowGameAction.and.returnValue(true);
+            this.cardSpy = { allowGameAction: vi.fn(), getType: vi.fn() };
+            this.cardSpy.allowGameAction.mockReturnValue(true);
             this.cardSpy.controller = this.cardSpy.owner = this.playerSpy;
-            this.cardSpy.getType.and.returnValue('character');
+            this.cardSpy.getType.mockReturnValue('character');
             this.cardSpy.location = 'hand';
 
             this.executeForLocation = (targetLocation) => {
@@ -31,7 +27,7 @@ describe('DropCommand', () => {
             for (let type of ['attachment', 'character', 'location']) {
                 describe(`when the card is a ${type}`, function () {
                     beforeEach(function () {
-                        this.cardSpy.getType.and.returnValue(type);
+                        this.cardSpy.getType.mockReturnValue(type);
 
                         this.executeForLocation('play area');
                     });
@@ -40,15 +36,31 @@ describe('DropCommand', () => {
                         expect(this.playerSpy.putIntoPlay).toHaveBeenCalledWith(
                             this.cardSpy,
                             'play',
-                            jasmine.objectContaining({ force: true })
+                            expect.objectContaining({ force: true })
                         );
                     });
                 });
             }
 
+            describe('during setup', function () {
+                beforeEach(function () {
+                    this.gameSpy.currentPhase = 'setup';
+
+                    this.executeForLocation('play area');
+                });
+
+                it('should set the card up', function () {
+                    expect(this.playerSpy.putIntoPlay).toHaveBeenCalledWith(
+                        this.cardSpy,
+                        'setup',
+                        expect.objectContaining({ force: true })
+                    );
+                });
+            });
+
             describe('when the card is in hand and an event', function () {
                 beforeEach(function () {
-                    this.cardSpy.getType.and.returnValue('event');
+                    this.cardSpy.getType.mockReturnValue('event');
 
                     this.executeForLocation('play area');
                 });
@@ -63,7 +75,7 @@ describe('DropCommand', () => {
             for (let type of ['attachment', 'event', 'location']) {
                 describe(`when the card is a ${type}`, function () {
                     beforeEach(function () {
-                        this.cardSpy.getType.and.returnValue(type);
+                        this.cardSpy.getType.mockReturnValue(type);
 
                         this.executeForLocation('dead pile');
                     });
@@ -76,7 +88,7 @@ describe('DropCommand', () => {
 
             describe('when the card is a character', function () {
                 beforeEach(function () {
-                    this.cardSpy.getType.and.returnValue('character');
+                    this.cardSpy.getType.mockReturnValue('character');
                 });
 
                 describe('and the character is not in play', function () {
@@ -108,7 +120,7 @@ describe('DropCommand', () => {
                     it('should kill the character', function () {
                         expect(this.gameSpy.killCharacter).toHaveBeenCalledWith(
                             this.cardSpy,
-                            jasmine.objectContaining({ allowSave: false, force: true })
+                            expect.objectContaining({ allowSave: false, force: true })
                         );
                     });
                 });
@@ -119,7 +131,7 @@ describe('DropCommand', () => {
             for (let type of ['attachment', 'character', 'event', 'location']) {
                 describe(`when the card is a ${type}`, function () {
                     beforeEach(function () {
-                        this.cardSpy.getType.and.returnValue(type);
+                        this.cardSpy.getType.mockReturnValue(type);
                     });
 
                     describe('and it is not in play', function () {
@@ -150,7 +162,7 @@ describe('DropCommand', () => {
                             expect(this.playerSpy.discardCard).toHaveBeenCalledWith(
                                 this.cardSpy,
                                 false,
-                                jasmine.objectContaining({ force: true })
+                                expect.objectContaining({ force: true })
                             );
                         });
                     });
@@ -162,7 +174,7 @@ describe('DropCommand', () => {
             for (let type of ['attachment', 'character', 'event', 'location']) {
                 describe(`when the card is a ${type}`, function () {
                     beforeEach(function () {
-                        this.cardSpy.getType.and.returnValue(type);
+                        this.cardSpy.getType.mockReturnValue(type);
 
                         this.executeForLocation('draw deck');
                     });

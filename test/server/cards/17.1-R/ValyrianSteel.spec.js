@@ -1,108 +1,77 @@
-describe('Valyrian Steel', function () {
-    integration(function () {
-        describe('when an attachment enters play', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('lannister', [
-                    'Valyrian Steel (R)',
-                    'Late Summer Feast',
-                    'Hedge Knight',
-                    'Little Bird (Core)'
-                ]);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.character = this.player1.findCardByName('Hedge Knight', 'hand');
-                this.attachment = this.player1.findCardByName('Little Bird', 'hand');
-
-                this.player1.clickCard(this.character);
-
-                this.completeSetup();
-
-                this.selectFirstPlayer(this.player1);
-
-                this.player1.clickCard(this.attachment);
-                this.player1.clickCard(this.character);
-            });
-
-            it('allows it to trigger', function () {
-                expect(this.player1).toAllowAbilityTrigger('Valyrian Steel');
-            });
+describe('Valyrian Steel (R)', function () {
+    it('kneels your faction card and pays X gold to put an attachment with printed cost X into play from your hand', function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                agenda: 'Valyrian Steel (R)',
+                inPlay: ['Hedge Knight'],
+                hand: ['Little Bird (Core)'],
+                gold: 5
+            }
         });
+        this.player1.clickMenu(this.valyrianSteel, 'Put attachment into play');
+        this.player1.clickCard(this.littleBird);
+        this.player1.clickCard(this.hedgeKnight);
+        expect(this.player1Object.faction.kneeled).toBe(true);
+        expect(this.hedgeKnight.attachments).toContain(this.littleBird);
+        expect(this.player1Object.gold).toBe(4);
+        this.player1.clickPrompt('Pass');
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-        describe('vs Risen from the Sea', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('lannister', [
-                    'Valyrian Steel (R)',
-                    'Valar Morghulis',
-                    'A Noble Cause',
-                    'Theon Greyjoy (Core)',
-                    'Risen from the Sea'
-                ]);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.character = this.player1.findCardByName('Theon Greyjoy', 'hand');
-
-                this.player1.clickCard(this.character);
-
-                this.completeSetup();
-
-                this.player1.selectPlot('Valar Morghulis');
-                this.player2.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player1);
-
-                this.player1.clickCard('Risen from the Sea', 'hand');
-            });
-
-            it('allows it to trigger', function () {
-                expect(this.player1).toAllowAbilityTrigger('Valyrian Steel');
-            });
+    it('lets you gain 1 gold or draw 1 card after an attachment enters play under your control', function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                agenda: 'Valyrian Steel (R)',
+                inPlay: ['Hedge Knight'],
+                hand: ['Little Bird (Core)'],
+                gold: 5
+            }
         });
+        this.player1.clickCard(this.littleBird);
+        this.player1.clickCard(this.hedgeKnight);
+        expect(this.player1).toAllowAbilityTrigger('Valyrian Steel');
+        this.player1.triggerAbility('Valyrian Steel');
+        this.player1.clickPrompt('Gain 1 gold');
+        expect(this.player1Object.gold).toBe(5);
+    });
 
-        describe('vs Water Gardens', function() {
-            beforeEach(function() {
-                const deck = this.buildDeck('lannister', [
-                    'Valyrian Steel (R)',
-                    'A Noble Cause', 'A Storm of Swords', 'Valar Morghulis',
-                    'Hedge Knight', 'Little Bird (Core)', 'The Water Gardens'
-                ]);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.character = this.player1.findCardByName('Hedge Knight', 'hand');
-                this.attachment = this.player1.findCardByName('Little Bird', 'hand');
-                this.waterGardens = this.player1.findCardByName('The Water Gardens', 'hand');
-
-                this.player1.clickCard(this.character);
-                this.player1.clickCard(this.waterGardens);
-
-                this.completeSetup();
-
-                const plot = this.player1.findCardByName('A Storm of Swords');
-                this.player1.dragCard(plot, 'revealed plots');
-
-                this.player1.selectPlot('A Noble Cause');
-                this.player2.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player1);
-
-                this.completeMarshalPhase();
-
-                this.player1.clickCard(this.waterGardens);
-                this.player1.clickMenu('Valyrian Steel', 'Put attachment into play');
-                this.player1.clickCard(this.attachment);
-                this.player1.clickCard(this.character);
-            });
-
-            it('does not reduce the cost', function() {
-                expect(this.player1Object.gold).toBe(4);
-                expect(this.character.attachments).toContain(this.attachment);
-            });
+    it('triggers when Risen from the Sea attaches itself', function () {
+        this.setupTest({
+            phase: 'plot',
+            player1: {
+                agenda: 'Valyrian Steel (R)',
+                plotDeck: ['Valar Morghulis'],
+                inPlay: ['Theon Greyjoy (Core)'],
+                hand: ['Risen from the Sea']
+            }
         });
+        this.player1.selectPlot('Valar Morghulis');
+        this.player2.selectPlot('Filler Plot');
+        this.selectFirstPlayer(this.player1);
+        this.player1.clickCard(this.risenFromTheSea);
+        expect(this.player1).toAllowAbilityTrigger('Valyrian Steel');
+    });
+
+    it('does not let The Water Gardens reduce the cost', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                agenda: 'Valyrian Steel (R)',
+                plot: 'A Noble Cause',
+                usedPlots: ['A Storm of Swords'],
+                inPlay: ['Hedge Knight', 'The Water Gardens'],
+                hand: ['Little Bird (Core)'],
+                gold: 5
+            }
+        });
+        this.player1.clickCard(this.theWaterGardens);
+        this.player1.clickMenu(this.valyrianSteel, 'Put attachment into play');
+        this.player1.clickCard(this.littleBird);
+        this.player1.clickCard(this.hedgeKnight);
+        expect(this.player1Object.gold).toBe(4);
+        expect(this.hedgeKnight.attachments).toContain(this.littleBird);
+        this.player1.clickPrompt('Pass');
     });
 });

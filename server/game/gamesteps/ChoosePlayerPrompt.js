@@ -11,6 +11,7 @@ class ChoosePlayerPrompt extends BaseStep {
         this.enabled = properties.enabled || (() => true);
         this.onSelect = properties.onSelect;
         this.onCancel = properties.onCancel || (() => true);
+        this.cancelable = properties.cancelable ?? true;
         this.source = properties.source;
         this.activePromptTitle = properties.activePromptTitle;
         this.waitingPromptTitle = properties.waitingPromptTitle;
@@ -37,7 +38,9 @@ class ChoosePlayerPrompt extends BaseStep {
                 disabled: () => !this.enabled(player)
             };
         });
-        buttons.push({ text: 'Cancel', method: 'cancel' });
+        if (this.canCancel()) {
+            buttons.push({ text: 'Cancel', method: 'cancel', cancel: true });
+        }
         this.game.promptWithMenu(this.player, this, {
             activePrompt: {
                 menuTitle: this.activePromptTitle,
@@ -59,7 +62,15 @@ class ChoosePlayerPrompt extends BaseStep {
         return true;
     }
 
+    canCancel() {
+        return this.cancelable || !!this.game.manualMode?.enabled;
+    }
+
     cancel() {
+        if (!this.canCancel()) {
+            return false;
+        }
+
         this.onCancel();
         return true;
     }

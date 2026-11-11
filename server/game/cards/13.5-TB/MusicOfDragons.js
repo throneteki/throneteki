@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MusicOfDragons extends DrawCard {
+    // Music of Dragons (13094)
+    // Challenges Action: Search your deck for a Dragon character, reveal it, and add it to your
+    // hand. Shuffle your deck.
     setupCardAbilities() {
         this.action({
             title: 'Search deck',

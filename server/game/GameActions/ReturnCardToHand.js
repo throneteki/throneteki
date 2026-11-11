@@ -8,18 +8,18 @@ class ReturnCardToHand extends GameAction {
         super('returnToHand');
     }
 
-    message({ card, context }) {
+    message({ card, context, location = card.location }) {
         let controller =
             card.controller === context.player
                 ? 'their'
                 : Message.fragment("{c}'s", { c: card.controller });
-        switch (card.location) {
+        switch (location) {
             case 'dead pile':
             case 'discard pile':
             case 'shadows':
                 return Message.fragment(
                     'returns {card} from {controller} {location} to {controller} hand',
-                    { card, controller, location: card.location }
+                    { card, controller, location }
                 );
             case 'being played':
                 return Message.fragment(
@@ -32,6 +32,12 @@ class ReturnCardToHand extends GameAction {
                     controller
                 });
         }
+    }
+
+    resultMessage(props, event) {
+        return this.hasResult(event)
+            ? this.message({ ...props, location: event.originalLocation })
+            : '';
     }
 
     canChangeGameState({ card }) {

@@ -3,90 +3,83 @@ import GameActions from '../../GameActions/index.js';
 import GenericTracker from '../../EventTrackers/GenericTracker.js';
 
 class NarrowEscape extends DrawCard {
+    // Narrow Escape (16024)
+    // Action: Put each character that was killed or discarded from play this phase into play from
+    // its owner's dead or discard pile. An opponent may discard his or her hand (of at least 1
+    // card) to cancel this effect. (Max 1 per phase.)
     setupCardAbilities(ability) {
         this.killTracker = GenericTracker.forPhase(this.game, 'onCharacterKilled');
         this.discardTracker = GenericTracker.forPhase(this.game, 'onCardDiscarded');
-
         this.action({
             title: 'Put characters into play',
             message: {
                 format: '{player} plays {source} to put {characters} into play',
-                args: { characters: () => this.getEligibleCharacters() }
+                args: { characters: (context) => eligibleCharacters(context.source) }
             },
-            handler: (context) => {
-                const opponents = this.game.getOpponentsInFirstPlayerOrder(context.player);
-                this.remainingOpponents = opponents.filter((opponent) => opponent.hand.length > 1);
-                this.context = context;
-                this.promptForCancel(context);
-            },
+            gameAction: askToCancel(0),
             max: ability.limit.perPhase(1)
         });
     }
+}
 
-    promptForCancel(context) {
-        if (this.remainingOpponents.length === 0 || context.ability.cannotBeCanceled) {
-            this.resolvePutIntoPlay();
-            return true;
-        }
+const MaxOpponents = 5;
 
-        const nextOpponent = this.remainingOpponents.shift();
-        this.game.promptWithMenu(nextOpponent, this, {
-            activePrompt: {
-                menuTitle: 'Discard hand to cancel?',
-                buttons: [
-                    { text: 'Yes', method: 'cancelResolution' },
-                    { text: 'No', method: 'promptForCancel' }
-                ]
-            },
-            source: this
-        });
+function eligibleCharacters(source) {
+    const eligibleKilled = source.killTracker.events
+        .map((event) => event.card)
+        .filter((card) => card.location === 'dead pile');
+    const eligibleDiscards = source.discardTracker.events
+        .filter(
+            (event) =>
+                event.originalLocation === 'play area' && event.card.location === 'discard pile'
+        )
+        .map((event) => event.card);
+    return eligibleKilled
+        .concat(eligibleDiscards)
+        .filter((card) => card.owner.canPutIntoPlay(card));
+}
 
-        return true;
+function cancellingOpponents(context) {
+    return context.ability?.cannotBeCanceled
+        ? []
+        : context.game
+              .getOpponentsInFirstPlayerOrder(context.player)
+              .filter((opponent) => opponent.hand.length >= 1);
+}
+
+function askToCancel(index) {
+    if (index >= MaxOpponents) {
+        return putIntoPlay();
     }
 
-    cancelResolution(opponent) {
-        this.game.addMessage(
-            '{0} discards their hand to cancel the effects of {1}',
-            opponent,
-            this
-        );
-        this.game.resolveGameAction(
-            GameActions.simultaneously(() =>
-                opponent.hand.map((card) => GameActions.discardCard({ card }))
-            ),
-            this.context
-        );
-        return true;
-    }
+    return GameActions.ifCondition({
+        condition: (context) => cancellingOpponents(context).length > index,
+        thenAction: GameActions.choose({
+            player: (context) => cancellingOpponents(context)[index],
+            title: 'Discard hand to cancel?',
+            choices: {
+                Yes: {
+                    message:
+                        '{choosingPlayer} discards their hand to cancel the effects of {source}',
+                    gameAction: GameActions.simultaneously((context) =>
+                        cancellingOpponents(context)[index].hand.map((card) =>
+                            GameActions.discardCard({ card })
+                        )
+                    )
+                },
+                No: askToCancel(index + 1)
+            }
+        }),
+        elseAction: putIntoPlay()
+    });
+}
 
-    resolvePutIntoPlay() {
-        this.game.resolveGameAction(
-            GameActions.simultaneously(() => [
-                ...this.getEligibleCharacters().map((card) =>
-                    GameActions.putIntoPlay({
-                        card,
-                        player: card.owner
-                    })
-                )
-            ]),
-            this.context
-        );
-    }
-
-    getEligibleCharacters() {
-        const eligibleKilled = this.killTracker.events
-            .map((event) => event.card)
-            .filter((card) => card.location === 'dead pile');
-        const eligibleDiscards = this.discardTracker.events
-            .filter(
-                (event) =>
-                    event.originalLocation === 'play area' && event.card.location === 'discard pile'
-            )
-            .map((event) => event.card);
-        return eligibleKilled
-            .concat(eligibleDiscards)
-            .filter((card) => card.owner.canPutIntoPlay(card));
-    }
+function putIntoPlay() {
+    return GameActions.simultaneously((context) =>
+        eligibleCharacters(context.source).map((card) =>
+            GameActions.putIntoPlay({ card, player: card.owner })
+        )
+    );
 }
 
 NarrowEscape.code = '16024';

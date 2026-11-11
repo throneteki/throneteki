@@ -1,16 +1,23 @@
+import GameActions from '../GameActions/index.js';
+
 class PutIntoPlayCost {
     constructor() {
         this.name = 'putIntoPlay';
     }
 
     isEligible(card, context) {
-        return card.location !== 'play area' && context.player.canPutIntoPlay(card);
+        return GameActions.putIntoPlay({ player: context.player, card }).allow(context);
     }
 
     pay(cards, context) {
-        for (let card of cards) {
-            context.player.putIntoPlay(card);
-        }
+        context.game.resolveGameAction(
+            GameActions.simultaneously(
+                cards.map((card) =>
+                    GameActions.putIntoPlay({ player: context.player, card, dupeIsValid: true })
+                )
+            ),
+            context
+        );
     }
 }
 

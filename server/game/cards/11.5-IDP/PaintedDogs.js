@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class PaintedDogs extends DrawCard {
+    // Painted Dogs (11089)
+    // Ambush (4).
+    // Challenges Action: Return Painted Dogs to your hand to choose and stand a Clansman character
+    // or Tyrion Lannister.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand Clansman or Tyrion',
@@ -13,15 +18,8 @@ class PaintedDogs extends DrawCard {
                     (card.hasTrait('Clansman') || card.name === 'Tyrion Lannister'),
                 gameAction: 'stand'
             },
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} returns {1} to hand to stand {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-                context.player.standCard(context.target);
-            }
+            message: '{player} returns {source} to hand to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

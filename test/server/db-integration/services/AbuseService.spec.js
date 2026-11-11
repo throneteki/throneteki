@@ -95,7 +95,7 @@ describe('Postgres AbuseService', function () {
             const blocks = await this.service.getMatchingBlocks({ ip: '203.0.113.10' });
 
             expect(blocks).toEqual([
-                jasmine.objectContaining({
+                expect.objectContaining({
                     scope: 'ip',
                     value: '203.0.113.10',
                     reason: 'Legacy banlist',
@@ -123,7 +123,7 @@ describe('Postgres AbuseService', function () {
             const blocks = await this.service.listBlocks();
 
             expect(blocks[0]).toEqual({
-                _id: jasmine.any(String),
+                _id: expect.any(String),
                 scope: 'email_domain',
                 value: 'spam.example',
                 reason: 'Manual moderation action',
@@ -163,7 +163,7 @@ describe('Postgres AbuseService', function () {
             const [event] = await this.service.getRecentEventsForUser(user);
 
             expect(event).toEqual(
-                jasmine.objectContaining({
+                expect.objectContaining({
                     type: 'login_attempt',
                     username: 'Stark',
                     userId: user._id,
@@ -313,7 +313,7 @@ describe('Postgres AbuseService', function () {
             await this.service.restrictUser(user, { actor: 'Admin', reason: 'Spam' });
             user = (await this.userService.getUserByUsername('Stark')).getDetails();
             expect(user.trustState).toBe('restricted');
-            expect(user.restrictedUntil).toEqual(jasmine.any(Date));
+            expect(user.restrictedUntil).toEqual(expect.any(Date));
             expect(user.riskFlags).toContain('manual_restriction');
 
             await this.service.unrestrictUser(user, { actor: 'Admin' });

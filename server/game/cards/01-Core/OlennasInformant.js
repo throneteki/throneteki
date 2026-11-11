@@ -1,39 +1,29 @@
 import DrawCard from '../../drawcard.js';
-import ChallengeTypes from '../../ChallengeTypes.js';
+import GameActions from '../../GameActions/index.js';
 
 class OlennasInformant extends DrawCard {
-    setupCardAbilities() {
+    // Olenna's Informant (01189)
+    // Ambush (4).
+    // Reaction: After Olenna's Informant enters play during the challenges phase, name a challenge
+    // type. You may initiate an additional challenge of that type this phase.
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (event) =>
-                    event.card === this && this.game.currentPhase === 'challenge'
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source && context.game.currentPhase === 'challenge'
             },
-            handler: () => {
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Name a challenge type',
-                        buttons: ChallengeTypes.asButtons({ method: 'challengeSelected' })
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.chooseChallengeType({
+                title: 'Name a challenge type',
+                message:
+                    '{player} uses {source} to be able to initiate an additional {challengeType} challenge this phase',
+                gameAction: (challengeType) =>
+                    GameActions.lastingEffect(() => ({
+                        duration: 'untilEndOfPhase',
+                        targetController: 'current',
+                        effect: ability.effects.mayInitiateAdditionalChallenge(challengeType)
+                    }))
+            })
         });
-    }
-
-    challengeSelected(player, challenge) {
-        this.untilEndOfPhase((ability) => ({
-            targetController: 'current',
-            effect: ability.effects.mayInitiateAdditionalChallenge(challenge)
-        }));
-
-        this.game.addMessage(
-            '{0} uses {1} to be able to initiate an additional {2} challenge this phase',
-            player,
-            this,
-            challenge
-        );
-
-        return true;
     }
 }
 

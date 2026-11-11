@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class KingsLandingMob extends DrawCard {
+    // King's Landing Mob (24025)
+    // Assault.
+    // Reaction: After a location is knelt by assault, kill King's Landing Mob to discard that
+    // location from play.
     setupCardAbilities(ability) {
         this.reaction({
             when: {

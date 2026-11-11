@@ -1,10 +1,14 @@
 import DrawCard from '../../drawcard.js';
 
 class OxcrossSurvivors extends DrawCard {
+    // Oxcross Survivors (24008)
+    // No attachments.
+    // While you control a [lannister] Lord or Commander character, Oxcross Survivors gets +3 STR
+    // and gains assault.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.controller.anyCardsInPlay({
+            condition: (context) =>
+                context.source.controller.anyCardsInPlay({
                     faction: 'lannister',
                     type: 'character',
                     trait: ['Lord', 'Commander']

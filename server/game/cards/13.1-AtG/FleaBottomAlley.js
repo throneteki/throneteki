@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class FleaBottomAlley extends DrawCard {
+    // Flea Bottom Alley (13006)
+    // Limited.
+    // Marshaling Action: Kneel and sacrifice Flea Bottom Alley to put a [thenightswatch] character
+    // with printed cost 3 or lower into play from your hand. Then, draw 1 card.
     setupCardAbilities(ability) {
         this.action({
             title: 'Put character into play',
@@ -17,21 +21,16 @@ class FleaBottomAlley extends DrawCard {
             },
             cost: [ability.costs.kneelSelf(), ability.costs.sacrificeSelf()],
             message: '{player} kneels and sacrifices {source} to put {target} into play',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoPlay((context) => ({
-                        player: context.player,
-                        card: context.target
-                    })).then({
-                        message: 'Then {player} draws 1 card',
-                        gameAction: GameActions.drawCards((context) => ({
-                            player: context.player,
-                            amount: 1
-                        }))
-                    }),
-                    context
-                );
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target
+            })).then((context) => ({
+                message: 'Then {player} draws 1 card',
+                gameAction: GameActions.drawCards((context) => ({
+                    player: context.player,
+                    amount: 1
+                }))
+            }))
         });
     }
 }

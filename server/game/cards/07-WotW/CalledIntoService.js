@@ -2,6 +2,9 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class CalledIntoService extends PlotCard {
+    // Called Into Service (07049)
+    // When Revealed: Reveal the top card of your deck. If it is a character, put it into play. If
+    // it is a non-character card, draw it and gain 2 gold.
     setupCardAbilities() {
         this.whenRevealed({
             message: '{player} uses {source} to reveal the top card of their deck',

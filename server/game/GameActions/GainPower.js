@@ -7,7 +7,14 @@ class GainPower extends GameAction {
     }
 
     message({ card, amount = 1, context }) {
-        const actualAmount = card.getPowerToGain(amount);
+        return this.describe(card, card.getPowerToGain(amount), context);
+    }
+
+    resultMessage(props, event) {
+        return this.hasResult(event) ? this.describe(event.card, event.power, props.context) : '';
+    }
+
+    describe(card, actualAmount, context) {
         if (card.getType() === 'faction') {
             return Message.fragment(
                 `gains {amount} power on ${context.player !== card.controller ? "{player}'s" : 'their'} faction card`,

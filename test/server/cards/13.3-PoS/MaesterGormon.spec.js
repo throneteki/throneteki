@@ -1,43 +1,68 @@
 describe('Maester Gormon', function () {
-    integration(function () {
-        describe('playing events from top of deck', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('tyrell', [
-                    'A Noble Cause',
-                    'Maester Gormon',
-                    "The Hand's Judgment",
-                    'Margaery Tyrell (Core)',
-                    'Growing Strong'
-                ]);
+    describe('when the top card of your deck is not [tyrell]', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    faction: 'tyrell',
+                    inPlay: ['Maester Gormon'],
+                    drawDeck: ['Hedge Knight', 'Nightmares']
+                },
+                player2: {
+                    inPlay: ['Bastard in Hiding']
+                }
+            });
+        });
 
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
+        it('lets you look at the top card of your deck', function () {
+            expect(this.game.isCardVisible(this.hedgeKnight, this.player1Object)).toBe(true);
+            expect(this.game.isCardVisible(this.nightmares, this.player1Object)).toBe(false);
+            expect(this.game.isCardVisible(this.hedgeKnight, this.player2Object)).toBe(false);
+            expect(this.player1).isReadyToTakeAction();
+        });
 
-                this.topDeckEvent = this.player1.findCardByName("The Hand's Judgment");
-                this.opponentChar = this.player2.findCardByName('Margaery Tyrell');
-                this.opponentEvent = this.player2.findCardByName('Growing Strong');
+        it('lets you marshal it, once per phase', function () {
+            this.player1.clickCard(this.hedgeKnight);
 
-                this.player1.clickCard('Maester Gormon', 'hand');
-                this.player2.clickCard(this.opponentChar);
+            expect(this.hedgeKnight.location).toBe('play area');
+            expect(this.player1Object.gold).toBe(3);
 
-                this.completeSetup();
+            this.player1.clickCard(this.nightmares);
 
-                this.selectFirstPlayer(this.player2);
-                this.completeMarshalPhase();
+            expect(this.nightmares.location).toBe('draw deck');
+            expect(this.player1).isReadyToTakeAction();
+        });
 
-                // Drag the event to the top of the deck
-                this.player1.dragCard(this.topDeckEvent, 'draw deck');
+        it('lets you play it in a later phase', function () {
+            this.player1.clickCard(this.hedgeKnight);
+            this.player1.clickPrompt('Done');
+            this.player2.clickPrompt('Done');
+            this.player1.clickCard(this.nightmares);
+            this.player1.clickCard(this.bastardInHiding);
+
+            expect(this.nightmares.location).toBe('discard pile');
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
+
+    describe('when the top card of your deck is [tyrell]', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    faction: 'tyrell',
+                    inPlay: ['Maester Gormon'],
+                    drawDeck: ['Courtesan of the Rose']
+                }
             });
 
-            it('allows the event to be played', function () {
-                this.player2.clickCard(this.opponentEvent);
-                this.player2.clickCard(this.opponentChar);
-                this.player2.clickPrompt('Done');
+            this.player1.clickCard(this.courtesanOfTheRose);
+        });
 
-                expect(this.player1).toAllowAbilityTrigger(this.topDeckEvent);
-            });
+        it('does not let you marshal it', function () {
+            expect(this.courtesanOfTheRose.location).toBe('draw deck');
+            expect(this.player1Object.gold).toBe(5);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 });

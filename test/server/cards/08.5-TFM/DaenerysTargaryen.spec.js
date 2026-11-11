@@ -1,206 +1,116 @@
 describe('Daenerys Targaryen (TFM)', function () {
-    integration({ numOfPlayers: 1 }, function () {
+    describe('when a constant effect would lower her STR', function () {
         beforeEach(function () {
-            const deck = this.buildDeck('targaryen', [
-                'Trading with the Pentoshi',
-                'Blood of the Dragon',
-                'Daenerys Targaryen (TFM)',
-                'Waking the Dragon',
-                'Winterfell Steward',
-                'Nightmares',
-                'A Dragon Is No Slave',
-                'A Dragon Is No Slave'
-            ]);
-            this.player1.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.dany = this.player1.findCardByName('Daenerys Targaryen (TFM)', 'hand');
-            this.steward = this.player1.findCardByName('Winterfell Steward', 'hand');
-            this.waking = this.player1.findCardByName('Waking the Dragon', 'hand');
-            this.nightmares = this.player1.findCardByName('Nightmares', 'hand');
-            [this.noSlave1, this.noSlave2] = this.player1.filterCardsByName(
-                'A Dragon Is No Slave',
-                'hand'
-            );
-
-            this.player1.clickCard(this.dany);
-            this.player1.clickCard(this.steward);
-
-            this.completeSetup();
+            this.setupTest({
+                phase: 'plot',
+                player1: { plotDeck: ['Blood of the Dragon'], inPlay: ['Daenerys Targaryen (TFM)'] }
+            });
+            this.player1.selectPlot('Blood of the Dragon');
+            this.player2.selectPlot('Filler Plot');
+            this.selectFirstPlayer(this.player1);
         });
 
-        describe('when a constant effect burns Daenerys Targaryen (TFM)', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('Blood of the Dragon');
-                this.selectFirstPlayer(this.player1);
-            });
-
-            it('should not lower her strength', function () {
-                expect(this.dany.getStrength()).toBe(3);
-            });
-        });
-
-        describe('when you burn a STR 1 chud', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('Trading with the Pentoshi');
-                this.selectFirstPlayer(this.player1);
-
-                this.completeMarshalPhase();
-
-                this.player1.clickCard(this.waking);
-                this.player1.clickCard(this.dany);
-
-                this.player1.triggerAbility('Daenerys Targaryen');
-                this.player1.clickCard(this.steward);
-            });
-
-            it('should be killed', function () {
-                expect(this.steward.location).toBe('dead pile');
-            });
-        });
-
-        describe('when a triggered ability burns Daenerys Targaryen (TFM)', function () {
-            beforeEach(function () {
-                this.player1.selectPlot('Trading with the Pentoshi');
-                this.selectFirstPlayer(this.player1);
-
-                this.completeMarshalPhase();
-
-                this.player1.clickCard(this.waking);
-                this.player1.clickCard(this.dany);
-
-                this.player1.triggerAbility('Daenerys Targaryen');
-                this.player1.clickCard(this.dany);
-            });
-
-            it('should not reduce her strength', function () {
-                expect(this.dany.getStrength()).toBe(3);
-            });
-
-            describe('but when you blank her afterwards, and then reduce her strength non-terminally', function () {
-                beforeEach(function () {
-                    this.player1.clickCard(this.nightmares);
-                    this.player1.clickCard(this.dany);
-                });
-
-                it('should lower her strength', function () {
-                    // The previous lasting effect from Dany's ability now applies.
-                    expect(this.dany.getStrength()).toBe(2);
-                });
-
-                describe('and when it reaches 0', function () {
-                    beforeEach(function () {
-                        this.player1.clickCard(this.noSlave2);
-                        this.player1.clickCard(this.dany);
-                    });
-
-                    it('should kill her', function () {
-                        expect(this.dany.location).toBe('dead pile');
-                    });
-                });
-            });
+        it('does not lower it', function () {
+            expect(this.daenerysTargaryen.getStrength()).toBe(3);
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 
-    integration({ numOfPlayers: 1 }, function () {
-        describe('vs Lord of the Crossing', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('targaryen', [
-                    'The Lord of the Crossing',
-                    'Trading with the Pentoshi',
-                    'Daenerys Targaryen (TFM)',
-                    'Viserion (Core)',
-                    'Viserys Targaryen (Core)'
-                ]);
-                this.player1.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.dany = this.player1.findCardByName('Daenerys Targaryen (TFM)', 'hand');
-                this.player1.clickCard(this.dany);
-                this.player1.clickCard('Viserion', 'hand');
-                this.player1.clickCard('Viserys Targaryen', 'hand');
-
-                this.completeSetup();
-
-                this.selectFirstPlayer(this.player1);
-
-                this.completeMarshalPhase();
+    describe('after you play a targaryen event', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: {
+                    plot: 'Trading with the Pentoshi',
+                    inPlay: ['Daenerys Targaryen (TFM)', 'Winterfell Steward'],
+                    hand: ['Waking the Dragon', 'Nightmares', 'A Dragon Is No Slave']
+                }
             });
+            this.player1.clickCard(this.wakingTheDragon);
+            this.player1.clickCard(this.daenerysTargaryen);
+            this.player1.triggerAbility(this.daenerysTargaryen);
+        });
 
-            describe('during the first challenge', function () {
-                beforeEach(function () {
-                    this.player1.clickPrompt('Intrigue');
-                    this.player1.clickCard(this.dany);
-                    this.player1.clickPrompt('Done');
-                });
+        it('gives a character -1 STR and kills it if its STR is 0', function () {
+            this.player1.clickCard(this.winterfellSteward);
 
-                it('should not reduce her strength', function () {
-                    expect(this.dany.getStrength()).toBe(3);
-                });
-            });
+            expect(this.winterfellSteward.location).toBe('dead pile');
+            expect(this.player1).isReadyToTakeAction();
+        });
 
-            describe('during the third challenge', function () {
-                beforeEach(function () {
-                    this.player1.clickPrompt('Military');
-                    this.player1.clickCard('Viserion');
-                    this.player1.clickPrompt('Done');
-                    this.skipActionWindow();
-                    this.skipActionWindow();
+        it('does not reduce her own STR', function () {
+            this.player1.clickCard(this.daenerysTargaryen);
 
-                    this.player1.clickPrompt('Power');
-                    this.player1.clickCard('Viserys Targaryen');
-                    this.player1.clickPrompt('Done');
-                    this.skipActionWindow();
-                    this.skipActionWindow();
+            expect(this.daenerysTargaryen.getStrength()).toBe(3);
+            expect(this.player1).isReadyToTakeAction();
+        });
 
-                    this.player1.clickPrompt('Intrigue');
-                    this.player1.clickCard(this.dany);
-                    this.player1.clickPrompt('Done');
-                });
+        it('applies to her once she is blanked, and kills her when her STR reaches 0', function () {
+            this.player1.clickCard(this.daenerysTargaryen);
+            this.player1.clickCard(this.nightmares);
+            this.player1.clickCard(this.daenerysTargaryen);
 
-                it('should increase her strength', function () {
-                    expect(this.dany.getStrength()).toBe(5);
-                });
-            });
+            // The earlier lasting effect from her own ability now applies.
+            expect(this.daenerysTargaryen.getStrength()).toBe(2);
+
+            this.player1.clickCard(this.aDragonIsNoSlave);
+            this.player1.clickCard(this.daenerysTargaryen);
+
+            expect(this.daenerysTargaryen.location).toBe('dead pile');
+            expect(this.player1).isReadyToTakeAction();
         });
     });
 
-    integration({ numOfPlayers: 1 }, function () {
-        describe('vs Strangler', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('targaryen', [
-                    'Trading with the Pentoshi',
-                    'Daenerys Targaryen (TFM)',
-                    'Strangler'
-                ]);
-                this.player1.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.dany = this.player1.findCardByName('Daenerys Targaryen (TFM)', 'hand');
-                let strangler = this.player1.findCardByName('Strangler', 'hand');
-                this.player1.clickCard(this.dany);
-                this.player1.clickCard(strangler);
-
-                this.completeSetup();
-                this.player1.clickCard(strangler);
-                this.player1.clickCard(this.dany);
-
-                this.selectFirstPlayer(this.player1);
-
-                this.completeMarshalPhase();
-
-                this.player1.clickPrompt('Intrigue');
-                this.player1.clickCard(this.dany);
-                this.player1.clickPrompt('Done');
+    describe('vs The Lord of the Crossing', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: {
+                    agenda: 'The Lord of the Crossing',
+                    inPlay: [
+                        'Daenerys Targaryen (TFM)',
+                        'Viserion (Core)',
+                        'Viserys Targaryen (Core)'
+                    ]
+                }
             });
+        });
 
-            it('should not set her strength to 1', function () {
-                // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/39646-ruling-daenerys-targaryen-tfm-strangler/
-                expect(this.dany.getStrength()).toBe(3);
+        it('does not reduce her STR during the first challenge', function () {
+            this.player1.clickPrompt('Intrigue');
+            this.player1.clickCard(this.daenerysTargaryen);
+            this.player1.clickPrompt('Done');
+
+            expect(this.daenerysTargaryen.getStrength()).toBe(3);
+        });
+
+        it('increases her STR during the third challenge', function () {
+            this.unopposedChallenge(this.player1, 'Military', this.viserion);
+            this.unopposedChallenge(this.player1, 'Power', this.viserysTargaryen);
+            this.player1.clickPrompt('Intrigue');
+            this.player1.clickCard(this.daenerysTargaryen);
+            this.player1.clickPrompt('Done');
+
+            expect(this.daenerysTargaryen.getStrength()).toBe(5);
+        });
+    });
+
+    // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/39646-ruling-daenerys-targaryen-tfm-strangler/
+    describe('vs Strangler', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: {
+                    inPlay: [{ card: 'Daenerys Targaryen (TFM)', attachments: ['Strangler'] }]
+                }
             });
+            this.player1.clickPrompt('Intrigue');
+            this.player1.clickCard(this.daenerysTargaryen);
+            this.player1.clickPrompt('Done');
+        });
+
+        it('does not set her STR to 1', function () {
+            expect(this.daenerysTargaryen.getStrength()).toBe(3);
         });
     });
 });

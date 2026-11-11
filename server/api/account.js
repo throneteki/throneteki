@@ -229,6 +229,7 @@ function validatePassword(password) {
 const PromptedActionWindowNames = [
     'plot',
     'draw',
+    'marshal',
     'challengeBegin',
     'attackersDeclared',
     'defendersDeclared',
@@ -263,17 +264,17 @@ function sanitizeSettings(settings) {
     }
 
     let result = {
-        keywordSettings: pickBooleans(settings.keywordSettings, ['chooseOrder', 'chooseCards']),
-        timerSettings: pickBooleans(settings.timerSettings, ['events', 'abilities'])
+        keywordSettings: pickBooleans(settings.keywordSettings, ['chooseOrder', 'chooseCards'])
     };
 
     if (Object.hasOwn(settings, 'promptDupes')) {
         result.promptDupes = !!settings.promptDupes;
     }
 
-    let windowTimer = Number(settings.windowTimer);
-    if (Number.isFinite(windowTimer)) {
-        result.windowTimer = Math.min(Math.max(Math.round(windowTimer), 0), 60);
+    for (const key of ['hideInterrupts', 'hideReactions']) {
+        if (Object.hasOwn(settings, key)) {
+            result[key] = !!settings[key];
+        }
     }
 
     let background = pickString(settings.background, /^[A-Za-z0-9_-]{1,32}$/);

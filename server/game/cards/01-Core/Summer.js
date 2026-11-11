@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class Summer extends DrawCard {
+    // Summer (01148)
+    // No attachments.
+    // While you control Bran Stark, he gains insight.
+    // Reaction: After Summer enters play, return a [stark] character with printed STR 2 or lower
+    // from your discard or dead pile to your hand.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Bran Stark',
@@ -9,34 +15,18 @@ class Summer extends DrawCard {
 
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this
+                onCardEntersPlay: (event, context) => event.card === context.source
             },
             target: {
-                cardCondition: (card) => this.cardCondition(card)
+                cardCondition: (card, context) =>
+                    ['dead pile', 'discard pile'].includes(card.location) &&
+                    card.controller === context.player &&
+                    card.getType() === 'character' &&
+                    card.isFaction('stark') &&
+                    card.getPrintedStrength() <= 2
             },
-            handler: (context) => {
-                let oldLocation = context.target.location;
-
-                this.controller.moveCard(context.target, 'hand');
-                this.game.addMessage(
-                    '{0} uses {1} to move {2} from their {3} to their hand',
-                    this.controller,
-                    this,
-                    context.target,
-                    oldLocation
-                );
-            }
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.target }))
         });
-    }
-
-    cardCondition(card) {
-        return (
-            (card.location === 'dead pile' || card.location === 'discard pile') &&
-            card.controller === this.controller &&
-            card.getType() === 'character' &&
-            card.isFaction('stark') &&
-            card.getPrintedStrength() <= 2
-        );
     }
 }
 

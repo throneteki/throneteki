@@ -1,30 +1,28 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class FleetFromPyke extends DrawCard {
-    setupCardAbilities() {
+    // Fleet From Pyke (10027)
+    // No attachments. Pillage.
+    // Reaction: After a character you control discards a location or attachment using pillage,
+    // Fleet From Pyke gains a challenge icon of your choice until the end of the phase.
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardDiscarded: (event) =>
+                onCardDiscarded: (event, context) =>
                     event.isPillage &&
-                    event.source.controller === this.controller &&
+                    event.source.controller === context.source.controller &&
                     ['location', 'attachment'].includes(event.card.getType())
             },
-            handler: (context) => {
-                this.game.promptForIcon(context.player, this, (icon) => {
-                    this.untilEndOfPhase((ability) => ({
-                        match: this,
+            gameAction: GameActions.chooseIcon({
+                message: '{player} gains {icon} icon on {source}',
+                gameAction: (icon) =>
+                    GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
+                        match: context.source,
                         effect: ability.effects.addIcon(icon)
-                    }));
-
-                    this.game.addMessage(
-                        '{0} gains {1} {2} icon on {3}',
-                        context.player,
-                        icon === 'intrigue' ? 'an' : 'a',
-                        icon,
-                        this
-                    );
-                });
-            }
+                    }))
+            })
         });
     }
 }

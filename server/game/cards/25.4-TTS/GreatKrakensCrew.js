@@ -1,10 +1,16 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class GreatKrakensCrew extends DrawCard {
-    setupCardAbilities() {
+    // Great Kraken's Crew (25063)
+    // No attachments. Shadow (2).
+    // Reaction: After Great Kraken's Crew comes out of shadows during a challenge, choose a
+    // defending character with printed cost 3 or lower. That character does not contribute its STR
+    // to this challenge.
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) => event.card === this
+                onCardOutOfShadows: (event, context) => event.card === context.source
             },
             target: {
                 cardCondition: (card) =>
@@ -15,12 +21,11 @@ class GreatKrakensCrew extends DrawCard {
             },
             message:
                 "{player} uses {source} to have {target} not contribute it's STR to this challenge",
-            handler: (context) => {
-                this.untilEndOfChallenge((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.doesNotContributeStrength()
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfChallenge',
+                match: context.target,
+                effect: ability.effects.doesNotContributeStrength()
+            }))
         });
     }
 }

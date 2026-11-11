@@ -2,13 +2,16 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class Castamere extends DrawCard {
+    // Castamere (25006)
+    // Reaction: After claim is applied for an [intrigue] challenge you won by 5 or more STR, kneel
+    // and sacrifice Castamere to apply [military] claim.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onClaimApplied: (event) =>
+                onClaimApplied: (event, context) =>
                     event.challenge &&
                     event.challenge.isMatch({
-                        winner: this.controller,
+                        winner: context.source.controller,
                         challengeType: 'intrigue',
                         by5: true
                     })
@@ -19,7 +22,7 @@ class Castamere extends DrawCard {
             gameAction: GameActions.applyClaim((context) => {
                 const claim = context.event.claim.clone();
                 claim.challengeType = 'military';
-                return { player: context.player, claim, game: this.game };
+                return { player: context.player, claim, game: context.game };
             })
         });
     }

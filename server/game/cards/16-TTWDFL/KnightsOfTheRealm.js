@@ -1,15 +1,20 @@
 import AgendaCard from '../../agendacard.js';
 
 class KnightsOfTheRealm extends AgendaCard {
+    // Knights of the Realm (16029)
+    // While you control more Knight characters than each other player, increase the number of cards
+    // you draw in the draw phase by 1.
+    // While you control fewer Knight characters than each other player, reduce the number of cards
+    // you draw in the draw phase by 1.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.controlsMoreKnights(),
+            condition: (context) => context.source.controlsMoreKnights(),
             targetController: 'current',
             effect: ability.effects.modifyDrawPhaseCards(1)
         });
 
         this.persistentEffect({
-            condition: () => this.controlsFewerKnights(),
+            condition: (context) => context.source.controlsFewerKnights(),
             targetController: 'current',
             effect: ability.effects.modifyDrawPhaseCards(-1)
         });

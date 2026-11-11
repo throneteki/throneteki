@@ -1,67 +1,46 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class RisenFromTheSea extends DrawCard {
-    setupCardAbilities() {
+    // Risen from the Sea (01081)
+    // Interrupt: When a [greyjoy] character would be killed, save it. Then, attach Risen from the
+    // Sea to that character as a Condition attachment with the text: "Terminal. Attached character
+    // gets +1 STR."
+    setupCardAbilities(ability) {
+        const attachToSaved = (context, card) => ({
+            player: context.player,
+            attachment: context.source,
+            target: card,
+            playingType: 'play',
+            asAttachment: {
+                keywords: ['Terminal'],
+                traits: ['Condition'],
+                effect: ability.effects.modifyStrength(1)
+            }
+        });
+        const canSurviveBurn = (card, context) =>
+            GameActions.attach(attachToSaved(context, card)).allow(context) &&
+            card.getBoostedStrength(1) > 0;
+
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: (event) => this.canSaveVsEvent(event)
+                onCharacterKilled: (event, context) =>
+                    event.card.canBeSaved() &&
+                    (event.isBurn ? canSurviveBurn(event.card, context) : event.allowSave) &&
+                    event.card.isFaction('greyjoy') &&
+                    event.card.controller === context.player
             },
             location: 'hand',
-            handler: (context) => {
-                context.event.saveCard();
-
-                if (this.controller.canAttach(this, context.event.card)) {
-                    this.controller.attach(this.controller, this, context.event.card, 'play');
-                    this.lastingEffect((ability) => ({
-                        condition: () => !!this.parent,
-                        targetLocation: 'any',
-                        match: this,
-                        effect: [
-                            ability.effects.setCardType('attachment'),
-                            ability.effects.addKeyword('Terminal'),
-                            ability.effects.addTrait('Condition')
-                        ]
-                    }));
-
-                    this.lastingEffect((ability) => ({
-                        condition: () => this.location === 'play area',
-                        targetLocation: 'any',
-                        targetController: 'any',
-                        match: (card) => card === this.parent,
-                        effect: ability.effects.modifyStrength(1)
-                    }));
-                }
-
-                this.game.addMessage(
-                    '{0} plays {1} to save {2}',
-                    this.controller,
-                    this,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} plays {source} to save {card}',
+                args: { card: (context) => context.event.card }
+            },
+            gameAction: GameActions.simultaneously([
+                GameActions.saveCard((context) => ({ event: context.event, remediesBurn: true })),
+                GameActions.attach((context) => attachToSaved(context, context.event.card))
+            ])
         });
-    }
-
-    canSaveVsEvent(event) {
-        let card = event.card;
-
-        if (!card.canBeSaved()) {
-            return false;
-        }
-
-        let allowSave = event.allowSave || (event.isBurn && this.canSurviveBurn(card));
-
-        return allowSave && card.isFaction('greyjoy') && card.controller === this.controller;
-    }
-
-    canSurviveBurn(card) {
-        return card.controller.canAttach(this, card) && card.getBoostedStrength(1) > 0;
-    }
-
-    // Explicitly override since it has printed type 'event'.
-    canAttach(player, card) {
-        return card.getType() === 'character';
     }
 }
 

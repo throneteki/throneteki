@@ -3,6 +3,9 @@ import GameActions from '../../GameActions/index.js';
 import Messages from '../../Messages/index.js';
 
 class RavagesOfWar extends PlotCard {
+    // Ravages of War (11120)
+    // When Revealed: Each player sacrifices a character or location, chooses and discards 1 card
+    // from his or her hand, and chooses and discards 1 card from his or her shadows area, if able.
     setupCardAbilities() {
         this.whenRevealed({
             targets: {
@@ -37,37 +40,19 @@ class RavagesOfWar extends PlotCard {
                     messages: Messages.eachPlayerSecretTargetingForCardType('cards in shadow')
                 }
             },
-            handler: (context) => {
-                let actions = [];
-
-                for (let player of this.game.getPlayersInFirstPlayerOrder()) {
-                    let targets = context.targets.getTargetsForPlayer(player);
-                    this.game.addMessage(
-                        '{0} sacrifices {1}, discards {2} from hand, and discards {3} from shadows for {4}',
-                        player,
-                        targets.sacrifice || 'nothing',
-                        targets.hand || 'nothing',
-                        targets.shadows || 'nothing',
-                        this
-                    );
-
-                    if (targets.sacrifice) {
-                        actions.push(
-                            GameActions.sacrificeCard({ player, card: targets.sacrifice })
-                        );
-                    }
-
-                    if (targets.hand) {
-                        actions.push(GameActions.discardCard({ card: targets.hand }));
-                    }
-
-                    if (targets.shadows) {
-                        actions.push(GameActions.discardCard({ card: targets.shadows }));
-                    }
-                }
-
-                this.game.resolveGameAction(GameActions.simultaneously(actions));
-            }
+            message:
+                '{player} uses {source} to have each player sacrifice a character or location, and discard a card from their hand and a card from their shadows area',
+            gameAction: GameActions.simultaneously((context) =>
+                context.game.getPlayersInFirstPlayerOrder().flatMap((player) => {
+                    const targets = context.targets.getTargetsForPlayer(player);
+                    return [
+                        targets.sacrifice &&
+                            GameActions.sacrificeCard({ player, card: targets.sacrifice }),
+                        targets.hand && GameActions.discardCard({ card: targets.hand }),
+                        targets.shadows && GameActions.discardCard({ card: targets.shadows })
+                    ].filter(Boolean);
+                })
+            )
         });
     }
 }

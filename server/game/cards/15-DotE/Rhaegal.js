@@ -2,36 +2,40 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Rhaegal extends DrawCard {
+    // Rhaegal (15003)
+    // No attachments.
+    // Reaction: After you win a challenge in which Rhaegal is attacking, choose and stand another
+    // character you control. Then, if that character has the Dragon or Stormborn trait, stand
+    // Rhaegal. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    this.controller === event.challenge.winner && this.isAttacking()
+                afterChallenge: (event, context) =>
+                    context.player === event.challenge.winner &&
+                    event.challenge.isAttacking(context.source)
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
                     card.kneeled &&
-                    card.controller === this.controller &&
-                    card !== this,
+                    card.controller === context.player &&
+                    card !== context.source,
                 gameAction: 'stand'
             },
             message: '{player} uses {source} to stand {target}',
             limit: ability.limit.perPhase(1),
-            handler: (context) => {
-                this.game
-                    .resolveGameAction(GameActions.standCard({ card: context.target }))
-                    .thenExecute(() => {
-                        if (
-                            context.target.hasTrait('Dragon') ||
-                            context.target.hasTrait('Stormborn')
-                        ) {
-                            this.game.resolveGameAction(GameActions.standCard({ card: this }));
-                            this.game.addMessage('Then {0} stands {1}', context.player, this);
-                        }
-                    });
-            }
+            gameAction: GameActions.standCard((context) => ({ card: context.target })).then({
+                gameAction: GameActions.ifCondition({
+                    condition: (context) =>
+                        context.parentContext.target.hasTrait('Dragon') ||
+                        context.parentContext.target.hasTrait('Stormborn'),
+                    thenAction: {
+                        message: 'Then {player} stands {source}',
+                        gameAction: GameActions.standCard((context) => ({ card: context.source }))
+                    }
+                })
+            })
         });
     }
 }

@@ -1,4 +1,5 @@
 import BaseAbility from '../baseability.js';
+import { Requirements } from '../Constants/index.js';
 
 class MarshalDuplicateAction extends BaseAbility {
     constructor() {
@@ -12,16 +13,40 @@ class MarshalDuplicateAction extends BaseAbility {
         return true;
     }
 
-    meetsRequirements(context) {
-        var { game, player, source } = context;
-
+    isRelevant({ game, player, source }) {
         return (
-            game.currentPhase === 'marshal' &&
+            game.currentPhase !== 'setup' &&
             source.getType() !== 'event' &&
-            player.allowMarshal &&
-            player.isCardInPlayableLocation(source, 'marshal') &&
-            player.canDuplicate(source)
+            player.canDuplicate(source) &&
+            player.isCardInPlayableLocation(source, 'marshal')
         );
+    }
+
+    getUnmetRequirement(context) {
+        const { game, player, source } = context;
+
+        if (game.currentPhase !== 'marshal') {
+            return Requirements.phase;
+        }
+
+        const timingRequirement = game.getActionTimingRequirement(player);
+        if (timingRequirement) {
+            return timingRequirement;
+        }
+
+        if (source.getType() === 'event' || !player.canDuplicate(source)) {
+            return Requirements.condition;
+        }
+
+        if (!player.isCardInPlayableLocation(source, 'marshal')) {
+            return Requirements.location;
+        }
+
+        if (!player.allowMarshal) {
+            return Requirements.restriction;
+        }
+
+        return undefined;
     }
 
     executeHandler(context) {
@@ -35,6 +60,7 @@ class MarshalDuplicateAction extends BaseAbility {
             player: context.player,
             type: 'dupe'
         };
+        context.player.markUsedReducers('marshalDuplicate', context.source);
         context.game.raiseEvent('onCardMarshalled', params, () => {
             context.game.addMessage(
                 this.getMessageFormat(params),

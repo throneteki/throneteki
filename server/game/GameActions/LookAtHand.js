@@ -1,8 +1,13 @@
 import GameAction from './GameAction.js';
+import Message from '../Message.js';
 
 class LookAtHand extends GameAction {
     constructor() {
         super('lookAtHand');
+    }
+
+    message({ opponent }) {
+        return Message.fragment("looks at {opponent}'s hand", { opponent });
     }
 
     canChangeGameState({ opponent }) {

@@ -1,66 +1,56 @@
-describe('Valyrian Steel', function () {
-    integration(function () {
-        describe('when an attachment enters play', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('lannister', [
-                    'Valyrian Steel (LMHR)',
-                    'Late Summer Feast',
-                    'Hedge Knight',
-                    'Little Bird (Core)'
-                ]);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.character = this.player1.findCardByName('Hedge Knight', 'hand');
-                this.attachment = this.player1.findCardByName('Little Bird', 'hand');
-
-                this.player1.clickCard(this.character);
-
-                this.completeSetup();
-
-                this.selectFirstPlayer(this.player1);
-
-                this.player1.clickCard(this.attachment);
-                this.player1.clickCard(this.character);
-            });
-
-            it('allows it to trigger', function () {
-                expect(this.player1).toAllowAbilityTrigger('Valyrian Steel');
-            });
+describe('Valyrian Steel (LMHR)', function () {
+    it('kneels your faction card and pays X gold to put an attachment with printed cost X into play from your hand', function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                agenda: 'Valyrian Steel (LMHR)',
+                inPlay: ['Hedge Knight'],
+                hand: ['Little Bird (Core)'],
+                gold: 5
+            }
         });
+        this.player1.clickMenu(this.valyrianSteel, 'Put attachment into play');
+        this.player1.clickCard(this.littleBird);
+        this.player1.clickCard(this.hedgeKnight);
+        expect(this.player1Object.faction.kneeled).toBe(true);
+        expect(this.hedgeKnight.attachments).toContain(this.littleBird);
+        expect(this.player1Object.gold).toBe(4);
+        this.player1.clickPrompt('Pass');
+        expect(this.player1).isReadyToTakeAction();
+    });
 
-        describe('vs Risen from the Sea', function () {
-            beforeEach(function () {
-                const deck = this.buildDeck('lannister', [
-                    'Valyrian Steel (LMHR)',
-                    'Valar Morghulis',
-                    'A Noble Cause',
-                    'Theon Greyjoy (Core)',
-                    'Risen from the Sea'
-                ]);
-                this.player1.selectDeck(deck);
-                this.player2.selectDeck(deck);
-                this.startGame();
-                this.keepStartingHands();
-
-                this.character = this.player1.findCardByName('Theon Greyjoy', 'hand');
-
-                this.player1.clickCard(this.character);
-
-                this.completeSetup();
-
-                this.player1.selectPlot('Valar Morghulis');
-                this.player2.selectPlot('A Noble Cause');
-                this.selectFirstPlayer(this.player1);
-
-                this.player1.clickCard('Risen from the Sea', 'hand');
-            });
-
-            it('allows it to trigger', function () {
-                expect(this.player1).toAllowAbilityTrigger('Valyrian Steel');
-            });
+    it('lets you gain 1 gold or draw 1 card after an attachment enters play under your control', function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                agenda: 'Valyrian Steel (LMHR)',
+                inPlay: ['Hedge Knight'],
+                hand: ['Little Bird (Core)'],
+                gold: 5
+            }
         });
+        this.player1.clickCard(this.littleBird);
+        this.player1.clickCard(this.hedgeKnight);
+        expect(this.player1).toAllowAbilityTrigger('Valyrian Steel');
+        this.player1.triggerAbility('Valyrian Steel');
+        this.player1.clickPrompt('Gain 1 gold');
+        expect(this.player1Object.gold).toBe(5);
+    });
+
+    it('triggers when Risen from the Sea attaches itself', function () {
+        this.setupTest({
+            phase: 'plot',
+            player1: {
+                agenda: 'Valyrian Steel (LMHR)',
+                plotDeck: ['Valar Morghulis'],
+                inPlay: ['Theon Greyjoy (Core)'],
+                hand: ['Risen from the Sea']
+            }
+        });
+        this.player1.selectPlot('Valar Morghulis');
+        this.player2.selectPlot('Filler Plot');
+        this.selectFirstPlayer(this.player1);
+        this.player1.clickCard(this.risenFromTheSea);
+        expect(this.player1).toAllowAbilityTrigger('Valyrian Steel');
     });
 });

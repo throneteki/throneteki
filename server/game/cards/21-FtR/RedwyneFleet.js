@@ -2,6 +2,12 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class RedwyneFleet extends DrawCard {
+    // The Redwyne Fleet (21022)
+    // Assault. No attachments.
+    // While you control Paxter Redwyne, he gains a [military] and a [power] icon, and the Commander
+    // trait.
+    // Reaction: After a House Redwyne card you control is knelt, gain 1 gold. (Limit 3 times per
+    // round.)
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.name === 'Paxter Redwyne',

@@ -2,39 +2,41 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ForAllTheNightsToCome extends DrawCard {
+    // For All the Nights to Come (27030)
+    // Reaction: After you win a challenge by 5 or more STR, choose a Builder character, a Ranger
+    // character, and a Steward character. Each of those characters gains 1 power. (Max 1 per
+    // phase.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.strengthDifference >= 5
             },
             max: ability.limit.perPhase(1),
             targets: {
                 builder: {
-                    cardCondition: (card) => this.hasTraitAndCanGainPower(card, 'Builder')
+                    cardCondition: (card, context) =>
+                        context.source.hasTraitAndCanGainPower(card, 'Builder')
                 },
                 ranger: {
-                    cardCondition: (card) => this.hasTraitAndCanGainPower(card, 'Ranger')
+                    cardCondition: (card, context) =>
+                        context.source.hasTraitAndCanGainPower(card, 'Ranger')
                 },
                 steward: {
-                    cardCondition: (card) => this.hasTraitAndCanGainPower(card, 'Steward')
+                    cardCondition: (card, context) =>
+                        context.source.hasTraitAndCanGainPower(card, 'Steward')
                 }
             },
             message: {
                 format: '{player} plays {source} to have {targets} each gain 1 power',
-                args: { targets: (context) => this.getCharactersToGainPower(context) }
+                args: { targets: (context) => context.source.getCharactersToGainPower(context) }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously((context) =>
-                        this.getCharactersToGainPower(context).map((card) =>
-                            GameActions.gainPower({ card })
-                        )
-                    ),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                context.source
+                    .getCharactersToGainPower(context)
+                    .map((card) => GameActions.gainPower({ card }))
+            )
         });
     }
 

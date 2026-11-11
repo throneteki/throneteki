@@ -3,7 +3,7 @@ import Player from '../../../server/game/player.js';
 
 describe('the MenuPrompt', function () {
     beforeEach(function () {
-        var game = new jasmine.createSpyObj('game', ['raiseEvent']);
+        var game = { raiseEvent: vi.fn() };
 
         this.player = new Player('1', { username: 'Player 1', settings: {} }, true, game);
         this.player.initialise();
@@ -21,8 +21,8 @@ describe('the MenuPrompt', function () {
                 return true;
             }
         };
-        spyOn(this.contextObj, 'doIt');
-        spyOn(this.contextObj, 'forbiddenMethod');
+        vi.spyOn(this.contextObj, 'doIt').mockImplementation(() => {});
+        vi.spyOn(this.contextObj, 'forbiddenMethod').mockImplementation(() => {});
 
         this.properties = {
             activePrompt: {
@@ -91,7 +91,7 @@ describe('the MenuPrompt', function () {
 
                 describe('when the method returns false', function () {
                     beforeEach(function () {
-                        this.contextObj.doIt.and.returnValue(false);
+                        this.contextObj.doIt.mockReturnValue(false);
                     });
 
                     it('should not complete the prompt', function () {
@@ -106,7 +106,7 @@ describe('the MenuPrompt', function () {
 
                 describe('when the method returns true', function () {
                     beforeEach(function () {
-                        this.contextObj.doIt.and.returnValue(true);
+                        this.contextObj.doIt.mockReturnValue(true);
                     });
 
                     it('should complete the prompt', function () {

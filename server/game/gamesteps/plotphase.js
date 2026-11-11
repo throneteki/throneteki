@@ -5,6 +5,7 @@ import RevealPlots from './revealplots.js';
 import ChooseTitlePrompt from './plot/ChooseTitlePrompt.js';
 import ActionWindow from './actionwindow.js';
 import { Flags } from '../Constants/index.js';
+import ResetRound from '../GameActions/ResetRound.js';
 
 class PlotPhase extends Phase {
     constructor(game) {
@@ -27,14 +28,13 @@ class PlotPhase extends Phase {
     }
 
     startPlotPhase() {
-        for (const player of this.game.getPlayers()) {
-            player.resetForStartOfRound();
-        }
+        this.plotSelectionFirstPlayer = this.game.getFirstPlayer();
+        this.game.resolveGameAction(ResetRound, { players: this.game.getPlayers() });
     }
 
     announceForcedPlotSelection() {
         for (const player of this.game.getPlayers()) {
-            if (player.mustRevealPlot) {
+            if (player.mustRevealPlot && player.getForcedPlot()) {
                 this.game.addMessage('{0} is forced to select a plot', player);
             } else if (player.hasFlag(Flags.player.cannotRevealPlot)) {
                 this.game.addMessage('{0} cannot reveal a new plot', player);
@@ -46,10 +46,12 @@ class PlotPhase extends Phase {
         let choosingPlayers = this.game
             .getPlayers()
             .filter(
-                (player) => !player.mustRevealPlot && !player.hasFlag(Flags.player.cannotRevealPlot)
+                (player) =>
+                    !(player.mustRevealPlot && player.getForcedPlot()) &&
+                    !player.hasFlag(Flags.player.cannotRevealPlot)
             );
         this.game.raiseEvent('onChoosePlot', { players: choosingPlayers }, () => {
-            this.game.queueStep(new SelectPlotPrompt(this.game));
+            this.game.queueStep(new SelectPlotPrompt(this.game, this.plotSelectionFirstPlayer));
         });
     }
 

@@ -1,35 +1,39 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class NighttimeMarauders extends DrawCard {
+    // Nighttime Marauders (17104)
+    // Pillage. Shadow (3).
+    // Reaction: After Nighttime Marauders comes out of shadows during the challenges phase, choose
+    // a card in an opponent's discard pile. That player reveals their hand and discards from it
+    // each card with the same printed cost as the chosen card.
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardOutOfShadows: (event) =>
-                    event.card === this && this.game.currentPhase === 'challenge'
+                onCardOutOfShadows: (event, context) =>
+                    event.card === context.source && context.game.currentPhase === 'challenge'
             },
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: (card) =>
-                    card.controller !== this.controller && card.location === 'discard pile'
+                cardCondition: (card, context) =>
+                    card.controller !== context.player && card.location === 'discard pile'
             },
-            handler: (context) => {
-                let opponent = context.target.controller;
-                let cardsToDiscard = opponent.hand.filter(
-                    (card) =>
-                        card.hasPrintedCost() &&
-                        card.getPrintedCost() === context.target.getPrintedCost()
-                );
-                opponent.discardCards(cardsToDiscard, false);
-                this.game.addMessage(
-                    '{0} uses {1} to choose {2} and have {3} reveal their hand: {4}',
-                    this.controller,
-                    this,
-                    context.target,
-                    opponent,
-                    opponent.hand
-                );
-                this.game.addMessage('{0} discards {1}', opponent, cardsToDiscard);
-            }
+            message: {
+                format: '{player} uses {source} to choose {target} and have {opponent} reveal their hand: {hand}',
+                args: {
+                    opponent: (context) => context.target.controller,
+                    hand: (context) => context.target.controller.hand
+                }
+            },
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.controller.hand
+                    .filter(
+                        (card) =>
+                            card.hasPrintedCost() &&
+                            card.getPrintedCost() === context.target.getPrintedCost()
+                    )
+                    .map((card) => GameActions.discardCard({ card, allowSave: false }))
+            )
         });
     }
 }

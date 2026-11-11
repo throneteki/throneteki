@@ -2,8 +2,8 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'reac
 import classNames from 'classnames';
 import { CardHoverContext } from './CardHoverContext';
 
-const CardHoverable = ({ touchDelay = 0, className, children, code, isDisabled }) => {
-    const { type, setType, setCode } = useContext(CardHoverContext);
+const CardHoverable = ({ touchDelay = 0, className, children, code, notes, isDisabled }) => {
+    const { type, setType, setCode, setNotes } = useContext(CardHoverContext);
     const holdTimeout = useRef(null);
 
     const wrapperClassName = useMemo(
@@ -17,8 +17,9 @@ const CardHoverable = ({ touchDelay = 0, className, children, code, isDisabled }
     const clear = useCallback(() => {
         setType(null);
         setCode(null);
+        setNotes(null);
         clearTimeout(holdTimeout.current);
-    }, [setCode, setType]);
+    }, [setCode, setNotes, setType]);
 
     useEffect(() => {
         if (isDisabled) {
@@ -45,6 +46,7 @@ const CardHoverable = ({ touchDelay = 0, className, children, code, isDisabled }
                     // If pointer is within element whilst disabled & then is re-enabled, this ensures we update on first pointer move
                     setType('mouse');
                     setCode(code);
+                    setNotes(notes);
                 }
             }}
             onPointerEnter={(e) => {
@@ -58,10 +60,12 @@ const CardHoverable = ({ touchDelay = 0, className, children, code, isDisabled }
                     holdTimeout.current = setTimeout(() => {
                         setType('touch');
                         setCode(code);
+                        setNotes(notes);
                     }, touchDelay);
                 } else {
                     setType('mouse');
                     setCode(code);
+                    setNotes(notes);
                 }
             }}
             onPointerLeave={() => {

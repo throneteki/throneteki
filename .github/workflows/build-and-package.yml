@@ -35,6 +35,11 @@ jobs:
             - run: npm ci
             - run: npm run lint
             - run: npm test
+            - run: npm run card-rules
+            - run: node test/tools/spec-coverage.js --check-verified
+            - name: Check changed cards have specs
+              if: github.event_name == 'pull_request'
+              run: node test/tools/spec-coverage.js --changed origin/${{ github.base_ref }}
     database:
         name: Database migrations
         runs-on: ubuntu-latest

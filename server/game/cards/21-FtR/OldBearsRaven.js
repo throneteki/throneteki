@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class OldBearsRaven extends DrawCard {
+    // Old Bear's Raven (21014)
+    // Ambush (2). No attachments.
+    // Action: Return Old Bear's Raven to your hand to stand Old Bear Mormont. (Max twice per
+    // round.)
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand Old Bear',
@@ -13,15 +18,8 @@ class OldBearsRaven extends DrawCard {
                     card.kneeled,
                 gameAction: 'stand'
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.addMessage(
-                    '{0} returns {1} back to hand to stand {2}',
-                    context.player,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} returns {source} back to hand to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

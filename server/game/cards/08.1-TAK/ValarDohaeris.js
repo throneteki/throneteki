@@ -2,6 +2,10 @@ import PlotCard from '../../plotcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class ValarDohaeris extends PlotCard {
+    // Valar Dohaeris (08020)
+    // When Revealed: Each player chooses any number of characters he or she controls with a total
+    // printed cost of 10 or lower. Place each character not chosen on the bottom of its owner's
+    // deck (cannot be saved).
     setupCardAbilities() {
         this.whenRevealed({
             target: {
@@ -16,47 +20,20 @@ class ValarDohaeris extends PlotCard {
                     card.controller === context.choosingPlayer &&
                     card.getType() === 'character'
             },
-            message: (context) => {
-                const toBeMoved = this.toBeMoved(context);
-                context.targets.selections
-                    .map((selection) => selection.choosingPlayer)
-                    .forEach((player) => {
-                        const cards = toBeMoved.filter((card) => card.owner === player);
-                        if (cards.length > 0) {
-                            this.game.addMessage(
-                                '{0} places {1} on the bottom of their deck for {2}',
-                                player,
-                                cards,
-                                context.source
-                            );
-                        } else {
-                            this.game.addMessage(
-                                '{0} does not have any cards placed on the bottom of their deck for {1}',
-                                player,
-                                context.source
-                            );
-                        }
-                    });
-            },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously((context) =>
-                        this.toBeMoved(context).map((card) =>
-                            GameActions.returnCardToDeck({ card, bottom: true, allowSave: false })
-                        )
-                    ),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously((context) =>
+                toBeMoved(context).map((card) =>
+                    GameActions.returnCardToDeck({ card, bottom: true, allowSave: false })
+                )
+            )
         });
     }
+}
 
-    toBeMoved(context) {
-        const targets = context.targets.getTargets();
-        return this.game.filterCardsInPlay(
-            (card) => card.getType() === 'character' && !targets.includes(card)
-        );
-    }
+function toBeMoved(context) {
+    const targets = context.targets.getTargets();
+    return context.game.filterCardsInPlay(
+        (card) => card.getType() === 'character' && !targets.includes(card)
+    );
 }
 
 ValarDohaeris.code = '08020';

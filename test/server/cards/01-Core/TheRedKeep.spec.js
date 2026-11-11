@@ -1,59 +1,55 @@
 describe('The Red Keep (Core)', function () {
-    integration(function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { inPlay: ['The Red Keep (Core)', 'Tumblestone Knight'] },
+            player2: { hand: ['Nightmares', 'Areo Hotah (Core)'] }
+        });
+    });
+
+    describe('during a power challenge with a participating character', function () {
         beforeEach(function () {
-            const deck = this.buildDeck('stark', [
-                'Trading with the Pentoshi',
-                'The Red Keep (Core)',
-                'Areo Hotah (Core)',
-                'Maester Caleotte',
-                'Nightmares'
-            ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
-            this.startGame();
-            this.keepStartingHands();
-
-            this.redKeep = this.player1.findCardByName('The Red Keep (Core)', 'hand');
-            this.character = this.player1.findCardByName('Maester Caleotte', 'hand');
-
-            this.player1.clickCard(this.character);
-            this.player1.clickCard(this.redKeep);
-            this.completeSetup();
-
-            this.selectFirstPlayer(this.player1);
-            this.selectPlotOrder(this.player1);
-
-            this.completeMarshalPhase();
+            this.player1.clickPrompt('Power');
+            this.player1.clickCard(this.tumblestoneKnight);
+            this.player1.clickPrompt('Done');
         });
 
-        describe('during a power challenge w/ at least one participating character', function () {
-            beforeEach(function () {
-                this.player1.clickPrompt('Power');
-                this.player1.clickCard(this.character);
-                this.player1.clickPrompt('Done');
-            });
+        it('contributes 2 STR', function () {
+            expect(this.game.currentChallenge.attackerStrength).toBe(4);
 
-            it('should provide +2 strength', function () {
-                // 2 from Caleotte, 2 from the Red Keep.
-                expect(this.game.currentChallenge.attackerStrength).toBe(4);
-            });
+            this.skipActionWindow();
+            this.player2.clickPrompt('Done');
+            this.skipActionWindow();
 
-            it('should remove the strength bonus if blanked mid-challenge', function () {
-                this.player1.clickPrompt('Pass');
-                this.player2.clickCard('Nightmares', 'hand');
-                this.player2.clickCard(this.redKeep);
-
-                expect(this.game.currentChallenge.attackerStrength).toBe(2);
-            });
-
-            it('should not keep the strength bonus if all characters removed from the challenge', function () {
-                this.player1.clickPrompt('Pass');
-                this.player2.clickCard('Areo Hotah', 'hand');
-                this.player2.triggerAbility('Areo Hotah');
-                this.player2.clickCard(this.character);
-
-                expect(this.game.currentChallenge.attackerStrength).toBe(0);
-            });
+            expect(this.player1).isReadyToTakeAction();
         });
+
+        it('stops contributing if blanked mid-challenge', function () {
+            this.player1.clickPrompt('Pass');
+            this.player2.clickCard(this.nightmares);
+            this.player2.clickCard(this.theRedKeep);
+
+            expect(this.game.currentChallenge.attackerStrength).toBe(2);
+        });
+
+        it('stops contributing if all characters are removed from the challenge', function () {
+            this.player1.clickPrompt('Pass');
+            this.player2.clickCard(this.areoHotah);
+            this.player2.triggerAbility(this.areoHotah);
+            this.player2.clickCard(this.tumblestoneKnight);
+
+            expect(this.game.currentChallenge.attackerStrength).toBe(0);
+        });
+    });
+
+    it('kneels to draw 2 cards when the challenges phase ends if you have not lost a power challenge', function () {
+        this.player1.togglePromptedActionWindow('dominance', true);
+        this.player1.clickPrompt('Done');
+        this.player2.clickPrompt('Done');
+        this.player1.triggerAbility(this.theRedKeep);
+
+        expect(this.theRedKeep.kneeled).toBe(true);
+        expect(this.player1Object.hand).toHaveLength(2);
+        expect(this.player1).isReadyToTakeAction();
     });
 });

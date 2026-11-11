@@ -1,6 +1,11 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class PlazaOfPride extends DrawCard {
+    // Plaza of Pride (07036)
+    // Action: Kneel Plaza of Pride and discard a card from your hand to choose and stand a
+    // character with printed cost X or lower. X is 3 higher than the printed cost of the discarded
+    // card.
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand character',
@@ -13,16 +18,9 @@ class PlazaOfPride extends DrawCard {
                     (!context.costs.discardFromHand ||
                         card.getPrintedCost() <= context.costs.discardFromHand.getPrintedCost() + 3)
             },
-            handler: (context) => {
-                context.target.controller.standCard(context.target);
-                this.game.addMessage(
-                    '{0} kneels {1} and discards {2} to stand {3}',
-                    this.controller,
-                    this,
-                    context.costs.discardFromHand,
-                    context.target
-                );
-            }
+            message:
+                '{player} kneels {source} and discards {costs.discardFromHand} to stand {target}',
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

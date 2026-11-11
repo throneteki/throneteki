@@ -1,29 +1,28 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class MountainsOfTheMoon extends DrawCard {
-    setupCardAbilities() {
+    // Mountains of the Moon (05018)
+    // Reaction: After a Clansman character enters play, that character gains a challenge icon of
+    // your choice until the end of the phase.
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 onCardEntersPlay: (event) =>
                     event.card.hasTrait('Clansman') && event.card.getType() === 'character'
             },
-            handler: (context) => {
-                this.game.promptForIcon(this.controller, this, (icon) => {
-                    this.untilEndOfPhase((ability) => ({
+            gameAction: GameActions.chooseIcon({
+                message: {
+                    format: '{player} uses {source} to have {card} gain {icon} icon until the end of the phase',
+                    args: { card: (context) => context.event.card }
+                },
+                gameAction: (icon) =>
+                    GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
                         match: context.event.card,
                         effect: ability.effects.addIcon(icon)
-                    }));
-
-                    this.game.addMessage(
-                        '{0} uses {1} to have {2} gain {3} {4} icon until the end of the phase',
-                        this.controller,
-                        this,
-                        context.event.card,
-                        icon === 'intrigue' ? 'an' : 'a',
-                        icon
-                    );
-                });
-            }
+                    }))
+            })
         });
     }
 }

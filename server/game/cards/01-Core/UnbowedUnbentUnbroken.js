@@ -1,55 +1,34 @@
 import DrawCard from '../../drawcard.js';
-import ChallengeTypes from '../../ChallengeTypes.js';
+import GameActions from '../../GameActions/index.js';
 
 class UnbowedUnbentUnbroken extends DrawCard {
+    // Unbowed, Unbent, Unbroken (01120)
+    // Play only if you are not the first player.
+    // Reaction: After you lose a challenge as the defending player, name a challenge type. Until
+    // the end of the phase, the winner of the challenge cannot initiate challenges of that type.
+    // (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: (event) =>
-                    !this.controller.firstPlayer &&
-                    event.challenge.defendingPlayer === this.controller &&
-                    event.challenge.loser === this.controller
+                afterChallenge: (event, context) =>
+                    !context.player.firstPlayer &&
+                    event.challenge.defendingPlayer === context.player &&
+                    event.challenge.loser === context.player
             },
-            handler: (context) => {
-                this.challengeWinner = context.event.challenge.winner;
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Select a challenge type',
-                        buttons: ChallengeTypes.asButtons({ method: 'trigger' }).concat([
-                            { text: 'Cancel', method: 'cancel' }
-                        ])
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.chooseChallengeType({
+                message: {
+                    format: '{player} plays {source} to make {winner} unable to initiate {challengeType} challenges until the end of the phase',
+                    args: { winner: (context) => context.event.challenge.winner }
+                },
+                gameAction: (challengeType) =>
+                    GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
+                        targetController: context.event.challenge.winner,
+                        effect: ability.effects.cannotInitiateChallengeType(challengeType)
+                    }))
+            })
         });
-    }
-
-    trigger(player, challengeType) {
-        this.untilEndOfPhase((ability) => ({
-            targetController: this.challengeWinner,
-            effect: ability.effects.cannotInitiateChallengeType(challengeType)
-        }));
-
-        this.game.addMessage(
-            '{0} plays {1} to make {2} unable to initiate {3} challenges until the end of the phase',
-            player,
-            this,
-            this.challengeWinner,
-            challengeType
-        );
-
-        return true;
-    }
-
-    cancel(player) {
-        this.game.addAlert('danger', '{0} cancels the resolution of {1}', player, this);
-
-        this.game.addGold(player, this.getCost()); // TODO this fails if opponent cannot gain gold
-        player.moveCard(this, 'hand');
-
-        return true;
     }
 }
 

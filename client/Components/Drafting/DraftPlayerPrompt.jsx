@@ -37,10 +37,6 @@ const DraftPlayerPrompt = ({
         }
 
         for (const button of buttons) {
-            if (button.timer) {
-                continue;
-            }
-
             let option = (
                 <button
                     key={button.command + buttonIndex.toString()}

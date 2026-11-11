@@ -2,16 +2,16 @@ import Kill from '../../../server/game/GameActions/Kill.js';
 
 describe('Kill', function () {
     beforeEach(function () {
-        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'getType']);
-        this.playerSpy = jasmine.createSpyObj('player', ['moveCard']);
+        this.cardSpy = { allowGameAction: vi.fn(), getType: vi.fn() };
+        this.playerSpy = { moveCard: vi.fn() };
         this.props = { card: this.cardSpy, player: this.playerSpy };
     });
 
     describe('allow()', function () {
         beforeEach(function () {
-            this.cardSpy.getType.and.returnValue('character');
+            this.cardSpy.getType.mockReturnValue('character');
             this.cardSpy.location = 'play area';
-            this.cardSpy.allowGameAction.and.returnValue(true);
+            this.cardSpy.allowGameAction.mockReturnValue(true);
         });
 
         describe('when the card is in play and not immune', function () {
@@ -32,7 +32,7 @@ describe('Kill', function () {
 
         describe('when the card is not a character', function () {
             beforeEach(function () {
-                this.cardSpy.getType.and.returnValue('location');
+                this.cardSpy.getType.mockReturnValue('location');
             });
 
             it('returns false', function () {
@@ -42,7 +42,7 @@ describe('Kill', function () {
 
         describe('when the card is immune', function () {
             beforeEach(function () {
-                this.cardSpy.allowGameAction.and.returnValue(false);
+                this.cardSpy.allowGameAction.mockReturnValue(false);
             });
 
             it('returns false', function () {

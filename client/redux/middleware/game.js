@@ -8,7 +8,6 @@ import {
     receiveResponseTime,
     sendButtonClickedMessage,
     sendCardClickedMessage,
-    sendCardMenuItemClickedMessage,
     sendChangeStatMessage,
     sendConcedeMessage,
     sendDragDropMessage,
@@ -19,8 +18,10 @@ import {
     sendToggleDupesMessage,
     sendToggleKeywordSettingMessage,
     sendToggleMuteSpectatorsMessage,
+    sendToggleManualModeMessage,
+    sendReportProblemMessage,
     sendTogglePromptedActionWindowMessage,
-    sendToggleTimerSetting,
+    sendToggleHideResponsesMessage,
     sendCardSizeChangeMessage,
     startGameConnecting
 } from '../reducers/game';
@@ -38,15 +39,16 @@ const GameMessage = Object.freeze({
     ToggleKeywordSetting: 'toggleKeywordSetting',
     ToggleDupes: 'toggleDupes',
     TogglePromptedActionWindow: 'togglePromptedActionWindow',
-    ToggleTimerSetting: 'toggleTimerSetting',
+    ToggleHideResponses: 'toggleHideResponses',
     CardSizeChange: 'cardSizeChange',
     CardClicked: 'cardClicked',
-    MenuItemClick: 'menuItemClick',
     ShowDrawDeck: 'showDrawDeck',
     ShuffleDeck: 'shuffleDeck',
     DragDrop: 'drop',
     Chat: 'chat',
     ToggleMuteSpectators: 'toggleMuteSpectators',
+    ToggleManualMode: 'toggleManualMode',
+    ReportProblem: 'reportProblem',
     ChangeStat: 'changeStat',
     LeaveGame: 'leavegame',
     Concede: 'concede',
@@ -139,10 +141,10 @@ const gameMiddleware = (store) => {
                 action.payload.option,
                 action.payload.value
             );
-        } else if (sendToggleTimerSetting.match(action)) {
+        } else if (sendToggleHideResponsesMessage.match(action)) {
             socket.emit(
                 'game',
-                GameMessage.ToggleTimerSetting,
+                GameMessage.ToggleHideResponses,
                 action.payload.option,
                 action.payload.value
             );
@@ -157,13 +159,6 @@ const gameMiddleware = (store) => {
                 action.payload.arg,
                 action.payload.method,
                 action.payload.promptId
-            );
-        } else if (sendCardMenuItemClickedMessage.match(action)) {
-            socket.emit(
-                'game',
-                GameMessage.MenuItemClick,
-                action.payload.cardId,
-                action.payload.menuItem
             );
         } else if (sendShowDrawDeckMessage.match(action)) {
             socket.emit('game', GameMessage.ShowDrawDeck, action.payload.visible);
@@ -181,6 +176,10 @@ const gameMiddleware = (store) => {
             socket.emit('game', GameMessage.Chat, action.payload);
         } else if (sendToggleMuteSpectatorsMessage.match(action)) {
             socket.emit('game', GameMessage.ToggleMuteSpectators);
+        } else if (sendToggleManualModeMessage.match(action)) {
+            socket.emit('game', GameMessage.ToggleManualMode);
+        } else if (sendReportProblemMessage.match(action)) {
+            socket.emit('game', GameMessage.ReportProblem);
         } else if (sendChangeStatMessage.match(action)) {
             socket.emit('game', GameMessage.ChangeStat, action.payload.type, action.payload.amount);
         } else if (sendLeaveGameMessage.match(action)) {

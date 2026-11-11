@@ -2,6 +2,9 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class WeaponsAtTheDoor extends PlotCard {
+    // Weapons at the Door (03051)
+    // Forced Reaction: After the challenges phase begins, return each card with the printed
+    // attachment cardtype to its owner's hand.
     setupCardAbilities() {
         this.forcedReaction({
             when: {

@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class Farlen extends DrawCard {
+    // Farlen (20026)
+    // Each unique Direwolf character you control gains renown.
+    // Reaction: After you marshal Farlen, search your hand, deck, and discard pile for The
+    // Wolfswood and put it into play. Shuffle your deck.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.hasTrait('Direwolf') && card.isUnique(),
@@ -10,7 +14,8 @@ class Farlen extends DrawCard {
 
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this && event.playingType === 'marshal'
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source && event.playingType === 'marshal'
             },
             message:
                 '{player} uses {source} to search their hand, deck and discard pile for The Wolfswood',

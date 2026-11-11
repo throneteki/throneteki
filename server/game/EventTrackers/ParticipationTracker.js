@@ -4,22 +4,21 @@ class ParticipationTracker {
     }
 
     constructor(game, endingEvent) {
-        this.cards = [];
-        game.on('onDeclaredAsAttacker', (event) => this.trackCard(event.card));
-        game.on('onDeclaredAsDefender', (event) => this.trackCard(event.card));
-        game.on(endingEvent, () => this.clearCards());
+        this.challenges = [];
+        game.on('onChallengeInitiated', (event) => this.trackChallenge(event.challenge));
+        game.on(endingEvent, () => this.clearChallenges());
     }
 
-    trackCard(card) {
-        this.cards.push(card);
+    trackChallenge(challenge) {
+        this.challenges.push(challenge);
     }
 
-    clearCards() {
-        this.cards = [];
+    clearChallenges() {
+        this.challenges = [];
     }
 
     hasParticipated(card) {
-        return this.cards.includes(card);
+        return this.challenges.some((challenge) => challenge.hasParticipated(card));
     }
 }
 

@@ -3,10 +3,14 @@ import { Tokens } from '../../Constants/index.js';
 import GameActions from '../../GameActions/index.js';
 
 class Ashemark extends DrawCard {
+    // Ashemark (08011)
+    // Bestow (3).
+    // Reaction: After a phase begins, kneel and sacrifice Ashemark to return each character with
+    // printed cost X or lower to its owner's hand. X is the number of gold on Ashemark.
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onPhaseStarted: () => this.hasToken(Tokens.gold)
+                onPhaseStarted: (event, context) => context.source.hasToken(Tokens.gold)
             },
             cost: [ability.costs.kneelSelf(), ability.costs.sacrificeSelf()],
             message: {

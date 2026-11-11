@@ -3,6 +3,10 @@ import Message from '../../Message.js';
 import GameActions from '../../GameActions/index.js';
 
 class DefendingTheWall extends DrawCard {
+    // Defending the Wall (24015)
+    // Play only if you control Castle Black or The Wall.
+    // Challenges Action: Choose an attacking character with more than 1 challenge icon, and remove
+    // it from the challenge. If that character does not have the Army or Wildling trait, stand it.
     setupCardAbilities() {
         this.action({
             title: 'Remove character from challenge',
@@ -17,7 +21,7 @@ class DefendingTheWall extends DrawCard {
                 }
             },
             message: {
-                format: '{player} plays {source} to {actions}', // TODO: Update this to {gameAction} once handler is replaced by gameAction
+                format: '{player} plays {source} to {actions}',
                 args: {
                     actions: (context) =>
                         Message.fragment(
@@ -26,23 +30,18 @@ class DefendingTheWall extends DrawCard {
                         )
                 }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously([
-                        GameActions.removeFromChallenge((context) => ({
-                            card: context.target
-                        })),
-                        GameActions.ifCondition({
-                            condition: (context) =>
-                                context.target.isMatch({ not: { trait: ['Army', 'Wildling'] } }),
-                            thenAction: GameActions.standCard((context) => ({
-                                card: context.target
-                            }))
-                        })
-                    ]),
-                    context
-                );
-            }
+            gameAction: GameActions.simultaneously([
+                GameActions.removeFromChallenge((context) => ({
+                    card: context.target
+                })),
+                GameActions.ifCondition({
+                    condition: (context) =>
+                        context.target.isMatch({ not: { trait: ['Army', 'Wildling'] } }),
+                    thenAction: GameActions.standCard((context) => ({
+                        card: context.target
+                    }))
+                })
+            ])
         });
     }
 }

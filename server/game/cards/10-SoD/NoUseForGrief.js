@@ -8,16 +8,22 @@ class NoUseForGrief extends DrawCard {
         this.tracker = new KillTracker(this.game);
     }
 
+    // No Use For Grief (10022)
+    // Play only if a [martell] character was killed under your control this round.
+    // Action: Search your deck for a Sand Snake character with printed cost 3 or lower, put it into
+    // play, and shuffle your deck. (Printed cost 6 or lower instead if The Red Viper is in your
+    // dead pile.)
     setupCardAbilities() {
         this.action({
             title: 'Put Sand Snake into play',
-            condition: () =>
-                this.tracker.anyKilledThisRound(
-                    (card) => card.isFaction('martell') && card.controller === this.controller
+            condition: (context) =>
+                context.source.tracker.anyKilledThisRound(
+                    (card) =>
+                        card.isFaction('martell') && card.controller === context.source.controller
                 ),
             message: {
                 format: '{player} plays {source} to search their deck for a Sand Snake character with printed cost {printedCost} or lower',
-                args: { printedCost: (context) => this.getCostLimit(context.player) }
+                args: { printedCost: (context) => context.source.getCostLimit(context.player) }
             },
             gameAction: GameActions.search({
                 title: 'Select a character',
@@ -26,7 +32,7 @@ class NoUseForGrief extends DrawCard {
                     trait: 'Sand Snake',
                     condition: (card, context) =>
                         card.hasPrintedCost() &&
-                        card.getPrintedCost() <= this.getCostLimit(context.player)
+                        card.getPrintedCost() <= context.source.getCostLimit(context.player)
                 },
                 reveal: false,
                 message: '{player} {gameAction}',

@@ -1,6 +1,10 @@
+import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class AlyceGraceford extends DrawCard {
+    // Alyce Graceford (13063)
+    // Action: Kneel Alyce Graceford to choose another The Seven character. Until the end of the
+    // phase, that character gains renown.
     setupCardAbilities(ability) {
         this.action({
             title: 'Give renown',
@@ -11,19 +15,12 @@ class AlyceGraceford extends DrawCard {
                     card.getType() === 'character' &&
                     card.hasTrait('The Seven')
             },
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.addKeyword('renown')
-                }));
-
-                this.game.addMessage(
-                    '{0} kneels {1} to give {2} renown until the end of the phase',
-                    this.controller,
-                    this,
-                    context.target
-                );
-            }
+            message: '{player} kneels {source} to give {target} renown until the end of the phase',
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.addKeyword('renown')
+            }))
         });
     }
 }

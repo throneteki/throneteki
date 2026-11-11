@@ -3,11 +3,16 @@ import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class TheTatteredPrince extends DrawCard {
+    // The Tattered Prince (18008)
+    // Bestow (2). Renown. Shadow (2).
+    // Forced Reaction: After a plot card enters your used pile, return The Tattered Prince to
+    // shadows unless you discard 1 gold from him.
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onCardPlaced: (event) =>
-                    event.location === 'revealed plots' && event.player === this.controller
+                onCardPlaced: (event, context) =>
+                    event.location === 'revealed plots' &&
+                    event.player === context.source.controller
             },
             gameAction: GameActions.ifCondition({
                 condition: (context) => context.source.hasToken(Tokens.gold),

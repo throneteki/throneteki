@@ -1,46 +1,30 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class SeenInFlames extends DrawCard {
+    // Seen In Flames (01064)
+    // Play only if you control a R'hllor character.
+    // Challenges Action: Choose an opponent, and look at his or her hand. Then, choose and discard
+    // 1 card from that hand.
     setupCardAbilities() {
         this.action({
             title: "Look at opponent's hand",
             phase: 'challenge',
-            condition: () =>
-                this.controller.anyCardsInPlay(
+            condition: (context) =>
+                context.player.anyCardsInPlay(
                     (card) => card.hasTrait("R'hllor") && card.getType() === 'character'
                 ),
-            chooseOpponent: (opponent) => opponent.hand.length !== 0,
-            handler: (context) => {
-                this.game.addMessage(
-                    "{0} plays {1} to look at {2}'s hand",
-                    context.player,
-                    this,
-                    context.opponent
-                );
-                this.game.promptForSelect(context.player, {
-                    activePromptTitle: 'Select a card',
-                    source: this,
-                    revealTargets: true,
-                    cardCondition: (card) =>
-                        card.location === 'hand' && card.controller === context.opponent,
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
-            }
+            chooseOpponent: true,
+            message:
+                "{player} plays {source} to look at {opponent}'s hand and discard 1 card from it",
+            gameAction: GameActions.chooseCards({
+                title: 'Select a card to discard',
+                revealTargets: true,
+                cardCondition: (card, context) =>
+                    card.location === 'hand' && card.controller === context.opponent,
+                gameAction: (card) => GameActions.discardCard({ card })
+            })
         });
-    }
-
-    onCardSelected(player, card) {
-        let otherPlayer = card.controller;
-        otherPlayer.discardCard(card);
-        this.game.addMessage(
-            "{0} then uses {1} to discard {2} from {3}'s hand",
-            player,
-            this,
-            card,
-            otherPlayer
-        );
-
-        return true;
     }
 }
 

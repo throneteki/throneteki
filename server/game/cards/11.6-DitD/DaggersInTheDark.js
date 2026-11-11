@@ -2,72 +2,64 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class DaggersInTheDark extends DrawCard {
+    // Daggers in the Dark (11106)
+    // Shadow (2).
+    // Reaction: After you win a challenge as the defending player, choose and kill an attacking
+    // character. The attacking player may sacrifice 2 characters to cancel this effect.
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    event.challenge.defendingPlayer === this.controller
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
+                    event.challenge.defendingPlayer === context.player
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.controller === this.game.currentChallenge.loser &&
+                    card.controller === context.event.challenge.loser &&
                     card.isAttacking(),
                 gameAction: 'kill'
             },
-            handler: (context) => {
-                let loser = context.event.challenge.loser;
-                let target = context.target;
-
-                if (!this.playerHas2Characters(loser) || context.ability.cannotBeCanceled) {
-                    this.resolveKill(target);
-                    return;
-                }
-
-                this.game.promptForSelect(loser, {
-                    mode: 'exactly',
-                    numCards: 2,
-                    activePromptTitle: 'Sacrifice 2 characters to cancel "Daggers in the Dark"?',
-                    source: this,
-                    cardCondition: (card) =>
-                        card.location === 'play area' &&
-                        card.controller === loser &&
-                        card.getType() === 'character',
-                    onSelect: (player, cards) => this.onCardsSelected(player, cards, target),
-                    onCancel: () => this.resolveKill(target)
-                });
-            }
+            gameAction: GameActions.ifCondition({
+                condition: (context) =>
+                    !context.ability.cannotBeCanceled &&
+                    context.event.challenge.loser.getNumberOfCardsInPlay(
+                        (card) => card.getType() === 'character'
+                    ) >= 2,
+                thenAction: GameActions.choose({
+                    player: (context) => context.event.challenge.loser,
+                    title: 'Sacrifice 2 characters to cancel "Daggers in the Dark"?',
+                    choices: {
+                        Yes: {
+                            message:
+                                '{player} plays {source} to kill {target}, but the effect is cancelled by {choosingPlayer} sacrificing 2 characters',
+                            gameAction: GameActions.chooseCards({
+                                player: (context) => context.event.challenge.loser,
+                                mode: 'exactly',
+                                numCards: 2,
+                                title: 'Select 2 characters',
+                                cardCondition: (card, context) =>
+                                    card.location === 'play area' &&
+                                    card.controller === context.choosingPlayer &&
+                                    card.getType() === 'character',
+                                gameAction: (card) => GameActions.sacrificeCard({ card })
+                            })
+                        },
+                        No: kill()
+                    }
+                }),
+                elseAction: kill()
+            })
         });
     }
+}
 
-    playerHas2Characters(player) {
-        return player.getNumberOfCardsInPlay((card) => card.getType() === 'character') >= 2;
-    }
-
-    resolveKill(target) {
-        this.game.killCharacter(target);
-        this.game.addMessage('{0} plays {1} to kill {2}', this.controller, this, target);
-        return true;
-    }
-
-    onCardsSelected(player, cards, target) {
-        this.game.resolveGameAction(
-            GameActions.simultaneously(cards.map((card) => GameActions.sacrificeCard({ card })))
-        );
-
-        this.game.addMessage(
-            '{0} plays {1} to kill {2}, but the effect is cancelled by {3} sacrificing {4}',
-            this.controller,
-            this,
-            target,
-            player,
-            cards
-        );
-
-        return true;
-    }
+function kill() {
+    return {
+        message: '{player} plays {source} to kill {target}',
+        gameAction: GameActions.kill((context) => ({ card: context.target }))
+    };
 }
 
 DaggersInTheDark.code = '11106';

@@ -1,22 +1,23 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class HagensDaughter extends DrawCard {
+    // Hagen's Daughter (11031)
+    // Shadow (2).
+    // Interrupt: When Hagen’s Daughter would be killed, save her and return her to shadows.
     setupCardAbilities() {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: (event) =>
-                    (event.allowSave || event.isBurn) && event.card === this && this.canBeSaved()
+                onCharacterKilled: (event, context) => event.card === context.source
             },
-            handler: (context) => {
-                context.event.saveCard();
-                context.player.moveCard(this, 'shadows');
-                this.game.addMessage(
-                    '{0} saves {1} and returns her to shadows',
-                    context.player,
-                    this
-                );
-            }
+            message: '{player} saves {source} and returns her to shadows',
+            gameAction: GameActions.saveCard((context) => ({
+                event: context.event,
+                remediesBurn: true
+            })).then({
+                gameAction: GameActions.putIntoShadows((context) => ({ card: context.source }))
+            })
         });
     }
 }

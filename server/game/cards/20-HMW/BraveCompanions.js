@@ -4,16 +4,25 @@ import GameActions from '../../GameActions/index.js';
 import { availableToPair } from '../../../Array.js';
 
 class BraveCompanions extends DrawCard {
+    // Brave Companions (20042)
+    // Bestow (1). Pillage.
+    // Brave Companions get +1 STR for each character you control with 1 or more gold.
+    // Reaction: After you marshal Brave Companions, search the top 10 cards of your deck for an
+    // Army character, a Commander character, and a Mercenary character, reveal them, and add them
+    // to your hand. Shuffle your deck.
     setupCardAbilities(ability) {
         const selectableTraits = ['Army', 'Commander', 'Mercenary'];
         this.persistentEffect({
-            match: (card) => card === this,
-            effect: ability.effects.dynamicStrength(() => this.calculateStrength())
+            match: (card, context) => card === context.source,
+            effect: ability.effects.dynamicStrength((card, context) =>
+                context.source.calculateStrength()
+            )
         });
 
         this.reaction({
             when: {
-                onCardEntersPlay: (event) => event.card === this && event.playingType === 'marshal'
+                onCardEntersPlay: (event, context) =>
+                    event.card === context.source && event.playingType === 'marshal'
             },
             message:
                 '{player} uses {source} to search the top 10 cards of their deck for an Army character, a Commander character and a Mercenary character',

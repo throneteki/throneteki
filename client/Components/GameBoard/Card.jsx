@@ -1,9 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import classNames from 'classnames';
+import { useSelector } from 'react-redux';
 import { useDraggable } from '@dnd-kit/core';
-import CardMenu from './CardMenu';
 import CardCounters from './CardCounters';
 import SquishableCardPanel from './SquishableCardPanel';
+import CardTiledList from './CardTiledList';
+import MovablePanel from './MovablePanel';
 
 import { ItemTypes } from '../../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,15 +15,14 @@ import CardHoverable from '../Images/CardHoverable';
 import CardImage from '../Images/CardImage';
 import { cardClass, standardiseCardSize } from '../../util';
 import { Tooltip } from '@heroui/react';
+import { getActionRequirementReason, isNotableRequirement } from './actionRequirementReasons';
 
 const Card = ({
     card,
     className,
     disableHover,
     hideTokens,
-    menu = [{ hideable: true, command: 'click', text: 'Select Card' }],
     onClick,
-    onMenuItemClick,
     orientation = 'vertical',
     size,
     source,
@@ -30,7 +31,18 @@ const Card = ({
     forceFaceup = false,
     cardStackIndex = 200
 }) => {
-    const [showMenu, setShowMenu] = useState(false);
+    const [showUnderneath, setShowUnderneath] = useState(false);
+    const cardRef = useRef(null);
+
+    const hasUnderneathPopup = card.childCards?.length > 0 && card.type !== 'agenda';
+    const hasSelectableUnderneath =
+        hasUnderneathPopup && card.childCards.some((child) => child.selectable);
+
+    useEffect(() => {
+        if (hasSelectableUnderneath) {
+            setShowUnderneath(true);
+        }
+    }, [hasSelectableUnderneath]);
 
     const key = `card-${card.uuid}-${source}`;
 
@@ -56,54 +68,21 @@ const Card = ({
 
     const standardisedSize = standardiseCardSize(size);
 
+    const manualMode = useSelector((state) => state.lobby.currentGame?.manualMode);
     const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
         id: useUniqueId(key),
+        disabled: !manualMode,
         data: { type: ItemTypes.CARD, card, orientation, source, key: key }
     });
-
-    const isAllowedMenuSource = useCallback(
-        () => ['play area', 'agenda', 'revealed plots'].includes(source),
-        [source]
-    );
-
-    const handleMenuItemClick = useCallback(
-        (menuItem) => {
-            if (onMenuItemClick) {
-                onMenuItemClick(card, menuItem);
-                setShowMenu(!showMenu);
-            }
-        },
-        [card, onMenuItemClick, showMenu]
-    );
-
-    const getMenu = useCallback(() => {
-        const retMenu = [...menu] || [];
-
-        if (card.menu) {
-            retMenu.push(...card.menu);
-        }
-
-        return retMenu;
-    }, [card.menu, menu]);
-
-    const shouldShowMenu = useCallback(
-        () => getMenu().some((item) => item.command !== 'click') && isAllowedMenuSource(),
-        [getMenu, isAllowedMenuSource]
-    );
 
     const handleClick = useCallback(
         (event) => {
             event.preventDefault();
             event.stopPropagation();
 
-            if (shouldShowMenu()) {
-                setShowMenu(!showMenu);
-                return;
-            }
-
             onClick && onClick(card);
         },
-        [card, onClick, shouldShowMenu, showMenu]
+        [card, onClick]
     );
 
     const getCountersForCard = (card) => {
@@ -169,7 +148,6 @@ const Card = ({
                     wrapped={false}
                     hideTokens
                     onClick={onClick}
-                    onMenuItemClick={onMenuItemClick}
                     size={size}
                 />
             );
@@ -194,7 +172,6 @@ const Card = ({
                     card={dupeCopy}
                     wrapped={false}
                     onClick={onClick}
-                    onMenuItemClick={onMenuItemClick}
                     size={size}
                     facedown={forceFaceup ? false : card.facedown}
                     hideTokens
@@ -232,13 +209,69 @@ const Card = ({
         );
     };
 
+    const getUnderneathBadge = () => {
+        if (!hasUnderneathPopup) {
+            return null;
+        }
+
+        return (
+            <button
+                type='button'
+                title='Cards underneath'
+                className='absolute bottom-1 right-1 z-[230] min-w-6 h-6 px-1 text-white bg-black/80 font-bold text-center rounded-md border-1'
+                onClick={(event) => {
+                    event.stopPropagation();
+                    setShowUnderneath(!showUnderneath);
+                }}
+            >
+                {card.childCards.length}
+            </button>
+        );
+    };
+
+    const getUnderneathPopup = () => {
+        if (!hasUnderneathPopup || !showUnderneath) {
+            return null;
+        }
+
+        // Facedown cards the viewer may see (their own) arrive with a code; show those face up here.
+        const cards = card.childCards.map((child) =>
+            child.code ? { ...child, facedown: false } : child
+        );
+
+        return (
+            <MovablePanel
+                id={card.uuid}
+                anchorRef={cardRef}
+                title={`Underneath ${card.name || 'card'}`}
+                name='underneath'
+                onCloseClick={() => setShowUnderneath(false)}
+                side='bottom'
+            >
+                <div
+                    className='flex flex-col box-content border-1 border-default-200 bg-black/75 rounded-b-md overflow-hidden'
+                    onClick={(event) => event.stopPropagation()}
+                >
+                    <CardTiledList
+                        cards={cards}
+                        numColumns={Math.min(cards.length, 5)}
+                        numRows={1.2}
+                        onCardClick={onClick}
+                        size={size}
+                        source='underneath'
+                    />
+                </div>
+            </MovablePanel>
+        );
+    };
+
     const getCardOrder = () => {
         if (!card.order) {
             return null;
         }
 
         return (
-            <div className='absolute w-6 h-6 -ml-3 -top-7 z-[230] left-1/2 text-white bg-black/80 font-bold text-center rounded-md border-1'>
+            <div className='absolute w-6 h-6 -ml-3 top-1 z-[230] left-1/2 text-white bg-black/80 font-bold text-center rounded-md border-1'>
                 {card.order}
             </div>
         );
@@ -265,10 +298,10 @@ const Card = ({
     // Need to get classes in priority, as tailwind is not consistent in CSS priority
     const getHighlightClass = () => {
         if (card.selected) {
-            return 'shadow-[0_0_2px_4px] shadow-green-400';
+            return 'shadow-[0_0_0_3px] shadow-sky-400';
         }
-        if (card.selectable) {
-            return 'shadow-[0_0_8px_4px] shadow-slate-300';
+        if (card.selectable || card.canPlay) {
+            return 'shadow-[0_0_4px_2px] shadow-green-400';
         }
         if (card.inChallenge) {
             return 'shadow-[0_0_1px_2px] shadow-red-500';
@@ -308,10 +341,29 @@ const Card = ({
             ),
             getHighlightClass(),
             {
-                'grayscale brightness-75': card.unselectable
+                'brightness-[.85] saturate-[.75]':
+                    card.unselectable ||
+                    (card.canPlay === false && !card.selected && !card.selectable)
             }
         );
         const isFaceup = forceFaceup || (!card.facedown && card.code);
+        const availabilityNotes = isFaceup
+            ? [
+                  ...(card.unavailableActions || []).map((action) => ({
+                      ...action,
+                      label: 'Unavailable'
+                  })),
+                  ...(card.unavailableTriggers || []).map((trigger) => ({
+                      ...trigger,
+                      label: 'Did not resolve'
+                  }))
+              ]
+                  .filter((note) => isNotableRequirement(note.reason))
+                  .map((note) => ({
+                      ...note,
+                      reason: getActionRequirementReason(note.reason)
+                  }))
+            : [];
         const imageCode = isFaceup
             ? card.code
             : source === 'shadows'
@@ -348,20 +400,22 @@ const Card = ({
             className
         );
         return (
-            <div className={wrapperClass}>
+            <div className={wrapperClass} ref={cardRef}>
                 {disableHover ? (
                     image
                 ) : (
                     <CardHoverable
                         code={card.code}
-                        isDisabled={isDragging || showMenu}
+                        notes={availabilityNotes}
+                        isDisabled={isDragging}
                         touchDelay={250}
                     >
                         {image}
                     </CardHoverable>
                 )}
-                {showMenu && <CardMenu menu={getMenu()} onMenuItemClick={handleMenuItemClick} />}
                 {getCardOrder()}
+                {getUnderneathBadge()}
+                {getUnderneathPopup()}
             </div>
         );
     };

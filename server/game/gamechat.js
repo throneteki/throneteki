@@ -13,7 +13,11 @@ class GameChat {
         ];
         let formattedMessage = this.formatMessage(format, args);
 
-        this.messages.push({ date: new Date(), message: formattedMessage });
+        this.messages.push({
+            date: new Date(),
+            message: formattedMessage,
+            structuredMessage: Message.structured(format, ...args)
+        });
     }
 
     getFormattedMessage(message) {
@@ -34,7 +38,11 @@ class GameChat {
     addMessage(message, ...args) {
         let formattedMessage = this.getFormattedMessage(message, ...args);
 
-        this.messages.push({ date: new Date(), message: formattedMessage });
+        this.messages.push({
+            date: new Date(),
+            message: formattedMessage,
+            structuredMessage: this.getStructuredMessage(message, args)
+        });
     }
 
     addAlert(type, message, ...args) {
@@ -42,8 +50,25 @@ class GameChat {
 
         this.messages.push({
             date: new Date(),
-            message: { alert: { type: type, message: formattedMessage } }
+            message: { alert: { type: type, message: formattedMessage } },
+            structuredMessage: {
+                alert: { type, message: this.getStructuredMessage(message, args) }
+            }
         });
+    }
+
+    getStructuredMessage(message, args) {
+        let argList = args.map((arg) => {
+            if (arg instanceof Spectator) {
+                return { name: arg.name, argType: 'nonAvatarPlayer', role: arg.role };
+            } else if (arg && arg.name && arg.argType === 'player') {
+                return { name: arg.name, argType: arg.argType, role: arg.role };
+            }
+
+            return arg;
+        });
+
+        return Message.structured(message, ...argList);
     }
 
     formatMessage(format, args) {

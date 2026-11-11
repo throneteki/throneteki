@@ -2,72 +2,67 @@ import GameActions from '../../GameActions/index.js';
 import PlotCard from '../../plotcard.js';
 
 class TheDoomOfValyria extends PlotCard {
+    // The Doom of Valyria (26100)
+    // When Revealed: If there are 3 or more plot cards in your used pile, discard each non-limited
+    // card from play, and each card in shadows. An opponent may discard their hand (of at least 3
+    // cards) to cancel this effect.
     setupCardAbilities() {
         this.whenRevealed({
             condition: (context) => context.player.getNumberOfUsedPlots() >= 3,
             message:
                 '{player} uses {source} to discard all non-limited cards from play, and all cards from shadows',
-            handler: (context) => {
-                const opponents = this.game.getOpponentsInFirstPlayerOrder(context.player);
-                this.remainingOpponents = opponents.filter((opponent) => opponent.hand.length >= 3);
-                this.context = context;
-                if (context.ability.cannotBeCanceled) {
-                    this.resolveDiscardFromPlay();
-                } else {
-                    this.promptForCancel();
-                }
-            }
+            gameAction: askToCancel(0)
         });
     }
-    promptForCancel() {
-        if (this.remainingOpponents.length === 0) {
-            this.resolveDiscardFromPlay();
-            return true;
-        }
+}
 
-        const nextOpponent = this.remainingOpponents.shift();
-        this.game.promptWithMenu(nextOpponent, this, {
-            activePrompt: {
-                menuTitle: 'Discard hand to cancel?',
-                buttons: [
-                    { text: 'Yes', method: 'cancelResolution' },
-                    { text: 'No', method: 'promptForCancel' }
-                ]
-            },
-            source: this
-        });
+const MaxOpponents = 5;
 
-        return true;
+function cancellingOpponents(context) {
+    return context.ability.cannotBeCanceled
+        ? []
+        : context.game
+              .getOpponentsInFirstPlayerOrder(context.player)
+              .filter((opponent) => opponent.hand.length >= 3);
+}
+
+function askToCancel(index) {
+    if (index >= MaxOpponents) {
+        return discardFromPlay();
     }
 
-    cancelResolution(opponent) {
-        this.game.addMessage(
-            '{0} discards their hand to cancel the effects of {1}',
-            opponent,
-            this
-        );
-        this.game.resolveGameAction(
-            GameActions.simultaneously(() =>
-                opponent.hand.map((card) => GameActions.discardCard({ card, source: this }))
-            )
-        );
-        return true;
-    }
-
-    resolveDiscardFromPlay() {
-        this.game.resolveGameAction(
-            GameActions.simultaneously(() =>
-                this.game.allCards
-                    .filter(
-                        (card) =>
-                            (card.location === 'play area' && !card.isLimited()) ||
-                            card.location === 'shadows'
+    return GameActions.ifCondition({
+        condition: (context) => cancellingOpponents(context).length > index,
+        thenAction: GameActions.choose({
+            player: (context) => cancellingOpponents(context)[index],
+            title: 'Discard hand to cancel?',
+            choices: {
+                Yes: {
+                    message:
+                        '{choosingPlayer} discards their hand to cancel the effects of {source}',
+                    gameAction: GameActions.simultaneously((context) =>
+                        cancellingOpponents(context)[index].hand.map((card) =>
+                            GameActions.discardCard({ card, source: context.source })
+                        )
                     )
-                    .map((card) => GameActions.discardCard({ card, source: this }))
-            ),
-            this.context
-        );
-    }
+                },
+                No: askToCancel(index + 1)
+            }
+        }),
+        elseAction: discardFromPlay()
+    });
+}
+
+function discardFromPlay() {
+    return GameActions.simultaneously((context) =>
+        context.game.allCards
+            .filter(
+                (card) =>
+                    (card.location === 'play area' && !card.isLimited()) ||
+                    card.location === 'shadows'
+            )
+            .map((card) => GameActions.discardCard({ card, source: context.source }))
+    );
 }
 
 TheDoomOfValyria.code = '26100';

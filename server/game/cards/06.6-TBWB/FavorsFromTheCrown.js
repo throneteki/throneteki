@@ -1,27 +1,32 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
 class FavorsFromTheCrown extends PlotCard {
+    // Favors From the Crown (06120)
+    // Reaction: After a card with bestow enters play, place 1 gold from the treasury on that card.
+    // (2 gold instead if that card has 3 or more gold on it.)
     setupCardAbilities() {
         this.reaction({
             when: {
                 //Don't see any advantage in bestow-boosting your opponent's cards, so limiting this to own controlled cards
-                onCardEntersPlay: (event) =>
+                onCardEntersPlay: (event, context) =>
                     event.card.getType() !== 'plot' &&
                     event.card.isBestow() &&
-                    event.card.controller === this.controller
+                    event.card.controller === context.source.controller
             },
-            handler: (context) => {
-                let numToAdd = context.event.card.tokens[Tokens.gold] >= 3 ? 2 : 1;
-                context.event.card.modifyToken(Tokens.gold, numToAdd);
-                this.game.addMessage(
-                    '{0} uses {1} to place {2} gold from the treasury on {3}',
-                    this.controller,
-                    this,
-                    numToAdd,
-                    context.event.card
-                );
-            }
+            message: {
+                format: '{player} uses {source} to place {amount} gold from the treasury on {card}',
+                args: {
+                    amount: (context) => (context.event.card.tokens[Tokens.gold] >= 3 ? 2 : 1),
+                    card: (context) => context.event.card
+                }
+            },
+            gameAction: GameActions.placeToken((context) => ({
+                card: context.event.card,
+                token: Tokens.gold,
+                amount: context.event.card.tokens[Tokens.gold] >= 3 ? 2 : 1
+            }))
         });
     }
 }

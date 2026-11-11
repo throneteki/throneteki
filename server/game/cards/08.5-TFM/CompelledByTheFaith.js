@@ -1,18 +1,24 @@
 import PlotCard from '../../plotcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class CompelledByTheFaith extends PlotCard {
+    // Compelled by the Faith (08100)
+    // When Revealed: Move each power from each card in play to its controller's faction card.
     setupCardAbilities() {
         this.whenRevealed({
-            handler: (context) => {
-                for (let card of this.game.filterCardsInPlay((card) => card.power > 0)) {
-                    this.game.movePower(card, card.controller.faction, card.power);
-                }
-                this.game.addMessage(
-                    '{0} uses {1} to move all power from each card in play to their controller faction card',
-                    context.player,
-                    this
-                );
-            }
+            message:
+                "{player} uses {source} to move all power from each card in play to its controller's faction card",
+            gameAction: GameActions.simultaneously((context) =>
+                context.game
+                    .filterCardsInPlay((card) => card.power > 0)
+                    .map((card) =>
+                        GameActions.movePower({
+                            from: card,
+                            to: card.controller.faction,
+                            amount: card.power
+                        })
+                    )
+            )
         });
     }
 }

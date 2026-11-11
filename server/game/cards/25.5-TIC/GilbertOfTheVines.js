@@ -2,8 +2,11 @@ import GameActions from '../../GameActions/index.js';
 import DrawCard from '../../drawcard.js';
 
 class GilbertOfTheVines extends DrawCard {
+    // Gilbert of the Vines (25096)
+    // Challenges Action: Reveal the top X cards of your deck. Choose up to 2 cards revealed this
+    // way and add them to your hand. Shuffle the other cards back into your deck.
     setupCardAbilities() {
-        this.xValue({ min: () => 1, max: () => this.controller.drawDeck.length });
+        this.xValue({ min: () => 1, max: (context) => context.player.drawDeck.length });
         this.action({
             title: 'Reveal top X cards of your deck',
             phase: 'challenge',
@@ -14,35 +17,13 @@ class GilbertOfTheVines extends DrawCard {
             gameAction: GameActions.revealTopCards((context) => ({
                 player: context.player,
                 amount: context.xValue,
-                whileRevealed: GameActions.genericHandler((context) => {
-                    const numRevealed = context.revealed.length;
-                    if (numRevealed > 0) {
-                        const numCards = Math.min(2, numRevealed);
-                        this.game.promptForSelect(context.player, {
-                            activePromptTitle: `Select up to ${numCards} cards`,
-                            numCards,
-                            cardCondition: (card) => context.revealed.includes(card),
-                            onSelect: (player, cards) => {
-                                cards = Array.isArray(cards) ? cards : [cards];
-                                this.game.addMessage('{0} adds {1} to their hand', player, cards);
-                                this.game.resolveGameAction(
-                                    GameActions.simultaneously(() =>
-                                        cards.map((card) => GameActions.addToHand({ card }))
-                                    ),
-                                    context
-                                );
-                                return true;
-                            },
-                            onCancel: (player) => {
-                                this.game.addMessage(
-                                    '{0} does not choose to add any cards to their hand',
-                                    player
-                                );
-                                return true;
-                            },
-                            source: this
-                        });
-                    }
+                whileRevealed: GameActions.chooseCards({
+                    mode: 'upTo',
+                    numCards: 2,
+                    optional: true,
+                    title: 'Select up to 2 cards',
+                    cardCondition: (card, context) => context.revealed.includes(card),
+                    gameAction: (card) => GameActions.addToHand({ card })
                 })
             })).then({
                 message: '{player} {gameAction}',

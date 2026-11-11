@@ -2,6 +2,10 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class WinterfellKennels extends DrawCard {
+    // Winterfell Kennels (26092)
+    // Each Direwolf character you control gets +1 STR.
+    // Challenges Action: Kneel Winterfell Kennels to put a Direwolf card into play from your hand.
+    // At the end of the phase, if that card is still in play, place it on the bottom of your deck.
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',
@@ -24,25 +28,32 @@ class WinterfellKennels extends DrawCard {
                 }
             },
             message: '{player} kneels {source} to put {target} into play',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously([
-                        GameActions.putIntoPlay((context) => ({
-                            card: context.target
-                        })),
-                        GameActions.genericHandler((context) => {
-                            this.atEndOfPhase((ability) => ({
-                                match: context.target,
-                                condition: () =>
-                                    ['play area', 'duplicate'].includes(context.target.location),
-                                targetLocation: 'any',
-                                effect: ability.effects.moveToBottomOfDeckIfStillInPlay(true)
-                            }));
+            gameAction: GameActions.simultaneously(() => [
+                GameActions.putIntoPlay((context) => ({
+                    card: context.target
+                })),
+                GameActions.delayedEffect((context) => {
+                    const card = context.target;
+                    return {
+                        duration: 'untilTriggered',
+                        title: card.name,
+                        when: { onAtEndOfPhase: () => true },
+                        until: { onCardLeftPlay: (event) => event.card === card },
+                        gameAction: GameActions.ifCondition({
+                            condition: () => ['play area', 'duplicate'].includes(card.location),
+                            thenAction: {
+                                message:
+                                    '{player} resolves the delayed effect from {source}: {gameAction}',
+                                gameAction: GameActions.returnCardToDeck({
+                                    card,
+                                    bottom: true,
+                                    allowSave: true
+                                })
+                            }
                         })
-                    ]),
-                    context
-                );
-            }
+                    };
+                })
+            ])
         });
     }
 }

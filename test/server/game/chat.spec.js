@@ -2,18 +2,18 @@ import Game from '../../../server/game/game.js';
 
 describe('Game', function () {
     beforeEach(function () {
-        this.gameService = jasmine.createSpyObj('gameService', ['save']);
+        this.gameService = { save: vi.fn() };
         this.game = new Game({ owner: {} }, { gameService: this.gameService });
 
-        this.player = jasmine.createSpyObj('player', ['isSpectator']);
+        this.player = { isSpectator: vi.fn() };
         this.player.name = 'Player 1';
 
         this.game.playersAndSpectators[this.player.name] = this.player;
 
         this.chatCommands = this.game.chatCommands;
         this.gameChat = this.game.gameChat;
-        spyOn(this.chatCommands, 'executeCommand').and.returnValue(false);
-        spyOn(this.gameChat, 'addChatMessage');
+        vi.spyOn(this.chatCommands, 'executeCommand').mockReturnValue(false);
+        vi.spyOn(this.gameChat, 'addChatMessage').mockImplementation(() => {});
     });
 
     describe('chat()', function () {
@@ -28,7 +28,7 @@ describe('Game', function () {
         describe('when called by a player in the game', function () {
             describe('and the message is a command', function () {
                 beforeEach(function () {
-                    this.chatCommands.executeCommand.and.returnValue(true);
+                    this.chatCommands.executeCommand.mockReturnValue(true);
 
                     this.game.chat(this.player.name, '/this is a command');
                 });
@@ -48,14 +48,14 @@ describe('Game', function () {
 
             describe('and the message is a not a valid command', function () {
                 beforeEach(function () {
-                    this.chatCommands.executeCommand.and.returnValue(false);
+                    this.chatCommands.executeCommand.mockReturnValue(false);
 
                     this.game.chat(this.player.name, 'this is a message');
                 });
 
                 it('should add the chat messages', function () {
                     expect(this.gameChat.addChatMessage).toHaveBeenCalledWith(
-                        jasmine.any(String),
+                        expect.any(String),
                         this.player,
                         'this is a message'
                     );
@@ -65,12 +65,12 @@ describe('Game', function () {
 
         describe('when called by a spectator in the game', function () {
             beforeEach(function () {
-                this.player.isSpectator.and.returnValue(true);
+                this.player.isSpectator.mockReturnValue(true);
             });
 
             describe('and the message is a command', function () {
                 beforeEach(function () {
-                    this.chatCommands.executeCommand.and.returnValue(true);
+                    this.chatCommands.executeCommand.mockReturnValue(true);
 
                     this.game.chat(this.player.name, '/this is a command');
                 });
@@ -81,7 +81,7 @@ describe('Game', function () {
 
                 it('should add it as a chat messages', function () {
                     expect(this.gameChat.addChatMessage).toHaveBeenCalledWith(
-                        jasmine.any(String),
+                        expect.any(String),
                         this.player,
                         '/this is a command'
                     );
@@ -90,14 +90,14 @@ describe('Game', function () {
 
             describe('and the message is a not a valid command', function () {
                 beforeEach(function () {
-                    this.chatCommands.executeCommand.and.returnValue(false);
+                    this.chatCommands.executeCommand.mockReturnValue(false);
 
                     this.game.chat(this.player.name, 'this is a message');
                 });
 
                 it('should add the chat messages', function () {
                     expect(this.gameChat.addChatMessage).toHaveBeenCalledWith(
-                        jasmine.any(String),
+                        expect.any(String),
                         this.player,
                         'this is a message'
                     );

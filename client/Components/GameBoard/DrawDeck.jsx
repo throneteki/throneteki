@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import CardPile from './CardPile';
 import { faEye, faShuffle } from '@fortawesome/free-solid-svg-icons';
 
@@ -10,7 +11,6 @@ const DrawDeck = ({
     cardCount,
     revealTopCard,
     onCardClick,
-    onMenuItemClick,
     popupLocation,
     popupId,
     size,
@@ -39,9 +39,10 @@ const DrawDeck = ({
         [onPopupChange]
     );
 
+    const manualMode = useSelector((state) => state.lobby.currentGame?.manualMode);
     const drawDeckPopupMenu = [];
 
-    if (isMe) {
+    if (isMe && manualMode) {
         if (!showDeck) {
             drawDeckPopupMenu.push({
                 text: 'View Hidden',
@@ -69,7 +70,6 @@ const DrawDeck = ({
             numColumns={7}
             numRows={3.2}
             onCardClick={onCardClick}
-            onMenuItemClick={onMenuItemClick}
             onPopupChange={handlePopupChange}
             popupLocation={popupLocation}
             popupId={popupId}

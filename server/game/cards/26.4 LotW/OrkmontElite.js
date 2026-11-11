@@ -2,34 +2,36 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class OrkmontElite extends DrawCard {
+    // Orkmont Elite (26063)
+    // Assault. Pillage.
+    // While Orkmont Elite has an attachment, it gains renown.
+    // Reaction: After Orkmont Elite discards a card using pillage, put an attachment from the
+    // losing opponent's discard pile into play under your control, attached to a character you
+    // control.
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.attachments.length >= 1,
+            condition: (context) => context.source.attachments.length >= 1,
             match: this,
             effect: ability.effects.addKeyword('Renown')
         });
         this.reaction({
             when: {
-                onCardDiscarded: (event) => event.isPillage && event.source === this
+                onCardDiscarded: (event, context) =>
+                    event.isPillage && event.source === context.source
             },
             target: {
                 activePromptTitle: 'Select an attachment',
-                cardCondition: (card, context) => this.cardCondition(card, context)
+                cardCondition: (card, context) => context.source.cardCondition(card, context)
             },
             message: {
                 format: "{player} uses {source} to put {target} into play from {opponent}'s discard pile",
-                args: { opponent: () => this.game.currentChallenge.loser }
+                args: { opponent: (context) => context.game.currentChallenge.loser }
             },
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoPlay((context) => ({
-                        player: context.player,
-                        card: context.target,
-                        attachmentTargets: (card) => card.controller === context.player
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.putIntoPlay((context) => ({
+                player: context.player,
+                card: context.target,
+                attachmentTargets: (card) => card.controller === context.player
+            }))
         });
     }
 

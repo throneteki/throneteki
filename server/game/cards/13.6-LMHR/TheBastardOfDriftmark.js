@@ -2,12 +2,15 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class TheBastardOfDriftmark extends DrawCard {
+    // The Bastard of Driftmark (13109)
+    // Reaction: After you win an [intrigue] challenge in which The Bastard of Driftmark is
+    // participating, choose and stand a location.
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    this.isParticipating() &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
+                    context.source.isParticipating() &&
                     event.challenge.challengeType === 'intrigue'
             },
             target: {
@@ -17,12 +20,7 @@ class TheBastardOfDriftmark extends DrawCard {
                 gameAction: 'stand'
             },
             message: '{player} uses {source} to stand {target}',
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.standCard((context) => ({ card: context.target })),
-                    context
-                );
-            }
+            gameAction: GameActions.standCard((context) => ({ card: context.target }))
         });
     }
 }

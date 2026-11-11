@@ -1,6 +1,12 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class TheWall extends DrawCard {
+    // The Wall (11026)
+    // Each character you control gains the [thenightswatch] affiliation and loses all other faction
+    // affiliations.
+    // Action: Kneel The Wall to choose an opponent. Put an eligible character of that player’s
+    // choice from his or her discard pile into play under your control.
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: (card) => card.getType() === 'character',
@@ -19,40 +25,20 @@ class TheWall extends DrawCard {
         this.action({
             title: 'Take control of character',
             cost: ability.costs.kneelSelf(),
-            chooseOpponent: (opponent) =>
-                opponent.discardPile.some(
-                    (card) => card.getType() === 'character' && this.controller.canPutIntoPlay(card)
-                ),
-            handler: (context) => {
-                this.game.addMessage(
-                    '{0} kneels {1} to have {2} select a character from their discard pile to put into play',
-                    context.player,
-                    this,
-                    context.opponent
-                );
-                this.game.promptForSelect(context.opponent, {
-                    source: this,
-                    cardCondition: (card) =>
-                        card.location === 'discard pile' &&
-                        card.controller === context.opponent &&
-                        card.getType() === 'character' &&
-                        context.player.canPutIntoPlay(card),
-                    onSelect: (player, cards) => this.onCardSelected(player, cards),
-                    onCancel: (player) => this.cancelSelection(player)
-                });
-            }
+            chooseOpponent: true,
+            message:
+                '{player} kneels {source} to have {opponent} choose a character in their discard pile for {player} to put into play',
+            gameAction: GameActions.chooseCards({
+                player: (context) => context.opponent,
+                title: 'Select a character',
+                cardCondition: (card, context) =>
+                    card.location === 'discard pile' &&
+                    card.getType() === 'character' &&
+                    card.controller === context.choosingPlayer,
+                gameAction: (card, context) =>
+                    GameActions.putIntoPlay({ player: context.player, card })
+            })
         });
-    }
-
-    onCardSelected(player, card) {
-        this.controller.putIntoPlay(card);
-        this.game.addMessage('{0} chooses {1} for {2}', player, card, this);
-        return true;
-    }
-
-    cancelSelection(player) {
-        this.game.addAlert('danger', '{0} does not select a character for {1}', player, this);
-        return true;
     }
 }
 

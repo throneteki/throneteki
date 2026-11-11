@@ -1,6 +1,14 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class LordSteward extends DrawCard {
+    // Lord Steward (20023)
+    // Unique character only.
+    // Attached character gains an [intrigue] icon and the Steward trait.
+    // Reaction: After you win an [intrigue] challenge in which you control a participating Steward
+    // character, choose a character with printed cost X or lower controlled by the losing opponent.
+    // Take control of it until the end of the phase. X is the number of Steward characters you
+    // control. (Limit once per phase.)
     setupCardAbilities(ability) {
         this.attachmentRestriction({ unique: true });
         this.whileAttached({
@@ -9,26 +17,25 @@ class LordSteward extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.source.controller &&
                     event.challenge.challengeType === 'intrigue' &&
-                    this.isStewardParticipatingInChallenge()
+                    context.source.isStewardParticipatingInChallenge()
             },
             target: {
-                cardCondition: (card) =>
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.controller === this.game.currentChallenge.loser &&
-                    card.getPrintedCost() <= this.getNumberOfStewards()
+                    card.controller === context.game.currentChallenge.loser &&
+                    card.getPrintedCost() <= context.source.getNumberOfStewards()
             },
             limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to take control of {target}',
-            handler: (context) => {
-                this.untilEndOfPhase((ability) => ({
-                    match: context.target,
-                    effect: ability.effects.takeControl(context.player)
-                }));
-            }
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.takeControl(context.player)
+            }))
         });
     }
 

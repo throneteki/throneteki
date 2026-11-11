@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class WhenIWoke extends DrawCard {
+    // When I Woke... (12044)
+    // Reaction: After a player loses a [military] challenge, that player chooses a participating
+    // character and places it on top of its owner's deck. (Max 1 per challenge.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {
@@ -15,14 +18,9 @@ class WhenIWoke extends DrawCard {
             },
             message: "{player} plays {source} to place {target} on top of its owner's deck",
             max: ability.limit.perChallenge(1),
-            handler: (context) => {
-                this.game.resolveGameAction(
-                    GameActions.returnCardToDeck((context) => ({
-                        card: context.target
-                    })),
-                    context
-                );
-            }
+            gameAction: GameActions.returnCardToDeck((context) => ({
+                card: context.target
+            }))
         });
     }
 }

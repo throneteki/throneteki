@@ -2,6 +2,9 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class MeggaTyrell extends DrawCard {
+    // Megga Tyrell (26075)
+    // Reaction: After 1 or more characters are removed from a challenge, gain 1 power for your
+    // faction. (Limit twice per round.)
     setupCardAbilities(ability) {
         this.reaction({
             when: {

@@ -1,53 +1,48 @@
 import DrawCard from '../../drawcard.js';
 import TextHelper from '../../TextHelper.js';
+import GameActions from '../../GameActions/index.js';
 
 class WeGuardtheWay extends DrawCard {
-    setupCardAbilities() {
+    // We Guard the Way (20020)
+    // Action: Choose X characters with the Guard or House Yronwood trait. Until the end of the
+    // phase, each chosen character gains renown and does not kneel when declared as a defender.
+    setupCardAbilities(ability) {
         this.xValue({
             min: () => 1,
-            max: () =>
-                this.game.getNumberOfCardsInPlay(
-                    (card) =>
-                        card.getType() === 'character' &&
-                        (card.hasTrait('Guard') || card.hasTrait('House Yronwood'))
+            max: (context) =>
+                context.game.getNumberOfCardsInPlay(
+                    (card) => card.getType() === 'character' && isGuard(card)
                 )
         });
-
         this.action({
-            handler: (context) => {
-                let xValue = context.xValue;
-                this.game.promptForSelect(context.player, {
-                    mode: 'exactly',
-                    numCards: xValue,
-                    activePromptTitle: `Select ${TextHelper.count(xValue, 'character')}`,
-                    source: this,
-                    cardCondition: (card) =>
-                        card.location === 'play area' &&
-                        card.getType() === 'character' &&
-                        (card.hasTrait('Guard') || card.hasTrait('House Yronwood')),
-                    onSelect: (player, cards) => this.targetsSelected(player, cards, xValue)
-                });
-            }
+            message: {
+                format: '{player} plays {source} and pays {xValue} gold to have characters gain renown and not kneel when declared as a defender this phase',
+                args: { xValue: (context) => context.xValue }
+            },
+            gameAction: GameActions.chooseCards({
+                mode: 'exactly',
+                numCards: (context) => context.xValue,
+                title: (context) => `Select ${TextHelper.count(context.xValue, 'character')}`,
+                cardCondition: (card) =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    isGuard(card),
+                gameAction: (card) =>
+                    GameActions.lastingEffect(() => ({
+                        duration: 'untilEndOfPhase',
+                        match: card,
+                        effect: [
+                            ability.effects.addKeyword('renown'),
+                            ability.effects.doesNotKneelAsDefender()
+                        ]
+                    }))
+            })
         });
     }
+}
 
-    targetsSelected(player, cards, xValue) {
-        this.untilEndOfPhase((ability) => ({
-            match: cards,
-            targetController: 'any',
-            effect: [ability.effects.addKeyword('renown'), ability.effects.doesNotKneelAsDefender()]
-        }));
-
-        this.game.addMessage(
-            '{0} plays {1} and pays {2} gold to have {3} gain renown and not kneel when declared as a defender this phase',
-            player,
-            this,
-            xValue,
-            cards
-        );
-
-        return true;
-    }
+function isGuard(card) {
+    return card.hasTrait('Guard') || card.hasTrait('House Yronwood');
 }
 
 WeGuardtheWay.code = '20020';

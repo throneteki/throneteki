@@ -1,51 +1,55 @@
 import DrawCard from '../../drawcard.js';
+import GameActions from '../../GameActions/index.js';
 
 class WithoutHisBeard extends DrawCard {
+    // Without His Beard (04070)
+    // Reaction: After you win an [intrigue] challenge, discard up to 3 cards at random from the
+    // losing opponent's hand. Then, that player draws 2 cards.
     setupCardAbilities() {
+        const discardThenDraw = (amount) =>
+            GameActions.discardAtRandom((context) => ({
+                player: context.event.challenge.loser,
+                amount
+            })).then({
+                gameAction: GameActions.drawCards((context) => ({
+                    player: context.parentContext.event.challenge.loser,
+                    amount: 2
+                }))
+            });
+
         this.reaction({
             when: {
-                afterChallenge: (event) =>
-                    event.challenge.winner === this.controller &&
-                    event.challenge.challengeType === 'intrigue' &&
-                    this.opponentHasCardsInHand(event.challenge.loser)
+                afterChallenge: (event, context) =>
+                    event.challenge.winner === context.player &&
+                    event.challenge.challengeType === 'intrigue'
             },
-            handler: (context) => {
-                this.losingOpponent = context.event.challenge.loser;
-                let nums = ['1', '2', '3'];
-
-                let buttons = nums.map((num) => {
-                    return { text: num, method: 'numSelected', arg: num };
-                });
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Select # of cards to discard',
-                        buttons: buttons
+            gameAction: GameActions.choose({
+                title: 'Select # of cards to discard',
+                choices: {
+                    1: {
+                        message: {
+                            format: '{player} plays {source} to have {loser} discard 1 card at random, then draw 2 cards',
+                            args: { loser: (context) => context.event.challenge.loser }
+                        },
+                        gameAction: discardThenDraw(1)
                     },
-                    source: this
-                });
-            }
+                    2: {
+                        message: {
+                            format: '{player} plays {source} to have {loser} discard 2 cards at random, then draw 2 cards',
+                            args: { loser: (context) => context.event.challenge.loser }
+                        },
+                        gameAction: discardThenDraw(2)
+                    },
+                    3: {
+                        message: {
+                            format: '{player} plays {source} to have {loser} discard 3 cards at random, then draw 2 cards',
+                            args: { loser: (context) => context.event.challenge.loser }
+                        },
+                        gameAction: discardThenDraw(3)
+                    }
+                }
+            })
         });
-    }
-
-    numSelected(player, num) {
-        let opponent = this.losingOpponent;
-        opponent.discardAtRandom(num);
-        let cards = opponent.drawCardsToHand(2).length;
-        this.game.addMessage(
-            '{0} plays {1} to have {2} discard {3} cards at random, then draw {4} cards',
-            player,
-            this,
-            opponent,
-            num,
-            cards
-        );
-
-        return true;
-    }
-
-    opponentHasCardsInHand(opponent) {
-        return opponent.hand.length >= 1;
     }
 }
 

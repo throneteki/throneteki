@@ -1,6 +1,7 @@
 import GameAction from './GameAction.js';
 import MoveCardEventGenerator from './MoveCardEventGenerator.js';
 import Message from '../Message.js';
+import AttachmentPrompt from '../gamesteps/attachmentprompt.js';
 
 class PutIntoPlay extends GameAction {
     constructor() {
@@ -27,34 +28,63 @@ class PutIntoPlay extends GameAction {
         });
     }
 
-    canChangeGameState({ player, card, attachmentTargets }) {
+    canChangeGameState({
+        player,
+        card,
+        attachmentTargets,
+        playingType = 'play',
+        isEffectExpiration
+    }) {
         player = player || card.controller;
-        attachmentTargets = attachmentTargets || (() => true);
+        const targets = attachmentTargets || (() => true);
         return (
-            card.location !== 'play area' &&
-            player.canPutIntoPlay(card) &&
-            (card.getType() !== 'attachment' ||
-                player.game.anyCardsInPlay(
-                    (c) => player.canAttach(card, c) && attachmentTargets(c)
-                ))
+            (card.location !== 'play area' || (card.facedown && !!card.parent)) &&
+            player.canPutIntoPlay(card, playingType, { attachmentTargets, isEffectExpiration }) &&
+            (playingType === 'setup' ||
+                !!player.getDuplicateInPlay(card) ||
+                card.getType() !== 'attachment' ||
+                player.game.anyCardsInPlay((c) => player.canAttach(card, c) && targets(c)))
         );
     }
 
-    createEvent({ player, card, kneeled, playingType, attachmentTargets, dupeIsValid = false }) {
+    createEvent({
+        player,
+        card,
+        kneeled,
+        playingType = 'play',
+        attachmentTargets,
+        dupeIsValid = false,
+        xValue
+    }) {
         player = player || card.controller;
 
         let dupeCard = player.getDuplicateInPlay(card);
 
         if (card.getPrintedType() === 'attachment' && playingType !== 'setup' && !dupeCard) {
             return this.event('__PLACEHOLDER_EVENT__', { player, card }, (event) => {
-                event.player.putIntoPlay(event.card, 'play', { kneeled, attachmentTargets });
+                event.player.game.queueStep(
+                    new AttachmentPrompt(
+                        event.player.game,
+                        event.player,
+                        event.card,
+                        playingType,
+                        attachmentTargets,
+                        { kneeled, xValue },
+                        event
+                    )
+                );
             });
         }
 
         const additionalEvents = [];
         if (card.location === 'shadows') {
             additionalEvents.push(
-                this.event('onCardOutOfShadows', { player, card, type: dupeCard ? 'dupe' : 'card' })
+                this.event('onCardOutOfShadows', {
+                    player,
+                    card,
+                    type: dupeCard ? 'dupe' : 'card',
+                    xValue
+                })
             );
         }
 

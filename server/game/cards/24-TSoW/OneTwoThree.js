@@ -2,12 +2,18 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 
 class OneTwoThree extends DrawCard {
-    setupCardAbilities() {
+    // One, Two, Three (24009)
+    // Reaction: After you win an [intrigue] challenge, choose a participating character you control
+    // and (choose one):
+    // - return it to its owner's hand.
+    // - place it in shadows.
+    // - have it gain insight until the end of the phase.
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event) =>
+                afterChallenge: (event, context) =>
                     event.challenge.isMatch({
-                        winner: this.controller,
+                        winner: context.source.controller,
                         challengeType: 'intrigue'
                     })
             },
@@ -33,12 +39,11 @@ class OneTwoThree extends DrawCard {
                 'Gain insight': {
                     message:
                         '{player} plays {source} to have {target} gain insight until the end of the phase',
-                    gameAction: GameActions.genericHandler((context) => {
-                        this.untilEndOfPhase((ability) => ({
-                            match: context.target,
-                            effect: ability.effects.addKeyword('insight')
-                        }));
-                    })
+                    gameAction: GameActions.lastingEffect((context) => ({
+                        duration: 'untilEndOfPhase',
+                        match: context.target,
+                        effect: ability.effects.addKeyword('insight')
+                    }))
                 }
             }
         });

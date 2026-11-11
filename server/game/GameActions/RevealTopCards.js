@@ -8,7 +8,11 @@ class RevealTopCards extends GameAction {
     message({ amount = 1, player, context }) {
         player = player || context.player;
         const cards = player.drawDeck.slice(0, amount);
-        return RevealCards.message({ player, cards, context: { ...context, revealed: cards } });
+        return RevealCards.message({
+            player,
+            cards,
+            context: Object.assign(Object.create(context), { revealed: cards })
+        });
     }
 
     canChangeGameState({ amount = 1, player, context }) {
