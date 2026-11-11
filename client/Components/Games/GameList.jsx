@@ -15,6 +15,7 @@ const GameList = ({ gameFilter, games, onJoinOrWatch = () => true }) => {
     const dispatch = useDispatch();
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const user = useSelector((state) => state.auth.user);
+    const isAdmin = !!user?.permissions?.canManageGames;
 
     const joinGame = useCallback(
         (game) => {
@@ -35,9 +36,9 @@ const GameList = ({ gameFilter, games, onJoinOrWatch = () => true }) => {
 
     const canWatch = useCallback(
         (game) => {
-            return !currentGame && game.allowSpectators;
+            return !currentGame && (game.allowSpectators || isAdmin);
         },
-        [currentGame]
+        [currentGame, isAdmin]
     );
 
     const watchGame = useCallback(
@@ -47,14 +48,14 @@ const GameList = ({ gameFilter, games, onJoinOrWatch = () => true }) => {
                 return;
             }
 
-            if (game.needsPassword) {
+            if (game.needsPassword && !isAdmin) {
                 dispatch(joinPasswordGame(game, 'Watch'));
             } else {
                 dispatch(sendWatchGameMessage(game.id));
             }
             onJoinOrWatch();
         },
-        [user, dispatch, onJoinOrWatch]
+        [user, isAdmin, dispatch, onJoinOrWatch]
     );
 
     const removeGame = useCallback(
@@ -77,8 +78,6 @@ const GameList = ({ gameFilter, games, onJoinOrWatch = () => true }) => {
 
     const gameList = useMemo(() => {
         let gamesToReturn = [];
-
-        let isAdmin = user && user.permissions.canManageGames;
 
         // Orders games by whether they've started, followed by the time it was created (earliest first)
         const compareGames = (a, b) => {
@@ -123,7 +122,7 @@ const GameList = ({ gameFilter, games, onJoinOrWatch = () => true }) => {
         }
 
         return <div>{gamesToReturn}</div>;
-    }, [user, games, gameFilter, canJoin, canWatch, joinGame, removeGame, watchGame]);
+    }, [isAdmin, games, gameFilter, canJoin, canWatch, joinGame, removeGame, watchGame]);
 
     if (gameList.length === 0) {
         return (

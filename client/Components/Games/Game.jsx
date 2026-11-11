@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import moment from 'moment';
 
 import GamePlayerSlot from './GamePlayerSlot';
-import { Button } from '@heroui/react';
+import { Button, Chip } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock } from '@fortawesome/free-solid-svg-icons';
 
@@ -107,6 +107,11 @@ const Game = ({
                         <b>{game.name}</b>
                     </span>
                     <span>{`[${formattedTime}]`}</span>
+                    {isAdmin && game.node && (
+                        <Chip size='sm' variant='flat' className='bg-black/40 text-white'>
+                            {game.node}
+                        </Chip>
+                    )}
                     <span className='flex gap-1.5 items-center'>
                         {game.showHand && (
                             <img

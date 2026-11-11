@@ -301,7 +301,7 @@ const Card = ({
             return 'shadow-[0_0_0_3px] shadow-sky-400';
         }
         if (card.selectable || card.canPlay) {
-            return 'shadow-[0_0_4px_2px] shadow-green-400';
+            return 'shadow-[0_0_3px_3px] shadow-green-400';
         }
         if (card.inChallenge) {
             return 'shadow-[0_0_1px_2px] shadow-red-500';
@@ -341,7 +341,7 @@ const Card = ({
             ),
             getHighlightClass(),
             {
-                'brightness-[.85] saturate-[.75]':
+                'brightness-[.75] saturate-[.5]':
                     card.unselectable ||
                     (card.canPlay === false && !card.selected && !card.selectable)
             }

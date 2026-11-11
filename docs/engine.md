@@ -228,7 +228,7 @@ cancel such as The Hand's Judgment.
   from a hidden zone" from public information: every card their deck could legally contain, checked
   with phantom card instances against the player's gold and visible board.
 - In a triggered window, a player who could respond from a hidden zone but has nothing is shown the
-  same window with nothing to choose, and it passes for them after a random 1 to 3 seconds
+  same window with nothing to choose, and it passes for them after a random 3 to 5 seconds
   ([TriggeredAbilityWindow.js](../server/game/gamesteps/TriggeredAbilityWindow.js)). They see the
   window's question with a progress bar and Wait and "Don't ask again this phase" buttons; their
   opponent sees an ordinary wait. Wait pauses the bar and leaves the window open until they pass.
@@ -300,7 +300,7 @@ Rules readings and design choices that stand until changed:
   don't. A choice is still declinable when the text says "may": keyword targets (stealth,
   intimidate, assault) are `declinable`, and a `GameActions.choose` with a `cancelMessage` keeps its
   skip button.
-- Fake waits cover every prompted window (cancels, interrupts, reactions) and last a random 1 to 3
+- Fake waits cover every prompted window (cancels, interrupts, reactions) and last a random 3 to 5
   seconds.
 - Action windows are opened from the players' profile settings only. There is no option to offer
   every window to every player.

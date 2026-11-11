@@ -93,8 +93,8 @@ describe('cancel windows for a player without the timer', function () {
 
             it('passes for them after a short random delay', function () {
                 expect(this.scheduled).toHaveLength(1);
-                expect(this.scheduled[0].delay).toBeGreaterThanOrEqual(1000);
-                expect(this.scheduled[0].delay).toBeLessThan(3000);
+                expect(this.scheduled[0].delay).toBeGreaterThanOrEqual(3000);
+                expect(this.scheduled[0].delay).toBeLessThan(5000);
 
                 this.scheduled[0].callback();
 

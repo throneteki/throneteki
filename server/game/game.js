@@ -56,8 +56,8 @@ import { EventValidator } from './EventValidator.js';
 import PossibleResponders from './PossibleResponders.js';
 import { randomUUID } from 'crypto';
 
-const MinResponseDelay = 1000;
-const MaxResponseDelay = 3000;
+const MinResponseDelay = 3000;
+const MaxResponseDelay = 5000;
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
