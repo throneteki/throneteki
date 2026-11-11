@@ -1,9 +1,9 @@
-import uuid from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import Event from './event.js';
 
 class AggregateTrigger {
     constructor(ability, eventName, listener) {
-        this.uuid = uuid.v1();
+        this.uuid = uuidv1();
         this.ability = ability;
         this.eventName = eventName;
         this.aggregateBy = listener.aggregateBy;
