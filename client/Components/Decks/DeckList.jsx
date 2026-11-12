@@ -41,6 +41,7 @@ const DeckList = ({
     const dispatch = useDispatch();
 
     const [selectedIds, setSelectedIds] = useState([]);
+    const [isLockedDeckSelected, setIsLockedDeckSelected] = useState(false);
     const [selectedRows, setSelectedRows] = useState(new Set([]));
     const [showConfirm, setShowConfirm] = useState(false);
     const [addDeck, { isLoading: isAddLoading }] = useAddDeckMutation();
@@ -235,7 +236,7 @@ const DeckList = ({
                   color: 'danger',
                   icon: <FontAwesomeIcon icon={faTrashAlt} />,
                   label: 'Delete',
-                  disabled: selectedIds.length === 0,
+                  disabled: selectedIds.length === 0 || isLockedDeckSelected,
                   isLoading: isDeleteLoading,
                   onPress: () => setShowConfirm(true)
               }
@@ -268,7 +269,10 @@ const DeckList = ({
                 disableSelection={readOnly}
                 columns={columns}
                 onRowClick={(row) => onDeckSelected && onDeckSelected(row.original)}
-                onRowSelectionChange={(ids) => setSelectedIds(ids.map((r) => r.original._id))}
+                onRowSelectionChange={(rows) => {
+                    setSelectedIds(rows.map((r) => r.original._id));
+                    setIsLockedDeckSelected(rows.some((r) => r.original.locked));
+                }}
                 selectedRows={selectedRows}
                 classNames={{
                     td: 'max-sm:px-2',
@@ -287,10 +291,11 @@ const DeckList = ({
 
                         setSelectedRows(new Set([]));
                         setSelectedIds([]);
+                        setIsLockedDeckSelected(false);
 
                         toast.success('Deck(s) deleted successfully');
                     } catch (err) {
-                        toast.error('An error occurred deleting decks');
+                        toast.error(err.data?.message || 'An error occurred deleting decks');
                     }
                 }}
             />
