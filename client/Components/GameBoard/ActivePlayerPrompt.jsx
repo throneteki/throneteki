@@ -5,11 +5,19 @@ import CardNameLookup from './CardNameLookup';
 import TraitNameLookup from './TraitNameLookup';
 import SelectFromValuesLookup from './SelectFromValuesLookup';
 import { useGetCardsQuery } from '../../redux/middleware/api';
-import { Button } from '@heroui/react';
+import { Button, Kbd } from '@heroui/react';
+import { useSelector } from 'react-redux';
 import ThronesIcon from './ThronesIcon';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import CardHoverable from '../Images/CardHoverable';
 import ResponseDelay from './ResponseDelay';
+import {
+    getButtonShortcutLabel,
+    getPromptButtonIndex,
+    isPromptShortcutKey,
+    isShortcutEvent,
+    keyboardShortcutsEnabled
+} from './keyboardShortcuts';
 
 const ActivePlayerPrompt = ({
     className,
@@ -22,6 +30,9 @@ const ActivePlayerPrompt = ({
 }) => {
     const { data: cards, isLoading } = useGetCardsQuery();
     const [pausedPromptId, setPausedPromptId] = useState();
+    const shortcutsEnabled = useSelector((state) =>
+        keyboardShortcutsEnabled(state.auth.user?.settings)
+    );
 
     // Ignore a press that lands just after the buttons change, such as one meant for a window
     // that closed under the cursor.
@@ -38,6 +49,12 @@ const ActivePlayerPrompt = ({
         (event, button) => {
             if (isFreshPress()) {
                 return;
+            }
+
+            // A clicked button keeps focus, and Space or Enter would then press whichever
+            // button takes its place in the next prompt.
+            if (event && event.pointerType !== 'keyboard') {
+                event.target?.blur?.();
             }
 
             let googleFormMatcher =
@@ -62,6 +79,41 @@ const ActivePlayerPrompt = ({
         [onButtonClick]
     );
 
+    const latestButtons = useRef(buttons);
+    const latestHandleButtonClick = useRef(handleButtonClick);
+    useEffect(() => {
+        latestButtons.current = buttons;
+        latestHandleButtonClick.current = handleButtonClick;
+    });
+
+    useEffect(() => {
+        if (!shortcutsEnabled) {
+            return;
+        }
+
+        const onKeyDown = (event) => {
+            const currentButtons = latestButtons.current;
+            if (
+                !currentButtons ||
+                currentButtons.length === 0 ||
+                !isPromptShortcutKey(event) ||
+                !isShortcutEvent(event)
+            ) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const button = currentButtons[getPromptButtonIndex(event, currentButtons)];
+            if (button && !button.disabled) {
+                latestHandleButtonClick.current(null, button);
+            }
+        };
+
+        window.addEventListener('keydown', onKeyDown);
+        return () => window.removeEventListener('keydown', onKeyDown);
+    }, [shortcutsEnabled]);
+
     const handleLookupValueSelected = useCallback(
         (command, method, promptId, cardName) => {
             if (onButtonClick) {
@@ -82,6 +134,8 @@ const ActivePlayerPrompt = ({
         }
 
         return buttons.map((button, index) => {
+            const shortcutLabel =
+                shortcutsEnabled && !button.disabled && getButtonShortcutLabel(buttons, index);
             const buttonRet = (
                 <Button
                     type='button'
@@ -96,6 +150,11 @@ const ActivePlayerPrompt = ({
                         <ThronesIcon icon={button.icon} withBackground noSize={false} />
                     )}
                     <span>{button.text}</span>
+                    {shortcutLabel && (
+                        <Kbd className='hidden md:inline-flex absolute left-1 top-1/2 -translate-y-1/2 text-tiny bg-transparent shadow-none opacity-60'>
+                            {shortcutLabel}
+                        </Kbd>
+                    )}
                 </Button>
             );
 
@@ -109,7 +168,7 @@ const ActivePlayerPrompt = ({
                 </div>
             );
         });
-    }, [buttons, handleButtonClick]);
+    }, [buttons, handleButtonClick, shortcutsEnabled]);
 
     const getControls = useCallback(() => {
         if (!controls) {

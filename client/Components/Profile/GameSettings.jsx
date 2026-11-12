@@ -36,6 +36,12 @@ const GameSettings = ({ formProps }) => {
                 >
                     Hide whether I have reactions
                 </Switch>
+                <Switch
+                    {...formProps.getFieldProps('keyboardShortcuts')}
+                    isSelected={formProps.values.keyboardShortcuts}
+                >
+                    Keyboard shortcuts in games
+                </Switch>
             </div>
         </Panel>
     );

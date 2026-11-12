@@ -3,6 +3,7 @@ import React from 'react';
 import Panel from '../Components/Site/Panel';
 import { Button, Link } from '@heroui/react';
 import Page from './Page';
+import { KeyboardShortcutsTable } from '../Components/GameBoard/KeyboardShortcutsModal';
 
 const HowToPlay = () => {
     return (
@@ -73,6 +74,9 @@ const HowToPlay = () => {
                                 <Link href='#timed'>Timed Interrupt Window</Link>
                             </li>
                         </ul>
+                        <li>
+                            <Link href='#shortcuts'>Keyboard Shortcuts</Link>
+                        </li>
                         <li>
                             <Link href='#framework-timing-sheet'>Framework Timing Sheet</Link>
                         </li>
@@ -263,6 +267,20 @@ const HowToPlay = () => {
                             you actually have them.
                         </p>
                     </div>
+                </div>
+                <div className='my-3'>
+                    <h3
+                        className='mb-3 text-large font-bold border-b-1 border-b-gray-300'
+                        id='shortcuts'
+                    >
+                        Keyboard Shortcuts
+                    </h3>
+                    <p className='mb-2'>
+                        In a game on a larger screen, the buttons on your prompt show the key that
+                        presses them. Shortcuts are ignored while you are typing in the chat or a
+                        card name box, and can be turned off under Game Settings in your profile.
+                    </p>
+                    <KeyboardShortcutsTable />
                 </div>
                 <div className='my-3'>
                     <h3
