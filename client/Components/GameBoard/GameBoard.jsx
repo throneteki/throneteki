@@ -41,6 +41,8 @@ import { MotionConfig } from 'framer-motion';
 import { useMotionEnabled } from '../../motion';
 import { holdFlip, playPendingFlip } from '../../flip';
 import { dragStore, useDragGhost, useDragVersion } from './dragStore';
+import { playShuffles } from '../../shuffle';
+import { elevation } from '../../tableFeel';
 import { useLinger } from './useLinger';
 import DropZoneTracker from './DropZoneTracker';
 import { canDrop, needsChoice } from './dropTargets';
@@ -76,10 +78,18 @@ const defaultPlayerInfo = (source) => {
 const isRotated = (card, orientation) =>
     (card.type !== 'plot' && orientation === 'horizontal') || !!card.kneeled;
 
-// The area under the pointer decides where the card is, falling back to the area the card overlaps
+const areaOf = (collision) => {
+    const rect = collision.data?.droppableContainer?.rect.current;
+    return rect ? rect.width * rect.height : Infinity;
+};
+
+// The area under the pointer decides where the card is, falling back to the area the card overlaps. Where
+// areas overlap (the top of a deep pile standing up into the board), the smallest one is the one meant.
 const detectCollisions = (args) => {
     const underPointer = pointerWithin(args);
-    return underPointer.length > 0 ? underPointer : rectIntersection(args);
+    return underPointer.length > 0
+        ? underPointer.sort((a, b) => areaOf(a) - areaOf(b))
+        : rectIntersection(args);
 };
 
 // The hidden drop zones that appear when a drag starts shift the board; keep the carried card with the pointer instead of scrolling to compensate
@@ -320,6 +330,9 @@ const GameBoard = () => {
         playPendingFlip();
     }, [dragVersion]);
     useLayoutEffect(() => {
+        playShuffles(currentGame?.players);
+    }, [currentGame?.players]);
+    useLayoutEffect(() => {
         document.documentElement.dataset.motion = motionEnabled ? 'on' : 'off';
         return () => delete document.documentElement.dataset.motion;
     }, [motionEnabled]);
@@ -436,7 +449,11 @@ const GameBoard = () => {
                 createPortal(
                     <div
                         className='fixed z-[400] pointer-events-none'
-                        style={{ left: dragGhost.rect.left, top: dragGhost.rect.top }}
+                        style={{
+                            left: dragGhost.rect.left,
+                            top: dragGhost.rect.top,
+                            scale: String(elevation.carried)
+                        }}
                     >
                         <CardImage code={dragGhost.code} orientation={dragGhost.orientation} />
                     </div>,

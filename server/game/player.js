@@ -84,6 +84,7 @@ class Player extends Spectator {
         this.bonusesFromRivals = new Set();
         this.showDeck = false;
         this.shuffleArray = shuffle;
+        this.deckShuffles = 0;
         this.role = user.role;
         this.flags = new ReferenceCountedSetProperty();
         if (game.useChessClocks) {
@@ -335,6 +336,7 @@ class Player extends Spectator {
 
     shuffleDrawDeck() {
         this.drawDeck = this.shuffleArray(this.drawDeck);
+        this.deckShuffles++;
     }
 
     discardFromDraw(number, callback = () => true, options = {}) {
@@ -1387,6 +1389,7 @@ class Player extends Spectator {
             faction: this.faction.getSummary(activePlayer),
             firstPlayer: this.firstPlayer,
             numDrawCards: this.drawDeck.length,
+            deckShuffles: this.deckShuffles,
             numPlotCards: this.plotDeck.length,
             phase: this.game.currentPhase,
             selectedPlot: this.selectedPlot

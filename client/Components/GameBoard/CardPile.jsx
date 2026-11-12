@@ -6,6 +6,7 @@ import Card from './Card';
 import CardTiledList from './CardTiledList';
 import Droppable from './Droppable';
 import MovablePanel from './MovablePanel';
+import PileDepth, { pileRise, raisedStackStyle } from './PileDepth';
 import LabelledGameArea from './LabelledGameArea';
 
 import { Button } from '@heroui/react';
@@ -42,7 +43,8 @@ const CardPile = ({
     selected,
     flipDeck,
     flipFrom,
-    lockTopCard
+    lockTopCard,
+    showDepth
 }) => {
     useRenderCount('CardPile');
     const [showPopup, setShowPopup] = useState(cards && cards.some((card) => card.selectable));
@@ -268,16 +270,18 @@ const CardPile = ({
     ]);
 
     // A sideways card is laid out as an upright one, so the area is held to the height of a sideways card
+    const retCardCount = cardCount || (cards ? cards.length : 0);
+    const rise = showDepth ? pileRise(retCardCount) : undefined;
     const areaStyle = useMemo(
-        () =>
-            orientation === 'horizontal'
-                ? { height: 'calc(var(--card-scale, 1) * 4rem)', ...style }
-                : style,
-        [orientation, style]
+        () => ({
+            ...(orientation === 'horizontal' && { height: 'calc(var(--card-scale, 1) * 4rem)' }),
+            ...(rise && { '--pile-rise': rise }),
+            ...style
+        }),
+        [orientation, style, rise]
     );
     const retClassName = classNames('flex w-fit h-fit', className);
 
-    const retCardCount = cardCount || (cards ? cards.length : '0');
     const headerText = title ? title + ' (' + retCardCount + ')' : '';
     const shownTopCard = topCard || (cards ? cards[0] : null);
     const hiddenUuid = shownTopCard?.uuid;
@@ -324,30 +328,37 @@ const CardPile = ({
         >
             {retTopCard ? (
                 <div className='relative'>
-                    {retNextCard && (
-                        <div key={retNextCard.uuid} className='absolute left-0 top-0'>
+                    {showDepth && <PileDepth count={retCardCount} orientation={orientation} />}
+                    <div
+                        data-pile-stack=''
+                        className='relative shift-smooth'
+                        style={showDepth ? raisedStackStyle : undefined}
+                    >
+                        {retNextCard && (
+                            <div key={retNextCard.uuid} className='absolute left-0 top-0'>
+                                <Card
+                                    card={retNextCard}
+                                    source={source}
+                                    disableHover
+                                    orientation={orientation}
+                                    under={retTopCard.uuid || true}
+                                    flip={!hiddenTopCard && !hideUnderCard}
+                                    flipFrom={flipFrom}
+                                />
+                            </div>
+                        )}
+                        <div key={retTopCard.uuid} data-pile-top='' className='relative flex'>
                             <Card
-                                card={retNextCard}
+                                card={retTopCard}
                                 source={source}
-                                disableHover
+                                disableHover={hiddenTopCard}
+                                onClick={onTopCardClick}
+                                dragDisabled={lockTopCard}
                                 orientation={orientation}
-                                under={retTopCard.uuid || true}
-                                flip={!hiddenTopCard && !hideUnderCard}
+                                flip={!hiddenTopCard}
                                 flipFrom={flipFrom}
                             />
                         </div>
-                    )}
-                    <div key={retTopCard.uuid} className='relative'>
-                        <Card
-                            card={retTopCard}
-                            source={source}
-                            disableHover={hiddenTopCard}
-                            onClick={onTopCardClick}
-                            dragDisabled={lockTopCard}
-                            orientation={orientation}
-                            flip={!hiddenTopCard}
-                            flipFrom={flipFrom}
-                        />
                     </div>
                 </div>
             ) : (

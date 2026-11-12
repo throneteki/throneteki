@@ -134,7 +134,7 @@ html.card-dragging * {
 
 /* Anything that grows, shrinks or makes room for a neighbour does it smoothly instead of jumping */
 .shift-smooth {
-    transition-property: width, height, margin, grid-template-columns, opacity;
+    transition-property: width, height, margin, padding, grid-template-columns, opacity;
     transition-duration: 280ms;
     transition-timing-function: cubic-bezier(0.3, 0.7, 0.3, 1);
 }

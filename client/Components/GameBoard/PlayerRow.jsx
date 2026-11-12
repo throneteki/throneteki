@@ -9,6 +9,7 @@ import DrawDeck from './DrawDeck';
 import Droppable from './Droppable';
 import PlayerPlots from './PlayerPlots';
 import AnimatedSlot from './AnimatedSlot';
+import { pileRise } from './PileDepth';
 
 const PlayerRow = ({
     className,
@@ -42,10 +43,14 @@ const PlayerRow = ({
 }) => {
     useRenderCount('PlayerRow');
     const renderDroppablePile = useCallback(
-        (source, cards) => {
+        (source, cards, count) => {
             if (isMe) {
                 return (
-                    <Droppable source={source} className='self-start'>
+                    <Droppable
+                        source={source}
+                        className='self-start'
+                        rise={count === undefined ? undefined : pileRise(count)}
+                    >
                         {cards}
                     </Droppable>
                 );
@@ -179,6 +184,7 @@ const PlayerRow = ({
             numColumns={5}
             numRows={2.2}
             className='discard'
+            showDepth
             title='Discard'
             source='discard pile'
             cards={discardPile}
@@ -190,6 +196,7 @@ const PlayerRow = ({
             numColumns={5}
             numRows={2.2}
             className='dead'
+            showDepth
             title='Dead'
             source='dead pile'
             cards={deadPile}
@@ -214,6 +221,7 @@ const PlayerRow = ({
             orientation='horizontal'
             source='out of game'
             title='Out of Game'
+            showDepth
             {...cardPileProps}
         />
     );
@@ -246,11 +254,11 @@ const PlayerRow = ({
             <AnimatedSlot open={showHiddenPiles || shadows.length > 0}>
                 {renderDroppablePile('shadows', retShadows)}
             </AnimatedSlot>
-            {renderDroppablePile('draw deck', retDrawDeck)}
-            {renderDroppablePile('discard pile', retDiscardPile)}
-            {renderDroppablePile('dead pile', retDeadPile)}
+            {renderDroppablePile('draw deck', retDrawDeck, numDrawCards || drawDeck?.length || 0)}
+            {renderDroppablePile('discard pile', retDiscardPile, discardPile.length)}
+            {renderDroppablePile('dead pile', retDeadPile, deadPile.length)}
             <AnimatedSlot open={showHiddenPiles || outOfGamePile.length > 0}>
-                {renderDroppablePile('out of game', retOutOfGame)}
+                {renderDroppablePile('out of game', retOutOfGame, outOfGamePile.length)}
             </AnimatedSlot>
         </div>
     );

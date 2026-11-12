@@ -1,5 +1,6 @@
 import React, { forwardRef, useMemo } from 'react';
 import classNames from 'classnames';
+import { raisedStyle } from './PileDepth';
 
 const LabelledGameArea = forwardRef(function LabelledGameArea(
     {
@@ -21,11 +22,15 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
         }
         const pos = `${position.includes('bottom') ? 'bottom' : 'top'}-0 ${position.includes('right') ? 'right' : 'left'}-0`;
         const labelClassName = classNames(
-            'absolute text-xs z-[210] leading-tight px-1 py-0.5 bg-black/40 rounded-md',
+            'absolute text-xs z-[210] leading-tight px-1 py-0.5 bg-black/40 rounded-md shift-smooth',
             labelClickable ? 'cursor-pointer hover:bg-black/70' : 'pointer-events-none',
             pos
         );
-        return <div className={labelClassName}>{label}</div>;
+        return (
+            <div className={labelClassName} style={raisedStyle}>
+                {label}
+            </div>
+        );
     }, [label, labelClickable, position]);
 
     const areaClassName = classNames('relative shift-smooth', className);

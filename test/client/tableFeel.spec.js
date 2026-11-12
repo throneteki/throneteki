@@ -1,6 +1,7 @@
 import {
     landingImpact,
     liftFrames,
+    sizeAt,
     restingAngle,
     seededAngle,
     slapConfig,
@@ -88,4 +89,30 @@ describe('slapFrames', function () {
         expect(lift[0].opacity).toBe(1);
         expect(lift[lift.length - 1].opacity).toBe(0);
     });
+});
+
+describe('elevation', function () {
+    it('draws every zone on the table at the same size and a carried card larger', function () {
+        expect(sizeAt('play area')).toBe(1);
+        expect(sizeAt('hand')).toBe(1);
+        expect(sizeAt('carried')).toBeGreaterThan(1);
+    });
+
+    for (const frames of [liftFrames, slapFrames]) {
+        it(`${frames.name} picks a card up off the table to the carried size and puts it down`, function () {
+            const { card, lift } = frames({ uuid: 'a', fromSource: 'hand', toSource: 'play area' });
+
+            expect(card[0].scale).toBe(1);
+            expect(lift[0].opacity).toBe(0);
+            expect(Math.max(...card.map((frame) => frame.scale))).toBe(sizeAt('carried'));
+            expect(card.at(-1).scale).toBe(1);
+        });
+
+        it(`${frames.name} starts a dropped card at the size it was carried at`, function () {
+            const { card, lift } = frames({ uuid: 'a', fromSource: 'carried', toSource: 'hand' });
+
+            expect(card[0].scale).toBe(sizeAt('carried'));
+            expect(lift[0].opacity).toBe(1);
+        });
+    }
 });

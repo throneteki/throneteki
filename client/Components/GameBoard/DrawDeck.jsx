@@ -62,6 +62,7 @@ const DrawDeck = ({
     return (
         <CardPile
             className='draw'
+            showDepth
             cardCount={cardCount}
             cards={cards}
             disablePopup={!hasVisibleCards && (spectating || !isMe)}

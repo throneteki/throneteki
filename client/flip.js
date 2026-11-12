@@ -21,6 +21,17 @@ const rectOf = (el) => {
     return { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
 };
 
+// Cards go into and come off the top of a pile, which stands above the pile's outline when it is deep
+const topOfPile = (el) => {
+    const rect = rectOf(el);
+    const stack = el.querySelector('[data-pile-stack]');
+    if (stack?.parentElement) {
+        rect.top +=
+            stack.getBoundingClientRect().top - stack.parentElement.getBoundingClientRect().top;
+    }
+    return rect;
+};
+
 // Everything that makes up a card on the table, so it can all be animated together
 const surfaceOf = (el) =>
     el.querySelector('[data-flip-slot] > [data-card-surface]') ||
@@ -63,7 +74,7 @@ export const measureCards = (root = document) => {
 export const measureDecks = (root = document) => {
     const decks = new Map();
     root.querySelectorAll('[data-flip-deck]').forEach((el) => {
-        decks.set(el.dataset.flipDeck, rectOf(el));
+        decks.set(el.dataset.flipDeck, topOfPile(el));
     });
     return decks;
 };
@@ -122,6 +133,7 @@ const planMove = (uuid, was, arrived, change, config) => {
         old: { left: was.left, top: was.top },
         now: { left: now.left, top: now.top },
         fromSource: was.source,
+        liftedFrom: was.source,
         toSource: now.source,
         nested: now.source === 'attached',
         z: now.z
@@ -278,6 +290,7 @@ export const planFlip = ({
             old: { left: was.left, top: was.top },
             now: { left: pile.left, top: pile.top },
             fromSource: was.source,
+            liftedFrom: was.el ? was.source : 'carried',
             toSource: pile.source,
             depth: pile.depth,
             returning: pile.source === 'draw deck'
@@ -447,7 +460,7 @@ const findPile = (uuid) => {
         if (entry.uuids.has(uuid) && entry.el.isConnected) {
             const code = entry.codes?.get(uuid);
             return {
-                ...rectOf(entry.el),
+                ...topOfPile(entry.el),
                 source: entry.source,
                 depth: entry.uuids.get(uuid),
                 covered: !!entry.covered,
@@ -758,8 +771,8 @@ export const pulseCard = (slot) => {
 };
 
 // The card is lifted off the table while it travels, then lands with a small settle
-const liftCard = (el, { delay, duration, toSource }) => {
-    const frames = liftFrames({ uuid: el.dataset.flip, toSource });
+const liftCard = (el, { delay, duration, toSource, liftedFrom }) => {
+    const frames = liftFrames({ uuid: el.dataset.flip, toSource, fromSource: liftedFrom });
     animateCard(el, frames, {
         id: 'flip',
         duration,
@@ -773,8 +786,8 @@ const slapTotal = slapConfig.move + slapConfig.settle;
 const slapShare = slapConfig.move / slapTotal;
 
 // The card lands on the table: a bounce and a settle on top of the move
-const bounceCard = (el, { delay, toSource }) => {
-    const frames = slapFrames({ uuid: el.dataset.flip, toSource });
+const bounceCard = (el, { delay, toSource, liftedFrom }) => {
+    const frames = slapFrames({ uuid: el.dataset.flip, toSource, fromSource: liftedFrom });
     animateCard(el, frames, {
         id: 'flip',
         duration: frames.total,
@@ -829,9 +842,9 @@ const animateGhost = (item) => {
 
     const slap = !returning && slapsInto(toSource);
     if (slap) {
-        bounceCard(el, { delay, toSource });
+        bounceCard(el, { delay, toSource, liftedFrom: item.liftedFrom });
     } else {
-        liftCard(el, { delay, duration, toSource });
+        liftCard(el, { delay, duration, toSource, liftedFrom: item.liftedFrom });
     }
     if (turnTo) {
         turnAway(el, { to: turnTo, delay, duration: slap ? slapConfig.move : duration });
