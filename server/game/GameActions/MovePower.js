@@ -6,8 +6,8 @@ class MovePower extends GameAction {
         super('movePower');
     }
 
-    isImmune({ from, context }) {
-        super.isImmune({ card: from, context });
+    isImmune({ from, to, context }) {
+        return super.isImmune({ card: from, context }) || super.isImmune({ card: to, context });
     }
 
     message({ from, to, amount = 1 }) {
