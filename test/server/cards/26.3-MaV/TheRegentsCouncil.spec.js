@@ -17,3 +17,51 @@ describe("The Regent's Council", function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe("The Regent's Council (not triggered)", function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                inPlay: [
+                    'Grand Maester Pycelle (Core)',
+                    'Courtesan of the Rose',
+                    'House Dayne Knight'
+                ],
+                hand: ["The Regent's Council"]
+            },
+            player2: {
+                inPlay: ['Ser Kevan Lannister (LoCR)']
+            }
+        });
+    });
+
+    it('cannot be played after you lose an intrigue challenge with a participating Small Council character', function () {
+        this.player1.clickPrompt('Intrigue');
+        this.player1.clickCard(this.grandMaesterPycelle);
+        this.player1.clickPrompt('Done');
+        this.skipActionWindow();
+        this.player2.clickCard(this.serKevanLannister);
+        this.player2.clickPrompt('Done');
+        this.skipActionWindow();
+
+        expect(this.player1).not.toAllowAbilityTrigger("The Regent's Council");
+        expect(this.theRegentsCouncil.location).toBe('hand');
+        expect(this.player1).isReadyToTakeAction();
+    });
+
+    it('cannot be played after you win when only an opponent controls a participating Small Council character', function () {
+        this.player1.clickPrompt('Intrigue');
+        this.player1.clickCard(this.courtesanOfTheRose);
+        this.player1.clickCard(this.houseDayneKnight);
+        this.player1.clickPrompt('Done');
+        this.skipActionWindow();
+        this.player2.clickCard(this.serKevanLannister);
+        this.player2.clickPrompt('Done');
+        this.skipActionWindow();
+
+        expect(this.player1).not.toAllowAbilityTrigger("The Regent's Council");
+        expect(this.theRegentsCouncil.location).toBe('hand');
+        expect(this.player1).isReadyToTakeAction();
+    });
+});
