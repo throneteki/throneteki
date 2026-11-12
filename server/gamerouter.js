@@ -200,6 +200,11 @@ class GameRouter extends EventEmitter {
             worker.disconnected = false;
         }
 
+        if (!worker && message.command !== 'HELLO') {
+            logger.info(`Message from unknown worker ${identity}, asking it to say hello`);
+            this.sendCommand(identity, 'LOBBYHELLO');
+        }
+
         switch (message.command) {
             case 'HELLO':
                 this.emit('onWorkerStarted', identity);
@@ -317,15 +322,22 @@ class GameRouter extends EventEmitter {
     checkTimeouts() {
         var currentTime = Date.now();
         const pingTimeout = 1 * 60 * 1000;
+        const disconnectedTimeout = 2 * 60 * 1000;
 
         for (const worker of Object.values(this.workers)) {
             if (worker.disconnected) {
+                if (currentTime - worker.disconnectedAt > disconnectedTimeout) {
+                    logger.info('removing worker %s after being disconnected', worker.identity);
+                    delete this.workers[worker.identity];
+                }
+
                 continue;
             }
 
             if (worker.pingSent && currentTime - worker.pingSent > pingTimeout) {
                 logger.info('worker %s timed out', worker.identity);
                 worker.disconnected = true;
+                worker.disconnectedAt = currentTime;
                 this.emit('onWorkerTimedOut', worker.identity);
             } else if (!worker.pingSent) {
                 if (currentTime - worker.lastMessage > pingTimeout) {
