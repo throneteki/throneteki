@@ -7,6 +7,7 @@ export const flipConfig = {
     easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
     shuffleGap: 600,
     sequenceDuration: 320,
+    turnDuration: 440,
     sequenceStep: 380,
     maxSequence: 2000,
     maxAnimated: 30,
@@ -19,6 +20,19 @@ const rectOf = (el) => {
     const rect = el.getBoundingClientRect();
     return { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
 };
+
+// Everything that makes up a card on the table, so it can all be animated together
+const surfaceOf = (el) =>
+    el.querySelector('[data-flip-slot] > [data-card-surface]') ||
+    el.querySelector(':scope > [data-card-surface]');
+const slotOf = (el) => el.querySelector('[data-flip-slot]') || (surfaceOf(el) && el);
+const overlaysOf = (el) => [
+    ...(slotOf(el)?.querySelectorAll(':scope > [data-card-overlay]') ?? [])
+];
+// The body is the card itself: its face (the image, or what is drawn when that fails), its shadow and
+// anything printed on it. It is what turns over, so nothing of the card is left lying flat.
+const bodyOf = (el) => surfaceOf(el)?.querySelector(':scope > [data-card-body]');
+const imageOf = (body) => body?.querySelector(':scope > [data-card-face] > img');
 
 export const measureCards = (root = document) => {
     const cards = new Map();
@@ -35,7 +49,10 @@ export const measureCards = (root = document) => {
             from: el.dataset.flipFrom,
             parent: el.parentElement?.closest('[data-flip]')?.dataset.flip,
             source: el.dataset.flipSource,
+            face: imageOf(bodyOf(el))?.getAttribute('src'),
+            faceNode: bodyOf(el)?.cloneNode(true),
             under: el.dataset.flipUnder !== undefined,
+            underOf: el.dataset.flipUnder || undefined,
             rot: Number(el.dataset.flipRot) || 0,
             z: el.dataset.flipZ === undefined ? undefined : Number(el.dataset.flipZ)
         });
@@ -46,13 +63,49 @@ export const measureCards = (root = document) => {
 export const measureDecks = (root = document) => {
     const decks = new Map();
     root.querySelectorAll('[data-flip-deck]').forEach((el) => {
-        const rect = el.getBoundingClientRect();
-        decks.set(el.dataset.flipDeck, { left: rect.left, top: rect.top });
+        decks.set(el.dataset.flipDeck, rectOf(el));
     });
     return decks;
 };
 
 const centre = (rect) => ({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
+
+// The one rule for what a card shows on its way from one place to another, whatever the two places are.
+// Each end is described the same way (where it is, the angle it lies at, the face it shows), and the
+// card turns over when the face differs and turns to the new angle when the angle differs. Kneeling,
+// standing, lying sideways in a pile and going facedown into a deck all come from this comparison.
+export const changeBetween = (from, to, back = cardImageSrc('cardback')) => {
+    const turnsOver = !!from.face && !!to.face && from.face !== to.face;
+    // A facedown plot is drawn as an upright card back laid on its side, and a plot is drawn as it is.
+    // Both lie sideways on the table, so going from one to the other is not a turn.
+    const bothSideways = isWide(from.slot) && isWide(to.slot);
+    return {
+        travel: from.source !== to.source,
+        rotate: bothSideways ? 0 : (from.rot || 0) - (to.rot || 0),
+        ...(turnsOver && {
+            turnFrom: from.face,
+            turnNode: from.faceNode,
+            turnTo: to.face,
+            reveal: to.face !== back
+        })
+    };
+};
+
+const isWide = (rect) => !!rect && rect.width > rect.height;
+
+const turnOf = ({ turnFrom, turnNode, turnTo, reveal }) =>
+    turnFrom ? { turnFrom, turnNode, turnTo, reveal } : {};
+
+// A card that changes angle turns about its middle, so the two middles are what line up
+const aboutCentre = (fromSlot, to) => {
+    const from = centre(fromSlot);
+    const middle = centre(to.slot);
+    return {
+        dx: from.x - middle.x,
+        dy: from.y - middle.y,
+        origin: { x: middle.x - to.left, y: middle.y - to.top }
+    };
+};
 
 // A card carried back to its place leaves the attachments and duplicates on it where they are
 const alone = (was, now) =>
@@ -60,10 +113,11 @@ const alone = (was, now) =>
         ? { ...now, el: now.slotEl, left: now.slot.left, top: now.slot.top }
         : now;
 
-const planMove = (uuid, was, arrived, config) => {
+const planMove = (uuid, was, arrived, change, config) => {
     const now = alone(was, arrived);
-    const turned = was.el !== now.el && was.rot !== now.rot;
-    const travel = was.source !== now.source;
+    // A card that stays in the same element kneels and stands by itself, so only a card that has changed
+    // element is turned to its new angle here
+    const turned = was.el !== now.el && change.rotate !== 0;
     const places = {
         old: { left: was.left, top: was.top },
         now: { left: now.left, top: now.top },
@@ -73,17 +127,13 @@ const planMove = (uuid, was, arrived, config) => {
         z: now.z
     };
     if (turned) {
-        const from = centre(was.slot);
-        const to = centre(now.slot);
         return {
             type: 'move',
             uuid,
             el: now.el,
-            dx: from.x - to.x,
-            dy: from.y - to.y,
-            rotate: was.rot - now.rot,
-            origin: { x: to.x - now.left, y: to.y - now.top },
-            travel,
+            ...aboutCentre(was.slot, now),
+            rotate: change.rotate,
+            travel: change.travel,
             ...places
         };
     }
@@ -94,14 +144,43 @@ const planMove = (uuid, was, arrived, config) => {
         return null;
     }
 
-    return { type: 'move', uuid, el: now.el, dx, dy, rotate: 0, travel, ...places };
+    return { type: 'move', uuid, el: now.el, dx, dy, rotate: 0, travel: change.travel, ...places };
 };
 
 // A hand card that has vanished most likely went back to its owner's draw deck
 const returnedToDeck = (was, decks) => {
     const deck = was.source === 'hand' && was.from && decks.get(was.from);
-    return deck ? { source: 'draw deck', left: deck.left, top: deck.top } : null;
+    return deck ? { ...deck, source: 'draw deck' } : null;
 };
+
+// Whether the card itself is wider than tall (a plot), whatever angle it is lying at
+const liesSideways = (rect, rot) => {
+    const upright = ((rot || 0) / 90) % 2 === 0;
+    return upright ? rect.width > rect.height : rect.height > rect.width;
+};
+
+// How a card rests in a pile it is not drawn in: facedown in a hidden pile, and turned to the way the
+// pile lies. A pile that does not say how it lies leaves the card at the angle it had.
+const restingIn = (pile, was, back) => {
+    const hidden = pile.hidden ?? pile.source === 'draw deck';
+    const knowsAngle = pile.sideways !== undefined && pile.width !== undefined && !!was.slot;
+    return {
+        source: pile.source,
+        rot: knowsAngle
+            ? pile.sideways === liesSideways(was.slot, was.rot)
+                ? 0
+                : 90
+            : was.rot || 0,
+        face: hidden ? back : (pile.face ?? was.face)
+    };
+};
+
+// A card drawn or revealed starts as it lies in its deck: upright and facedown
+const lyingIn = (deck, now, back) => ({
+    source: null,
+    rot: deck.width === undefined ? now.rot || 0 : 0,
+    face: back
+});
 
 export const planFlip = ({
     before,
@@ -114,13 +193,19 @@ export const planFlip = ({
         return [];
     }
 
+    const back = cardImageSrc('cardback');
     const plan = [];
     for (const [uuid, now] of after) {
         const was = before.get(uuid);
         if (was) {
-            const move = planMove(uuid, was, now, config);
+            const change = changeBetween(was, now, back);
+            const move = planMove(uuid, was, now, change, config);
+            // A card put under a card that was already on top of the pile stays under it all the way
+            const under = !!now.underOf && before.get(now.underOf)?.source === now.source;
             if (move) {
-                plan.push(move);
+                plan.push({ ...move, ...turnOf(change), ...(under && { under }) });
+            } else if (change.turnFrom && now.el) {
+                plan.push({ type: 'turn', uuid, el: now.el, ...turnOf(change) });
             }
             continue;
         }
@@ -134,23 +219,28 @@ export const planFlip = ({
             continue;
         }
 
+        const change = changeBetween(lyingIn(origin, now, back), now, back);
         plan.push({
             type: 'move',
             uuid,
             el: now.el,
             dx: origin.left - now.left,
             dy: origin.top - now.top,
-            rotate: 0,
-            travel: true,
+            ...(change.rotate !== 0 && aboutCentre(origin, now)),
+            rotate: change.rotate,
+            travel: change.travel,
             sequential: !now.from.startsWith(plotDeckPrefix),
-            old: origin,
+            ...turnOf(change),
+            old: { left: origin.left, top: origin.top },
             now: { left: now.left, top: now.top },
             toSource: now.source
         });
     }
 
     for (const [uuid, was] of before) {
-        if (after.has(uuid) || !was.el || was.el.isConnected) {
+        // A card that was being carried has no element left, but can still be shown from its face
+        const gone = was.el ? !was.el.isConnected : !!was.faceNode;
+        if (after.has(uuid) || !gone) {
             continue;
         }
 
@@ -159,24 +249,39 @@ export const planFlip = ({
             continue;
         }
         const pile = found || returnedToDeck(was, decks);
-        plan.push(
-            pile
-                ? {
-                      type: 'ghost',
-                      el: was.el,
-                      rect: was,
-                      dx: pile.left - was.left,
-                      dy: pile.top - was.top,
-                      travel: true,
-                      old: { left: was.left, top: was.top },
-                      now: { left: pile.left, top: pile.top },
-                      fromSource: was.source,
-                      toSource: pile.source,
-                      depth: pile.depth,
-                      returning: pile.source === 'draw deck'
-                  }
-                : { type: 'exit', el: was.el, rect: was }
-        );
+        if (!pile) {
+            if (was.el) {
+                plan.push({ type: 'exit', el: was.el, rect: was });
+            }
+            continue;
+        }
+
+        const change = changeBetween(was, restingIn(pile, was, back), back);
+        const turned = change.rotate !== 0;
+        const middle = turned && centre(was.slot);
+        const target = turned && centre(pile);
+        plan.push({
+            type: 'ghost',
+            el: was.el,
+            ...(!was.el && { built: { uuid, faceNode: was.faceNode, rot: was.rot || 0 } }),
+            rect: was,
+            dx: turned ? target.x - middle.x : pile.left - was.left,
+            dy: turned ? target.y - middle.y : pile.top - was.top,
+            ...(turned && {
+                rotate: change.rotate,
+                origin: { x: middle.x - was.left, y: middle.y - was.top }
+            }),
+            ...(change.turnTo && { turnTo: change.turnTo }),
+            travel: true,
+            behind: !!was.under || !!pile.covered || isCovered(was.source),
+            area: pile.area,
+            old: { left: was.left, top: was.top },
+            now: { left: pile.left, top: pile.top },
+            fromSource: was.source,
+            toSource: pile.source,
+            depth: pile.depth,
+            returning: pile.source === 'draw deck'
+        });
     }
 
     return relativeToParents(plan, after, config);
@@ -313,7 +418,6 @@ export const scheduleFlip = (plan, config = flipConfig) => {
 };
 
 let pending = null;
-let host = null;
 let ignored = null;
 let dropOrigin = null;
 const piles = new Map();
@@ -331,15 +435,26 @@ export const registerPile = (id, entry) => {
     return () => piles.delete(id);
 };
 
+// A pile with a card fixed on top of it (the revealed plot) keeps that card above anything that moves
+// in or out of the pile
+const isCovered = (source) =>
+    [...piles.values()].some(
+        (entry) => entry.source === source && entry.covered && entry.el.isConnected
+    );
+
 const findPile = (uuid) => {
     for (const entry of piles.values()) {
         if (entry.uuids.has(uuid) && entry.el.isConnected) {
-            const rect = entry.el.getBoundingClientRect();
+            const code = entry.codes?.get(uuid);
             return {
+                ...rectOf(entry.el),
                 source: entry.source,
-                left: rect.left,
-                top: rect.top,
-                depth: entry.uuids.get(uuid)
+                depth: entry.uuids.get(uuid),
+                covered: !!entry.covered,
+                area: entry.el.closest('[data-flip-layers]'),
+                hidden: !!entry.hidden || !code,
+                sideways: entry.sideways,
+                face: code ? cardImageSrc(code) : undefined
             };
         }
     }
@@ -353,7 +468,7 @@ export const holdFlip = (milliseconds) => {
     holdUntil = Math.max(holdUntil, performance.now() + milliseconds);
 };
 
-const motionOff = () =>
+export const motionOff = () =>
     document.hidden ||
     performance.now() < holdUntil ||
     document.documentElement.dataset.motion === 'off';
@@ -369,8 +484,19 @@ export const captureCards = () => {
     const cards = motionOff() ? null : measureCards();
     if (dropOrigin) {
         if (cards) {
-            const { uuid, rect, source, rot } = dropOrigin;
-            cards.set(uuid, { el: null, ...rect, slot: rect, source, rot, solo: true });
+            const { uuid, rect, source, rot, faceNode, under } = dropOrigin;
+            const body = faceNode && bodyAround(faceNode);
+            cards.set(uuid, {
+                el: null,
+                ...rect,
+                slot: rect,
+                source,
+                rot,
+                solo: true,
+                under,
+                faceNode: body,
+                face: imageOf(body)?.getAttribute('src')
+            });
         }
         dropOrigin = null;
         ignored = null;
@@ -378,60 +504,269 @@ export const captureCards = () => {
     pending = cards;
 };
 
-const getHost = () => {
-    if (!host || !host.isConnected) {
-        host = document.createElement('div');
-        host.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:205';
-        document.body.appendChild(host);
+// A card made up here, not by the board, is given the same body the board gives its cards
+const bodyAround = (face) => {
+    const body = document.createElement('div');
+    body.dataset.cardBody = '';
+    body.className = 'card-body';
+    body.append(face);
+    return body;
+};
+
+// Cards in flight are kept in one of two layers: above the board, or just below the cards on it, for a
+// card that comes from or goes under the card on top of a pile
+// The lower layer sits inside the area the piles are drawn in (marked data-flip-layers), so it is ordered
+// against the piles by z-index however the rest of the page stacks.
+const hosts = {};
+const areaHosts = new WeakMap();
+const getHost = (behind, area) => {
+    if (behind && area?.isConnected) {
+        let inner = areaHosts.get(area);
+        if (!inner?.isConnected) {
+            inner = document.createElement('div');
+            inner.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:199';
+            area.appendChild(inner);
+            areaHosts.set(area, inner);
+        }
+        const { left, top } = inner.getBoundingClientRect();
+        inner.style.transform = left || top ? `translate(${-left}px, ${-top}px)` : '';
+        return inner;
     }
-    return host;
+
+    const name = behind ? 'behind' : 'above';
+    if (!hosts[name]?.isConnected) {
+        hosts[name] = document.createElement('div');
+        hosts[name].style.cssText =
+            `position:fixed;inset:0;pointer-events:none;z-index:${behind ? 199 : 205}`;
+        document.body.appendChild(hosts[name]);
+    }
+    return hosts[name];
 };
 
-const detach = (el, rect) => {
+const detach = (el, rect, behind = false, area = null) => {
     el.style.cssText += `;position:fixed;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;height:${rect.height}px;margin:0;transform:none`;
-    getHost().appendChild(el);
+    getHost(behind, area).appendChild(el);
 };
 
-// A card put back into the deck turns over on the way, so it arrives facedown
-const turnFacedown = (el, { delay, duration }) => {
-    const face = el.querySelector('[data-card-surface] img');
-    const back = cardImageSrc('cardback');
-    if (!face || face.getAttribute('src') === back) {
+// Everything on the card moves together: the card with its shadow, and the counters and badges on it
+const originOf = (slot, part) =>
+    `${slot.clientWidth / 2 - part.offsetLeft}px ${slot.clientHeight / 2 - part.offsetTop}px`;
+
+const animateCard = (el, frames, options) => {
+    const surface = surfaceOf(el);
+    if (!surface) {
         return;
     }
 
-    const rear = face.cloneNode();
-    rear.src = back;
-    face.after(rear);
+    surface.animate(frames.card, options);
+
+    const slot = slotOf(el);
+    for (const part of overlaysOf(el)) {
+        const transformOrigin = originOf(slot, part);
+        part.animate(
+            frames.card.map((frame) => ({
+                ...frame,
+                ...(frames.rest !== undefined &&
+                    frame.rotate === frames.rest && { rotate: '0deg' }),
+                transformOrigin
+            })),
+            options
+        );
+    }
+
+    if (frames.lift) {
+        bodyOf(el)?.animate(frames.lift, { ...options, pseudoElement: '::after' });
+    }
+};
+
+// A card is turned over across its shorter side, the way it is done by hand: an upright card turns
+// sideways, and a card that is wider than tall (a plot) turns top over bottom
+export const turnAxis = ({ width, height }) => (width > height ? 'X' : 'Y');
+
+// A card turns over like a real one: the old face turns edge-on, then the new face turns up
+const spin = (outgoing, incoming, { delay, duration }) => {
     const half = duration / 2;
-    face.animate([{ transform: 'scaleX(1)' }, { transform: 'scaleX(0)' }], {
+    const shape = incoming.clientWidth ? incoming : outgoing;
+    const axis = turnAxis({ width: shape.clientWidth, height: shape.clientHeight });
+    const turned = (angle) => ({ transform: `perspective(700px) rotate${axis}(${angle}deg)` });
+    const away = outgoing.animate([turned(0), turned(90)], {
         duration: half,
         delay,
         easing: 'ease-in',
         fill: 'both'
     });
-    rear.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], {
+    incoming.animate([turned(-90), turned(0)], {
         duration: half,
         delay: delay + half,
         easing: 'ease-out',
         fill: 'both'
     });
+    return away;
 };
 
-// The card is lifted off the table while it travels, then lands with a small settle
-const liftCard = (el, { delay, duration, toSource }) => {
-    const surface = el.querySelector('[data-flip-slot] > [data-card-surface]');
+// Counters and badges are not part of the face, so they drop out while the card is edge-on
+const fadeOverlays = (el, { delay, duration }) =>
+    overlaysOf(el).forEach((part) =>
+        part.animate(
+            [
+                { opacity: 1 },
+                { opacity: 0, offset: 0.4 },
+                { opacity: 0, offset: 0.6 },
+                { opacity: 1 }
+            ],
+            { id: 'flip', duration, delay, easing: 'linear' }
+        )
+    );
+
+// A copy of a card showing this face as the board shows it right now, so it includes what is drawn when
+// its image fails
+const shownBody = (src) =>
+    [...document.querySelectorAll('[data-card-body]')]
+        .find((body) => imageOf(body)?.getAttribute('src') === src)
+        ?.cloneNode(true);
+
+// A card face made from nothing but its image, with the same body around it as the board gives a card
+const builtBody = (src, like) => {
+    const body = like.cloneNode(false);
+    const face = document.createElement('div');
+    face.dataset.cardFace = '';
+    face.className = 'absolute inset-0 overflow-hidden rounded-[inherit]';
+    const image = document.createElement('img');
+    image.setAttribute('src', src);
+    image.alt = '';
+    image.draggable = false;
+    image.className = 'absolute left-0 top-0 h-full w-full pointer-events-none select-none';
+    face.append(image);
+    body.append(face);
+    return body;
+};
+
+// Whether an image is drawn upright (a card back, a character) or on its side (a plot), when that is known
+const isPortrait = (src) => {
+    if (src === cardImageSrc('cardback')) {
+        return true;
+    }
+
+    const probe = new Image();
+    probe.src = src;
+    return probe.complete && probe.naturalWidth > 0
+        ? probe.naturalHeight > probe.naturalWidth
+        : undefined;
+};
+
+// The card as it looks at the other end of its move, made to fit the card it is put on: a face that is
+// drawn the other way round from the card it replaces is laid on its side, so it is never stretched
+const bodyFor = (src, like) => {
+    const body = shownBody(src) || builtBody(src, like);
+    const width = like.clientWidth;
+    const height = like.clientHeight;
+    const portrait = isPortrait(src);
+    if (!body || !width || !height || portrait === undefined || portrait === height > width) {
+        return body;
+    }
+
+    const turned = document.createElement('div');
+    turned.style.cssText = `position:absolute;border-radius:inherit;width:${height}px;height:${width}px;left:${(width - height) / 2}px;top:${(height - width) / 2}px;transform:rotate(90deg)`;
+    turned.append(...body.children);
+    const holder = like.cloneNode(false);
+    holder.append(turned);
+    return holder;
+};
+
+// A card that is leaving turns to the face it will show where it is going
+const turnAway = (el, { to, delay, duration }) => {
+    const outgoing = bodyOf(el);
+    const incoming = outgoing && bodyFor(to, outgoing);
+    if (!incoming) {
+        return;
+    }
+
+    outgoing.after(incoming);
+    spin(outgoing, incoming, { delay, duration });
+    fadeOverlays(el, { delay, duration });
+};
+
+// The card already shows its new face, so the old one is put back on top just to be turned away
+const turnFace = (el, { from, node, delay, duration }) => {
+    const incoming = bodyOf(el);
+    if (!incoming) {
+        return;
+    }
+
+    // A card back is always made to fit the card it is on: the copy kept from before may be an upright
+    // back, which does not fit a plot
+    const isBack = from === cardImageSrc('cardback');
+    const outgoing = (!isBack && node) || (from && bodyFor(from, incoming)) || node;
+    if (!outgoing) {
+        return;
+    }
+
+    incoming.before(outgoing);
+    spin(outgoing, incoming, { delay, duration }).addEventListener('finish', () =>
+        outgoing.remove()
+    );
+    fadeOverlays(el, { delay, duration });
+};
+
+const revealGlow = [
+    { boxShadow: '0 0 0 0 rgba(255, 255, 255, 0)' },
+    { boxShadow: '0 0 16px 5px rgba(255, 255, 255, 0.75)', offset: 0.5 },
+    { boxShadow: '0 0 0 0 rgba(255, 255, 255, 0)' }
+];
+const rise = [{ scale: 1 }, { scale: 1.08, offset: 0.5 }, { scale: 1 }];
+const highlightFade = 220;
+const glowLength = 520;
+
+// A highlight is drawn flat around the card, which gives the game away while the card is in the air or
+// turning over. It stays off until the card has landed, then fades in. A reveal flashes first.
+const landHighlight = (el, { delay, duration, reveal = false }) => {
+    const surface = surfaceOf(el);
     if (!surface) {
         return;
     }
 
-    const frames = liftFrames({ uuid: el.dataset.flip, toSource });
-    const options = { id: 'flip', duration, delay, easing: 'linear', fill: 'backwards' };
-    surface.animate(frames.card, options);
+    const hidden = duration + (reveal ? glowLength : 0);
+    const total = hidden + highlightFade;
+    surface.animate(
+        [
+            { boxShadow: 'none', offset: 0 },
+            { boxShadow: 'none', offset: hidden / total },
+            { offset: 1 }
+        ],
+        { id: 'flip', duration: total, delay, easing: 'linear', fill: 'backwards' }
+    );
+    if (reveal) {
+        surface.animate(revealGlow, { id: 'flip', duration: glowLength, delay: delay + duration });
+    }
+};
 
-    const shadow = el.querySelector('[data-flip-slot] > [data-card-shadow]');
-    shadow?.animate(frames.card, options);
-    shadow?.animate(frames.lift, { ...options, pseudoElement: '::after' });
+// The card rises while it turns, and a reveal flashes
+const turnInPlace = ({ el, turnFrom, turnNode, delay, reveal }) => {
+    const duration = flipConfig.turnDuration;
+    turnFace(el, { from: turnFrom, node: turnNode, delay, duration });
+    animateCard(el, { card: rise }, { id: 'flip', duration, delay, easing: 'ease-in-out' });
+    landHighlight(el, { delay, duration, reveal });
+};
+
+// A card knelt or stood rises a little as it turns
+export const pulseCard = (slot) => {
+    if (!slot || motionOff()) {
+        return;
+    }
+
+    animateCard(slot, { card: rise }, { id: 'kneel', duration: 380, easing: 'ease-in-out' });
+};
+
+// The card is lifted off the table while it travels, then lands with a small settle
+const liftCard = (el, { delay, duration, toSource }) => {
+    const frames = liftFrames({ uuid: el.dataset.flip, toSource });
+    animateCard(el, frames, {
+        id: 'flip',
+        duration,
+        delay,
+        easing: 'linear',
+        fill: 'backwards'
+    });
 };
 
 const slapTotal = slapConfig.move + slapConfig.settle;
@@ -439,24 +774,14 @@ const slapShare = slapConfig.move / slapTotal;
 
 // The card lands on the table: a bounce and a settle on top of the move
 const bounceCard = (el, { delay, toSource }) => {
-    const surface = el.querySelector('[data-flip-slot] > [data-card-surface]');
-    if (!surface) {
-        return;
-    }
-
     const frames = slapFrames({ uuid: el.dataset.flip, toSource });
-    const options = {
+    animateCard(el, frames, {
         id: 'flip',
         duration: frames.total,
         delay,
         easing: 'linear',
         fill: 'backwards'
-    };
-    surface.animate(frames.card, options);
-
-    const shadow = el.querySelector('[data-flip-slot] > [data-card-shadow]');
-    shadow?.animate(frames.shadow, options);
-    shadow?.animate(frames.lift, { ...options, pseudoElement: '::after' });
+    });
 };
 
 // A fast move that stops suddenly, then holds still while the card bounces
@@ -470,28 +795,62 @@ const slapKeyframes = (item) => {
     return [...lead, { ...end, offset: slapShare }, { ...end, offset: 1 }];
 };
 
-const animateGhost = ({ el, rect, dx, dy, delay, duration, returning, toSource }) => {
-    detach(el, rect);
+// A card that was being carried has no element of its own left on the board, so one is put together
+// from its face, as big as the card was on the screen. A card that lay on its side as an upright one
+// (a card back in a sideways pile) keeps its face turned inside, so the face can be swapped for a card
+// that is drawn on its side without being stretched.
+const buildGhost = ({ uuid, faceNode, rot }, rect) => {
+    const surface = document.createElement('div');
+    surface.dataset.cardSurface = '';
+    surface.style.cssText = `position:absolute;left:0;top:0;width:${rect.width}px;height:${rect.height}px;border-radius:calc(var(--card-scale, 1) * 0.25rem)`;
+    if ((rot / 90) % 2 !== 0) {
+        const turned = document.createElement('div');
+        turned.style.cssText = `position:absolute;border-radius:inherit;width:${rect.height}px;height:${rect.width}px;left:${(rect.width - rect.height) / 2}px;top:${(rect.height - rect.width) / 2}px;transform:rotate(${rot}deg)`;
+        turned.append(...faceNode.children);
+        faceNode.append(turned);
+    }
+    surface.append(faceNode);
+
+    const el = document.createElement('div');
+    el.dataset.flip = uuid;
+    el.append(surface);
+    return el;
+};
+
+const animateGhost = (item) => {
+    const { rect, dx, dy, rotate, origin, turnTo, delay, duration, returning, toSource } = item;
+    const el = item.el ?? buildGhost(item.built, rect);
+    detach(el, rect, item.behind, item.area);
+    // The card is in the air until it is gone, so it never shows a highlight
+    surfaceOf(el)?.style.setProperty('box-shadow', 'none');
+    if (origin) {
+        el.style.transformOrigin = `${origin.x}px ${origin.y}px`;
+    }
+
     const slap = !returning && slapsInto(toSource);
     if (slap) {
         bounceCard(el, { delay, toSource });
     } else {
         liftCard(el, { delay, duration, toSource });
     }
-    if (returning) {
-        turnFacedown(el, { delay, duration });
+    if (turnTo) {
+        turnAway(el, { to: turnTo, delay, duration: slap ? slapConfig.move : duration });
     }
-    const end = { transform: `translate(${dx}px, ${dy}px)` };
+
+    // The card ends at the angle it rests at in the pile, so a kneeling card stands as it goes
+    const turn = (angle) => (rotate ? ` rotate(${angle}deg)` : '');
+    const start = { transform: `translate(0, 0)${turn(0)}` };
+    const end = { transform: `translate(${dx}px, ${dy}px)${turn(-rotate)}` };
     const animation = slap
         ? el.animate(
               [
-                  { transform: 'translate(0, 0)', offset: 0, easing: slapConfig.easing },
+                  { ...start, offset: 0, easing: slapConfig.easing },
                   { ...end, offset: slapShare },
                   { ...end, offset: 1 }
               ],
               { duration: slapTotal, delay, easing: 'linear', fill: 'both' }
           )
-        : el.animate([{ transform: 'translate(0, 0)' }, end], {
+        : el.animate([start, end], {
               duration,
               delay,
               easing: flipConfig.easing,
@@ -522,7 +881,9 @@ export const keyframesFor = (item) => {
 
     const origin = item.origin ? { transformOrigin: `${item.origin.x}px ${item.origin.y}px` } : {};
     // Attachments slide in at the level they come to rest, behind their card and the attachments already on it
-    const lifted = { zIndex: item.nested ? String(item.z ?? 199) : item.travel ? '205' : '200' };
+    // A card that lands under the top card of its pile stays under it all the way
+    const level = item.nested ? String(item.z ?? 199) : item.travel ? '205' : '200';
+    const lifted = { zIndex: item.under ? 'auto' : level };
     const start = {
         ...origin,
         transform: `translate(${item.dx}px, ${item.dy}px) rotate(${item.rotate}deg)`,
@@ -542,7 +903,7 @@ const landingPoint = 0.7;
 // A card in flight is lifted above the board, then drops to the level it rests at as it nears its place,
 // so it passes behind the cards that are above that place (the cards to its right in a hand)
 export const landingFrames = (item, point = landingPoint) =>
-    item.type === 'move' && item.travel && !item.nested
+    item.type === 'move' && item.travel && !item.nested && !item.under
         ? [
               { zIndex: '205', offset: 0 },
               { zIndex: '205', offset: point, easing: 'steps(1, jump-start)' },
@@ -601,6 +962,10 @@ export const playPendingFlip = (root = document) => {
             animateGhost(item);
             continue;
         }
+        if (item.type === 'turn') {
+            turnInPlace(item);
+            continue;
+        }
 
         const slap =
             item.type === 'move' && item.travel && !item.nested && slapsInto(item.toSource);
@@ -614,7 +979,21 @@ export const playPendingFlip = (root = document) => {
             fill: 'backwards'
         });
 
-        if (item.type === 'move' && item.travel && !item.nested) {
+        if (item.turnFrom) {
+            turnFace(item.el, {
+                from: item.turnFrom,
+                node: item.turnNode,
+                delay: item.delay,
+                duration: slap ? slapConfig.move : duration
+            });
+        }
+
+        const flies = item.type === 'move' && item.travel && !item.nested;
+        if (flies || item.turnFrom) {
+            landHighlight(item.el, { delay: item.delay, duration, reveal: item.reveal });
+        }
+
+        if (flies) {
             flights.set(item.uuid, performance.now() + item.delay + duration);
             if (slap) {
                 bounceCard(item.el, item);

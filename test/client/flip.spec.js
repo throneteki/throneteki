@@ -1,11 +1,13 @@
 import {
+    changeBetween,
     holdAfterReturns,
     keyframesFor,
     landingFrames,
     planFlip,
     flipConfig,
     scheduleFlip,
-    sequenceDelays
+    sequenceDelays,
+    turnAxis
 } from '../../client/flip.js';
 
 const card = (left, top, extra = {}) => ({
@@ -526,5 +528,388 @@ describe('sequenceDelays', function () {
 
         expect(delays[0]).toBe(0);
         expect(delays[20] + flipConfig.duration).toBeCloseTo(flipConfig.maxSequence);
+    });
+});
+
+describe('turning cards over', function () {
+    const back = '/img/cards/cardback.png';
+    const decks = new Map([['alice', { left: 900, top: 500 }]]);
+
+    it('turns a card over where it is when its face changes', function () {
+        const before = new Map([['a', card(100, 200, { face: back })]]);
+        const after = new Map([['a', card(100, 200, { face: '/img/cards/01001.png' })]]);
+
+        expect(planFlip({ before, after })).toEqual([
+            expect.objectContaining({ type: 'turn', uuid: 'a', turnFrom: back, reveal: true })
+        ]);
+    });
+
+    it('does not flash a reveal when a card is turned facedown', function () {
+        const before = new Map([['a', card(100, 200, { face: '/img/cards/01001.png' })]]);
+        const after = new Map([['a', card(100, 200, { face: back })]]);
+
+        const [item] = planFlip({ before, after });
+
+        expect(item).toMatchObject({ type: 'turn', turnFrom: '/img/cards/01001.png' });
+        expect(item.reveal).toBe(false);
+    });
+
+    it('turns a card that moves and changes face in the same move', function () {
+        const before = new Map([['a', card(100, 200, { face: back, source: 'shadows' })]]);
+        const after = new Map([
+            ['a', card(400, 50, { face: '/img/cards/01001.png', source: 'play area' })]
+        ]);
+
+        const [item] = planFlip({ before, after });
+
+        expect(item).toMatchObject({ type: 'move', turnFrom: back, reveal: true });
+    });
+
+    it('turns a card drawn from the deck face up on its way', function () {
+        const before = new Map([['x', card(0, 0)]]);
+        const after = new Map([
+            ['x', card(0, 0)],
+            [
+                'n',
+                card(0, 600, {
+                    source: 'hand',
+                    from: 'alice',
+                    face: '/img/cards/01001.png'
+                })
+            ]
+        ]);
+
+        const draw = planFlip({ before, after, decks }).find((item) => item.uuid === 'n');
+
+        expect(draw).toMatchObject({ type: 'move', turnFrom: back, reveal: true });
+    });
+
+    it('leaves a card from the deck facedown when it arrives facedown', function () {
+        const before = new Map([['x', card(0, 0)]]);
+        const after = new Map([
+            ['x', card(0, 0)],
+            ['n', card(0, 600, { source: 'hand', from: 'alice', face: back })]
+        ]);
+
+        const draw = planFlip({ before, after, decks }).find((item) => item.uuid === 'n');
+
+        expect(draw.turnFrom).toBeUndefined();
+    });
+
+    it('does nothing when the face is the same or unknown', function () {
+        const same = new Map([['a', card(100, 200, { face: back })]]);
+
+        expect(
+            planFlip({ before: same, after: new Map([['a', card(100, 200, { face: back })]]) })
+        ).toEqual([]);
+        expect(
+            planFlip({
+                before: new Map([['a', card(100, 200)]]),
+                after: new Map([['a', card(100, 200, { face: back })]])
+            })
+        ).toEqual([]);
+    });
+});
+
+describe('changeBetween', function () {
+    const back = '/img/cards/cardback.png';
+    const face = '/img/cards/01001.png';
+
+    it('turns the card over when the face it shows is different at the other end', function () {
+        const change = changeBetween({ source: 'hand', face }, { source: 'draw deck', face: back });
+
+        expect(change).toMatchObject({ travel: true, turnFrom: face, turnTo: back, reveal: false });
+    });
+
+    it('flashes a reveal only when the card ends face up', function () {
+        expect(changeBetween({ face: back }, { face }).reveal).toBe(true);
+    });
+
+    it('turns the card to the angle it lies at in the other place', function () {
+        expect(changeBetween({ rot: 90 }, { rot: 0 }).rotate).toBe(90);
+        expect(changeBetween({ rot: 0 }, { rot: 90 }).rotate).toBe(-90);
+        expect(changeBetween({ rot: 90 }, { rot: 90 }).rotate).toBe(0);
+    });
+
+    it('shows nothing extra when the face and the angle are the same, or the face is unknown', function () {
+        expect(changeBetween({ source: 'hand', face }, { source: 'hand', face })).toEqual({
+            travel: false,
+            rotate: 0
+        });
+        expect(changeBetween({ face }, {}).turnFrom).toBeUndefined();
+    });
+});
+
+describe('a card going into a pile it is not drawn in', function () {
+    const back = '/img/cards/cardback.png';
+    const face = '/img/cards/01001.png';
+    const leaving = (extra) => card(100, 200, { el: { isConnected: false }, face, ...extra });
+    const plan = (was, pile) =>
+        planFlip({
+            before: new Map([
+                ['x', card(0, 0)],
+                ['a', was]
+            ]),
+            after: new Map([['x', card(0, 0)]]),
+            findPile: () => pile
+        }).find((item) => item.type === 'ghost');
+
+    it('turns facedown on its way into a hidden pile', function () {
+        const ghost = plan(leaving({ source: 'play area' }), {
+            source: 'draw deck',
+            left: 800,
+            top: 500,
+            hidden: true
+        });
+
+        expect(ghost).toMatchObject({ turnTo: back, toSource: 'draw deck', returning: true });
+    });
+
+    it('keeps its face on its way into a pile that shows its cards', function () {
+        const ghost = plan(leaving({ source: 'hand' }), {
+            source: 'discard pile',
+            left: 800,
+            top: 500,
+            hidden: false,
+            face
+        });
+
+        expect(ghost.turnTo).toBeUndefined();
+    });
+
+    it('turns face up when a facedown card goes into a pile that shows its cards', function () {
+        const ghost = plan(leaving({ source: 'play area', face: back }), {
+            source: 'discard pile',
+            left: 800,
+            top: 500,
+            hidden: false,
+            face
+        });
+
+        expect(ghost.turnTo).toBe(face);
+    });
+
+    it('stands a kneeling card up as it goes into an upright pile, turning about its middle', function () {
+        const kneeling = leaving({
+            source: 'play area',
+            rot: 90,
+            width: 90,
+            height: 64,
+            slot: { left: 100, top: 200, width: 90, height: 64 }
+        });
+        const ghost = plan(kneeling, {
+            source: 'draw deck',
+            left: 800,
+            top: 500,
+            width: 64,
+            height: 90,
+            sideways: false,
+            hidden: true
+        });
+
+        expect(ghost).toMatchObject({
+            rotate: 90,
+            dx: 832 - 145,
+            dy: 545 - 232,
+            origin: { x: 45, y: 32 }
+        });
+    });
+
+    it('lays an upright card on its side as it goes into a sideways pile', function () {
+        const ghost = plan(leaving({ source: 'play area' }), {
+            source: 'dead pile',
+            left: 800,
+            top: 500,
+            width: 90,
+            height: 64,
+            sideways: true,
+            hidden: false,
+            face
+        });
+
+        expect(ghost.rotate).toBe(-90);
+    });
+
+    it('leaves a plot as it lies when it goes into a sideways plot pile', function () {
+        const plot = leaving({
+            source: 'revealed plots',
+            width: 90,
+            height: 64,
+            slot: { left: 100, top: 200, width: 90, height: 64 }
+        });
+        const ghost = plan(plot, {
+            source: 'plot deck',
+            left: 800,
+            top: 500,
+            width: 90,
+            height: 64,
+            sideways: true,
+            hidden: true
+        });
+
+        expect(ghost.rotate).toBeUndefined();
+        expect(ghost.turnTo).toBe(back);
+    });
+
+    it('shows a card that was being carried, which has no element left, from its face', function () {
+        const faceNode = { carried: true };
+        const carried = card(100, 200, { el: null, solo: true, source: 'hand', face, faceNode });
+        const ghost = plan(carried, { source: 'draw deck', left: 800, top: 500, hidden: true });
+
+        expect(ghost).toMatchObject({
+            el: null,
+            built: { uuid: 'a', faceNode, rot: 0 },
+            turnTo: back
+        });
+    });
+
+    it('does nothing for a carried card that has no face to show', function () {
+        const carried = card(100, 200, { el: null, solo: true, source: 'hand' });
+
+        expect(plan(carried, { source: 'draw deck', left: 800, top: 500 })).toBeUndefined();
+    });
+});
+
+describe('a card coming out of a deck', function () {
+    const face = '/img/cards/01001.png';
+
+    it('turns to the angle it lands at when it arrives kneeling', function () {
+        const decks = new Map([['alice', { left: 900, top: 500, width: 64, height: 90 }]]);
+        const before = new Map([['x', card(0, 0)]]);
+        const after = new Map([
+            ['x', card(0, 0)],
+            [
+                'n',
+                card(100, 200, {
+                    source: 'play area',
+                    from: 'alice',
+                    face,
+                    rot: 90,
+                    width: 90,
+                    height: 64,
+                    slot: { left: 100, top: 200, width: 90, height: 64 }
+                })
+            ]
+        ]);
+
+        const arrival = planFlip({ before, after, decks }).find((item) => item.uuid === 'n');
+
+        expect(arrival).toMatchObject({
+            rotate: -90,
+            dx: 932 - 145,
+            dy: 545 - 232,
+            origin: { x: 45, y: 32 }
+        });
+    });
+});
+
+describe('turnAxis', function () {
+    it('turns an upright card over sideways', function () {
+        expect(turnAxis({ width: 64, height: 90 })).toBe('Y');
+    });
+
+    it('turns a card that is wider than tall, like a plot, top over bottom', function () {
+        expect(turnAxis({ width: 90, height: 64 })).toBe('X');
+    });
+});
+
+describe('a facedown plot dragged onto the used plots', function () {
+    const back = '/img/cards/cardback.png';
+    const face = '/img/cards/01001.png';
+    const sideways = { left: 100, top: 200, width: 90, height: 64 };
+
+    it('is turned over but not turned round, as both ends lie sideways', function () {
+        const carried = card(100, 200, {
+            el: null,
+            solo: true,
+            source: 'plot deck',
+            rot: 90,
+            face: back,
+            width: 90,
+            height: 64,
+            slot: sideways
+        });
+        const landed = card(400, 200, {
+            source: 'revealed plots',
+            rot: 0,
+            face,
+            width: 90,
+            height: 64,
+            slot: { ...sideways, left: 400 },
+            under: true,
+            underOf: 'top'
+        });
+        const top = card(400, 200, { source: 'revealed plots', slot: { ...sideways, left: 400 } });
+
+        const [item] = planFlip({
+            before: new Map([
+                ['top', top],
+                ['p', carried]
+            ]),
+            after: new Map([
+                ['top', top],
+                ['p', landed]
+            ])
+        });
+
+        expect(item).toMatchObject({ type: 'move', rotate: 0, turnFrom: back, under: true });
+        expect(item.origin).toBeUndefined();
+    });
+
+    it('flies above the board when the card on top of it is arriving as well', function () {
+        const arriving = (uuid, extra) =>
+            card(400, 200, { source: 'discard pile', ...extra, uuid });
+        const plan = planFlip({
+            before: new Map([
+                ['a', card(0, 0, { source: 'hand' })],
+                ['b', card(70, 0, { source: 'hand' })]
+            ]),
+            after: new Map([
+                ['a', arriving('a')],
+                ['b', arriving('b', { under: true, underOf: 'a' })]
+            ])
+        });
+
+        expect(plan.find((item) => item.uuid === 'b').under).toBeUndefined();
+    });
+
+    it('stays under the top card of the pile all the way', function () {
+        const item = { type: 'move', dx: 10, dy: 0, rotate: 0, travel: true, under: true };
+
+        expect(keyframesFor(item).every((frame) => frame.zIndex === 'auto')).toBe(true);
+        expect(landingFrames(item)).toBeNull();
+    });
+});
+
+describe('a card leaving or entering a pile under its top card', function () {
+    const sideways = { left: 100, top: 200, width: 90, height: 64 };
+    const ghostFor = (was, pile) =>
+        planFlip({
+            before: new Map([
+                ['x', card(0, 0)],
+                ['a', was]
+            ]),
+            after: new Map([['x', card(0, 0)]]),
+            findPile: () => pile
+        }).find((item) => item.type === 'ghost');
+    const leaving = (extra) =>
+        card(100, 200, {
+            el: { isConnected: false },
+            source: 'revealed plots',
+            slot: sideways,
+            ...extra
+        });
+    const pile = { source: 'plot deck', left: 800, top: 500, hidden: true };
+
+    it('flies behind the cards on the board when it was under the top card of its pile', function () {
+        expect(ghostFor(leaving({ under: true }), pile).behind).toBe(true);
+    });
+
+    it('flies behind the cards on the board when it goes into a pile with a card on top', function () {
+        expect(ghostFor(leaving(), { ...pile, covered: true }).behind).toBe(true);
+    });
+
+    it('flies above the board otherwise', function () {
+        expect(ghostFor(leaving(), pile).behind).toBe(false);
     });
 });

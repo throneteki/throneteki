@@ -41,7 +41,8 @@ const CardPile = ({
     showCards,
     selected,
     flipDeck,
-    flipFrom
+    flipFrom,
+    lockTopCard
 }) => {
     useRenderCount('CardPile');
     const [showPopup, setShowPopup] = useState(cards && cards.some((card) => card.selectable));
@@ -53,9 +54,17 @@ const CardPile = ({
             registerPile(`${popupId || ''}:${source}`, {
                 el: areaRef.current,
                 source,
-                uuids: new Map((cards || []).map((card, index) => [card.uuid, index]))
+                hidden: !!hiddenTopCard,
+                covered: !!topCard,
+                sideways: orientation === 'horizontal',
+                uuids: new Map((cards || []).map((card, index) => [card.uuid, index])),
+                codes: new Map(
+                    (cards || [])
+                        .filter((card) => card.code && !card.facedown)
+                        .map((card) => [card.uuid, card.code])
+                )
             }),
-        [cards, popupId, source]
+        [cards, popupId, source, hiddenTopCard, orientation, topCard]
     );
 
     const isTopCardSelectable = useMemo(() => {
@@ -194,7 +203,7 @@ const CardPile = ({
             cardList = <CardTiledList cards={cards} {...listProps} showCards={showCards} />;
         }
 
-        if (disablePopup || !showPopup) {
+        if (disablePopup) {
             return null;
         }
 
@@ -223,6 +232,7 @@ const CardPile = ({
         return (
             <MovablePanel
                 id={popupId}
+                open={!!showPopup}
                 anchorRef={areaRef}
                 title={playerName ? `${playerName}'s ${title}` : title}
                 name={source}
@@ -321,7 +331,7 @@ const CardPile = ({
                                 source={source}
                                 disableHover
                                 orientation={orientation}
-                                under
+                                under={retTopCard.uuid || true}
                                 flip={!hiddenTopCard && !hideUnderCard}
                                 flipFrom={flipFrom}
                             />
@@ -333,6 +343,7 @@ const CardPile = ({
                             source={source}
                             disableHover={hiddenTopCard}
                             onClick={onTopCardClick}
+                            dragDisabled={lockTopCard}
                             orientation={orientation}
                             flip={!hiddenTopCard}
                             flipFrom={flipFrom}

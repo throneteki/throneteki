@@ -12,6 +12,7 @@ const CardCounters = ({ counters }) => {
 
     return (
         <div
+            data-card-overlay=''
             className='absolute inset-0 z-[230] flex flex-wrap items-center justify-center content-center gap-0.5 p-0.5 text-white pointer-events-none'
             style={containerStyle}
         >

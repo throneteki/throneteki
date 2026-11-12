@@ -42,6 +42,7 @@ const PlayerPlots = ({
                 title='Used Plots'
                 titlePosition={!deckAtBottom && frontIsDeck ? 'bottom left' : 'top left'}
                 topCard={activePlot}
+                lockTopCard
                 disableBackground={true}
                 flipFrom={`plots:${playerName}`}
             />
@@ -78,7 +79,7 @@ const PlayerPlots = ({
                 key={key}
                 className={classNames('relative rounded-md', className)}
                 style={{
-                    zIndex: inFront ? 1 : 0,
+                    zIndex: inFront ? 201 : 200,
                     height: plotHeight,
                     marginTop: atBottom ? plotOverlap : undefined
                 }}
@@ -115,7 +116,11 @@ const PlayerPlots = ({
     ]);
 
     return (
-        <div className='relative flex flex-col self-start' style={{ height: plotAreaHeight }}>
+        <div
+            data-flip-layers=''
+            className='relative flex flex-col self-start'
+            style={{ height: plotAreaHeight }}
+        >
             <div className='inner-border absolute border-2 border-default-100/55 bg-black/55 w-full h-full rounded-md' />
             {renderPlotPiles()}
         </div>

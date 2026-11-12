@@ -1,5 +1,6 @@
 import DiscardCard from '../GameActions/DiscardCard.js';
 import { OpenInformationLocations } from '../CardVisibility.js';
+import RevealPlots from '../gamesteps/revealplots.js';
 
 class DropCommand {
     constructor(game, player, card, targetLocation) {
@@ -11,6 +12,10 @@ class DropCommand {
     }
 
     execute() {
+        if (this.isPlotPlacement()) {
+            return this.promptPlotPlacement();
+        }
+
         if (this.originalLocation === this.targetLocation || this.card.controller !== this.player) {
             return false;
         }
@@ -40,6 +45,65 @@ class DropCommand {
         this.addGameMessage();
 
         return true;
+    }
+
+    isPlotPlacement() {
+        return (
+            this.card.controller === this.player &&
+            this.card.getType() === 'plot' &&
+            this.targetLocation === 'revealed plots' &&
+            ['plot deck', 'revealed plots'].includes(this.originalLocation)
+        );
+    }
+
+    /**
+     * A plot dropped on the used plots pile is either put with the used plots or revealed on the
+     * spot, so the player is asked. Nothing is moved or recorded until they choose.
+     */
+    promptPlotPlacement() {
+        const handlers = {
+            cancel: () => true,
+            reveal: () => {
+                this.game.addAlert(
+                    'danger',
+                    '{0} has revealed {1} immediately',
+                    this.player,
+                    this.card
+                );
+                this.record(this.originalLocation, 'active plot');
+                this.game.queueStep(new RevealPlots(this.game, [this.card]));
+                return true;
+            }
+        };
+        const buttons = [{ text: 'Reveal now', method: 'reveal' }];
+
+        if (this.originalLocation === 'plot deck') {
+            handlers.move = () => {
+                this.player.moveCard(this.card, this.targetLocation);
+                this.addGameMessage();
+                this.record(this.originalLocation, this.targetLocation);
+                return true;
+            };
+            buttons.unshift({ text: 'Move to used plots', method: 'move' });
+        }
+
+        this.game.promptWithMenu(this.player, handlers, {
+            activePrompt: {
+                menuTitle: 'Place this plot',
+                buttons: [...buttons, { text: 'Cancel', method: 'cancel', cancel: true }]
+            },
+            source: this.card,
+            beforeInitiation: true
+        });
+
+        return false;
+    }
+
+    record(from, to) {
+        this.game.manualActions.record(this.player, 'drop', {
+            cards: [this.card],
+            args: [from, to]
+        });
     }
 
     isValidDropCombination() {

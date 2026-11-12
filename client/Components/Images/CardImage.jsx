@@ -18,6 +18,7 @@ const CardImage = forwardRef(function CardImage(
         >
             <CardFace
                 code={code}
+                orientation={orientation === 'horizontal' ? 'horizontal' : 'vertical'}
                 disableSkeleton={disableSkeleton}
                 onLoad={onLoad}
                 onError={onError}

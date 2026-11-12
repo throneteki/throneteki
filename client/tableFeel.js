@@ -29,6 +29,7 @@ export const liftFrames = ({ uuid, toSource }) => {
     const impact = landingImpact(toSource);
 
     return {
+        rest,
         card: [
             { scale: 1.06, rotate: `${tilt}deg`, offset: 0 },
             { scale: 1.04, rotate: `${tilt * 0.5}deg`, offset: 0.45 },
@@ -90,5 +91,5 @@ export const slapFrames = ({ uuid, toSource, config = slapConfig }) => {
         { opacity: 0, offset: 1 }
     ];
 
-    return { card, shadow: card, lift, total };
+    return { card, lift, total, rest };
 };

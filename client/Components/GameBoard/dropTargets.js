@@ -45,7 +45,7 @@ export const validTargets = {
         'shadows'
     ],
     'plot deck': ['revealed plots', 'out of game'],
-    'revealed plots': ['plot deck', 'out of game'],
+    'revealed plots': ['plot deck', 'revealed plots', 'out of game'],
     'out of game': [
         'plot deck',
         'revealed plots',
@@ -83,6 +83,10 @@ const allowedTypes = {
     'revealed plots': ['plot'],
     shadows: drawDeckTypes
 };
+
+// A plot dropped on the used plots is asked about, so it is not moved by the drop itself
+export const needsChoice = (from, to, type) =>
+    type === 'plot' && to === 'revealed plots' && ['plot deck', 'revealed plots'].includes(from);
 
 export const canDrop = (from, to, type) =>
     !!validTargets[from]?.includes(to) &&

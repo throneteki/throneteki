@@ -95,7 +95,9 @@ parameters. Add an entry when you add or change an event.
 Some low-level operations stay below the action boundary: `placeCardInPile`, `moveTo`, property
 setters, setup consolidation and title-pool helpers are used inside action handlers and must not
 queue actions of their own. Deck construction, snapshots, ability counters and prompt selections
-are bookkeeping. `Player.moveCard` is only used by manual commands and drag and drop.
+are bookkeeping. `Player.moveCard` is only used by manual commands and drag and drop. Dropping a plot from the plot deck or the used
+plots on the used plots pile does not move it: the player is asked whether to move it to the used
+plots or reveal it now (the normal reveal, including when revealed abilities), or to cancel.
 
 ## Abilities
 

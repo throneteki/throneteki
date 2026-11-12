@@ -1,4 +1,4 @@
-import { canDrop } from '../../client/Components/GameBoard/dropTargets.js';
+import { canDrop, needsChoice } from '../../client/Components/GameBoard/dropTargets.js';
 
 describe('canDrop', function () {
     it('does not let an event be put into play, but lets it go to the discard pile', function () {
@@ -28,5 +28,18 @@ describe('canDrop', function () {
 
     it('refuses an area the card cannot be moved to from where it is', function () {
         expect(canDrop('plot deck', 'hand', 'plot')).toBe(false);
+    });
+});
+
+describe('needsChoice', function () {
+    it('asks about a plot put on the used plots from the plot deck or the used plots', function () {
+        expect(needsChoice('plot deck', 'revealed plots', 'plot')).toBe(true);
+        expect(needsChoice('revealed plots', 'revealed plots', 'plot')).toBe(true);
+    });
+
+    it('does not ask about other moves', function () {
+        expect(needsChoice('hand', 'discard pile', 'event')).toBe(false);
+        expect(needsChoice('out of game', 'revealed plots', 'plot')).toBe(false);
+        expect(needsChoice('revealed plots', 'plot deck', 'plot')).toBe(false);
     });
 });

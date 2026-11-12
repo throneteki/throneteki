@@ -41,7 +41,9 @@ import { MotionConfig } from 'framer-motion';
 import { useMotionEnabled } from '../../motion';
 import { holdFlip, playPendingFlip } from '../../flip';
 import { dragStore, useDragGhost, useDragVersion } from './dragStore';
-import { canDrop } from './dropTargets';
+import { useLinger } from './useLinger';
+import DropZoneTracker from './DropZoneTracker';
+import { canDrop, needsChoice } from './dropTargets';
 import { useImagePreload } from './useImagePreload';
 
 const placeholderPlayer = {
@@ -82,6 +84,8 @@ const detectCollisions = (args) => {
 
 // The hidden drop zones that appear when a drag starts shift the board; keep the carried card with the pointer instead of scrolling to compensate
 const autoScrollOptions = { layoutShiftCompensation: false };
+
+const dropZoneLinger = 800;
 
 const GameBoard = () => {
     useRenderCount('GameBoard');
@@ -132,6 +136,8 @@ const GameBoard = () => {
     const dragGhost = useDragGhost();
     const dragVersion = useDragVersion();
     const boardAreaRef = useRef(null);
+    // The extra drop zones stay until a dropped card has landed, so nothing moves under its flight
+    const showDropZones = useLinger(!!draggingDetail || !!dragGhost, dropZoneLinger);
 
     const mouseSensor = useSensor(MouseSensor, {
         activationConstraint: {
@@ -169,6 +175,9 @@ const GameBoard = () => {
             event.active.rect.current.initial;
         const start = { x: pointer.clientX, y: pointer.clientY };
         draggedRef.current = {
+            under:
+                event.activatorEvent.target?.closest?.('[data-flip]')?.dataset.flipUnder !==
+                undefined,
             card: data.card,
             orientation: data.orientation,
             source: data.source,
@@ -208,7 +217,13 @@ const GameBoard = () => {
             detail,
             rect,
             rotated,
-            origin: rect && { rect, source: detail.source, rot: rotated ? 90 : 0 }
+            origin: rect && {
+                rect,
+                source: detail.source,
+                rot: rotated ? 90 : 0,
+                under: detail.under,
+                faceNode: document.querySelector('[data-carried] [data-card-face]')?.cloneNode(true)
+            }
         };
     }, []);
 
@@ -223,9 +238,16 @@ const GameBoard = () => {
             if (
                 !rect ||
                 !target ||
-                target === detail.source ||
+                (target === detail.source &&
+                    !needsChoice(detail.source, target, detail.card.type)) ||
                 !canDrop(detail.source, target, detail.card.type)
             ) {
+                dragStore.settle(origin);
+                return;
+            }
+
+            if (needsChoice(detail.source, target, detail.card.type)) {
+                dispatch(sendDragDropMessage(detail.card.uuid, detail.source, target));
                 dragStore.settle(origin);
                 return;
             }
@@ -336,7 +358,7 @@ const GameBoard = () => {
                 onSettingsClick={onSettingsClick}
                 onChatToggle={onChatToggle}
                 unreadMessages={unreadMessages}
-                isDragging={!!draggingDetail}
+                isDragging={showDropZones}
             />
         );
     } else if (currentGame.gameFormat === 'melee') {
@@ -350,7 +372,7 @@ const GameBoard = () => {
                 onSettingsClick={onSettingsClick}
                 onChatToggle={onChatToggle}
                 unreadMessages={unreadMessages}
-                isDragging={!!draggingDetail}
+                isDragging={showDropZones}
             />
         );
     } else {
@@ -379,6 +401,7 @@ const GameBoard = () => {
                             onDragEnd={onDragEnd}
                             onDragCancel={onDragCancel}
                         >
+                            <DropZoneTracker />
                             <ManualModeContext.Provider value={!!currentGame.manualMode}>
                                 {gameBoard}
                             </ManualModeContext.Provider>

@@ -8,6 +8,7 @@ import SquishableCardPanel from './SquishableCardPanel';
 import DrawDeck from './DrawDeck';
 import Droppable from './Droppable';
 import PlayerPlots from './PlayerPlots';
+import AnimatedSlot from './AnimatedSlot';
 
 const PlayerRow = ({
     className,
@@ -242,13 +243,15 @@ const PlayerRow = ({
             {getAgendas(cardPileProps)}
             {getTitleCard()}
             {renderDroppablePile('hand', retHand)}
-            {shadows.length > 0 && renderDroppablePile('shadows', retShadows)}
+            <AnimatedSlot open={showHiddenPiles || shadows.length > 0}>
+                {renderDroppablePile('shadows', retShadows)}
+            </AnimatedSlot>
             {renderDroppablePile('draw deck', retDrawDeck)}
             {renderDroppablePile('discard pile', retDiscardPile)}
             {renderDroppablePile('dead pile', retDeadPile)}
-            {showHiddenPiles && shadows.length === 0 && renderDroppablePile('shadows', retShadows)}
-            {(showHiddenPiles || outOfGamePile.length > 0) &&
-                renderDroppablePile('out of game', retOutOfGame)}
+            <AnimatedSlot open={showHiddenPiles || outOfGamePile.length > 0}>
+                {renderDroppablePile('out of game', retOutOfGame)}
+            </AnimatedSlot>
         </div>
     );
 };

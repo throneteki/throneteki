@@ -103,22 +103,42 @@ html.card-dragging * {
     cursor: grabbing !important;
 }
 
-/* The resting shadow of a card, with a deeper one that only shows while the card is lifted */
-.card-shadow {
+/* The card itself: what is lifted, turned over and set down. Its shadow is part of it, so the shadow
+   turns with the card, and a deeper one only shows while the card is lifted */
+.card-body {
     position: absolute;
-    left: 0;
-    top: 0;
-    pointer-events: none;
+    inset: 0;
+    border-radius: inherit;
     box-shadow:
         0 1px 1px rgba(0, 0, 0, 0.45),
         0 2px 5px rgba(0, 0, 0, 0.35);
 }
 
-.card-shadow::after {
+.card-body::after {
     content: '';
     position: absolute;
     inset: 0;
     border-radius: inherit;
     box-shadow: 0 14px 22px rgba(0, 0, 0, 0.45);
     opacity: 0;
+    pointer-events: none;
+}
+
+/* A card turning to kneel or stand overshoots a little and settles, like it was flicked */
+.card-turn {
+    transition:
+        transform 380ms cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 150ms,
+        filter 150ms;
+}
+
+/* Anything that grows, shrinks or makes room for a neighbour does it smoothly instead of jumping */
+.shift-smooth {
+    transition-property: width, height, margin, grid-template-columns, opacity;
+    transition-duration: 280ms;
+    transition-timing-function: cubic-bezier(0.3, 0.7, 0.3, 1);
+}
+
+[data-motion='off'] .shift-smooth {
+    transition: none;
 }

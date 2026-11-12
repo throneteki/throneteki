@@ -1,4 +1,13 @@
-import React, { memo, useState, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import React, {
+    memo,
+    useState,
+    useCallback,
+    useContext,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useRef
+} from 'react';
 import classNames from 'classnames';
 import { useDraggable } from '@dnd-kit/core';
 import CardCounters from './CardCounters';
@@ -18,6 +27,7 @@ import { getActionRequirementReason, isNotableRequirement } from './actionRequir
 import { ManualModeContext } from './ManualModeContext';
 import { useIsCarried } from './dragStore';
 import { restingAngle } from '../../tableFeel';
+import { pulseCard } from '../../flip';
 import { useRenderCount } from '../../perf';
 
 // Opening one card menu closes any other that is open.
@@ -51,6 +61,14 @@ const CardView = ({
     const isCarried = useIsCarried(card?.uuid);
     const [showUnderneath, setShowUnderneath] = useState(false);
     const cardRef = useRef(null);
+    const kneeled = !!card.kneeled;
+    const wasKneeled = useRef(kneeled);
+    useLayoutEffect(() => {
+        if (wasKneeled.current !== kneeled) {
+            wasKneeled.current = kneeled;
+            pulseCard(cardRef.current);
+        }
+    }, [kneeled]);
 
     const dupeCards = useMemo(
         () => (card.dupes || []).map((dupe) => ({ ...dupe, facedown: card.facedown })),
@@ -253,6 +271,7 @@ const CardView = ({
         return (
             <button
                 type='button'
+                data-card-overlay=''
                 title='Cards underneath'
                 className='pointer-events-auto absolute bottom-1 right-1 z-[230] card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[var(--badge-size)] h-[var(--badge-size)] px-1 text-white bg-black/80 font-bold text-center rounded-md border-1'
                 onClick={(event) => {
@@ -266,7 +285,7 @@ const CardView = ({
     };
 
     const getUnderneathPopup = () => {
-        if (!hasUnderneathPopup || !showUnderneath) {
+        if (!hasUnderneathPopup) {
             return null;
         }
 
@@ -278,6 +297,7 @@ const CardView = ({
         return (
             <MovablePanel
                 id={card.uuid}
+                open={!!showUnderneath}
                 anchorRef={cardRef}
                 title={`Underneath ${card.name || 'card'}`}
                 name='underneath'
@@ -307,7 +327,10 @@ const CardView = ({
         }
 
         return (
-            <div className='absolute top-0 left-0 z-[230] flex items-center justify-center card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[calc(var(--badge-size)*0.8)] h-[var(--badge-size)] px-0.5 text-white bg-black/90 font-bold rounded-br-md rounded-tl-[inherit]'>
+            <div
+                data-card-overlay=''
+                className='absolute top-0 left-0 z-[230] flex items-center justify-center card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[calc(var(--badge-size)*0.8)] h-[var(--badge-size)] px-0.5 text-white bg-black/90 font-bold rounded-br-md rounded-tl-[inherit]'
+            >
                 {card.order}
             </div>
         );
@@ -404,7 +427,7 @@ const CardView = ({
 
         const isInteractive = card.selectable || card.canPlay;
         const cardClassName = classNames(
-            'relative overflow-hidden pointer-events-auto touch-none transition-[transform,box-shadow,filter]',
+            'relative pointer-events-auto touch-none card-turn',
             cardBoxClass(isRotated ? 'rotated' : orientation),
             getHighlightClass(),
             {
@@ -439,14 +462,6 @@ const CardView = ({
                 data-flip-rot={flip && !wrapped ? (isRotated ? 90 : 0) : undefined}
             >
                 <div
-                    data-card-shadow=''
-                    className={classNames(
-                        'card-shadow',
-                        cardBoxClass(isRotated ? 'rotated' : orientation)
-                    )}
-                    style={{ zIndex: cardStackIndex, rotate: resting }}
-                />
-                <div
                     {...listeners}
                     {...attributes}
                     {...hoverHandlers}
@@ -456,9 +471,13 @@ const CardView = ({
                     onClick={handleClick}
                     style={{ zIndex: cardStackIndex--, rotate: resting }}
                 >
-                    {card.name && <span className='absolute left-0 top-0'>{card.name}</span>}
-                    <CardFace code={imageCode} />
-                    {isFaceup && getAlertStatus()}
+                    <div data-card-body='' className='card-body'>
+                        <CardFace
+                            code={imageCode}
+                            orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}
+                        />
+                        {isFaceup && getAlertStatus()}
+                    </div>
                 </div>
                 {!hideTokens && <CardCounters counters={getCountersForCard(card)} />}
                 {showMenu && (
@@ -485,7 +504,7 @@ const CardView = ({
             data-flip={flip && !shell ? card.uuid : undefined}
             data-flip-from={flip ? flipFrom : undefined}
             data-flip-source={flip ? source : undefined}
-            data-flip-under={flip && under ? '' : undefined}
+            data-flip-under={flip && under ? (under === true ? '' : under) : undefined}
             data-flip-rot={flip ? (isRotated ? 90 : 0) : undefined}
         >
             {getDupes()}
@@ -499,10 +518,11 @@ const CardView = ({
 };
 
 const DraggableCard = (props) => {
-    const { card, orientation, source } = props;
+    const { card, orientation, source, dragDisabled } = props;
     const key = `card-${card.uuid}-${source}`;
     const drag = useDraggable({
         id: useUniqueId(key),
+        disabled: !!dragDisabled,
         data: { type: ItemTypes.CARD, card, orientation, source, key }
     });
 

@@ -22,7 +22,7 @@ const CarriedCard = ({ code, orientation, start, grab, rectRef }) => {
     }, [grab, rectRef, start]);
 
     return createPortal(
-        <div ref={ref} className='fixed left-0 top-0 z-[400] pointer-events-none'>
+        <div ref={ref} data-carried='' className='fixed left-0 top-0 z-[400] pointer-events-none'>
             <CardImage
                 code={code}
                 orientation={orientation}

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { preloadCards } from '../../imageCache';
+import { background, preloadCards } from '../../imageCache';
 
 const pileKeys = [
     'hand',
@@ -40,12 +40,49 @@ export const collectPlayerCodes = (players) => {
     return codes;
 };
 
+// What is on the table or on top of a pile is shown at once, so it is loaded first
+const shownNow = ['hand', 'shadows', 'cardsInPlay'];
+const topOfPile = ['plotDiscard', 'discardPile', 'deadPile', 'outOfGamePile'];
+
+export const collectShownCodes = (players) => {
+    const codes = new Set();
+    Object.values(players || {}).forEach((player) => {
+        shownNow.forEach((key) =>
+            player.cardPiles?.[key]?.forEach((card) => collectCodes(card, codes))
+        );
+        topOfPile.forEach((key) =>
+            player.cardPiles?.[key]?.slice(0, 2).forEach((card) => collectCodes(card, codes))
+        );
+        cardKeys.forEach((key) => collectCodes(player[key], codes));
+        player.agendas?.forEach((card) => collectCodes(card, codes));
+    });
+
+    return codes;
+};
+
+const whenIdle = (task) => {
+    if (typeof requestIdleCallback === 'function') {
+        const id = requestIdleCallback(task, { timeout: 3000 });
+        return () => cancelIdleCallback(id);
+    }
+
+    const id = setTimeout(task, 500);
+    return () => clearTimeout(id);
+};
+
 export const useImagePreload = (players) => {
     useEffect(() => {
         preloadCards(alwaysPreload);
     }, []);
 
     useEffect(() => {
-        preloadCards(collectPlayerCodes(players));
+        const shown = collectShownCodes(players);
+        preloadCards(shown);
+
+        // Everything else is only loaded while nothing else is, and a few at a time
+        return whenIdle(() => {
+            const rest = [...collectPlayerCodes(players)].filter((code) => !shown.has(code));
+            preloadCards(rest, background);
+        });
     }, [players]);
 };

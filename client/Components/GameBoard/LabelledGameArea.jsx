@@ -28,7 +28,7 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
         return <div className={labelClassName}>{label}</div>;
     }, [label, labelClickable, position]);
 
-    const areaClassName = classNames('relative', className);
+    const areaClassName = classNames('relative shift-smooth', className);
     return (
         <div ref={ref} className={areaClassName} onClick={onClick} style={style} {...rest}>
             {!disableBackground && (

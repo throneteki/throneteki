@@ -1,14 +1,17 @@
 import React from 'react';
 import classNames from 'classnames';
 import { cardImageSrc, markImage, useImageStatus } from '../../imageCache';
+import CardFallback from './CardFallback';
 
-const CardFace = ({ code, className, disableSkeleton = false, onLoad, onError }) => {
+const CardFace = ({ code, orientation, className, disableSkeleton = false, onLoad, onError }) => {
     const src = cardImageSrc(code);
     const status = useImageStatus(src);
     const ready = status === 'loaded';
+    const failed = status === 'error';
 
     return (
-        <>
+        <div data-card-face='' className='absolute inset-0 overflow-hidden rounded-[inherit]'>
+            {failed && <CardFallback code={code} orientation={orientation} />}
             {!status && !disableSkeleton && (
                 <div className='absolute inset-0 animate-pulse bg-default-100/60' />
             )}
@@ -19,7 +22,7 @@ const CardFace = ({ code, className, disableSkeleton = false, onLoad, onError })
                 decoding={ready ? 'sync' : 'async'}
                 className={classNames(
                     'absolute left-0 top-0 h-full w-full pointer-events-none select-none',
-                    { 'opacity-0': !ready && status !== 'error' },
+                    { 'opacity-0': !ready, hidden: failed },
                     className
                 )}
                 onLoad={(event) => {
@@ -31,7 +34,7 @@ const CardFace = ({ code, className, disableSkeleton = false, onLoad, onError })
                     onError && onError(event);
                 }}
             />
-        </>
+        </div>
     );
 };
 
