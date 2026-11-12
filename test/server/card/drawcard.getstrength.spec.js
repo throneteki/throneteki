@@ -72,4 +72,20 @@ describe('DrawCard', function () {
             });
         });
     });
+
+    describe('getStrengthIfTextBoxBlank()', function () {
+        beforeEach(function () {
+            this.ownTextEffect = { source: this.card, duration: 'persistent' };
+            this.ownLastingEffect = { source: this.card, duration: 'untilEndOfPhase' };
+            this.otherCardEffect = { source: { uuid: 3333 }, duration: 'persistent' };
+            this.card.addStrengthModifier(this.ownTextEffect, -2);
+            this.card.addStrengthModifier(this.ownLastingEffect, -1);
+            this.card.addStrengthModifier(this.otherCardEffect, 2);
+        });
+
+        it("leaves out only the persistent effects from the card's own text", function () {
+            expect(this.card.getStrength()).toBe(2);
+            expect(this.card.getStrengthIfTextBoxBlank()).toBe(4);
+        });
+    });
 });

@@ -8,12 +8,22 @@ class CardStat {
     }
 
     calculate(boostValue = 0) {
-        if (typeof this.setValue !== 'number') {
-            let modifiedValue = this.modifier + this.baseValue + boostValue;
-            let multipliedValue = Math.round(this.multiplier * modifiedValue);
-            return Math.max(0, multipliedValue);
+        return this.calculateExcluding(() => false, boostValue);
+    }
+
+    calculateExcluding(isExcluded, boostValue = 0) {
+        const included = (records) => records.filter((record) => !isExcluded(record.effect));
+        const setValues = included(this.setValues);
+        if (setValues.length > 0) {
+            return setValues[setValues.length - 1].val;
         }
-        return this.setValue;
+
+        const modifier = included(this.modifiers).reduce((total, record) => total + record.val, 0);
+        const multiplier = included(this.multipliers).reduce(
+            (total, record) => total * record.val,
+            1
+        );
+        return Math.max(0, Math.round(multiplier * (modifier + this.baseValue + boostValue)));
     }
 
     get setValue() {
