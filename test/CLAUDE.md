@@ -89,9 +89,10 @@ When a run fails, read the full output rather than piping it through `grep` or `
 
 ## Modifying existing specs
 
-Never change an existing spec unless asked. Specs describe the expected behaviour, and changing
-them can hide bugs. If a spec looks wrong against the card text or the Rules Reference, explain why
-and ask before changing it.
+Adding test cases to an existing spec is fine, and encouraged when it covers a gap. Never change or
+remove an existing test case unless asked. Specs describe the expected behaviour, and changing them
+can hide bugs. If a test looks wrong against the card text or the Rules Reference, explain why and
+ask before changing it.
 
 The exception is an assertion that contradicts text you can quote from the card, the Rules
 Reference or a ThronesDB FAQ entry. Correct only that assertion, quote the text in the commit message, and point the change

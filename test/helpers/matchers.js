@@ -1,3 +1,5 @@
+import { expect as importedExpect } from 'vitest';
+
 function serializeButtons(buttons) {
     return buttons
         .map((button) => `[${button.disabled ? button.text + ' (Disabled)' : button.text}]`)
@@ -141,7 +143,7 @@ const matchers = {
 };
 
 export function install() {
-    // Use the runner's global `expect`: importing 'vitest' here can load a second copy of it on
+    // Prefer the runner's global `expect`: importing 'vitest' here can load a second copy of it on
     // Windows when the working directory's drive letter is lowercase (as under Git Bash).
-    globalThis.expect.extend(matchers);
+    (globalThis.expect ?? importedExpect).extend(matchers);
 }

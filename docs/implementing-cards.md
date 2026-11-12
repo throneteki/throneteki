@@ -137,7 +137,7 @@ this.persistentEffect({
 });
 ```
 
-`match` can also be an array of cards or players. Leaving `match` out matches every eligible target. Passing it as `undefined` or `null` (for example `match: context.target` when there is no target), or as a card selector object such as `{ type: 'character' }`, is a mistake: it throws outside production, and in production the error is reported and the effect matches nothing.
+`match` can also be an array of cards or players. Leaving `match` out matches every eligible target. Passing it as `undefined` or `null` (for example `match: context.target` when there is no target), or as a card selector object such as `{ type: 'character' }`, is a mistake: it throws outside production, and in production the error is reported and the effect is not added. `whileAttached` already matches the parent, so its `match` can only be a function that narrows that further.
 
 #### Conditional effects
 

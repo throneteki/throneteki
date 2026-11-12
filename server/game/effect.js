@@ -1,5 +1,37 @@
 import { flatten } from '../Array.js';
 
+function isCardOrPlayer(value) {
+    return ['card', 'player'].includes(value?.getGameElementType?.());
+}
+
+function describeMatch(match) {
+    if (match && typeof match === 'object') {
+        try {
+            return JSON.stringify(match);
+        } catch {
+            return String(match);
+        }
+    }
+
+    return String(match);
+}
+
+/**
+ * A match that is passed but missing (usually a target that no longer exists) must not fall back
+ * to matching everything. Outside production the mistake throws so specs catch it; in production
+ * it is reported and the effect is not added.
+ */
+export function reportInvalidMatch(game, source, match) {
+    const error = new Error(
+        `Effect from ${source?.name} has an invalid match: ${describeMatch(match)}`
+    );
+    if (process.env.NODE_ENV !== 'production') {
+        throw error;
+    }
+
+    game.reportError(error);
+}
+
 /**
  * Represents a card based effect applied to one or more targets.
  *
@@ -33,10 +65,6 @@ import { flatten } from '../Array.js';
  * effect.unapply   - function that takes a card and a context object and modifies
  *                    the card to remove the previously applied effect.
  */
-function isGameElement(value) {
-    return typeof value?.getGameElementType === 'function';
-}
-
 class Effect {
     constructor(game, source, properties) {
         if (properties.duration?.startsWith('atEndOf')) {
@@ -84,21 +112,12 @@ class Effect {
         }
 
         const match = properties.match;
-        if (typeof match === 'function' || Array.isArray(match) || isGameElement(match)) {
+        if (typeof match === 'function' || Array.isArray(match) || isCardOrPlayer(match)) {
             return match;
         }
 
-        // A match that is passed but missing (usually a target that no longer exists) must not
-        // fall back to matching everything. Outside production the mistake throws so specs catch
-        // it; in production the effect matches nothing.
-        const error = new Error(
-            `Effect from ${this.source?.name} has an invalid match: ${String(match)}`
-        );
-        if (process.env.NODE_ENV !== 'production') {
-            throw error;
-        }
-
-        this.game.reportError?.(error);
+        reportInvalidMatch(this.game, this.source, match);
+        this.invalid = true;
         return () => false;
     }
 

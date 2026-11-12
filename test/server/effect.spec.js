@@ -93,8 +93,16 @@ describe('Effect', function () {
             );
         });
 
-        it('throws when match is a card selector object', function () {
+        it('throws and names the selector when match is a card selector object', function () {
             expect(() => this.buildEffect({ match: { type: 'character' } })).toThrow(
+                'Effect from Source has an invalid match: {"type":"character"}'
+            );
+        });
+
+        it('throws when match is the game', function () {
+            const game = { getGameElementType: () => 'game' };
+
+            expect(() => this.buildEffect({ match: game })).toThrow(
                 'Effect from Source has an invalid match'
             );
         });
@@ -109,7 +117,7 @@ describe('Effect', function () {
                 vi.unstubAllEnvs();
             });
 
-            it('reports the error and matches nothing when match is undefined', function () {
+            it('reports the error and marks the effect invalid when match is undefined', function () {
                 const effect = this.buildEffect({ match: undefined });
 
                 effect.addTargets([this.card, this.otherCard]);
@@ -119,6 +127,7 @@ describe('Effect', function () {
                         message: 'Effect from Source has an invalid match: undefined'
                     })
                 );
+                expect(effect.invalid).toBe(true);
                 expect(effect.targets).toEqual([]);
             });
         });
