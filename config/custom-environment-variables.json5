@@ -1,4 +1,7 @@
 {
+    thronesDbClientId: 'THRONESDB_CLIENT_ID',
+    thronesDbSecret: 'THRONESDB_SECRET',
+    thronesDbCallbackUrl: 'THRONESDB_CALLBACK_URL',
     db: {
         migrator: {
             user: 'DB_MIGRATOR_USER',

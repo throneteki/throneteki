@@ -10,6 +10,7 @@ import {
     Card,
     CardBody,
     Input,
+    Link,
     Select,
     SelectItem,
     extendVariants
@@ -405,6 +406,16 @@ const DeckEditor = ({ deck: initial, cards, packs, onBackClick }) => {
                 <Button onPress={() => setShowImportModal(true)} isDisabled={deck.locked}>
                     Import
                 </Button>
+                {initial.thronesDbUuid && (
+                    <Button
+                        as={Link}
+                        href={`https://thronesdb.com/deck/view/${initial.thronesDbUuid}`}
+                        target='_blank'
+                        rel='noreferrer'
+                    >
+                        View on ThronesDB
+                    </Button>
+                )}
             </div>
             <div className='columns-1 xl:columns-2 gap-4'>
                 <div className='flex flex-col gap-2 break-inside-avoid'>

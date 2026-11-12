@@ -3,6 +3,7 @@ import moment from 'moment';
 import ReactTable from '../Table/ReactTable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+    faCloudArrowDown,
     faDownload,
     faFileCirclePlus,
     faHeart,
@@ -64,7 +65,7 @@ const DeckList = ({
                     );
                 },
                 meta: {
-                    colWidth: '45%',
+                    colWidth: '42%',
                     className: 'min-w-34'
                 }
             },
@@ -188,6 +189,33 @@ const DeckList = ({
                 enableSorting: false
             },
             {
+                accessorKey: 'thronesDbUuid',
+                cell: (info) =>
+                    info.getValue() ? (
+                        <div className='flex justify-center'>
+                            <a
+                                className='text-default-500 hover:text-primary'
+                                href={`https://thronesdb.com/deck/view/${info.getValue()}`}
+                                target='_blank'
+                                rel='noreferrer'
+                                title='View on ThronesDB'
+                                aria-label='View on ThronesDB'
+                                onPointerDown={(event) => event.stopPropagation()}
+                                onClick={(event) => event.stopPropagation()}
+                            >
+                                <FontAwesomeIcon icon={faCloudArrowDown} />
+                            </a>
+                        </div>
+                    ) : null,
+                header: 'ThronesDB',
+                meta: {
+                    colWidth: '5%',
+                    className: 'max-sm:hidden'
+                },
+                enableColumnFilter: false,
+                enableSorting: false
+            },
+            {
                 accessorKey: 'isFavourite',
                 cell: (info) => (
                     <div
@@ -230,6 +258,12 @@ const DeckList = ({
                   icon: <FontAwesomeIcon icon={faDownload} />,
                   label: 'Import',
                   onPress: () => setShowImportModal(true)
+              },
+              {
+                  color: 'default',
+                  icon: <FontAwesomeIcon icon={faCloudArrowDown} />,
+                  label: 'From ThronesDB',
+                  onPress: () => dispatch(navigate('/decks/thronesdb'))
               },
               {
                   color: 'danger',

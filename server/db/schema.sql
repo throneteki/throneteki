@@ -147,6 +147,7 @@ CREATE TABLE public.decks (
     event_id bigint,
     is_favourite boolean DEFAULT false NOT NULL,
     last_updated timestamp with time zone DEFAULT now() NOT NULL,
+    thronesdb_uuid text,
     CONSTRAINT decks_check CHECK (((user_id IS NULL) <> (standalone_deck_id IS NULL)))
 );
 
@@ -502,6 +503,7 @@ CREATE TABLE public.users (
     mod_notes text,
     legacy jsonb,
     email_updates boolean DEFAULT true NOT NULL,
+    thronesdb jsonb,
     CONSTRAINT users_email_check CHECK ((email <> ''::text)),
     CONSTRAINT users_trust_state_check CHECK ((trust_state = ANY (ARRAY['trusted'::text, 'new'::text, 'restricted'::text, 'banned_evasion_review'::text]))),
     CONSTRAINT users_username_check CHECK ((username <> ''::text))
@@ -819,6 +821,12 @@ CREATE UNIQUE INDEX decks_user_id_event_id_key ON public.decks USING btree (user
 --
 
 CREATE INDEX decks_user_id_last_updated_idx ON public.decks USING btree (user_id, last_updated DESC);
+
+--
+-- Name: decks_user_id_thronesdb_uuid_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX decks_user_id_thronesdb_uuid_key ON public.decks USING btree (user_id, thronesdb_uuid) WHERE (thronesdb_uuid IS NOT NULL);
 
 --
 -- Name: game_players_deck_id_idx; Type: INDEX; Schema: public; Owner: -

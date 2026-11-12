@@ -24,6 +24,8 @@ import NodesAdmin from './pages/NodesAdmin';
 import MotdAdmin from './pages/MotdAdmin';
 import Privacy from './pages/Privacy';
 import Patreon from './pages/Patreon';
+import ThronesDb from './pages/ThronesDb';
+import ThronesDbDecks from './pages/ThronesDbDecks';
 import BanlistAdmin from './pages/BanlistAdmin';
 import EventsAdmin from './pages/EventsAdmin';
 import DraftingTable from './Components/Drafting/DraftingTable';
@@ -44,6 +46,7 @@ const routes = [
     { path: '/blocklist', action: () => <BlockList key='blocklist' /> },
     { path: '/decks', action: () => <Decks key='decks' /> },
     { path: '/decks/new', action: () => <AddDeck key='adddecks' /> },
+    { path: '/decks/thronesdb', action: () => <ThronesDbDecks key='thronesdbdecks' /> },
     {
         path: '/decks/edit/:id([a-f\\d]{24}|\\d+)',
         action: (context) => <EditDeck key='editdeck' deckId={context.params.id} />
@@ -100,6 +103,7 @@ const routes = [
         permission: 'canManageMotd'
     },
     { path: '/patreon', action: (context) => <Patreon code={context.params.code} /> },
+    { path: '/thronesdb', action: () => <ThronesDb key='thronesdb' /> },
     {
         path: '/banlist',
         action: () => <BanlistAdmin key='banlist' permission='canManageBanlist' />

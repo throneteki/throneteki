@@ -165,6 +165,8 @@ jobs:
                     patreonCallbackUrl: "${{ vars.PATREON_CALLBACK_URL }}"
                     patreonClientId: "${{ secrets.PATREON_CLIENTID }}"
                     patreonSecret: "${{ secrets.PATREON_SECRET }}"
+                    thronesDbClientId: "${{ secrets.THRONESDB_CLIENTID }}"
+                    thronesDbSecret: "${{ secrets.THRONESDB_SECRET }}"
                   EOF
 
                   cat > /tmp/lobby-db.yaml <<EOF

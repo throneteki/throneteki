@@ -37,6 +37,7 @@ export const UserFields = [
     { property: 'settings', column: 'settings', type: 'json' },
     { property: 'promptedActionWindows', column: 'prompted_action_windows', type: 'json' },
     { property: 'patreon', column: 'patreon', type: 'json' },
+    { property: 'thronesDb', column: 'thronesdb', type: 'json' },
     { property: 'activationTokenHash', column: 'activation_token_hash' },
     { property: 'activationTokenExpiry', column: 'activation_token_expires_at' },
     { property: 'activationTokenIssuedAt', column: 'activation_token_issued_at' },
