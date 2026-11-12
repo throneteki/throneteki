@@ -87,9 +87,17 @@ async function reset(server, scenario, users, oldGame) {
     return newGame;
 }
 
+export function isCompleteJson(filePath) {
+    try {
+        JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 export async function install(server, scenario, usernames) {
     const users = parseUsers(usernames);
-    const specPath = scenario.split('#')[0];
 
     let game = await build(server, scenario, users, randomUUID());
     server.games[game.id] = game;
@@ -98,8 +106,20 @@ export async function install(server, scenario, usernames) {
         `Scenario ready as game ${game.id}; log in as ${users.map((user) => user.username).join(' or ')} to join`
     );
 
-    fs.watchFile(specPath, { interval: 1000 }, async () => {
-        logger.info('Spec changed, rebuilding the scenario');
+    if (scenario.startsWith('report:')) {
+        return;
+    }
+
+    const isReportFile = scenario.startsWith('file:');
+    const watchPath = isReportFile ? scenario.slice('file:'.length) : scenario.split('#')[0];
+
+    fs.watchFile(watchPath, { interval: 1000 }, async () => {
+        if (isReportFile && !isCompleteJson(watchPath)) {
+            logger.info('Report file is not valid JSON yet, waiting for the next change');
+            return;
+        }
+
+        logger.info('Scenario file changed, rebuilding the scenario');
         game = await reset(server, scenario, users, game);
     });
 }

@@ -1,3 +1,5 @@
+import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import { runScenario } from '../../../server/devtools/scenario/runner.js';
 
@@ -67,6 +69,44 @@ describe('scenario runner', function () {
         expect(name).toContain('Problem report');
         expect(game.currentPhase).toBe('marshal');
         expect(game.allCards.find((card) => card.name === 'Tumblestone Knight').kneeled).toBe(true);
+    });
+
+    it('loads a downloaded problem report from a file', async function () {
+        const { game: source } = await runScenario(`${breakPath}#stops part way`, {
+            users,
+            logger: silentLogger
+        });
+        const report = source.getProblemReport('alice');
+        const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'problem-report-'));
+        const file = path.join(dir, `${report.id}.json`);
+        fs.writeFileSync(file, JSON.stringify(report));
+
+        try {
+            const { game, name, error } = await runScenario(`file:${file}`, {
+                users,
+                logger: silentLogger
+            });
+
+            expect(error).toBeUndefined();
+            expect(name).toContain(report.id);
+            expect(game.scenario).toBe(`file:${file}`);
+            expect(game.currentPhase).toBe('marshal');
+            expect(game.allCards.find((card) => card.name === 'Tumblestone Knight').kneeled).toBe(
+                true
+            );
+        } finally {
+            fs.rmSync(dir, { recursive: true, force: true });
+        }
+    });
+
+    it('records how a problem report was made', async function () {
+        const { game } = await runScenario(`${breakPath}#stops part way`, {
+            users,
+            logger: silentLogger
+        });
+
+        expect(game.getProblemReport('alice').source).toBe('report');
+        expect(game.getProblemReport('alice', 'cancel-prompt').source).toBe('cancel-prompt');
     });
 
     it('loads a problem report with as many players as the reported game', async function () {

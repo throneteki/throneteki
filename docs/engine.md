@@ -291,9 +291,11 @@ and argument snapshot beside the rendered text.
 ## Problem reports and scenarios
 
 `/cancel-prompt` and "report a problem" save a JSON snapshot (cards, zones, phase, log, challenge,
-pipeline) in PostgreSQL for 30 days. The scenario runner rebuilds the board, the phase, the
-challenges already made that phase, and a challenge in progress from the action window after
-attackers or defenders were declared, from a report ID or a spec
+pipeline) in PostgreSQL for 30 days, with whether it came from `/cancel-prompt` or the report
+button. Admin > Problem Reports lists them and downloads one as JSON. The scenario runner rebuilds
+the board, the phase, the challenges already made that phase, and a challenge in progress from the
+action window after attackers or defenders were declared, from a report ID, a downloaded report
+file or a spec
 (`SCENARIO=<spec>#<test>`, see [testing-cards.md](testing-cards.md#playing-a-test-in-the-real-client)).
 
 ## Decisions

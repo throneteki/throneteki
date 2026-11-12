@@ -19,7 +19,8 @@ export const Permissions = [
     'canModerateChat',
     'canManageMotd',
     'canManageEvents',
-    'canManageBanlist'
+    'canManageBanlist',
+    'canViewProblemReports'
 ];
 
 const DuplicateConstraints = { users_username_key: 'username', users_email_key: 'email' };

@@ -22,6 +22,7 @@ import GameBoard from './Components/GameBoard/GameBoard';
 import BlockList from './pages/BlockList';
 import NodesAdmin from './pages/NodesAdmin';
 import MotdAdmin from './pages/MotdAdmin';
+import ProblemReportsAdmin from './pages/ProblemReportsAdmin';
 import Privacy from './pages/Privacy';
 import Patreon from './pages/Patreon';
 import BanlistAdmin from './pages/BanlistAdmin';
@@ -93,6 +94,11 @@ const routes = [
     },
     { path: '/users', action: () => <UserAdmin key='useradmin' />, permission: 'canManageUsers' },
     { path: '/nodes', action: () => <NodesAdmin key='nodesadmin' />, permission: 'canManageNodes' },
+    {
+        path: '/admin/problem-reports',
+        action: () => <ProblemReportsAdmin key='problemreports' />,
+        permission: 'canViewProblemReports'
+    },
     { path: '/privacy', action: () => <Privacy key='privacy' /> },
     {
         path: '/admin/motd',

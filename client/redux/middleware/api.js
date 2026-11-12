@@ -90,7 +90,11 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
         };
     }
 
-    if (api.endpoint === 'getDecks' || api.endpoint === 'getAllNews') {
+    if (
+        api.endpoint === 'getDecks' ||
+        api.endpoint === 'getAllNews' ||
+        api.endpoint === 'getProblemReports'
+    ) {
         return result;
     }
 
@@ -417,6 +421,21 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: [TagTypes.BanList]
         }),
+        getProblemReports: builder.query({
+            query: (loadOptions) => ({
+                url: '/problem-reports',
+                params: {
+                    pageSize: loadOptions.pageSize,
+                    pageNumber: loadOptions.pageIndex,
+                    sorting: loadOptions.sorting,
+                    filters: loadOptions.columnFilters
+                }
+            })
+        }),
+        getProblemReport: builder.query({
+            query: (id) => `/problem-reports/${id}`,
+            keepUnusedDataFor: 0
+        }),
         getAbuseBlocks: builder.query({
             query: () => '/abuse-blocks',
             providesTags: (result = { data: [] }) => [
@@ -564,6 +583,8 @@ export const {
     useGetBanListQuery,
     useAddBanListEntryMutation,
     useRemoveBanListEntryMutation,
+    useGetProblemReportsQuery,
+    useLazyGetProblemReportQuery,
     useGetAbuseBlocksQuery,
     useAddAbuseBlockMutation,
     useRemoveAbuseBlockMutation,

@@ -1708,7 +1708,7 @@ class Game extends EventEmitter {
         }
     }
 
-    getProblemReport(reporter) {
+    getProblemReport(reporter, source = 'report') {
         const players = this.getAllPlayers();
         const cards = this.allCards.map((card) => ({
             id: card.uuid,
@@ -1780,6 +1780,7 @@ class Game extends EventEmitter {
                         : []
             },
             reporter,
+            source,
             players: playerStates,
             cards,
             messages: this.gameChat.messages.slice(-100),

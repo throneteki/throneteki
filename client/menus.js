@@ -16,6 +16,11 @@ export const LeftMenu = [
             { path: '/news', title: 'News', permission: 'canEditNews' },
             { path: '/users', title: 'Users', permission: 'canManageUsers' },
             { path: '/nodes', title: 'Nodes', permission: 'canManageNodes' },
+            {
+                path: '/admin/problem-reports',
+                title: 'Problem Reports',
+                permission: 'canViewProblemReports'
+            },
             { path: '/admin/motd', title: 'Motd', permission: 'canManageMotd' },
             { path: '/banlist', title: 'Ban List', permission: 'canManageBanlist' },
             { path: '/events', title: 'Events', permission: 'canManageEvents' }

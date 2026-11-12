@@ -5,6 +5,13 @@ import defaultDb from '../db/index.js';
 import logger from '../log.js';
 import { FinishedGameSql } from './UserStatsService.js';
 import { idColumn } from '../db/ids.js';
+import {
+    MaxFilterValueLength,
+    escapeLike,
+    getOrder,
+    getPaging,
+    getRequestedFilters
+} from './listQuery.js';
 
 export const Factions = [
     { name: 'House Baratheon', value: 'baratheon' },
@@ -25,7 +32,6 @@ const SortColumns = {
 };
 const MaxPageSize = 50;
 const MaxCardCount = 99;
-const MaxFilterValueLength = 100;
 
 const SelectDeck = `
     SELECT d.id, u.username, d.name, d.format, d.variant, d.faction_code, d.agenda_code, d.event_id,
@@ -116,35 +122,14 @@ function rowToDeck(row) {
     return deck;
 }
 
-function escapeLike(value) {
-    return String(value)
-        .substring(0, MaxFilterValueLength)
-        .replace(/[\\%_]/g, (character) => `\\${character}`);
-}
-
-function filterValues(value) {
-    const values = Array.isArray(value) ? value : [value];
-
-    return values.filter((val) => val !== undefined && val !== null && typeof val !== 'object');
-}
-
 function getQueryOptions(options, params) {
     const conditions = [];
 
-    for (const filter of Array.isArray(options.filters) ? options.filters : []) {
-        if (!filter || !FilterableFields.includes(filter.id)) {
-            continue;
-        }
-
-        const values = filterValues(filter.value);
-        if (values.length === 0) {
-            continue;
-        }
-
-        if (filter.id === 'name') {
+    for (const { id, values } of getRequestedFilters(options, FilterableFields)) {
+        if (id === 'name') {
             params.push(values.map((val) => `%${escapeLike(val)}%`));
             conditions.push(`d.name ILIKE ANY ($${params.length}::text[])`);
-        } else if (filter.id === 'faction.name') {
+        } else if (id === 'faction.name') {
             const codes = Factions.filter((faction) =>
                 values.some((val) =>
                     faction.name
@@ -163,14 +148,8 @@ function getQueryOptions(options, params) {
         }
     }
 
-    const requestedSort = Array.isArray(options.sorting) ? options.sorting[0] : undefined;
-    const order =
-        requestedSort && SortColumns[requestedSort.id]
-            ? `${SortColumns[requestedSort.id]} ${requestedSort.desc === 'true' ? 'DESC' : 'ASC'}`
-            : 'd.last_updated DESC';
-
-    const page = Math.max(parseInt(options.pageNumber, 10) || 1, 1);
-    const pageSize = Math.min(Math.max(parseInt(options.pageSize, 10) || 10, 1), MaxPageSize);
+    const order = getOrder(options, SortColumns, 'd.last_updated DESC');
+    const { page, pageSize } = getPaging(options, MaxPageSize);
 
     return { conditions, order, page, pageSize };
 }

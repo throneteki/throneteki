@@ -12,6 +12,7 @@
  * test at that point and keeps the game as it is.
  */
 
+import fs from 'fs';
 import path from 'path';
 import { pathToFileURL } from 'url';
 import ServiceFactory from '../../services/ServiceFactory.js';
@@ -146,7 +147,7 @@ function suiteChain(test) {
 }
 
 /**
- * @param {string} scenario `path/to/Card.spec.js#test name`
+ * @param {string} scenario `path/to/Card.spec.js#test name`, `report:<id>` or `file:<report.json>`
  * @param {object} options
  * @param {object[]} options.users the users who will play player1 and player2
  * @param {object} [options.router] the game node, as the game's router
@@ -244,13 +245,21 @@ function requireUsers(users, count) {
     }
 }
 
-async function runProblemReport(reportId, options) {
+async function loadStoredReport(reportId, options) {
     const report = await (
         options.problemReportService || ServiceFactory.problemReportService()
     ).getById(reportId);
     if (!report) {
         throw new Error(`Problem report "${reportId}" was not found or has expired`);
     }
+    return report;
+}
+
+function loadReportFile(filePath) {
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+}
+
+function runProblemReport(report, scenario, options) {
     const numOfPlayers = report.players.length;
     requireUsers(options.users, numOfPlayers);
     const flowOptions = {
@@ -269,7 +278,7 @@ async function runProblemReport(reportId, options) {
     const context = {};
     addSetupTest(context, flowOptions);
     context.setupTest(problemReportSetup(report));
-    context.game.scenario = `report:${reportId}`;
+    context.game.scenario = scenario;
     context.game.round = report.game.round || context.game.round;
     restoreChallenges(context, report);
     return { game: context.game, name: `Problem report ${report.id}`, stoppedAtBreak: true };
@@ -344,7 +353,11 @@ function mapCardsInPlay(report, players) {
 export async function runScenario(scenario, options) {
     const logger = options.logger || console;
     if (scenario.startsWith('report:')) {
-        return runProblemReport(scenario.slice('report:'.length), options);
+        const report = await loadStoredReport(scenario.slice('report:'.length), options);
+        return runProblemReport(report, scenario, options);
+    }
+    if (scenario.startsWith('file:')) {
+        return runProblemReport(loadReportFile(scenario.slice('file:'.length)), scenario, options);
     }
     requireUsers(options.users, 2);
     const [specPath, fragment] = scenario.split('#');

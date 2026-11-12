@@ -382,7 +382,13 @@ CREATE TABLE public.problem_reports (
     id uuid NOT NULL,
     report jsonb NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
-    expires_at timestamp with time zone DEFAULT (now() + '30 days'::interval) NOT NULL
+    expires_at timestamp with time zone DEFAULT (now() + '30 days'::interval) NOT NULL,
+    reporter text,
+    source text,
+    game_name text,
+    round integer,
+    phase text,
+    players text[] DEFAULT '{}'::text[] NOT NULL
 );
 
 --
@@ -447,7 +453,7 @@ CREATE TABLE public.user_monthly_stats (
 CREATE TABLE public.user_permissions (
     user_id bigint NOT NULL,
     permission text NOT NULL,
-    CONSTRAINT user_permissions_permission_check CHECK ((permission = ANY (ARRAY['isAdmin'::text, 'isContributor'::text, 'isSupporter'::text, 'canEditNews'::text, 'canManageUsers'::text, 'canManagePermissions'::text, 'canManageGames'::text, 'canManageNodes'::text, 'canModerateChat'::text, 'canManageMotd'::text, 'canManageEvents'::text, 'canManageBanlist'::text])))
+    CONSTRAINT user_permissions_permission_check CHECK ((permission = ANY (ARRAY['isAdmin'::text, 'isContributor'::text, 'isSupporter'::text, 'canEditNews'::text, 'canManageUsers'::text, 'canManagePermissions'::text, 'canManageGames'::text, 'canManageNodes'::text, 'canModerateChat'::text, 'canManageMotd'::text, 'canManageEvents'::text, 'canManageBanlist'::text, 'canViewProblemReports'::text])))
 );
 
 --
@@ -849,6 +855,12 @@ CREATE INDEX messages_posted_at_idx ON public.messages USING btree (posted_at DE
 --
 
 CREATE INDEX news_published_at_idx ON public.news USING btree (published_at DESC);
+
+--
+-- Name: problem_reports_created_at_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX problem_reports_created_at_idx ON public.problem_reports USING btree (created_at DESC);
 
 --
 -- Name: problem_reports_expires_at_idx; Type: INDEX; Schema: public; Owner: -

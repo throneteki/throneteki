@@ -10,6 +10,7 @@ import { init as BanlistInit } from './banlist.js';
 import { init as AbuseBlocksInit } from './abuseBlocks.js';
 import { init as StatsInit } from './stats.js';
 import { init as UnsubscribeInit } from './unsubscribe.js';
+import { init as ProblemReportsInit } from './problemReports.js';
 
 export const init = async function (server, options) {
     AccountInit(server, options);
@@ -23,5 +24,6 @@ export const init = async function (server, options) {
     AbuseBlocksInit(server, options);
     StatsInit(server, options);
     UnsubscribeInit(server, options);
+    ProblemReportsInit(server, options);
     await EventsInit(server, options);
 };
