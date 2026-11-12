@@ -717,16 +717,23 @@ const Effects = {
                     let originalLocation = context.removeFromGame[card.uuid];
                     if (originalLocation === 'play area') {
                         card.owner.putIntoPlay(card, 'play', { isEffectExpiration: true });
+                        context.game.addMessage(
+                            '{0} is put into play because of {1}',
+                            card,
+                            context.source
+                        );
                     } else {
                         context.game.resolveGameAction(
                             GameActions.placeCard({ card, location: originalLocation })
                         );
+                        context.game.addMessage(
+                            "{0} is returned to {1}'s {2} because of {3}",
+                            card,
+                            card.owner,
+                            originalLocation,
+                            context.source
+                        );
                     }
-                    context.game.addMessage(
-                        '{0} is put into play because of {1}',
-                        card,
-                        context.source
-                    );
                     delete context.removeFromGame[card.uuid];
                 }
             }
