@@ -24,6 +24,8 @@ spec:
           services:
               - name: throneteki-lobby
                 port: 80
+          middlewares:
+              - name: lobby-down-page
 {{- else }}
         - match: (Host(`{{ .Values.environment }}.throneteki.net`) || Host(`{{ .Values.environment }}.theironthrone.net`)) && (PathPrefix(`/img/cards/`) || PathPrefix(`/img/avatar/`))
           kind: Rule
@@ -39,6 +41,8 @@ spec:
           services:
               - name: throneteki-lobby
                 port: 80
+          middlewares:
+              - name: lobby-down-page
 {{- end }}
     tls:
 {{- if eq .Values.environment "production" }}

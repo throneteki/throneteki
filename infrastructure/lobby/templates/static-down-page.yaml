@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: throneteki-static-down-page
+    # prettier-ignore
+    namespace: {{ .Values.namespace }}
+data:
+    down.html: |
+{{- $logo := printf "src=\"data:image/png;base64,%s\"" (.Files.Get "files/down-logo.png" | b64enc) }}
+{{ .Files.Get "files/down.html" | replace "src=\"down-logo.png\"" $logo | indent 8 }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+    name: lobby-down-page
+    # prettier-ignore
+    namespace: {{ .Values.namespace }}
+spec:
+    errors:
+        status:
+            - "502-504"
+        query: /down.html
+        service:
+            name: throneteki-static
+            port: 80

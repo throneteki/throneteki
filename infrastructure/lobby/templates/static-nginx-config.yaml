@@ -57,6 +57,10 @@ data:
                     access_log off;
                 }
 
+                location = /down.html {
+                    add_header Cache-Control "no-store";
+                }
+
                 # Health check endpoint
                 location /health {
                     access_log off;
