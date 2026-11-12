@@ -172,6 +172,7 @@ class SelectCardPrompt extends UiPrompt {
             return {
                 text: this.properties.doneButtonText || 'Done',
                 arg: 'done',
+                done: true,
                 disabled: !hasEnough && (this.selectedCards.length > 0 || !this.canCancel())
             };
         }

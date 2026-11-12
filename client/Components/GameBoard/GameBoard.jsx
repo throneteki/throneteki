@@ -1,10 +1,12 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import LoadingSpinner from '../Site/LoadingSpinner';
 
 import GameChat from './GameChat';
 import GameConfigurationModal from './GameConfigurationModal';
+import KeyboardShortcutsModal from './KeyboardShortcutsModal';
+import { isShortcutEvent, keyboardShortcutsEnabled } from './keyboardShortcuts';
 import { navigate } from '../../redux/reducers/navigation';
 import {
     sendCardClickedMessage,
@@ -60,6 +62,38 @@ const GameBoard = () => {
     const [showGameChat, setShowGameChat] = useState(window.innerWidth > 768);
     const [unreadMessages, setUnreadMessages] = useState(0);
     const [showModal, setShowModal] = useState(false);
+    const [showShortcuts, setShowShortcuts] = useState(false);
+    const chatInputRef = useRef(null);
+    const shortcutsEnabled = keyboardShortcutsEnabled(user?.settings);
+
+    useEffect(() => {
+        if (!shortcutsEnabled) {
+            return;
+        }
+
+        const onKeyDown = (event) => {
+            if (!isShortcutEvent(event)) {
+                return;
+            }
+
+            if (event.key === 'Enter') {
+                const input = chatInputRef.current;
+                if (!input || input.disabled) {
+                    return;
+                }
+
+                event.preventDefault();
+                setShowGameChat(true);
+                input.focus({ preventScroll: true });
+            } else if (event.key === '?') {
+                event.preventDefault();
+                setShowShortcuts(true);
+            }
+        };
+
+        window.addEventListener('keydown', onKeyDown);
+        return () => window.removeEventListener('keydown', onKeyDown);
+    }, [shortcutsEnabled]);
 
     const [draggingDetail, setDraggingDetail] = useState(null);
 
@@ -214,6 +248,7 @@ const GameBoard = () => {
                     messages={currentGame.messages}
                     onSendChat={(message) => dispatch(sendGameChatMessage(message))}
                     muted={!thisPlayer && currentGame.muteSpectators}
+                    inputRef={chatInputRef}
                 />
             </div>
             <GameConfigurationModal
@@ -237,6 +272,10 @@ const GameBoard = () => {
                 hideInterrupts={userPlayer.hideInterrupts}
                 hideReactions={userPlayer.hideReactions}
                 cardSizeSetting={userPlayer.cardSize}
+            />
+            <KeyboardShortcutsModal
+                isOpen={showShortcuts}
+                onClose={() => setShowShortcuts(false)}
             />
         </>
     );

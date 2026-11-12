@@ -14,7 +14,8 @@ const GameChat = ({
     onUnreadMessagesChange = () => {},
     onSendChat,
     muted,
-    className
+    className,
+    inputRef
 }) => {
     const messagePanel = useRef(null);
 
@@ -79,6 +80,7 @@ const GameChat = ({
                     isInputDisabled={muted}
                     placeholder={placeholder}
                     onUnreadMessagesChange={onUnreadMessagesChange}
+                    inputRef={inputRef}
                 >
                     <Messages messages={messages} />
                 </ChatArea>

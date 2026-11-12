@@ -17,6 +17,7 @@ import { setAuthTokens, setUser } from '../redux/reducers/auth';
 import { toast } from 'react-toastify';
 import CardSizeSettings from '../Components/Profile/CardSizeSettings';
 import Page from './Page';
+import { keyboardShortcutsEnabled } from '../Components/GameBoard/keyboardShortcuts';
 
 const backgrounds = [
     { name: 'none', label: 'None', imageUrl: BlankBg },
@@ -124,6 +125,7 @@ const Profile = () => {
         promptDupes: !!settings.promptDupes,
         hideInterrupts: settings.hideInterrupts ?? true,
         hideReactions: settings.hideReactions ?? true,
+        keyboardShortcuts: keyboardShortcutsEnabled(settings),
         cardSize: settings.cardSize || 'normal'
     };
 
@@ -152,6 +154,7 @@ const Profile = () => {
                                     promptDupes: values.promptDupes,
                                     hideInterrupts: values.hideInterrupts,
                                     hideReactions: values.hideReactions,
+                                    keyboardShortcuts: values.keyboardShortcuts,
                                     keywordSettings: {
                                         chooseOrder: values.chooseOrder,
                                         chooseCards: values.chooseCards

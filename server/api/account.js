@@ -271,7 +271,7 @@ function sanitizeSettings(settings) {
         result.promptDupes = !!settings.promptDupes;
     }
 
-    for (const key of ['hideInterrupts', 'hideReactions']) {
+    for (const key of ['hideInterrupts', 'hideReactions', 'keyboardShortcuts']) {
         if (Object.hasOwn(settings, key)) {
             result[key] = !!settings[key];
         }
