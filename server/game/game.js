@@ -593,9 +593,9 @@ class Game extends EventEmitter {
     addSimultaneousEffects(effectProperties) {
         let effects = effectProperties.reduce((array, effect) => {
             let flattenedProperties = Effect.flattenProperties(effect.properties);
-            let effects = flattenedProperties.map(
-                (props) => new Effect(this, effect.source, props)
-            );
+            let effects = flattenedProperties
+                .map((props) => new Effect(this, effect.source, props))
+                .filter((effect) => !effect.invalid);
             return array.concat(effects);
         }, []);
         this.effectEngine.addSimultaneous(effects);

@@ -1,5 +1,37 @@
 import { flatten } from '../Array.js';
 
+function isCardOrPlayer(value) {
+    return ['card', 'player'].includes(value?.getGameElementType?.());
+}
+
+function describeMatch(match) {
+    if (match && typeof match === 'object') {
+        try {
+            return JSON.stringify(match);
+        } catch {
+            return String(match);
+        }
+    }
+
+    return String(match);
+}
+
+/**
+ * A match that is passed but missing (usually a target that no longer exists) must not fall back
+ * to matching everything. Outside production the mistake throws so specs catch it; in production
+ * it is reported and the effect is not added.
+ */
+export function reportInvalidMatch(game, source, match) {
+    const error = new Error(
+        `Effect from ${source?.name} has an invalid match: ${describeMatch(match)}`
+    );
+    if (process.env.NODE_ENV !== 'production') {
+        throw error;
+    }
+
+    game.reportError(error);
+}
+
 /**
  * Represents a card based effect applied to one or more targets.
  *
@@ -43,7 +75,7 @@ class Effect {
         this.game = game;
         this.source = source;
         this.copiedTextBoxId = properties.copiedTextBoxId;
-        this.match = properties.match || (() => true);
+        this.match = this.buildMatch(properties);
         this.duration = properties.duration;
         this.until = properties.until || {};
         this.condition = properties.condition || (() => true);
@@ -76,6 +108,21 @@ class Effect {
         }
 
         return [properties];
+    }
+
+    buildMatch(properties) {
+        if (!Object.hasOwn(properties, 'match')) {
+            return () => true;
+        }
+
+        const match = properties.match;
+        if (typeof match === 'function' || Array.isArray(match) || isCardOrPlayer(match)) {
+            return match;
+        }
+
+        reportInvalidMatch(this.game, this.source, match);
+        this.invalid = true;
+        return () => false;
     }
 
     buildTargetLocation(targetLocation) {
