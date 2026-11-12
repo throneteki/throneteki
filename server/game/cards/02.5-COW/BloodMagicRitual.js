@@ -7,29 +7,41 @@ class BloodMagicRitual extends DrawCard {
     // Ritual to that character as a Condition attachment with the text: "Terminal. Treat attached
     // character's printed text box as if it were blank (except for Traits)."
     setupCardAbilities(ability) {
+        const attachToSaved = (context, card) => ({
+            player: context.player,
+            attachment: context.source,
+            target: card,
+            playingType: 'play',
+            asAttachment: {
+                keywords: ['Terminal'],
+                traits: ['Condition'],
+                effect: ability.effects.blankExcludingTraits
+            }
+        });
+        const canSurviveBurn = (card, context) =>
+            GameActions.attach(attachToSaved(context, card)).allow(context) &&
+            card.getStrengthIfTextBoxBlank() > 0;
+
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: (event) =>
-                    event.allowSave && event.card.canBeSaved() && !event.card.hasTrait('Army')
+                onCharacterKilled: (event, context) =>
+                    event.card.canBeSaved() &&
+                    (event.isBurn ? canSurviveBurn(event.card, context) : event.allowSave) &&
+                    !event.card.hasTrait('Army')
             },
             location: 'hand',
             message: {
                 format: '{player} plays {source} to save {card}',
                 args: { card: (context) => context.event.card }
             },
-            gameAction: GameActions.saveCard((context) => ({ event: context.event })).then({
-                gameAction: GameActions.attach((context) => ({
-                    player: context.player,
-                    attachment: context.source,
-                    target: context.parentContext.event.card,
-                    playingType: 'play',
-                    asAttachment: {
-                        keywords: ['Terminal'],
-                        traits: ['Condition'],
-                        effect: ability.effects.blankExcludingTraits
-                    }
-                }))
+            gameAction: GameActions.saveCard((context) => ({
+                event: context.event,
+                remediesBurn: true
+            })).then({
+                gameAction: GameActions.attach((context) =>
+                    attachToSaved(context, context.parentContext.event.card)
+                )
             })
         });
     }

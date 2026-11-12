@@ -170,7 +170,13 @@ Text without a trigger has its own constructs:
   facedown and during setup, and cannot be cancelled.
 - **Terminal conditions** are burn and state checks. A save that could not remedy the condition
   is refused up front (FAQ 3.1): a burn kill can't be saved by a duplicate or Bodyguard. Risen from
-  the Sea is offered when its +1 STR would take the character above 0.
+  the Sea is offered when its +1 STR would take the character above 0, and Blood Magic Ritual when
+  the blank would (`getStrengthIfTextBoxBlank`, which leaves out the same effects a blank turns
+  off; it does not foresee other cards' effects that depend on the character's text).
+- **Burn** is enforced by `StateChecks.checkBurn` when a burning character's STR changes or a
+  challenge ends. A character is removed once each time it reaches 0 STR: it is not removed again
+  until it has been above 0 STR or lost the burn, so a save that remedied the condition stops
+  later removals tied to it (FAQ 3.1), and a character that cannot be killed stays at 0 STR.
 
 ## Challenges
 
@@ -335,6 +341,9 @@ Rules readings and design choices that stand until changed:
 - There is no prompt for the infinite-loop shortcut (naming a number of repetitions).
 - Logs are translation-ready but there are no locale catalogs or translating renderer.
 - A problem report cannot restore an arbitrary open prompt.
+- A save that remedies burn by giving the character power (Jory Cassel with a Winter plot, on a
+  character whose STR counts its power) is not offered: the engine cannot preview STR with extra
+  power without side effects.
 - Open ruling: whether The White Shadows' effects apply to Craster.
 
 ## Pitfalls

@@ -65,6 +65,10 @@ class Effect {
         this.appliedInitialTargets = false;
     }
 
+    static isFromTextBoxOf(effect, card) {
+        return effect.duration === 'persistent' && effect.source === card;
+    }
+
     static flattenProperties(properties) {
         if (Array.isArray(properties.effect)) {
             let effects = flatten(properties.effect);
