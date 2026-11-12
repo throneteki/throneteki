@@ -359,6 +359,10 @@ class GameServer {
         }
 
         for (let player of Object.values(game.getPlayersAndSpectators())) {
+            if (!player.socket) {
+                continue;
+            }
+
             player.socket.send('cleargamestate');
             player.socket.leaveChannel(game.id);
         }
