@@ -19,6 +19,38 @@ describe('MovePower', function () {
     describe('allow()', function () {
         beforeEach(function () {
             this.fromCardSpy.allowGameAction.mockReturnValue(true);
+            this.toCardSpy.allowGameAction.mockReturnValue(true);
+        });
+
+        describe('when the from card is immune', function () {
+            beforeEach(function () {
+                this.fromCardSpy.allowGameAction.mockReturnValue(false);
+            });
+
+            it('returns false', function () {
+                expect(MovePower.allow(this.props)).toBe(false);
+            });
+        });
+
+        describe('when the to card is immune', function () {
+            beforeEach(function () {
+                this.toCardSpy.allowGameAction.mockReturnValue(false);
+            });
+
+            it('returns false', function () {
+                expect(MovePower.allow(this.props)).toBe(false);
+            });
+        });
+
+        describe('when immune and forced', function () {
+            beforeEach(function () {
+                this.fromCardSpy.allowGameAction.mockReturnValue(false);
+                this.props.force = true;
+            });
+
+            it('returns true', function () {
+                expect(MovePower.allow(this.props)).toBe(true);
+            });
         });
 
         for (let location of ['active plot', 'faction', 'play area']) {
