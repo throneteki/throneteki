@@ -335,7 +335,6 @@ Rules readings and design choices that stand until changed:
 - There is no prompt for the infinite-loop shortcut (naming a number of repetitions).
 - Logs are translation-ready but there are no locale catalogs or translating renderer.
 - A problem report cannot restore an arbitrary open prompt.
-- Open ruling: whether The White Shadows' effects apply to Craster.
 
 ## Pitfalls
 
