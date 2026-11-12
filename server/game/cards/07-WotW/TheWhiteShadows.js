@@ -17,40 +17,38 @@ class TheWhiteShadows extends PlotCard {
                 format: '{player} uses {source} to put {card} into play under their control, blank',
                 args: { card: (context) => context.event.card }
             },
-            gameAction: GameActions.simultaneously([
-                GameActions.putIntoPlay((context) => ({
-                    player: context.player,
-                    card: context.event.card
-                })),
-                GameActions.simultaneously([
-                    GameActions.lastingEffect((context) => ({
+            gameAction: GameActions.simultaneously((context) => {
+                const card = context.event.card;
+                const putIntoPlay = GameActions.putIntoPlay({ player: context.player, card });
+                if (!putIntoPlay.allow(context)) {
+                    return [putIntoPlay];
+                }
+
+                return [
+                    GameActions.lastingEffect(() => ({
                         duration: 'custom',
-                        until: { onCardLeftPlay: (event) => event.card === context.event.card },
-                        match: context.event.card,
-                        condition: () =>
-                            ['play area', 'duplicate'].includes(context.event.card.location),
+                        until: { onCardLeftPlay: (event) => event.card === card },
+                        match: card,
                         targetLocation: 'any',
                         effect: [ability.effects.fullBlank]
                     })),
-                    GameActions.delayedEffect((context) => {
-                        const card = context.event.card;
-                        return {
-                            duration: 'untilTriggered',
-                            title: card.name,
-                            when: { onAtEndOfPhase: () => true },
-                            until: { onCardLeftPlay: (event) => event.card === card },
-                            gameAction: GameActions.ifCondition({
-                                condition: () => ['play area', 'duplicate'].includes(card.location),
-                                thenAction: {
-                                    message:
-                                        '{player} resolves the delayed effect from {source}: {gameAction}',
-                                    gameAction: GameActions.placeInDeadPile({ card })
-                                }
-                            })
-                        };
-                    })
-                ])
-            ])
+                    GameActions.delayedEffect(() => ({
+                        duration: 'untilTriggered',
+                        title: card.name,
+                        when: { onAtEndOfPhase: () => true },
+                        until: { onCardLeftPlay: (event) => event.card === card },
+                        gameAction: GameActions.ifCondition({
+                            condition: () => ['play area', 'duplicate'].includes(card.location),
+                            thenAction: {
+                                message:
+                                    '{player} resolves the delayed effect from {source}: {gameAction}',
+                                gameAction: GameActions.placeInDeadPile({ card })
+                            }
+                        })
+                    })),
+                    putIntoPlay
+                ];
+            })
         });
     }
 }
