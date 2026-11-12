@@ -43,6 +43,87 @@ describe('Effect', function () {
         expect(this.effect.targetLocation).toEqual(['play area', 'active plot']);
     });
 
+    describe('match', function () {
+        beforeEach(function () {
+            this.sourceSpy.name = 'Source';
+            this.sourceSpy.controller = 'player1';
+            this.card = createTarget({ location: 'play area', controller: 'player1' });
+            this.otherCard = createTarget({ location: 'play area', controller: 'player1' });
+            this.buildEffect = (match) =>
+                new Effect(this.gameSpy, this.sourceSpy, {
+                    ...match,
+                    duration: 'persistent',
+                    effect: this.effectDefinition
+                });
+        });
+
+        it('matches every target when match is not passed', function () {
+            const effect = this.buildEffect({});
+
+            effect.addTargets([this.card, this.otherCard]);
+
+            expect(effect.targets).toEqual([this.card, this.otherCard]);
+        });
+
+        it('matches only the given card when match is a card', function () {
+            const effect = this.buildEffect({ match: this.card });
+
+            effect.addTargets([this.card, this.otherCard]);
+
+            expect(effect.targets).toEqual([this.card]);
+        });
+
+        it('matches only the given cards when match is an array', function () {
+            const effect = this.buildEffect({ match: [this.otherCard] });
+
+            effect.addTargets([this.card, this.otherCard]);
+
+            expect(effect.targets).toEqual([this.otherCard]);
+        });
+
+        it('throws when match is passed as undefined', function () {
+            expect(() => this.buildEffect({ match: undefined })).toThrow(
+                'Effect from Source has an invalid match: undefined'
+            );
+        });
+
+        it('throws when match is passed as null', function () {
+            expect(() => this.buildEffect({ match: null })).toThrow(
+                'Effect from Source has an invalid match: null'
+            );
+        });
+
+        it('throws when match is a card selector object', function () {
+            expect(() => this.buildEffect({ match: { type: 'character' } })).toThrow(
+                'Effect from Source has an invalid match'
+            );
+        });
+
+        describe('in production', function () {
+            beforeEach(function () {
+                vi.stubEnv('NODE_ENV', 'production');
+                this.gameSpy.reportError = vi.fn();
+            });
+
+            afterEach(function () {
+                vi.unstubAllEnvs();
+            });
+
+            it('reports the error and matches nothing when match is undefined', function () {
+                const effect = this.buildEffect({ match: undefined });
+
+                effect.addTargets([this.card, this.otherCard]);
+
+                expect(this.gameSpy.reportError).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        message: 'Effect from Source has an invalid match: undefined'
+                    })
+                );
+                expect(effect.targets).toEqual([]);
+            });
+        });
+    });
+
     describe('addTargets()', function () {
         beforeEach(function () {
             this.matchingCard = createTarget({ good: true, location: 'play area' });

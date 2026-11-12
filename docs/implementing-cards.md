@@ -137,6 +137,8 @@ this.persistentEffect({
 });
 ```
 
+`match` can also be an array of cards or players. Leaving `match` out matches every eligible target. Passing it as `undefined` or `null` (for example `match: context.target` when there is no target), or as a card selector object such as `{ type: 'character' }`, is a mistake: it throws outside production, and in production the error is reported and the effect matches nothing.
+
 #### Conditional effects
 
 Some effects have a 'when', 'while' or 'if' clause within their text. These cards can be implemented by passing a `condition` function into the persistent effect declaration. The effect will only be applied when the function returns `true`. If the function returns `false` later on, the effect will be automatically unapplied from the cards it matched.

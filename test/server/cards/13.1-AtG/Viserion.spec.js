@@ -2,7 +2,7 @@ describe('Viserion (AtG)', function () {
     beforeEach(function () {
         this.setupTest({
             phase: 'challenge',
-            player1: { inPlay: ['Viserion (AtG)'], hand: ['Aggo'] },
+            player1: { inPlay: ['Viserion (AtG)', 'Hedge Knight'], hand: ['Aggo'] },
             player2: { inPlay: ['Targaryen Loyalist', 'Handmaiden'] }
         });
         this.unopposedChallenge(this.player1, 'Military', this.viserion);
@@ -16,6 +16,7 @@ describe('Viserion (AtG)', function () {
 
         expect(this.aggo.location).toBe('discard pile');
         expect(this.viserion.hasKeyword('Intimidate')).toBe(true);
+        expect(this.hedgeKnight.hasKeyword('Intimidate')).toBe(false);
 
         this.player2.clickCard(this.targaryenLoyalist);
         this.player1.clickCard(this.handmaiden);

@@ -22,7 +22,7 @@ class Viserion extends DrawCard {
             },
             gameAction: GameActions.lastingEffect((context) => ({
                 duration: 'untilEndOfChallenge',
-                match: context.this,
+                match: context.source,
                 effect: [ability.effects.addKeyword('Intimidate')]
             }))
         });

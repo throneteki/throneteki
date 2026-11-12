@@ -33,6 +33,10 @@ import { flatten } from '../Array.js';
  * effect.unapply   - function that takes a card and a context object and modifies
  *                    the card to remove the previously applied effect.
  */
+function isGameElement(value) {
+    return typeof value?.getGameElementType === 'function';
+}
+
 class Effect {
     constructor(game, source, properties) {
         if (properties.duration?.startsWith('atEndOf')) {
@@ -43,7 +47,7 @@ class Effect {
         this.game = game;
         this.source = source;
         this.copiedTextBoxId = properties.copiedTextBoxId;
-        this.match = properties.match || (() => true);
+        this.match = this.buildMatch(properties);
         this.duration = properties.duration;
         this.until = properties.until || {};
         this.condition = properties.condition || (() => true);
@@ -72,6 +76,30 @@ class Effect {
         }
 
         return [properties];
+    }
+
+    buildMatch(properties) {
+        if (!Object.hasOwn(properties, 'match')) {
+            return () => true;
+        }
+
+        const match = properties.match;
+        if (typeof match === 'function' || Array.isArray(match) || isGameElement(match)) {
+            return match;
+        }
+
+        // A match that is passed but missing (usually a target that no longer exists) must not
+        // fall back to matching everything. Outside production the mistake throws so specs catch
+        // it; in production the effect matches nothing.
+        const error = new Error(
+            `Effect from ${this.source?.name} has an invalid match: ${String(match)}`
+        );
+        if (process.env.NODE_ENV !== 'production') {
+            throw error;
+        }
+
+        this.game.reportError?.(error);
+        return () => false;
     }
 
     buildTargetLocation(targetLocation) {
