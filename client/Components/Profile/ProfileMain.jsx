@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import Panel from '../Site/Panel';
 import { useUnlinkPatreonMutation, useUpdateAvatarMutation } from '../../redux/middleware/api';
 import { setUser } from '../../redux/reducers/auth';
-import { PatreonStateKey } from '../../util';
+import { getOAuthState, PatreonStateKey } from '../../util';
 
 import PatreonImage from '../../assets/img/Patreon_Mark_Coral.jpg';
 
@@ -64,17 +64,8 @@ const ProfileMain = ({ user, formProps }) => {
             return undefined;
         }
 
-        // Ties the OAuth callback to this browser session so a link started elsewhere is rejected
-        let state;
-        try {
-            state = window.sessionStorage.getItem(PatreonStateKey);
-            if (!state) {
-                state = Array.from(window.crypto.getRandomValues(new Uint8Array(16)), (byte) =>
-                    byte.toString(16).padStart(2, '0')
-                ).join('');
-                window.sessionStorage.setItem(PatreonStateKey, state);
-            }
-        } catch {
+        const state = getOAuthState(PatreonStateKey);
+        if (!state) {
             return undefined;
         }
 

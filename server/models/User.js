@@ -137,6 +137,14 @@ class User {
         this.userData.patreon = value;
     }
 
+    get thronesDb() {
+        return this.userData.thronesDb;
+    }
+
+    set thronesDb(value) {
+        this.userData.thronesDb = value;
+    }
+
     block(otherUser) {
         this.userData.blockList = this.userData.blockList || [];
         this.userData.blockList.push(otherUser.username.toLowerCase());
@@ -150,6 +158,16 @@ class User {
         let user = Object.assign({}, this.userData);
 
         delete user.password;
+        delete user.thronesDb;
+        delete user.patreon;
+        delete user.activationTokenHash;
+        delete user.resetTokenHash;
+        user.tokens = (user.tokens || []).map(({ _id, ip, exp, lastUsed }) => ({
+            _id,
+            ip,
+            exp,
+            lastUsed
+        }));
 
         user = Settings.getUserWithDefaultsSet(user);
 

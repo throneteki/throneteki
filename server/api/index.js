@@ -10,10 +10,12 @@ import { init as BanlistInit } from './banlist.js';
 import { init as AbuseBlocksInit } from './abuseBlocks.js';
 import { init as StatsInit } from './stats.js';
 import { init as UnsubscribeInit } from './unsubscribe.js';
+import { init as ThronesDbInit } from './thronesdb.js';
 
 export const init = async function (server, options) {
     AccountInit(server, options);
     await DecksInit(server, options);
+    ThronesDbInit(server, options);
     DraftCubesInit(server, options);
     CardsInit(server, options);
     NewsInit(server, options);

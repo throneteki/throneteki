@@ -1,5 +1,6 @@
 import MessageService from './MessageService.js';
 import PatreonService from './PatreonService.js';
+import ThronesDbService from './ThronesDbService.js';
 import ConfigService from './ConfigService.js';
 import UserService from './UserService.js';
 import BanlistService from './BanlistService.js';
@@ -59,6 +60,20 @@ const factory = {
         }
 
         return services.patreonService;
+    },
+    thronesDbService: (configService = factory.configService()) => {
+        if (!services.thronesDbService) {
+            const origin = (configService.getValue('origin') || '').replace(/\/+$/, '');
+
+            services.thronesDbService = new ThronesDbService(
+                configService.getValue('thronesDbClientId'),
+                configService.getValue('thronesDbSecret'),
+                configService.getValue('thronesDbCallbackUrl') || (origin && `${origin}/thronesdb`),
+                factory.userService(configService)
+            );
+        }
+
+        return services.thronesDbService;
     },
     banlistService: () => {
         if (!services.banlistService) {

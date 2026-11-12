@@ -29,7 +29,7 @@ const MaxFilterValueLength = 100;
 
 const SelectDeck = `
     SELECT d.id, u.username, d.name, d.format, d.variant, d.faction_code, d.agenda_code, d.event_id,
-        d.is_favourite, d.last_updated, d.standalone_deck_id,
+        d.is_favourite, d.last_updated, d.standalone_deck_id, d.thronesdb_uuid,
         COALESCE((
             SELECT json_agg(json_build_object('section', c.section, 'code', c.card_code, 'count', c.count)
                 ORDER BY c.section, c.position)
@@ -107,6 +107,10 @@ function rowToDeck(row) {
 
     if (row.event_id) {
         deck.eventId = String(row.event_id);
+    }
+
+    if (row.thronesdb_uuid) {
+        deck.thronesDbUuid = row.thronesdb_uuid;
     }
 
     if (sections.pool.length > 0) {
@@ -376,9 +380,9 @@ class DeckService extends EventEmitter {
             return await this.db.transaction(async (tx) => {
                 const [{ id }] = await tx.query(
                     `INSERT INTO decks (user_id, standalone_deck_id, name, format, variant, faction_code, agenda_code,
-                        event_id, last_updated)
+                        event_id, last_updated, thronesdb_uuid)
                     VALUES ((SELECT id FROM users WHERE lower(username) = lower($1)), $2, $3, $4, $5, $6, $7,
-                        ${eventIdExpression(8, properties.eventId)}, $9)
+                        ${eventIdExpression(8, properties.eventId)}, $9, $10)
                     RETURNING id`,
                     [
                         properties.username ?? null,
@@ -389,7 +393,8 @@ class DeckService extends EventEmitter {
                         properties.faction?.value ?? properties.faction,
                         cardCode(properties.agenda) ?? null,
                         properties.eventId ? String(properties.eventId) : null,
-                        properties.lastUpdated || new Date()
+                        properties.lastUpdated || new Date(),
+                        properties.thronesDbUuid ?? null
                     ]
                 );
 
@@ -427,11 +432,21 @@ class DeckService extends EventEmitter {
             }
         }
 
-        return this.insertDeck({ ...deck, standaloneDeckId: undefined, lastUpdated: new Date() });
+        return this.insertDeck({
+            ...deck,
+            standaloneDeckId: undefined,
+            thronesDbUuid: undefined,
+            lastUpdated: new Date()
+        });
     }
 
     createStandalone(deck) {
-        return this.insertDeck({ ...deck, username: undefined, eventId: undefined });
+        return this.insertDeck({
+            ...deck,
+            username: undefined,
+            eventId: undefined,
+            thronesDbUuid: undefined
+        });
     }
 
     async update(deck) {
@@ -468,6 +483,73 @@ class DeckService extends EventEmitter {
 
             await this.replaceCards(tx, previousVersion._id, deck);
         });
+    }
+
+    async getCards(codes) {
+        await this.ensureCardData({ drawCards: codes.map((cardcode) => ({ cardcode })) });
+
+        return this.cards;
+    }
+
+    async getThronesDbUuids(username) {
+        const rows = await this.db.query(
+            `SELECT d.thronesdb_uuid FROM decks d JOIN users u ON u.id = d.user_id
+            WHERE lower(u.username) = lower($1) AND d.thronesdb_uuid IS NOT NULL`,
+            [username]
+        );
+
+        return new Set(rows.map((row) => row.thronesdb_uuid));
+    }
+
+    async findThronesDbDeck(username, thronesDbUuid) {
+        const rows = await this.db.query(
+            `SELECT d.id, d.event_id FROM decks d JOIN users u ON u.id = d.user_id
+            WHERE lower(u.username) = lower($1) AND d.thronesdb_uuid = $2`,
+            [username, thronesDbUuid]
+        );
+
+        return rows[0];
+    }
+
+    async importThronesDbDeck(username, deck) {
+        if (await this.findThronesDbDeck(username, deck.thronesDbUuid)) {
+            return 'skipped';
+        }
+
+        try {
+            await this.insertDeck({ ...deck, username, standaloneDeckId: undefined });
+        } catch (err) {
+            if (err.constraint === 'decks_user_id_thronesdb_uuid_key') {
+                return 'skipped';
+            }
+
+            throw err;
+        }
+
+        return 'created';
+    }
+
+    async syncThronesDbDeck(username, deck) {
+        const existing = await this.findThronesDbDeck(username, deck.thronesDbUuid);
+        if (!existing) {
+            return 'skipped';
+        }
+
+        if (existing.event_id) {
+            return 'locked';
+        }
+
+        await this.db.transaction(async (tx) => {
+            await tx.query(
+                `UPDATE decks SET name = $1, faction_code = $2, agenda_code = $3, last_updated = $4
+                WHERE id = $5`,
+                [deck.name, deck.faction, deck.agenda ?? null, deck.lastUpdated, existing.id]
+            );
+
+            await this.replaceCards(tx, existing.id, deck);
+        });
+
+        return 'updated';
     }
 
     async delete(id) {

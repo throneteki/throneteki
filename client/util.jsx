@@ -108,3 +108,23 @@ export const cardClass = (size, orientation = 'vertical') => {
 
 // sessionStorage key holding the OAuth state for an in-progress Patreon link
 export const PatreonStateKey = 'patreonOAuthState';
+
+export const ThronesDbStateKey = 'thronesDbOAuthState';
+
+// Ties an OAuth callback to the browser session that started it, so a link started elsewhere is
+// rejected. Returns undefined when session storage is unavailable.
+export const getOAuthState = (stateKey) => {
+    try {
+        let state = window.sessionStorage.getItem(stateKey);
+        if (!state) {
+            state = Array.from(window.crypto.getRandomValues(new Uint8Array(16)), (byte) =>
+                byte.toString(16).padStart(2, '0')
+            ).join('');
+            window.sessionStorage.setItem(stateKey, state);
+        }
+
+        return state;
+    } catch {
+        return undefined;
+    }
+};
