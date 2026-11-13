@@ -3,7 +3,8 @@ import SimpleStep from './simplestep.js';
 import Challenge from '../challenge.js';
 import ChallengeFlow from './challenge/challengeflow.js';
 import ChallengeTypes from '../ChallengeTypes.js';
-import ChallengeActionWindow from './challenge/ChallengeActionWindow.js';
+import ActionWindow from './actionwindow.js';
+import ChallengeChoicePrompt from './challenge/ChallengeChoicePrompt.js';
 import { ChallengeTracker } from '../EventTrackers/index.js';
 
 class ChallengePhase extends Phase {
@@ -33,11 +34,17 @@ class ChallengePhase extends Phase {
         }
 
         const currentPlayer = this.remainingPlayers[0];
-        const window = new ChallengeActionWindow(this.game, this, currentPlayer, {
-            otherPlayers: actionWindow
+        const windowOpens =
+            actionWindow &&
+            this.game.getPlayers().some((player) => player.promptedActionWindows.challengeBegin);
+        if (windowOpens) {
+            this.game.queueStep(new ActionWindow(this.game, 'Before challenge', 'challengeBegin'));
+        }
+        const prompt = new ChallengeChoicePrompt(this.game, this, currentPlayer, {
+            allowActions: !windowOpens
         });
-        this.game.queueStep(window);
-        this.game.queueSimpleStep(() => this.resolveChoice(currentPlayer, window.choice));
+        this.game.queueStep(prompt);
+        this.game.queueSimpleStep(() => this.resolveChoice(currentPlayer, prompt.choice));
     }
 
     resolveChoice(player, choice) {

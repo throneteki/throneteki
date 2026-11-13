@@ -37,6 +37,7 @@ describe('Northern Patriarch', function () {
                 }
             });
 
+            this.player1.clickPrompt('Pass');
             this.player2.clickCard(this.nightmares);
             this.player2.clickCard(this.tumblestoneKnight);
         });
@@ -47,7 +48,7 @@ describe('Northern Patriarch', function () {
 
             this.player1.clickPrompt('Pass');
             expect(this.tumblestoneKnight.isAnyBlank()).toBe(true);
-            this.player2.clickPrompt('Pass');
+            this.passChallengeBeginWindow();
             expect(this.player1).isReadyToTakeAction();
         });
 
@@ -63,7 +64,7 @@ describe('Northern Patriarch', function () {
                 expect(this.tumblestoneKnight.isAnyBlank()).toBe(false);
                 expect(this.player2Object.faction.power).toBe(1);
                 expect(this.northernPatriarch.power).toBe(0);
-                this.player2.clickPrompt('Pass');
+                this.passChallengeBeginWindow();
                 expect(this.player1).isReadyToTakeAction();
             });
 
@@ -78,18 +79,19 @@ describe('Northern Patriarch', function () {
                 expect(this.bastardInHiding.power).toBe(0);
                 expect(this.player2Object.faction.power).toBe(1);
                 expect(this.northernPatriarch.power).toBe(1);
-                this.player2.clickPrompt('Pass');
+                this.passChallengeBeginWindow();
                 expect(this.player1).isReadyToTakeAction();
             });
 
             it('can only be used once per round', function () {
                 this.player2.clickPrompt('Do not move power');
+                this.player1.clickPrompt('Pass');
                 this.player2.clickCard(this.player2.filterCardsByName('Nightmares', 'hand')[0]);
                 this.player2.clickCard(this.tumblestoneKnight);
 
                 expect(this.player1).not.toAllowAbilityTrigger(this.northernPatriarch);
                 expect(this.tumblestoneKnight.isAnyBlank()).toBe(true);
-                this.player2.clickPrompt('Pass');
+                this.passChallengeBeginWindow();
                 expect(this.player1).isReadyToTakeAction();
             });
         });
@@ -110,6 +112,7 @@ describe('Northern Patriarch', function () {
                 }
             });
 
+            this.player1.clickPrompt('Pass');
             this.player2.clickCard(this.nightmares);
             this.player2.clickCard(this.tumblestoneKnight);
             this.player1.triggerAbility(this.northernPatriarch);
@@ -118,7 +121,7 @@ describe('Northern Patriarch', function () {
         it('cancels the event', function () {
             expect(this.nightmares.location).toBe('discard pile');
             expect(this.tumblestoneKnight.isAnyBlank()).toBe(false);
-            this.player2.clickPrompt('Pass');
+            this.passChallengeBeginWindow();
             expect(this.player1).isReadyToTakeAction();
         });
     });

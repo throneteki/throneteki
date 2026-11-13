@@ -263,12 +263,14 @@ cancel such as The Hand's Judgment.
   active player marshals on their turn; players who stop at the marshaling window are offered an
   action in player order, and the window closes only after every player passes in a row (Appendix
   I, 3.2).
-- **Before each challenge** is an action window
-  ([ChallengeActionWindow.js](../server/game/gamesteps/challenge/ChallengeActionWindow.js)), and it
-  is over before the challenge is chosen. Every other player who stops at the window has their turn
-  first, in player order. The active player's turn comes last and is choosing a challenge type, or
-  Done, which closes the window; they can take actions while choosing, and each action gives the
-  others who stop at the window another turn before they choose.
+- **Before each challenge** (Appendix I, between 4.1 and 4.2): when any player stops at the window,
+  it is an ordinary action window. The first player has the first opportunity, turns go round in
+  player order, and it closes when every player passes in a row. The active player then chooses a
+  challenge type or Done
+  ([ChallengeChoicePrompt.js](../server/game/gamesteps/challenge/ChallengeChoicePrompt.js)) and
+  cannot take actions while choosing. When nobody stops at the window, it is skipped and the active
+  player can take actions while choosing instead; the other players gave up their opportunity by
+  not stopping at it.
 - The "action outside a window" and "action during another player's turn" warnings can only appear
   in manual mode.
 
@@ -356,8 +358,7 @@ Rules readings and design choices that stand until changed:
 - `context.opponent` is not a getter. A target snapshot is skipped when any choosing player is
   missing.
 - `ActionWindow.skipCondition` skips everyone when nobody stops at the window;
-  `MarshalingActionWindow` and `ChallengeActionWindow` override it per player, so the active player
-  always has their turn.
+  `MarshalingActionWindow` overrides it per player, so the active player always has their turn.
 - Timing is checked before `cannotTrigger`, `cost` and `noEffect`, so a spec asserting one of those
   reasons must wait until it is that player's turn.
 - Pile-order prompts keep `canCancel`: Done with nothing selected uses the default order.
