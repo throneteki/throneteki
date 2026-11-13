@@ -22,7 +22,7 @@ import MenuPrompt from './gamesteps/menuprompt.js';
 import IconPrompt from './gamesteps/iconprompt.js';
 import SelectCardPrompt from './gamesteps/selectcardprompt.js';
 import EventWindow from './gamesteps/eventwindow.js';
-import AbilityResolver from './gamesteps/abilityresolver.js';
+import AbilityResolver, { SnapshotTypes } from './gamesteps/abilityresolver.js';
 import ForcedTriggeredAbilityWindow from './gamesteps/ForcedTriggeredAbilityWindow.js';
 import TriggeredAbilityWindow from './gamesteps/TriggeredAbilityWindow.js';
 import InterruptWindow from './gamesteps/InterruptWindow.js';
@@ -681,9 +681,35 @@ class Game extends EventEmitter {
                 buttons: [...buttons, { text: 'Cancel', method: 'cancel', cancel: true }]
             },
             source: card,
-            beforeInitiation: true
+            beforeInitiation: true,
+            previewCards:
+                usable.length === 1 ? this.getTargetPreview(player, usable[0].action) : undefined
         });
         return true;
+    }
+
+    getTargetPreview(player, action) {
+        const context = action.createContext(player);
+        if (SnapshotTypes.includes(context.source.getType())) {
+            context.cardStateWhenInitiated = context.source.createSnapshot();
+        }
+
+        const cards = new Set();
+        try {
+            for (const target of action.targets || []) {
+                const byPlayer = target.legalCards?.(context);
+                for (const card of byPlayer?.get(player) || []) {
+                    if (this.isCardVisible(card, player)) {
+                        cards.add(card);
+                    }
+                }
+            }
+        } catch (error) {
+            this.reportError(error);
+            return [];
+        }
+
+        return [...cards];
     }
 
     canToggleKneel(player, card) {
