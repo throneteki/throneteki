@@ -18,26 +18,28 @@ describe('The Father', function () {
             this.player2.clickPrompt('Pass');
         });
 
-        it('has each player choose a unique non-Army character they control', function () {
+        it('has its controller choose a unique non-Army character controlled by each player', function () {
             expect(this.player1).toBeAbleToSelect(this.eddardStark);
             expect(this.player1).not.toBeAbleToSelect(this.houseUmberBerserkers);
             expect(this.player1).not.toBeAbleToSelect(this.tumblestoneKnight);
-            expect(this.player1).not.toBeAbleToSelect(this.grandMaesterPycelle);
+            expect(this.player1).toBeAbleToSelect(this.grandMaesterPycelle);
+            expect(this.player1).toBeAbleToSelect(this.samwellTarly);
+            expect(this.player2).not.toHavePromptButton('Done');
 
             this.player1.clickCard(this.eddardStark);
+            this.player1.clickCard(this.grandMaesterPycelle);
 
-            expect(this.player2).toBeAbleToSelect(this.grandMaesterPycelle);
-            expect(this.player2).toBeAbleToSelect(this.samwellTarly);
-            expect(this.player2).not.toBeAbleToSelect(this.eddardStark);
+            expect(this.player1).not.toBeAbleToSelect(this.samwellTarly);
 
-            this.player2.clickCard(this.grandMaesterPycelle);
+            this.player1.clickPrompt('Done');
 
             expect(this.player1).isReadyToTakeAction();
         });
 
         it("returns each chosen character to its owner's hand", function () {
             this.player1.clickCard(this.eddardStark);
-            this.player2.clickCard(this.grandMaesterPycelle);
+            this.player1.clickCard(this.grandMaesterPycelle);
+            this.player1.clickPrompt('Done');
 
             expect(this.eddardStark.location).toBe('hand');
             expect(this.grandMaesterPycelle.location).toBe('hand');
@@ -67,10 +69,8 @@ describe('The Father', function () {
             this.player2.clickPrompt('Pass');
         });
 
-        it("only returns the other player's chosen character", function () {
-            this.player2.clickCard(this.grandMaesterPycelle);
-
-            expect(this.grandMaesterPycelle.location).toBe('hand');
+        it('returns no characters', function () {
+            expect(this.grandMaesterPycelle.location).toBe('play area');
             expect(this.tumblestoneKnight.location).toBe('play area');
             expect(this.player1).isReadyToTakeAction();
         });
