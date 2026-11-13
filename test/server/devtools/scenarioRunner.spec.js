@@ -109,6 +109,93 @@ describe('scenario runner', function () {
         expect(game.getProblemReport('alice', 'cancel-prompt').source).toBe('cancel-prompt');
     });
 
+    it('passes reactions offered on the way to the reported phase', async function () {
+        const { game: source } = await runScenario(`${breakPath}#stops part way`, {
+            users,
+            logger: silentLogger
+        });
+        const report = source.getProblemReport('alice');
+        report.cards.push({
+            id: 'the-long-voyage',
+            code: '16030',
+            name: 'The Long Voyage',
+            packCode: 'TTWDFL',
+            owner: 'alice',
+            controller: 'alice',
+            location: 'agenda'
+        });
+        report.players[0].agendas = ['the-long-voyage'];
+        const problemReportService = { getById: vi.fn().mockResolvedValue(report) };
+
+        const { game } = await runScenario(`report:${report.id}`, {
+            users,
+            logger: silentLogger,
+            problemReportService
+        });
+
+        expect(game.currentPhase).toBe('marshal');
+        expect(game.getPlayerByName('alice').agenda.name).toBe('The Long Voyage');
+        expect(game.getPlayerByName('alice').faction.kneeled).toBe(false);
+    });
+
+    it('restores revealed plots without resolving their When Revealed abilities again', async function () {
+        const { game: source } = await runScenario(`${breakPath}#stops part way`, {
+            users,
+            logger: silentLogger
+        });
+        const report = source.getProblemReport('alice');
+        for (const reportPlayer of report.players) {
+            const plot = report.cards.find((card) => card.id === reportPlayer.activePlot);
+            Object.assign(plot, { code: '01010', name: 'Counting Coppers', packCode: 'Core' });
+        }
+        const problemReportService = { getById: vi.fn().mockResolvedValue(report) };
+
+        const { game, error } = await runScenario(`report:${report.id}`, {
+            users,
+            logger: silentLogger,
+            problemReportService
+        });
+
+        expect(error).toBeUndefined();
+        expect(game.currentPhase).toBe('marshal');
+        for (const reportPlayer of report.players) {
+            const player = game.getPlayerByName(reportPlayer.name);
+            expect(player.activePlot.name).toBe('Counting Coppers');
+            expect(player.getReserve()).toBe(10);
+            expect(player.hand.length).toBe(reportPlayer.hand.length);
+            expect(player.plotDeck.length).toBe(reportPlayer.plotDeck.length);
+        }
+    });
+
+    it("shows the reported game's log, including chat, instead of the rebuild's", async function () {
+        const { game: source } = await runScenario(`${breakPath}#stops part way`, {
+            users,
+            logger: silentLogger
+        });
+        source.chat('alice', 'meryn did not trigger');
+        const report = source.getProblemReport('alice');
+        report.messages = JSON.parse(JSON.stringify(report.messages));
+        const problemReportService = { getById: vi.fn().mockResolvedValue(report) };
+
+        const { game } = await runScenario(`report:${report.id}`, {
+            users,
+            logger: silentLogger,
+            problemReportService
+        });
+        const log = game.gameChat.messages.map((message) => JSON.stringify(message.message));
+
+        expect(log.slice(0, report.messages.length)).toEqual(
+            report.messages.map((message) => JSON.stringify(message.message))
+        );
+        expect(log.some((line) => line.includes('meryn did not trigger'))).toBe(true);
+        expect(log.filter((line) => line.includes('has kept their hand'))).toHaveLength(
+            report.messages.filter((message) =>
+                JSON.stringify(message.message).includes('has kept their hand')
+            ).length
+        );
+        expect(log.some((line) => line.includes('the reported game'))).toBe(true);
+    });
+
     it('loads a problem report with as many players as the reported game', async function () {
         const { game: source } = await runScenario(`${breakPath}#stops part way`, {
             users,

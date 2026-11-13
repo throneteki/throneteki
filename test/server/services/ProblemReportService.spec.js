@@ -23,7 +23,8 @@ describe('ProblemReportService', function () {
             null,
             null,
             'challenge',
-            []
+            [],
+            null
         ]);
     });
 
@@ -41,6 +42,35 @@ describe('ProblemReportService', function () {
         this.db.query.mockResolvedValue([]);
 
         await expect(this.service.getById(this.report.id)).resolves.toBeUndefined();
+    });
+
+    it('deletes the chosen reports and returns their IDs', async function () {
+        this.db.query.mockResolvedValue([{ id: this.report.id }]);
+
+        await expect(this.service.delete([this.report.id])).resolves.toEqual([this.report.id]);
+        expect(this.db.query).toHaveBeenCalledWith(
+            'DELETE FROM problem_reports WHERE id = ANY ($1::uuid[]) RETURNING id',
+            [[this.report.id]]
+        );
+    });
+
+    it("adds the reporter's description once, to their recent report only", async function () {
+        this.db.query.mockResolvedValue([{ id: this.report.id }]);
+
+        await expect(
+            this.service.describe(this.report.id, 'alice', '  Meryn did not trigger  ')
+        ).resolves.toBe(true);
+
+        const [sql, params] = this.db.query.mock.calls[0];
+        expect(sql).toContain('reporter = $2');
+        expect(sql).toContain('description IS NULL');
+        expect(sql).toContain("created_at > now() - interval '15 minutes'");
+        expect(params).toEqual([this.report.id, 'alice', 'Meryn did not trigger']);
+    });
+
+    it('ignores an empty description', async function () {
+        await expect(this.service.describe(this.report.id, 'alice', '   ')).resolves.toBe(false);
+        expect(this.db.query).not.toHaveBeenCalled();
     });
 
     it('deletes expired reports', async function () {
@@ -62,12 +92,20 @@ describe('ProblemReportService', function () {
                 })
             ).toEqual({
                 reporter: 'alice',
+                description: null,
                 source: 'cancel-prompt',
                 gameName: 'Test game',
                 round: 3,
                 phase: 'challenge',
                 players: ['alice', 'bob']
             });
+        });
+
+        it('keeps the description', function () {
+            expect(getReportSummary({ description: 'Meryn did not trigger' }).description).toBe(
+                'Meryn did not trigger'
+            );
+            expect(getReportSummary({ description: '' }).description).toBeNull();
         });
 
         it('keeps round 0', function () {
@@ -83,6 +121,7 @@ describe('ProblemReportService', function () {
                 })
             ).toEqual({
                 reporter: null,
+                description: null,
                 source: null,
                 gameName: null,
                 round: null,

@@ -1,9 +1,10 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     sendChangeStatMessage,
     sendToggleManualModeMessage,
     sendReportProblemMessage,
+    sendDescribeProblemMessage,
     sendToggleMuteSpectatorsMessage
 } from '../../redux/reducers/game';
 import { Avatar, Badge, Button } from '@heroui/react';
@@ -19,6 +20,7 @@ import {
 import StatContainer from './StatContainer';
 import StatDisplay from './StatDisplay';
 import classNames from 'classnames';
+import ReportProblemModal from './ReportProblemModal';
 
 const PlayerStats = ({
     className,
@@ -32,6 +34,7 @@ const PlayerStats = ({
     seatNo
 }) => {
     const dispatch = useDispatch();
+    const [isReportOpen, setReportOpen] = useState(false);
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const user = useSelector((state) => state.auth.user);
     const isMe = userProp?.username === user?.username;
@@ -147,7 +150,10 @@ const PlayerStats = ({
                                 )}
                             {isMe &&
                                 getStatButton(
-                                    () => dispatch(sendReportProblemMessage()),
+                                    () => {
+                                        dispatch(sendReportProblemMessage());
+                                        setReportOpen(true);
+                                    },
                                     faBug,
                                     'Report a problem with this game',
                                     'Report Problem'
@@ -166,6 +172,13 @@ const PlayerStats = ({
                     )}
                 </StatContainer>
             </div>
+            {isMe && (
+                <ReportProblemModal
+                    isOpen={isReportOpen}
+                    onClose={() => setReportOpen(false)}
+                    onSend={(description) => dispatch(sendDescribeProblemMessage(description))}
+                />
+            )}
         </div>
     );
 };

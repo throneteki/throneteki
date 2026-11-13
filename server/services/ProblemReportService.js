@@ -1,7 +1,8 @@
 import defaultDb from '../db/index.js';
 import { escapeLike, getOrder, getPaging, getRequestedFilters } from './listQuery.js';
+import { normaliseDescription } from '../../shared/problemReportLimits.js';
 
-const FilterableFields = ['id', 'reporter', 'players', 'gameName'];
+const FilterableFields = ['id', 'reporter', 'players', 'gameName', 'description', 'search'];
 const SortColumns = { createdAt: 'created_at' };
 const MaxPageSize = 50;
 
@@ -12,6 +13,7 @@ export function getReportSummary(report) {
 
     return {
         reporter: stringOrNull(report.reporter),
+        description: normaliseDescription(report.description) || null,
         source: stringOrNull(report.source),
         gameName: stringOrNull(game.name),
         round: Number.isInteger(game.round) ? game.round : null,
@@ -37,6 +39,14 @@ function getConditions(options, params) {
             conditions.push(`reporter ILIKE ANY (${patterns})`);
         } else if (id === 'gameName') {
             conditions.push(`game_name ILIKE ANY (${patterns})`);
+        } else if (id === 'description') {
+            conditions.push(`description ILIKE ANY (${patterns})`);
+        } else if (id === 'search') {
+            conditions.push(
+                `(id::text ILIKE ANY (${patterns}) OR reporter ILIKE ANY (${patterns}) OR ` +
+                    `game_name ILIKE ANY (${patterns}) OR description ILIKE ANY (${patterns}) OR ` +
+                    `EXISTS (SELECT 1 FROM unnest(players) AS player WHERE player ILIKE ANY (${patterns})))`
+            );
         } else {
             conditions.push(
                 `EXISTS (SELECT 1 FROM unnest(players) AS player WHERE player ILIKE ANY (${patterns}))`
@@ -56,8 +66,8 @@ class ProblemReportService {
         const summary = getReportSummary(report);
 
         await this.db.query(
-            `INSERT INTO problem_reports (id, report, reporter, source, game_name, round, phase, players)
-             VALUES ($1, $2::jsonb, $3, $4, $5, $6, $7, $8)`,
+            `INSERT INTO problem_reports (id, report, reporter, source, game_name, round, phase, players, description)
+             VALUES ($1, $2::jsonb, $3, $4, $5, $6, $7, $8, $9)`,
             [
                 report.id,
                 JSON.stringify(report),
@@ -66,7 +76,8 @@ class ProblemReportService {
                 summary.gameName,
                 summary.round,
                 summary.phase,
-                summary.players
+                summary.players,
+                summary.description
             ]
         );
 
@@ -98,7 +109,7 @@ class ProblemReportService {
         }
 
         const rows = await this.db.query(
-            `SELECT id, created_at, reporter, source, game_name, round, phase, players
+            `SELECT id, created_at, reporter, source, game_name, round, phase, players, description
              FROM problem_reports
              WHERE ${where}
              ORDER BY ${order}, id
@@ -119,9 +130,37 @@ class ProblemReportService {
                 gameName: row.game_name,
                 round: row.round,
                 phase: row.phase,
-                players: row.players
+                players: row.players,
+                description: row.description
             }))
         };
+    }
+
+    async describe(id, reporter, description) {
+        const text = normaliseDescription(description);
+        if (!text) {
+            return false;
+        }
+
+        const rows = await this.db.query(
+            `UPDATE problem_reports
+             SET description = $3, report = jsonb_set(report, '{description}', to_jsonb($3::text))
+             WHERE id = $1 AND reporter = $2 AND description IS NULL
+               AND created_at > now() - interval '15 minutes' AND expires_at > now()
+             RETURNING id`,
+            [id, reporter, text]
+        );
+
+        return rows.length > 0;
+    }
+
+    async delete(ids) {
+        const rows = await this.db.query(
+            'DELETE FROM problem_reports WHERE id = ANY ($1::uuid[]) RETURNING id',
+            [ids]
+        );
+
+        return rows.map((row) => row.id);
     }
 
     async deleteExpired() {

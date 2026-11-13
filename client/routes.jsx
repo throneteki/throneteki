@@ -97,7 +97,7 @@ const routes = [
     {
         path: '/admin/problem-reports',
         action: () => <ProblemReportsAdmin key='problemreports' />,
-        permission: 'canViewProblemReports'
+        permission: 'canManageProblemReports'
     },
     { path: '/privacy', action: () => <Privacy key='privacy' /> },
     {

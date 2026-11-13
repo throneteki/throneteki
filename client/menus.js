@@ -19,7 +19,7 @@ export const LeftMenu = [
             {
                 path: '/admin/problem-reports',
                 title: 'Problem Reports',
-                permission: 'canViewProblemReports'
+                permission: 'canManageProblemReports'
             },
             { path: '/admin/motd', title: 'Motd', permission: 'canManageMotd' },
             { path: '/banlist', title: 'Ban List', permission: 'canManageBanlist' },

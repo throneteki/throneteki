@@ -388,7 +388,8 @@ CREATE TABLE public.problem_reports (
     game_name text,
     round integer,
     phase text,
-    players text[] DEFAULT '{}'::text[] NOT NULL
+    players text[] DEFAULT '{}'::text[] NOT NULL,
+    description text
 );
 
 --
@@ -453,7 +454,7 @@ CREATE TABLE public.user_monthly_stats (
 CREATE TABLE public.user_permissions (
     user_id bigint NOT NULL,
     permission text NOT NULL,
-    CONSTRAINT user_permissions_permission_check CHECK ((permission = ANY (ARRAY['isAdmin'::text, 'isContributor'::text, 'isSupporter'::text, 'canEditNews'::text, 'canManageUsers'::text, 'canManagePermissions'::text, 'canManageGames'::text, 'canManageNodes'::text, 'canModerateChat'::text, 'canManageMotd'::text, 'canManageEvents'::text, 'canManageBanlist'::text, 'canViewProblemReports'::text])))
+    CONSTRAINT user_permissions_permission_check CHECK ((permission = ANY (ARRAY['isAdmin'::text, 'isContributor'::text, 'isSupporter'::text, 'canEditNews'::text, 'canManageUsers'::text, 'canManagePermissions'::text, 'canManageGames'::text, 'canManageNodes'::text, 'canModerateChat'::text, 'canManageMotd'::text, 'canManageEvents'::text, 'canManageBanlist'::text, 'canManageProblemReports'::text])))
 );
 
 --

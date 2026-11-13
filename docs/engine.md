@@ -292,13 +292,27 @@ and argument snapshot beside the rendered text.
 
 ## Problem reports and scenarios
 
-`/cancel-prompt` and "report a problem" save a JSON snapshot (cards, zones, phase, log, challenge,
-pipeline) in PostgreSQL for 30 days, with whether it came from `/cancel-prompt` or the report
-button. Admin > Problem Reports lists them and downloads one as JSON. The scenario runner rebuilds
-the board, the phase, the challenges already made that phase, and a challenge in progress from the
-action window after attackers or defenders were declared, from a report ID, a downloaded report
-file or a spec
+A problem report is for working out what went wrong. Report Problem asks the player what went wrong
+and saves that with a snapshot of the game; `/cancel-prompt` saves one without a description
+before clearing the prompt. Reports are kept in PostgreSQL for 30 days. The snapshot
+([ProblemReport.js](../server/game/ProblemReport.js)) holds:
+
+- the description, reporter, how it was made and the game node's version;
+- the round, phase, open action window, whose challenge turn it is and who has finished, and the
+  challenge in progress;
+- each player's open prompt (titles, buttons, selectable cards) and the settings that change what
+  they are offered (action window stops, hidden interrupts and reactions, paused response waits);
+- any ability still resolving (its player, source, ability, triggering event and targets), and the
+  recent ability log;
+- every card's zone and state (kneeling, blank, participating, STR, icons, traits, keywords,
+  tokens);
+- the last 300 game log messages, chat included, and the pipeline.
+
+Admin > Problem Reports (the Problem Report Manager permission) lists reports with their
+descriptions; clicking one shows its details and offers the JSON. The scenario runner can also
+rebuild a report's board for a closer look, from a report ID, a downloaded report file or a spec
 (`SCENARIO=<spec>#<test>`, see [testing-cards.md](testing-cards.md#playing-a-test-in-the-real-client)).
+It cannot restore open prompts.
 
 ## Decisions
 

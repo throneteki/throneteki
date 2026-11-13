@@ -29,7 +29,8 @@ describe('Postgres ProblemReportService', function () {
             reporter: 'bob',
             source: 'cancel-prompt',
             game: { name: 'Other game', round: 0, phase: 'setup' },
-            players: [{ name: 'bob' }]
+            players: [{ name: 'bob' }],
+            description: 'Meryn did not trigger'
         });
         await this.addReport(3, '2026-11-03T10:00:00Z');
         await db.query(
@@ -53,7 +54,8 @@ describe('Postgres ProblemReportService', function () {
                     gameName: 'Other game',
                     round: 0,
                     phase: 'setup',
-                    players: ['bob']
+                    players: ['bob'],
+                    description: 'Meryn did not trigger'
                 },
                 {
                     id: reportId(1),
@@ -63,7 +65,8 @@ describe('Postgres ProblemReportService', function () {
                     gameName: 'Test game',
                     round: 2,
                     phase: 'challenge',
-                    players: ['alice', 'bob']
+                    players: ['alice', 'bob'],
+                    description: null
                 }
             ]
         });
@@ -96,6 +99,7 @@ describe('Postgres ProblemReportService', function () {
         await this.addReport(1, '2026-11-01T10:00:00Z');
         await this.addReport(2, '2026-11-02T10:00:00Z', {
             reporter: 'carol',
+            description: 'I cannot cancel Starfall',
             game: { name: 'Carol game', round: 1, phase: 'plot' },
             players: [{ name: 'carol' }, { name: 'dave' }]
         });
@@ -108,6 +112,10 @@ describe('Postgres ProblemReportService', function () {
         expect(await ids([{ id: 'gameName', value: 'test' }])).toEqual([reportId(1)]);
         expect(await ids([{ id: 'id', value: '000000000001' }])).toEqual([reportId(1)]);
         expect(await ids([{ id: 'reporter', value: '%' }])).toEqual([]);
+        expect(await ids([{ id: 'description', value: 'cannot cancel' }])).toEqual([reportId(2)]);
+        expect(await ids([{ id: 'search', value: 'dave' }])).toEqual([reportId(2)]);
+        expect(await ids([{ id: 'search', value: 'Starfall' }])).toEqual([reportId(2)]);
+        expect(await ids([{ id: 'search', value: 'test game' }])).toEqual([reportId(1)]);
     });
 
     it('lists a report with malformed players', async function () {
@@ -116,5 +124,57 @@ describe('Postgres ProblemReportService', function () {
         const { data } = await this.service.list();
 
         expect(data[0].players).toEqual([]);
+    });
+
+    it('deletes only the chosen reports', async function () {
+        await this.addReport(1, '2026-11-01T10:00:00Z');
+        await this.addReport(2, '2026-11-02T10:00:00Z');
+        await this.addReport(3, '2026-11-03T10:00:00Z');
+
+        const deleted = await this.service.delete([reportId(1), reportId(3), reportId(9)]);
+
+        expect(deleted.sort()).toEqual([reportId(1), reportId(3)]);
+        expect((await this.service.list()).data.map((report) => report.id)).toEqual([reportId(2)]);
+    });
+
+    describe('describing a report', function () {
+        beforeEach(async function () {
+            await this.addReport(1, new Date().toISOString(), { description: '' });
+        });
+
+        it("adds the reporter's description to the stored report", async function () {
+            await expect(
+                this.service.describe(reportId(1), 'alice', 'Meryn did not trigger')
+            ).resolves.toBe(true);
+
+            const report = await this.service.getById(reportId(1));
+            const { data } = await this.service.list();
+            expect(report.description).toBe('Meryn did not trigger');
+            expect(data[0].description).toBe('Meryn did not trigger');
+        });
+
+        it('only lets the reporter describe it', async function () {
+            await expect(this.service.describe(reportId(1), 'bob', 'Not mine')).resolves.toBe(
+                false
+            );
+        });
+
+        it('only lets it be described once', async function () {
+            await this.service.describe(reportId(1), 'alice', 'First');
+
+            await expect(this.service.describe(reportId(1), 'alice', 'Second')).resolves.toBe(
+                false
+            );
+            expect((await this.service.getById(reportId(1))).description).toBe('First');
+        });
+
+        it('does not describe an old report', async function () {
+            await db.query(
+                "UPDATE problem_reports SET created_at = now() - interval '1 hour' WHERE id = $1",
+                [reportId(1)]
+            );
+
+            await expect(this.service.describe(reportId(1), 'alice', 'Late')).resolves.toBe(false);
+        });
     });
 });

@@ -1,3 +1,5 @@
+import { normaliseDescription } from '../../shared/problemReportLimits.js';
+
 /**
  * The commands a client is allowed to send to a game. The game server only dispatches
  * messages to methods defined on this class, so anything added here is callable by any
@@ -48,12 +50,20 @@ class GameCommands {
         return this.game.concede(playerName);
     }
 
-    reportProblem(playerName) {
+    describeProblem(playerName, description) {
         if (!this.game.getPlayerByName(playerName)) {
             return;
         }
 
-        return this.game.getProblemReport(playerName);
+        return { reporter: playerName, description: normaliseDescription(description) };
+    }
+
+    reportProblem(playerName, description) {
+        if (!this.game.getPlayerByName(playerName)) {
+            return;
+        }
+
+        return this.game.getProblemReport(playerName, 'report', description);
     }
 
     drop(playerName, cardId, source, target) {
