@@ -246,7 +246,11 @@ cancel such as The Hand's Judgment.
   card, choosing attackers) leaves the opponent's prompt as it was, so it doesn't reveal which card
   or challenge is being considered
   ([menuprompt.js](../server/game/gamesteps/menuprompt.js) `beforeInitiation`, and the attacker
-  prompt in [challengeflow.js](../server/game/gamesteps/challenge/challengeflow.js)).
+  prompt in [challengeflow.js](../server/game/gamesteps/challenge/challengeflow.js)). While a
+  player confirms a card action that chooses targets, the cards it could choose are highlighted for
+  that player only, limited to cards they can see, so they know what it can affect before paying
+  its costs (`previewCards`, filled by `Game.getTargetPreview`). Actions whose choices depend on an
+  earlier choice, such as an opponent, show no preview.
 - "Don't ask again this phase" is offered whenever a window involves a card the player could hold
   in a hidden zone. Until the next phase they get no fake waits but are still asked whenever they
   hold a response, so their opponents can tell when they do. Players accept that in exchange for

@@ -4,6 +4,8 @@ import GamePipeline from '../gamepipeline.js';
 import SimpleStep from './simplestep.js';
 import GameActions from '../GameActions/index.js';
 
+export const SnapshotTypes = ['attachment', 'character', 'event', 'location'];
+
 class AbilityResolver extends BaseStep {
     constructor(game, ability, context) {
         super(game);
@@ -71,9 +73,7 @@ class AbilityResolver extends BaseStep {
     }
 
     createSnapshot() {
-        if (
-            ['attachment', 'character', 'event', 'location'].includes(this.context.source.getType())
-        ) {
+        if (SnapshotTypes.includes(this.context.source.getType())) {
             this.context.cardStateWhenInitiated = this.context.source.createSnapshot();
         }
 
