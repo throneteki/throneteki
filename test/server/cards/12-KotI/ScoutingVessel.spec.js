@@ -57,4 +57,22 @@ describe('Scouting Vessel', function () {
             expect(this.player1).isReadyToTakeAction();
         });
     });
+
+    describe('when a card that is not a character discards the top card of a deck', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: { faction: 'greyjoy', inPlay: ['The Tickler', 'Scouting Vessel'] },
+                player2: { drawDeck: Array(4).fill('Winterfell Steward') }
+            });
+            this.player1.togglePromptedActionWindow('dominance', true);
+            this.completeChallengesPhase();
+            this.player1.clickCard(this.theTickler);
+        });
+
+        it('does not trigger', function () {
+            expect(this.player1).not.toAllowAbilityTrigger(this.scoutingVessel);
+            expect(this.player2Object.discardPile).toHaveLength(1);
+        });
+    });
 });
