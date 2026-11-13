@@ -3,6 +3,7 @@ import GameActions from '../GameActions/index.js';
 class ReturnToHandCost {
     constructor() {
         this.name = 'returnToHand';
+        this.movesCard = true;
     }
 
     isEligible(card) {

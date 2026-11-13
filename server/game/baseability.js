@@ -73,6 +73,10 @@ class BaseAbility {
         return cost;
     }
 
+    costMovesSource() {
+        return this.cost.some((cost) => cost.movesSource?.());
+    }
+
     buildTargets(properties) {
         const definitions = properties.target
             ? [['target', properties.target]]

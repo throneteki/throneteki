@@ -250,7 +250,10 @@ cancel such as The Hand's Judgment.
   player confirms a card action that chooses targets, the cards it could choose are highlighted for
   that player only, limited to cards they can see, so they know what it can affect before paying
   its costs (`previewCards`, filled by `Game.getTargetPreview`). Actions whose choices depend on an
-  earlier choice, such as an opponent, show no preview.
+  earlier choice, such as an opponent, show no preview. When an ability's cost moves its own card
+  (returning it to hand, sacrificing it, putting it into shadows and so on), that card can't be one
+  of its targets, both in the preview and when checking whether the ability can be used
+  (`BaseAbility.costMovesSource`, from the cost's `movesCard`).
 - "Don't ask again this phase" is offered whenever a window involves a card the player could hold
   in a hidden zone. Until the next phase they get no fake waits but are still asked whenever they
   hold a response, so their opponents can tell when they do. Players accept that in exchange for

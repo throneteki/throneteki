@@ -42,7 +42,7 @@ class AbilityTarget {
             return null;
         }
 
-        const selector = CardSelector.for({ context, ...this.properties });
+        const selector = CardSelector.for({ context, ...this.selectorProperties() });
         const choosingPlayer = context.choosingPlayer;
         const byPlayer = new Map();
         for (const player of players) {
@@ -54,7 +54,7 @@ class AbilityTarget {
     }
 
     canResolve(context) {
-        const selector = CardSelector.for({ context, ...this.properties });
+        const selector = CardSelector.for({ context, ...this.selectorProperties() });
         const players = this.getChoosingPlayers(context);
         return (
             this.ifAble ||
@@ -138,16 +138,29 @@ class AbilityTarget {
     createSelector(context) {
         const byPlayer = context.legalTargetsAtInitiation?.get(this);
         if (!byPlayer) {
-            return CardSelector.for({ context, ...this.properties });
+            return CardSelector.for({ context, ...this.selectorProperties() });
         }
 
         const legal = new Set(byPlayer.get(context.choosingPlayer) || []);
-        const matches = CardMatcher.createMatcher(this.properties.cardCondition || (() => true));
+        const properties = this.selectorProperties();
         return CardSelector.for({
             context,
-            ...this.properties,
-            cardCondition: (card, cardContext) => legal.has(card) && matches(card, cardContext)
+            ...properties,
+            cardCondition: (card, cardContext) =>
+                legal.has(card) && properties.cardCondition(card, cardContext)
         });
+    }
+
+    // A cost that moves the source, such as returning it to hand, is paid before targets are
+    // chosen, so the source can't be one of them.
+    selectorProperties() {
+        const matches = CardMatcher.createMatcher(this.properties.cardCondition || (() => true));
+        return {
+            ...this.properties,
+            cardCondition: (card, context) =>
+                !(card === context.source && context.ability?.costMovesSource?.()) &&
+                matches(card, context)
+        };
     }
 
     hasSingleChooser() {

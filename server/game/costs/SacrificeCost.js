@@ -3,6 +3,7 @@ import GameActions from '../GameActions/index.js';
 class SacrificeCost {
     constructor() {
         this.name = 'sacrifice';
+        this.movesCard = true;
     }
 
     isEligible(card) {

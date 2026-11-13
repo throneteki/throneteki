@@ -4,6 +4,7 @@ import LeavePlay from '../GameActions/LeavePlay.js';
 class PutIntoShadowsCost {
     constructor() {
         this.name = 'putIntoShadows';
+        this.movesCard = true;
     }
 
     isEligible(card) {

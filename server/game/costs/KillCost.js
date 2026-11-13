@@ -1,6 +1,7 @@
 class KillCost {
     constructor() {
         this.name = 'kill';
+        this.movesCard = true;
     }
 
     isEligible(card) {
