@@ -650,7 +650,9 @@ this.action({
 ```
 
 `{player}`, `{source}`, and `{target}` come from the context. Additional arguments use
-`message: { format, args }`, with each argument a context function. Prefer `{gameAction}` to
+`message: { format, args }`, with each argument a context function. `{opponent}`,
+`{chosenPlayer}` and `{searchTarget}` also come from the context, and an argument with the same
+name replaces any of these, for example in a `then` where the context has no opponent. Prefer `{gameAction}` to
 wording that could claim a prevented effect happened. Prompting actions such as `search`,
 `choose`, `ifCondition`, `may`, `nameCard`, and `nameTrait` log their own messages. A cancelled
 ability only gets the plain uses/plays line.

@@ -91,4 +91,34 @@ describe('Citadel Archivist (KotI)', function () {
             expect(this.player1).isReadyToTakeAction();
         });
     });
+    describe("when an opponent's card places it in your discard pile", function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'challenge',
+                player1: {
+                    inPlay: ['Queenscrown']
+                },
+                player2: {
+                    drawDeck: ['Citadel Archivist', 'Milk of the Poppy', 'Nightmares'],
+                    discard: ['Winterfell Steward']
+                }
+            });
+
+            this.player1.clickMenu(this.queenscrown, "Reveal top 3 cards of opponent's deck");
+            this.player1.clickCard(this.citadelArchivist);
+            this.player1.clickPrompt('Done');
+        });
+
+        it("shuffles each player's discard pile into their deck", function () {
+            expect(this.player1).not.toAllowAbilityTrigger(this.citadelArchivist);
+
+            this.player2.triggerAbility(this.citadelArchivist);
+            this.player1.clickPrompt('Done');
+
+            expect(this.citadelArchivist.location).toBe('draw deck');
+            expect(this.winterfellSteward.location).toBe('draw deck');
+            expect(this.player2Object.discardPile).toHaveLength(0);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 });
