@@ -1,7 +1,6 @@
 class DiscardFromHandCost {
     constructor() {
         this.name = 'discardFromHand';
-        this.movesCard = true;
     }
 
     isEligible(card) {

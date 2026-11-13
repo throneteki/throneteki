@@ -228,25 +228,3 @@ describe('the confirmation for an action whose targets depend on the card using 
         expect(this.player1).not.toBeAbleToSelect(this.arianneMartell);
     });
 });
-
-describe('the confirmation for an action whose cost moves the card using it', function () {
-    beforeEach(function () {
-        this.setupTest({
-            phase: 'challenge',
-            player1: {
-                inPlay: [
-                    { card: 'Painted Dogs', kneeling: true },
-                    { card: 'Burned Men', kneeling: true }
-                ]
-            }
-        });
-
-        this.game.cardClicked(this.player1.name, this.paintedDogs.uuid);
-        this.game.continue();
-    });
-
-    it('does not show the card itself as a target', function () {
-        expect(this.player1).toBeAbleToSelect(this.burnedMen);
-        expect(this.player1).not.toBeAbleToSelect(this.paintedDogs);
-    });
-});

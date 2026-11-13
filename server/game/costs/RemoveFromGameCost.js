@@ -3,7 +3,6 @@ import GameActions from '../GameActions/index.js';
 class RemoveFromGameCost {
     constructor() {
         this.name = 'removeFromGame';
-        this.movesCard = true;
     }
 
     isEligible(card) {

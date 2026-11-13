@@ -4,10 +4,6 @@ class SelfCost {
         this.unpayAction = unpayAction;
     }
 
-    movesSource() {
-        return !!this.action.movesCard;
-    }
-
     canPay(context) {
         return this.action.isEligible(context.source, context);
     }
