@@ -17,15 +17,19 @@ class UmberLoyalist extends DrawCard {
             when: {
                 onCardLeftPlay: (event, context) => event.card === context.source
             },
-            message: '{player} is forced by {source} to choose and discard 2 cards from their hand',
-            gameAction: GameActions.chooseCards({
-                title: 'Select 2 cards to discard',
+            target: {
+                type: 'select',
                 mode: 'exactly',
                 numCards: 2,
+                activePromptTitle: 'Select 2 cards to discard',
+                cardType: ['attachment', 'character', 'event', 'location'],
                 cardCondition: (card, context) =>
-                    card.location === 'hand' && card.controller === context.choosingPlayer,
-                gameAction: (card) => GameActions.discardCard({ card })
-            })
+                    card.location === 'hand' && card.controller === context.player
+            },
+            message: '{player} is forced by {source} to discard {target} from their hand',
+            gameAction: GameActions.simultaneously((context) =>
+                context.target.map((card) => GameActions.discardCard({ card }))
+            )
         });
     }
 }

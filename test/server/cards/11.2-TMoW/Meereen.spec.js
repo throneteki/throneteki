@@ -108,3 +108,22 @@ describe('Meereen (TMoW)', function () {
         });
     });
 });
+
+describe('Meereen (TMoW) with no cards in hand', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                inPlay: ['Meereen (TMoW)']
+            }
+        });
+        this.player1.clickMenu(this.meereen, 'Place hand facedown and draw 3');
+    });
+
+    it('still draws 3 cards', function () {
+        expect(this.meereen.underneath).toHaveLength(0);
+        expect(this.player1Object.hand.length).toBe(3);
+        expect(this.meereen.kneeled).toBe(true);
+        expect(this.player1).isReadyToTakeAction();
+    });
+});

@@ -2,6 +2,8 @@ import DrawCard from '../../drawcard.js';
 import GameActions from '../../GameActions/index.js';
 import { Tokens } from '../../Constants/index.js';
 
+const InPlayLocations = ['active plot', 'faction', 'play area'];
+
 class CasterlyRock extends DrawCard {
     // Casterly Rock (17166)
     // While Casterly Rock is standing, you may spend gold on [lannister] cards you control as if it
@@ -14,8 +16,9 @@ class CasterlyRock extends DrawCard {
                 context.game.currentPhase === 'marshal' && !context.source.kneeled,
             match: (card, context) =>
                 card.controller === context.source.controller &&
-                card.location === 'play area' &&
+                isInPlay(card) &&
                 card.isFaction('lannister'),
+            targetLocation: InPlayLocations,
             effect: ability.effects.canSpendGold(
                 (spendParams, context) => spendParams.activePlayer === context.source.controller
             )
@@ -28,8 +31,8 @@ class CasterlyRock extends DrawCard {
                 mode: 'upTo',
                 numCards: 3,
                 activePromptTitle: 'Select up to 3 cards',
-                cardCondition: (card) =>
-                    card.location === 'play area' && card.isFaction('lannister')
+                cardType: ['attachment', 'character', 'faction', 'location', 'plot'],
+                cardCondition: (card) => isInPlay(card) && card.isFaction('lannister')
             },
             message: '{player} kneels {source} to have {target} each gain 1 gold',
             gameAction: GameActions.simultaneously((context) =>
@@ -39,6 +42,10 @@ class CasterlyRock extends DrawCard {
             )
         });
     }
+}
+
+function isInPlay(card) {
+    return InPlayLocations.includes(card.location);
 }
 
 CasterlyRock.code = '17166';

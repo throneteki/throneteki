@@ -126,3 +126,26 @@ describe('Northern Patriarch', function () {
         });
     });
 });
+
+describe('Northern Patriarch immunity', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                faction: 'stark',
+                inPlay: ['Northern Patriarch', 'Hedge Knight']
+            },
+            player2: {
+                plot: 'At the Palace of Sorrows (R)',
+                inPlay: ['Tumblestone Knight']
+            }
+        });
+    });
+
+    it("only makes Northern Patriarch immune to opponents' Omen plot effects", function () {
+        expect(this.northernPatriarch.getStrength()).toBe(3);
+        expect(this.hedgeKnight.getStrength()).toBe(3);
+        expect(this.tumblestoneKnight.getStrength()).toBe(3);
+        expect(this.player1).isReadyToTakeAction();
+    });
+});
