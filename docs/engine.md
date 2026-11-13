@@ -263,12 +263,14 @@ cancel such as The Hand's Judgment.
   active player marshals on their turn; players who stop at the marshaling window are offered an
   action in player order, and the window closes only after every player passes in a row (Appendix
   I, 3.2).
-- **Before each challenge** is an action window
-  ([ChallengeActionWindow.js](../server/game/gamesteps/challenge/ChallengeActionWindow.js)), and it
-  is over before the challenge is chosen. Every other player who stops at the window has their turn
-  first, in player order. The active player's turn comes last and is choosing a challenge type, or
-  Done, which closes the window; they can take actions while choosing, and each action gives the
-  others who stop at the window another turn before they choose.
+- **Before each challenge** (Appendix I, between 4.1 and 4.2): when any player stops at the window,
+  it is an ordinary action window. The first player has the first opportunity, turns go round in
+  player order, and it closes when every player passes in a row. The active player then chooses a
+  challenge type or Done
+  ([ChallengeChoicePrompt.js](../server/game/gamesteps/challenge/ChallengeChoicePrompt.js)) and
+  cannot take actions while choosing. When nobody stops at the window, it is skipped and the active
+  player can take actions while choosing instead; the other players gave up their opportunity by
+  not stopping at it.
 - The "action outside a window" and "action during another player's turn" warnings can only appear
   in manual mode.
 
@@ -290,13 +292,27 @@ and argument snapshot beside the rendered text.
 
 ## Problem reports and scenarios
 
-`/cancel-prompt` and "report a problem" save a JSON snapshot (cards, zones, phase, log, challenge,
-pipeline) in PostgreSQL for 30 days, with whether it came from `/cancel-prompt` or the report
-button. Admin > Problem Reports lists them and downloads one as JSON. The scenario runner rebuilds
-the board, the phase, the challenges already made that phase, and a challenge in progress from the
-action window after attackers or defenders were declared, from a report ID, a downloaded report
-file or a spec
+A problem report is for working out what went wrong. Report Problem asks the player what went wrong
+and saves that with a snapshot of the game; `/cancel-prompt` saves one without a description
+before clearing the prompt. Reports are kept in PostgreSQL for 30 days. The snapshot
+([ProblemReport.js](../server/game/ProblemReport.js)) holds:
+
+- the description, reporter, how it was made and the game node's version;
+- the round, phase, open action window, whose challenge turn it is and who has finished, and the
+  challenge in progress;
+- each player's open prompt (titles, buttons, selectable cards) and the settings that change what
+  they are offered (action window stops, hidden interrupts and reactions, paused response waits);
+- any ability still resolving (its player, source, ability, triggering event and targets), and the
+  recent ability log;
+- every card's zone and state (kneeling, blank, participating, STR, icons, traits, keywords,
+  tokens);
+- the last 300 game log messages, chat included, and the pipeline.
+
+Admin > Problem Reports (the Problem Report Manager permission) lists reports with their
+descriptions; clicking one shows its details and offers the JSON. The scenario runner can also
+rebuild a report's board for a closer look, from a report ID, a downloaded report file or a spec
 (`SCENARIO=<spec>#<test>`, see [testing-cards.md](testing-cards.md#playing-a-test-in-the-real-client)).
+It cannot restore open prompts.
 
 ## Decisions
 
@@ -356,8 +372,7 @@ Rules readings and design choices that stand until changed:
 - `context.opponent` is not a getter. A target snapshot is skipped when any choosing player is
   missing.
 - `ActionWindow.skipCondition` skips everyone when nobody stops at the window;
-  `MarshalingActionWindow` and `ChallengeActionWindow` override it per player, so the active player
-  always has their turn.
+  `MarshalingActionWindow` overrides it per player, so the active player always has their turn.
 - Timing is checked before `cannotTrigger`, `cost` and `noEffect`, so a spec asserting one of those
   reasons must wait until it is that player's turn.
 - Pile-order prompts keep `canCancel`: Done with nothing selected uses the default order.

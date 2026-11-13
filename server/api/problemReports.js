@@ -2,11 +2,17 @@ import passport from 'passport';
 import qs from 'qs';
 import { wrapAsync } from '../util.js';
 import ServiceFactory from '../services/ServiceFactory.js';
+import { MaxDeleteCount } from '../../shared/problemReportLimits.js';
 
 const UuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-function canViewProblemReports(user) {
-    return !!user.permissions?.canViewProblemReports;
+function canManageProblemReports(user) {
+    return !!user.permissions?.canManageProblemReports;
+}
+
+// qs decodes each key and value itself, so search text keeps its commas and ampersands.
+export function parseListQuery(rawQuery) {
+    return qs.parse(rawQuery || '', { allowDots: true });
 }
 
 export const init = function (server) {
@@ -16,16 +22,11 @@ export const init = function (server) {
         '/api/problem-reports',
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async (req, res) => {
-            if (!canViewProblemReports(req.user)) {
+            if (!canManageProblemReports(req.user)) {
                 return res.status(403).send({ message: 'Forbidden' });
             }
 
-            const options = qs.parse(decodeURIComponent(req._parsedUrl.query || ''), {
-                allowDots: true,
-                comma: true
-            });
-
-            return res.send(await problemReportService.list(options));
+            return res.send(await problemReportService.list(parseListQuery(req._parsedUrl.query)));
         })
     );
 
@@ -33,7 +34,7 @@ export const init = function (server) {
         '/api/problem-reports/:id',
         passport.authenticate('jwt', { session: false }),
         wrapAsync(async (req, res) => {
-            if (!canViewProblemReports(req.user)) {
+            if (!canManageProblemReports(req.user)) {
                 return res.status(403).send({ message: 'Forbidden' });
             }
 
@@ -48,6 +49,33 @@ export const init = function (server) {
             }
 
             return res.send({ success: true, data: report });
+        })
+    );
+
+    server.delete(
+        '/api/problem-reports',
+        passport.authenticate('jwt', { session: false }),
+        wrapAsync(async (req, res) => {
+            if (!canManageProblemReports(req.user)) {
+                return res.status(403).send({ message: 'Forbidden' });
+            }
+
+            const ids = req.body?.ids;
+            if (
+                !Array.isArray(ids) ||
+                ids.length === 0 ||
+                ids.length > MaxDeleteCount ||
+                !ids.every((id) => typeof id === 'string' && UuidPattern.test(id))
+            ) {
+                return res.status(400).send({
+                    success: false,
+                    message: `Choose up to ${MaxDeleteCount} reports to delete`
+                });
+            }
+
+            const deleted = await problemReportService.delete(ids);
+
+            return res.send({ success: true, data: { ids: deleted } });
         })
     );
 };

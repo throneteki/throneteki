@@ -38,7 +38,7 @@ const defaultPermissions = {
     canManageMotd: false,
     canManageBanlist: false,
     canManageEvents: false,
-    canViewProblemReports: false,
+    canManageProblemReports: false,
     isAdmin: false,
     isContributor: false,
     isSupporter: false
@@ -54,7 +54,7 @@ const availablePermissions = [
     { name: 'canManageMotd', label: 'Motd Manager' },
     { name: 'canManageBanlist', label: 'Banlist Manager' },
     { name: 'canManageEvents', label: 'Events Manager' },
-    { name: 'canViewProblemReports', label: 'Problem Report Viewer' },
+    { name: 'canManageProblemReports', label: 'Problem Report Manager' },
     { name: 'isAdmin', label: 'Site Admin' },
     { name: 'isContributor', label: 'Contributor' },
     { name: 'isSupporter', label: 'Supporter' }

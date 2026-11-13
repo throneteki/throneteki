@@ -54,7 +54,7 @@ import DisconnectHandler from './GameHandlers/DisconnectHandler.js';
 import { Flags, Requirements } from './Constants/index.js';
 import { EventValidator } from './EventValidator.js';
 import PossibleResponders from './PossibleResponders.js';
-import { randomUUID } from 'crypto';
+import { buildProblemReport } from './ProblemReport.js';
 
 const MinResponseDelay = 3000;
 const MaxResponseDelay = 5000;
@@ -1708,84 +1708,8 @@ class Game extends EventEmitter {
         }
     }
 
-    getProblemReport(reporter, source = 'report') {
-        const players = this.getAllPlayers();
-        const cards = this.allCards.map((card) => ({
-            id: card.uuid,
-            code: card.cardData.code,
-            name: card.name,
-            packCode: card.cardData.packCode,
-            owner: card.owner?.name,
-            controller: card.controller?.name,
-            location: card.location,
-            parent: card.parent?.uuid,
-            facedown: !!card.facedown,
-            kneeled: !!card.kneeled,
-            power: card.power,
-            gold: card.gold,
-            tokens: { ...card.tokens }
-        }));
-        const playerStates = players.map((player, index) => ({
-            name: player.name,
-            seat: index + 1,
-            faction: player.faction.code,
-            gold: player.gold,
-            power: player.faction.getPower(),
-            standing: player.standing,
-            eliminated: player.eliminated,
-            activePlot: player.activePlot?.uuid,
-            plotDeck: player.plotDeck.map((card) => card.uuid),
-            usedPlots: player.plotDiscard.map((card) => card.uuid),
-            cardsInPlay: player.cardsInPlay.map((card) => card.uuid),
-            hand: player.hand.map((card) => card.uuid),
-            drawDeck: player.drawDeck.map((card) => card.uuid),
-            discardPile: player.discardPile.map((card) => card.uuid),
-            deadPile: player.deadPile.map((card) => card.uuid),
-            shadows: player.shadows.map((card) => card.uuid),
-            outOfGame: player.outOfGamePile.map((card) => card.uuid),
-            agendas: (player.agendas || []).map((card) => card.uuid)
-        }));
-
-        return {
-            schemaVersion: 1,
-            id: randomUUID(),
-            createdAt: new Date().toISOString(),
-            game: {
-                id: this.id,
-                name: this.name,
-                format: this.gameFormat,
-                variant: this.gameVariant,
-                manualMode: this.manualMode.enabled,
-                round: this.round,
-                phase: this.currentPhase,
-                firstPlayer: this.getPlayersInFirstPlayerOrder()[0]?.name,
-                currentChallenge: this.currentChallenge && {
-                    ...this.getChallengeSummary(this.currentChallenge),
-                    stage: this.getChallengeStage(this.currentChallenge),
-                    currentType: this.currentChallenge.challengeType,
-                    declaredAttackers: this.currentChallenge.declaredAttackers.map(
-                        (card) => card.uuid
-                    ),
-                    attackers: this.currentChallenge.attackers?.map((card) => card.uuid),
-                    declaredDefenders: this.currentChallenge.declaredDefenders.map(
-                        (card) => card.uuid
-                    ),
-                    defenders: this.currentChallenge.defenders?.map((card) => card.uuid)
-                },
-                earlierChallenges:
-                    this.currentPhase === 'challenge'
-                        ? this.getEarlierChallenges().map((challenge) =>
-                              this.getChallengeSummary(challenge)
-                          )
-                        : []
-            },
-            reporter,
-            source,
-            players: playerStates,
-            cards,
-            messages: this.gameChat.messages.slice(-100),
-            pipeline: this.pipeline.getDebugInfo()
-        };
+    getProblemReport(reporter, source = 'report', description = '') {
+        return buildProblemReport(this, { reporter, source, description });
     }
 
     getChallengeSummary(challenge) {

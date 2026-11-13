@@ -399,7 +399,7 @@ reproduce a bug or try a card in the browser.
 For maintainers reproducing a submitted report, set `SCENARIO` to `report:<id>` instead of a spec
 path, using the ID shown in the in-game confirmation, to load it from the database the game node
 uses. For a report saved on the live site, open Admin > Problem Reports (it needs the Problem Report
-Viewer permission), download it, and set `SCENARIO` to `file:<path to the .json>`; saving the file
+Manager permission), download it, and set `SCENARIO` to `file:<path to the .json>`; saving the file
 rebuilds the game. The game has as many players as the reported one, so `SCENARIO_USERS` names one
 account for a solo game. The game node sends reports to the lobby
 router over Redis; the router stores them in PostgreSQL for 30 days, so any game-node pod can load
@@ -408,8 +408,12 @@ one. Players only need to include the report ID when filing an issue through the
 board and phase from the report, with the challenges already made that phase. A challenge in
 progress resumes at the action window after its attackers were declared, or after its defenders
 were declared if they were (also when the report was taken later in the challenge). Nothing
-triggers while it is rebuilt. Other open prompts are not restored; the stored snapshot keeps them
-for diagnosis.
+triggers while it is rebuilt: optional reactions and interrupts offered on the way to the phase,
+such as The Long Voyage in the draw phase, are passed. A report from the dominance, standing or
+taxation phase is rebuilt at the start of the challenges phase. The reported plots are put in
+place without resolving their When Revealed abilities again. The game log shows the messages
+saved in the report (the last 300 since report format 2), chat included, in place of the rebuild's own messages. Open
+prompts are not restored; the admin page shows the ones recorded in the report.
 
 The part after `#` picks the test: a case-insensitive part of its name (the describe and it labels
 joined with spaces). Without it, the first test in the file is used. The test's hooks and body run

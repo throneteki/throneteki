@@ -20,7 +20,7 @@ export const Permissions = [
     'canManageMotd',
     'canManageEvents',
     'canManageBanlist',
-    'canViewProblemReports'
+    'canManageProblemReports'
 ];
 
 const DuplicateConstraints = { users_username_key: 'username', users_email_key: 'email' };

@@ -300,6 +300,42 @@ function applyPlayerState(playerWrapper, own) {
     }
 }
 
+// The scenario runner rebuilds reports holding any cards, so it passes the optional reactions and
+// interrupts those cards offer on the way to the reported phase. Specs never do: a prompt there
+// means the setup should start in an earlier phase.
+function passOpenResponses(options, players) {
+    if (options.passResponses) {
+        passOptionalResponses(players);
+    }
+}
+
+export function passOptionalResponses(players) {
+    for (let passes = 0; passes < MaxResponsePasses; passes++) {
+        const player = Object.values(players).find(isInOptionalResponseWindow);
+        if (!player) {
+            return;
+        }
+
+        player.clickPrompt('Pass');
+    }
+
+    throw new Error(
+        `setupTest passed ${MaxResponsePasses} reaction or interrupt windows without reaching the phase`
+    );
+}
+
+const OptionalResponseTitle = /^Any (interrupt|reaction)s( to .+)?\?$/;
+const MaxResponsePasses = 100;
+
+function isInOptionalResponseWindow(player) {
+    const prompt = player.currentPrompt();
+
+    return (
+        OptionalResponseTitle.test(prompt.menuTitle || '') &&
+        prompt.buttons.some((button) => button.text === 'Pass')
+    );
+}
+
 function advanceToPhase(flow, phase, options, players) {
     const playerKeys = Object.keys(players);
     const targetIndex = PhaseOrder.indexOf(phase);
@@ -325,9 +361,12 @@ function advanceToPhase(flow, phase, options, players) {
     }
 
     for (const current of PhaseOrder.slice(PhaseOrder.indexOf('marshal'), targetIndex)) {
+        passOpenResponses(options, players);
         flow.guardCurrentPhase(current);
         flow[CompletePhase[current]]();
     }
+
+    passOpenResponses(options, players);
 
     if (flow.game.currentPhase !== phase) {
         throw new Error(

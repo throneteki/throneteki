@@ -30,6 +30,7 @@ class GameServer {
         this.configService = new ConfigService();
         checkSecrets(this.configService, ['secret']);
         this.games = {};
+        this.problemReportIds = new WeakMap();
 
         this.protocol = 'https';
 
@@ -505,6 +506,8 @@ class GameServer {
                 const result = game.commands[command](socket.user.username, ...args);
                 if (command === 'reportProblem' && result) {
                     this.requestProblemReport(game, result);
+                } else if (command === 'describeProblem' && result) {
+                    this.describeProblemReport(game, result);
                 }
             }
 
@@ -517,7 +520,37 @@ class GameServer {
     }
 
     requestProblemReport(game, report) {
+        report.serverVersion = this.gameSocket.version;
+        if (report.source === 'report') {
+            this.getProblemReportIds(game).set(report.reporter, report.id);
+        }
         this.gameSocket.send('REPORTPROBLEM', { gameId: game.id, report });
+    }
+
+    getProblemReportIds(game) {
+        if (!this.problemReportIds.has(game)) {
+            this.problemReportIds.set(game, new Map());
+        }
+
+        return this.problemReportIds.get(game);
+    }
+
+    // The report ID comes from the report this player last made in this game, never from the
+    // client, so a player can only describe their own report.
+    describeProblemReport(game, { reporter, description }) {
+        const reportIds = this.getProblemReportIds(game);
+        const reportId = reportIds.get(reporter);
+        if (!reportId || !description) {
+            return;
+        }
+
+        reportIds.delete(reporter);
+        this.gameSocket.send('DESCRIBEPROBLEM', {
+            gameId: game.id,
+            reportId,
+            reporter,
+            description
+        });
     }
 
     onProblemReportSaved(gameId, reportId) {

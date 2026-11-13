@@ -16,6 +16,7 @@ const TagTypes = {
     User: 'User',
     BanList: 'BanList',
     AbuseBlock: 'AbuseBlock',
+    ProblemReport: 'ProblemReport',
     DraftCube: 'DraftCube'
 };
 
@@ -430,11 +431,20 @@ export const apiSlice = createApi({
                     sorting: loadOptions.sorting,
                     filters: loadOptions.columnFilters
                 }
-            })
+            }),
+            providesTags: [TagTypes.ProblemReport]
         }),
         getProblemReport: builder.query({
             query: (id) => `/problem-reports/${id}`,
             keepUnusedDataFor: 0
+        }),
+        deleteProblemReports: builder.mutation({
+            query: (ids) => ({
+                url: '/problem-reports',
+                method: 'DELETE',
+                body: { ids }
+            }),
+            invalidatesTags: [TagTypes.ProblemReport]
         }),
         getAbuseBlocks: builder.query({
             query: () => '/abuse-blocks',
@@ -584,7 +594,8 @@ export const {
     useAddBanListEntryMutation,
     useRemoveBanListEntryMutation,
     useGetProblemReportsQuery,
-    useLazyGetProblemReportQuery,
+    useGetProblemReportQuery,
+    useDeleteProblemReportsMutation,
     useGetAbuseBlocksQuery,
     useAddAbuseBlockMutation,
     useRemoveAbuseBlockMutation,

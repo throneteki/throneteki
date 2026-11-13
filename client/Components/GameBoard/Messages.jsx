@@ -1,6 +1,5 @@
 import React from 'react';
 import classNames from 'classnames';
-import { useSelector } from 'react-redux';
 import { Avatar, Link } from '@heroui/react';
 
 import AlertPanel from '../Site/AlertPanel';
@@ -19,10 +18,6 @@ const tokens = {
 };
 
 const Messages = ({ messages }) => {
-    const currentGame = useSelector((state) => state.lobby.currentGame);
-
-    const owner = currentGame.players[currentGame.owner];
-
     const processKeywords = (message) => {
         const messages = [];
         let i = 0;
