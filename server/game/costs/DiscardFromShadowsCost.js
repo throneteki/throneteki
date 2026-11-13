@@ -1,6 +1,7 @@
 class DiscardFromShadowsCost {
     constructor() {
         this.name = 'discardFromShadows';
+        this.movesCard = true;
     }
 
     isEligible(card) {

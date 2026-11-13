@@ -3,6 +3,7 @@ import GameActions from '../GameActions/index.js';
 class ShuffleCardIntoDeckCost {
     constructor() {
         this.name = 'shuffleCardIntoDeckCost';
+        this.movesCard = true;
     }
 
     isEligible(card) {

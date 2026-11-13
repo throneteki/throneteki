@@ -3,6 +3,7 @@ import GameActions from '../GameActions/index.js';
 class PlaceInDeadPileFromHandCost {
     constructor() {
         this.name = 'placeInDeadPileFromHand';
+        this.movesCard = true;
     }
 
     isEligible(card) {
