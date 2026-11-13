@@ -11,7 +11,7 @@ class CitadelArchivist extends DrawCard {
                 onCardPlaced: (event, context) =>
                     event.card === context.source &&
                     event.card.location === 'discard pile' &&
-                    event.player === context.player
+                    event.card.owner === context.player
             },
             location: 'discard pile',
             message: "{player} uses {source} to shuffle each player's discard pile into their deck",
