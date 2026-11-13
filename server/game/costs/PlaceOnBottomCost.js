@@ -3,7 +3,6 @@ import GameActions from '../GameActions/index.js';
 class PlaceOnBottomCost {
     constructor() {
         this.name = 'placeBottom';
-        this.movesCard = true;
     }
 
     isEligible(card) {

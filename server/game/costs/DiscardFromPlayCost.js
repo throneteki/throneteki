@@ -3,7 +3,6 @@ import GameActions from '../GameActions/index.js';
 class DiscardFromPlayCost {
     constructor() {
         this.name = 'discardFromPlay';
-        this.movesCard = true;
     }
 
     isEligible(card) {
