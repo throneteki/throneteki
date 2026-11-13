@@ -15,22 +15,26 @@ class GreyGhost extends DrawCard {
         this.action({
             title: 'Prevent character(s) from defending',
             cost: ability.costs.kneelSelf(),
-            message:
-                '{player} kneels {source} to make characters unable to be declared as defenders',
-            gameAction: GameActions.chooseCards({
+            target: {
                 mode: 'upTo',
                 numCards,
-                title: (context) =>
+                activePromptTitle: (context) =>
                     numCards(context) === 2 ? 'Select up to 2 characters' : 'Select a character',
                 cardCondition: (card) =>
-                    card.location === 'play area' && card.getType() === 'character',
-                gameAction: (card) =>
-                    GameActions.lastingEffect(() => ({
-                        duration: 'untilEndOfPhase',
-                        match: card,
-                        effect: ability.effects.cannotBeDeclaredAsDefender()
-                    }))
-            })
+                    card.location === 'play area' && card.getType() === 'character'
+            },
+            message: {
+                format: '{player} kneels {source} to make {target} unable to be declared as {defenders}',
+                args: {
+                    defenders: (context) =>
+                        context.target.length === 1 ? 'a defender' : 'defenders'
+                }
+            },
+            gameAction: GameActions.lastingEffect((context) => ({
+                duration: 'untilEndOfPhase',
+                match: context.target,
+                effect: ability.effects.cannotBeDeclaredAsDefender()
+            }))
         });
     }
 }

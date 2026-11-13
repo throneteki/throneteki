@@ -159,25 +159,23 @@ describe('Marriage Pact on your own Umber Loyalist', function () {
         this.player1.clickCard(this.umberLoyalist);
     });
 
-    it('sacrifices it again after each discard, until your hand is empty', function () {
-        for (const cards of [
-            [this.hedgeKnight, this.tumblestoneKnight],
-            [this.houseMaester, this.winterfellSteward],
-            [this.castleGuard]
-        ]) {
-            expect(this.player1).toHavePrompt('Select 2 cards to discard');
-            for (const card of cards) {
-                this.player1.clickCard(card);
-            }
-            this.player1.clickPrompt('Done');
-            if (cards.length === 2) {
-                this.player1.clickPrompt('Done');
-                expect(this.player1).toHavePrompt('Select a character');
-                this.player1.clickCard(this.umberLoyalist);
-            }
-        }
+    it('sacrifices it again after each discard, until you have fewer than 2 cards in hand', function () {
+        expect(this.player1).toHavePrompt('Select 2 cards to discard');
+        this.player1.clickCard(this.hedgeKnight);
+        this.player1.clickCard(this.tumblestoneKnight);
+        this.player1.clickPrompt('Done');
+        this.player1.clickPrompt('Done');
+        expect(this.player1).toHavePrompt('Select a character');
+        this.player1.clickCard(this.umberLoyalist);
 
-        expect(this.player1Object.hand).toHaveLength(0);
+        expect(this.player1).toHavePrompt('Select 2 cards to discard');
+        this.player1.clickCard(this.houseMaester);
+        this.player1.clickCard(this.winterfellSteward);
+        this.player1.clickPrompt('Done');
+        this.player1.clickPrompt('Done');
+
+        expect(this.castleGuard.location).toBe('hand');
+        expect(this.player1Object.hand).toHaveLength(1);
         expect(this.umberLoyalist.location).toBe('discard pile');
         expect(this.marriagePact.location).toBe('discard pile');
         expect(this.player2).isReadyToTakeAction();
