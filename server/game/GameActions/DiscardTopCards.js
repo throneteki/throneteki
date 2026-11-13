@@ -29,7 +29,7 @@ class DiscardTopCards extends GameAction {
         return amount > 0 && player.drawDeck.length > 0;
     }
 
-    createEvent({ player, amount, isPillage = false, source }) {
+    createEvent({ player, amount, isPillage = false, source, context }) {
         const actualAmount = Math.min(amount, player.drawDeck.length);
         let params = {
             amount: actualAmount,
@@ -37,7 +37,7 @@ class DiscardTopCards extends GameAction {
             isFullyResolved: (event) => event.amount === event.desiredAmount,
             player,
             isPillage,
-            source
+            source: source || context?.source
         };
         return this.event('onTopCardsDiscarded', params, (event) => {
             event.topCards = event.player.drawDeck.slice(0, event.amount);
