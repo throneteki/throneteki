@@ -61,6 +61,10 @@ An event window ([eventwindow.js](../server/game/gamesteps/eventwindow.js),
 4. When Revealed abilities;
 5. forced reactions, then reactions.
 
+If a card leaves play some other way while an event that affects it is still in its interrupt
+windows (killed as a cost while The Stranger is killing it, say), nothing more can interrupt that
+event for that card, and its handler does nothing.
+
 An interrupt that says "would" declares `would: true`; the engine does not read card text for it.
 [wouldInterrupts.spec.js](../test/server/tools/wouldInterrupts.spec.js) checks each declaration
 against the card text.

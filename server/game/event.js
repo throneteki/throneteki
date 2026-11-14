@@ -10,6 +10,8 @@ const ReservedEventParamKeys = [
     'cardStateWhenEventCreated'
 ];
 
+const InterruptTypes = ['cancelinterrupt', 'wouldinterrupt', 'forcedinterrupt', 'interrupt'];
+
 class Event {
     constructor(name, params = {}, handler = () => true, postHandler = () => true) {
         const { isFullyResolved, ...otherParams } = params;
@@ -52,8 +54,9 @@ class Event {
     }
 
     emitTo(emitter, suffix) {
-        let fullName = suffix ? `${this.name}:${suffix}` : this.name;
-        emitter.emit(fullName, this);
+        if (!InterruptTypes.includes(suffix) || !this.hasLeftPlaySinceCreated()) {
+            emitter.emit(suffix ? `${this.name}:${suffix}` : this.name, this);
+        }
 
         for (let event of this.childEvents) {
             event.emitTo(emitter, suffix);
@@ -61,7 +64,21 @@ class Event {
     }
 
     allowAutomaticSave() {
-        return this.allowSave && this.automaticSaveWithDupe && !!this.card;
+        return (
+            this.allowSave &&
+            this.automaticSaveWithDupe &&
+            !!this.card &&
+            !this.hasLeftPlaySinceCreated()
+        );
+    }
+
+    // A card already taken out of play by something else (killed as a cost while The Stranger is
+    // killing it, say) is no longer affected by this event, so nothing can interrupt it.
+    hasLeftPlaySinceCreated() {
+        return (
+            this.cardStateWhenEventCreated?.location === 'play area' &&
+            this.params.card.location !== 'play area'
+        );
     }
 
     saveCard() {
