@@ -173,4 +173,9 @@ describe('describing a problem report', function () {
     it('ignores players who are not in the game', function () {
         expect(this.game.commands.describeProblem('nobody', 'It broke')).toBeUndefined();
     });
+
+    it('returns the reporter for the game server to discard their unsent report', function () {
+        expect(this.game.commands.cancelProblemReport('player1')).toEqual({ reporter: 'player1' });
+        expect(this.game.commands.cancelProblemReport('nobody')).toBeUndefined();
+    });
 });

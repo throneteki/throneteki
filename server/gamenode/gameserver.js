@@ -30,7 +30,7 @@ class GameServer {
         this.configService = new ConfigService();
         checkSecrets(this.configService, ['secret']);
         this.games = {};
-        this.problemReportIds = new WeakMap();
+        this.pendingProblemReports = new WeakMap();
 
         this.protocol = 'https';
 
@@ -508,6 +508,8 @@ class GameServer {
                     this.requestProblemReport(game, result);
                 } else if (command === 'describeProblem' && result) {
                     this.describeProblemReport(game, result);
+                } else if (command === 'cancelProblemReport' && result) {
+                    this.getPendingProblemReports(game).delete(result.reporter);
                 }
             }
 
@@ -519,38 +521,36 @@ class GameServer {
         });
     }
 
+    // A player's report is snapshotted when they open the report dialog, so it shows the game as
+    // it was when they saw the problem, but is only saved once they describe it.
     requestProblemReport(game, report) {
         report.serverVersion = this.gameSocket.version;
-        if (report.source === 'report') {
-            this.getProblemReportIds(game).set(report.reporter, report.id);
-        }
-        this.gameSocket.send('REPORTPROBLEM', { gameId: game.id, report });
-    }
-
-    getProblemReportIds(game) {
-        if (!this.problemReportIds.has(game)) {
-            this.problemReportIds.set(game, new Map());
-        }
-
-        return this.problemReportIds.get(game);
-    }
-
-    // The report ID comes from the report this player last made in this game, never from the
-    // client, so a player can only describe their own report.
-    describeProblemReport(game, { reporter, description }) {
-        const reportIds = this.getProblemReportIds(game);
-        const reportId = reportIds.get(reporter);
-        if (!reportId || !description) {
+        if (report.source === 'report' && !report.description) {
+            this.getPendingProblemReports(game).set(report.reporter, report);
             return;
         }
 
-        reportIds.delete(reporter);
-        this.gameSocket.send('DESCRIBEPROBLEM', {
-            gameId: game.id,
-            reportId,
-            reporter,
-            description
-        });
+        this.gameSocket.send('REPORTPROBLEM', { gameId: game.id, report });
+    }
+
+    getPendingProblemReports(game) {
+        if (!this.pendingProblemReports.has(game)) {
+            this.pendingProblemReports.set(game, new Map());
+        }
+
+        return this.pendingProblemReports.get(game);
+    }
+
+    describeProblemReport(game, { reporter, description }) {
+        const pending = this.getPendingProblemReports(game);
+        const report = pending.get(reporter);
+        if (!report || !description) {
+            return;
+        }
+
+        pending.delete(reporter);
+        report.description = description;
+        this.gameSocket.send('REPORTPROBLEM', { gameId: game.id, report });
     }
 
     onProblemReportSaved(gameId, reportId) {

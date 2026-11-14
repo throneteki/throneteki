@@ -58,6 +58,14 @@ class GameCommands {
         return { reporter: playerName, description: normaliseDescription(description) };
     }
 
+    cancelProblemReport(playerName) {
+        if (!this.game.getPlayerByName(playerName)) {
+            return;
+        }
+
+        return { reporter: playerName };
+    }
+
     reportProblem(playerName, description) {
         if (!this.game.getPlayerByName(playerName)) {
             return;

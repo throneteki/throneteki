@@ -70,6 +70,7 @@ const gameSlice = createSlice({
             (description) => ({ payload: { description } }),
             () => {}
         ),
+        sendCancelProblemReportMessage: () => {},
         sendChangeStatMessage: create.preparedReducer(
             (type, amount) => ({ payload: { type, amount } }),
             () => {}
@@ -101,6 +102,7 @@ export const {
     sendToggleManualModeMessage,
     sendReportProblemMessage,
     sendDescribeProblemMessage,
+    sendCancelProblemReportMessage,
     sendChangeStatMessage,
     sendLeaveGameMessage,
     sendConcedeMessage

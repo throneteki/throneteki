@@ -5,6 +5,7 @@ import {
     sendToggleManualModeMessage,
     sendReportProblemMessage,
     sendDescribeProblemMessage,
+    sendCancelProblemReportMessage,
     sendToggleMuteSpectatorsMessage
 } from '../../redux/reducers/game';
 import { Avatar, Badge, Button } from '@heroui/react';
@@ -175,8 +176,14 @@ const PlayerStats = ({
             {isMe && (
                 <ReportProblemModal
                     isOpen={isReportOpen}
-                    onClose={() => setReportOpen(false)}
-                    onSend={(description) => dispatch(sendDescribeProblemMessage(description))}
+                    onCancel={() => {
+                        dispatch(sendCancelProblemReportMessage());
+                        setReportOpen(false);
+                    }}
+                    onSend={(description) => {
+                        dispatch(sendDescribeProblemMessage(description));
+                        setReportOpen(false);
+                    }}
                 />
             )}
         </div>

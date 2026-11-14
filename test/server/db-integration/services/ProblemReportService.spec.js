@@ -136,45 +136,4 @@ describe('Postgres ProblemReportService', function () {
         expect(deleted.sort()).toEqual([reportId(1), reportId(3)]);
         expect((await this.service.list()).data.map((report) => report.id)).toEqual([reportId(2)]);
     });
-
-    describe('describing a report', function () {
-        beforeEach(async function () {
-            await this.addReport(1, new Date().toISOString(), { description: '' });
-        });
-
-        it("adds the reporter's description to the stored report", async function () {
-            await expect(
-                this.service.describe(reportId(1), 'alice', 'Meryn did not trigger')
-            ).resolves.toBe(true);
-
-            const report = await this.service.getById(reportId(1));
-            const { data } = await this.service.list();
-            expect(report.description).toBe('Meryn did not trigger');
-            expect(data[0].description).toBe('Meryn did not trigger');
-        });
-
-        it('only lets the reporter describe it', async function () {
-            await expect(this.service.describe(reportId(1), 'bob', 'Not mine')).resolves.toBe(
-                false
-            );
-        });
-
-        it('only lets it be described once', async function () {
-            await this.service.describe(reportId(1), 'alice', 'First');
-
-            await expect(this.service.describe(reportId(1), 'alice', 'Second')).resolves.toBe(
-                false
-            );
-            expect((await this.service.getById(reportId(1))).description).toBe('First');
-        });
-
-        it('does not describe an old report', async function () {
-            await db.query(
-                "UPDATE problem_reports SET created_at = now() - interval '1 hour' WHERE id = $1",
-                [reportId(1)]
-            );
-
-            await expect(this.service.describe(reportId(1), 'alice', 'Late')).resolves.toBe(false);
-        });
-    });
 });

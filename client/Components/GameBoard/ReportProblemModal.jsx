@@ -10,24 +10,35 @@ import {
 } from '@heroui/react';
 import { MaxDescriptionLength } from '../../../shared/problemReportLimits';
 
-const ReportProblemModal = ({ isOpen, onClose, onSend }) => {
+const ReportProblemModal = ({ isOpen, onCancel, onSend }) => {
     const [description, setDescription] = useState('');
 
-    const send = () => {
-        if (description.trim()) {
-            onSend(description.trim());
-        }
+    const close = () => {
         setDescription('');
-        onClose();
+        onCancel();
+    };
+
+    const send = () => {
+        if (!description.trim()) {
+            return;
+        }
+
+        onSend(description.trim());
+        setDescription('');
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} size='md'>
+        <Modal isOpen={isOpen} onClose={close} isDismissable={false} size='md'>
             <ModalContent>
                 <ModalHeader>Report a problem</ModalHeader>
                 <ModalBody>
+                    <p className='text-sm'>
+                        The game has been saved as it was when you opened this. Describe what went
+                        wrong and what you expected to happen, so the report can be looked into.
+                    </p>
                     <Textarea
                         autoFocus
+                        isRequired
                         label='What went wrong?'
                         placeholder='For example: I tried to use a card ability and nothing happened'
                         value={description}
@@ -37,11 +48,11 @@ const ReportProblemModal = ({ isOpen, onClose, onSend }) => {
                     />
                 </ModalBody>
                 <ModalFooter>
-                    <Button variant='light' onPress={onClose}>
-                        Skip
+                    <Button variant='light' onPress={close}>
+                        Cancel
                     </Button>
                     <Button color='primary' onPress={send} isDisabled={!description.trim()}>
-                        Add description
+                        Send report
                     </Button>
                 </ModalFooter>
             </ModalContent>

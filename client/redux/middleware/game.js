@@ -21,6 +21,7 @@ import {
     sendToggleManualModeMessage,
     sendReportProblemMessage,
     sendDescribeProblemMessage,
+    sendCancelProblemReportMessage,
     sendTogglePromptedActionWindowMessage,
     sendToggleHideResponsesMessage,
     sendCardSizeChangeMessage,
@@ -51,6 +52,7 @@ const GameMessage = Object.freeze({
     ToggleManualMode: 'toggleManualMode',
     ReportProblem: 'reportProblem',
     DescribeProblem: 'describeProblem',
+    CancelProblemReport: 'cancelProblemReport',
     ChangeStat: 'changeStat',
     LeaveGame: 'leavegame',
     Concede: 'concede',
@@ -184,6 +186,8 @@ const gameMiddleware = (store) => {
             socket.emit('game', GameMessage.ReportProblem);
         } else if (sendDescribeProblemMessage.match(action)) {
             socket.emit('game', GameMessage.DescribeProblem, action.payload.description);
+        } else if (sendCancelProblemReportMessage.match(action)) {
+            socket.emit('game', GameMessage.CancelProblemReport);
         } else if (sendChangeStatMessage.match(action)) {
             socket.emit('game', GameMessage.ChangeStat, action.payload.type, action.payload.amount);
         } else if (sendLeaveGameMessage.match(action)) {

@@ -300,9 +300,10 @@ and argument snapshot beside the rendered text.
 
 ## Problem reports and scenarios
 
-A problem report is for working out what went wrong. Report Problem asks the player what went wrong
-and saves that with a snapshot of the game; `/cancel-prompt` saves one without a description
-before clearing the prompt. Reports are kept in PostgreSQL for 30 days. The snapshot
+A problem report is for working out what went wrong. Report Problem snapshots the game as soon as
+it is clicked, and the game node holds that snapshot until the player describes the problem; the
+report is only saved with a description, and cancelling discards it. `/cancel-prompt` saves one
+without a description before clearing the prompt. Reports are kept in PostgreSQL for 30 days. The snapshot
 ([ProblemReport.js](../server/game/ProblemReport.js)) holds:
 
 - the description, reporter, how it was made and the game node's version;
