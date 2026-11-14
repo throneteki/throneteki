@@ -83,6 +83,8 @@ describe('keyboard shortcuts', function () {
         it('recognises digits, W and Space but not Enter', function () {
             expect(isPromptShortcutKey(keyEvent('1'))).toBe(true);
             expect(isPromptShortcutKey(keyEvent('w'))).toBe(true);
+            expect(isPromptShortcutKey(keyEvent('d'))).toBe(true);
+            expect(isPromptShortcutKey(keyEvent('D'))).toBe(true);
             expect(isPromptShortcutKey(keyEvent(' '))).toBe(true);
             expect(isPromptShortcutKey(keyEvent('Enter'))).toBe(false);
             expect(isPromptShortcutKey(keyEvent('0', { code: 'Digit0' }))).toBe(false);
@@ -139,6 +141,16 @@ describe('keyboard shortcuts', function () {
             expect(getPromptButtonIndex(keyEvent(' '), plotSelection)).toBe(0);
         });
 
+        it('maps only D to a button that ends your turn in the phase', function () {
+            const marshaling = [{ text: 'Done', endsTurn: true }];
+
+            expect(getPromptButtonIndex(keyEvent('d'), marshaling)).toBe(0);
+            expect(getPromptButtonIndex(keyEvent('D'), marshaling)).toBe(0);
+            expect(getPromptButtonIndex(keyEvent(' '), marshaling)).toBe(-1);
+            expect(getPromptButtonIndex(keyEvent('1'), marshaling)).toBe(-1);
+            expect(getPromptButtonIndex(keyEvent('d'), [{ text: 'Pass' }])).toBe(-1);
+        });
+
         it('never maps Space to a Cancel button', function () {
             const buttons = [{ text: 'Cancel', arg: 'done', cancel: true }];
 
@@ -157,6 +169,13 @@ describe('keyboard shortcuts', function () {
 
             expect(getButtonShortcutLabel(buttons, 0)).toBe('W');
             expect(getButtonShortcutLabel(buttons, 1)).toBe('1');
+        });
+
+        it('labels a button that ends your turn D and numbers the others without it', function () {
+            const buttons = [{ text: 'Use ability' }, { text: 'Done', endsTurn: true }];
+
+            expect(getButtonShortcutLabel(buttons, 0)).toBe('1');
+            expect(getButtonShortcutLabel(buttons, 1)).toBe('D');
         });
 
         it('only numbers the first nine buttons', function () {

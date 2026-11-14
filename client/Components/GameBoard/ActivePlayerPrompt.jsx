@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import classNames from 'classnames';
 
 import AbilityTargeting from './AbilityTargeting';
 import CardNameLookup from './CardNameLookup';
@@ -19,6 +20,8 @@ import {
     keyboardShortcutsEnabled
 } from './keyboardShortcuts';
 
+const EndTurnDelay = 500;
+
 const ActivePlayerPrompt = ({
     className,
     onButtonClick,
@@ -35,15 +38,27 @@ const ActivePlayerPrompt = ({
     );
 
     // Ignore a press that lands just after the buttons change, such as one meant for a window
-    // that closed under the cursor.
+    // that closed under the cursor. A button that ends your turn in the phase waits longer, and
+    // shows as disabled while it does, as it often replaces a Pass button the player is pressing.
     const buttonsShownAt = useRef(0);
+    const pressDelay = useRef(300);
+    const [endTurnReady, setEndTurnReady] = useState(true);
     const buttonsKey = (buttons || [])
         .map((button) => `${button.promptId}:${button.text}`)
         .join('|');
+    const endsTurn = (buttons || []).some((button) => button.endsTurn);
     useEffect(() => {
         buttonsShownAt.current = Date.now();
-    }, [buttonsKey]);
-    const isFreshPress = () => Date.now() - buttonsShownAt.current < 300;
+        pressDelay.current = endsTurn ? EndTurnDelay : 300;
+        if (!endsTurn) {
+            return;
+        }
+
+        setEndTurnReady(false);
+        const timer = setTimeout(() => setEndTurnReady(true), EndTurnDelay);
+        return () => clearTimeout(timer);
+    }, [buttonsKey, endsTurn]);
+    const isFreshPress = () => Date.now() - buttonsShownAt.current < pressDelay.current;
 
     const handleButtonClick = useCallback(
         (event, button) => {
@@ -142,7 +157,7 @@ const ActivePlayerPrompt = ({
                     color={button.cancel ? 'default' : 'primary'}
                     className='text-wrap text-xs h-8 md:h-full md:min-h-10 md:text-small'
                     onPress={(event) => handleButtonClick(event, button)}
-                    isDisabled={button.disabled}
+                    isDisabled={button.disabled || (button.endsTurn && !endTurnReady)}
                     disableRipple
                     fullWidth
                 >
@@ -168,7 +183,7 @@ const ActivePlayerPrompt = ({
                 </div>
             );
         });
-    }, [buttons, handleButtonClick, shortcutsEnabled]);
+    }, [buttons, endTurnReady, handleButtonClick, shortcutsEnabled]);
 
     const getControls = useCallback(() => {
         if (!controls) {
@@ -275,7 +290,12 @@ const ActivePlayerPrompt = ({
                 {`${phase} phase`}
             </div>
             {promptTitle && (
-                <div className='font-normal text-xs md:text-small lg:text-medium text-center border-1 border-default-200 bg-black/65 py-1'>
+                <div
+                    className={classNames(
+                        'text-xs md:text-small lg:text-medium text-center border-1 border-default-200 py-1',
+                        endsTurn ? 'bg-primary font-bold' : 'bg-black/65 font-normal'
+                    )}
+                >
                     {promptTitle}
                 </div>
             )}

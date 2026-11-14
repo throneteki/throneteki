@@ -13,7 +13,8 @@ class MarshalCardsPrompt extends UiPrompt {
     activePrompt() {
         return {
             menuTitle: 'Marshal your cards',
-            buttons: [{ text: 'Done' }]
+            buttons: [{ text: 'Done', endsTurn: true }],
+            promptTitle: 'Your turn to marshal'
         };
     }
 
