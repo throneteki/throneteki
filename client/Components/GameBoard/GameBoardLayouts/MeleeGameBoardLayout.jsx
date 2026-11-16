@@ -15,8 +15,6 @@ const MeleeGameBoardLayout = ({
     userPlayer,
     onCardClick,
     onSettingsClick,
-    onChatToggle,
-    unreadMessages,
     isDragging
 }) => {
     const dispatch = useDispatch();
@@ -41,8 +39,6 @@ const MeleeGameBoardLayout = ({
                         user={player.user}
                         firstPlayer={player.firstPlayer}
                         onSettingsClick={isMe ? onSettingsClick : undefined}
-                        onChatToggle={isMe ? onChatToggle : undefined}
-                        unreadMessages={isMe ? unreadMessages : undefined}
                         seatNo={player.seatNo} // Melee only
                     />
                     <PlayerRow
@@ -97,16 +93,7 @@ const MeleeGameBoardLayout = ({
                 </div>
             );
         },
-        [
-            dispatch,
-            isDragging,
-            onCardClick,
-            onChatToggle,
-            onSettingsClick,
-            thisPlayer,
-            userPlayer,
-            unreadMessages
-        ]
+        [dispatch, isDragging, onCardClick, onSettingsClick, thisPlayer, userPlayer]
     );
 
     // Grid is ordered top to bottom, left to right, ensuring that:

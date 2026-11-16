@@ -102,7 +102,6 @@ const GameBoard = () => {
     const token = useSelector((state) => state.auth.token);
 
     const [showGameChat, setShowGameChat] = useState(window.innerWidth > 768);
-    const [unreadMessages, setUnreadMessages] = useState(0);
     const [showModal, setShowModal] = useState(false);
     const [showShortcuts, setShowShortcuts] = useState(false);
     const chatInputRef = useRef(null);
@@ -157,7 +156,6 @@ const GameBoard = () => {
 
     const onSettingsClick = useCallback(() => setShowModal((show) => !show), []);
     const onChatToggle = useCallback(() => setShowGameChat((show) => !show), []);
-    const onChatClose = useCallback(() => setShowGameChat(false), []);
     const onSendChat = useCallback((message) => dispatch(sendGameChatMessage(message)), [dispatch]);
     const onModalClose = useCallback(() => setShowModal(false), []);
     // Shown straight away, and kept by the server for this game so a refresh does not lose it
@@ -446,7 +444,7 @@ const GameBoard = () => {
         return <LoadingSpinner label={'Waiting for game to have players or close...'} />;
     }
 
-    const boardClass = 'flex h-full overflow-x-hidden hud-text';
+    const boardClass = 'relative flex h-full overflow-x-hidden hud-text';
 
     let gameBoard = null;
     if (currentGame.gameFormat === 'joust') {
@@ -458,8 +456,6 @@ const GameBoard = () => {
                 onCardClick={onCardClick}
                 onMenuItemClick={onMenuItemClick}
                 onSettingsClick={onSettingsClick}
-                onChatToggle={onChatToggle}
-                unreadMessages={unreadMessages}
                 isDragging={showDropZones}
             />
         );
@@ -472,8 +468,6 @@ const GameBoard = () => {
                 onCardClick={onCardClick}
                 onMenuItemClick={onMenuItemClick}
                 onSettingsClick={onSettingsClick}
-                onChatToggle={onChatToggle}
-                unreadMessages={unreadMessages}
                 isDragging={showDropZones}
             />
         );
@@ -527,8 +521,7 @@ const GameBoard = () => {
                     <GameChat
                         className='shrink-0 grow-0'
                         isOpen={showGameChat}
-                        onClose={onChatClose}
-                        onUnreadMessagesChange={setUnreadMessages}
+                        onToggle={onChatToggle}
                         messages={currentGame.messages}
                         onSendChat={onSendChat}
                         muted={!thisPlayer && currentGame.muteSpectators}

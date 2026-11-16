@@ -15,8 +15,6 @@ const JoustGameBoardLayout = ({
     userPlayer,
     onCardClick,
     onSettingsClick,
-    onChatToggle,
-    unreadMessages,
     isDragging
 }) => {
     const dispatch = useDispatch();
@@ -38,8 +36,6 @@ const JoustGameBoardLayout = ({
                         user={player.user}
                         firstPlayer={player.firstPlayer}
                         onSettingsClick={isMe ? onSettingsClick : undefined}
-                        onChatToggle={isMe ? onChatToggle : undefined}
-                        unreadMessages={isMe ? unreadMessages : undefined}
                     />
                     <PlayerRow
                         agendas={player.agendas}
@@ -91,16 +87,7 @@ const JoustGameBoardLayout = ({
                 </div>
             );
         },
-        [
-            thisPlayer,
-            userPlayer,
-            onSettingsClick,
-            onChatToggle,
-            unreadMessages,
-            onCardClick,
-            isDragging,
-            dispatch
-        ]
+        [thisPlayer, userPlayer, onSettingsClick, onCardClick, isDragging, dispatch]
     );
     return (
         <div className='min-h-full min-w-max grid grid-cols-1 grid-rows-[repeat(2,1fr)]'>

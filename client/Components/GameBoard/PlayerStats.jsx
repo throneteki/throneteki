@@ -8,16 +8,9 @@ import {
     sendCancelProblemReportMessage,
     sendToggleMuteSpectatorsMessage
 } from '../../redux/reducers/game';
-import { Avatar, Badge, Button } from '@heroui/react';
+import { Avatar, Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    faBug,
-    faCogs,
-    faComment,
-    faEye,
-    faEyeSlash,
-    faWrench
-} from '@fortawesome/free-solid-svg-icons';
+import { faBug, faCogs, faEye, faEyeSlash, faWrench } from '@fortawesome/free-solid-svg-icons';
 import StatContainer from './StatContainer';
 import StatDisplay from './StatDisplay';
 import classNames from 'classnames';
@@ -30,8 +23,6 @@ const PlayerStats = ({
     onSettingsClick,
     user: userProp,
     firstPlayer,
-    onChatToggle,
-    unreadMessages,
     seatNo
 }) => {
     const dispatch = useDispatch();
@@ -159,16 +150,6 @@ const PlayerStats = ({
                                     'Report a problem with this game',
                                     'Report Problem'
                                 )}
-                            <StatContainer>
-                                <Badge
-                                    shape='circle'
-                                    color='danger'
-                                    content={unreadMessages > 99 ? '99+' : unreadMessages}
-                                    isInvisible={!unreadMessages || unreadMessages === 0}
-                                >
-                                    {getStatButton(onChatToggle, faComment, 'Toggle chat')}
-                                </Badge>
-                            </StatContainer>
                         </>
                     )}
                 </StatContainer>
