@@ -109,10 +109,10 @@ describe('plot phase', function () {
                 this.p2StarfallCav = this.player2.findCardByName('Starfall Cavalry', 'hand');
                 this.player2.clickCard(this.p2bitterbridge);
                 this.completeSetup();
-                this.player1.dragCard(this.p1noble, 'revealed plots');
-                this.player1.dragCard(this.p1summer, 'revealed plots');
-                this.player1.dragCard(this.p1winter, 'revealed plots');
-                this.player1.dragCard(this.p1feast, 'revealed plots');
+                for (const plot of [this.p1noble, this.p1summer, this.p1winter, this.p1feast]) {
+                    this.player1.dragCard(plot, 'revealed plots');
+                    this.player1.clickPrompt('Move to used plots');
+                }
                 //p1 has 4 plots in used pile, 1 in deck
                 this.player2.selectPlot(this.p2noble);
                 this.selectFirstPlayer(this.player1);

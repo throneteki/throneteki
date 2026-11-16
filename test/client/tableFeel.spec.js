@@ -35,10 +35,11 @@ describe('liftFrames', function () {
     it('lifts the card, dips as it lands, then rests', function () {
         const { card, lift } = liftFrames({ uuid: 'card-1', toSource: 'hand' });
 
-        expect(card[0].scale).toBeGreaterThan(1);
+        expect(card[0].scale).toBe(1);
+        expect(Math.max(...card.map((frame) => frame.scale))).toBeGreaterThan(1);
         expect(Math.min(...card.map((frame) => frame.scale))).toBeLessThan(1);
         expect(card[card.length - 1]).toMatchObject({ scale: 1, offset: 1 });
-        expect(lift[0].opacity).toBe(1);
+        expect(Math.max(...lift.map((frame) => frame.opacity))).toBe(1);
         expect(lift[lift.length - 1].opacity).toBe(0);
     });
 
@@ -67,11 +68,13 @@ describe('slapsInto', function () {
 describe('slapFrames', function () {
     const { card, lift, total } = slapFrames({ uuid: 'card-1', toSource: 'play area' });
 
-    it('stays lifted and tilted until the impact, where it is at its true size', function () {
+    it('is lifted and tilted on the way, and at its true size at the impact', function () {
         const impact = card.find((frame) => frame.offset === slapConfig.move / total);
+        const inFlight = card.filter((frame) => frame.offset > 0 && frame.offset < impact.offset);
 
-        expect(card[0].scale).toBeGreaterThan(1);
-        expect(Math.abs(parseFloat(card[0].rotate))).toBeGreaterThanOrEqual(1.5);
+        expect(card[0].scale).toBe(1);
+        expect(inFlight.some((frame) => frame.scale > 1)).toBe(true);
+        expect(inFlight.some((frame) => Math.abs(parseFloat(frame.rotate)) >= 1.5)).toBe(true);
         expect(impact.scale).toBe(1);
     });
 
@@ -86,7 +89,10 @@ describe('slapFrames', function () {
     });
 
     it('drops the lifted shadow at the impact', function () {
-        expect(lift[0].opacity).toBe(1);
+        const impact = lift.findIndex((frame) => frame.offset === slapConfig.move / total);
+
+        expect(lift[impact].opacity).toBe(1);
+        expect(lift[impact + 1].opacity).toBe(0);
         expect(lift[lift.length - 1].opacity).toBe(0);
     });
 });

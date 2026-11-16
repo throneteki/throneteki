@@ -54,7 +54,6 @@ const PlayerPlots = ({
                 className={classNames('plot', {
                     'plot-selected': selectedPlot
                 })}
-                closeOnClick={isMe}
                 hiddenTopCard={!showSelectedPlot}
                 hideUnderCard
                 disablePopup={!isMe}

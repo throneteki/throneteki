@@ -354,34 +354,34 @@ const CardView = ({
         );
     };
 
-    // Need to get classes in priority, as tailwind is not consistent in CSS priority
+    // One ring at a time, the most important first
     const getHighlightClass = () => {
         if (card.selected) {
-            return 'shadow-[0_0_0_3px] shadow-sky-400';
+            return 'ring-selected';
         }
         if (card.selectable) {
-            return 'shadow-[0_0_3px_3px] shadow-green-400';
+            return 'ring-selectable';
         }
         if (card.inChallenge) {
-            return 'shadow-[0_0_1px_2px] shadow-red-500';
+            return 'ring-participating';
         }
         if (card.inDanger) {
-            return 'shadow-[0_0_1px_2px] shadow-red-900';
+            return 'ring-danger';
         }
         if (card.saved) {
-            return 'shadow-[0_0_1px_2px] shadow-green-500';
+            return 'ring-saved';
         }
         if (card.isContributing) {
-            return 'shadow-[0_0_1px_2px] shadow-orange-200';
+            return 'ring-contributing';
         }
         if (card.stealth || card.assault) {
-            return 'shadow-[0_0_1px_2px] shadow-orange-800';
+            return 'ring-keyword';
         }
         if (card.controlled) {
-            return 'shadow-[0_0_1px_2px] shadow-yellow-300';
+            return 'ring-controlled';
         }
         if (card.new) {
-            return 'shadow-[0_0_1px_2px] shadow-blue-100';
+            return 'ring-new';
         }
     };
     const isFaceup = forceFaceup || (!card.facedown && card.code);
@@ -479,11 +479,8 @@ const CardView = ({
                         {isFaceup && getAlertStatus()}
                     </div>
                 </div>
-                {!hideTokens && <CardCounters counters={getCountersForCard(card)} />}
-                {showMenu && (
-                    <div className='contents pointer-events-auto'>
-                        <CardMenu menu={getMenu()} onMenuItemClick={handleMenuItemClick} />
-                    </div>
+                {!hideTokens && (
+                    <CardCounters cardUuid={card.uuid} counters={getCountersForCard(card)} />
                 )}
                 {getCardOrder()}
                 {getUnderneathBadge()}

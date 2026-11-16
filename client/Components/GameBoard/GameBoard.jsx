@@ -43,6 +43,7 @@ import { holdFlip, playPendingFlip } from '../../flip';
 import { dragStore, useDragGhost, useDragVersion } from './dragStore';
 import { playShuffles } from '../../shuffle';
 import { elevation } from '../../tableFeel';
+import { forgetBoard, showBoard } from '../../counterMemory';
 import { useLinger } from './useLinger';
 import DropZoneTracker from './DropZoneTracker';
 import { canDrop, needsChoice } from './dropTargets';
@@ -96,6 +97,7 @@ const detectCollisions = (args) => {
 const autoScrollOptions = { layoutShiftCompensation: false };
 
 const dropZoneLinger = 800;
+const boardSettle = 1500;
 
 const GameBoard = () => {
     useRenderCount('GameBoard');
@@ -315,9 +317,16 @@ const GameBoard = () => {
     const motionEnabled = useMotionEnabled();
     const boardStarted = !!currentGame?.started;
     useLayoutEffect(() => {
-        if (boardStarted) {
-            holdFlip(1500);
+        if (!boardStarted) {
+            return;
         }
+        holdFlip(boardSettle);
+        // Counters drawn while the board is first filling in were already on the cards
+        const timer = setTimeout(showBoard, boardSettle);
+        return () => {
+            clearTimeout(timer);
+            forgetBoard();
+        };
     }, [boardStarted]);
     useLayoutEffect(() => {
         if (dragStore.hasGhost()) {
