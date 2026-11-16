@@ -1,13 +1,13 @@
 import React, { useCallback } from 'react';
-import PlayerRow from '../PlayerRow';
+import PlayerRow from './PlayerRow';
 import PlayerBoard from '../PlayerBoard';
 import { findPendingAttachment, withoutPendingAttachment } from '../pendingAttachment';
 import { findLeftBehind } from '../leftBehind';
 import { sendShowDrawDeckMessage, sendShuffleDeckMessage } from '../../../redux/reducers/game';
 import { useDispatch } from 'react-redux';
-import PlayerStats from '../PlayerStats';
+import PlayerStats from './PlayerStats';
 import classNames from 'classnames';
-import SideBoardPanel from '../SideBoardPanel';
+import SideBoardPanel from './SideBoardPanel';
 
 const JoustGameBoardLayout = ({
     thisPlayer,

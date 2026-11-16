@@ -1,15 +1,15 @@
 import React, { useCallback } from 'react';
 import classNames from 'classnames';
-import { useRenderCount } from '../../perf';
+import { useRenderCount } from '../../../perf';
 
-import Card from './Card';
-import CardPile from './CardPile';
-import SquishableCardPanel from './SquishableCardPanel';
-import DrawDeck from './DrawDeck';
-import Droppable from './Droppable';
-import PlayerPlots from './PlayerPlots';
-import AnimatedSlot from './AnimatedSlot';
-import { pileRise } from './PileDepth';
+import Card from '../Card';
+import CardPile from '../CardPile';
+import SquishableCardPanel from '../SquishableCardPanel';
+import DrawDeck from '../DrawDeck';
+import Droppable from '../Droppable';
+import PlayerPlots from '../PlayerPlots';
+import AnimatedSlot from '../AnimatedSlot';
+import { pileRise } from '../PileDepth';
 
 const PlayerRow = ({
     className,

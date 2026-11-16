@@ -1,7 +1,7 @@
 import React from 'react';
-import GameTimer from './GameTimer';
-import ActivePlayerPrompt from './ActivePlayerPrompt';
-import { sendButtonClickedMessage } from '../../redux/reducers/game';
+import GameTimer from '../GameTimer';
+import ActivePlayerPrompt from '../ActivePlayerPrompt';
+import { sendButtonClickedMessage } from '../../../redux/reducers/game';
 import classNames from 'classnames';
 import { useDispatch } from 'react-redux';
 

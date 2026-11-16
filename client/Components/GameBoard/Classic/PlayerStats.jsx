@@ -7,14 +7,14 @@ import {
     sendDescribeProblemMessage,
     sendCancelProblemReportMessage,
     sendToggleMuteSpectatorsMessage
-} from '../../redux/reducers/game';
+} from '../../../redux/reducers/game';
 import { Avatar, Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBug, faCogs, faEye, faEyeSlash, faWrench } from '@fortawesome/free-solid-svg-icons';
 import StatContainer from './StatContainer';
 import StatDisplay from './StatDisplay';
 import classNames from 'classnames';
-import ReportProblemModal from './ReportProblemModal';
+import ReportProblemModal from '../ReportProblemModal';
 
 const PlayerStats = ({
     className,
