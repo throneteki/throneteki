@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import CardImage from '../Images/CardImage';
 import { elevation } from '../../tableFeel';
-import { useUnderTarget } from './dragStore';
+import { dragStore, useUnderTarget } from './dragStore';
 import { motionOff } from '../../flip';
 
 const tuckTime = 160;
@@ -104,14 +104,17 @@ const CarriedCard = ({ uuid: carriedUuid, code, orientation, start, grab, rectRe
         const cover = coverWith(stack);
         const glide = motionOff()
             ? 'none'
-            : `translate ${tuckTime}ms ease-out, scale ${tuckTime}ms ease-out`;
-        // Scaled about its centre, so the card is moved to where its centre will be
-        const fit = spot.width / grab.width;
+            : `translate ${tuckTime}ms ease-out, scale ${tuckTime}ms ease-out, rotate ${tuckTime}ms ease-out`;
+        // A knelt card is carried on its side; cards underneath lie upright, so it is turned to stand up.
+        // Scaled and turned about its centre, so the card is moved to where its centre will be.
+        const sideways = grab.width > grab.height;
+        const fit = spot.width / (sideways ? grab.height : grab.width);
         const left = spot.left + (spot.width - grab.width) / 2;
         const top = spot.top + (spot.height - grab.height) / 2;
         element.style.transition = glide;
         element.style.translate = `${left}px ${top}px`;
         element.style.scale = String(fit);
+        element.style.rotate = sideways ? '-90deg' : '0deg';
         rectRef.current = {
             left: spot.left,
             top: spot.top,
@@ -121,11 +124,18 @@ const CarriedCard = ({ uuid: carriedUuid, code, orientation, start, grab, rectRe
         tucked.current = true;
 
         return () => {
-            cover.remove();
+            // Dropped here, the stack keeps covering the card until the server puts it underneath
+            if (dragStore.ghostTarget() === 'underneath') {
+                cover.querySelector('.under-target')?.remove();
+                dragStore.holdCover(cover);
+            } else {
+                cover.remove();
+            }
             tucked.current = false;
             const back = { x: pointer.current.x - grab.x, y: pointer.current.y - grab.y };
             element.style.translate = `${back.x}px ${back.y}px`;
             element.style.scale = String(elevation.carried);
+            element.style.rotate = '0deg';
             rectRef.current = { left: back.x, top: back.y, width: grab.width, height: grab.height };
             setTimeout(() => {
                 element.style.transition = '';
@@ -133,18 +143,23 @@ const CarriedCard = ({ uuid: carriedUuid, code, orientation, start, grab, rectRe
         };
     }, [under, grab, rectRef, carriedUuid]);
 
+    // A knelt card's image is an upright box with the picture turned onto its side within it, so the card is
+    // scaled, stood up and turned over about the middle of what is seen, not the middle of that box
+    const middle = `${grab.width / 2}px ${grab.height / 2}px`;
+
     return createPortal(
         <div
             ref={ref}
             data-carried=''
             className='fixed left-0 top-0 z-[400] pointer-events-none'
-            style={{ scale: String(elevation.carried) }}
+            style={{ scale: String(elevation.carried), transformOrigin: middle }}
         >
             {/* Turned face down while it shows where it would go under a card, as it will lie there */}
             <div
                 className='relative'
                 style={{
                     transformStyle: 'preserve-3d',
+                    transformOrigin: middle,
                     transform: `perspective(700px) rotateY(${under ? 180 : 0}deg)`,
                     transition: motionOff() ? 'none' : `transform ${tuckTime}ms ease-in-out`
                 }}
@@ -159,7 +174,11 @@ const CarriedCard = ({ uuid: carriedUuid, code, orientation, start, grab, rectRe
                 <div
                     data-carried-back=''
                     className='absolute inset-0'
-                    style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+                    style={{
+                        backfaceVisibility: 'hidden',
+                        transformOrigin: middle,
+                        transform: 'rotateY(180deg)'
+                    }}
                 >
                     <CardImage
                         code='cardback'

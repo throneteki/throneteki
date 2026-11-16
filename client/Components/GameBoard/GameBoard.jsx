@@ -278,16 +278,20 @@ const GameBoard = () => {
             rect,
             rotated,
             under,
+            // Tucked under a card, it was already shown upright and face down where it goes
             origin: rect && {
                 rect,
                 source: detail.source,
-                rot: rotated ? 90 : 0,
+                rot: rotated && !under ? 90 : 0,
                 under: detail.under,
-                faceNode: document
-                    .querySelector(
-                        `[data-carried] [${under ? 'data-carried-back' : 'data-carried-face'}] [data-card-face]`
-                    )
-                    ?.cloneNode(true)
+                faceNode:
+                    under && rotated
+                        ? undefined
+                        : document
+                              .querySelector(
+                                  `[data-carried] [${under ? 'data-carried-back' : 'data-carried-face'}] [data-card-face]`
+                              )
+                              ?.cloneNode(true)
             }
         };
     }, [underHold]);
@@ -313,7 +317,7 @@ const GameBoard = () => {
                     {
                         uuid: detail.card.uuid,
                         code: under ? 'cardback' : detail.card.code || 'cardback',
-                        orientation: rotated ? 'rotated' : detail.orientation,
+                        orientation: under ? 'vertical' : rotated ? 'rotated' : detail.orientation,
                         rect,
                         target: 'underneath'
                     },
@@ -535,7 +539,8 @@ const GameBoard = () => {
                         style={{
                             left: dragGhost.rect.left,
                             top: dragGhost.rect.top,
-                            scale: String(elevation.carried)
+                            scale:
+                                dragGhost.target === 'underneath' ? '1' : String(elevation.carried)
                         }}
                     >
                         <CardImage code={dragGhost.code} orientation={dragGhost.orientation} />

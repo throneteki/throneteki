@@ -226,8 +226,11 @@ export const planFlip = ({
         if (was) {
             const change = changeBetween(was, now, back);
             const move = planMove(uuid, was, now, change, config);
-            // A card put under a card that was already on top of the pile stays under it all the way
-            const under = !!now.underOf && before.get(now.underOf)?.source === now.source;
+            // A card put under a card that was already on top of the pile stays under it all the way, as does a
+            // card placed underneath a card on the board
+            const under =
+                (!!now.underOf && before.get(now.underOf)?.source === now.source) ||
+                (now.source === 'underneath' && !now.inPopup);
             if (move) {
                 plan.push({ ...move, ...turnOf(change), ...(under && { under }) });
             } else if (change.turnFrom && now.el) {

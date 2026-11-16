@@ -16,6 +16,7 @@ const settleTimeout = 1500;
 
 let state = idle;
 let settleTimer = null;
+let heldCover = null;
 const listeners = new Set();
 
 const subscribe = (listener) => {
@@ -87,8 +88,10 @@ export const dragStore = {
 
     // The card was released somewhere new: hold it there until the server moves it
     drop(ghost, origin) {
-        setDropOrigin({ uuid: ghost.uuid, ...origin });
+        // Holding the card can hide it where it came from, which measures the board straight away; the drop
+        // origin is set after that, so it is kept for the move the server makes, not used up by the hiding
         change({ ghost });
+        setDropOrigin({ uuid: ghost.uuid, ...origin });
         settleTimer = setTimeout(() => dragStore.settle(), settleTimeout);
     },
 
@@ -106,15 +109,24 @@ export const dragStore = {
         dragStore.finish();
     },
 
+    // A card dropped under another stays drawn beneath it until the server has moved it there
+    holdCover(cover) {
+        heldCover?.remove();
+        heldCover = cover;
+    },
+
     finish() {
         clearTimeout(settleTimer);
+        heldCover?.remove();
+        heldCover = null;
         setFlipIgnored(null);
         cardHoverStore.suppress(false);
         state = { ...idle, version: state.version + 1 };
         emit();
     },
 
-    hasGhost: () => !!state.ghost
+    hasGhost: () => !!state.ghost,
+    ghostTarget: () => state.ghost?.target
 };
 
 export const useHiddenDragUuid = () => useSyncExternalStore(subscribe, () => hiddenUuid(state));
