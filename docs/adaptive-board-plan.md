@@ -59,18 +59,18 @@ These keep the board recognisable when it changes shape:
 
 ### Switch
 
-- [ ] `client/hud.js`: add `board: 'classic'` to `defaultHud`, and accept `'classic' | 'adaptive'` in
+- [x] `client/hud.js`: add `board: 'classic'` to `defaultHud`, and accept `'classic' | 'adaptive'` in
       `normalizeHud`.
-- [ ] `server/hudSettings.js`: allow `board` through `sanitizeHud`, as one of those two values only.
-- [ ] `client/Components/Profile/HudSettings.jsx`: add a "Board layout" radio with the options
+- [x] `server/hudSettings.js`: allow `board` through `sanitizeHud`, as one of those two values only.
+- [x] `client/Components/Profile/HudSettings.jsx`: add a "Board layout" radio with the options
       Classic and Adaptive (experimental). The profile and in-game settings both show it, as card size
       does.
-- [ ] `GameBoard.jsx`: render `AdaptiveGameBoardLayout` when `hud.board === 'adaptive'`, and the
+- [x] `GameBoard.jsx`: render `AdaptiveGameBoardLayout` when `hud.board === 'adaptive'`, and the
       classic layouts otherwise. The same layout handles joust and melee. Until phase 6's acceptance
       passes, melee falls back to the classic board.
-- [ ] Add `followAction: true` to `defaultHud`, and accept it as a boolean in `normalizeHud` and
+- [x] Add `followAction: true` to `defaultHud`, and accept it as a boolean in `normalizeHud` and
       `sanitizeHud`. The HUD settings get a "Follow the action in melee" switch.
-- [ ] Tests: add the `board` and `followAction` keys to `test/client/hud.spec.js`, and add a server
+- [x] Tests: add the `board` and `followAction` keys to `test/client/hud.spec.js`, and add a server
       spec for `sanitizeHud`.
 
 ### Folders
@@ -85,19 +85,19 @@ client/Components/GameBoard/
 
 Move into `Classic/` (only the classic layouts use these):
 
-- [ ] `GameBoardLayouts/JoustGameBoardLayout.jsx` and `GameBoardLayouts/MeleeGameBoardLayout.jsx`
+- [x] `GameBoardLayouts/JoustGameBoardLayout.jsx` and `GameBoardLayouts/MeleeGameBoardLayout.jsx`
       move to `Classic/`, and the `GameBoardLayouts/` folder is removed.
-- [ ] `PlayerRow.jsx`, `PlayerStats.jsx`, `StatContainer.jsx`, `StatDisplay.jsx`, `StatButton.jsx`
+- [x] `PlayerRow.jsx`, `PlayerStats.jsx`, `StatContainer.jsx`, `StatDisplay.jsx`, `StatButton.jsx`
       (imported nowhere, but moved rather than deleted, as decided) and `SideBoardPanel.jsx`.
-- [ ] `ReportProblemModal.jsx` stays shared, because the game menu needs it.
+- [x] `ReportProblemModal.jsx` stays shared, because the game menu needs it.
 
 These stay shared because the adaptive board needs them: `ActivePlayerPrompt`, `GameTimer`
 (`ChessClock`, `TimeLimitClock`), `DrawDeck`, `PlayerPlots`, `AnimatedSlot`, `SquishableCardPanel`,
 `PlayerBoard`, `CardPile`, `Card`, `MovablePanel` and `Droppable`.
 
-- [ ] Do the move as its own commit with no other changes: `git mv` and import paths only. The
+- [x] Do the move as its own commit with no other changes: `git mv` and import paths only. The
       classic board's behaviour doesn't change.
-- [ ] Check: a search finds no imports of `Classic/` from outside it (`grep -rn "/Classic/"
+- [x] Check: a search finds no imports of `Classic/` from outside it (`grep -rn "/Classic/"
       client --include=*.js*` lists only `GameBoard.jsx`). The client builds, and the client specs
       pass.
 
@@ -125,7 +125,12 @@ New code goes under `client/Components/GameBoard/Adaptive/`:
 | `OpponentTabs.jsx` | Melee only: a mini scoreboard per opponent in seat order, used to jump; shows active, follow and selectable markers |
 | `useAutoFollow.js` | Picks the opponent to show and handles pausing and resuming |
 | `followTarget.js` | Pure: the follow target from the players' state (active prompt, our selectable cards, seat order) |
-| `adaptive.css` | Layout CSS keyed off `[data-layout]` |
+| `adaptive.css` | Layout CSS keyed off `[data-layout]` (not needed yet: grid areas are inline) |
+| `useAdaptivePage.js` | Page-level settings while the board shows: `viewport-fit=cover` and no overscroll |
+| `LeaveGameButton.jsx` | Temporary Leave Game while the navbar is hidden; replaced by `GameMenu` in phase 4 |
+
+Outside `Adaptive/`: `client/boardLayoutStore.js` (the current mode, for the navbar) and `client/dev/`
+(the fixture page, development only).
 
 Changes to shared components follow one rule: **add an optional prop or context whose default is the
 classic behaviour.** That leaves the classic board unchanged. The planned shared changes are:
@@ -152,9 +157,9 @@ context and `data-layout` on the board root.
 | `short` | height < 560px and landscape | Phone landscape |
 | `wide` | everything else | Tablet landscape, desktop |
 
-- [ ] Hysteresis: only change mode after crossing a threshold by a margin, so resizing near a
+- [x] Hysteresis: only change mode after crossing a threshold by a margin, so resizing near a
       boundary doesn't make it flap.
-- [ ] Freeze the mode and scales while a text input has focus. The phone's on-screen keyboard
+- [x] Freeze the mode and scales while a text input has focus. The phone's on-screen keyboard
       shrinks the viewport, and the board must not reshuffle under the chat input.
 
 ### Scales
@@ -170,11 +175,11 @@ change, because they measure the real elements.
 | `--hand-scale` | Our hand tray |
 | `--pile-scale` | Plots, faction, agenda, the piles cluster and the opponent's hand, on both sides |
 
-- [ ] `adaptiveScale.js`: a pure function that fits the three scales to the board area for a given
+- [x] `adaptiveScale.js`: a pure function that fits the three scales to the board area for a given
       mode and the row counts (the widest character row and widest location row on either side,
       counting kneeling as wider). The HUD's card and interface sizes still multiply in. Unit tested
       in `test/client/adaptiveScale.spec.js`.
-- [ ] `useHudScale` keeps the classic calculation when `board` is classic. On the adaptive board,
+- [x] `useHudScale` keeps the classic calculation when `board` is classic. On the adaptive board,
       `useBoardLayout` sets the three variables, and `--ui-scale` and `--text-scale` work as today.
 
 ### Play-area overflow, in order
@@ -284,24 +289,55 @@ narrow melee                         short melee
 
 ### Phase 0: groundwork
 
-- [ ] Create branch `feat/adaptive-board` from `feat/gameboard-overhaul`, and commit this plan.
-- [ ] Move the classic board into `Classic/` as its own commit (see Architecture, Folders).
-- [ ] Add the switch (see Architecture, Switch).
-- [ ] Add `useBoardLayout` and `adaptiveScale.js` with their specs.
-- [ ] Viewport: add `viewport-fit=cover` to `index.html`. On the adaptive board, pad the board root
-      with `env(safe-area-inset-*)`, use `dvh` heights, and set `overscroll-behavior: none` on the
-      page during a game.
-- [ ] `AdaptiveGameBoardLayout` shell: render the classic pieces in the new structure, so we can switch
-      to it and see it.
-- [ ] Dev-only fixture route (not in production builds) that renders `GameBoard` from canned
-      `currentGame` states with no server: empty, mid-game, crowded (10+ characters, attachments,
-      dupes, kneeling), plot selection, and a selection prompt with an open pile. It has a
-      board-switch toggle.
-- [ ] Baseline screenshots of the classic board from the fixtures at 390×844, 844×390, 820×1180,
-      1180×820 and 1600×950.
-- [ ] Hide the navbar on `narrow` and `short` when the adaptive board is on (`Application.jsx`
-      checks the board layout). Until phase 4 adds the game menu, the shell keeps a temporary
-      Leave button.
+- [x] Create branch `feat/adaptive-board` from `feat/gameboard-overhaul`, and commit this plan.
+- [x] Move the classic board into `Classic/` as its own commit (see Architecture, Folders).
+- [x] Add the switch (see Architecture, Switch).
+- [x] Add `useBoardLayout` and `adaptiveScale.js` with their specs. `adaptiveScale.js` (pure) has
+      `test/client/adaptiveScale.spec.js`. `useBoardLayout` is DOM glue (`ResizeObserver`, focus
+      tracking) with no spec of its own, and is checked in the fixtures. It shares
+      `applyScaleProperties` with `useHudScale`, which pauses animations while scales change.
+- [x] Viewport: `useAdaptivePage` adds `viewport-fit=cover` to the viewport meta and sets
+      `overscroll-behavior: none` only while the adaptive board shows. Every other page keeps the
+      browser default, so content there never goes under a notch. **This changes the plan, which put
+      it in `index.html`.** The board root pads itself with `env(safe-area-inset-*)`, and the
+      full-screen board uses `h-dvh`.
+- [x] `AdaptiveGameBoardLayout` shell: built only from shared parts (never from `Classic/`), with grid
+      areas for each mode. The opponent's hand and piles use `--pile-scale`, our hand uses
+      `--hand-scale`, and `wide` keeps full-size piles. It has a basic stats line, the prompt, the
+      timer, a settings button and the temporary Leave button. The grid areas are inline styles for
+      now, so `adaptive.css` isn't needed yet.
+- [x] Dev-only fixture route at `/dev/board?fixture=<key>&board=<adaptive|classic>`
+      (`client/dev/DevBoard.jsx` and `client/dev/boardFixtures.js`, lazy-loaded behind
+      `import.meta.env.DEV` and confirmed absent from `vite build` output). It renders the real
+      `GameBoard` against a store of its own with no socket. Fixtures: `empty`, `mid`, `crowded`,
+      `plots` and `discard`. A floating panel switches the fixture and the board and resets the state.
+      Melee fixtures come in phase 6.
+- [x] Baseline screenshots of the classic board from the fixtures at 390×844, 844×390, 820×1180,
+      1180×820 and 1600×950. `npm run board:shots` (`test/tools/board-shots.js`, using the
+      `playwright` dev dependency with Chromium) shoots every fixture, board and size against the
+      running dev server, saving to `testoutput/board-shots/` (gitignored). For each shot it reports
+      the layout mode, anything that scrolls, regions of the adaptive board that clip their content,
+      and page errors. Classic baseline: it scrolls sideways at both portrait sizes (all fixtures) and
+      in 7 of the 10 landscape shots across phone and tablet.
+- [x] Hide the navbar on `narrow` and `short` when the adaptive board is on. `Application.jsx` reads
+      `boardLayoutStore`, which only `useBoardLayout` sets. The shell's temporary `LeaveGameButton`
+      stands in until phase 4's game menu.
+- [x] Look at the shell in every mode with `board:shots`. It loads in every mode and nothing
+      scrolls. What's broken is layout work that phases 1 and 2 already cover (clipping is listed
+      under phase 1), plus the chat in landscape, which is now a phase 1 item.
+
+Notes for later phases, found during phase 0:
+
+- `CarriedCard.jsx` reads `--card-scale` from the page root, so a card dragged out of the hand or a
+  pile (drawn at `--hand-scale` or `--pile-scale`) would be carried at the play-area size. Fix in
+  phase 1.
+- On phones the chat drawer is absolutely positioned inside the board root, so it ignores the
+  safe-area padding. Check in phase 5.
+- A drop in the fixture page leaves the drop ghost waiting, because no server sends back a new state.
+  Use Reset.
+- The full test suite fails in `test/server/cards/25.6-WK/AThousandEyesAndOne.spec.js` (ability
+  coverage). This happens on the base branch too and the spec passes on its own, so it's unrelated
+  to this work.
 
 ### Phase 1: no page scrolling (joust)
 
@@ -320,7 +356,15 @@ narrow melee                         short melee
 - [ ] Build the opponent's side as `OpponentCarousel` from the start. Joust is one slide with no tabs
       and no swiping. Melee gets basic swiping and ◀ ▶ here, and the rest in phase 6.
 - [ ] Scale fitting uses the widest row across **all** players.
-- [ ] Scale fitting for all three variables in every mode, checked at every reference size.
+- [ ] Scale fitting for all three variables in every mode, checked at every reference size. Known
+      from phase 0: `wide`'s `stripUnits` (17) overestimates the strip, which is about 13 card widths,
+      so desktop cards come out at about 0.76 instead of 1.
+- [ ] Chat in `short`: the board opens the chat when the window is wider than 768px, so a phone in
+      landscape starts with a 300px side panel. On `short` (and `narrow`) the chat starts closed and
+      drops over the board, as on a phone in portrait.
+- [ ] Clear every clip the phase 0 shots report: the opponent's hand in `narrow`, crowded play rows
+      (to squish, then scroll), the right-hand column in `short`, and the strip heights in `wide`.
+- [ ] Fix `CarriedCard`'s scale for cards dragged from the hand or a pile (see the notes in phase 0).
 - [ ] Acceptance: at every reference size, the page itself never scrolls for empty, mid-game and
       crowded boards, and only a crowded play row scrolls. Dragging and flight animations work to
       and from every pile.
@@ -366,6 +410,32 @@ narrow melee                         short melee
 - [ ] Acceptance: every popup source opens as a sheet on the adaptive board: draw deck (search),
       discard, dead, out of game, plots, the agenda's cards, and cards underneath a card. Classic
       popups are unchanged.
+
+#### Card preview (zoom) on touch
+
+Today `CardHover` (`client/Components/Images/CardHover.jsx`) shows the card at a fixed size
+(`3x-large`), placed above the finger and pushed inside the screen edges. It disappears when the finger
+lifts. On a phone it covers much of the board and sits under the finger. Phones make the board's cards
+small, so the preview is how players read them. The touch model itself stays as decided: hold still to
+zoom, hold and move to drag.
+
+- [ ] Size: on the adaptive board's touch layouts, the preview is the largest card that fits in about
+      85% of the screen's shorter side (allowing for any availability notes), not a fixed size. Plots
+      are sized as horizontal cards.
+- [ ] Placement: never under the finger. In `narrow`, it goes in the half of the screen away from the
+      finger (top if the finger is in the bottom half, bottom otherwise). In `short`, it goes on the
+      side away from the finger. In `wide` with a mouse, it stays as today.
+- [ ] Live state the small card can't show legibly: current strength against printed strength,
+      power, tokens and their counts, and the names of attachments and dupes. These go in a compact
+      panel beside or under the image, built from the card's summary only (no hidden information).
+- [ ] Starting a drag (moving after the hold) hides the preview straight away, as now.
+- [ ] `CardHover` keeps its current behaviour on the classic board. The adaptive behaviour comes
+      through a prop or context whose default is the classic one.
+- [ ] Check in `board:shots`: add a mode that holds on a card in each fixture and screenshots the
+      preview at every touch size.
+- Open question, for when we get here: should the preview stay up after the finger lifts, until the
+  next tap (a "pin")? That is not the deferred tap-to-preview idea, because a tap would still click,
+  but it does change what lifting the finger does.
 
 ### Phase 4: player bars and game menu
 
@@ -419,6 +489,9 @@ narrow melee                         short melee
 ## Checks each phase
 
 - `npm test` for the client specs we touched (run vitest from `C:\`, not `c:\`).
+- `npm run board:shots` with the dev server running. Read the report: for the adaptive board, "no
+  scrolling" and no CLIPPED regions except where a phase still has open items. Look at the images for
+  every size.
 - A manual check at every reference size and orientation, by switching between classic and adaptive
   mid-game.
 - Re-read this file and tick off or flag every item in the phase.

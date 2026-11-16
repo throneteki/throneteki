@@ -69,6 +69,36 @@ const HudSettings = ({ value, onChange }) => {
     return (
         <Panel title='HUD Settings'>
             <div className='flex flex-col gap-4'>
+                <div className='flex flex-col gap-2'>
+                    <div>
+                        <div className='font-bold'>Board layout</div>
+                        <div className='text-xs text-default-500'>
+                            The adaptive board rearranges itself to fit phones and tablets in either
+                            orientation. It is experimental.
+                        </div>
+                    </div>
+                    <RadioGroup
+                        aria-label='Board layout'
+                        orientation='horizontal'
+                        size='sm'
+                        value={value.board}
+                        onValueChange={(board) => update({ board })}
+                    >
+                        <Radio value='classic'>Classic</Radio>
+                        <Radio value='adaptive'>Adaptive (experimental)</Radio>
+                    </RadioGroup>
+                </div>
+                {value.board === 'adaptive' && (
+                    <Switch
+                        isSelected={value.followAction !== false}
+                        onValueChange={(followAction) => update({ followAction })}
+                    >
+                        <div>Follow the action in melee</div>
+                        <div className='text-xs text-default-500'>
+                            Shows the opponent whose turn it is, or whose cards you are choosing.
+                        </div>
+                    </Switch>
+                )}
                 <Switch isSelected={value.auto} onValueChange={(auto) => update({ auto })}>
                     <div>Scale with screen</div>
                     <div className='text-xs text-default-500'>

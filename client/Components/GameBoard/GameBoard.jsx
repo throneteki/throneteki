@@ -27,6 +27,9 @@ import CarriedCard from './CarriedCard';
 import ErrorMessage from '../Site/ErrorMessage';
 import JoustGameBoardLayout from './Classic/JoustGameBoardLayout';
 import MeleeGameBoardLayout from './Classic/MeleeGameBoardLayout';
+import AdaptiveGameBoardLayout from './Adaptive/AdaptiveGameBoardLayout';
+import { BoardLayoutProvider, useBoardLayout } from './Adaptive/useBoardLayout';
+import { useAdaptivePage } from './Adaptive/useAdaptivePage';
 import { ManualModeContext } from './ManualModeContext';
 import { useRenderCount } from '../../perf';
 import { useHudScale } from './useHudScale';
@@ -397,9 +400,22 @@ const GameBoard = () => {
     }, [currentGame?.maxPlayers, currentGame?.players, currentGame?.spectators, user?.username]);
 
     const hud = useHud();
-    useHudScale(hud, boardAreaRef, !!currentGame?.started);
-    const motionEnabled = useMotionEnabled();
     const boardStarted = !!currentGame?.started;
+    // Melee keeps the classic board until the adaptive board can show more than one opponent
+    const adaptive = hud.board === 'adaptive' && currentGame?.gameFormat === 'joust';
+    useHudScale(hud, boardAreaRef, boardStarted && !adaptive);
+    const allPlayers = useMemo(
+        () => Object.values(currentGame?.players || {}),
+        [currentGame?.players]
+    );
+    const layoutMode = useBoardLayout({
+        containerRef: boardAreaRef,
+        hud,
+        players: allPlayers,
+        ready: boardStarted && adaptive
+    });
+    useAdaptivePage(boardStarted && adaptive);
+    const motionEnabled = useMotionEnabled();
     useLayoutEffect(() => {
         if (!boardStarted) {
             return;
@@ -451,7 +467,19 @@ const GameBoard = () => {
     const boardClass = 'relative flex h-full overflow-x-hidden hud-text';
 
     let gameBoard = null;
-    if (currentGame.gameFormat === 'joust') {
+    if (adaptive) {
+        gameBoard = (
+            <BoardLayoutProvider value={layoutMode}>
+                <AdaptiveGameBoardLayout
+                    thisPlayer={thisPlayer}
+                    otherPlayer={otherPlayers[0]}
+                    userPlayer={userPlayer}
+                    onCardClick={onCardClick}
+                    onSettingsClick={onSettingsClick}
+                />
+            </BoardLayoutProvider>
+        );
+    } else if (currentGame.gameFormat === 'joust') {
         gameBoard = (
             <JoustGameBoardLayout
                 thisPlayer={thisPlayer}
@@ -489,7 +517,11 @@ const GameBoard = () => {
             <MotionConfig reducedMotion={motionEnabled ? 'user' : 'always'}>
                 <div className={boardClass}>
                     <div
-                        className='overflow-auto basis-full [scrollbar-gutter:stable]'
+                        className={
+                            adaptive
+                                ? 'overflow-hidden basis-full min-w-0'
+                                : 'overflow-auto basis-full [scrollbar-gutter:stable]'
+                        }
                         ref={boardAreaRef}
                     >
                         <DndContext

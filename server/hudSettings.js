@@ -1,6 +1,7 @@
+const boardLayouts = ['classic', 'adaptive'];
 const sizePattern = /^(?:small|normal|large|\d{1,2}(?:\.\d{1,2})?)$/;
 
-// The board size settings a player may save, in their profile or for one game
+// The board settings a player may save, in their profile or for one game
 export function sanitizeHud(hud) {
     if (!hud || typeof hud !== 'object') {
         return undefined;
@@ -13,7 +14,11 @@ export function sanitizeHud(hud) {
         }
     }
 
-    for (const key of ['auto', 'animations']) {
+    if (boardLayouts.includes(hud.board)) {
+        result.board = hud.board;
+    }
+
+    for (const key of ['auto', 'animations', 'followAction']) {
         if (typeof hud[key] === 'boolean') {
             result[key] = hud[key];
         }

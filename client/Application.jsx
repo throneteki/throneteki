@@ -16,8 +16,13 @@ import CardHover from './Components/Images/CardHover';
 import ErrorMessage from './Components/Site/ErrorMessage';
 import classNames from 'classnames';
 import PendingGameAlerter from './Components/Games/PendingGameAlerter';
-import { customBackgroundUrl } from './util';
-import { builtInBackgroundUrl } from './backgrounds';
+import { hidesNavbar, useAdaptiveLayoutMode } from './boardLayoutStore';
+
+const backgrounds = {
+    none: BlankBg,
+    BG1: StandardBg,
+    BG2: WinterBg
+};
 
 const Application = () => {
     const router = new Router();
@@ -26,6 +31,7 @@ const Application = () => {
     const path = useSelector((state) => state.navigation.path);
     const { user, token, refreshToken } = useSelector((state) => state.auth);
     const bgRef = useRef();
+    const adaptiveLayoutMode = useAdaptiveLayoutMode();
 
     const [incompatibleBrowser, setIncompatibleBrowser] = useState(false);
     const [cannotLoad, setCannotLoad] = useState(false);
@@ -112,15 +118,22 @@ const Application = () => {
         }
     }, [gameBoardVisible, user]);
 
+    // On a phone the adaptive board takes the whole screen, and its own menu stands in for the navbar
+    const fullScreenBoard = hidesNavbar(adaptiveLayoutMode);
     const containerClass = classNames('container h-full relative z-0', {
-        'max-w-full': gameBoardVisible
+        'max-w-full': gameBoardVisible || fullScreenBoard || component.key === 'devboard'
     });
     return (
         <>
-            <NavBar />
+            {!fullScreenBoard && <NavBar />}
             <main role='main'>
                 <div
-                    className='absolute bottom-0 left-0 right-0 top-[3rem] bg-cover bg-center bg-no-repeat overflow-y-auto'
+                    className={classNames(
+                        'absolute left-0 right-0 bg-cover bg-center bg-no-repeat',
+                        fullScreenBoard
+                            ? 'top-0 h-dvh overflow-hidden'
+                            : 'bottom-0 top-[3rem] overflow-y-auto'
+                    )}
                     ref={bgRef}
                 >
                     <Sentry.ErrorBoundary

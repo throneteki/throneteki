@@ -7,6 +7,33 @@ const rescaleHold = 400;
 let rescaleTimer = null;
 const properties = { cards: ['--card-scale'], interface: ['--ui-scale', '--text-scale'] };
 
+// Sets the board's scale variables on the page. Resizing the board is not a card moving: nothing should glide or
+// animate because of it
+export const applyScaleProperties = (values) => {
+    const root = document.documentElement;
+    let changed = false;
+    for (const [property, value] of Object.entries(values)) {
+        const text = String(value);
+        changed ||= root.style.getPropertyValue(property) !== text;
+        root.style.setProperty(property, text);
+    }
+    if (changed) {
+        holdFlip(rescaleHold);
+        root.dataset.rescaling = '';
+        clearTimeout(rescaleTimer);
+        rescaleTimer = setTimeout(() => delete root.dataset.rescaling, rescaleHold);
+    }
+};
+
+export const removeScaleProperties = (names) => {
+    for (const property of names) {
+        document.documentElement.style.removeProperty(property);
+    }
+};
+
+export const interfaceScaleProperties = (scale) =>
+    Object.fromEntries(properties.interface.map((property) => [property, scale]));
+
 export const useHudScale = (hud, containerRef, ready = true) => {
     const { cards, interface: interfaceSize, auto } = hud;
 
@@ -27,21 +54,10 @@ export const useHudScale = (hud, containerRef, ready = true) => {
                 cardFit: cardFit ?? 1,
                 screen: computeScreenScale({ width: window.innerWidth, height: window.innerHeight })
             });
-            let changed = false;
-            for (const kind of Object.keys(properties)) {
-                properties[kind].forEach((property) => {
-                    const value = String(scales[kind]);
-                    changed ||= root.style.getPropertyValue(property) !== value;
-                    root.style.setProperty(property, value);
-                });
-            }
-            if (changed) {
-                // Resizing the board is not a card moving: nothing should glide or animate because of it
-                holdFlip(rescaleHold);
-                root.dataset.rescaling = '';
-                clearTimeout(rescaleTimer);
-                rescaleTimer = setTimeout(() => delete root.dataset.rescaling, rescaleHold);
-            }
+            applyScaleProperties({
+                '--card-scale': scales.cards,
+                ...interfaceScaleProperties(scales.interface)
+            });
         };
 
         const update = () => {
@@ -72,9 +88,7 @@ export const useHudScale = (hud, containerRef, ready = true) => {
             cancelAnimationFrame(frame);
             observer?.disconnect();
             window.removeEventListener('resize', schedule);
-            for (const property of Object.values(properties).flat()) {
-                root.style.removeProperty(property);
-            }
+            removeScaleProperties(Object.values(properties).flat());
         };
     }, [cards, interfaceSize, auto, containerRef, ready]);
 };

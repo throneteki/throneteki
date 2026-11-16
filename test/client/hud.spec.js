@@ -44,7 +44,9 @@ describe('normalizeHud', function () {
             cards: 'normal',
             interface: 'normal',
             auto: true,
-            animations: true
+            animations: true,
+            board: 'classic',
+            followAction: true
         });
     });
 
@@ -53,9 +55,31 @@ describe('normalizeHud', function () {
             cards: 'large',
             interface: 'normal',
             auto: false,
-            animations: true
+            animations: true,
+            board: 'classic',
+            followAction: true
         });
         expect(normalizeHud({ hud: { animations: false } }).animations).toBe(false);
+    });
+
+    it('keeps a known board layout and ignores anything else', function () {
+        expect(normalizeHud({ hud: { board: 'adaptive' } }).board).toBe('adaptive');
+        expect(normalizeHud({ hud: { board: 'classic' } }).board).toBe('classic');
+        expect(normalizeHud({ hud: { board: 'fancy' } }).board).toBe('classic');
+        expect(normalizeHud({ hud: { board: 1 } }).board).toBe('classic');
+    });
+
+    it('keeps follow the action as a boolean, on by default', function () {
+        expect(normalizeHud({ hud: {} }).followAction).toBe(true);
+        expect(normalizeHud({ hud: { followAction: false } }).followAction).toBe(false);
+        expect(normalizeHud({ hud: { followAction: 'no' } }).followAction).toBe(true);
+    });
+
+    it('defaults the legacy card size setting to the classic board', function () {
+        expect(normalizeHud({ cardSize: 'large' })).toMatchObject({
+            board: 'classic',
+            followAction: true
+        });
     });
 
     it('migrates the earlier separate elements and text sizes', function () {
