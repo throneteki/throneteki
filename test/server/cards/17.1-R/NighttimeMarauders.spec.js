@@ -19,3 +19,25 @@ describe('Nighttime Marauders', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe("Nighttime Marauders when no card in the opponent's hand has the same printed cost", function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { shadows: ['Nighttime Marauders (R)'], gold: 5 },
+            player2: {
+                discard: ['Hedge Knight'],
+                hand: ['Winterfell Steward']
+            }
+        });
+        this.player1.clickCard(this.nighttimeMarauders);
+    });
+
+    it('can still choose the card and reveal the hand', function () {
+        this.player1.triggerAbility('Nighttime Marauders');
+        this.player1.clickCard(this.hedgeKnight);
+
+        expect(this.winterfellSteward.location).toBe('hand');
+        expect(this.player1).isReadyToTakeAction();
+    });
+});

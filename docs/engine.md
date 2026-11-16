@@ -375,6 +375,11 @@ Rules readings and design choices that stand until changed:
   character whose STR counts its power) is not offered: the engine cannot preview STR with extra
   power without side effects.
 - Open ruling: whether The White Shadows' effects apply to Craster.
+- A single `target` is filtered by the ability's `gameAction` (`buildTargets` in
+  [baseability.js](../server/game/baseability.js)), and that check can read hidden zones. When
+  the action only affects cards in a hand or deck, whether the ability is offered reveals what is
+  there. Cards avoid it by making the action depend on public state, such as revealing the hand
+  first (Nighttime Marauders).
 
 ## Pitfalls
 
