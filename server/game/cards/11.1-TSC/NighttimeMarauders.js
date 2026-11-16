@@ -18,21 +18,22 @@ class NighttimeMarauders extends DrawCard {
                     card.controller !== context.player && card.location === 'discard pile'
             },
             message: {
-                format: '{player} uses {source} to choose {target} and have {opponent} reveal their hand: {hand}',
-                args: {
-                    opponent: (context) => context.target.controller,
-                    hand: (context) => context.target.controller.hand
-                }
+                format: '{player} uses {source} to choose {target} and have {opponent} reveal their hand',
+                args: { opponent: (context) => context.target.controller }
             },
-            gameAction: GameActions.simultaneously((context) =>
-                context.target.controller.hand
-                    .filter(
-                        (card) =>
-                            card.hasPrintedCost() &&
-                            card.getPrintedCost() === context.target.getPrintedCost()
-                    )
-                    .map((card) => GameActions.discardCard({ card, allowSave: false }))
-            )
+            gameAction: GameActions.revealCards((context) => ({
+                cards: [...context.target.controller.hand],
+                player: context.target.controller,
+                whileRevealed: GameActions.simultaneously((context) =>
+                    context.target.controller.hand
+                        .filter(
+                            (card) =>
+                                card.hasPrintedCost() &&
+                                card.getPrintedCost() === context.target.getPrintedCost()
+                        )
+                        .map((card) => GameActions.discardCard({ card, allowSave: false }))
+                )
+            }))
         });
     }
 }
