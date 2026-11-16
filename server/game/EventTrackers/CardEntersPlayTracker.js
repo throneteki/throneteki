@@ -11,6 +11,7 @@ class CardEntersPlayTracker {
 
     constructor(game, endingEvent) {
         this.events = [];
+        this.controllersOnEntry = new Map();
 
         game.on('onCardEntersPlay', (event) => this.trackEvent(event));
         game.on(endingEvent, () => this.clearEvents());
@@ -20,10 +21,18 @@ class CardEntersPlayTracker {
 
     trackEvent(event) {
         this.events.push(event);
+        this.controllersOnEntry.set(event, event.card.controller);
     }
 
     clearEvents() {
         this.events = [];
+        this.controllersOnEntry.clear();
+    }
+
+    // A card returns to its owner's control when it leaves play, so its controller now may not be
+    // the player it entered play under.
+    controllerOnEntry(event) {
+        return this.controllersOnEntry.get(event);
     }
 
     hasAmbushed(card) {

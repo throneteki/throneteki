@@ -315,6 +315,9 @@ without a description before clearing the prompt. Reports are kept in PostgreSQL
   recent ability log;
 - every card's zone and state (kneeling, blank, participating, STR, icons, traits, keywords,
   tokens);
+- every effect in the effect engine, persistent and lasting (its type such as `immuneTo`, source,
+  duration, whether it is active or conditional, and the cards or players it applies to), and the
+  delayed effects still waiting to trigger;
 - the last 300 game log messages, chat included, and the pipeline.
 
 Admin > Problem Reports (the Problem Report Manager permission) lists reports with their

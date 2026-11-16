@@ -9,9 +9,9 @@ class WardensOfTheEast extends PlotCard {
             targetController: 'any',
             effect: [
                 ability.effects.cannotPlay(
-                    (card) =>
+                    (card, context, player) =>
                         card.getPrintedType() === 'event' &&
-                        card.isFaction(card.controller.faction.getPrintedFaction())
+                        card.isFaction(player.faction.getPrintedFaction())
                 ),
                 ability.effects.revealShadows()
             ]

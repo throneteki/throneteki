@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
 import { MaxDescriptionLength, normaliseDescription } from '../../shared/problemReportLimits.js';
+import { getEffectType } from './effects.js';
 
 export { MaxDescriptionLength, normaliseDescription };
 export const ProblemReportSchemaVersion = 2;
@@ -44,6 +45,41 @@ function getCardState(card) {
         power: card.power,
         gold: card.gold,
         tokens: { ...card.tokens }
+    };
+}
+
+function describeEffectTarget(target) {
+    if (target?.uuid && target.getType) {
+        return { card: target.uuid, name: target.name };
+    }
+
+    if (target?.faction && target.name) {
+        return { player: target.name };
+    }
+
+    return { game: true };
+}
+
+function getEffectState(effect) {
+    return {
+        type: getEffectType(effect.effect) || effect.constructor?.name,
+        source: cardRef(effect.source),
+        sourceController: effect.source?.controller?.name,
+        duration: effect.duration,
+        active: effect.active,
+        conditional: effect.isConditional,
+        targetType: effect.targetType,
+        targetController: effect.targetController,
+        targets: (effect.targets || []).map(describeEffectTarget)
+    };
+}
+
+function getDelayedEffectState(delayedEffect) {
+    return {
+        title: delayedEffect.title,
+        source: cardRef(delayedEffect.context?.source),
+        player: delayedEffect.context?.player?.name,
+        duration: delayedEffect.duration
     };
 }
 
@@ -235,6 +271,12 @@ export function buildProblemReport(game, { reporter, source = 'report', descript
         ),
         abilityLog: capture('abilityLog', () => getAbilityLog(game), []),
         cards: capture('cards', () => game.allCards.map(getCardState), []),
+        effects: capture('effects', () => game.effectEngine.effects.map(getEffectState), []),
+        delayedEffects: capture(
+            'delayedEffects',
+            () => game.effectEngine.delayedEffects.map(getDelayedEffectState),
+            []
+        ),
         messages: capture('messages', () => game.gameChat.messages.slice(-MaxMessages), []),
         pipeline: capture('pipeline', () => game.pipeline.getDebugInfo()),
         captureErrors

@@ -8,14 +8,18 @@ class StrainedReserves extends PlotCard {
     // card revealed.)
     setupCardAbilities(ability) {
         const tracker = CardEntersPlayTracker.forRound(this.game);
-        const isRestricted = (card) =>
-            isLimitedType(card) && hasReachedLimit(tracker, card.controller);
+        const isRestricted = (card, player) =>
+            isLimitedType(card) && hasReachedLimit(tracker, player);
 
         this.persistentEffect({
             targetController: 'any',
             effect: [
-                ability.effects.cannotMarshal(isRestricted),
-                ability.effects.cannotPutIntoPlay(isRestricted)
+                ability.effects.cannotMarshal((card, context, player) =>
+                    isRestricted(card, player)
+                ),
+                ability.effects.cannotPutIntoPlay((card, playingType, context, player) =>
+                    isRestricted(card, player)
+                )
             ]
         });
     }
@@ -28,7 +32,7 @@ function isLimitedType(card) {
 function hasReachedLimit(tracker, player) {
     const entered = tracker.events.filter(
         (event) =>
-            event.card.controller === player &&
+            tracker.controllerOnEntry(event) === player &&
             isLimitedType(event.card) &&
             ['marshal', 'ambush', 'outOfShadows', 'play'].includes(event.playingType)
     );
