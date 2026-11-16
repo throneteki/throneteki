@@ -6,76 +6,62 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCogs } from '@fortawesome/free-solid-svg-icons';
 
 import ActivePlayerPrompt from '../ActivePlayerPrompt';
-import CardPile from '../CardPile';
-import DrawDeck from '../DrawDeck';
 import Droppable from '../Droppable';
 import GameTimer from '../GameTimer';
 import PlayerBoard from '../PlayerBoard';
-import PlayerPlots from '../PlayerPlots';
 import SquishableCardPanel from '../SquishableCardPanel';
+import { AreaLabelContext } from '../LabelledGameArea';
 import { pileRise } from '../PileDepth';
 import { findPendingAttachment, withoutPendingAttachment } from '../pendingAttachment';
 import { findLeftBehind } from '../leftBehind';
-import {
-    sendButtonClickedMessage,
-    sendShowDrawDeckMessage,
-    sendShuffleDeckMessage
-} from '../../../redux/reducers/game';
+import { sendButtonClickedMessage } from '../../../redux/reducers/game';
 import { useLayoutMode } from './useBoardLayout';
 import LeaveGameButton from './LeaveGameButton';
+import PlotFactionStack from './PlotFactionStack';
+import PileCluster from './PileCluster';
+import HandTray from './HandTray';
+import OpponentCarousel from './OpponentCarousel';
 
-// Where each part of the board sits in each layout mode. "o-" parts are the opponent's, "m-" parts ours.
-const areas = {
+// One player's side of the board, as a grid of its parts: "id" (plots, agenda and faction), "hand" (the
+// opponent's hand, or ours on a wide board), "piles" and "play". Ours mirrors the opponent's, play area nearest
+// the middle.
+const sideAreas = {
     narrow: {
-        columns: 'auto minmax(0, 1fr) auto',
-        rows: 'auto minmax(0, 1fr) auto minmax(0, 1fr) auto auto',
-        template: [
-            'o-id o-hand o-piles',
-            'o-play o-play o-play',
-            'mid mid mid',
-            'm-play m-play m-play',
-            'm-id . m-piles',
-            'm-hand m-hand m-hand'
-        ]
+        top: { columns: 'auto minmax(0, 1fr) auto', rows: ['id hand piles', 'play play play'] },
+        bottom: { columns: 'auto minmax(0, 1fr) auto', rows: ['play play play', 'id . piles'] }
     },
     short: {
-        columns: 'auto minmax(0, 1fr) auto',
-        rows: 'auto minmax(0, 1fr) auto minmax(0, 1fr) auto auto',
-        template: [
-            'o-id o-play o-hand',
-            'o-id o-play o-piles',
-            'm-id o-play mid',
-            'm-id m-play mid',
-            'm-id m-play m-piles',
-            'm-id m-hand m-piles'
-        ]
+        top: { columns: 'auto minmax(0, 1fr) auto', rows: ['id play hand', 'id play piles'] },
+        bottom: { columns: 'auto minmax(0, 1fr) auto', rows: ['id play piles', 'id play piles'] }
     },
     wide: {
-        columns: 'auto auto minmax(0, 1fr) auto',
-        rows: 'auto minmax(0, 1fr) minmax(0, 1fr) auto',
-        template: [
-            'o-id o-hand o-piles mid',
-            'o-play o-play o-play mid',
-            'm-play m-play m-play mid',
-            'm-id m-hand m-piles mid'
-        ]
+        top: { columns: 'auto auto minmax(0, 1fr)', rows: ['id hand piles', 'play play play'] },
+        bottom: { columns: 'auto auto minmax(0, 1fr)', rows: ['play play play', 'id hand piles'] }
     }
 };
 
-const gridStyle = (mode) => ({
-    gridTemplateColumns: areas[mode].columns,
-    gridTemplateRows: areas[mode].rows,
-    gridTemplateAreas: areas[mode].template.map((row) => `"${row}"`).join(' ')
-});
+const sideGridStyle = (mode, side) => {
+    const { columns, rows } = sideAreas[mode][side];
+    const playRow = rows.findIndex((row) => row.includes('play') && !row.includes('id'));
+    return {
+        gridTemplateColumns: columns,
+        gridTemplateRows: rows
+            .map((row, index) =>
+                index === playRow || (mode === 'short' && index === (side === 'top' ? 1 : 0))
+                    ? 'minmax(0, 1fr)'
+                    : 'auto'
+            )
+            .join(' '),
+        gridTemplateAreas: rows.map((row) => `"${row}"`).join(' ')
+    };
+};
 
-// A region drawn at another of the board's scales: every card size inside follows --card-scale
-const scaled = (scale) => (scale ? { '--card-scale': `var(--${scale}-scale)` } : undefined);
-
-const Region = ({ area, scale, className, children }) => (
+// A part drawn at another of the board's scales: every card size inside follows --card-scale
+const Part = ({ area, scale, className, children }) => (
     <div
         data-region={area}
         className={classNames('relative min-w-0 min-h-0', className)}
-        style={{ gridArea: area, ...scaled(scale) }}
+        style={{ gridArea: area, ...(scale && { '--card-scale': `var(--${scale}-scale)` }) }}
     >
         {children}
     </div>
@@ -83,195 +69,112 @@ const Region = ({ area, scale, className, children }) => (
 
 const AdaptiveGameBoardLayout = ({
     thisPlayer,
-    otherPlayer,
+    otherPlayers,
     userPlayer,
     onCardClick,
-    onSettingsClick
+    onSettingsClick,
+    isDragging
 }) => {
     const dispatch = useDispatch();
     const mode = useLayoutMode();
-    const isMe = (player) => !!thisPlayer && player === thisPlayer;
-    const piles = mode === 'wide' ? null : 'pile';
+    const phoneLayout = mode !== 'wide';
+    const pileScale = phoneLayout ? 'pile' : null;
 
-    const droppable = (player, source, children, count) =>
-        isMe(player) ? (
-            <Droppable
-                source={source}
-                className='self-start'
-                rise={count === undefined ? undefined : pileRise(count)}
-            >
-                {children}
-            </Droppable>
-        ) : (
-            children
-        );
-
-    const renderSide = (player, prefix, side) => {
-        const me = isMe(player);
-        const cardPiles = player.cardPiles;
-        const playerName = player.user?.username;
-        const pileProps = { onCardClick, popupLocation: side, popupId: side, playerName };
-        const agenda = player.agendas?.[0];
-        const numDrawCards = player.numDrawCards || cardPiles.drawDeck?.length || 0;
-        const shadows = withoutPendingAttachment(cardPiles.shadows);
-        const outOfGame = withoutPendingAttachment(cardPiles.outOfGamePile);
+    const renderSide = (player, side) => {
+        const isMe = !!thisPlayer && player === thisPlayer;
+        const pileProps = {
+            onCardClick,
+            popupLocation: side,
+            popupId: side,
+            playerName: player.user?.username
+        };
+        const droppable = (source, children, count, className = 'self-start') =>
+            isMe ? (
+                <Droppable
+                    source={source}
+                    className={className}
+                    rise={count === undefined ? undefined : pileRise(count)}
+                >
+                    {children}
+                </Droppable>
+            ) : (
+                children
+            );
+        const handInStrip = !isMe || mode === 'wide';
 
         return (
-            <React.Fragment key={prefix}>
-                <Region area={`${prefix}-id`} scale={piles} className='flex gap-1 p-1 items-start'>
-                    <PlayerPlots
+            <div
+                data-side={side}
+                className='grid h-full w-full min-h-0 min-w-0'
+                style={sideGridStyle(mode, side)}
+            >
+                <Part area='id' scale={pileScale} className='p-1'>
+                    <PlotFactionStack
+                        player={player}
+                        isMe={isMe}
+                        side={side}
                         onCardClick={onCardClick}
-                        direction={side === 'bottom' ? 'default' : 'reverse'}
-                        isMe={me}
-                        playerName={playerName}
-                        plotDeck={cardPiles.plotDeck}
-                        plotDiscard={cardPiles.plotDiscard}
-                        activePlot={player.activePlot}
-                        selectedPlot={player.selectedPlot}
-                        mustShowPlotSelection={player.mustShowPlotSelection}
+                        pileProps={pileProps}
+                        droppable={droppable}
                     />
-                    <CardPile
-                        className='faction'
-                        source='faction'
-                        cards={[]}
-                        topCard={player.faction}
-                        disablePopup
-                        onCardClick={onCardClick}
-                        orientation={player.faction?.kneeled ? 'horizontal' : 'vertical'}
-                    />
-                    {agenda?.code &&
-                        droppable(
-                            player,
-                            'agenda',
-                            <CardPile
-                                cards={agenda.childCards || []}
-                                disablePopup={!agenda.childCards?.length}
-                                showCards
-                                source='agenda'
-                                title={agenda.childCards?.length ? 'Agenda' : null}
-                                topCard={agenda}
-                                numColumns={5}
-                                numRows={1.2}
-                                {...pileProps}
-                            />
-                        )}
-                </Region>
-                <Region area={`${prefix}-hand`} scale={me ? 'hand' : piles} className='p-1'>
-                    {droppable(
-                        player,
-                        'hand',
-                        <SquishableCardPanel
-                            cards={withoutPendingAttachment(cardPiles.hand)}
-                            groupVisibleCards
-                            maxCards={5}
-                            onCardClick={onCardClick}
-                            source='hand'
-                            title='Hand'
-                            flipFrom={playerName}
-                            stagedArrivals
-                            redeal={player.phase === 'setup'}
-                        />
-                    )}
-                </Region>
-                <Region
-                    area={`${prefix}-piles`}
-                    scale={piles}
-                    className='flex gap-1 p-1 items-start'
-                >
-                    {shadows.length > 0 &&
-                        droppable(
-                            player,
-                            'shadows',
+                </Part>
+                {handInStrip && (
+                    <Part
+                        area='hand'
+                        scale={isMe ? null : pileScale}
+                        className={classNames('p-1', { 'justify-self-end': mode === 'short' })}
+                    >
+                        {droppable(
+                            'hand',
                             <SquishableCardPanel
-                                cards={shadows}
-                                maxCards={2}
+                                cards={withoutPendingAttachment(player.cardPiles.hand)}
+                                groupVisibleCards
+                                maxCards={
+                                    isMe
+                                        ? 5
+                                        : Math.max(1, Math.min(player.cardPiles.hand.length, 2))
+                                }
                                 onCardClick={onCardClick}
-                                source='shadows'
-                                title='Shadows'
+                                source='hand'
+                                title='Hand'
+                                flipFrom={player.user?.username}
+                                stagedArrivals={isMe}
+                                redeal={player.phase === 'setup'}
                             />
                         )}
-                    {droppable(
-                        player,
-                        'draw deck',
-                        <DrawDeck
-                            cardCount={numDrawCards}
-                            cards={withoutPendingAttachment(cardPiles.drawDeck)}
-                            isMe={me}
-                            numDrawCards={player.numDrawCards}
-                            onPopupChange={
-                                me
-                                    ? (visible) => dispatch(sendShowDrawDeckMessage(visible))
-                                    : undefined
-                            }
-                            onShuffleClick={
-                                me ? () => dispatch(sendShuffleDeckMessage()) : undefined
-                            }
-                            revealTopCard={player.revealTopCard}
-                            showDeck={player.showDeck}
-                            spectating={!thisPlayer}
-                            {...pileProps}
-                        />,
-                        numDrawCards
-                    )}
-                    {droppable(
-                        player,
-                        'discard pile',
-                        <CardPile
-                            numColumns={5}
-                            numRows={2.2}
-                            className='discard'
-                            showDepth
-                            title='Discard'
-                            source='discard pile'
-                            cards={withoutPendingAttachment(cardPiles.discardPile)}
-                            {...pileProps}
-                        />,
-                        cardPiles.discardPile.length
-                    )}
-                    {droppable(
-                        player,
-                        'dead pile',
-                        <CardPile
-                            numColumns={5}
-                            numRows={2.2}
-                            className='dead'
-                            showDepth
-                            title='Dead'
-                            source='dead pile'
-                            cards={withoutPendingAttachment(cardPiles.deadPile)}
-                            orientation='horizontal'
-                            {...pileProps}
-                        />,
-                        cardPiles.deadPile.length
-                    )}
-                    {outOfGame.length > 0 &&
-                        droppable(
-                            player,
-                            'out of game',
-                            <CardPile
-                                numColumns={4}
-                                numRows={1.2}
-                                cards={outOfGame}
-                                orientation='horizontal'
-                                source='out of game'
-                                title='Out of Game'
-                                showDepth
-                                {...pileProps}
-                            />,
-                            outOfGame.length
-                        )}
-                </Region>
-                <Region area={`${prefix}-play`} className='flex overflow-hidden'>
+                    </Part>
+                )}
+                <Part
+                    area='piles'
+                    scale={pileScale}
+                    className={classNames('p-1 flex', {
+                        'justify-end': mode !== 'wide',
+                        'items-end': mode === 'short' && side === 'bottom'
+                    })}
+                >
+                    <PileCluster
+                        player={player}
+                        isMe={isMe}
+                        side={side}
+                        spectating={!thisPlayer}
+                        onCardClick={onCardClick}
+                        pileProps={pileProps}
+                        droppable={droppable}
+                        isDragging={isDragging}
+                    />
+                </Part>
+                <Part area='play' className='flex overflow-hidden'>
                     <PlayerBoard
-                        isDroppable={me}
-                        cardsInPlay={cardPiles.cardsInPlay}
-                        pendingAttachment={findPendingAttachment(cardPiles)}
-                        leftBehind={findLeftBehind(cardPiles)}
+                        isDroppable={isMe}
+                        cardsInPlay={player.cardPiles.cardsInPlay}
+                        pendingAttachment={findPendingAttachment(player.cardPiles)}
+                        leftBehind={findLeftBehind(player.cardPiles)}
                         onCardClick={onCardClick}
                         rowDirection={side === 'bottom' ? 'default' : 'reverse'}
+                        overflow={isMe ? 'squish-then-scroll' : 'squish'}
                     />
-                </Region>
-            </React.Fragment>
+                </Part>
+            </div>
         );
     };
 
@@ -281,61 +184,116 @@ const AdaptiveGameBoardLayout = ({
         </span>
     );
 
-    return (
+    const mid = (
         <div
-            data-layout={mode}
-            className='grid h-full w-full overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]'
-            style={gridStyle(mode)}
+            data-region='mid'
+            className={classNames('hud-zoom relative z-[250] flex gap-1 p-1 min-h-0', {
+                'flex-row items-center justify-between': mode === 'narrow',
+                'flex-col justify-center w-40 overflow-hidden': mode === 'short',
+                'flex-col justify-end w-48 lg:w-64': mode === 'wide'
+            })}
         >
-            {renderSide(otherPlayer, 'o', 'top')}
-            {renderSide(thisPlayer, 'm', 'bottom')}
-            <Region
-                area='mid'
-                className={classNames('hud-zoom flex gap-1 p-1 z-[250]', {
-                    'flex-row items-center justify-between': mode === 'narrow',
-                    'flex-col justify-center w-40': mode === 'short',
-                    'flex-col justify-end w-48 lg:w-64': mode === 'wide'
-                })}
-            >
-                <div className='flex flex-col text-xs gap-0.5'>
-                    {stat(otherPlayer)}
-                    {stat(thisPlayer)}
-                </div>
-                <GameTimer player={thisPlayer} isMe={!!thisPlayer} side='bottom' />
-                {userPlayer && thisPlayer && (
-                    <ActivePlayerPrompt
-                        className='min-w-0 flex-1'
-                        buttons={userPlayer.buttons}
-                        controls={userPlayer.controls}
-                        promptText={userPlayer.menuTitle}
-                        promptTitle={userPlayer.promptTitle}
-                        onButtonClick={(button) =>
-                            dispatch(
-                                sendButtonClickedMessage(
-                                    button.promptId,
-                                    button.command,
-                                    button.method,
-                                    button.arg
-                                )
+            <div className='flex flex-col text-xs gap-0.5'>
+                {otherPlayers.map((player) => (
+                    <React.Fragment key={player.name ?? player.seatNo}>
+                        {stat(player)}
+                    </React.Fragment>
+                ))}
+                {stat(thisPlayer)}
+            </div>
+            <GameTimer player={thisPlayer} isMe={!!thisPlayer} side='bottom' />
+            {userPlayer && thisPlayer && (
+                <ActivePlayerPrompt
+                    className='min-w-0 flex-1'
+                    buttons={userPlayer.buttons}
+                    controls={userPlayer.controls}
+                    promptText={userPlayer.menuTitle}
+                    promptTitle={userPlayer.promptTitle}
+                    onButtonClick={(button) =>
+                        dispatch(
+                            sendButtonClickedMessage(
+                                button.promptId,
+                                button.command,
+                                button.method,
+                                button.arg
                             )
-                        }
-                        phase={thisPlayer.phase}
-                    />
-                )}
-                <div className='flex gap-1'>
-                    <Button
-                        isIconOnly
-                        size='sm'
-                        variant='light'
-                        title='Open Settings'
-                        onPress={onSettingsClick}
-                    >
-                        <FontAwesomeIcon icon={faCogs} />
-                    </Button>
-                    <LeaveGameButton />
-                </div>
-            </Region>
+                        )
+                    }
+                    phase={thisPlayer.phase}
+                />
+            )}
+            <div className='flex gap-1'>
+                <Button
+                    isIconOnly
+                    size='sm'
+                    variant='light'
+                    title='Open Settings'
+                    onPress={onSettingsClick}
+                >
+                    <FontAwesomeIcon icon={faCogs} />
+                </Button>
+                <LeaveGameButton />
+            </div>
         </div>
+    );
+
+    const opponents = (
+        <OpponentCarousel
+            className='flex-1 basis-0'
+            opponents={otherPlayers}
+            renderSide={(player) => renderSide(player, 'top')}
+        />
+    );
+    const ours = (
+        <div className='flex flex-1 basis-0 min-h-0'>{renderSide(thisPlayer, 'bottom')}</div>
+    );
+    const handTray = phoneLayout && thisPlayer && (
+        <div
+            data-region='hand-tray'
+            className='shrink-0 p-1'
+            style={{ '--card-scale': 'var(--hand-scale)' }}
+        >
+            <HandTray
+                player={thisPlayer}
+                onCardClick={onCardClick}
+                peek={mode === 'short'}
+                droppable={(source, children, count, className) => (
+                    <Droppable source={source} className={className}>
+                        {children}
+                    </Droppable>
+                )}
+            />
+        </div>
+    );
+
+    return (
+        <AreaLabelContext.Provider value={phoneLayout ? 'count' : 'full'}>
+            <div
+                data-layout={mode}
+                className={classNames(
+                    'flex h-full w-full overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]',
+                    mode === 'narrow' ? 'flex-col' : 'flex-row'
+                )}
+            >
+                {mode === 'narrow' ? (
+                    <>
+                        {opponents}
+                        {mid}
+                        {ours}
+                        {handTray}
+                    </>
+                ) : (
+                    <>
+                        <div className='flex flex-col flex-1 min-w-0 min-h-0'>
+                            {opponents}
+                            {ours}
+                            {handTray}
+                        </div>
+                        {mid}
+                    </>
+                )}
+            </div>
+        </AreaLabelContext.Provider>
     );
 };
 

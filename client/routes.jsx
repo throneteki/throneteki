@@ -47,6 +47,7 @@ const devRoutes = DevBoard
                           fixture={context.params.fixture}
                           board={context.params.board}
                           panel={context.params.panel}
+                          manual={context.params.manual}
                       />
                   </React.Suspense>
               )

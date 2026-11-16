@@ -11,6 +11,7 @@ import classNames from 'classnames';
 import { useMotionEnabled } from '../../motion';
 import { useStagedArrivals } from './useStagedArrivals';
 import { useHiddenDragUuid, useIncomingSlot } from './dragStore';
+import { boardRescaleEvent } from './useHudScale';
 
 const raiseTime = 150;
 
@@ -24,12 +25,38 @@ const raisedStyle = {
 // A card being lowered stays above its neighbours until it is back in place
 const loweringStyle = { zIndex: 220, transition: `translate ${raiseTime}ms ease-out` };
 
+// Fitted to its width, the panel holds as many cards side by side as that width takes at its card size
+const useFittedCards = (areaRef, enabled) => {
+    const [fitted, setFitted] = useState(null);
+    useLayoutEffect(() => {
+        const area = areaRef.current;
+        if (!enabled || !area) {
+            return;
+        }
+        const measure = () => {
+            const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+            const scale = parseFloat(getComputedStyle(area).getPropertyValue('--card-scale')) || 1;
+            setFitted(Math.max(1, Math.floor((area.clientWidth / (4 * rem * scale)) * 100) / 100));
+        };
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(area);
+        window.addEventListener(boardRescaleEvent, measure);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener(boardRescaleEvent, measure);
+        };
+    }, [areaRef, enabled]);
+    return fitted;
+};
+
 const SquishableCardPanel = ({
     cards: allCards,
     disableBackground = false,
     onCardClick,
     source,
-    maxCards,
+    maxCards: fixedMaxCards,
+    fitWidth = false,
     title,
     titlePosition,
     className,
@@ -51,6 +78,10 @@ const SquishableCardPanel = ({
         () => cards.some((card) => !!card.code) && cards.some((card) => !card.code),
         [cards]
     );
+
+    const areaRef = useRef(null);
+    const fittedCards = useFittedCards(areaRef, fitWidth);
+    const maxCards = fitWidth && fittedCards ? fittedCards : fixedMaxCards;
 
     const slotCount = cards.length + (incoming ? 1 : 0);
     const needsSquish = slotCount > maxCards;
@@ -187,17 +218,19 @@ const SquishableCardPanel = ({
 
     const style = useMemo(
         () => ({
-            width: `calc(var(--card-scale, 1) * ${4 * maxCards}rem)`,
+            width: fitWidth ? '100%' : `calc(var(--card-scale, 1) * ${4 * maxCards}rem)`,
             height: cardHeight
         }),
-        [maxCards]
+        [maxCards, fitWidth]
     );
 
     const retClassName = classNames('box-border relative', className);
 
     return (
         <LabelledGameArea
+            ref={areaRef}
             label={headerText}
+            count={title ? cards.length : undefined}
             position={titlePosition}
             className={retClassName}
             style={style}

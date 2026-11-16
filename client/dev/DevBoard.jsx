@@ -23,11 +23,14 @@ const createFixtureStore = () =>
     });
 
 // The board expects a game before it first draws, as it has in a real game
-const loadFixture = (store, fixture, board) => {
+// With manual mode on, cards can be dragged
+const loadFixture = (store, fixture, board, manual) => {
     store.dispatch(
         setUser({ username: fixtureUsername, permissions: {}, settings: { hud: { board } } })
     );
-    store.dispatch(receiveGameState(boardFixtures[fixture].build(), fixtureUsername));
+    store.dispatch(
+        receiveGameState({ ...boardFixtures[fixture].build(), manualMode: manual }, fixtureUsername)
+    );
 };
 
 const setQuery = (fixture, board) => {
@@ -38,21 +41,22 @@ const setQuery = (fixture, board) => {
 };
 
 // Development only: the real game board, showing a canned game state, at /dev/board?fixture=crowded&board=adaptive
-const DevBoard = ({ fixture: initialFixture, board: initialBoard, panel }) => {
+const DevBoard = ({ fixture: initialFixture, board: initialBoard, panel, manual: manualParam }) => {
+    const manual = manualParam === '1';
     const [fixture, setFixture] = useState(boardFixtures[initialFixture] ? initialFixture : 'mid');
     const [board, setBoard] = useState(initialBoard === 'classic' ? 'classic' : 'adaptive');
     const [store] = useState(() => {
         const created = createFixtureStore();
-        loadFixture(created, fixture, board);
+        loadFixture(created, fixture, board, manual);
         return created;
     });
     const [open, setOpen] = useState(true);
 
     useEffect(() => {
         hudStore.reset();
-        loadFixture(store, fixture, board);
+        loadFixture(store, fixture, board, manual);
         setQuery(fixture, board);
-    }, [store, fixture, board]);
+    }, [store, fixture, board, manual]);
 
     return (
         <Provider store={store}>

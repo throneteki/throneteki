@@ -57,13 +57,13 @@ const card = { width: 4, height: 5.6 };
 const gapRem = 0.375;
 
 // What each mode stacks vertically and lines up horizontally. Rows are counted in card heights, strips in card
-// widths at pile scale; chrome is the space taken by bars, the prompt and rails, in rem.
+// widths at pile scale (at card scale where pilesAtCardSize); chrome is the space taken by bars, the prompt and rails, in rem.
 export const layoutBudgets = {
     narrow: {
         pileRatio: 0.7,
         handRatio: 1.1,
-        baseline: 1,
-        min: 0.55,
+        baseline: 1.6,
+        min: 0.85,
         max: 1.6,
         rows: { play: 4, pile: 2, hand: 1 },
         stripUnits: 9,
@@ -73,20 +73,21 @@ export const layoutBudgets = {
         pileRatio: 0.7,
         handRatio: 1.1,
         baseline: 0.9,
-        min: 0.45,
+        min: 0.7,
         max: 1.4,
         rows: { play: 4, pile: 0, hand: 0.4 },
         stripUnits: 0,
-        chrome: { width: 20, height: 1.5 }
+        chrome: { width: 26, height: 1.5 }
     },
     wide: {
+        pilesAtCardSize: true,
         pileRatio: 1,
         handRatio: 1,
         baseline: 1,
-        min: 0.5,
+        min: 0.8,
         max: 2.5,
         rows: { play: 4, pile: 2, hand: 0 },
-        stripUnits: 17,
+        stripUnits: 13,
         chrome: { width: 18, height: 6 }
     }
 };
@@ -121,21 +122,25 @@ export const computeAdaptiveScales = ({
     const heightFit = freeHeight / (heightUnits * cardHeight);
 
     const freeWidth = width - budget.chrome.width * rem;
-    const stripFit =
+    // The largest pile scale at which a strip of piles fits across the board
+    const stripPileFit =
         budget.stripUnits > 0
-            ? (freeWidth - budget.stripUnits * gap) /
-              (budget.stripUnits * cardWidth * budget.pileRatio)
+            ? (freeWidth - budget.stripUnits * gap) / (budget.stripUnits * cardWidth)
             : Infinity;
     const rowFit =
         widestRow > 0 ? (freeWidth - widestRow * gap) / (widestRow * cardWidth) : Infinity;
 
+    // Where piles are drawn at the board's card size, a strip too wide for the board makes every card smaller;
+    // elsewhere the piles shrink on their own and the play areas keep their size
+    const stripLimit = budget.pilesAtCardSize ? stripPileFit : Infinity;
     const wanted = Math.min(budget.baseline * cardsSize, budget.max);
-    const fitted = Math.min(wanted, heightFit, stripFit, Math.max(rowFit, budget.min));
+    const fitted = Math.min(wanted, heightFit, stripLimit, Math.max(rowFit, budget.min));
     const scale = toStep(clamp(fitted, absoluteMin, budget.max));
+    const pile = budget.pilesAtCardSize ? scale : Math.min(scale * budget.pileRatio, stripPileFit);
 
     return {
         card: scale,
-        pile: toStep(Math.max(scale * budget.pileRatio, absoluteMin)),
+        pile: toStep(Math.max(pile, absoluteMin)),
         hand: toStep(Math.max(scale * budget.handRatio, absoluteMin))
     };
 };

@@ -23,13 +23,14 @@ import {
 import { DndContext, MouseSensor, pointerWithin, rectIntersection, useSensor } from '@dnd-kit/core';
 import { HoldTouchSensor, holdToDrag } from './HoldTouchSensor';
 import CardImage from '../Images/CardImage';
-import CarriedCard from './CarriedCard';
+import CarriedCard, { scaleOfCard } from './CarriedCard';
 import ErrorMessage from '../Site/ErrorMessage';
 import JoustGameBoardLayout from './Classic/JoustGameBoardLayout';
 import MeleeGameBoardLayout from './Classic/MeleeGameBoardLayout';
 import AdaptiveGameBoardLayout from './Adaptive/AdaptiveGameBoardLayout';
 import { BoardLayoutProvider, useBoardLayout } from './Adaptive/useBoardLayout';
 import { useAdaptivePage } from './Adaptive/useAdaptivePage';
+import { hidesNavbar } from '../../boardLayoutStore';
 import { ManualModeContext } from './ManualModeContext';
 import { useRenderCount } from '../../perf';
 import { useHudScale } from './useHudScale';
@@ -171,6 +172,8 @@ const GameBoard = () => {
     );
     useEffect(() => () => hudStore.reset(), []);
 
+    // Cards on the adaptive board are not all drawn at the board's card size
+    const adaptiveRef = useRef(false);
     const onDragStart = useCallback((event) => {
         const data = event.active.data.current;
         if (!data?.card) {
@@ -191,6 +194,7 @@ const GameBoard = () => {
             orientation: data.orientation,
             source: data.source,
             start,
+            scale: adaptiveRef.current && surface ? scaleOfCard(surface) : undefined,
             grab: {
                 x: start.x - rect.left,
                 y: start.y - rect.top,
@@ -322,6 +326,7 @@ const GameBoard = () => {
                         code: under ? 'cardback' : detail.card.code || 'cardback',
                         orientation: under ? 'vertical' : rotated ? 'rotated' : detail.orientation,
                         rect,
+                        scale: under ? undefined : detail.scale,
                         target: 'underneath'
                     },
                     origin
@@ -357,6 +362,7 @@ const GameBoard = () => {
                     code: detail.card.code || 'cardback',
                     orientation: rotated ? 'rotated' : detail.orientation,
                     rect,
+                    scale: detail.scale,
                     target
                 },
                 origin
@@ -403,6 +409,7 @@ const GameBoard = () => {
     const boardStarted = !!currentGame?.started;
     // Melee keeps the classic board until the adaptive board can show more than one opponent
     const adaptive = hud.board === 'adaptive' && currentGame?.gameFormat === 'joust';
+    adaptiveRef.current = adaptive;
     useHudScale(hud, boardAreaRef, boardStarted && !adaptive);
     const allPlayers = useMemo(
         () => Object.values(currentGame?.players || {}),
@@ -415,6 +422,13 @@ const GameBoard = () => {
         ready: boardStarted && adaptive
     });
     useAdaptivePage(boardStarted && adaptive);
+    // Laid out for a phone, the chat drops over the board, so it starts closed
+    const phoneLayout = adaptive && hidesNavbar(layoutMode);
+    useEffect(() => {
+        if (phoneLayout) {
+            setShowGameChat(false);
+        }
+    }, [phoneLayout]);
     const motionEnabled = useMotionEnabled();
     useLayoutEffect(() => {
         if (!boardStarted) {
@@ -472,10 +486,11 @@ const GameBoard = () => {
             <BoardLayoutProvider value={layoutMode}>
                 <AdaptiveGameBoardLayout
                     thisPlayer={thisPlayer}
-                    otherPlayer={otherPlayers[0]}
+                    otherPlayers={otherPlayers}
                     userPlayer={userPlayer}
                     onCardClick={onCardClick}
                     onSettingsClick={onSettingsClick}
+                    isDragging={showDropZones}
                 />
             </BoardLayoutProvider>
         );
@@ -549,6 +564,7 @@ const GameBoard = () => {
                                     }
                                     start={draggingDetail.start}
                                     grab={draggingDetail.grab}
+                                    scale={draggingDetail.scale}
                                     rectRef={carriedRectRef}
                                 />
                             )}
@@ -571,6 +587,7 @@ const GameBoard = () => {
                         style={{
                             left: dragGhost.rect.left,
                             top: dragGhost.rect.top,
+                            '--card-scale': dragGhost.scale,
                             scale:
                                 dragGhost.target === 'underneath' ? '1' : String(elevation.carried)
                         }}

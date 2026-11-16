@@ -128,10 +128,15 @@ const player = ({ name, seatNo, faction, agenda, phase, ...rest }) => ({
     ...promptState(),
     ...rest,
     cardPiles: {
+        // The server sends a face-down entry for every card in the draw deck
+        drawDeck: Array.from({ length: rest.numDrawCards ?? 30 }, (_, index) => ({
+            uuid: `${name}-deck-${index}`,
+            facedown: true,
+            tokens: {}
+        })),
         cardsInPlay: [],
         deadPile: [],
         discardPile: [],
-        drawDeck: [],
         hand: [],
         outOfGamePile: [],
         plotDeck: [],

@@ -21,6 +21,15 @@ const cardUnit = () => {
     return scale * (parseFloat(getComputedStyle(root).fontSize) || 16);
 };
 
+// The card is carried at the size it was picked up at, which is not the board's card size when it comes from a
+// hand or pile drawn smaller or larger. Measured without transforms (a loose pile's tilt, a knelt card's turn),
+// its long side is 5.6 card units.
+export const scaleOfCard = (surface) => {
+    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const long = Math.max(surface.offsetWidth, surface.offsetHeight);
+    return long > 0 ? long / (5.6 * rem) : undefined;
+};
+
 // Where a card placed underneath this stack will lie. The cards underneath are drawn after the card and its
 // attachments, peeking out below the last of them, each a sixth of a card further right than the one before.
 export const underneathSpot = (stack, carriedUuid) => {
@@ -68,7 +77,7 @@ const coverWith = (stack) => {
 };
 
 // The card follows the pointer straight from pointer events, so layout changes while dragging cannot offset it
-const CarriedCard = ({ uuid: carriedUuid, code, orientation, start, grab, rectRef }) => {
+const CarriedCard = ({ uuid: carriedUuid, code, orientation, start, grab, scale, rectRef }) => {
     const ref = useRef(null);
     const pointer = useRef(start);
     const tucked = useRef(false);
@@ -152,7 +161,11 @@ const CarriedCard = ({ uuid: carriedUuid, code, orientation, start, grab, rectRe
             ref={ref}
             data-carried=''
             className='fixed left-0 top-0 z-[400] pointer-events-none'
-            style={{ scale: String(elevation.carried), transformOrigin: middle }}
+            style={{
+                scale: String(elevation.carried),
+                transformOrigin: middle,
+                '--card-scale': scale
+            }}
         >
             {/* Turned face down while it shows where it would go under a card, as it will lie there */}
             <div

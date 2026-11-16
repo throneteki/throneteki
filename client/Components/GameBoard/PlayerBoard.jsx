@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { useRenderCount } from '../../perf';
 import Card from './Card';
 import Droppable from './Droppable';
+import FittedRow from './FittedRow';
 import { cardHeight } from '../../cardScale';
 import { useHiddenDragUuid, useIncomingType } from './dragStore';
 import { cardBoxClass } from '../../cardScale';
@@ -19,7 +20,8 @@ const PlayerBoard = ({
     leftBehind = [],
     rowDirection,
     onCardClick,
-    className
+    className,
+    overflow = 'grow'
 }) => {
     useRenderCount('PlayerBoard');
     const draggedUuid = useHiddenDragUuid();
@@ -133,16 +135,20 @@ const PlayerBoard = ({
 
     const renderRows = useCallback(
         (rows) => {
+            const fitted = ['squish', 'squish-then-scroll'].includes(overflow);
+            const Row = fitted ? FittedRow : 'div';
+            const rowProps = fitted ? { scroll: overflow === 'squish-then-scroll' } : {};
             return rows.map((row, index) => (
-                <div
+                <Row
+                    {...rowProps}
                     className='flex justify-start min-h-0 gap-1.5 card-row'
                     key={`card-row-${index}`}
                 >
                     {renderRow(row)}
-                </div>
+                </Row>
             ));
         },
-        [renderRow]
+        [renderRow, overflow]
     );
 
     const rows = getCardRows();
@@ -171,7 +177,8 @@ const PlayerBoard = ({
         className,
         'flex flex-1 flex-col m-2 gap-1.5 justify-between',
         {
-            'our-side': rowDirection === 'default'
+            'our-side': rowDirection === 'default',
+            'min-w-0': overflow !== 'grow'
         }
     );
     const content = (
@@ -182,7 +189,11 @@ const PlayerBoard = ({
 
     if (isDroppable) {
         return (
-            <Droppable source='play area' className='flex flex-grow' underCards>
+            <Droppable
+                source='play area'
+                className={classNames('flex flex-grow', { 'min-w-0': overflow !== 'grow' })}
+                underCards
+            >
                 {content}
             </Droppable>
         );

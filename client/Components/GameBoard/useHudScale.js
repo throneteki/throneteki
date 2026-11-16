@@ -7,6 +7,9 @@ const rescaleHold = 400;
 let rescaleTimer = null;
 const properties = { cards: ['--card-scale'], interface: ['--ui-scale', '--text-scale'] };
 
+// Sent on the window when the board's scales change, for parts that measure themselves in cards
+export const boardRescaleEvent = 'boardrescale';
+
 // Sets the board's scale variables on the page. Resizing the board is not a card moving: nothing should glide or
 // animate because of it
 export const applyScaleProperties = (values) => {
@@ -22,6 +25,7 @@ export const applyScaleProperties = (values) => {
         root.dataset.rescaling = '';
         clearTimeout(rescaleTimer);
         rescaleTimer = setTimeout(() => delete root.dataset.rescaling, rescaleHold);
+        window.dispatchEvent(new Event(boardRescaleEvent));
     }
 };
 

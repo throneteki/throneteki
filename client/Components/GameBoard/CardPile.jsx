@@ -321,6 +321,7 @@ const CardPile = ({
         <LabelledGameArea
             ref={areaRef}
             label={headerText}
+            count={title ? retCardCount : undefined}
             position={titlePosition}
             className={retClassName}
             style={areaStyle}

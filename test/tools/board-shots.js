@@ -64,11 +64,14 @@ const findOverflow = () => {
             });
         }
     }
-    // The adaptive board never scrolls, so content too big for a region is cut off instead: report that too
+    // The adaptive board never scrolls, so content too big for a region is cut off instead: report that too.
+    // Only where the region hides what spills out; spilling visibly over its neighbours is not cut off.
     const clipped = [];
+    const hides = (value) => ['hidden', 'clip'].includes(value);
     for (const element of document.querySelectorAll('[data-layout], [data-region]')) {
-        const x = element.scrollWidth > element.clientWidth + 1;
-        const y = element.scrollHeight > element.clientHeight + 1;
+        const style = getComputedStyle(element);
+        const x = hides(style.overflowX) && element.scrollWidth > element.clientWidth + 2;
+        const y = hides(style.overflowY) && element.scrollHeight > element.clientHeight + 2;
         if (x || y) {
             clipped.push({
                 what: element.dataset.region || 'board',

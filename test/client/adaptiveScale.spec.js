@@ -115,7 +115,23 @@ describe('computeAdaptiveScales', function () {
             widestRow: 20
         });
         expect(crowded.card).toBeLessThan(roomy.card);
-        expect(packed.card).toBe(0.55);
+        expect(packed.card).toBe(0.85);
+    });
+
+    it('shrinks the piles to fit their strip on a phone without shrinking the play areas', function () {
+        const { card, pile } = computeAdaptiveScales({ mode: 'narrow', width: 390, height: 844 });
+        const stripWidth = 9 * 4 * 16 * pile + 9 * 6;
+        expect(stripWidth).toBeLessThanOrEqual(390 - 16);
+        expect(card).toBeGreaterThan(1);
+        expect(pile).toBeLessThan(card * 0.7);
+    });
+
+    it('keeps piles at the card size on a wide board, shrinking every card if the strip is too wide', function () {
+        const roomy = computeAdaptiveScales({ mode: 'wide', width: 1600, height: 950 });
+        const tight = computeAdaptiveScales({ mode: 'wide', width: 900, height: 950 });
+        expect(roomy.pile).toBe(roomy.card);
+        expect(tight.pile).toBe(tight.card);
+        expect(tight.card).toBeLessThan(roomy.card);
     });
 
     it('scales with the chosen card size within the room available', function () {

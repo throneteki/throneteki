@@ -253,7 +253,9 @@ html.card-dragging * {
     );
 }
 
-@media (max-width: 767px) {
+/* The phone chat: it drops down from the top, over the board. Used on small screens, and on the adaptive
+   board whenever it is laid out for a phone */
+@define-mixin chat-phone {
     /* The tab sits near the right edge, clear of the opponent's totals in the middle of their bar */
     .chat-drawer {
         --lip-at: calc(100% - var(--lip-gap) - 0.5rem);
@@ -330,6 +332,15 @@ html.card-dragging * {
             var(--chat-fill) var(--lip-flare)
         );
     }
+}
+
+@media (max-width: 767px) {
+    @mixin chat-phone;
+}
+
+html[data-board-layout='narrow'],
+html[data-board-layout='short'] {
+    @mixin chat-phone;
 }
 
 [data-motion='off'] .chat-drawer,

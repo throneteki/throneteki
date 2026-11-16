@@ -23,24 +23,24 @@ hold still to zoom, hold and move to drag").
 
 ## Decisions
 
-| Date | Decision |
-| --- | --- |
-| 2026-11-16 | Support both portrait and landscape as real layouts. |
-| 2026-11-16 | The opponent's hand, deck, piles and plots may be drawn smaller than ours. **Both play areas always use the same scale.** |
-| 2026-11-16 | Show initiative, claim and reserve on the active plot rather than in the bar. This is a trial, and we may revert it. |
-| 2026-11-16 | Keep the current touch model. Tap-to-preview is deferred. |
-| 2026-11-16 | Trial the midline scoreboard (opponent stats, then the prompt, then our stats). |
-| 2026-11-16 | A new layout built from shared parts. The classic layout files stay almost untouched. |
-| 2026-11-16 | The switch is a HUD setting, `board: 'classic' \| 'adaptive'`, defaulting to classic. |
-| 2026-11-16 | This plan lives in `docs/` on the experimental branch. |
-| 2026-11-16 | Hide the site navbar on `narrow` and `short`. The game menu takes over Leave and Concede. `wide` keeps the navbar. |
-| 2026-11-16 | After a successful drop out of a sheet, the sheet comes back at peek. |
-| 2026-11-16 | Check layouts with a dev-only fixture route that renders the board from canned game states. |
-| 2026-11-16 | `wide` keeps the classic full-size piles. The compact piles cluster is only for `narrow` and `short`. |
-| 2026-11-16 | Melee is part of this work, not an afterthought. Our board stays fixed at the bottom, and opponents go in a carousel on the opponent's side, with tabs to jump to any opponent. Joust is the same carousel with one opponent and no tabs. |
-| 2026-11-16 | Melee auto-follow is a HUD setting, `followAction`, **on by default**. It follows the opponent with the active prompt. During our own prompt, it jumps to an opponent whose board has cards we can select. |
-| 2026-11-16 | Swiping or jumping by hand pauses auto-follow. It resumes by itself the next time the action moves to a different player. |
-| 2026-11-16 | `wide` melee uses the same carousel, showing as many opponents side by side as fit, and pages for the rest. |
+| Date       | Decision                                                                                                                                                                                                                                                                                                                                                         |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-11-16 | Support both portrait and landscape as real layouts.                                                                                                                                                                                                                                                                                                             |
+| 2026-11-16 | The opponent's hand, deck, piles and plots may be drawn smaller than ours. **Both play areas always use the same scale.**                                                                                                                                                                                                                                        |
+| 2026-11-16 | Show initiative, claim and reserve on the active plot rather than in the bar. This is a trial, and we may revert it.                                                                                                                                                                                                                                             |
+| 2026-11-16 | Keep the current touch model. Tap-to-preview is deferred.                                                                                                                                                                                                                                                                                                        |
+| 2026-11-16 | Trial the midline scoreboard (opponent stats, then the prompt, then our stats).                                                                                                                                                                                                                                                                                  |
+| 2026-11-16 | A new layout built from shared parts. The classic layout files stay almost untouched.                                                                                                                                                                                                                                                                            |
+| 2026-11-16 | The switch is a HUD setting, `board: 'classic' \| 'adaptive'`, defaulting to classic.                                                                                                                                                                                                                                                                            |
+| 2026-11-16 | This plan lives in `docs/` on the experimental branch.                                                                                                                                                                                                                                                                                                           |
+| 2026-11-16 | Hide the site navbar on `narrow` and `short`. The game menu takes over Leave and Concede. `wide` keeps the navbar.                                                                                                                                                                                                                                               |
+| 2026-11-16 | After a successful drop out of a sheet, the sheet comes back at peek.                                                                                                                                                                                                                                                                                            |
+| 2026-11-16 | Check layouts with a dev-only fixture route that renders the board from canned game states.                                                                                                                                                                                                                                                                      |
+| 2026-11-16 | `wide` keeps the classic full-size piles. The compact piles cluster is only for `narrow` and `short`.                                                                                                                                                                                                                                                            |
+| 2026-11-16 | Melee is part of this work, not an afterthought. Our board stays fixed at the bottom, and opponents go in a carousel on the opponent's side, with tabs to jump to any opponent. Joust is the same carousel with one opponent and no tabs.                                                                                                                        |
+| 2026-11-16 | Melee auto-follow is a HUD setting, `followAction`, **on by default**. It follows the opponent with the active prompt. During our own prompt, it jumps to an opponent whose board has cards we can select.                                                                                                                                                       |
+| 2026-11-16 | Swiping or jumping by hand pauses auto-follow. It resumes by itself the next time the action moves to a different player.                                                                                                                                                                                                                                        |
+| 2026-11-16 | `wide` melee uses the same carousel, showing as many opponents side by side as fit, and pages for the rest.                                                                                                                                                                                                                                                      |
 | 2026-11-16 | The classic board moves to `GameBoard/Classic/`. **Nothing outside `Classic/` imports from it**, so the classic board can be removed later by deleting one folder. Anything the adaptive board needs stays shared at the `GameBoard/` root, and the adaptive `wide` layout is built from shared parts rather than from classic `PlayerRow` and `SideBoardPanel`. |
 
 ## Rules that hold in every layout
@@ -98,36 +98,36 @@ These stay shared because the adaptive board needs them: `ActivePlayerPrompt`, `
 - [x] Do the move as its own commit with no other changes: `git mv` and import paths only. The
       classic board's behaviour doesn't change.
 - [x] Check: a search finds no imports of `Classic/` from outside it (`grep -rn "/Classic/"
-      client --include=*.js*` lists only `GameBoard.jsx`). The client builds, and the client specs
+  client --include=*.js*` lists only `GameBoard.jsx`). The client builds, and the client specs
       pass.
 
 ### Files
 
 New code goes under `client/Components/GameBoard/Adaptive/`:
 
-| File | Role |
-| --- | --- |
-| `AdaptiveGameBoardLayout.jsx` | Lays out both sides for the current mode |
-| `useBoardLayout.js` | Watches the board area and returns the mode and scales; sets `data-layout` |
-| `adaptiveScale.js` | Pure functions: mode classification (with hysteresis) and per-mode scale fitting |
-| `PlayerStrip.jsx` | One player's non-play row: plot/faction/agenda stack, piles cluster, opponent hand |
-| `PileCluster.jsx` | Deck, discard, dead, shadows and out of game as a compact cluster with counts |
-| `PlotFactionStack.jsx` | Active plot with the faction and agenda peeking behind it |
-| `OpponentHand.jsx` | A short fan of card backs and a count |
-| `HandTray.jsx` | Our hand along the bottom edge (fully shown, or peeking in `short`) |
-| `Scoreboard.jsx` | The midline strip: opponent stats, then the prompt, then our stats |
-| `PromptBar.jsx` | The phone prompt: phase, text, button chips, "More", and a waiting pill |
-| `BoardSheet.jsx` | The edge-anchored sheet that replaces `MovablePanel` on the adaptive board |
-| `sheetStore.js` | Allows one sheet at a time, with tabs for recently opened piles |
-| `GameMenu.jsx` | Settings, mute, manual mode, report, shortcuts, concede and leave |
-| `DropTray.jsx` | Drop targets for hidden piles (shadows, out of game) that appear over the board while dragging |
-| `OpponentCarousel.jsx` | The opponent's side: one slide per opponent (strip and play area), scroll-snapped, showing as many at once as the mode allows |
-| `OpponentTabs.jsx` | Melee only: a mini scoreboard per opponent in seat order, used to jump; shows active, follow and selectable markers |
-| `useAutoFollow.js` | Picks the opponent to show and handles pausing and resuming |
-| `followTarget.js` | Pure: the follow target from the players' state (active prompt, our selectable cards, seat order) |
-| `adaptive.css` | Layout CSS keyed off `[data-layout]` (not needed yet: grid areas are inline) |
-| `useAdaptivePage.js` | Page-level settings while the board shows: `viewport-fit=cover` and no overscroll |
-| `LeaveGameButton.jsx` | Temporary Leave Game while the navbar is hidden; replaced by `GameMenu` in phase 4 |
+| File                          | Role                                                                                                                          |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `AdaptiveGameBoardLayout.jsx` | Lays out both sides for the current mode                                                                                      |
+| `useBoardLayout.js`           | Watches the board area and returns the mode and scales; sets `data-layout`                                                    |
+| `adaptiveScale.js`            | Pure functions: mode classification (with hysteresis) and per-mode scale fitting                                              |
+| `PlayerStrip.jsx`             | One player's non-play row: plot/faction/agenda stack, piles cluster, opponent hand                                            |
+| `PileCluster.jsx`             | Deck, discard, dead, shadows and out of game as a compact cluster with counts                                                 |
+| `PlotFactionStack.jsx`        | Active plot with the faction and agenda peeking behind it                                                                     |
+| `OpponentHand.jsx`            | A short fan of card backs and a count                                                                                         |
+| `HandTray.jsx`                | Our hand along the bottom edge (fully shown, or peeking in `short`)                                                           |
+| `Scoreboard.jsx`              | The midline strip: opponent stats, then the prompt, then our stats                                                            |
+| `PromptBar.jsx`               | The phone prompt: phase, text, button chips, "More", and a waiting pill                                                       |
+| `BoardSheet.jsx`              | The edge-anchored sheet that replaces `MovablePanel` on the adaptive board                                                    |
+| `sheetStore.js`               | Allows one sheet at a time, with tabs for recently opened piles                                                               |
+| `GameMenu.jsx`                | Settings, mute, manual mode, report, shortcuts, concede and leave                                                             |
+| `DropTray.jsx`                | Drop targets for hidden piles (shadows, out of game) that appear over the board while dragging                                |
+| `OpponentCarousel.jsx`        | The opponent's side: one slide per opponent (strip and play area), scroll-snapped, showing as many at once as the mode allows |
+| `OpponentTabs.jsx`            | Melee only: a mini scoreboard per opponent in seat order, used to jump; shows active, follow and selectable markers           |
+| `useAutoFollow.js`            | Picks the opponent to show and handles pausing and resuming                                                                   |
+| `followTarget.js`             | Pure: the follow target from the players' state (active prompt, our selectable cards, seat order)                             |
+| `adaptive.css`                | Layout CSS keyed off `[data-layout]` (not needed yet: grid areas are inline)                                                  |
+| `useAdaptivePage.js`          | Page-level settings while the board shows: `viewport-fit=cover` and no overscroll                                             |
+| `LeaveGameButton.jsx`         | Temporary Leave Game while the navbar is hidden; replaced by `GameMenu` in phase 4                                            |
 
 Outside `Adaptive/`: `client/boardLayoutStore.js` (the current mode, for the navbar) and `client/dev/`
 (the fixture page, development only).
@@ -151,11 +151,11 @@ classic behaviour.** That leaves the classic board unchanged. The planned shared
 `useBoardLayout` measures the board area (not `window`), classifies it, and publishes the mode through
 context and `data-layout` on the board root.
 
-| Mode | Rough rule (to be tuned) | Typical device |
-| --- | --- | --- |
+| Mode     | Rough rule (to be tuned)                   | Typical device                        |
+| -------- | ------------------------------------------ | ------------------------------------- |
 | `narrow` | aspect ratio (w/h) < 0.9 and width < 900px | Phone portrait, small tablet portrait |
-| `short` | height < 560px and landscape | Phone landscape |
-| `wide` | everything else | Tablet landscape, desktop |
+| `short`  | height < 560px and landscape               | Phone landscape                       |
+| `wide`   | everything else                            | Tablet landscape, desktop             |
 
 - [x] Hysteresis: only change mode after crossing a threshold by a margin, so resizing near a
       boundary doesn't make it flap.
@@ -169,10 +169,10 @@ gets a different scale by overriding the variable locally with
 `style={{ '--card-scale': 'var(--pile-scale)' }}`. Card components, flips and `registerPile` don't
 change, because they measure the real elements.
 
-| Variable | Used by |
-| --- | --- |
-| `--card-scale` | Both play areas, at the same value |
-| `--hand-scale` | Our hand tray |
+| Variable       | Used by                                                                          |
+| -------------- | -------------------------------------------------------------------------------- |
+| `--card-scale` | Both play areas, at the same value                                               |
+| `--hand-scale` | Our hand tray                                                                    |
 | `--pile-scale` | Plots, faction, agenda, the piles cluster and the opponent's hand, on both sides |
 
 - [x] `adaptiveScale.js`: a pure function that fits the three scales to the board area for a given
@@ -252,19 +252,19 @@ narrow melee                         short melee
 - **Tabs (jumping):** `narrow` has a strip of mini scoreboards along the top (avatar, power, gold,
   title icon, first-player token). `short` puts them in the left stats rail, one per opponent above
   ours. Tapping a tab jumps to that opponent.
-  - Markers: **active** (their prompt; pulses), **selectable** (a dot when our current prompt can
-    select cards on their board), **shown** (the slide in view).
+    - Markers: **active** (their prompt; pulses), **selectable** (a dot when our current prompt can
+      select cards on their board), **shown** (the slide in view).
 - **Midline scoreboard:** shows the opponent in view, then the prompt, then us. Every opponent's stats
   are always visible in the tabs.
 - **Auto-follow** (`followAction`, on by default):
-  - Target: during our prompt, the first opponent in seat order with a selectable card on their
-    board. Otherwise, the opponent with the active prompt. If neither applies, stay where we are.
-  - Swiping or jumping by hand pauses it. The control changes to "Paused · tap to resume", and it
-    resumes by itself the next time the active prompt moves to a different player.
-  - Never move the carousel during a drag, while a card is raised or zoomed, or while a sheet is
-    being dragged. Wait until that ends.
-  - The control sits at the end of the tab strip (`narrow`) or the bottom of the opponents' rail
-    (`short` and `wide`) and switches the setting.
+    - Target: during our prompt, the first opponent in seat order with a selectable card on their
+      board. Otherwise, the opponent with the active prompt. If neither applies, stay where we are.
+    - Swiping or jumping by hand pauses it. The control changes to "Paused · tap to resume", and it
+      resumes by itself the next time the active prompt moves to a different player.
+    - Never move the carousel during a drag, while a card is raised or zoomed, or while a sheet is
+      being dragged. Wait until that ends.
+    - The control sits at the end of the tab strip (`narrow`) or the bottom of the opponents' rail
+      (`short` and `wide`) and switches the setting.
 - **Scale:** the decision that both play areas use the same scale covers every opponent. Fit
   `--card-scale` to the widest row across all players, so swiping never changes card sizes.
 - **Opponent rows never scroll** in a carousel. They only shrink and overlap, so a sideways swipe
@@ -341,46 +341,73 @@ Notes for later phases, found during phase 0:
 
 ### Phase 1: no page scrolling (joust)
 
-- [ ] `PlotFactionStack`: the active plot in front, with faction and agenda peeking. Additional
-      agendas and the title fan out. Plot deck and used plots still open their popups, and tapping
-      the stack opens a chooser.
-- [ ] `PileCluster`: deck, discard and dead as small cards with counts. Shadows and out of game appear
-      only when they hold cards. Each still registers with `registerPile`, so cards fly to and from
-      the right place, and each is still a `Droppable` for our side.
-- [ ] `OpponentHand`: a fan of backs and a count, at pile scale.
-- [ ] `HandTray`: full width, uses `fitWidth` squishing and keeps staged arrivals and redealing. Fully
-      shown in `narrow`, peeking in `short`, and drop target `hand`.
-- [ ] `DropTray`: while dragging, shadows and out of game appear as targets over the board instead of
-      making the row grow.
-- [ ] Play-area overflow, in order (`PlayerBoard` `overflow` prop).
-- [ ] Build the opponent's side as `OpponentCarousel` from the start. Joust is one slide with no tabs
-      and no swiping. Melee gets basic swiping and ◀ ▶ here, and the rest in phase 6.
-- [ ] Scale fitting uses the widest row across **all** players.
-- [ ] Scale fitting for all three variables in every mode, checked at every reference size. Known
-      from phase 0: `wide`'s `stripUnits` (17) overestimates the strip, which is about 13 card widths,
-      so desktop cards come out at about 0.76 instead of 1.
-- [ ] Chat in `short`: the board opens the chat when the window is wider than 768px, so a phone in
-      landscape starts with a 300px side panel. On `short` (and `narrow`) the chat starts closed and
-      drops over the board, as on a phone in portrait.
-- [ ] Clear every clip the phase 0 shots report: the opponent's hand in `narrow`, crowded play rows
-      (to squish, then scroll), the right-hand column in `short`, and the strip heights in `wide`.
-- [ ] Fix `CarriedCard`'s scale for cards dragged from the hand or a pile (see the notes in phase 0).
-- [ ] Acceptance: at every reference size, the page itself never scrolls for empty, mid-game and
-      crowded boards, and only a crowded play row scrolls. Dragging and flight animations work to
-      and from every pile.
+- [x] `PlotFactionStack`: the active plot in front (`PlayerPlots` as before), with the faction card
+      over the agenda, which shows a strip down its left. Additional agendas peek the same way, and the
+      title sits beside them. Plot deck and used plots still open their popups.
+    - Dropped (decided 2026-11-17): the "tapping the stack opens a chooser" idea. Each pile in the
+      stack can still be tapped on its own. Revisit only if that proves fiddly in real games.
+- [x] `PileCluster`: deck, discard and dead at pile scale, with shadows and out of game only when they
+      hold cards. Each is still a `CardPile` or `DrawDeck` (so `registerPile` and the drop zones are
+      unchanged) and a `Droppable` for our side. On `narrow` and `short`, `AreaLabelContext` shows each
+      pile's label as a count badge, with the name as its tooltip. `wide` keeps the full labels.
+- [x] Opponent's hand: a `SquishableCardPanel` of backs, squeezed into two card widths, at pile scale
+      with a count badge. It's inline in the layout, not a separate `OpponentHand.jsx`.
+- [x] `HandTray`: full width (`SquishableCardPanel` gained `fitWidth`, which re-measures on the
+      `boardrescale` event), and keeps staged arrivals and redealing. It's fully shown in `narrow` and
+      peeks (40%) in `short`. Checked by probe: a tap raises the whole hand, a tap elsewhere lowers it,
+      and a hold still picks a card up. Its drop target is `hand`.
+- [x] `DropTray` (in `PileCluster.jsx`): while dragging, empty shadows and out of game appear as
+      dashed targets laid over the board beside our piles, so nothing moves. Checked by a drag probe.
+- [x] Play-area overflow: `PlayerBoard` `overflow` is `'grow'` (classic), `'squish'` (opponents: overlap,
+      never scroll) or `'squish-then-scroll'` (ours). `FittedRow` overlaps cards down to 40% showing,
+      then scrolls. On touch, while a row overlaps, a first tap brings a card to the front and a second
+      tap uses it (checked by probe).
+- [x] `OpponentCarousel`: the opponent's side is built as a carousel. Joust is one slide with no
+      swiping.
+    - [ ] **Moved to phase 6:** melee swiping and ◀ ▶. The carousel already scroll-snaps when it has
+          more than one slide, but melee still falls back to the classic board and there are no melee
+          fixtures to check it against until phase 6.
+- [x] Scale fitting uses the widest row across all players (`widestRowUnits`).
+- [x] Scale fitting for all three variables in every mode, checked at every reference size:
+    - The pile scale is fitted on its own to its strip on `narrow` and `short`, so a wide strip no
+      longer shrinks the play areas. On `wide` the piles are drawn at card size (`pilesAtCardSize`), so
+      the strip still limits every card.
+    - `stripUnits` for `wide` is 13, and `short`'s chrome width is 26rem.
+    - `narrow`'s baseline is 1.6, so cards grow until the height stops them (about 1.15 on a 390×844
+      phone).
+    - Minimum scales before rows overlap: narrow 0.85, short 0.7, wide 0.8. They were 0.55, 0.45 and
+      0.5, which made crowded landscape cards unreadable.
+- [x] Chat in `short` and `narrow`: the phone chat rules are a `chat-phone` mixin in `index.css`, used
+      by the small-screen media query and by `html[data-board-layout='narrow'|'short']`. `GameBoard`
+      closes the chat whenever the layout becomes a phone layout.
+- [x] Clips from the phase 0 shots are cleared. What's left: the peeking hand in `short`, which hangs
+      below the screen on purpose; plot selection's popup, which scrolls inside itself until phase 3;
+      and a 2px layout artifact on desktop, which the clip report now ignores along with any overflow
+      of 2px or less.
+- [x] `CarriedCard` scale: on the adaptive board `GameBoard` measures the picked-up card's untransformed
+      size (`scaleOfCard`), and the carried card and drop ghost are drawn at it. A drop that tucks a card
+      underneath keeps the page scale, because it lands at play size. Classic passes no scale and is
+      unchanged. Checked by probe: a hand card of 76.8×107.5 is carried at ×1.1.
+- [ ] Acceptance:
+    - [x] At every reference size the page never scrolls, for every fixture. On the adaptive board the
+          only scrolling is our crowded play row. Classic's report is identical to the phase 0
+          baseline.
+    - [x] Dragging works (probe: hand to play area, with the drop tray showing).
+    - [ ] **Not checked:** flight animations to and from every pile. They need the server's next state,
+          which the dev page doesn't send. Check in a real game.
 
 ### Phase 2: prompt
 
 - [ ] Extract `usePromptActions` with no change to the classic behaviour (existing specs pass, and
       check the keyboard shortcuts by hand).
 - [ ] `PromptBar` states:
-  - [ ] **Waiting**: a small pill reading "Waiting for opponent", with the timer or chess clock.
-  - [ ] **1–3 buttons**: inline chips, with the main (non-cancel) button nearest the right edge.
-  - [ ] **More than 3 buttons, or any control** (card name, trait name, values): the first two
-        buttons and a "More" chip, which opens a sheet with the full list and the controls.
-  - [ ] **Selection prompts**: the prompt text as a banner across the board with the selection
-        count, plus a Done chip.
-  - [ ] Response delay ("Any reactions?") shows its countdown on the chip.
+    - [ ] **Waiting**: a small pill reading "Waiting for opponent", with the timer or chess clock.
+    - [ ] **1–3 buttons**: inline chips, with the main (non-cancel) button nearest the right edge.
+    - [ ] **More than 3 buttons, or any control** (card name, trait name, values): the first two
+          buttons and a "More" chip, which opens a sheet with the full list and the controls.
+    - [ ] **Selection prompts**: the prompt text as a banner across the board with the selection
+          count, plus a Done chip.
+    - [ ] Response delay ("Any reactions?") shows its countdown on the chip.
 - [ ] Buttons with a card keep the hold-to-zoom preview.
 - [ ] `narrow` uses the bar in the `Scoreboard`, `short` uses the right column, and `wide` keeps
       `SideBoardPanel`.
@@ -391,13 +418,13 @@ Notes for later phases, found during phase 0:
 
 - [ ] Add `PopupHostContext` and `PopupContainer`. Nothing changes on the classic board.
 - [ ] `BoardSheet`:
-  - [ ] Two heights: **peek**, one row of cards that scrolls sideways (about 40% of the board in
-        `narrow`, and one card row in `short`), and **full**, a grid.
-  - [ ] A drag handle on the header switches between the heights, swiping down closes it, and there
-        is always an X button.
-  - [ ] There's no dimmed backdrop, so the board stays usable during prompts.
-  - [ ] It keeps the pile's popup menu (shuffle, reveal and so on) and the card list's drop zones,
-        including dropping underneath a card.
+    - [ ] Two heights: **peek**, one row of cards that scrolls sideways (about 40% of the board in
+          `narrow`, and one card row in `short`), and **full**, a grid.
+    - [ ] A drag handle on the header switches between the heights, swiping down closes it, and there
+          is always an X button.
+    - [ ] There's no dimmed backdrop, so the board stays usable during prompts.
+    - [ ] It keeps the pile's popup menu (shuffle, reveal and so on) and the card list's drop zones,
+          including dropping underneath a card.
 - [ ] `sheetStore`: one sheet at a time. Opening another replaces it, and the sheet header has tabs
       for recently opened piles.
 - [ ] Dragging a card out of a sheet collapses the sheet to a strip. After the drop, whether it lands
@@ -463,6 +490,7 @@ zoom, hold and move to drag.
 
 ### Phase 6: melee
 
+- [ ] Carousel swiping and ◀ ▶ for several opponents (moved from phase 1).
 - [ ] `OpponentTabs`: mini scoreboards in seat order, as the top strip in `narrow` and in the left
       rail in `short` and `wide`, with the active, selectable and shown markers. Tapping a tab jumps
       to that opponent.
@@ -472,10 +500,10 @@ zoom, hold and move to drag.
 - [ ] `followTarget.js` with a spec covering our prompt with selectable cards on one or several
       boards, another player's active prompt, no target, and selectable cards only on our board.
 - [ ] `useAutoFollow`:
-  - [ ] Follows the target.
-  - [ ] Pauses on a manual swipe or jump.
-  - [ ] Resumes when the active prompt moves to a different player.
-  - [ ] Waits while a drag, a raised card, a zoom or a sheet drag is in progress.
+    - [ ] Follows the target.
+    - [ ] Pauses on a manual swipe or jump.
+    - [ ] Resumes when the active prompt moves to a different player.
+    - [ ] Waits while a drag, a raised card, a zoom or a sheet drag is in progress.
 - [ ] Auto-follow control: reads and writes `followAction`, and shows "Paused · tap to resume".
 - [ ] Flights to and from an opponent who isn't shown go to their tab.
 - [ ] Spectator arrangement.
