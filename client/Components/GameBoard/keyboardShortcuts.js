@@ -2,6 +2,7 @@ export const shortcutList = [
     { keys: ['1', '9'], description: 'Press the prompt button with that number' },
     { keys: ['W'], description: 'Wait: pause the response timer' },
     { keys: ['Space'], description: 'Pass or Done' },
+    { keys: ['D'], description: 'Done marshaling: end your marshaling for the round' },
     { keys: ['Enter'], description: 'Open and type in the game chat' },
     { keys: ['Esc'], description: 'Leave the chat box' },
     { keys: ['?'], description: 'Show the keyboard shortcuts' }
@@ -42,8 +43,14 @@ export const isShortcutEvent = (event, doc = globalThis.document) => {
 
 const isWaitButton = (button) => !!button.pausesTimer;
 
+// Ending your turn in a phase has its own key, so a run of Space or 1 presses meant for Pass
+// can't end it by accident.
+const isEndTurnButton = (button) => !!button.endsTurn;
+
 const isPassOrDoneButton = (button) =>
-    !button.cancel && (button.done || button.text === 'Pass' || button.text === 'Done');
+    !button.cancel &&
+    !isEndTurnButton(button) &&
+    (button.done || button.text === 'Pass' || button.text === 'Done');
 
 // Digits use the physical key so they work on layouts such as AZERTY, where the top row
 // gives symbols without Shift.
@@ -52,12 +59,15 @@ const getDigit = (event) => {
     return match ? Number(match[1]) : null;
 };
 
+const isKey = (event, letter) => event.key === letter || event.key === letter.toUpperCase();
+
 export const isPromptShortcutKey = (event) =>
-    getDigit(event) !== null || event.key === 'w' || event.key === 'W' || event.key === ' ';
+    getDigit(event) !== null || isKey(event, 'w') || isKey(event, 'd') || event.key === ' ';
 
 const getNumberedButtonIndexes = (buttons) =>
     buttons.reduce(
-        (indexes, button, index) => (isWaitButton(button) ? indexes : [...indexes, index]),
+        (indexes, button, index) =>
+            isWaitButton(button) || isEndTurnButton(button) ? indexes : [...indexes, index],
         []
     );
 
@@ -72,8 +82,12 @@ export const getPromptButtonIndex = (event, buttons) => {
         return index === undefined ? -1 : index;
     }
 
-    if (event.key === 'w' || event.key === 'W') {
+    if (isKey(event, 'w')) {
         return buttons.findIndex(isWaitButton);
+    }
+
+    if (isKey(event, 'd')) {
+        return buttons.findIndex(isEndTurnButton);
     }
 
     if (event.key === ' ') {
@@ -86,6 +100,10 @@ export const getPromptButtonIndex = (event, buttons) => {
 export const getButtonShortcutLabel = (buttons, index) => {
     if (isWaitButton(buttons[index])) {
         return 'W';
+    }
+
+    if (isEndTurnButton(buttons[index])) {
+        return 'D';
     }
 
     const position = getNumberedButtonIndexes(buttons).indexOf(index);

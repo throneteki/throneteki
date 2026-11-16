@@ -136,24 +136,6 @@ class ProblemReportService {
         };
     }
 
-    async describe(id, reporter, description) {
-        const text = normaliseDescription(description);
-        if (!text) {
-            return false;
-        }
-
-        const rows = await this.db.query(
-            `UPDATE problem_reports
-             SET description = $3, report = jsonb_set(report, '{description}', to_jsonb($3::text))
-             WHERE id = $1 AND reporter = $2 AND description IS NULL
-               AND created_at > now() - interval '15 minutes' AND expires_at > now()
-             RETURNING id`,
-            [id, reporter, text]
-        );
-
-        return rows.length > 0;
-    }
-
     async delete(ids) {
         const rows = await this.db.query(
             'DELETE FROM problem_reports WHERE id = ANY ($1::uuid[]) RETURNING id',

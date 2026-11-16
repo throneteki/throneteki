@@ -13,7 +13,6 @@ class GameRouter extends EventEmitter {
         this.workers = {};
         this.gameService = ServiceFactory.gameService();
         this.problemReportService = ServiceFactory.problemReportService();
-        this.problemReportsSaving = new Map();
 
         this.subscriber = redis.createClient(configService.getValue('redisUrl'));
         this.keyPrefix = configService.getValue('redisKeyPrefix');
@@ -274,14 +273,6 @@ class GameRouter extends EventEmitter {
 
                 this.saveProblemReport(identity, message.arg);
                 break;
-            case 'DESCRIBEPROBLEM':
-                if (!worker || !message.arg?.gameId || !message.arg?.reportId) {
-                    logger.warn('Invalid problem description received from worker %s', identity);
-                    break;
-                }
-
-                this.describeProblemReport(message.arg);
-                break;
         }
 
         if (worker) {
@@ -290,36 +281,15 @@ class GameRouter extends EventEmitter {
     }
 
     saveProblemReport(identity, { gameId, report }) {
-        const saving = this.problemReportService
+        this.problemReportService
             .create(report)
             .then(() => {
                 this.sendCommand(identity, 'PROBLEMREPORTSAVED', { gameId, reportId: report.id });
-                return true;
             })
             .catch((error) => {
                 logger.error('Unable to save problem report %s', error);
                 this.sendCommand(identity, 'PROBLEMREPORTFAILED', { gameId });
-                return false;
-            })
-            .finally(() => this.problemReportsSaving.delete(report.id));
-
-        this.problemReportsSaving.set(report.id, saving);
-    }
-
-    async describeProblemReport({ reportId, reporter, description }) {
-        try {
-            await this.problemReportsSaving.get(reportId);
-            const described = await this.problemReportService.describe(
-                reportId,
-                reporter,
-                description
-            );
-            if (!described) {
-                logger.warn('Problem report %s was not described by %s', reportId, reporter);
-            }
-        } catch (error) {
-            logger.error('Unable to describe problem report %s', error);
-        }
+            });
     }
 
     // Internal methods

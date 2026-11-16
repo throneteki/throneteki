@@ -12,7 +12,11 @@ class AggregateTrigger {
 
     createAggregateGroups(event) {
         return event.getConcurrentEvents().reduce((aggregateGroups, event) => {
-            if (event.name === this.eventName && !event.cancelled) {
+            if (
+                event.name === this.eventName &&
+                !event.cancelled &&
+                !(this.ability.eventType.endsWith('interrupt') && event.hasLeftPlaySinceCreated())
+            ) {
                 const tempContext = this.ability.createContext(event);
                 const aggregate = this.aggregateBy(event, tempContext);
 

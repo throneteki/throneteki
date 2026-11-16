@@ -54,25 +54,6 @@ describe('ProblemReportService', function () {
         );
     });
 
-    it("adds the reporter's description once, to their recent report only", async function () {
-        this.db.query.mockResolvedValue([{ id: this.report.id }]);
-
-        await expect(
-            this.service.describe(this.report.id, 'alice', '  Meryn did not trigger  ')
-        ).resolves.toBe(true);
-
-        const [sql, params] = this.db.query.mock.calls[0];
-        expect(sql).toContain('reporter = $2');
-        expect(sql).toContain('description IS NULL');
-        expect(sql).toContain("created_at > now() - interval '15 minutes'");
-        expect(params).toEqual([this.report.id, 'alice', 'Meryn did not trigger']);
-    });
-
-    it('ignores an empty description', async function () {
-        await expect(this.service.describe(this.report.id, 'alice', '   ')).resolves.toBe(false);
-        expect(this.db.query).not.toHaveBeenCalled();
-    });
-
     it('deletes expired reports', async function () {
         await this.service.deleteExpired();
 

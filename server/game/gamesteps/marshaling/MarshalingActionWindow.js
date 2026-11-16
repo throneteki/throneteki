@@ -28,12 +28,15 @@ class MarshalingActionWindow extends ActionWindow {
         if (player === this.marshalingPlayer) {
             return {
                 menuTitle: 'Marshal your cards',
-                buttons: [{ text: 'Done' }],
-                promptTitle: this.title
+                buttons: [{ text: 'Done', endsTurn: true }],
+                promptTitle: 'Your turn to marshal'
             };
         }
 
-        return super.activePrompt();
+        return {
+            ...super.activePrompt(),
+            promptTitle: `${this.marshalingPlayer.name} is marshaling`
+        };
     }
 
     markActionAsTaken(player) {

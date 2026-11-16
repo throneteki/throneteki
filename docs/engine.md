@@ -61,6 +61,10 @@ An event window ([eventwindow.js](../server/game/gamesteps/eventwindow.js),
 4. When Revealed abilities;
 5. forced reactions, then reactions.
 
+If a card leaves play some other way while an event that affects it is still in its interrupt
+windows (killed as a cost while The Stranger is killing it, say), nothing more can interrupt that
+event for that card, and its handler does nothing.
+
 An interrupt that says "would" declares `would: true`; the engine does not read card text for it.
 [wouldInterrupts.spec.js](../test/server/tools/wouldInterrupts.spec.js) checks each declaration
 against the card text.
@@ -296,9 +300,10 @@ and argument snapshot beside the rendered text.
 
 ## Problem reports and scenarios
 
-A problem report is for working out what went wrong. Report Problem asks the player what went wrong
-and saves that with a snapshot of the game; `/cancel-prompt` saves one without a description
-before clearing the prompt. Reports are kept in PostgreSQL for 30 days. The snapshot
+A problem report is for working out what went wrong. Report Problem snapshots the game as soon as
+it is clicked, and the game node holds that snapshot until the player describes the problem; the
+report is only saved with a description, and cancelling discards it. `/cancel-prompt` saves one
+without a description before clearing the prompt. Reports are kept in PostgreSQL for 30 days. The snapshot
 ([ProblemReport.js](../server/game/ProblemReport.js)) holds:
 
 - the description, reporter, how it was made and the game node's version;
