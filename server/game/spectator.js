@@ -37,6 +37,7 @@ class Spectator {
             id: this.id,
             name: this.name,
             cardSize: this.cardSize,
+            hud: this.hud,
             promptDupes: this.promptDupes,
             hideInterrupts: this.hideInterrupts,
             hideReactions: this.hideReactions,

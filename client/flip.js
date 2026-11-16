@@ -45,14 +45,28 @@ const overlaysOf = (el) => [
 const bodyOf = (el) => surfaceOf(el)?.querySelector(':scope > [data-card-body]');
 const imageOf = (body) => body?.querySelector(':scope > [data-card-face] > img');
 
+// Cards listed in an open popup are left to the board, which moves them to and from their pile or the card
+// they lie under. The one exception is a card just dropped into a popup: it lands in the popup, where it was put.
+let landInPopup = null;
+
+export const setLandInPopup = (uuid) => {
+    landInPopup = uuid;
+};
+
 export const measureCards = (root = document) => {
     const cards = new Map();
     root.querySelectorAll('[data-flip]').forEach((el) => {
+        const inPopup = !!el.closest('[data-popup]');
+        const landsHere = landInPopup === el.dataset.flip;
+        if (inPopup ? !landsHere : landsHere && cards.get(el.dataset.flip)?.inPopup) {
+            return;
+        }
         const rect = rectOf(el);
         const slotEl = el.querySelector('[data-flip-slot]') || el;
         const slot = rectOf(slotEl);
         cards.set(el.dataset.flip, {
             el,
+            inPopup,
             ...rect,
             slot,
             slotEl,
@@ -686,6 +700,22 @@ const bodyFor = (src, like) => {
     return holder;
 };
 
+// A card back shaped like the given card body
+export const cardBackLike = (like) => bodyFor(cardImageSrc('cardback'), like);
+
+// How long until the cards in an element have finished turning over and moving
+export const flipRemaining = (el) =>
+    Math.max(
+        0,
+        ...el
+            .getAnimations({ subtree: true })
+            .filter((animation) => animation.id === 'flip')
+            .map(
+                (animation) =>
+                    animation.effect.getComputedTiming().endTime - (animation.currentTime ?? 0)
+            )
+    );
+
 // A card that is leaving turns to the face it will show where it is going
 const turnAway = (el, { to, delay, duration }) => {
     const outgoing = bodyOf(el);
@@ -955,6 +985,9 @@ export const playPendingFlip = (root = document) => {
     });
 
     const after = measureCards(root);
+    if (landInPopup && after.has(landInPopup)) {
+        landInPopup = null;
+    }
     for (const uuid of [ignored, ...flying]) {
         before.delete(uuid);
         after.delete(uuid);

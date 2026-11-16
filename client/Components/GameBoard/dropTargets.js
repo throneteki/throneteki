@@ -65,7 +65,17 @@ export const validTargets = {
         'out of game',
         'shadows'
     ],
-    shadows: ['dead pile', 'discard pile', 'draw deck', 'hand', 'out of game', 'play area']
+    shadows: ['dead pile', 'discard pile', 'draw deck', 'hand', 'out of game', 'play area'],
+    underneath: [
+        'hand',
+        'play area',
+        'draw deck',
+        'discard pile',
+        'dead pile',
+        'out of game',
+        'agenda',
+        'shadows'
+    ]
 };
 
 const drawDeckTypes = ['attachment', 'character', 'event', 'location'];
@@ -88,6 +98,11 @@ const allowedTypes = {
 export const needsChoice = (from, to, type) =>
     type === 'plot' && to === 'revealed plots' && ['plot deck', 'revealed plots'].includes(from);
 
+export const canPlaceUnder = (from, type) => !!from && drawDeckTypes.includes(type);
+
 export const canDrop = (from, to, type) =>
+    to === 'underneath' ? canPlaceUnder(from, type) : canDropInArea(from, to, type);
+
+const canDropInArea = (from, to, type) =>
     !!validTargets[from]?.includes(to) &&
     (type === undefined || type === null || (allowedTypes[to]?.includes(type) ?? true));

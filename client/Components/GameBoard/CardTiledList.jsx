@@ -16,7 +16,8 @@ const CardTiledList = ({
     source,
     title,
     titleCount,
-    showCards
+    showCards,
+    flip = false
 }) => {
     // Returns a card list, or a single "fake card" to ensure grid size is properly reflected
     const cardList = useMemo(() => {
@@ -31,13 +32,14 @@ const CardTiledList = ({
                         onClick={onCardClick}
                         orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}
                         source={source}
+                        flip={flip}
                     />
                 );
             })
         ) : (
             <div className={cardBoxClass()}></div>
         );
-    }, [cards, disableHover, onCardClick, onMenuItemClick, showCards, source]);
+    }, [cards, disableHover, onCardClick, showCards, source, flip]);
 
     const titleText = title && cards ? `${title} (${titleCount || cards.length})` : title;
 

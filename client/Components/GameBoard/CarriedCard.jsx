@@ -2,14 +2,85 @@ import React, { useLayoutEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import CardImage from '../Images/CardImage';
 import { elevation } from '../../tableFeel';
+import { useUnderTarget } from './dragStore';
+import { motionOff } from '../../flip';
+
+const tuckTime = 160;
+
+const overlayHost = () =>
+    document.querySelector('[data-overlay-container="true"]') || document.body;
+
+const stackOf = (uuid) => document.querySelector(`[data-flip="${CSS.escape(uuid)}"]`);
+const stripOf = (stack) =>
+    [...stack.children].find((child) => child.querySelector(':scope > .underneath'));
+
+// One card width at the board's card size, in pixels
+const cardUnit = () => {
+    const root = document.documentElement;
+    const scale = parseFloat(getComputedStyle(root).getPropertyValue('--card-scale')) || 1;
+    return scale * (parseFloat(getComputedStyle(root).fontSize) || 16);
+};
+
+// Where a card placed underneath this stack will lie. The cards underneath are drawn after the card and its
+// attachments, peeking out below the last of them, each a sixth of a card further right than the one before.
+export const underneathSpot = (stack, carriedUuid) => {
+    const unit = cardUnit();
+    const width = 4 * unit;
+    const height = 5.6 * unit;
+    const panel = stripOf(stack)?.querySelector(':scope > .underneath');
+    if (panel) {
+        const count = [...panel.querySelectorAll(':scope > [data-flip]')].filter(
+            (card) => card.dataset.flip !== carriedUuid
+        ).length;
+        const rect = panel.getBoundingClientRect();
+        return { left: rect.left + (count * width) / 6, top: rect.top, width, height };
+    }
+
+    const layers = [...stack.children].filter((child) =>
+        child.matches('[data-flip-slot], .card-attachment')
+    );
+    const last = layers[layers.length - 1] ?? stack;
+    return {
+        left: stack.getBoundingClientRect().left,
+        top: last.getBoundingClientRect().bottom - 5.04 * unit,
+        width,
+        height
+    };
+};
+
+// The card with its duplicates and attachments is drawn again above the carried card, so the carried card
+// shows tucked beneath it the way it will lie once dropped. The cards already underneath stay on the board,
+// below the carried card, as a new card lies on top of them.
+const coverWith = (stack) => {
+    const rect = stack.getBoundingClientRect();
+    const cover = stack.cloneNode(true);
+    stripOf(cover)?.remove();
+    for (const el of [cover, ...cover.querySelectorAll('*')]) {
+        for (const name of el.getAttributeNames()) {
+            if (name.startsWith('data-flip')) {
+                el.removeAttribute(name);
+            }
+        }
+    }
+    cover.style.cssText += `;position:fixed;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;margin:0;z-index:401;pointer-events:none;filter:drop-shadow(0 6px 10px rgba(0,0,0,0.55))`;
+    overlayHost().append(cover);
+    return cover;
+};
 
 // The card follows the pointer straight from pointer events, so layout changes while dragging cannot offset it
-const CarriedCard = ({ code, orientation, start, grab, rectRef }) => {
+const CarriedCard = ({ uuid: carriedUuid, code, orientation, start, grab, rectRef }) => {
     const ref = useRef(null);
+    const pointer = useRef(start);
+    const tucked = useRef(false);
+    const under = useUnderTarget();
 
     useLayoutEffect(() => {
         const element = ref.current;
         const place = (x, y) => {
+            pointer.current = { x, y };
+            if (tucked.current) {
+                return;
+            }
             const left = x - grab.x;
             const top = y - grab.y;
             element.style.translate = `${left}px ${top}px`;
@@ -22,6 +93,46 @@ const CarriedCard = ({ code, orientation, start, grab, rectRef }) => {
         return () => window.removeEventListener('pointermove', onMove);
     }, [grab, rectRef, start]);
 
+    useLayoutEffect(() => {
+        const element = ref.current;
+        const stack = under && stackOf(under);
+        if (!stack) {
+            return;
+        }
+
+        const spot = underneathSpot(stack, carriedUuid);
+        const cover = coverWith(stack);
+        const glide = motionOff()
+            ? 'none'
+            : `translate ${tuckTime}ms ease-out, scale ${tuckTime}ms ease-out`;
+        // Scaled about its centre, so the card is moved to where its centre will be
+        const fit = spot.width / grab.width;
+        const left = spot.left + (spot.width - grab.width) / 2;
+        const top = spot.top + (spot.height - grab.height) / 2;
+        element.style.transition = glide;
+        element.style.translate = `${left}px ${top}px`;
+        element.style.scale = String(fit);
+        rectRef.current = {
+            left: spot.left,
+            top: spot.top,
+            width: spot.width,
+            height: spot.height
+        };
+        tucked.current = true;
+
+        return () => {
+            cover.remove();
+            tucked.current = false;
+            const back = { x: pointer.current.x - grab.x, y: pointer.current.y - grab.y };
+            element.style.translate = `${back.x}px ${back.y}px`;
+            element.style.scale = String(elevation.carried);
+            rectRef.current = { left: back.x, top: back.y, width: grab.width, height: grab.height };
+            setTimeout(() => {
+                element.style.transition = '';
+            }, tuckTime);
+        };
+    }, [under, grab, rectRef, carriedUuid]);
+
     return createPortal(
         <div
             ref={ref}
@@ -29,13 +140,36 @@ const CarriedCard = ({ code, orientation, start, grab, rectRef }) => {
             className='fixed left-0 top-0 z-[400] pointer-events-none'
             style={{ scale: String(elevation.carried) }}
         >
-            <CardImage
-                code={code}
-                orientation={orientation}
-                className='shadow-[0_14px_22px_rgba(0,0,0,0.5)]'
-            />
+            {/* Turned face down while it shows where it would go under a card, as it will lie there */}
+            <div
+                className='relative'
+                style={{
+                    transformStyle: 'preserve-3d',
+                    transform: `perspective(700px) rotateY(${under ? 180 : 0}deg)`,
+                    transition: motionOff() ? 'none' : `transform ${tuckTime}ms ease-in-out`
+                }}
+            >
+                <div data-carried-face='' style={{ backfaceVisibility: 'hidden' }}>
+                    <CardImage
+                        code={code}
+                        orientation={orientation}
+                        className='shadow-[0_14px_22px_rgba(0,0,0,0.5)]'
+                    />
+                </div>
+                <div
+                    data-carried-back=''
+                    className='absolute inset-0'
+                    style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+                >
+                    <CardImage
+                        code='cardback'
+                        orientation={orientation}
+                        className='shadow-[0_14px_22px_rgba(0,0,0,0.5)]'
+                    />
+                </div>
+            </div>
         </div>,
-        document.querySelector('[data-overlay-container="true"]') || document.body
+        overlayHost()
     );
 };
 

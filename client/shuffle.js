@@ -1,4 +1,4 @@
-import { drawHoldRemaining, flipConfig, motionOff } from './flip';
+import { cardBackLike, drawHoldRemaining, flipConfig, flipRemaining, motionOff } from './flip';
 
 export const shuffleConfig = { duration: 800, cards: 2, grow: 1.06, shake: 3 };
 
@@ -35,7 +35,8 @@ export const turnFrames = (index) => {
     ];
 };
 
-// The cards that turn look like the cards under the top one, so they are copied from the pile itself
+// The cards that turn are the size of the card under the top one. They are always card backs: a card that
+// was shown while the deck was searched may still be turning face down when the shuffle starts.
 const cardUnderTop = (stack) =>
     stack.querySelector(':scope > :not([data-pile-top]) [data-card-body]') ||
     stack.querySelector('[data-pile-top] [data-card-body]');
@@ -43,12 +44,18 @@ const cardUnderTop = (stack) =>
 export const playShuffle = (deck, delay = 0) => {
     const stack = deck?.querySelector('[data-pile-stack]');
     const top = stack?.querySelector(':scope > [data-pile-top]');
-    const body = stack && cardUnderTop(stack);
+    const under = stack && cardUnderTop(stack);
+    const body = under && cardBackLike(under);
     if (!top || !body || !deck.offsetWidth || motionOff()) {
         return;
     }
 
-    const options = { duration: shuffleConfig.duration, delay, easing: 'ease-in-out' };
+    // Cards turning face down as the deck is closed finish first, then the deck is shuffled
+    const options = {
+        duration: shuffleConfig.duration,
+        delay: Math.max(delay, flipRemaining(deck)),
+        easing: 'ease-in-out'
+    };
     for (let index = 0; index < shuffleConfig.cards; index++) {
         const card = document.createElement('div');
         card.style.cssText = `position:absolute;left:0;top:0;width:${top.offsetWidth}px;height:${top.offsetHeight}px;pointer-events:none;border-radius:calc(var(--card-scale, 1) * 0.25rem)`;

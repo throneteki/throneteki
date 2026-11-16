@@ -21,10 +21,28 @@ export const hudStore = {
     }
 };
 
+// A change made in this game first, then what was saved for this game (kept by the server, so it survives a
+// refresh), then the profile
+const gameHudOf = (state) => {
+    const game = state.lobby.currentGame;
+    const name = state.auth.user?.username;
+    if (!game || !name) {
+        return undefined;
+    }
+    return (
+        game.players?.[name]?.hud ??
+        game.spectators?.find((spectator) => spectator.name === name)?.hud
+    );
+};
+
 export const useHud = () => {
     const settings = useSelector((state) => state.auth.user?.settings);
+    const gameHud = useSelector(gameHudOf);
     const current = useSyncExternalStore(subscribe, () => override);
-    const saved = useMemo(() => normalizeHud(settings), [settings]);
+    const saved = useMemo(
+        () => normalizeHud(gameHud ? { ...settings, hud: gameHud } : settings),
+        [settings, gameHud]
+    );
 
     return current || saved;
 };

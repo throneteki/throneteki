@@ -1,19 +1,32 @@
 import DiscardCard from '../GameActions/DiscardCard.js';
 import { OpenInformationLocations } from '../CardVisibility.js';
 import RevealPlots from '../gamesteps/revealplots.js';
+import GameActions from '../GameActions/index.js';
+
+const DrawDeckCardTypes = ['attachment', 'character', 'event', 'location'];
 
 class DropCommand {
-    constructor(game, player, card, targetLocation) {
+    constructor(game, player, card, targetLocation, parentCard) {
         this.game = game;
         this.player = player;
         this.card = card;
         this.originalLocation = card.location;
         this.targetLocation = targetLocation;
+        this.parentCard = parentCard;
     }
 
     execute() {
+        // An attachment waiting for its target is already on its way into play
+        if (this.game.pendingAttachments?.has(this.card)) {
+            return false;
+        }
+
         if (this.isPlotPlacement()) {
             return this.promptPlotPlacement();
+        }
+
+        if (this.targetLocation === 'underneath') {
+            return this.placeUnderneath();
         }
 
         if (this.originalLocation === this.targetLocation || this.card.controller !== this.player) {
@@ -99,6 +112,45 @@ class DropCommand {
         return false;
     }
 
+    canPlaceUnderneath() {
+        const parent = this.parentCard;
+        return (
+            !!parent &&
+            parent !== this.card &&
+            parent.parent !== this.card &&
+            parent.location === 'play area' &&
+            this.card.controller === this.player &&
+            DrawDeckCardTypes.includes(this.card.getType()) &&
+            !parent.underneath.includes(this.card)
+        );
+    }
+
+    placeUnderneath() {
+        if (!this.canPlaceUnderneath()) {
+            return false;
+        }
+
+        const visible = OpenInformationLocations.includes(this.originalLocation);
+        this.game.resolveGameAction(
+            GameActions.placeCardUnderneath({
+                card: this.card,
+                parentCard: this.parentCard,
+                player: this.player,
+                facedown: true
+            })
+        );
+        this.game.addAlert(
+            'danger',
+            '{0} has placed {1} from their {2} facedown underneath {3}',
+            this.player,
+            visible ? this.card : 'a card',
+            this.originalLocation,
+            this.parentCard
+        );
+
+        return true;
+    }
+
     record(from, to) {
         this.game.manualActions.record(this.player, 'drop', {
             cards: [this.card],
@@ -108,7 +160,6 @@ class DropCommand {
 
     isValidDropCombination() {
         const PlotCardTypes = ['plot'];
-        const DrawDeckCardTypes = ['attachment', 'character', 'event', 'location'];
         const AllowedTypesForPile = {
             'active plot': PlotCardTypes,
             'being played': ['event'],

@@ -123,7 +123,7 @@ const PlayerBoard = ({
             const waiting =
                 pendingAttachment && row.rowType === 'character' ? (
                     <div key={pendingAttachment.uuid} className='flex flex-col'>
-                        <Card card={pendingAttachment} source='play area' flip />
+                        <Card card={pendingAttachment} source='play area' flip dragDisabled />
                     </div>
                 ) : null;
             return [...cards, ...(waiting ? [waiting] : []), ...(slot ? [slot] : [])];

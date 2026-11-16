@@ -14,6 +14,7 @@ import {
     sendGameChatMessage,
     sendLeaveGameMessage,
     sendShowDrawDeckMessage,
+    sendHudChangeMessage,
     sendShuffleDeckMessage,
     sendToggleDupesMessage,
     sendToggleKeywordSettingMessage,
@@ -43,6 +44,7 @@ const GameMessage = Object.freeze({
     ToggleHideResponses: 'toggleHideResponses',
     CardClicked: 'cardClicked',
     ShowDrawDeck: 'showDrawDeck',
+    HudChange: 'hudChange',
     ShuffleDeck: 'shuffleDeck',
     DragDrop: 'drop',
     Chat: 'chat',
@@ -162,6 +164,8 @@ const gameMiddleware = (store) => {
             );
         } else if (sendShowDrawDeckMessage.match(action)) {
             socket.emit('game', GameMessage.ShowDrawDeck, action.payload.visible);
+        } else if (sendHudChangeMessage.match(action)) {
+            socket.emit('game', GameMessage.HudChange, action.payload);
         } else if (sendShuffleDeckMessage.match(action)) {
             socket.emit('game', GameMessage.ShuffleDeck, action.payload);
         } else if (sendDragDropMessage.match(action)) {
@@ -170,7 +174,8 @@ const gameMiddleware = (store) => {
                 GameMessage.DragDrop,
                 action.payload.uuid,
                 action.payload.source,
-                action.payload.target
+                action.payload.target,
+                action.payload.parentUuid
             );
         } else if (sendGameChatMessage.match(action)) {
             socket.emit('game', GameMessage.Chat, action.payload);

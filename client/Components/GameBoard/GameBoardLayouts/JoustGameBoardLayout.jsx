@@ -55,13 +55,13 @@ const JoustGameBoardLayout = ({
                                 : undefined
                         }
                         onShuffleClick={isMe ? () => dispatch(sendShuffleDeckMessage()) : undefined}
-                        discardPile={player.cardPiles.discardPile}
-                        deadPile={player.cardPiles.deadPile}
-                        drawDeck={player.cardPiles.drawDeck}
+                        discardPile={withoutPendingAttachment(player.cardPiles.discardPile)}
+                        deadPile={withoutPendingAttachment(player.cardPiles.deadPile)}
+                        drawDeck={withoutPendingAttachment(player.cardPiles.drawDeck)}
                         onCardClick={onCardClick}
-                        outOfGamePile={player.cardPiles.outOfGamePile}
+                        outOfGamePile={withoutPendingAttachment(player.cardPiles.outOfGamePile)}
                         revealTopCard={player.revealTopCard}
-                        shadows={player.cardPiles.shadows}
+                        shadows={withoutPendingAttachment(player.cardPiles.shadows)}
                         spectating={!thisPlayer}
                         title={player.title}
                         side={side}
@@ -76,7 +76,7 @@ const JoustGameBoardLayout = ({
                         <PlayerBoard
                             isDroppable={isMe}
                             cardsInPlay={player.cardPiles.cardsInPlay}
-                            pendingAttachment={findPendingAttachment(player.cardPiles.hand)}
+                            pendingAttachment={findPendingAttachment(player.cardPiles)}
                             leftBehind={findLeftBehind(player.cardPiles)}
                             onCardClick={onCardClick}
                             rowDirection={side === 'bottom' ? 'default' : 'reverse'}

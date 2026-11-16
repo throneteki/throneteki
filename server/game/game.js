@@ -1,4 +1,5 @@
 import DelayedEffect from './DelayedEffect.js';
+import { sanitizeHud } from '../hudSettings.js';
 import EventEmitter from 'events';
 import AttachmentValidityCheck from './AttachmentValidityCheck.js';
 import StateChecks from './StateChecks.js';
@@ -770,7 +771,7 @@ class Game extends EventEmitter {
         }
     }
 
-    drop(playerName, cardId, source, target) {
+    drop(playerName, cardId, source, target, parentId) {
         let player = this.getPlayerByName(playerName);
         let card = this.allCards.find((card) => card.uuid === cardId);
 
@@ -782,7 +783,8 @@ class Game extends EventEmitter {
             return;
         }
 
-        let command = new DropCommand(this, player, card, target);
+        const parentCard = parentId && this.allCards.find((card) => card.uuid === parentId);
+        let command = new DropCommand(this, player, card, target, parentCard);
         if (command.execute()) {
             this.manualActions.record(player, 'drop', {
                 cards: [card],
@@ -1133,6 +1135,16 @@ class Game extends EventEmitter {
         }
 
         player.cardSize = value;
+    }
+
+    // Board size settings changed during a game last for that game, so they survive a refresh
+    hudChange(playerName, hud) {
+        const player = this.getPlayersAndSpectators()[playerName];
+        if (!player) {
+            return;
+        }
+
+        player.hud = sanitizeHud(hud);
     }
 
     toggleKeywordSetting(playerName, settingName, toggle) {

@@ -1354,6 +1354,7 @@ class Player extends Spectator {
             id: this.id,
             name: this.name,
             cardSize: this.cardSize,
+            hud: this.hud,
             promptDupes: this.promptDupes,
             promptedActionWindows: this.promptedActionWindows,
             hideInterrupts: this.hideInterrupts,

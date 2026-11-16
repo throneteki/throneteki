@@ -1,7 +1,6 @@
 import { createPortal } from 'react-dom';
 import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import classNames from 'classnames';
 import LoadingSpinner from '../Site/LoadingSpinner';
 
 import GameChat from './GameChat';
@@ -14,20 +13,15 @@ import {
     sendCardMenuItemClickedMessage,
     sendDragDropMessage,
     sendGameChatMessage,
+    sendHudChangeMessage,
     sendToggleDupesMessage,
     sendToggleKeywordSettingMessage,
     sendTogglePromptedActionWindowMessage,
     sendToggleHideResponsesMessage
 } from '../../redux/reducers/game';
 
-import {
-    DndContext,
-    MouseSensor,
-    TouchSensor,
-    pointerWithin,
-    rectIntersection,
-    useSensor
-} from '@dnd-kit/core';
+import { DndContext, MouseSensor, pointerWithin, rectIntersection, useSensor } from '@dnd-kit/core';
+import { HoldTouchSensor, holdToDrag } from './HoldTouchSensor';
 import CardImage from '../Images/CardImage';
 import CarriedCard from './CarriedCard';
 import ErrorMessage from '../Site/ErrorMessage';
@@ -39,14 +33,15 @@ import { useHudScale } from './useHudScale';
 import { hudStore, useHud } from '../../hudStore';
 import { MotionConfig } from 'framer-motion';
 import { useMotionEnabled } from '../../motion';
-import { holdFlip, playPendingFlip } from '../../flip';
+import { holdFlip, playPendingFlip, setLandInPopup } from '../../flip';
 import { dragStore, useDragGhost, useDragVersion } from './dragStore';
 import { playShuffles } from '../../shuffle';
 import { elevation } from '../../tableFeel';
 import { forgetBoard, showBoard } from '../../counterMemory';
 import { useLinger } from './useLinger';
 import DropZoneTracker from './DropZoneTracker';
-import { canDrop, needsChoice } from './dropTargets';
+import { canDrop, canPlaceUnder, needsChoice } from './dropTargets';
+import { cardInPlayAt, createUnderHold } from './underHold';
 import { useImagePreload } from './useImagePreload';
 
 const placeholderPlayer = {
@@ -157,15 +152,7 @@ const GameBoard = () => {
         }
     });
 
-    // TODO: Create a custom touch sensor to allow for distance, delay & tolerance to work together (as TouchSensor does not support all 3 used together)
-    // Distance is required to ensure press + hold shows the card hover
-    // Delay is required to ensure a swipe gesture will scroll, such as scrolling down the draw deck window
-    // Tolerance is a nice-to-have, but can probably be 0
-    const touchSensor = useSensor(TouchSensor, {
-        activationConstraint: {
-            distance: 10
-        }
-    });
+    const touchSensor = useSensor(HoldTouchSensor, { activationConstraint: holdToDrag });
     const sensors = useMemo(() => [mouseSensor, touchSensor], [mouseSensor, touchSensor]);
 
     const onSettingsClick = useCallback(() => setShowModal((show) => !show), []);
@@ -173,6 +160,15 @@ const GameBoard = () => {
     const onChatClose = useCallback(() => setShowGameChat(false), []);
     const onSendChat = useCallback((message) => dispatch(sendGameChatMessage(message)), [dispatch]);
     const onModalClose = useCallback(() => setShowModal(false), []);
+    // Shown straight away, and kept by the server for this game so a refresh does not lose it
+    const onHudChange = useCallback(
+        (next) => {
+            hudStore.set(next);
+            dispatch(sendHudChangeMessage(next));
+        },
+        [dispatch]
+    );
+    useEffect(() => () => hudStore.reset(), []);
 
     const onDragStart = useCallback((event) => {
         const data = event.active.data.current;
@@ -202,22 +198,76 @@ const GameBoard = () => {
             }
         };
         setDraggingDetail(draggedRef.current);
+        setLandInPopup(null);
         dragStore.start(data.card.uuid, data.source, data.card.type);
         document.documentElement.classList.add('card-dragging');
     }, []);
 
+    // The cursor shows a refused drop over an area the card cannot go in, unless it is armed to go under a card there
+    const overRef = useRef(null);
+    const showDropCursor = useCallback(() => {
+        const detail = draggedRef.current;
+        const over = overRef.current;
+        document.documentElement.classList.toggle(
+            'card-drop-refused',
+            !!detail &&
+                !!over &&
+                !dragStore.getUnder() &&
+                over !== detail.source &&
+                !canDrop(detail.source, over, detail.card.type)
+        );
+    }, []);
+
     const onDragOver = useCallback(
-        (event) => dragStore.setOver(event.over?.data.current?.source ?? null),
-        []
+        (event) => {
+            overRef.current = event.over?.data.current?.source ?? null;
+            dragStore.setOver(overRef.current);
+            showDropCursor();
+        },
+        [showDropCursor]
     );
+
+    const underHold = useMemo(
+        () =>
+            createUnderHold({
+                onArm: (uuid) => {
+                    dragStore.setUnder(uuid);
+                    showDropCursor();
+                }
+            }),
+        [showDropCursor]
+    );
+    // Read from the pointer itself: dnd-kit's drag delta also counts the board scrolling under the card
+    useEffect(() => {
+        if (!draggingDetail) {
+            return;
+        }
+        const onPointerMove = (event) => {
+            const detail = draggedRef.current;
+            if (!detail) {
+                return;
+            }
+            const point = { x: event.clientX, y: event.clientY };
+            underHold.track(
+                point,
+                canPlaceUnder(detail.source, detail.card.type)
+                    ? cardInPlayAt(point, detail.card.uuid)
+                    : null
+            );
+        };
+        window.addEventListener('pointermove', onPointerMove);
+        return () => window.removeEventListener('pointermove', onPointerMove);
+    }, [draggingDetail, underHold]);
 
     const finishCarrying = useCallback(() => {
         const detail = draggedRef.current;
         const carried = carriedRectRef.current;
+        const under = dragStore.getUnder();
+        underHold.reset();
         carriedRectRef.current = null;
         draggedRef.current = null;
         setDraggingDetail(null);
-        document.documentElement.classList.remove('card-dragging');
+        document.documentElement.classList.remove('card-dragging', 'card-drop-refused');
 
         if (!detail) {
             return {};
@@ -229,24 +279,55 @@ const GameBoard = () => {
             detail,
             rect,
             rotated,
+            under,
             origin: rect && {
                 rect,
                 source: detail.source,
                 rot: rotated ? 90 : 0,
                 under: detail.under,
-                faceNode: document.querySelector('[data-carried] [data-card-face]')?.cloneNode(true)
+                faceNode: document
+                    .querySelector(
+                        `[data-carried] [${under ? 'data-carried-back' : 'data-carried-face'}] [data-card-face]`
+                    )
+                    ?.cloneNode(true)
             }
         };
-    }, []);
+    }, [underHold]);
 
     const onDragEnd = useCallback(
         (event) => {
-            const { detail, rect, rotated, origin } = finishCarrying(event);
+            const { detail, rect, rotated, under, origin } = finishCarrying(event);
             if (!detail) {
                 return;
             }
 
-            const target = event.over?.data.current?.source;
+            // Held over a card it goes under that card; dropped in the popup of a card's underneath cards, under that
+            // card too, landing in the popup where it was dropped
+            const overData = event.over?.data.current;
+            const popupParent =
+                overData?.source === 'underneath' &&
+                canPlaceUnder(detail.source, detail.card.type) &&
+                overData.parentUuid;
+            const parent = under || popupParent;
+            if (parent && rect) {
+                setLandInPopup(under ? null : detail.card.uuid);
+                dragStore.drop(
+                    {
+                        uuid: detail.card.uuid,
+                        code: under ? 'cardback' : detail.card.code || 'cardback',
+                        orientation: rotated ? 'rotated' : detail.orientation,
+                        rect,
+                        target: 'underneath'
+                    },
+                    origin
+                );
+                dispatch(
+                    sendDragDropMessage(detail.card.uuid, detail.source, 'underneath', parent)
+                );
+                return;
+            }
+
+            const target = overData?.source;
             if (
                 !rect ||
                 !target ||
@@ -264,6 +345,7 @@ const GameBoard = () => {
                 return;
             }
 
+            setLandInPopup(overData.popup ? detail.card.uuid : null);
             dragStore.drop(
                 {
                     uuid: detail.card.uuid,
@@ -364,9 +446,7 @@ const GameBoard = () => {
         return <LoadingSpinner label={'Waiting for game to have players or close...'} />;
     }
 
-    const boardClass = classNames('flex h-full overflow-x-hidden hud-text', {
-        'cursor-select': thisPlayer && thisPlayer.selectCard
-    });
+    const boardClass = 'flex h-full overflow-x-hidden hud-text';
 
     let gameBoard = null;
     if (currentGame.gameFormat === 'joust') {
@@ -430,6 +510,7 @@ const GameBoard = () => {
                             {draggingDetail && (
                                 <CarriedCard
                                     key={draggingDetail.card.uuid}
+                                    uuid={draggingDetail.card.uuid}
                                     code={draggingDetail.card.code || 'cardback'}
                                     orientation={
                                         isRotated(draggingDetail.card, draggingDetail.orientation)
@@ -483,7 +564,7 @@ const GameBoard = () => {
                 onHideResponsesToggle={(option, value) =>
                     dispatch(sendToggleHideResponsesMessage(option, value))
                 }
-                onHudChange={hudStore.set.bind(hudStore)}
+                onHudChange={onHudChange}
                 promptDupes={userPlayer.promptDupes}
                 promptedActionWindows={userPlayer.promptedActionWindows}
                 hideInterrupts={userPlayer.hideInterrupts}

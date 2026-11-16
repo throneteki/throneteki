@@ -103,6 +103,48 @@ html.card-dragging * {
     cursor: grabbing !important;
 }
 
+/* The top card of a pile opens the pile when it cannot be chosen itself */
+[data-pile-top] .cursor-not-allowed {
+    cursor: inherit;
+}
+
+/* A long press shows the card, not the browser's menu for its image */
+.card-body img {
+    -webkit-touch-callout: none;
+}
+
+/* Small buttons are easy to hit with a finger, however small they are drawn */
+@media (pointer: coarse) {
+    .tap-target::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: max(100%, 44px);
+        height: max(100%, 44px);
+        translate: -50% -50%;
+    }
+}
+
+/* A carried card held over this card goes underneath it when let go */
+.under-target {
+    animation: under-arm 200ms ease-out;
+}
+@keyframes under-arm {
+    from {
+        opacity: 0;
+    }
+}
+[data-motion='off'] .under-target {
+    animation: none;
+}
+
+/* Over an area the carried card cannot be put in */
+html.card-dragging.card-drop-refused,
+html.card-dragging.card-drop-refused * {
+    cursor: no-drop !important;
+}
+
 /* The card itself: what is lifted, turned over and set down. Its shadow is part of it, so the shadow
    turns with the card, and a deeper one only shows while the card is lifted */
 .card-body {

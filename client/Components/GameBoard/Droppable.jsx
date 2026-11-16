@@ -4,21 +4,40 @@ import classNames from 'classnames';
 import { useDroppable } from '@dnd-kit/core';
 import { ItemTypes } from '../../constants';
 import { useUniqueId } from '@dnd-kit/utilities';
-import { useDragSource, useDragType } from './dragStore';
+import { useDragSource, useDragType, useUnderTarget } from './dragStore';
 import { canDrop as canDropOn } from './dropTargets';
 
 // A pile that stands above the table (rise) has a zone that reaches up to its top, without moving the pile.
 // A zone drawn under the cards (underCards) leaves the tops of piles that stand up into it uncovered.
-const Droppable = ({ className, children, source, rise, underCards = false }) => {
-    const { isOver, active, setNodeRef } = useDroppable({
+// A zone for the cards underneath a card (parentUuid) places the dropped card underneath that card.
+// A card dropped in a zone inside a popup (popup) lands in the popup rather than on the board.
+const Droppable = ({
+    className,
+    children,
+    source,
+    rise,
+    underCards = false,
+    parentUuid,
+    popup = false
+}) => {
+    const {
+        isOver: isOverArea,
+        active,
+        setNodeRef
+    } = useDroppable({
         id: useUniqueId(source),
         data: {
-            source: source
+            source: source,
+            parentUuid,
+            popup
         }
     });
 
     const dragSource = useDragSource();
     const dragType = useDragType();
+    // Armed to go under a card, the card is no longer dropped into the area itself
+    const underTarget = useUnderTarget();
+    const isOver = isOverArea && !underTarget;
 
     const canDrop = useMemo(() => {
         return active && canDropOn(dragSource, source, dragType);

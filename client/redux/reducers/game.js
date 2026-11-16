@@ -53,9 +53,12 @@ const gameSlice = createSlice({
             () => {}
         ),
         sendShowDrawDeckMessage: () => {},
+        sendHudChangeMessage: () => {},
         sendShuffleDeckMessage: () => {},
         sendDragDropMessage: create.preparedReducer(
-            (uuid, source, target) => ({ payload: { uuid, source, target } }),
+            (uuid, source, target, parentUuid) => ({
+                payload: { uuid, source, target, parentUuid }
+            }),
             () => {}
         ),
         sendGameChatMessage: () => {},
@@ -90,6 +93,7 @@ export const {
     sendCardClickedMessage,
     sendButtonClickedMessage,
     sendShowDrawDeckMessage,
+    sendHudChangeMessage,
     sendShuffleDeckMessage,
     sendDragDropMessage,
     sendGameChatMessage,

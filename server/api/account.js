@@ -8,6 +8,7 @@ import logger from '../log.js';
 import { wrapAsync } from '../util.js';
 import { writeFile } from 'fs/promises';
 import ServiceFactory from '../services/ServiceFactory.js';
+import { sanitizeHud } from '../hudSettings.js';
 import {
     accountTokenLimiter,
     loginIpLimiter,
@@ -296,28 +297,6 @@ function sanitizeSettings(settings) {
     }
 
     return result;
-}
-
-function sanitizeHud(hud) {
-    if (!hud || typeof hud !== 'object') {
-        return undefined;
-    }
-
-    let result = {};
-    for (const key of ['cards', 'interface']) {
-        let size = pickString(hud[key], /^(?:small|normal|large|\d{1,2}(?:\.\d{1,2})?)$/);
-        if (size) {
-            result[key] = size;
-        }
-    }
-
-    for (const key of ['auto', 'animations']) {
-        if (typeof hud[key] === 'boolean') {
-            result[key] = hud[key];
-        }
-    }
-
-    return Object.keys(result).length > 0 ? result : undefined;
 }
 
 function sanitizePromptedActionWindows(windows) {

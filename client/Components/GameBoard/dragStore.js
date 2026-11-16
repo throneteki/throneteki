@@ -3,7 +3,15 @@ import { captureCards, setDropOrigin, setFlipIgnored } from '../../flip';
 import { canDrop } from './dropTargets';
 import { cardHoverStore } from '../Images/cardHoverStore';
 
-const idle = { uuid: null, source: null, type: null, over: null, ghost: null, version: 0 };
+const idle = {
+    uuid: null,
+    source: null,
+    type: null,
+    over: null,
+    under: null,
+    ghost: null,
+    version: 0
+};
 const settleTimeout = 1500;
 
 let state = idle;
@@ -24,6 +32,7 @@ export const hiddenUuid = (current) =>
 export const incomingTarget = (current) =>
     current.uuid &&
     current.over &&
+    current.over !== 'underneath' &&
     current.over !== current.source &&
     canDrop(current.source, current.over, current.type)
         ? current.over
@@ -67,6 +76,15 @@ export const dragStore = {
         }
     },
 
+    // Held over a card long enough, the carried card goes underneath that card when it is let go
+    setUnder(under) {
+        if (state.uuid && under !== state.under) {
+            change({ under });
+        }
+    },
+
+    getUnder: () => state.under,
+
     // The card was released somewhere new: hold it there until the server moves it
     drop(ghost, origin) {
         setDropOrigin({ uuid: ghost.uuid, ...origin });
@@ -109,4 +127,7 @@ export const useIsCarried = (uuid) =>
 export const useDragSource = () => useSyncExternalStore(subscribe, () => state.source);
 export const useDragType = () => useSyncExternalStore(subscribe, () => state.type);
 export const useDragGhost = () => useSyncExternalStore(subscribe, () => state.ghost);
+export const useIsUnderTarget = (uuid) =>
+    useSyncExternalStore(subscribe, () => !!uuid && state.under === uuid);
+export const useUnderTarget = () => useSyncExternalStore(subscribe, () => state.under);
 export const useDragVersion = () => useSyncExternalStore(subscribe, () => state.version);

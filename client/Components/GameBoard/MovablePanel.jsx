@@ -7,6 +7,7 @@ import { createPortal } from 'react-dom';
 
 import { motionOff } from '../../flip';
 import { useDragMove } from './useDragMove';
+import { dropPanel, raisePanel } from './panelStack';
 
 const enterDuration = 240;
 const exitDuration = 180;
@@ -63,8 +64,25 @@ const PanelBody = ({
         }
     });
 
+    // The panel last opened or used is drawn above the others
     useLayoutEffect(() => {
         const panel = panelRef.current;
+        if (!panel) {
+            return;
+        }
+        const raise = () => raisePanel(panel);
+        panel.addEventListener('pointerdown', raise, true);
+        return () => {
+            panel.removeEventListener('pointerdown', raise, true);
+            dropPanel(panel);
+        };
+    }, [panelRef]);
+
+    useLayoutEffect(() => {
+        const panel = panelRef.current;
+        if (panel && open) {
+            raisePanel(panel);
+        }
         animation.current?.cancel();
         if (!panel || motionOff()) {
             if (!open) {
@@ -98,17 +116,19 @@ const PanelBody = ({
     );
 
     return createPortal(
-        <div ref={panelRef} className={wrapperClass}>
+        <div ref={panelRef} data-popup='' className={wrapperClass}>
             <div
                 ref={handleRef}
                 className='flex justify-end hud-zoom border-b-1 border-foreground border-transparent bg-primary p-1.5 text-center font-bold text-white opacity-100 h-auto touch-none cursor-grab select-none'
                 onClick={(event) => event.stopPropagation()}
             >
                 <span className='flex-1 text-center'>{title}</span>
-                <span className='cursor-pointer' data-no-drag>
-                    <a onClick={onCloseClick}>
-                        <FontAwesomeIcon icon={faTimes} />
-                    </a>
+                <span
+                    className='relative cursor-pointer tap-target'
+                    data-no-drag
+                    onClick={onCloseClick}
+                >
+                    <FontAwesomeIcon icon={faTimes} />
                 </span>
             </div>
             {children}

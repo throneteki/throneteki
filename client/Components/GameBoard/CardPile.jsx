@@ -180,7 +180,8 @@ const CardPile = ({
             onMenuItemClick: onMenuItemClick,
             source: source,
             numColumns,
-            numRows
+            numRows,
+            flip: true
         };
 
         if (cards && cards.some((card) => card.group)) {
@@ -243,7 +244,7 @@ const CardPile = ({
             >
                 <div className={popupClass} onClick={(event) => event.stopPropagation()}>
                     {retPopupMenu}
-                    <Droppable source={source} className='overflow-auto'>
+                    <Droppable source={source} popup className='overflow-auto'>
                         {cardList}
                     </Droppable>
                 </div>
@@ -280,7 +281,9 @@ const CardPile = ({
         }),
         [orientation, style, rise]
     );
-    const retClassName = classNames('flex w-fit h-fit', className);
+    const retClassName = classNames('flex w-fit h-fit', className, {
+        'cursor-pointer': !disablePopup
+    });
 
     const headerText = title ? title + ' (' + retCardCount + ')' : '';
     const shownTopCard = topCard || (cards ? cards[0] : null);

@@ -34,6 +34,10 @@ class GameCommands {
         return this.game.cardSizeChange(playerName, value);
     }
 
+    hudChange(playerName, hud) {
+        return this.game.hudChange(playerName, hud);
+    }
+
     changeStat(playerName, stat, value) {
         return this.game.changeStat(playerName, stat, value);
     }
@@ -74,8 +78,8 @@ class GameCommands {
         return this.game.getProblemReport(playerName, 'report', description);
     }
 
-    drop(playerName, cardId, source, target) {
-        return this.game.drop(playerName, cardId, source, target);
+    drop(playerName, cardId, source, target, parentId) {
+        return this.game.drop(playerName, cardId, source, target, parentId);
     }
 
     menuButton(playerName, arg, method, promptId) {

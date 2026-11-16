@@ -13,6 +13,7 @@ import { useDraggable } from '@dnd-kit/core';
 import CardCounters from './CardCounters';
 import SquishableCardPanel from './SquishableCardPanel';
 import CardTiledList from './CardTiledList';
+import Droppable from './Droppable';
 import MovablePanel from './MovablePanel';
 
 import { ItemTypes } from '../../constants';
@@ -25,9 +26,10 @@ import { cardBoxClass } from '../../cardScale';
 import { Tooltip } from '@heroui/react';
 import { getActionRequirementReason, isNotableRequirement } from './actionRequirementReasons';
 import { ManualModeContext } from './ManualModeContext';
-import { useIsCarried } from './dragStore';
+import { useIsCarried, useIsUnderTarget } from './dragStore';
+import { holdToDrag } from './HoldTouchSensor';
 import { restingAngle } from '../../tableFeel';
-import { pulseCard } from '../../flip';
+import { motionOff, pulseCard } from '../../flip';
 import { useRenderCount } from '../../perf';
 
 // Opening one card menu closes any other that is open.
@@ -59,8 +61,25 @@ const CardView = ({
     useRenderCount('Card');
     const { attributes, listeners, setNodeRef, isDragging } = drag;
     const isCarried = useIsCarried(card?.uuid);
+    const isUnderTarget = useIsUnderTarget(wrapped && source === 'play area' ? card?.uuid : null);
     const [showUnderneath, setShowUnderneath] = useState(false);
     const cardRef = useRef(null);
+
+    // A card shown or hidden by tapping it turns over, rather than its face simply changing
+    const wasForcedFaceup = useRef(forceFaceup);
+    useLayoutEffect(() => {
+        if (wasForcedFaceup.current === forceFaceup) {
+            return;
+        }
+        wasForcedFaceup.current = forceFaceup;
+        const body = cardRef.current?.querySelector('[data-card-body]');
+        if (body && !motionOff()) {
+            body.animate(
+                [{ transform: 'perspective(700px) rotateY(90deg)' }, { transform: 'none' }],
+                { duration: 180, easing: 'ease-out' }
+            );
+        }
+    }, [forceFaceup]);
     const kneeled = !!card.kneeled;
     const wasKneeled = useRef(kneeled);
     useLayoutEffect(() => {
@@ -273,7 +292,7 @@ const CardView = ({
                 type='button'
                 data-card-overlay=''
                 title='Cards underneath'
-                className='pointer-events-auto absolute bottom-1 right-1 z-[230] card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[var(--badge-size)] h-[var(--badge-size)] px-1 text-white bg-black/80 font-bold text-center rounded-md border-1'
+                className='pointer-events-auto tap-target absolute bottom-1 right-1 z-[230] card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[var(--badge-size)] h-[var(--badge-size)] px-1 text-white bg-black/80 font-bold text-center rounded-md border-1'
                 onClick={(event) => {
                     event.stopPropagation();
                     setShowUnderneath(!showUnderneath);
@@ -308,14 +327,21 @@ const CardView = ({
                     className='flex flex-col box-content border-1 border-default-200 bg-black/75 rounded-b-md overflow-hidden'
                     onClick={(event) => event.stopPropagation()}
                 >
-                    <CardTiledList
-                        cards={cards}
-                        numColumns={Math.min(cards.length, 5)}
-                        numRows={1.2}
-                        onCardClick={onClick}
-                        onMenuItemClick={onMenuItemClick}
+                    <Droppable
                         source='underneath'
-                    />
+                        parentUuid={card.uuid}
+                        popup
+                        className='overflow-auto'
+                    >
+                        <CardTiledList
+                            cards={cards}
+                            numColumns={Math.min(cards.length, 5)}
+                            numRows={1.2}
+                            onCardClick={onClick}
+                            source='underneath'
+                            flip
+                        />
+                    </Droppable>
                 </div>
             </MovablePanel>
         );
@@ -410,8 +436,8 @@ const CardView = ({
     const { handlers: hoverHandlers, touchActive } = useCardHoverHandlers({
         code: card.code,
         notes: availabilityNotes,
-        isDisabled: !!disableHover || isDragging || showMenu,
-        touchDelay: 250
+        isDisabled: !!disableHover || isDragging,
+        touchDelay: holdToDrag.hold
     });
 
     // Handles the rotating of knelt or horizontally placed vertical cards (eg. dead pile)
@@ -425,9 +451,9 @@ const CardView = ({
             return <div />;
         }
 
-        const isInteractive = card.selectable || card.canPlay;
+        const isInteractive = card.selectable || card.selected || card.canPlay;
         const cardClassName = classNames(
-            'relative pointer-events-auto touch-none card-turn',
+            'relative pointer-events-auto touch-manipulation card-turn',
             cardBoxClass(isRotated ? 'rotated' : orientation),
             getHighlightClass(),
             {
@@ -437,6 +463,8 @@ const CardView = ({
                 'cursor-grabbing': isDragging,
                 'cursor-grab': !isDragging && !!listeners,
                 'cursor-pointer': !isDragging && !listeners && isInteractive,
+                'cursor-not-allowed':
+                    !isDragging && !listeners && !isInteractive && card.unselectable,
                 'select-none': touchActive
             }
         );
@@ -481,6 +509,17 @@ const CardView = ({
                 </div>
                 {!hideTokens && (
                     <CardCounters cardUuid={card.uuid} counters={getCountersForCard(card)} />
+                )}
+                {isUnderTarget && (
+                    <div
+                        data-card-overlay=''
+                        className='under-target pointer-events-none absolute inset-0 z-[235] flex items-end justify-center'
+                    >
+                        <div className='absolute inset-0 rounded-md bg-success-500 opacity-50' />
+                        <span className='relative mb-1 rounded-md bg-black/40 px-1 py-0.5 text-center text-xs leading-tight'>
+                            Place underneath
+                        </span>
+                    </div>
                 )}
                 {getCardOrder()}
                 {getUnderneathBadge()}
