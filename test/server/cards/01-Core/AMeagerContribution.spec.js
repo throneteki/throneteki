@@ -11,4 +11,11 @@ describe('A Meager Contribution', function () {
         expect(this.player2Object.gold).toBe(4);
         expect(this.player2).isReadyToTakeAction();
     });
+
+    it('names the opponent in the game log', function () {
+        expect(this.game.getPlainTextLog()).toContain(
+            "player1 plays A Meager Contribution to move 1 gold from player2's gold pool to their own"
+        );
+        expect(this.player2).isReadyToTakeAction();
+    });
 });

@@ -17,7 +17,8 @@ class HarrenTheBlack extends DrawCard {
         this.persistentEffect({
             targetController: 'opponent',
             effect: ability.effects.cannotMarshal(
-                (card) => card.getType() === 'location' && hasCopyInDiscard(card)
+                (card, context, player) =>
+                    card.getType() === 'location' && hasCopyInDiscard(card, player)
             )
         });
         this.forcedReaction({
@@ -37,8 +38,8 @@ class HarrenTheBlack extends DrawCard {
     }
 }
 
-function hasCopyInDiscard(card) {
-    return card.controller.discardPile.some(
+function hasCopyInDiscard(card, player) {
+    return player.discardPile.some(
         (discardedCard) => card !== discardedCard && card.isCopyOf(discardedCard)
     );
 }

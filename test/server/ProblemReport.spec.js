@@ -112,6 +112,56 @@ describe('problem reports', function () {
     });
 });
 
+describe('problem report effects', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                faction: 'martell',
+                inPlay: ['Starfall', 'Tumblestone Knight', 'Septa Mordane', 'Sansa Stark (WotN)']
+            },
+            player2: { inPlay: ['Burned Men'] }
+        });
+        this.player1.clickPrompt('Military');
+        this.player1.clickCard(this.tumblestoneKnight);
+        this.player1.clickPrompt('Done');
+        this.player1.clickCard(this.starfall);
+        this.player1.clickCard(this.burnedMen);
+        this.player1.clickPrompt('Military');
+        this.report = this.game.getProblemReport('player1');
+        this.effectsFrom = (card) =>
+            this.report.effects.filter((effect) => effect.source?.id === card.uuid);
+    });
+
+    it('records persistent effects with their type, source and targets', function () {
+        expect(this.effectsFrom(this.septaMordane)).toContainEqual(
+            expect.objectContaining({
+                type: 'modifyStrength',
+                source: { id: this.septaMordane.uuid, name: 'Septa Mordane' },
+                sourceController: 'player1',
+                duration: 'persistent',
+                active: true,
+                conditional: true,
+                targets: [{ card: this.septaMordane.uuid, name: 'Septa Mordane' }]
+            })
+        );
+        expect(this.player2).isReadyToTakeAction();
+    });
+
+    it('records lasting effects and how long they last', function () {
+        expect(this.effectsFrom(this.starfall)).toContainEqual(
+            expect.objectContaining({
+                type: 'removeIcon',
+                duration: 'untilEndOfPhase',
+                targets: [{ card: this.burnedMen.uuid, name: 'Burned Men' }]
+            })
+        );
+        expect(this.report.delayedEffects).toEqual([]);
+        expect(() => JSON.stringify(this.report)).not.toThrow();
+        expect(this.player2).isReadyToTakeAction();
+    });
+});
+
 describe('problem report ability log', function () {
     beforeEach(function () {
         this.setupTest({

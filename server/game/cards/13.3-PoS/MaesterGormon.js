@@ -55,7 +55,7 @@ function hasMarshalledFromDeck(enterPlayTracker, player) {
     return enterPlayTracker.events.some(
         (event) =>
             event.originalLocation === 'draw deck' &&
-            event.card.controller === player &&
+            enterPlayTracker.controllerOnEntry(event) === player &&
             !event.card.isFaction('tyrell')
     );
 }

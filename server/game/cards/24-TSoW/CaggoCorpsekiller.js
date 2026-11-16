@@ -17,9 +17,7 @@ class CaggoCorpsekiller extends DrawCard {
                 args: {
                     card: (context) => context.event.card,
                     targetLocation: (context) =>
-                        context.event.location === 'shadows'
-                            ? 'shadow area'
-                            : context.event.location
+                        context.event.name === 'onCardPutIntoShadows' ? 'shadow area' : 'hand'
                 }
             },
             gameAction: GameActions.replaceEvent((context) => ({

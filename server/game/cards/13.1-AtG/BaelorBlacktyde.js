@@ -6,13 +6,15 @@ class BaelorBlacktyde extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'opponent',
-            effect: ability.effects.cannotPlay((card) => hasCopyInDiscard(card))
+            effect: ability.effects.cannotPlay((card, context, player) =>
+                hasCopyInDiscard(card, player)
+            )
         });
     }
 }
 
-function hasCopyInDiscard(card) {
-    return card.controller.discardPile.some(
+function hasCopyInDiscard(card, player) {
+    return player.discardPile.some(
         (discardedCard) => card !== discardedCard && card.isCopyOf(discardedCard)
     );
 }

@@ -65,3 +65,60 @@ describe('Strained Reserves', function () {
         expect(this.player2).isReadyToTakeAction();
     });
 });
+
+describe("Strained Reserves with a card from an opponent's discard pile", function () {
+    function setup(context, player1Hand) {
+        context.setupTest({
+            phase: 'marshal',
+            player1: {
+                faction: 'greyjoy',
+                plot: 'Strained Reserves (MaV)',
+                gold: 10,
+                hand: player1Hand,
+                inPlay: ["Euron Crow's Eye (Core)"]
+            },
+            player2: {
+                gold: 10,
+                hand: ['Bastard in Hiding', 'Put to the Torch', 'Hedge Knight'],
+                inPlay: ['Ser Jaime Lannister (Core)'],
+                drawDeck: ['The Arbor']
+            }
+        });
+        for (const card of player1Hand) {
+            context.player1.clickCard(context.player1.findCardByName(card, 'hand'));
+        }
+        context.player1.clickPrompt('Done');
+        context.player2.clickCard(context.bastardInHiding);
+        context.player2.clickPrompt('Done');
+        context.unopposedChallenge(context.player1, 'Power', context.euronCrowsEye);
+        context.theArbor = context.player2.findCardByName('The Arbor', 'discard pile');
+    }
+
+    it('counts against the player who puts it into play, so they cannot exceed their limit', function () {
+        setup(this, ['Tumblestone Knight', 'Winterfell Steward']);
+
+        expect(this.player1).not.toAllowAbilityTrigger(this.euronCrowsEye);
+        expect(this.theArbor.location).toBe('discard pile');
+        expect(this.player1).isReadyToTakeAction();
+    });
+
+    it("does not count against its owner once it leaves the other player's control", function () {
+        setup(this, ['Tumblestone Knight']);
+        this.player1.triggerAbility(this.euronCrowsEye);
+        this.player1.clickCard(this.theArbor);
+
+        expect(this.theArbor.controller).toBe(this.player1Object);
+
+        this.player1.clickPrompt('Done');
+        this.unopposedChallenge(this.player2, 'Military', this.serJaimeLannister);
+        this.player2.triggerAbility('Put to the Torch');
+        this.player2.clickCard(this.theArbor);
+
+        expect(this.theArbor.location).toBe('discard pile');
+        expect(this.player2Object.canPutIntoPlay(this.hedgeKnight, 'ambush')).toBe(true);
+
+        this.player1.clickCard(this.tumblestoneKnight);
+
+        expect(this.player2).isReadyToTakeAction();
+    });
+});

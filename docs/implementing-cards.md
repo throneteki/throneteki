@@ -274,6 +274,14 @@ The predicate receives `(opponent, context)`, where `context.source` is the card
 effect. Each affected player has an independent allowance, and removing and reapplying the same
 effect preserves whether that allowance has been used.
 
+`cannotPutIntoPlay(restriction)` calls `restriction(card, playingType, context, player)`, and
+`cannotMarshal`, `cannotBringOutOfShadows` and `cannotPlay` call their condition with
+`(card, context, player)`. `player` is the player being restricted. Use it rather than
+`card.controller`: a card being put into play from another player's pile is still controlled by
+its owner until it enters play. To count cards that entered play, use
+`CardEntersPlayTracker.controllerOnEntry(event)` for the player each card entered play under, since
+a card that has left play is controlled by its owner again.
+
 ### Lasting effects
 
 Lasting effects are declared through `GameActions.lastingEffect`. The property factory receives

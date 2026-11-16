@@ -18,7 +18,7 @@ class TheMostDevout extends DrawCard {
                     event.card.getType() === 'character' &&
                     tracker.events.filter(
                         (entered) =>
-                            entered.card.controller === event.card.controller &&
+                            tracker.controllerOnEntry(entered) === event.card.controller &&
                             entered.card.getType() === 'character'
                     ).length > 1
             },
