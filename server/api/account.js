@@ -282,14 +282,6 @@ function sanitizeSettings(settings) {
         result.background = background;
     }
 
-    let customBackgroundUrl = pickString(
-        settings.customBackgroundUrl,
-        /^[A-Za-z0-9_-]{1,64}\.(png|jpe?g|gif|webp)$/i
-    );
-    if (customBackgroundUrl) {
-        result.customBackgroundUrl = customBackgroundUrl;
-    }
-
     let cardSize = pickString(settings.cardSize, /^[a-z-]{1,16}$/);
     if (cardSize) {
         result.cardSize = cardSize;

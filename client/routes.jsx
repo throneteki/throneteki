@@ -14,6 +14,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import UserAdmin from './pages/UserAdmin';
 import Profile from './pages/Profile';
+import { isProfileSection } from './Components/Profile/ProfileSections';
 import NewsAdmin from './pages/NewsAdmin';
 import AddDeck from './Components/Decks/AddDeck';
 import EditDeck from './Components/Decks/EditDeck';
@@ -68,7 +69,13 @@ const routes = [
             return <GameLobby key='gamelobby' gameId={context.params.gameId} />;
         }
     },
-    { path: '/profile', action: () => <Profile key='profile' /> },
+    {
+        path: '/profile/:section?',
+        action: (context) =>
+            (!context.params.section || isProfileSection(context.params.section)) && (
+                <Profile key='profile' section={context.params.section} />
+            )
+    },
     { path: '/register', action: () => <Register key='register' /> },
     {
         path: '/reset-password',

@@ -111,7 +111,7 @@ const Lobby = () => {
                             <>
                                 {patreonState.message ||
                                     'Your Patreon link has expired. Please relink your account.'}{' '}
-                                <Link href='/profile' size='sm'>
+                                <Link href='/profile/integrations' size='sm'>
                                     Open profile
                                 </Link>
                             </>

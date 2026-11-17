@@ -275,6 +275,20 @@ export const apiSlice = createApi({
                 method: 'POST'
             })
         }),
+        uploadBackground: builder.mutation({
+            query: ({ username, image }) => ({
+                url: `/account/${username}/background`,
+                method: 'PUT',
+                body: image,
+                headers: { 'content-type': image.type }
+            })
+        }),
+        removeBackground: builder.mutation({
+            query: (username) => ({
+                url: `/account/${username}/background`,
+                method: 'DELETE'
+            })
+        }),
         unlinkPatreon: builder.mutation({
             query: () => ({
                 url: '/account/unlinkPatreon',
@@ -574,6 +588,8 @@ export const {
     useToggleDeckFavouriteMutation,
     useSaveProfileMutation,
     useUpdateAvatarMutation,
+    useUploadBackgroundMutation,
+    useRemoveBackgroundMutation,
     useUnlinkPatreonMutation,
     useGetUserSessionsQuery,
     useRemoveSessionMutation,

@@ -49,3 +49,8 @@ export const refreshIpLimiter = createLimiter({ windowMs: FifteenMinutes, limit:
 export const registerLimiter = createLimiter({ windowMs: OneHour, limit: 20 });
 export const accountTokenLimiter = createLimiter({ windowMs: FifteenMinutes, limit: 10 });
 export const lookupLimiter = createLimiter({ windowMs: FifteenMinutes, limit: 60 });
+export const backgroundUploadLimiter = createLimiter({
+    windowMs: OneHour,
+    limit: 20,
+    keyGenerator: usernameKey((req) => req.user?.username)
+});

@@ -1,4 +1,5 @@
 import { init as AccountInit } from './account.js';
+import { init as BackgroundsInit } from './backgrounds.js';
 import { init as EventsInit } from './events.js';
 import { init as DecksInit } from './decks.js';
 import { init as DraftCubesInit } from './draftCubes.js';
@@ -14,6 +15,7 @@ import { init as ProblemReportsInit } from './problemReports.js';
 
 export const init = async function (server, options) {
     AccountInit(server, options);
+    BackgroundsInit(server, options);
     await DecksInit(server, options);
     DraftCubesInit(server, options);
     CardsInit(server, options);

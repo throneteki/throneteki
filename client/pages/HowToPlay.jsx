@@ -151,8 +151,8 @@ const HowToPlay = () => {
                         Profile Options
                     </h3>
                     <p>
-                        Clicking your <Link href='/profile'>Profile</Link> at the top right of the
-                        page allows you to tailor certain aspects of gameplay to your wishes.
+                        Clicking your <Link href='/profile/gameplay'>Profile</Link> at the top right
+                        of the page allows you to tailor certain aspects of gameplay to your wishes.
                     </p>
 
                     <div className='my-3 mx-0'>

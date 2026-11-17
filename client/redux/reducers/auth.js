@@ -4,7 +4,8 @@ const initialState = {
     token: undefined,
     refreshToken: undefined,
     user: undefined,
-    username: undefined
+    username: undefined,
+    avatarVersion: 0
 };
 
 const authSlice = createSlice({
@@ -58,6 +59,9 @@ const authSlice = createSlice({
                 state.refreshToken = action.payload.refreshToken;
             }
         ),
+        avatarUpdated(state) {
+            state.avatarVersion += 1;
+        },
         setUser(state, action) {
             if (!action.payload) {
                 state.user = action.payload;
@@ -91,7 +95,8 @@ export const {
     accountLoggedIn,
     accountLoggedOut,
     setAuthTokens,
-    setUser
+    setUser,
+    avatarUpdated
 } = authSlice.actions;
 
 export default authSlice.reducer;
