@@ -111,12 +111,12 @@ const LobbyChat = ({ isLoggedIn, messages, isModerator, lobbyError }) => {
                 return (
                     <div
                         key={message.user.username + i++}
-                        className='text-gray-300 text-sm leading-[1.15rem] flex gap-2 pr-4'
+                        className='group text-gray-300 text-sm leading-[1.15rem] flex gap-2 pr-4'
                     >
                         <span className='min-w-0 [overflow-wrap:anywhere]'>{messageText}</span>
                         {isModerator && !message.deleted && (
                             <Link
-                                className='text-danger text-small ml-auto shrink-0 self-start'
+                                className='text-danger text-small ml-auto shrink-0 self-start [@media(hover:hover)]:opacity-0 group-hover:opacity-100 focus-visible:opacity-100'
                                 onPress={() => onRemoveMessageClick(message._id)}
                             >
                                 <FontAwesomeIcon icon={faTimes} />
