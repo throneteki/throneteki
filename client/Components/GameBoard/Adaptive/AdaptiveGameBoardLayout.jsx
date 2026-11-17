@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import { Button } from '@heroui/react';
@@ -10,6 +10,7 @@ import GameTimer from '../GameTimer';
 import PlayerBoard from '../PlayerBoard';
 import SquishableCardPanel from '../SquishableCardPanel';
 import { AreaLabelContext } from '../LabelledGameArea';
+import { PopupHostContext } from '../PopupContainer';
 import { pileRise } from '../PileDepth';
 import { findPendingAttachment, withoutPendingAttachment } from '../pendingAttachment';
 import { findLeftBehind } from '../leftBehind';
@@ -85,6 +86,11 @@ const AdaptiveGameBoardLayout = ({
     const username = useSelector((state) => state.auth.user?.username);
     const isPlaying = !!thisPlayer && thisPlayer.user?.username === username;
     const phoneLayout = mode !== 'wide';
+    // A tablet laid out wide is still touched, so its piles open in sheets too
+    const coarsePointer = useMemo(
+        () => window.matchMedia?.('(pointer: coarse)').matches ?? false,
+        []
+    );
     const pileScale = phoneLayout ? 'pile' : null;
 
     const renderSide = (player, side) => {
@@ -280,17 +286,19 @@ const AdaptiveGameBoardLayout = ({
     );
 
     return (
-        <AreaLabelContext.Provider value={phoneLayout ? 'count' : 'full'}>
-            <div
-                data-layout={mode}
-                className='flex h-full w-full flex-col overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]'
-            >
-                {opponents}
-                {divider}
-                {ours}
-                {handTray}
-            </div>
-        </AreaLabelContext.Provider>
+        <PopupHostContext.Provider value={phoneLayout || coarsePointer ? 'sheet' : 'panel'}>
+            <AreaLabelContext.Provider value={phoneLayout ? 'count' : 'full'}>
+                <div
+                    data-layout={mode}
+                    className='flex h-full w-full flex-col overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]'
+                >
+                    {opponents}
+                    {divider}
+                    {ours}
+                    {handTray}
+                </div>
+            </AreaLabelContext.Provider>
+        </PopupHostContext.Provider>
     );
 };
 

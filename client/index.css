@@ -449,3 +449,24 @@ html.card-dragging.card-drop-refused * {
 [data-motion='off'] .ring-new {
     animation: none;
 }
+
+/* Plots being chosen in a sheet: one after another, each snapping to the middle */
+.sheet-carousel > * {
+    flex-shrink: 0;
+    scroll-snap-align: center;
+}
+
+/* On the adaptive board a card eases into being chosen, and a chosen card grows above its neighbours so it is
+   easy to see what has been picked */
+[data-layout] [data-card-surface] {
+    transition:
+        scale 180ms ease-out,
+        box-shadow 180ms ease-out;
+}
+[data-layout] [data-card-surface].ring-selected {
+    scale: 1.12;
+    z-index: 250 !important;
+}
+[data-motion='off'] [data-layout] [data-card-surface] {
+    transition: none;
+}

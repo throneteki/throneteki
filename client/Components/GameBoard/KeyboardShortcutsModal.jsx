@@ -23,8 +23,8 @@ export const KeyboardShortcutsTable = () => (
     </table>
 );
 
-const KeyboardShortcutsModal = ({ isOpen, onClose }) => (
-    <Modal isOpen={isOpen} onClose={onClose} size='md'>
+const KeyboardShortcutsModal = ({ isOpen, onClose, fullScreen = false }) => (
+    <Modal isOpen={isOpen} onClose={onClose} size={fullScreen ? 'full' : 'md'}>
         <ModalContent>
             <ModalHeader>Keyboard Shortcuts</ModalHeader>
             <ModalBody className='pb-6'>

@@ -87,8 +87,9 @@ From the review on 2026-11-17:
 - [ ] **R6 Piles need to be identifiable** without the full text labels that don't fit small screens.
       Consider options. **Phase 4/5.**
 - [ ] **R7 The count bubbles on every pile feel disjointed.** Rethink alongside R6. **Phase 4/5.**
-- [ ] **R8 Tapping a card to select it** should animate smoothly and enlarge the card so it's easier to
+- [x] **R8 Tapping a card to select it** should animate smoothly and enlarge the card so it's easier to
       see. **Phase 3** (card preview).
+      Done: on the adaptive board a card eases into its selection ring (180ms), and a chosen card grows to 1.12× above its neighbours. Holding a card on touch shows a large readable preview with its live state (phase 3 card preview). **Check with you:** is that enough, or should a tap itself enlarge the card?
 - [ ] **R9 Card piles in different sizes feel off,** even on mobile. Plots in particular need to be
       clearly visible. Rethink the separate pile scale. **Phase 4/5.**
 - [x] **R10 Nothing may be cut off:** cards (location bottoms in landscape), selection rings, and cards
@@ -554,27 +555,37 @@ Causes:
 
 ### Phase 3: sheets
 
-- [ ] Add `PopupHostContext` and `PopupContainer`. Nothing changes on the classic board.
-- [ ] `BoardSheet`:
-    - [ ] Two heights: **peek**, one row of cards that scrolls sideways (about 40% of the board in
-          `narrow`, and one card row in `short`), and **full**, a grid.
-    - [ ] A drag handle on the header switches between the heights, swiping down closes it, and there
-          is always an X button.
-    - [ ] There's no dimmed backdrop, so the board stays usable during prompts.
-    - [ ] It keeps the pile's popup menu (shuffle, reveal and so on) and the card list's drop zones,
-          including dropping underneath a card.
-- [ ] `sheetStore`: one sheet at a time. Opening another replaces it, and the sheet header has tabs
-      for recently opened piles.
-- [ ] Dragging a card out of a sheet collapses the sheet to a strip. After the drop, whether it lands
-      or is cancelled, the sheet comes back at peek.
-- [ ] When a prompt opens a pile because it has selectable cards, the sheet opens at peek with the
-      prompt text in its header.
-- [ ] Plot selection opens a full-height carousel of large plot cards, and stays open until Done.
-- [ ] Settings, keyboard shortcuts and report problem become full-screen modals on `narrow` and
-      `short`.
-- [ ] Acceptance: every popup source opens as a sheet on the adaptive board: draw deck (search),
-      discard, dead, out of game, plots, the agenda's cards, and cards underneath a card. Classic
-      popups are unchanged.
+- [x] `PopupHostContext` and `PopupContainer` (`GameBoard/PopupContainer.jsx`). `CardPile`'s popup and
+      `Card`'s underneath popup render through it. It's `'panel'` by default (`MovablePanel`, which ignores
+      the new `onOpen` and `prompting` props), so classic is unchanged. The adaptive board provides
+      `'sheet'` on `narrow` and `short`, and on `wide` when the pointer is coarse (a tablet).
+- [x] `BoardSheet` (`Adaptive/BoardSheet.jsx`):
+    - [x] Heights: **peek** (`min(46dvh, 26rem)`, one row of cards scrolling sideways), **full**
+          (`92dvh`, a grid), and **strip** (just the header, while a card is dragged out). Through
+          `SheetContext`, `CardTiledList` lays out as a row, a grid or a carousel. Cards are drawn at
+          `--hand-scale`.
+    - [x] The handle: a tap switches between peek and full, a pull up goes to full, a swipe down drops
+          to peek and then closes. There's always an X. Checked by probe.
+    - [x] No dimmed backdrop. It slides up from the bottom and away again.
+    - [x] The pile's popup menu and drop zones are the same children as before (dropping underneath a
+          card included).
+- [x] `sheetStore`: one sheet at a time. Opening one closes the last, and the header has tabs for up to
+      four recently opened piles. A sheet whose pile leaves the board is forgotten. Checked by probe:
+      opening the opponent's discard closes ours, and its tab brings ours back. A peek sheet covers our
+      own piles, so the tabs are how to switch between them.
+- [x] Dragging a card out of a sheet drops it to a strip, and it comes back at peek once the drag ends
+      (checked by probe, after the fixture's 1.5s drop timeout; in a game, when the server replies).
+- [x] A pile opened because its cards are to be chosen opens at peek, with the prompt text in the
+      header in the warning colour (`prompting`).
+- [x] Plot selection: the plot deck's sheet is a carousel of large plots (about 72% of the screen wide),
+      each snapping to the middle. It fits its content up to `92dvh`, and stays open until Done, as
+      before.
+- [x] Settings and keyboard shortcuts are full-screen dialogs on `narrow` and `short` (checked:
+      390×844 on a phone). Report problem has no entry on the adaptive board until phase 4's game
+      menu.
+- [ ] Acceptance: every popup source opens as a sheet. **Checked:** discard, dead, opponent's discard
+      and plots. **Not checked by probe:** draw-deck search, out of game, the agenda's cards and cards
+      underneath a card. They go through the same `PopupContainer`.
 
 #### Card preview (zoom) on touch
 
@@ -584,23 +595,19 @@ lifts. On a phone it covers much of the board and sits under the finger. Phones 
 small, so the preview is how players read them. The touch model itself stays as decided: hold still to
 zoom, hold and move to drag.
 
-- [ ] Size: on the adaptive board's touch layouts, the preview is the largest card that fits in about
-      85% of the screen's shorter side (allowing for any availability notes), not a fixed size. Plots
-      are sized as horizontal cards.
-- [ ] Placement: never under the finger. In `narrow`, it goes in the half of the screen away from the
-      finger (top if the finger is in the bottom half, bottom otherwise). In `short`, it goes on the
-      side away from the finger. In `wide` with a mouse, it stays as today.
-- [ ] Live state the small card can't show legibly: current strength against printed strength,
-      power, tokens and their counts, and the names of attachments and dupes. These go in a compact
-      panel beside or under the image, built from the card's summary only (no hidden information).
-- [ ] Starting a drag (moving after the hold) hides the preview straight away, as now.
-- [ ] `CardHover` keeps its current behaviour on the classic board. The adaptive behaviour comes
-      through a prop or context whose default is the classic one.
-- [ ] Check in `board:shots`: add a mode that holds on a card in each fixture and screenshots the
-      preview at every touch size.
-- Open question, for when we get here: should the preview stay up after the finger lifts, until the
-  next tap (a "pin")? That is not the deferred tap-to-preview idea, because a tap would still click,
-  but it does change what lifting the finger does.
+- [x] Size: when the adaptive board shows (`boardLayoutStore`) and the hold is a touch, the preview is
+      the largest card that fits half the screen: 92% × 46% in portrait, 46% × 90% in landscape, less
+      room for the details panel. Plots are sized as horizontal cards.
+- [x] Placement: in portrait, the half away from the finger; in landscape, the side away from it. A
+      mouse keeps today's preview.
+- [x] Live state (`CardDetails`): current strength (and what's printed, when it differs), power, tokens,
+      dupes, whether it's knelt, and the names of attachments. It comes from the card's summary only,
+      which `Card` now passes to the hover store as `details` (faceup cards only).
+- [x] Starting a drag still hides the preview (`cardHoverStore.suppress`, unchanged).
+- [x] `CardHover` behaves as before unless the adaptive board is showing and the hold is a touch.
+- [x] `board:shots --hold` holds on the first card in play at every touch size and saves
+      `*-hold.png`.
+- Open question (unchanged): should the preview stay up after the finger lifts, until the next tap?
 
 ### Phase 4: player bars and game menu
 

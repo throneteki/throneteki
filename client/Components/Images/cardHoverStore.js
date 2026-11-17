@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react';
 
-const empty = { owner: null, type: null, code: null, notes: null };
+// details: the card's summary, for what is happening to it now (strength, power, tokens); optional
+const empty = { owner: null, type: null, code: null, notes: null, details: null };
 
 let state = empty;
 let suppressed = false;
@@ -23,17 +24,18 @@ export const cardHoverStore = {
             emit();
         }
     },
-    show: (owner, { type, code, notes }) => {
+    show: (owner, { type, code, notes, details = null }) => {
         if (
             suppressed ||
             (state.owner === owner &&
                 state.type === type &&
                 state.code === code &&
-                state.notes === notes)
+                state.notes === notes &&
+                state.details === details)
         ) {
             return;
         }
-        state = { owner, type, code, notes };
+        state = { owner, type, code, notes, details };
         emit();
     },
     clear: (owner) => {

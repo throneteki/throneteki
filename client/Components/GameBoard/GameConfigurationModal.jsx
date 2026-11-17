@@ -16,11 +16,17 @@ const GameConfigurationModal = ({
     promptedActionWindows,
     hideInterrupts,
     hideReactions,
-    hud
+    hud,
+    fullScreen = false
 }) => {
     return (
         <>
-            <Modal isOpen={isOpen} onClose={onClose} size='lg' scrollBehavior='inside'>
+            <Modal
+                isOpen={isOpen}
+                onClose={onClose}
+                size={fullScreen ? 'full' : 'lg'}
+                scrollBehavior='inside'
+            >
                 <ModalContent>
                     <ModalHeader>{'Game Configuration'}</ModalHeader>
                     <ModalBody>

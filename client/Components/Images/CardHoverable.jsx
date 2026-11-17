@@ -4,14 +4,14 @@ import { cardHoverStore, useCardHover } from './cardHoverStore';
 
 const isTouchLike = (state) => state.type === 'touch';
 
-export const useCardHoverHandlers = ({ touchDelay = 0, code, notes, isDisabled }) => {
+export const useCardHoverHandlers = ({ touchDelay = 0, code, notes, details, isDisabled }) => {
     const owner = useRef({}).current;
     const holdTimeout = useRef(null);
     const touchActive = useCardHover(isTouchLike);
 
     const show = useCallback(
-        (type) => cardHoverStore.show(owner, { type, code, notes }),
-        [owner, code, notes]
+        (type) => cardHoverStore.show(owner, { type, code, notes, details }),
+        [owner, code, notes, details]
     );
 
     const clear = useCallback(() => {

@@ -617,10 +617,12 @@ const GameBoard = () => {
                 hideInterrupts={userPlayer.hideInterrupts}
                 hideReactions={userPlayer.hideReactions}
                 hud={hud}
+                fullScreen={phoneLayout}
             />
             <KeyboardShortcutsModal
                 isOpen={showShortcuts}
                 onClose={() => setShowShortcuts(false)}
+                fullScreen={phoneLayout}
             />
         </>
     );

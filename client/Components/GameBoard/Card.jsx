@@ -14,7 +14,7 @@ import CardCounters from './CardCounters';
 import SquishableCardPanel from './SquishableCardPanel';
 import CardTiledList from './CardTiledList';
 import Droppable from './Droppable';
-import MovablePanel from './MovablePanel';
+import PopupContainer from './PopupContainer';
 
 import { ItemTypes } from '../../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -314,13 +314,14 @@ const CardView = ({
         );
 
         return (
-            <MovablePanel
+            <PopupContainer
                 id={card.uuid}
                 open={!!showUnderneath}
                 anchorRef={cardRef}
                 title={`Underneath ${card.name || 'card'}`}
                 name='underneath'
                 onCloseClick={() => setShowUnderneath(false)}
+                onOpen={() => setShowUnderneath(true)}
                 side='bottom'
             >
                 <div
@@ -343,7 +344,7 @@ const CardView = ({
                         />
                     </Droppable>
                 </div>
-            </MovablePanel>
+            </PopupContainer>
         );
     };
 
@@ -436,6 +437,7 @@ const CardView = ({
     const { handlers: hoverHandlers, touchActive } = useCardHoverHandlers({
         code: card.code,
         notes: availabilityNotes,
+        details: isFaceup ? card : null,
         isDisabled: !!disableHover || isDragging,
         touchDelay: holdToDrag.hold
     });

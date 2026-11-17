@@ -3,6 +3,7 @@
 //
 //   npm run board:shots
 //   npm run board:shots -- --board=adaptive --fixture=crowded --size=phone-portrait
+//   npm run board:shots -- --hold    also holds a finger on a card in play, and shoots the preview (touch sizes)
 //
 // Images go to testoutput/board-shots/<board>-<size>-<fixture>.png. Set BOARD_URL for another server.
 import fs from 'fs';
@@ -106,6 +107,24 @@ const load = async (page, url, attempts = 5) => {
     }
 };
 
+const holding = process.argv.includes('--hold');
+
+// Holds a finger still on the first card in play, long enough for its preview, and shoots it
+const holdOnCard = async (page, file) => {
+    const card = page.locator('.card-row [data-card-surface]').first();
+    const box = (await card.count()) ? await card.boundingBox() : null;
+    if (!box) {
+        return;
+    }
+    const touch = await page.context().newCDPSession(page);
+    const point = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+    await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [point] });
+    await page.waitForTimeout(900);
+    await page.screenshot({ path: file });
+    await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await touch.detach();
+};
+
 const run = async () => {
     const chosenBoards = pick(boards, 'board');
     const chosenSizes = pick(Object.keys(sizes), 'size');
@@ -142,6 +161,12 @@ const run = async () => {
                     const file = path.join(outDir, `${board}-${sizeName}-${fixture}.png`);
                     await page.screenshot({ path: file });
                     const found = await page.evaluate(findOverflow);
+                    if (holding && device.hasTouch) {
+                        await holdOnCard(
+                            page,
+                            path.join(outDir, `${board}-${sizeName}-${fixture}-hold.png`)
+                        );
+                    }
                     report.push({
                         board,
                         size: sizeName,

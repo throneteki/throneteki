@@ -5,7 +5,7 @@ import { useRenderCount } from '../../perf';
 import Card from './Card';
 import CardTiledList from './CardTiledList';
 import Droppable from './Droppable';
-import MovablePanel from './MovablePanel';
+import PopupContainer from './PopupContainer';
 import PileDepth, { pileRise, raisedStackStyle } from './PileDepth';
 import LabelledGameArea from './LabelledGameArea';
 
@@ -233,13 +233,15 @@ const CardPile = ({
         );
 
         return (
-            <MovablePanel
+            <PopupContainer
                 id={popupId}
                 open={!!showPopup}
                 anchorRef={areaRef}
                 title={playerName ? `${playerName}'s ${title}` : title}
                 name={source}
                 onCloseClick={onCloseClick}
+                onOpen={() => updatePopupVisibility(true)}
+                prompting={!!cards?.some((card) => card.selectable)}
                 side={popupLocation}
             >
                 <div className={popupClass} onClick={(event) => event.stopPropagation()}>
@@ -248,7 +250,7 @@ const CardPile = ({
                         {cardList}
                     </Droppable>
                 </div>
-            </MovablePanel>
+            </PopupContainer>
         );
     }, [
         disableHover,
@@ -267,7 +269,8 @@ const CardPile = ({
         popupLocation,
         popupId,
         showCards,
-        onPopupMenuItemClick
+        onPopupMenuItemClick,
+        updatePopupVisibility
     ]);
 
     // A sideways card is laid out as an upright one, so the area is held to the height of a sideways card
