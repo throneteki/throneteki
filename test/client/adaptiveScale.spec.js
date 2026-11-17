@@ -92,10 +92,17 @@ describe('computeAdaptiveScales', function () {
         expect(bigDesktop.card).toBeLessThanOrEqual(2);
     });
 
-    it('draws piles smaller and the hand larger on a phone', function () {
-        const scales = computeAdaptiveScales({ mode: 'narrow', width: 390, height: 780 });
-        expect(scales.pile).toBeLessThan(scales.card);
-        expect(scales.hand).toBeGreaterThan(scales.card);
+    it('never draws piles larger than cards in play, and draws the hand larger', function () {
+        for (const [width, height] of [
+            [360, 740],
+            [390, 780],
+            [430, 932],
+            [820, 1180]
+        ]) {
+            const scales = computeAdaptiveScales({ mode: 'narrow', width, height });
+            expect(scales.pile).toBeLessThanOrEqual(scales.card);
+            expect(scales.hand).toBeGreaterThan(scales.card);
+        }
     });
 
     it('always fits the play areas in the height', function () {
@@ -113,32 +120,39 @@ describe('computeAdaptiveScales', function () {
     it('shrinks for a wide row only down to the mode minimum', function () {
         const roomy = computeAdaptiveScales({
             mode: 'narrow',
-            width: 390,
-            height: 780,
+            width: 430,
+            height: 1100,
             widestRow: 3
         });
         const crowded = computeAdaptiveScales({
             mode: 'narrow',
-            width: 390,
-            height: 780,
+            width: 430,
+            height: 1100,
             widestRow: 7
         });
         const packed = computeAdaptiveScales({
             mode: 'narrow',
-            width: 390,
-            height: 780,
+            width: 430,
+            height: 1100,
             widestRow: 20
         });
         expect(crowded.card).toBeLessThan(roomy.card);
         expect(packed.card).toBe(0.85);
     });
 
-    it('shrinks the piles to fit their strip on a phone without shrinking the play areas', function () {
-        const { card, pile } = computeAdaptiveScales({ mode: 'narrow', width: 390, height: 844 });
-        const stripWidth = 7.5 * 4 * 16 * pile + 7.5 * 6;
-        expect(stripWidth).toBeLessThanOrEqual(390 - 16);
-        expect(card).toBeGreaterThan(1);
-        expect(pile).toBeLessThan(card * 0.7);
+    it('wraps a phone strip onto a second line rather than draw its piles too small to read', function () {
+        const phone = computeAdaptiveScales({ mode: 'narrow', width: 390, height: 844 });
+        const oneLine = 7.5 * 4 * 16 * phone.pile + 7.5 * 6;
+        expect(phone.pile).toBeGreaterThanOrEqual(0.75);
+        expect(oneLine).toBeGreaterThan(390);
+        expect(phone.card).toBeGreaterThanOrEqual(0.85);
+    });
+
+    it('keeps a phone strip on one line when its piles fit at a readable size', function () {
+        const tablet = computeAdaptiveScales({ mode: 'narrow', width: 820, height: 1180 });
+        const oneLine = 7.5 * 4 * 16 * tablet.pile + 7.5 * 6;
+        expect(oneLine).toBeLessThanOrEqual(820 - 16);
+        expect(tablet.pile).toBeGreaterThanOrEqual(0.75);
     });
 
     it('makes room in the strip for piles that hold cards', function () {

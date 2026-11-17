@@ -1,10 +1,36 @@
 import React, { createContext, forwardRef, useContext, useMemo } from 'react';
 import classNames from 'classnames';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faBan,
+    faClockRotateLeft,
+    faFlag,
+    faHand,
+    faLayerGroup,
+    faMask,
+    faRecycle,
+    faScroll,
+    faSkull
+} from '@fortawesome/free-solid-svg-icons';
 import { raisedStyle } from './PileDepth';
 
-// How areas show their label: 'full' writes the name and count; 'count' (for piles drawn small) shows only the
-// count, in a badge, keeping the name as the tooltip
+// How areas show their label: 'full' writes the name and count; 'caption' (for piles drawn small) shows a plate
+// along the bottom of the pile with an icon for what it is and its count, keeping the name as the tooltip
 export const AreaLabelContext = createContext('full');
+
+const captionIcons = {
+    Draw: faLayerGroup,
+    Discard: faRecycle,
+    Dead: faSkull,
+    Plots: faScroll,
+    'Used Plots': faClockRotateLeft,
+    Shadows: faMask,
+    'Out of Game': faBan,
+    Hand: faHand,
+    Agenda: faFlag
+};
+
+const nameOf = (label) => label.replace(/ \(\d+\)$/, '');
 
 const LabelledGameArea = forwardRef(function LabelledGameArea(
     {
@@ -22,19 +48,23 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
     ref
 ) {
     const labelStyle = useContext(AreaLabelContext);
-    const countOnly = labelStyle === 'count' && count !== undefined;
+    const captioned = labelStyle === 'caption' && count !== undefined;
 
     const areaLabel = useMemo(() => {
         if (!label) {
             return null;
         }
-        if (countOnly) {
+        if (captioned) {
+            const icon = captionIcons[nameOf(label)];
             return (
                 <div
-                    className='absolute bottom-0 right-0 z-[210] min-w-[1.25rem] px-1 text-center text-tiny font-bold leading-tight bg-black/75 border border-default-200 rounded-full pointer-events-none translate-x-1/4 translate-y-1/4'
+                    className='absolute inset-x-0 bottom-0 z-[210] flex h-[1.1rem] items-center justify-center gap-1 rounded-b-md border-t border-white/10 bg-black/80 text-[11px] font-bold leading-none pointer-events-none'
                     style={raisedStyle}
                 >
-                    {count}
+                    {icon && (
+                        <FontAwesomeIcon icon={icon} className='text-[9px] text-default-400' />
+                    )}
+                    <span>{count}</span>
                 </div>
             );
         }
@@ -49,7 +79,7 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
                 {label}
             </div>
         );
-    }, [label, labelClickable, position, countOnly, count]);
+    }, [label, labelClickable, position, captioned, count]);
 
     const areaClassName = classNames('relative shift-smooth', className);
     return (
@@ -58,7 +88,7 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
             className={areaClassName}
             onClick={onClick}
             style={style}
-            title={countOnly ? label : undefined}
+            title={captioned ? nameOf(label) : undefined}
             {...rest}
         >
             {!disableBackground && (

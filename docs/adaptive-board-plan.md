@@ -50,6 +50,11 @@ hold still to zoom, hold and move to drag").
 | 2026-11-17 | Cards and interface fill the room available: every mode grows the cards until the height, strip or rows stop it (`wide` up to 2×), and the interface never shrinks below its normal size on the adaptive board. "Small" cards is 0.7× that fit; "Large" can't grow past it.                                                                                      |
 | 2026-11-17 | In `short` (phone landscape) the divider is a single row: the phase track and both players' totals sit inline at its start. Location rows stay full size.                                                                                                                                                                                                        |
 | 2026-11-17 | The opponent's hand is a single card back with its count, not a two-card fan.                                                                                                                                                                                                                                                                                    |
+| 2026-11-17 | R6/R7: every pile sits on the same thin caption plate along its bottom edge, with an icon and its count (the name as a tooltip). This replaces the floating count bubbles.                                                                                                                                                                                       |
+| 2026-11-17 | R9: one strip size for every pile, for both players (plots, faction, agenda, deck, discard, dead, the opponent's hand), smaller than cards in play. In portrait the strip wraps onto a second line rather than shrink below legible.                                                                                                                             |
+| 2026-11-17 | R11: the divider is the scoreboard. Each player's avatar with large power and gold (with their icons) sit at its ends: the opponent's on the left, ours on the right. Initiative, claim and reserve are small badges on each active plot.                                                                                                                        |
+| 2026-11-17 | R5: the prompt title has its own small, dim line above the instruction text.                                                                                                                                                                                                                                                                                     |
+| 2026-11-17 | R13: on phone layouts the chat tab is replaced by a chat button on the divider, with the unread count, and the chat still drops down smoothly.                                                                                                                                                                                                                   |
 
 ## Rules that hold in every layout
 
@@ -82,26 +87,32 @@ From the review on 2026-11-17:
       The server already does this: it lists as buttons only cards that can't be shown on the board.
       My fixture invented buttons. **Fix the fixture now**, and check against the server.
       Done: checked against `TriggeredAbilityWindow`. The cards that can react are made selectable, and only cards in a draw deck, discard or dead pile become buttons ("Name (location)"), alongside "Don't ask again this phase" and Pass. The `reaction` fixture now matches that. The new `responder` fixture is what every possible responder sees (Pass, Wait, "Don't ask again", with the countdown). The `crowded` fixture's prompt is now an ordinary "Initiate a challenge".
-- [ ] **R5 Prompt title and prompt text on the same line** isn't liked. Rework the divider's text
+- [x] **R5 Prompt title and prompt text on the same line** isn't liked. Rework the divider's text
       layout. **Phase 4** (with the scoreboard).
-- [ ] **R6 Piles need to be identifiable** without the full text labels that don't fit small screens.
+      Done: the title has its own small, dim line above the instruction text (phase 4).
+- [x] **R6 Piles need to be identifiable** without the full text labels that don't fit small screens.
       Consider options. **Phase 4/5.**
-- [ ] **R7 The count bubbles on every pile feel disjointed.** Rethink alongside R6. **Phase 4/5.**
+      Done: a caption plate along the bottom of every pile with an icon for what it is and its count, the name as a tooltip (phase 4).
+- [x] **R7 The count bubbles on every pile feel disjointed.** Rethink alongside R6. **Phase 4/5.**
+      Done: the plates replace the floating count bubbles (phase 4).
 - [x] **R8 Tapping a card to select it** should animate smoothly and enlarge the card so it's easier to
       see. **Phase 3** (card preview).
       Done: on the adaptive board a card eases into its selection ring (180ms), and a chosen card grows to 1.12× above its neighbours. Holding a card on touch shows a large readable preview with its live state (phase 3 card preview). **Check with you:** is that enough, or should a tap itself enlarge the card?
-- [ ] **R9 Card piles in different sizes feel off,** even on mobile. Plots in particular need to be
+- [x] **R9 Card piles in different sizes feel off,** even on mobile. Plots in particular need to be
       clearly visible. Rethink the separate pile scale. **Phase 4/5.**
+      Done: one strip size for every pile and both players; in portrait, sized so our strip fits one line, with the opponent's strip wrapping when it must, and the two play areas kept equal (phase 4).
 - [x] **R10 Nothing may be cut off:** cards (location bottoms in landscape), selection rings, and cards
       flying between zones (hand to board). Review clipping everywhere. **Fix now** for the play areas
       and rings; check flights in phase 5.
       Done: the play areas no longer cut cards off. They scroll instead, with an inner margin so the selection rings show. The height budget now counts each play area's margins and a tenth of a card per row for attachments, which is why landscape location rows were cut off before. Cards flying into an area that cuts off its overflow (marked `data-clips`: play areas and the carousel) fly as a copy above the page (`flyAbove` in `flip.js`), and the real card shows once the copy lands. Classic marks nothing, so it is unchanged. **Still to check in phase 5:** every flight in a real game.
-- [ ] **R11 Power and gold must be clearer and larger, with their icons.** **Phase 4** (scoreboard).
+- [x] **R11 Power and gold must be clearer and larger, with their icons.** **Phase 4** (scoreboard).
+      Done: the divider is the scoreboard: avatars with large power and gold with their icons at its ends, and initiative, claim and reserve on each active plot (phase 4).
 - [x] **R12 Manual mode has gone missing** from the adaptive board. **Fix now** (temporary button), then
       into the game menu in phase 4.
       Done: a wrench button on the divider, red while manual mode is on, for players only. It sends the same message as classic, with the same tooltip. It moves into the game menu in phase 4.
-- [ ] **R13 The chat tab on phones** covers the opponent's board. Consider a chat button on the
+- [x] **R13 The chat tab on phones** covers the opponent's board. Consider a chat button on the
       divider, and make sure it opens and closes smoothly. **Phase 4** (game menu).
+      Done: on phones a chat button on the divider (with the unread count) replaces the tab; the chat slides down to the divider and no further, so it closes from the same button (phase 4).
 
 ## Architecture
 
@@ -611,16 +622,37 @@ zoom, hold and move to drag.
 
 ### Phase 4: player bars and game menu
 
-- [ ] `Scoreboard` (`narrow`): opponent stats, then the prompt, then our stats. Power and gold large,
-      the avatar with a first-player token. The name shows when there's room.
-- [ ] Stats rail (`short`): the same stats stacked vertically in the left rail.
-- [ ] Initiative, claim and reserve shown as badges on the active plot (trial).
-- [ ] Manual mode: tapping a stat opens a small +/- stepper, which replaces the bar's +/- buttons.
-- [ ] `GameMenu`: settings, mute spectators, manual mode, report problem, keyboard shortcuts, concede
-      and leave game. Concede and leave come from the navbar's `ContextMenu`.
-- [ ] While manual mode is on, a badge on the board shows it outside the menu.
-- [ ] Acceptance: everything the classic `PlayerStats` and the in-game navbar menu can do is
-      reachable on the adaptive board in every mode.
+- [x] Scoreboard: the divider's ends, on every layout (decided with R11). `ScoreBadge` shows the
+      avatar (ringed, with a "1st" token, for the first player), and power and gold as large numbers
+      with their icons (`Constants.StatIconImagePaths`). The name shows on `wide`. The opponent is on the
+      left and we are on the right. In `short`'s single row they bracket the whole row.
+- [x] Stats rail (`short`): replaced by the scoreboard on the divider, which `short` shares.
+- [x] Initiative, claim and reserve: small badges with icons along the top right of each active plot
+      (`PlotStats` in `PlotFactionStack`, a trial).
+- [x] Manual mode: our own power and gold are outlined, and tapping one opens a +/- stepper
+      (`sendChangeStatMessage`, as classic's bar). Checked by probe.
+- [x] `GameMenu` (≡ on the divider): settings, keyboard shortcuts, then, for players, mute spectators,
+      manual mode, report a problem, and concede, then leave game (with classic's confirmation when it
+      isn't safe to leave). `LeaveGameButton` is removed. Checked by probe: every item listed.
+- [x] While manual mode is on, a red wrench beside the menu shows it, and turns it off.
+- [x] R13: on `narrow` and `short` the chat tab is hidden and a chat button on the divider opens and
+      closes the chat, with the unread count (`GameChat` gained `onUnreadChange`). The chat drops down
+      to the divider and no further (`--chat-open-height`), so the button stays in reach and our half
+      stays usable, and there's no dimmed backdrop. Checked by probe: the chat's bottom edge meets the
+      divider's top.
+- [x] R5: the prompt title has its own small line above the instruction text.
+- [x] R6/R7: caption plates (an icon and the count along the bottom of each pile) replace the count
+      bubbles on `narrow` and `short` (`AreaLabelContext` `'caption'`). `wide` keeps the full labels.
+- [x] R9: every pile in the strips is one size for both players. In `narrow` it's as large as lets our
+      strip fit one line (0.7–0.8, more on tall screens, never more than the cards in play). The
+      opponent's strip, which also holds their hand, wraps onto a second line when it must. The two
+      play areas are kept the same height (`useEqualPlayAreas`), however the strips wrap.
+- [ ] Acceptance: everything classic `PlayerStats` and the in-game navbar can do is reachable.
+      **Checked:** settings, shortcuts, mute, manual mode, report, concede, leave, and the stat
+      changes. **Not on the adaptive board yet:** the navbar's spectator list and the game server's
+      connection status.
+- Trade-off to judge: on a 390×844 phone, larger piles on a wrapped strip cost the play cards some
+  size (0.9, down from 1.1).
 
 ### Phase 5: polish
 

@@ -87,9 +87,15 @@ export const layoutBudgets = {
         handRatio: 1.1,
         min: 0.85,
         max: 1.8,
+        // Every pile in the strips is drawn at one size: as large as lets our strip (which has no opponent's hand
+        // in it, so is one card narrower) fit on one line, within pileMin and pileCap. A strip that is still too
+        // wide wraps onto a second line.
+        pileMin: 0.7,
+        pileCap: 0.8,
+        ourStripLess: 1,
         rows: { play: 4, pile: 2, hand: 1 },
         stripUnits: 7.5,
-        chrome: { width: 1, height: 5.5 }
+        chrome: { width: 1, height: 6.5 }
     },
     short: {
         pileRatio: 0.7,
@@ -120,27 +126,14 @@ const toStep = (value) => Math.round(Math.floor(value / scaleStep + 1e-9) * scal
 
 // The play areas never push the board past the screen's height. A chosen card size below normal makes them
 // smaller than the room allows; above normal there is no room to grow into.
-export const computeAdaptiveScales = ({
-    mode,
-    width,
-    height,
-    rem = 16,
-    widestRow = 0,
-    cardsSize = 1,
-    stripExtra = 0
-}) => {
+const fitScales = (
+    { mode, width, height, rem = 16, widestRow = 0, cardsSize = 1, stripExtra = 0 },
+    pileCap
+) => {
     const budget = layoutBudgets[mode] || layoutBudgets.wide;
     const cardWidth = card.width * rem;
     const cardHeight = card.height * rem;
     const gap = gapRem * rem;
-
-    const heightUnits =
-        budget.rows.play * (1 + attachmentAllowance) +
-        budget.rows.pile * budget.pileRatio +
-        budget.rows.hand * budget.handRatio;
-    const rowCount = budget.rows.play + budget.rows.pile + Math.ceil(budget.rows.hand);
-    const freeHeight = height - (budget.chrome.height + playMarginRem) * rem - rowCount * gap;
-    const heightFit = freeHeight / (heightUnits * cardHeight);
 
     const freeWidth = width - budget.chrome.width * rem;
     // The largest pile scale at which a strip of piles fits across the board
@@ -149,6 +142,30 @@ export const computeAdaptiveScales = ({
             ? (freeWidth - (budget.stripUnits + stripExtra) * gap) /
               ((budget.stripUnits + stripExtra) * cardWidth)
             : Infinity;
+
+    // Piles with a size of their own take their strips' height first; the play areas fit the rest
+    let ownPile = null;
+    let pileLines = budget.rows.pile;
+    if (!budget.pilesAtCardSize && budget.pileMin) {
+        const units = budget.stripUnits + stripExtra;
+        const fitFor = (stripUnits) => (freeWidth - stripUnits * gap) / (stripUnits * cardWidth);
+        ownPile = clamp(
+            fitFor(units - budget.ourStripLess),
+            budget.pileMin,
+            pileCap ?? budget.pileCap
+        );
+        const linesFor = (stripUnits) => (fitFor(stripUnits) >= ownPile - 1e-9 ? 1 : 2);
+        pileLines = linesFor(units) + linesFor(units - budget.ourStripLess);
+    }
+    const heightUnits =
+        budget.rows.play * (1 + attachmentAllowance) +
+        (ownPile === null ? budget.rows.pile * budget.pileRatio : 0) +
+        budget.rows.hand * budget.handRatio;
+    const pileHeight = ownPile === null ? 0 : pileLines * ownPile * cardHeight;
+    const rowCount = budget.rows.play + pileLines + Math.ceil(budget.rows.hand);
+    const freeHeight =
+        height - (budget.chrome.height + playMarginRem) * rem - rowCount * gap - pileHeight;
+    const heightFit = freeHeight / (heightUnits * cardHeight);
     const rowFit =
         widestRow > 0 ? (freeWidth - widestRow * gap) / (widestRow * cardWidth) : Infinity;
 
@@ -159,11 +176,25 @@ export const computeAdaptiveScales = ({
         Math.min(budget.max, heightFit, stripLimit, Math.max(rowFit, budget.min)) *
         Math.min(cardsSize, 1);
     const scale = toStep(clamp(fitted, absoluteMin, budget.max));
-    const pile = budget.pilesAtCardSize ? scale : Math.min(scale * budget.pileRatio, stripPileFit);
+    const pile =
+        (ownPile !== null ? Math.min(ownPile, scale) : null) ??
+        (budget.pilesAtCardSize ? scale : Math.min(scale * budget.pileRatio, stripPileFit));
 
     return {
         card: scale,
         pile: toStep(Math.max(pile, absoluteMin)),
         hand: toStep(Math.max(scale * budget.handRatio, absoluteMin))
     };
+};
+
+export const computeAdaptiveScales = (options) => {
+    const first = fitScales(options);
+    const budget = layoutBudgets[options.mode] || layoutBudgets.wide;
+    if (!budget.pileMin || first.pile < budget.pileCap) {
+        return first;
+    }
+    // Where the play areas are drawn large (a tablet held upright), the piles may grow with them, as far as their
+    // strips still fit
+    const grown = fitScales(options, Math.max(budget.pileCap, first.card * budget.pileRatio));
+    return grown.card >= first.card * 0.9 ? grown : first;
 };

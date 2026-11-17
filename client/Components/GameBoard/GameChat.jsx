@@ -43,7 +43,17 @@ const ChatLip = ({ isOpen, unread, onToggle }) => (
     </button>
 );
 
-const GameChat = ({ isOpen, onToggle, messages, onSendChat, muted, className, inputRef }) => {
+// onUnreadChange: told how many messages arrived while the chat was closed, for a chat button elsewhere
+const GameChat = ({
+    isOpen,
+    onToggle,
+    messages,
+    onSendChat,
+    muted,
+    className,
+    inputRef,
+    onUnreadChange
+}) => {
     const messagePanel = useRef(null);
     const [unread, setUnread] = useState(0);
 
@@ -96,7 +106,10 @@ const GameChat = ({ isOpen, onToggle, messages, onSendChat, muted, className, in
                             onSendMessage={onSendChat}
                             isInputDisabled={muted}
                             placeholder={placeholder}
-                            onUnreadMessagesChange={setUnread}
+                            onUnreadMessagesChange={(count) => {
+                                setUnread(count);
+                                onUnreadChange?.(count);
+                            }}
                             inputRef={inputRef}
                         >
                             <Messages messages={messages} />

@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import { Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCogs, faWrench } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 import Droppable from '../Droppable';
 import GameTimer from '../GameTimer';
@@ -14,12 +14,10 @@ import { PopupHostContext } from '../PopupContainer';
 import { pileRise } from '../PileDepth';
 import { findPendingAttachment, withoutPendingAttachment } from '../pendingAttachment';
 import { findLeftBehind } from '../leftBehind';
-import {
-    sendButtonClickedMessage,
-    sendToggleManualModeMessage
-} from '../../../redux/reducers/game';
+import { sendButtonClickedMessage } from '../../../redux/reducers/game';
 import { useLayoutMode } from './useBoardLayout';
-import LeaveGameButton from './LeaveGameButton';
+import GameMenu from './GameMenu';
+import ScoreBadge from './ScoreBadge';
 import PlotFactionStack from './PlotFactionStack';
 import PileCluster from './PileCluster';
 import HandTray from './HandTray';
@@ -32,8 +30,8 @@ import PromptBar from './PromptBar';
 // the middle.
 const sideAreas = {
     narrow: {
-        top: { columns: 'auto minmax(0, 1fr) auto', rows: ['id hand piles', 'play play play'] },
-        bottom: { columns: 'auto minmax(0, 1fr) auto', rows: ['play play play', 'id . piles'] }
+        top: { columns: 'minmax(0, 1fr)', rows: ['strip', 'play'] },
+        bottom: { columns: 'minmax(0, 1fr)', rows: ['play', 'strip'] }
     },
     short: {
         top: { columns: 'auto minmax(0, 1fr) auto', rows: ['id play hand', 'id play piles'] },
@@ -72,16 +70,58 @@ const Part = ({ area, scale, className, children }) => (
     </div>
 );
 
+// Each side holds its strips and its play area. The sides are given the height of their strips to start from and
+// share what is left equally, so both play areas are the same height even when one side's strip wraps.
+const useEqualPlayAreas = (boardRef, mode) => {
+    const [chrome, setChrome] = useState({ top: 0, bottom: 0 });
+    useLayoutEffect(() => {
+        const board = boardRef.current;
+        if (!board) {
+            return;
+        }
+        const measure = () => {
+            const next = {};
+            for (const side of ['top', 'bottom']) {
+                const element = board.querySelector(`[data-side='${side}']`);
+                const play = element?.querySelector('[data-region="play"]');
+                next[side] =
+                    element && play ? Math.round(element.offsetHeight - play.offsetHeight) : 0;
+            }
+            setChrome((current) =>
+                Math.abs(current.top - next.top) <= 1 && Math.abs(current.bottom - next.bottom) <= 1
+                    ? current
+                    : next
+            );
+        };
+        measure();
+        const observer = new ResizeObserver(measure);
+        board
+            .querySelectorAll('[data-side] > [data-region]:not([data-region="play"])')
+            .forEach((part) => observer.observe(part));
+        board.querySelectorAll('[data-side]').forEach((side) => observer.observe(side));
+        return () => observer.disconnect();
+    }, [boardRef, mode]);
+    return {
+        top: { flex: `1 1 ${chrome.top}px` },
+        bottom: { flex: `1 1 ${chrome.bottom}px` }
+    };
+};
+
 const AdaptiveGameBoardLayout = ({
     thisPlayer,
     otherPlayers,
     userPlayer,
     onCardClick,
     onSettingsClick,
+    onShortcutsClick,
+    chat,
     isDragging
 }) => {
     const dispatch = useDispatch();
     const mode = useLayoutMode();
+    const dividerRef = useRef(null);
+    const boardRef = useRef(null);
+    const sideFlex = useEqualPlayAreas(boardRef, mode);
     const manualMode = useSelector((state) => !!state.lobby.currentGame?.manualMode);
     const username = useSelector((state) => state.auth.user?.username);
     const isPlaying = !!thisPlayer && thisPlayer.user?.username === username;
@@ -115,12 +155,10 @@ const AdaptiveGameBoardLayout = ({
             );
         const handInStrip = !isMe || mode === 'wide';
 
-        return (
-            <div
-                data-side={side}
-                className='grid h-full w-full min-h-0 min-w-0'
-                style={sideGridStyle(mode, side)}
-            >
+        // Plots, agenda and faction, the opponent's hand, and the piles: in portrait they share one strip, which
+        // wraps onto a second line when it is wider than the board
+        const stripParts = (
+            <>
                 <Part area='id' scale={pileScale} className='p-1'>
                     <PlotFactionStack
                         player={player}
@@ -172,6 +210,26 @@ const AdaptiveGameBoardLayout = ({
                         isDragging={isDragging}
                     />
                 </Part>
+            </>
+        );
+
+        return (
+            <div
+                data-side={side}
+                className='grid h-full w-full min-h-0 min-w-0'
+                style={sideGridStyle(mode, side)}
+            >
+                {mode === 'narrow' ? (
+                    <div
+                        data-region='strip'
+                        className='flex flex-wrap items-start justify-between [&>*]:p-0.5'
+                        style={{ gridArea: 'strip' }}
+                    >
+                        {stripParts}
+                    </div>
+                ) : (
+                    stripParts
+                )}
                 <Part area='play' className='flex'>
                     <ScrollArea className='flex-1' anchor={side === 'top' ? 'end' : 'start'}>
                         <PlayerBoard
@@ -189,52 +247,41 @@ const AdaptiveGameBoardLayout = ({
         );
     };
 
-    // Until the scoreboard (phase 4), each player's power and gold sit at their end of the phase track
-    const stat = (player) =>
-        player && (
-            <span className='whitespace-nowrap text-default-500'>
-                <span className='text-default-300'>{player.user?.username || 'Noone'}</span>
-                {` ♛${player.stats?.totalPower ?? 0} ●${player.stats?.gold ?? 0}`}
-            </span>
-        );
     const onButtonClick = (button) =>
         dispatch(
             sendButtonClickedMessage(button.promptId, button.command, button.method, button.arg)
         );
     const gameActions = (
-        <div className='flex'>
-            <Button
-                isIconOnly
-                size='sm'
-                variant='light'
-                className='h-6 w-6 min-w-6'
-                title='Open Settings'
-                onPress={onSettingsClick}
-            >
-                <FontAwesomeIcon icon={faCogs} />
-            </Button>
-            {isPlaying && (
+        <div className='flex items-center'>
+            {phoneLayout && chat && (
                 <Button
                     isIconOnly
                     size='sm'
                     variant='light'
-                    className={classNames('h-6 w-6 min-w-6', { 'text-danger': manualMode })}
-                    title={
-                        manualMode
-                            ? 'Manual mode is on: the rules are not fully enforced, and players can change the game by hand. Click to turn it off.'
-                            : 'Manual mode is off: the game enforces the rules, and manual changes are disabled. Click to ask your opponent to turn it on.'
-                    }
-                    onPress={() => dispatch(sendToggleManualModeMessage())}
+                    className='relative h-7 w-7 min-w-7 overflow-visible'
+                    title={chat.open ? 'Hide chat' : 'Show chat'}
+                    aria-expanded={chat.open}
+                    onPress={chat.onToggle}
                 >
-                    <FontAwesomeIcon icon={faWrench} />
+                    <FontAwesomeIcon icon={chat.open ? faXmark : faComment} />
+                    {!chat.open && chat.unread > 0 && (
+                        <span className='absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-bold text-white'>
+                            {chat.unread > 99 ? '99+' : chat.unread}
+                        </span>
+                    )}
                 </Button>
             )}
-            <LeaveGameButton />
+            <GameMenu
+                isPlaying={isPlaying}
+                onSettingsClick={onSettingsClick}
+                onShortcutsClick={onShortcutsClick}
+            />
         </div>
     );
 
+    // The divider is the scoreboard: each player's power and gold at their end of it
     const divider = (
-        <div data-region='mid' className='relative z-[250] shrink-0'>
+        <div ref={dividerRef} data-region='mid' className='relative z-[250] shrink-0'>
             <PromptBar
                 mode={mode}
                 phase={thisPlayer?.phase}
@@ -246,25 +293,64 @@ const AdaptiveGameBoardLayout = ({
                 onButtonClick={onButtonClick}
                 timer={<GameTimer player={thisPlayer} isMe={!!thisPlayer} side='bottom' />}
                 actions={gameActions}
-                startOfTrack={otherPlayers.map((player) => (
-                    <React.Fragment key={player.name ?? player.seatNo}>
-                        {stat(player)}{' '}
-                    </React.Fragment>
-                ))}
-                endOfTrack={stat(thisPlayer)}
+                startOfTrack={
+                    <div className='flex gap-3'>
+                        {otherPlayers.map((player) => (
+                            <ScoreBadge
+                                key={player.name ?? player.seatNo}
+                                player={player}
+                                showName={mode === 'wide'}
+                            />
+                        ))}
+                    </div>
+                }
+                endOfTrack={
+                    <ScoreBadge
+                        player={thisPlayer}
+                        align='end'
+                        showName={mode === 'wide'}
+                        canChange={isPlaying && manualMode}
+                    />
+                }
             />
         </div>
     );
 
+    // On a phone the chat drops down to the divider, and no further
+    useLayoutEffect(() => {
+        const divider = dividerRef.current;
+        const host = divider?.closest('[data-layout]')?.parentElement;
+        if (!phoneLayout || !divider || !host) {
+            return;
+        }
+        const root = document.documentElement;
+        const place = () =>
+            root.style.setProperty(
+                '--chat-open-height',
+                `${divider.getBoundingClientRect().top - host.getBoundingClientRect().top}px`
+            );
+        place();
+        const observer = new ResizeObserver(place);
+        observer.observe(divider);
+        observer.observe(host);
+        return () => {
+            observer.disconnect();
+            root.style.removeProperty('--chat-open-height');
+        };
+    }, [phoneLayout]);
+
     const opponents = (
         <OpponentCarousel
-            className='flex-1 basis-0'
+            className='flex-1'
+            style={sideFlex.top}
             opponents={otherPlayers}
             renderSide={(player) => renderSide(player, 'top')}
         />
     );
     const ours = (
-        <div className='flex flex-1 basis-0 min-h-0'>{renderSide(thisPlayer, 'bottom')}</div>
+        <div className='flex min-h-0 flex-1' style={sideFlex.bottom}>
+            {renderSide(thisPlayer, 'bottom')}
+        </div>
     );
     const handTray = phoneLayout && thisPlayer && (
         <div
@@ -287,8 +373,9 @@ const AdaptiveGameBoardLayout = ({
 
     return (
         <PopupHostContext.Provider value={phoneLayout || coarsePointer ? 'sheet' : 'panel'}>
-            <AreaLabelContext.Provider value={phoneLayout ? 'count' : 'full'}>
+            <AreaLabelContext.Provider value={phoneLayout ? 'caption' : 'full'}>
                 <div
+                    ref={boardRef}
                     data-layout={mode}
                     className='flex h-full w-full flex-col overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]'
                 >

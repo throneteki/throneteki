@@ -2,9 +2,32 @@ import React from 'react';
 import Card from '../Card';
 import CardPile from '../CardPile';
 import PlayerPlots from '../PlayerPlots';
+import { Constants } from '../../../constants';
 
 // The faction card lies over the agenda, which shows a strip down its left side
 const peekBehind = { marginLeft: 'calc(var(--card-scale, 1) * -2.6rem)' };
+
+const plotStats = [
+    { code: 'initiative', name: 'Initiative' },
+    { code: 'claim', name: 'Claim' },
+    { code: 'reserve', name: 'Reserve' }
+];
+
+// The numbers the revealed plot sets this round, along its top edge where they can be read at any size
+const PlotStats = ({ stats }) => (
+    <div className='pointer-events-none absolute right-0 top-0 z-[215] flex justify-end gap-0.5 hud-zoom'>
+        {plotStats.map((stat) => (
+            <span
+                key={stat.code}
+                title={stat.name}
+                className='flex items-center gap-0.5 rounded-b-md bg-black/80 px-1 text-[11px] font-bold leading-4'
+            >
+                <img src={Constants.StatIconImagePaths[stat.code]} alt='' className='h-3.5 w-3.5' />
+                {stats?.[stat.code] ?? 0}
+            </span>
+        ))}
+    </div>
+);
 
 // A player's plots, with their faction card and agenda stacked beside them
 const PlotFactionStack = ({ player, isMe, side, onCardClick, pileProps, droppable }) => {
@@ -16,17 +39,20 @@ const PlotFactionStack = ({ player, isMe, side, onCardClick, pileProps, droppabl
 
     return (
         <div className='flex items-start gap-1'>
-            <PlayerPlots
-                onCardClick={onCardClick}
-                direction={side === 'bottom' ? 'default' : 'reverse'}
-                isMe={isMe}
-                playerName={player.user?.username}
-                plotDeck={cardPiles.plotDeck}
-                plotDiscard={cardPiles.plotDiscard}
-                activePlot={player.activePlot}
-                selectedPlot={player.selectedPlot}
-                mustShowPlotSelection={player.mustShowPlotSelection}
-            />
+            <div className='relative'>
+                <PlayerPlots
+                    onCardClick={onCardClick}
+                    direction={side === 'bottom' ? 'default' : 'reverse'}
+                    isMe={isMe}
+                    playerName={player.user?.username}
+                    plotDeck={cardPiles.plotDeck}
+                    plotDiscard={cardPiles.plotDiscard}
+                    activePlot={player.activePlot}
+                    selectedPlot={player.selectedPlot}
+                    mustShowPlotSelection={player.mustShowPlotSelection}
+                />
+                {player.activePlot && <PlotStats stats={player.stats} />}
+            </div>
             <div className='flex items-start'>
                 {additionalAgendas.map((extra, index) => (
                     <div

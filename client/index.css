@@ -341,6 +341,16 @@ html.card-dragging * {
 html[data-board-layout='narrow'],
 html[data-board-layout='short'] {
     @mixin chat-phone;
+
+    /* The divider's chat button opens and closes the chat instead of the tab, which would cover the board. The
+       chat drops down only as far as the divider, so the button stays in reach and our half stays playable. */
+    .chat-lip,
+    .chat-dim {
+        display: none;
+    }
+    .chat-drawer.chat-open {
+        height: var(--chat-open-height, calc(100% - var(--lip-depth)));
+    }
 }
 
 [data-motion='off'] .chat-drawer,

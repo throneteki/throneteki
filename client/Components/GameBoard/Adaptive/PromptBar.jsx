@@ -83,6 +83,8 @@ const Chip = ({ button, onPress, fullWidth = false }) => {
 const ChipRows = ({ buttons, maxRows, align = 'start', onPress, onMore }) => {
     const ref = useRef(null);
     const [shown, setShown] = useState(buttons.length);
+    // A new width can fit more chips or fewer, so it starts again from all of them and measures once more
+    const [measure, setMeasure] = useState(0);
     const key = buttons.map((button) => `${button.promptId}:${button.text}`).join('|');
 
     useLayoutEffect(() => {
@@ -100,6 +102,7 @@ const ChipRows = ({ buttons, maxRows, align = 'start', onPress, onMore }) => {
             if (row.clientWidth !== width) {
                 width = row.clientWidth;
                 setShown(buttons.length);
+                setMeasure((count) => count + 1);
             }
         });
         observer.observe(row);
@@ -115,10 +118,10 @@ const ChipRows = ({ buttons, maxRows, align = 'start', onPress, onMore }) => {
         const rows = new Set(
             [...row.children].map((child) => Math.round(child.getBoundingClientRect().top))
         ).size;
-        if (rows > maxRows && shown > 1) {
+        if (rows > maxRows && shown > (maxRows > 1 ? 1 : 0)) {
             setShown(shown - 1);
         }
-    }, [shown, maxRows, key]);
+    }, [shown, maxRows, key, measure]);
 
     const hidden = buttons.length - shown;
     return (
@@ -171,24 +174,16 @@ const PhaseTrack = ({ phase, compact, inline = false, start, end }) => {
     const current = phases.findIndex((entry) => entry.name === phase);
     if (inline) {
         return (
-            <div className='flex shrink-0 items-center gap-2 text-[10px] leading-tight'>
-                <div className='flex flex-col'>
-                    <div className='truncate'>{start}</div>
-                    <div className='truncate'>{end}</div>
-                </div>
+            <div className='flex shrink-0 items-center text-[10px] leading-tight'>
                 <PhaseNames phase={phase} current={current} compact />
             </div>
         );
     }
     return (
-        <div className='flex items-center gap-2 px-2 pt-0.5 text-[10px] uppercase leading-none tracking-wider'>
-            <div className='min-w-0 flex-1 truncate text-left normal-case tracking-normal'>
-                {start}
-            </div>
+        <div className='flex items-center gap-2 px-2 pt-1 text-[10px] uppercase leading-none tracking-wider [[data-layout=wide]_&]:pr-9'>
+            <div className='flex min-w-0 flex-1 justify-start'>{start}</div>
             <PhaseNames phase={phase} current={current} compact={compact} />
-            <div className='min-w-0 flex-1 truncate text-right normal-case tracking-normal'>
-                {end}
-            </div>
+            <div className='flex min-w-0 flex-1 justify-end'>{end}</div>
         </div>
     );
 };
@@ -268,14 +263,18 @@ const PromptBar = ({
             })}
         >
             {promptTitle && !waiting && (
-                <span className='mr-1.5 font-normal text-default-500'>{promptTitle}</span>
+                <div className='text-[10px] font-normal uppercase leading-tight tracking-wider text-default-500'>
+                    {promptTitle}
+                </div>
             )}
-            {promptText}
-            {selection && selection.selected > 0 && (
-                <span className='ml-2 whitespace-nowrap rounded-full bg-warning px-2 text-tiny font-bold text-black'>
-                    {`${selection.selected} selected`}
-                </span>
-            )}
+            <div>
+                {promptText}
+                {selection && selection.selected > 0 && (
+                    <span className='ml-2 whitespace-nowrap rounded-full bg-warning px-2 text-tiny font-bold text-black'>
+                        {`${selection.selected} selected`}
+                    </span>
+                )}
+            </div>
         </div>
     );
     const corner = (
@@ -290,7 +289,7 @@ const PromptBar = ({
             {buttons.length > 0 && (
                 <ChipRows
                     buttons={buttons}
-                    maxRows={2}
+                    maxRows={short ? 1 : 2}
                     align={narrow ? 'start' : 'end'}
                     onPress={press}
                     onMore={() => setMoreOpen(true)}
@@ -339,12 +338,12 @@ const PromptBar = ({
                         short ? 'py-1' : 'pb-1 pt-0.5'
                     )}
                 >
-                    {short && (
-                        <PhaseTrack phase={phase} inline start={startOfTrack} end={endOfTrack} />
-                    )}
+                    {short && <div className='shrink-0'>{startOfTrack}</div>}
+                    {short && <PhaseTrack phase={phase} inline />}
                     {text}
                     {chips}
                     {corner}
+                    {short && <div className='shrink-0'>{endOfTrack}</div>}
                 </div>
             )}
             {responseDelay && (

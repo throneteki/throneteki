@@ -108,6 +108,7 @@ const GameBoard = () => {
     const [showGameChat, setShowGameChat] = useState(window.innerWidth > 768);
     const [showModal, setShowModal] = useState(false);
     const [showShortcuts, setShowShortcuts] = useState(false);
+    const [chatUnread, setChatUnread] = useState(0);
     const chatInputRef = useRef(null);
     const shortcutsEnabled = keyboardShortcutsEnabled(user?.settings);
 
@@ -490,6 +491,8 @@ const GameBoard = () => {
                     userPlayer={userPlayer}
                     onCardClick={onCardClick}
                     onSettingsClick={onSettingsClick}
+                    onShortcutsClick={() => setShowShortcuts(true)}
+                    chat={{ open: showGameChat, unread: chatUnread, onToggle: onChatToggle }}
                     isDragging={showDropZones}
                 />
             </BoardLayoutProvider>
@@ -577,6 +580,8 @@ const GameBoard = () => {
                         messages={currentGame.messages}
                         onSendChat={onSendChat}
                         muted={!thisPlayer && currentGame.muteSpectators}
+                        inputRef={chatInputRef}
+                        onUnreadChange={setChatUnread}
                     />
                 </div>
             </MotionConfig>

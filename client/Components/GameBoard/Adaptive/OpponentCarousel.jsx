@@ -3,12 +3,13 @@ import classNames from 'classnames';
 
 // The opponents' side of the board: one slide per opponent, swiped between. With one opponent (joust) it is a
 // single slide that never moves.
-const OpponentCarousel = ({ opponents, renderSide, className }) => {
+const OpponentCarousel = ({ opponents, renderSide, className, style }) => {
     const single = opponents.length < 2;
     return (
         <div
             data-opponent-carousel=''
             data-clips=''
+            style={style}
             className={classNames(
                 'flex min-h-0 min-w-0',
                 single
