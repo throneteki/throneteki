@@ -111,12 +111,12 @@ const LobbyChat = ({ isLoggedIn, messages, isModerator, lobbyError }) => {
                 return (
                     <div
                         key={message.user.username + i++}
-                        className='break-words text-gray-300 text-sm leading-[1.15rem] flex gap-1'
+                        className='text-gray-300 text-sm leading-[1.15rem] flex gap-1 pr-2'
                     >
-                        <span>{messageText}</span>
+                        <span className='min-w-0 [overflow-wrap:anywhere]'>{messageText}</span>
                         {isModerator && !message.deleted && (
                             <Link
-                                className='text-danger text-small'
+                                className='text-danger text-small shrink-0 self-start'
                                 onPress={() => onRemoveMessageClick(message._id)}
                             >
                                 <FontAwesomeIcon icon={faTimes} />
@@ -143,7 +143,7 @@ const LobbyChat = ({ isLoggedIn, messages, isModerator, lobbyError }) => {
                             showFallback
                         />
                     </div>
-                    <div className='overflow-x-hidden'>
+                    <div className='flex-1 min-w-0'>
                         <div className='flex'>
                             <span className={userClass}>{firstMessage.user.username}</span>
                             <span className='ml-2 text-gray-300 text-small'>{timestamp}</span>
@@ -156,9 +156,7 @@ const LobbyChat = ({ isLoggedIn, messages, isModerator, lobbyError }) => {
     }, [messages, isModerator, onRemoveMessageClick]);
 
     const noMessagesLabel = (
-        <div className='bg-default-200 rounded-lg rounded-b-none p-2'>
-            There are no messages at the moment
-        </div>
+        <div className='bg-default-200 rounded-lg p-2'>There are no messages at the moment</div>
     );
 
     const placeholder = isLoggedIn
@@ -166,7 +164,7 @@ const LobbyChat = ({ isLoggedIn, messages, isModerator, lobbyError }) => {
         : 'You must be logged in to send lobby chat messages';
     return (
         <ChatArea
-            className='overflow-hidden rounded-b-xl'
+            className='flex-1 min-h-0 overflow-hidden rounded-b-xl'
             messageCount={messages.length}
             noMessagesLabel={noMessagesLabel}
             onSendMessage={(message) => dispatch(sendLobbyChatMessage(message))}
