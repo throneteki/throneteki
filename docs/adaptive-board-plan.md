@@ -113,6 +113,13 @@ From the review on 2026-11-17:
 - [x] **R13 The chat tab on phones** covers the opponent's board. Consider a chat button on the
       divider, and make sure it opens and closes smoothly. **Phase 4** (game menu).
       Done: on phones a chat button on the divider (with the unread count) replaces the tab; the chat slides down to the divider and no further, so it closes from the same button (phase 4).
+- [ ] **R14 (found while building) Phone landscape cards are the smallest of any layout** (about 35–45px
+      wide). Four card rows, two strips' worth of side columns and the divider share 390px of height.
+      Next options: smaller location rows (declined earlier), or putting each side's locations beside its
+      characters instead of above them. Judge on a real phone.
+- [ ] **R15 (found while building) The navbar's spectator list and server connection status** aren't on
+      the adaptive board's phone layouts, because the navbar is hidden there. They could go in the game
+      menu.
 
 ## Architecture
 
@@ -656,14 +663,26 @@ zoom, hold and move to drag.
 
 ### Phase 5: polish
 
-- [ ] Animations: plot reveal, draw and redeal into the hand tray, and flights to and from collapsed
-      piles.
-- [ ] Turn off text selection and the iOS callout across the board. Check the hold delay feels right
-      at the new sizes.
-- [ ] Check performance on a mid-range phone with `useRenderCount`, especially the `ResizeObserver`
-      and scale changes during flips.
-- [ ] Spectators: no hand tray. Show both strips at pile scale, and hide the prompt or show it as
-      waiting.
+- [x] Flights can now be checked without a server. The dev page's fixture store has the real
+      `flipMiddleware`, and its panel has steps that change the game as a server would (`fixtureSteps`:
+      draw a card, play a character from hand, kill a character). Checked by probe in portrait and
+      landscape: drawing, playing (hand to the clipped play area) and killing (play area to the dead
+      pile) all fly. Copies fly above the page where an area clips, and none are left behind
+      afterwards. Mid-flight shots show nothing cut off (R10).
+- [ ] **Not checked:** plot reveal and redeal into the hand tray. They need fixture steps of their own,
+      or a real game.
+- [x] Text selection, the iOS long-press callout and image dragging are off across the adaptive board
+      and its sheets (`index.css`). The hold delay is unchanged (250ms, `holdToDrag`).
+      **Judge on a real phone.**
+- [ ] **Not done:** performance on a mid-range phone. It needs a real device. Where to look:
+      `useBoardLayout`'s and `useEqualPlayAreas`' `ResizeObserver`s during flips, and `ChipRows`'
+      one-render-per-hidden-chip measuring.
+- [x] Spectators: `isPlaying` (the viewer is the bottom player) decides drops, the hand tray, the
+      game menu's player items and the stat stepper. A spectator gets no hand tray, the bottom player's
+      hand shows as a counted back in the strip, and the divider reads "Spectating". Checked with the
+      dev page's `&spectate=1`.
+- [x] Landscape keeps two rows of chips. A single row hid Power and Done in the challenge prompt behind
+      "More". `short`'s chrome height is 4.25rem.
 
 ### Phase 6: melee
 

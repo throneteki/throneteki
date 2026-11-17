@@ -604,3 +604,68 @@ export const boardFixtures = {
     responder: { label: 'Any reactions? (countdown)', build: possibleResponder },
     choices: { label: 'Many choices', build: manyChoices }
 };
+
+// Changes to a fixture in the shape a server sends them, keeping each card's uuid, so the board animates the card
+// from where it was to where it went. Development only, for checking flights.
+const drawPool = ['01141', '01142', '01143', '01157', '01153', '01154'];
+
+export const fixtureSteps = {
+    draw: {
+        label: 'Draw a card',
+        apply: (state) => {
+            const me = state.players[fixtureUsername];
+            const [top, ...rest] = me.cardPiles.drawDeck;
+            if (!top) {
+                return state;
+            }
+            const code = drawPool[me.cardPiles.hand.length % drawPool.length];
+            me.cardPiles.drawDeck = rest;
+            me.numDrawCards = rest.length;
+            me.cardPiles.hand = [
+                ...me.cardPiles.hand,
+                {
+                    ...top,
+                    facedown: false,
+                    code,
+                    name: cardData[code].name,
+                    type: cardData[code].type,
+                    attachments: [],
+                    dupes: [],
+                    childCards: []
+                }
+            ];
+            return state;
+        }
+    },
+    play: {
+        label: 'Play a character from hand',
+        apply: (state) => {
+            const me = state.players[fixtureUsername];
+            const card = me.cardPiles.hand.find((entry) => entry.type === 'character');
+            if (!card) {
+                return state;
+            }
+            me.cardPiles.hand = me.cardPiles.hand.filter((entry) => entry !== card);
+            me.cardPiles.cardsInPlay = [...me.cardPiles.cardsInPlay, card];
+            return state;
+        }
+    },
+    kill: {
+        label: 'Kill a character',
+        apply: (state) => {
+            const me = state.players[fixtureUsername];
+            const card = me.cardPiles.cardsInPlay.find((entry) => entry.type === 'character');
+            if (!card) {
+                return state;
+            }
+            me.cardPiles.cardsInPlay = me.cardPiles.cardsInPlay.filter((entry) => entry !== card);
+            me.cardPiles.deadPile = [
+                { ...card, attachments: [], kneeled: false },
+                ...me.cardPiles.deadPile
+            ];
+            return state;
+        }
+    }
+};
+
+export const spectatorName = 'Watcher';

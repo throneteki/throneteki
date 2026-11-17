@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import auth, { setUser } from '../redux/reducers/auth.js';
@@ -8,29 +8,41 @@ import cards from '../redux/reducers/cards';
 import navigation from '../redux/reducers/navigation.js';
 import admin from '../redux/reducers/admin';
 import { apiSlice } from '../redux/middleware/api';
+import flipMiddleware from '../redux/middleware/flip.js';
 import GameBoard from '../Components/GameBoard/GameBoard';
 import { hudStore } from '../hudStore';
-import { boardFixtures, fixtureUsername } from './boardFixtures';
+import { boardFixtures, fixtureSteps, fixtureUsername, spectatorName } from './boardFixtures';
 
-// A store of its own, with no game server behind it: messages the board sends go nowhere
+// A store of its own, with no game server behind it: messages the board sends go nowhere. It notes where cards
+// were before each new state (flipMiddleware), as the real store does, so cards fly between zones.
 const createFixtureStore = () =>
     configureStore({
         reducer: { admin, api: apiSlice.reducer, auth, cards, navigation, lobby, game },
         middleware: (getDefaultMiddleware) =>
-            getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }).concat(
-                apiSlice.middleware
-            )
+            getDefaultMiddleware({ serializableCheck: false, immutableCheck: false })
+                .concat(flipMiddleware)
+                .concat(apiSlice.middleware)
     });
 
+// With manual mode on, cards can be dragged. Spectating, the page watches the game as someone not playing it.
+const buildFixture = (fixture, { manual, spectate }) => {
+    const state = { ...boardFixtures[fixture].build(), manualMode: manual };
+    if (spectate) {
+        state.spectators = [
+            { id: spectatorName, name: spectatorName, user: { username: spectatorName } }
+        ];
+    }
+    return state;
+};
+
+const viewerOf = (spectate) => (spectate ? spectatorName : fixtureUsername);
+
 // The board expects a game before it first draws, as it has in a real game
-// With manual mode on, cards can be dragged
-const loadFixture = (store, fixture, board, manual) => {
+const loadFixture = (store, state, board, spectate) => {
     store.dispatch(
-        setUser({ username: fixtureUsername, permissions: {}, settings: { hud: { board } } })
+        setUser({ username: viewerOf(spectate), permissions: {}, settings: { hud: { board } } })
     );
-    store.dispatch(
-        receiveGameState({ ...boardFixtures[fixture].build(), manualMode: manual }, fixtureUsername)
-    );
+    store.dispatch(receiveGameState(state, viewerOf(spectate)));
 };
 
 const setQuery = (fixture, board) => {
@@ -41,22 +53,43 @@ const setQuery = (fixture, board) => {
 };
 
 // Development only: the real game board, showing a canned game state, at /dev/board?fixture=crowded&board=adaptive
-const DevBoard = ({ fixture: initialFixture, board: initialBoard, panel, manual: manualParam }) => {
-    const manual = manualParam === '1';
+// (&manual=1 for dragging, &spectate=1 to watch, &panel=0 to hide this panel). The steps change the game as a
+// server would, to see cards move between zones.
+const DevBoard = ({
+    fixture: initialFixture,
+    board: initialBoard,
+    panel,
+    manual: manualParam,
+    spectate: spectateParam
+}) => {
+    const options = { manual: manualParam === '1', spectate: spectateParam === '1' };
     const [fixture, setFixture] = useState(boardFixtures[initialFixture] ? initialFixture : 'mid');
     const [board, setBoard] = useState(initialBoard === 'classic' ? 'classic' : 'adaptive');
+    const current = useRef(null);
     const [store] = useState(() => {
         const created = createFixtureStore();
-        loadFixture(created, fixture, board, manual);
+        current.current = buildFixture(fixture, options);
+        loadFixture(created, current.current, board, options.spectate);
         return created;
     });
     const [open, setOpen] = useState(true);
 
+    const reset = () => {
+        current.current = buildFixture(fixture, options);
+        store.dispatch(receiveGameState(current.current, viewerOf(options.spectate)));
+    };
+    const step = (name) => {
+        current.current = fixtureSteps[name].apply(structuredClone(current.current));
+        store.dispatch(receiveGameState(current.current, viewerOf(options.spectate)));
+    };
+
     useEffect(() => {
         hudStore.reset();
-        loadFixture(store, fixture, board, manual);
+        const spectate = spectateParam === '1';
+        current.current = buildFixture(fixture, { manual: manualParam === '1', spectate });
+        loadFixture(store, current.current, board, spectate);
         setQuery(fixture, board);
-    }, [store, fixture, board, manual]);
+    }, [store, fixture, board, manualParam, spectateParam]);
 
     return (
         <Provider store={store}>
@@ -89,17 +122,17 @@ const DevBoard = ({ fixture: initialFixture, board: initialBoard, panel, manual:
                                 <option value='adaptive'>Adaptive</option>
                                 <option value='classic'>Classic</option>
                             </select>
-                            <button
-                                type='button'
-                                onClick={() =>
-                                    store.dispatch(
-                                        receiveGameState(
-                                            boardFixtures[fixture].build(),
-                                            fixtureUsername
-                                        )
-                                    )
-                                }
-                            >
+                            {Object.entries(fixtureSteps).map(([name, { label }]) => (
+                                <button
+                                    key={name}
+                                    type='button'
+                                    data-step={name}
+                                    onClick={() => step(name)}
+                                >
+                                    {label}
+                                </button>
+                            ))}
+                            <button type='button' onClick={reset}>
                                 Reset
                             </button>
                         </>

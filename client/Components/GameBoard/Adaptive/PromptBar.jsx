@@ -289,7 +289,7 @@ const PromptBar = ({
             {buttons.length > 0 && (
                 <ChipRows
                     buttons={buttons}
-                    maxRows={short ? 1 : 2}
+                    maxRows={2}
                     align={narrow ? 'start' : 'end'}
                     onPress={press}
                     onMore={() => setMoreOpen(true)}

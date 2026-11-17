@@ -134,7 +134,8 @@ const AdaptiveGameBoardLayout = ({
     const pileScale = phoneLayout ? 'pile' : null;
 
     const renderSide = (player, side) => {
-        const isMe = !!thisPlayer && player === thisPlayer;
+        // A spectator watches the bottom player, but cannot act for them: no drops, and no hand of their own
+        const isMe = isPlaying && player === thisPlayer;
         const pileProps = {
             onCardClick,
             popupLocation: side,
@@ -286,7 +287,7 @@ const AdaptiveGameBoardLayout = ({
                 mode={mode}
                 phase={thisPlayer?.phase}
                 promptTitle={userPlayer?.promptTitle}
-                promptText={userPlayer?.menuTitle}
+                promptText={isPlaying ? userPlayer?.menuTitle : 'Spectating'}
                 buttons={userPlayer?.buttons}
                 controls={userPlayer?.controls}
                 selecting={!!userPlayer?.selectCard}
@@ -352,7 +353,7 @@ const AdaptiveGameBoardLayout = ({
             {renderSide(thisPlayer, 'bottom')}
         </div>
     );
-    const handTray = phoneLayout && thisPlayer && (
+    const handTray = phoneLayout && isPlaying && (
         <div
             data-region='hand-tray'
             className='shrink-0 p-1'

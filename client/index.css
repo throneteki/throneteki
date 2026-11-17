@@ -460,6 +460,19 @@ html.card-dragging.card-drop-refused * {
     animation: none;
 }
 
+/* On the adaptive board a long press previews or picks up a card, so it never selects text or opens the
+   browser's own menu for a picture. The sheets and dialogs it opens are kept the same way. */
+[data-layout],
+[data-sheet] {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+[data-layout] img,
+[data-sheet] img {
+    -webkit-user-drag: none;
+}
+
 /* Plots being chosen in a sheet: one after another, each snapping to the middle */
 .sheet-carousel > * {
     flex-shrink: 0;

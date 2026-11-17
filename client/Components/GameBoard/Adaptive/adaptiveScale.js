@@ -104,7 +104,7 @@ export const layoutBudgets = {
         max: 1.6,
         rows: { play: 4, pile: 0, hand: 0.4 },
         stripUnits: 0,
-        chrome: { width: 14, height: 3 }
+        chrome: { width: 14, height: 4.25 }
     },
     wide: {
         pilesAtCardSize: true,

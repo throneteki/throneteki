@@ -48,6 +48,7 @@ const devRoutes = DevBoard
                           board={context.params.board}
                           panel={context.params.panel}
                           manual={context.params.manual}
+                          spectate={context.params.spectate}
                       />
                   </React.Suspense>
               )
