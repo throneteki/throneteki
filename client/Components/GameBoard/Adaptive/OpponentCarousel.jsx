@@ -8,6 +8,7 @@ const OpponentCarousel = ({ opponents, renderSide, className }) => {
     return (
         <div
             data-opponent-carousel=''
+            data-clips=''
             className={classNames(
                 'flex min-h-0 min-w-0',
                 single

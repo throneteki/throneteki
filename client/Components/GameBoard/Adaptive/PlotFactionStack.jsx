@@ -31,7 +31,7 @@ const PlotFactionStack = ({ player, isMe, side, onCardClick, pileProps, droppabl
                 {additionalAgendas.map((extra, index) => (
                     <div
                         key={extra.uuid}
-                        className='relative'
+                        className='relative z-0'
                         style={index > 0 ? peekBehind : null}
                     >
                         <Card
@@ -44,7 +44,7 @@ const PlotFactionStack = ({ player, isMe, side, onCardClick, pileProps, droppabl
                 ))}
                 {hasAgenda && (
                     <div
-                        className='relative'
+                        className='relative z-0'
                         style={additionalAgendas.length > 0 ? peekBehind : null}
                     >
                         {droppable(
@@ -63,7 +63,7 @@ const PlotFactionStack = ({ player, isMe, side, onCardClick, pileProps, droppabl
                         )}
                     </div>
                 )}
-                <div className='relative z-[1]' style={hasAgenda ? peekBehind : null}>
+                <div className='relative z-10' style={hasAgenda ? peekBehind : null}>
                     <CardPile
                         className='faction'
                         source='faction'
@@ -75,7 +75,7 @@ const PlotFactionStack = ({ player, isMe, side, onCardClick, pileProps, droppabl
                     />
                 </div>
                 {player.title && (
-                    <div className='relative ml-1'>
+                    <div className='relative z-0 ml-1'>
                         <Card
                             card={player.title}
                             source='title'

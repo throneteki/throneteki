@@ -1,6 +1,7 @@
 import {
     classifyLayout,
     computeAdaptiveScales,
+    stripExtraUnits,
     widestRowUnits
 } from '../../client/Components/GameBoard/Adaptive/adaptiveScale.js';
 
@@ -68,13 +69,27 @@ describe('widestRowUnits', function () {
     });
 });
 
+describe('stripExtraUnits', function () {
+    it('adds the piles a strip shows only while they hold cards, for the widest strip', function () {
+        const plain = { cardPiles: { shadows: [], outOfGamePile: [] }, agendas: [{}] };
+        const busy = {
+            cardPiles: { shadows: [{}], outOfGamePile: [{}] },
+            agendas: [{}, {}],
+            title: {}
+        };
+        expect(stripExtraUnits([plain])).toBe(0);
+        expect(stripExtraUnits([plain, busy])).toBeCloseTo(1.5 + 1.4 + 1 + 0.35);
+        expect(stripExtraUnits(undefined)).toBe(0);
+    });
+});
+
 describe('computeAdaptiveScales', function () {
-    it('uses the comfortable size when there is room', function () {
-        expect(computeAdaptiveScales({ mode: 'wide', width: 1600, height: 950 })).toEqual({
-            card: 1,
-            pile: 1,
-            hand: 1
-        });
+    it('grows the cards to fill the room available', function () {
+        const desktop = computeAdaptiveScales({ mode: 'wide', width: 1600, height: 950 });
+        const bigDesktop = computeAdaptiveScales({ mode: 'wide', width: 2560, height: 1440 });
+        expect(desktop.card).toBeGreaterThan(1);
+        expect(bigDesktop.card).toBeGreaterThan(desktop.card);
+        expect(bigDesktop.card).toBeLessThanOrEqual(2);
     });
 
     it('draws piles smaller and the hand larger on a phone', function () {
@@ -120,10 +135,17 @@ describe('computeAdaptiveScales', function () {
 
     it('shrinks the piles to fit their strip on a phone without shrinking the play areas', function () {
         const { card, pile } = computeAdaptiveScales({ mode: 'narrow', width: 390, height: 844 });
-        const stripWidth = 9 * 4 * 16 * pile + 9 * 6;
+        const stripWidth = 7.5 * 4 * 16 * pile + 7.5 * 6;
         expect(stripWidth).toBeLessThanOrEqual(390 - 16);
         expect(card).toBeGreaterThan(1);
         expect(pile).toBeLessThan(card * 0.7);
+    });
+
+    it('makes room in the strip for piles that hold cards', function () {
+        const size = { mode: 'wide', width: 1200, height: 950 };
+        expect(computeAdaptiveScales({ ...size, stripExtra: 3 }).card).toBeLessThan(
+            computeAdaptiveScales(size).card
+        );
     });
 
     it('keeps piles at the card size on a wide board, shrinking every card if the strip is too wide', function () {
@@ -134,15 +156,13 @@ describe('computeAdaptiveScales', function () {
         expect(tight.card).toBeLessThan(roomy.card);
     });
 
-    it('scales with the chosen card size within the room available', function () {
-        const normal = computeAdaptiveScales({ mode: 'wide', width: 2400, height: 1400 });
-        const large = computeAdaptiveScales({
-            mode: 'wide',
-            width: 2400,
-            height: 1400,
-            cardsSize: 1.4
-        });
-        expect(large.card).toBeGreaterThan(normal.card);
+    it('draws smaller cards for a small card size, but has no room to grow for a large one', function () {
+        const size = { mode: 'wide', width: 1600, height: 950 };
+        const normal = computeAdaptiveScales(size);
+        const small = computeAdaptiveScales({ ...size, cardsSize: 0.7 });
+        const large = computeAdaptiveScales({ ...size, cardsSize: 1.4 });
+        expect(small.card).toBeLessThan(normal.card);
+        expect(large.card).toBe(normal.card);
     });
 
     it('steps in twentieths so small resizes do not change it', function () {

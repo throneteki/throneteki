@@ -16,6 +16,9 @@ const cardData = {
     '01020': { name: 'Reinforcements', type: 'plot' },
     '01027': { name: 'Fealty', type: 'agenda' },
     '01200': { name: 'Banner of the Lion', type: 'agenda' },
+    '01198': { name: 'Banner of the Stag', type: 'agenda' },
+    '01199': { name: 'Banner of the Kraken', type: 'agenda' },
+    '06018': { name: 'Alliance', type: 'agenda' },
     '01028': { name: 'Littlefinger', type: 'character', strength: 4 },
     '01029': { name: 'Varys', type: 'character', strength: 3 },
     '01031': { name: 'Wildling Horde', type: 'character', strength: 5 },
@@ -311,19 +314,13 @@ const crowded = () => {
             stats: { claim: 1, initiative: 3, gold: 2, reserve: 6, totalPower: 12 },
             ...promptState({
                 isActivePrompt: true,
-                promptTitle: 'Military Challenge',
-                menuTitle: 'Any reactions to the challenge being won?',
+                promptTitle: 'Challenges',
+                menuTitle: 'Initiate a challenge',
                 buttons: [
-                    { text: 'Eddard Stark', arg: 'a1', promptId: 'p1', card: { code: '01144' } },
-                    { text: 'Robb Stark', arg: 'a2', promptId: 'p1', card: { code: '01146' } },
-                    { text: 'Grey Wind', arg: 'a3', promptId: 'p1', card: { code: '01145' } },
-                    {
-                        text: 'Winter Is Coming',
-                        arg: 'a4',
-                        promptId: 'p1',
-                        card: { code: '01159' }
-                    },
-                    { text: 'Pass', arg: 'pass', promptId: 'p1', cancel: true }
+                    { text: 'Military', arg: 'military', promptId: 'p1', icon: 'military' },
+                    { text: 'Intrigue', arg: 'intrigue', promptId: 'p1', icon: 'intrigue' },
+                    { text: 'Power', arg: 'power', promptId: 'p1', icon: 'power' },
+                    { text: 'Done', arg: 'done', promptId: 'p1' }
                 ]
             }),
             cardPiles: {
@@ -361,7 +358,7 @@ const crowded = () => {
             seatNo: 2,
             phase: 'challenge',
             faction: faction('lannister', { power: 4 }),
-            agenda: card('01200', { childCards: [card('01092')] }),
+            agendas: [card('06018'), card('01198'), card('01199')],
             activePlot: card('01009'),
             firstPlayer: true,
             numDrawCards: 11,
@@ -432,10 +429,178 @@ const choosingFromDiscard = () => {
     return state;
 };
 
+const waiting = () => {
+    const state = midGame();
+    Object.assign(
+        state.players[fixtureUsername],
+        promptState({ menuTitle: 'Waiting for opponent to initiate a challenge' })
+    );
+    Object.assign(
+        state.players[opponentName],
+        promptState({ isActivePrompt: true, menuTitle: 'Initiate a challenge' })
+    );
+    return state;
+};
+
+const choosingOnBoard = () => {
+    const state = midGame();
+    const me = state.players[fixtureUsername];
+    const opponent = state.players[opponentName];
+    let first = true;
+    me.cardPiles.cardsInPlay = me.cardPiles.cardsInPlay.map((card) => {
+        if (card.type !== 'character') {
+            return { ...card, unselectable: true };
+        }
+        const chosen = first;
+        first = false;
+        return { ...card, selectable: true, selected: chosen };
+    });
+    opponent.cardPiles.cardsInPlay = opponent.cardPiles.cardsInPlay.map((card) => ({
+        ...card,
+        unselectable: true
+    }));
+    Object.assign(
+        me,
+        promptState({
+            isActivePrompt: true,
+            selectCard: true,
+            promptTitle: 'Military claim',
+            menuTitle: 'Select 2 characters to kill',
+            buttons: [{ text: 'Done', arg: 'done', promptId: 'p1' }]
+        })
+    );
+    return state;
+};
+
+const namingCard = () => {
+    const state = midGame();
+    Object.assign(
+        state.players[fixtureUsername],
+        promptState({
+            isActivePrompt: true,
+            promptTitle: "The Hand's Judgment",
+            menuTitle: 'Name a card',
+            controls: [
+                {
+                    type: 'card-name',
+                    command: 'menuButton',
+                    method: 'selectCardName',
+                    promptId: 'p1'
+                }
+            ],
+            buttons: [{ text: 'Cancel', arg: 'cancel', promptId: 'p1', cancel: true }]
+        })
+    );
+    return state;
+};
+
+// A reaction window with something to trigger: the cards that can react are chosen on the board, and only cards
+// that cannot be shown there (in a draw deck, discard or dead pile) become buttons, as the server sends them
+const reactionWindow = () => {
+    const state = crowded();
+    const me = state.players[fixtureUsername];
+    const reacting = ['01144', '01146', '01145'];
+    const choose = (card) =>
+        reacting.includes(card.code)
+            ? { ...card, selectable: true }
+            : { ...card, unselectable: true };
+    me.cardPiles.cardsInPlay = me.cardPiles.cardsInPlay.map(choose);
+    me.cardPiles.hand = me.cardPiles.hand.map((card) =>
+        card.code === '01159' ? { ...card, selectable: true } : { ...card, unselectable: true }
+    );
+    const opponent = state.players[opponentName];
+    opponent.cardPiles.cardsInPlay = opponent.cardPiles.cardsInPlay.map((card) => ({
+        ...card,
+        unselectable: true
+    }));
+    const fromDiscard =
+        me.cardPiles.discardPile.find((card) => card.code === '01045') ||
+        me.cardPiles.discardPile[0];
+    Object.assign(
+        me,
+        promptState({
+            isActivePrompt: true,
+            selectCard: true,
+            promptTitle: 'Military Challenge',
+            menuTitle: 'Any reactions to the challenge being won?',
+            buttons: [
+                {
+                    text: `${fromDiscard.name} (discard pile)`,
+                    arg: fromDiscard.uuid,
+                    promptId: 'p1',
+                    card: { code: fromDiscard.code }
+                },
+                { text: "Don't ask again this phase", arg: 'passAndPauseForPhase', promptId: 'p1' },
+                { text: 'Pass', arg: 'done', promptId: 'p1' }
+            ]
+        })
+    );
+    return state;
+};
+
+// What every player who might be able to respond sees, whether or not they can, so nobody can tell who can
+const possibleResponder = () => {
+    const state = crowded();
+    Object.assign(
+        state.players[fixtureUsername],
+        promptState({
+            isActivePrompt: true,
+            selectCard: true,
+            promptTitle: 'Military Challenge',
+            menuTitle: 'Any reactions to the challenge being won?',
+            controls: [
+                {
+                    type: 'response-delay',
+                    duration: 600000,
+                    abilityWord: 'reaction',
+                    promptId: 'p1'
+                }
+            ],
+            buttons: [
+                { text: 'Pass', arg: 'done', promptId: 'p1' },
+                { text: 'Wait', arg: 'wait', promptId: 'p1', pausesTimer: true },
+                { text: "Don't ask again this phase", arg: 'passAndPauseForPhase', promptId: 'p1' }
+            ]
+        })
+    );
+    return state;
+};
+
+const manyChoices = () => {
+    const state = midGame();
+    const names = Object.entries(cardData)
+        .filter(([, data]) => data.type === 'character')
+        .slice(0, 12);
+    Object.assign(
+        state.players[fixtureUsername],
+        promptState({
+            isActivePrompt: true,
+            promptTitle: 'Search your deck',
+            menuTitle: 'Select a character to put into play',
+            buttons: [
+                ...names.map(([code, data], index) => ({
+                    text: data.name,
+                    arg: `c${index}`,
+                    promptId: 'p1',
+                    card: { code }
+                })),
+                { text: 'Done', arg: 'done', promptId: 'p1', cancel: true }
+            ]
+        })
+    );
+    return state;
+};
+
 export const boardFixtures = {
     empty: { label: 'Empty board', build: empty },
     mid: { label: 'Mid-game', build: midGame },
     crowded: { label: 'Crowded', build: crowded },
     plots: { label: 'Plot selection', build: plotSelection },
-    discard: { label: 'Choose from discard', build: choosingFromDiscard }
+    discard: { label: 'Choose from discard', build: choosingFromDiscard },
+    waiting: { label: 'Waiting on opponent', build: waiting },
+    select: { label: 'Choose on the board', build: choosingOnBoard },
+    lookup: { label: 'Name a card', build: namingCard },
+    reaction: { label: 'Reaction window', build: reactionWindow },
+    responder: { label: 'Any reactions? (countdown)', build: possibleResponder },
+    choices: { label: 'Many choices', build: manyChoices }
 };

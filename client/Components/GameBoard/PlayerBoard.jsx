@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import { useRenderCount } from '../../perf';
 import Card from './Card';
 import Droppable from './Droppable';
-import FittedRow from './FittedRow';
 import { cardHeight } from '../../cardScale';
 import { useHiddenDragUuid, useIncomingType } from './dragStore';
 import { cardBoxClass } from '../../cardScale';
@@ -135,17 +134,16 @@ const PlayerBoard = ({
 
     const renderRows = useCallback(
         (rows) => {
-            const fitted = ['squish', 'squish-then-scroll'].includes(overflow);
-            const Row = fitted ? FittedRow : 'div';
-            const rowProps = fitted ? { scroll: overflow === 'squish-then-scroll' } : {};
+            // Wrapping, a row too wide for the board carries on below instead of running off its edge
             return rows.map((row, index) => (
-                <Row
-                    {...rowProps}
-                    className='flex justify-start min-h-0 gap-1.5 card-row'
+                <div
+                    className={classNames('flex justify-start min-h-0 gap-1.5 card-row', {
+                        'flex-wrap': overflow === 'wrap'
+                    })}
                     key={`card-row-${index}`}
                 >
                     {renderRow(row)}
-                </Row>
+                </div>
             ));
         },
         [renderRow, overflow]

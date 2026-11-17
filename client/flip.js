@@ -958,6 +958,32 @@ export const landingFrames = (item, point = landingPoint) =>
         : null;
 
 // Cards still on their way to a place are left to finish, so a later update never cuts a flight short
+// A card landing inside an area that cuts off what spills out of it (marked data-clips, such as a play area
+// that scrolls) would be cut off on its way in. A copy flies above the page instead, and the card shows once the
+// copy has landed. The copy loses its flip markers, so the board never measures it as a card.
+const flyAbove = (el) => {
+    if (!el.closest('[data-clips]')) {
+        return { target: el, settle: () => {} };
+    }
+    const copy = el.cloneNode(true);
+    for (const node of [copy, ...copy.querySelectorAll('*')]) {
+        node.removeAttribute('data-flip');
+        node.removeAttribute('data-flip-deck');
+    }
+    detach(copy, rectOf(el));
+    el.style.visibility = 'hidden';
+    return {
+        target: copy,
+        settle: () =>
+            Promise.allSettled(copy.getAnimations({ subtree: true }).map((a) => a.finished)).then(
+                () => {
+                    copy.remove();
+                    el.style.visibility = '';
+                }
+            )
+    };
+};
+
 const flights = new Map();
 
 const inFlight = () => {
@@ -1020,7 +1046,11 @@ export const playPendingFlip = (root = document) => {
             item.type === 'move' && item.travel && !item.nested && slapsInto(item.toSource);
         const duration = slap ? slapTotal : item.duration;
         const easing = slap ? 'linear' : flipConfig.easing;
-        item.el.animate(slap ? slapKeyframes(item) : keyframesFor(item), {
+        const flies = item.type === 'move' && item.travel && !item.nested;
+        const { target, settle } = flies
+            ? flyAbove(item.el)
+            : { target: item.el, settle: () => {} };
+        target.animate(slap ? slapKeyframes(item) : keyframesFor(item), {
             id: 'flip',
             duration,
             easing,
@@ -1029,7 +1059,7 @@ export const playPendingFlip = (root = document) => {
         });
 
         if (item.turnFrom) {
-            turnFace(item.el, {
+            turnFace(target, {
                 from: item.turnFrom,
                 node: item.turnNode,
                 delay: item.delay,
@@ -1037,23 +1067,22 @@ export const playPendingFlip = (root = document) => {
             });
         }
 
-        const flies = item.type === 'move' && item.travel && !item.nested;
         if (flies || item.turnFrom) {
-            landHighlight(item.el, { delay: item.delay, duration, reveal: item.reveal });
+            landHighlight(target, { delay: item.delay, duration, reveal: item.reveal });
         }
 
         if (flies) {
             flights.set(item.uuid, performance.now() + item.delay + duration);
             if (slap) {
-                bounceCard(item.el, item);
+                bounceCard(target, item);
             } else {
-                liftCard(item.el, item);
+                liftCard(target, item);
             }
         }
 
         const landing = landingFrames(item, slap ? slapShare * 0.85 : undefined);
         if (landing) {
-            item.el.animate(landing, {
+            target.animate(landing, {
                 id: 'flip',
                 duration,
                 easing,
@@ -1061,5 +1090,6 @@ export const playPendingFlip = (root = document) => {
                 fill: 'backwards'
             });
         }
+        settle();
     }
 };

@@ -1,11 +1,10 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import { Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCogs } from '@fortawesome/free-solid-svg-icons';
+import { faCogs, faWrench } from '@fortawesome/free-solid-svg-icons';
 
-import ActivePlayerPrompt from '../ActivePlayerPrompt';
 import Droppable from '../Droppable';
 import GameTimer from '../GameTimer';
 import PlayerBoard from '../PlayerBoard';
@@ -14,13 +13,18 @@ import { AreaLabelContext } from '../LabelledGameArea';
 import { pileRise } from '../PileDepth';
 import { findPendingAttachment, withoutPendingAttachment } from '../pendingAttachment';
 import { findLeftBehind } from '../leftBehind';
-import { sendButtonClickedMessage } from '../../../redux/reducers/game';
+import {
+    sendButtonClickedMessage,
+    sendToggleManualModeMessage
+} from '../../../redux/reducers/game';
 import { useLayoutMode } from './useBoardLayout';
 import LeaveGameButton from './LeaveGameButton';
 import PlotFactionStack from './PlotFactionStack';
 import PileCluster from './PileCluster';
 import HandTray from './HandTray';
 import OpponentCarousel from './OpponentCarousel';
+import ScrollArea from './ScrollArea';
+import PromptBar from './PromptBar';
 
 // One player's side of the board, as a grid of its parts: "id" (plots, agenda and faction), "hand" (the
 // opponent's hand, or ours on a wide board), "piles" and "play". Ours mirrors the opponent's, play area nearest
@@ -77,6 +81,9 @@ const AdaptiveGameBoardLayout = ({
 }) => {
     const dispatch = useDispatch();
     const mode = useLayoutMode();
+    const manualMode = useSelector((state) => !!state.lobby.currentGame?.manualMode);
+    const username = useSelector((state) => state.auth.user?.username);
+    const isPlaying = !!thisPlayer && thisPlayer.user?.username === username;
     const phoneLayout = mode !== 'wide';
     const pileScale = phoneLayout ? 'pile' : null;
 
@@ -129,11 +136,7 @@ const AdaptiveGameBoardLayout = ({
                             <SquishableCardPanel
                                 cards={withoutPendingAttachment(player.cardPiles.hand)}
                                 groupVisibleCards
-                                maxCards={
-                                    isMe
-                                        ? 5
-                                        : Math.max(1, Math.min(player.cardPiles.hand.length, 2))
-                                }
+                                maxCards={isMe ? 5 : 1}
                                 onCardClick={onCardClick}
                                 source='hand'
                                 title='Hand'
@@ -163,77 +166,87 @@ const AdaptiveGameBoardLayout = ({
                         isDragging={isDragging}
                     />
                 </Part>
-                <Part area='play' className='flex overflow-hidden'>
-                    <PlayerBoard
-                        isDroppable={isMe}
-                        cardsInPlay={player.cardPiles.cardsInPlay}
-                        pendingAttachment={findPendingAttachment(player.cardPiles)}
-                        leftBehind={findLeftBehind(player.cardPiles)}
-                        onCardClick={onCardClick}
-                        rowDirection={side === 'bottom' ? 'default' : 'reverse'}
-                        overflow={isMe ? 'squish-then-scroll' : 'squish'}
-                    />
+                <Part area='play' className='flex'>
+                    <ScrollArea className='flex-1' anchor={side === 'top' ? 'end' : 'start'}>
+                        <PlayerBoard
+                            isDroppable={isMe}
+                            cardsInPlay={player.cardPiles.cardsInPlay}
+                            pendingAttachment={findPendingAttachment(player.cardPiles)}
+                            leftBehind={findLeftBehind(player.cardPiles)}
+                            onCardClick={onCardClick}
+                            rowDirection={side === 'bottom' ? 'default' : 'reverse'}
+                            overflow='wrap'
+                        />
+                    </ScrollArea>
                 </Part>
             </div>
         );
     };
 
-    const stat = (player) => (
-        <span className='whitespace-nowrap'>
-            {`${player.user?.username || 'Noone'}: ${player.stats?.totalPower ?? 0} power, ${player.stats?.gold ?? 0} gold`}
-        </span>
-    );
-
-    const mid = (
-        <div
-            data-region='mid'
-            className={classNames('hud-zoom relative z-[250] flex gap-1 p-1 min-h-0', {
-                'flex-row items-center justify-between': mode === 'narrow',
-                'flex-col justify-center w-40 overflow-hidden': mode === 'short',
-                'flex-col justify-end w-48 lg:w-64': mode === 'wide'
-            })}
-        >
-            <div className='flex flex-col text-xs gap-0.5'>
-                {otherPlayers.map((player) => (
-                    <React.Fragment key={player.name ?? player.seatNo}>
-                        {stat(player)}
-                    </React.Fragment>
-                ))}
-                {stat(thisPlayer)}
-            </div>
-            <GameTimer player={thisPlayer} isMe={!!thisPlayer} side='bottom' />
-            {userPlayer && thisPlayer && (
-                <ActivePlayerPrompt
-                    className='min-w-0 flex-1'
-                    buttons={userPlayer.buttons}
-                    controls={userPlayer.controls}
-                    promptText={userPlayer.menuTitle}
-                    promptTitle={userPlayer.promptTitle}
-                    onButtonClick={(button) =>
-                        dispatch(
-                            sendButtonClickedMessage(
-                                button.promptId,
-                                button.command,
-                                button.method,
-                                button.arg
-                            )
-                        )
-                    }
-                    phase={thisPlayer.phase}
-                />
-            )}
-            <div className='flex gap-1'>
+    // Until the scoreboard (phase 4), each player's power and gold sit at their end of the phase track
+    const stat = (player) =>
+        player && (
+            <span className='whitespace-nowrap text-default-500'>
+                <span className='text-default-300'>{player.user?.username || 'Noone'}</span>
+                {` ♛${player.stats?.totalPower ?? 0} ●${player.stats?.gold ?? 0}`}
+            </span>
+        );
+    const onButtonClick = (button) =>
+        dispatch(
+            sendButtonClickedMessage(button.promptId, button.command, button.method, button.arg)
+        );
+    const gameActions = (
+        <div className='flex'>
+            <Button
+                isIconOnly
+                size='sm'
+                variant='light'
+                className='h-6 w-6 min-w-6'
+                title='Open Settings'
+                onPress={onSettingsClick}
+            >
+                <FontAwesomeIcon icon={faCogs} />
+            </Button>
+            {isPlaying && (
                 <Button
                     isIconOnly
                     size='sm'
                     variant='light'
-                    title='Open Settings'
-                    onPress={onSettingsClick}
+                    className={classNames('h-6 w-6 min-w-6', { 'text-danger': manualMode })}
+                    title={
+                        manualMode
+                            ? 'Manual mode is on: the rules are not fully enforced, and players can change the game by hand. Click to turn it off.'
+                            : 'Manual mode is off: the game enforces the rules, and manual changes are disabled. Click to ask your opponent to turn it on.'
+                    }
+                    onPress={() => dispatch(sendToggleManualModeMessage())}
                 >
-                    <FontAwesomeIcon icon={faCogs} />
+                    <FontAwesomeIcon icon={faWrench} />
                 </Button>
-                <LeaveGameButton />
-            </div>
+            )}
+            <LeaveGameButton />
+        </div>
+    );
+
+    const divider = (
+        <div data-region='mid' className='relative z-[250] shrink-0'>
+            <PromptBar
+                mode={mode}
+                phase={thisPlayer?.phase}
+                promptTitle={userPlayer?.promptTitle}
+                promptText={userPlayer?.menuTitle}
+                buttons={userPlayer?.buttons}
+                controls={userPlayer?.controls}
+                selecting={!!userPlayer?.selectCard}
+                onButtonClick={onButtonClick}
+                timer={<GameTimer player={thisPlayer} isMe={!!thisPlayer} side='bottom' />}
+                actions={gameActions}
+                startOfTrack={otherPlayers.map((player) => (
+                    <React.Fragment key={player.name ?? player.seatNo}>
+                        {stat(player)}{' '}
+                    </React.Fragment>
+                ))}
+                endOfTrack={stat(thisPlayer)}
+            />
         </div>
     );
 
@@ -270,28 +283,12 @@ const AdaptiveGameBoardLayout = ({
         <AreaLabelContext.Provider value={phoneLayout ? 'count' : 'full'}>
             <div
                 data-layout={mode}
-                className={classNames(
-                    'flex h-full w-full overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]',
-                    mode === 'narrow' ? 'flex-col' : 'flex-row'
-                )}
+                className='flex h-full w-full flex-col overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]'
             >
-                {mode === 'narrow' ? (
-                    <>
-                        {opponents}
-                        {mid}
-                        {ours}
-                        {handTray}
-                    </>
-                ) : (
-                    <>
-                        <div className='flex flex-col flex-1 min-w-0 min-h-0'>
-                            {opponents}
-                            {ours}
-                            {handTray}
-                        </div>
-                        {mid}
-                    </>
-                )}
+                {opponents}
+                {divider}
+                {ours}
+                {handTray}
             </div>
         </AreaLabelContext.Provider>
     );

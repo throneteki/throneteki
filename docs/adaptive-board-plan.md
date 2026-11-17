@@ -42,6 +42,14 @@ hold still to zoom, hold and move to drag").
 | 2026-11-16 | Swiping or jumping by hand pauses auto-follow. It resumes by itself the next time the action moves to a different player.                                                                                                                                                                                                                                        |
 | 2026-11-16 | `wide` melee uses the same carousel, showing as many opponents side by side as fit, and pages for the rest.                                                                                                                                                                                                                                                      |
 | 2026-11-16 | The classic board moves to `GameBoard/Classic/`. **Nothing outside `Classic/` imports from it**, so the classic board can be removed later by deleting one folder. Anything the adaptive board needs stays shared at the `GameBoard/` root, and the adaptive `wide` layout is built from shared parts rather than from classic `PlayerRow` and `SideBoardPanel`. |
+| 2026-11-17 | Prompt buttons on phones fill up to two rows of chips sized to their text. Whatever doesn't fit goes under a "More" chip that opens the full list. This replaces "3 inline, else 2 + More".                                                                                                                                                                      |
+| 2026-11-17 | Prompt buttons keep the server's order on every layout, so the shortcut numbers and desktop match. Cancel-style buttons are styled grey, not moved. This replaces "main action nearest the right edge".                                                                                                                                                          |
+| 2026-11-17 | The plot/faction stack does not open a chooser. Each pile in it is tapped on its own.                                                                                                                                                                                                                                                                            |
+| 2026-11-17 | The prompt is the **midline divider** on every layout: a slim full-width strip between the two halves, not a box. It's styled the same everywhere (the desktop prompt's look isn't kept on the adaptive board). This replaces the right-hand column in `short` and the side panel in `wide`.                                                                     |
+| 2026-11-17 | A **phase track** runs along the divider's top edge: all seven phases, past ones dimmed, the current one lit and named. Short names in `narrow`, full names elsewhere.                                                                                                                                                                                           |
+| 2026-11-17 | Cards and interface fill the room available: every mode grows the cards until the height, strip or rows stop it (`wide` up to 2×), and the interface never shrinks below its normal size on the adaptive board. "Small" cards is 0.7× that fit; "Large" can't grow past it.                                                                                      |
+| 2026-11-17 | In `short` (phone landscape) the divider is a single row: the phase track and both players' totals sit inline at its start. Location rows stay full size.                                                                                                                                                                                                        |
+| 2026-11-17 | The opponent's hand is a single card back with its count, not a two-card fan.                                                                                                                                                                                                                                                                                    |
 
 ## Rules that hold in every layout
 
@@ -54,6 +62,45 @@ These keep the board recognisable when it changes shape:
 - The prompt and player stats sit at the midline (narrow) or on the right-hand rail (short and wide).
 - Our hand is along the bottom edge, or in our row on the wide layout.
 - The game menu and the chat tab are in the same corner on every layout.
+
+## Review notes (open concerns)
+
+Your notes from reviewing the board. Each one is fixed now, assigned to a phase, or open. Tick them off
+as they are resolved, and add new notes here.
+
+From the review on 2026-11-17:
+
+- [x] **R1 Play rows wrap, never overlap.** When a row overflows and there's vertical room (portrait),
+      it wraps onto more rows. With no room, the play area scrolls, with a clear hint that there are
+      more cards. Cards in play never overlap. **Fix now** (replaces phase 1's overlap).
+      Done: rows wrap (`PlayerBoard` `overflow="wrap"`). Each play area is a `ScrollArea` that scrolls up and down with a fade and a "more" marker at any edge with cards past it. The opponent's area stays scrolled to the end nearest the divider. `FittedRow` and its overlap are removed.
+- [x] **R2 Faction card shows behind the agenda.** A bug. **Fix now.**
+      Done: each wrapper in the stack gets its own stacking context (agenda `z-0`, faction `z-10`), so the agenda card's own z-index no longer rises above the faction.
+- [x] **R3 Crowded fixture with an alliance agenda** (three agenda cards) on one side. **Fix now.**
+      Done: the crowded fixture's opponent has Alliance with Banner of the Stag and Banner of the Kraken.
+- [x] **R4 Reaction windows: choices should highlight the cards, not be buttons, with a Pass button.**
+      The server already does this: it lists as buttons only cards that can't be shown on the board.
+      My fixture invented buttons. **Fix the fixture now**, and check against the server.
+      Done: checked against `TriggeredAbilityWindow`. The cards that can react are made selectable, and only cards in a draw deck, discard or dead pile become buttons ("Name (location)"), alongside "Don't ask again this phase" and Pass. The `reaction` fixture now matches that. The new `responder` fixture is what every possible responder sees (Pass, Wait, "Don't ask again", with the countdown). The `crowded` fixture's prompt is now an ordinary "Initiate a challenge".
+- [ ] **R5 Prompt title and prompt text on the same line** isn't liked. Rework the divider's text
+      layout. **Phase 4** (with the scoreboard).
+- [ ] **R6 Piles need to be identifiable** without the full text labels that don't fit small screens.
+      Consider options. **Phase 4/5.**
+- [ ] **R7 The count bubbles on every pile feel disjointed.** Rethink alongside R6. **Phase 4/5.**
+- [ ] **R8 Tapping a card to select it** should animate smoothly and enlarge the card so it's easier to
+      see. **Phase 3** (card preview).
+- [ ] **R9 Card piles in different sizes feel off,** even on mobile. Plots in particular need to be
+      clearly visible. Rethink the separate pile scale. **Phase 4/5.**
+- [x] **R10 Nothing may be cut off:** cards (location bottoms in landscape), selection rings, and cards
+      flying between zones (hand to board). Review clipping everywhere. **Fix now** for the play areas
+      and rings; check flights in phase 5.
+      Done: the play areas no longer cut cards off. They scroll instead, with an inner margin so the selection rings show. The height budget now counts each play area's margins and a tenth of a card per row for attachments, which is why landscape location rows were cut off before. Cards flying into an area that cuts off its overflow (marked `data-clips`: play areas and the carousel) fly as a copy above the page (`flyAbove` in `flip.js`), and the real card shows once the copy lands. Classic marks nothing, so it is unchanged. **Still to check in phase 5:** every flight in a real game.
+- [ ] **R11 Power and gold must be clearer and larger, with their icons.** **Phase 4** (scoreboard).
+- [x] **R12 Manual mode has gone missing** from the adaptive board. **Fix now** (temporary button), then
+      into the game menu in phase 4.
+      Done: a wrench button on the divider, red while manual mode is on, for players only. It sends the same message as classic, with the same tooltip. It moves into the game menu in phase 4.
+- [ ] **R13 The chat tab on phones** covers the opponent's board. Consider a chat button on the
+      divider, and make sure it opens and closes smoothly. **Phase 4** (game menu).
 
 ## Architecture
 
@@ -98,7 +145,7 @@ These stay shared because the adaptive board needs them: `ActivePlayerPrompt`, `
 - [x] Do the move as its own commit with no other changes: `git mv` and import paths only. The
       classic board's behaviour doesn't change.
 - [x] Check: a search finds no imports of `Classic/` from outside it (`grep -rn "/Classic/"
-  client --include=*.js*` lists only `GameBoard.jsx`). The client builds, and the client specs
+client --include=*.js*` lists only `GameBoard.jsx`). The client builds, and the client specs
       pass.
 
 ### Files
@@ -362,6 +409,8 @@ Notes for later phases, found during phase 0:
       never scroll) or `'squish-then-scroll'` (ours). `FittedRow` overlaps cards down to 40% showing,
       then scrolls. On touch, while a row overlaps, a first tap brings a card to the front and a second
       tap uses it (checked by probe).
+    - **Replaced by R1:** cards in play never overlap. Rows wrap, and the play area scrolls with a
+      hint. `FittedRow` is removed, and `overflow` is now `'grow'` (classic) or `'wrap'`.
 - [x] `OpponentCarousel`: the opponent's side is built as a carousel. Joust is one slide with no
       swiping.
     - [ ] **Moved to phase 6:** melee swiping and ◀ ▶. The carousel already scroll-snaps when it has
@@ -398,21 +447,110 @@ Notes for later phases, found during phase 0:
 
 ### Phase 2: prompt
 
-- [ ] Extract `usePromptActions` with no change to the classic behaviour (existing specs pass, and
-      check the keyboard shortcuts by hand).
-- [ ] `PromptBar` states:
-    - [ ] **Waiting**: a small pill reading "Waiting for opponent", with the timer or chess clock.
-    - [ ] **1–3 buttons**: inline chips, with the main (non-cancel) button nearest the right edge.
-    - [ ] **More than 3 buttons, or any control** (card name, trait name, values): the first two
-          buttons and a "More" chip, which opens a sheet with the full list and the controls.
-    - [ ] **Selection prompts**: the prompt text as a banner across the board with the selection
-          count, plus a Done chip.
-    - [ ] Response delay ("Any reactions?") shows its countdown on the chip.
-- [ ] Buttons with a card keep the hold-to-zoom preview.
-- [ ] `narrow` uses the bar in the `Scoreboard`, `short` uses the right column, and `wide` keeps
-      `SideBoardPanel`.
-- [ ] Acceptance: every prompt type we can reproduce works on a phone: plot selection, marshaling,
-      challenge declaration, claim, card-name lookup, response windows and first player selection.
+- [x] Extract `usePromptActions` (`client/Components/GameBoard/usePromptActions.jsx`, with
+      `PromptControls`) from `ActivePlayerPrompt`. The classic prompt's markup is unchanged, and its
+      screenshots match. Keyboard shortcuts checked by probe on both boards: `W` presses Wait and the
+      countdown shows "Paused".
+- [x] Card-name and trait-name lookups wait for the card list ("Loading cards…") instead of crashing.
+      The classic prompt already showed a spinner while loading.
+- [x] `PromptBar` (`Adaptive/PromptBar.jsx`):
+    - [x] Header line: the phase, the prompt title, the timer, and the settings and leave buttons.
+          The prompt text goes underneath.
+    - [x] **Waiting**: no buttons or controls, so the bar shrinks to the phase and the text, in grey
+          italic.
+    - [x] **Buttons**: chips sized to their text, in the server's order, filling up to two rows (four in
+          `short`'s column). Rows are measured by position on screen, because cards' chips are wrapped
+          in a span. Checked with the `choices` fixture: 12 choices show "More (4)", which opens every
+          button full width.
+    - [x] **Controls**: shown in a bottom panel (the "More" panel). It opens on its own for input
+          controls (card name, trait name, values). Other controls get a "Details" chip. Checked with
+          the `lookup` fixture.
+    - [x] **Selection prompts**: while any card can be or is chosen, the bar gets a warning-coloured
+          border and an "n selected" count. Done is a chip. The bar is the banner: in `narrow` it
+          already sits across the board's midline.
+    - [x] Response delay: the countdown is a bar under the prompt text, not on a chip.
+- [x] Buttons with a card keep the hold-to-zoom preview (`CardHoverable` around the chip).
+- [x] `narrow` puts the bar across the midline, `short` puts it in a 13rem right-hand column, and `wide`
+      keeps the desktop prompt (`ActivePlayerPrompt`) in its own side panel, without classic
+      `SideBoardPanel`. Until phase 4, a two-line stats summary sits above the bar.
+- [x] Fixtures added: `waiting`, `select` (choosing on the board), `lookup` (name a card), `reaction`
+      (reaction window with countdown) and `choices` (12 buttons).
+- [ ] Acceptance:
+    - [x] Every prompt type we have a fixture for works on a phone: marshaling, challenge
+          declaration, claim (choosing on the board), card-name lookup, response windows, waiting,
+          and many choices. Plot selection works, but through the popup until phase 3.
+    - [ ] **Not checked:** first player selection, and real-game sequences (pressing a button and the
+          next prompt arriving). The dev page has no server to answer.
+
+#### Phase 2 rework (after review, 2026-11-17)
+
+Your feedback on the first pass: the portrait bar is too tall and looks like a card, short and wide
+put the prompt top right where nobody looks for it, the styles differ between layouts, and cards and
+interface are far too small everywhere.
+
+Measured before the rework (play-area card width, classic vs adaptive):
+
+| Size                      | Classic | Adaptive | Interface |
+| ------------------------- | ------- | -------- | --------- |
+| Phone portrait 390×844    | 32px    | 70px     | 0.8       |
+| Phone landscape 844×390   | 32px    | 51px     | 0.8       |
+| Tablet portrait 820×1180  | 32px    | 102px    | 0.8       |
+| Tablet landscape 1180×820 | 54px    | 38px     | 0.8       |
+| Desktop 1600×950          | 64px    | 64px     | 1.0       |
+| Desktop 2560×1440         | 99px    | 64px     | 1.4       |
+
+Causes:
+
+- `wide` was capped at scale 1 (its baseline), so it never grew on big screens.
+- On `wide`, the prompt's side column and the chat squeezed the pile strip, which limits every card.
+- The interface scale follows screen size from 0.8 to 1.4, so phones and tablets got smaller text
+  and buttons.
+
+- [x] Prompt as the midline divider on every layout. `AdaptiveGameBoardLayout` is one column in every
+      mode: opponents, divider, ours, then the hand tray on `narrow` and `short`. The side column is
+      gone, and so is `ActivePlayerPrompt` from the adaptive board.
+- [x] Phase track along the divider's top edge (`PhaseTrack` in `PromptBar.jsx`): initials in `narrow`,
+      full names elsewhere, the current phase lit as "◆ NAME", earlier phases dimmed, and "Setup"
+      during setup. Until the phase 4 scoreboard, each player's power (♛) and gold (●) sit at their end
+      of the track.
+- [x] Divider content:
+    - `narrow`: the text line (with timer, settings and leave), then chips (28px tall) up to two rows.
+    - `short` and `wide`: one row (text, then chips up to two rows aligned right, then timer and
+      actions). On `wide` it leaves room on the right for the chat tab.
+- [x] While choosing cards the divider's edges turn the warning colour and glow. The response-delay
+      countdown is a thin line along its bottom edge (`ResponseDelay` gained `slim`; classic still
+      draws the labelled bar).
+- [x] Scales: every mode fills the room available. There's no baseline cap any more. Maximums are
+      narrow 1.8, short 1.6 and wide 2. The card size setting only shrinks ("Small" is 0.7× the fit).
+      Budgets for the divider: narrow chrome height 5.5rem, short 14rem wide and 4rem high, wide 2rem
+      wide and 4rem high. `wide`'s `stripUnits` is 15, which allows for shadows and out of game.
+- [x] The interface scale on the adaptive board is at least 1 (the screen factor is floored at 1 in
+      `useBoardLayout`).
+- [x] Strip budgets count what's actually shown: each mode has a base (`narrow` 7.5 card widths, `wide`
+      11.5), plus `stripExtraUnits` for shadows, out of game, a title and extra agendas when they hold
+      cards. A flat budget either shrank every card on `wide` for piles that were empty or let a busy
+      strip run off the edge.
+- [x] `short`: a one-line divider (decided above), chrome height 3rem.
+- [x] The opponent's hand is a single back with a count (decided above). `narrow`'s strip is a card
+      width narrower, so the pile scale goes from 0.55 to 0.65.
+- [x] Wider layouts: the prompt text keeps at least 11rem and the chips shrink and wrap into "More".
+      Before this, the chips refused to shrink and squeezed the text to a word per line.
+- [x] Re-measured (play-area card width; classic in brackets):
+
+| Size                      | Before | After                                  |
+| ------------------------- | ------ | -------------------------------------- |
+| Phone portrait 390×844    | 70px   | 70px (32px)                            |
+| Phone landscape 844×390   | 51px   | 48px (32px)                            |
+| Tablet portrait 820×1180  | 102px  | 115px (32px)                           |
+| Tablet landscape 1180×820 | 38px   | 58px (54px); the open chat takes 384px |
+| Desktop 1600×950          | 64px   | 93px (64px)                            |
+| Desktop 2560×1440         | 64px   | 128px (99px)                           |
+
+- [x] Checks: lint and Prettier are clean, the 211 client and settings specs pass, and the client
+      builds. The adaptive shots have no page errors and no clipping except the intended landscape hand
+      peek. Scrolling is limited to our crowded row (allowed) and the plot popup (until phase 3).
+- Phone landscape stays the tightest layout. Judge it on a real phone; smaller location rows there
+  are the next lever if needed.
 
 ### Phase 3: sheets
 

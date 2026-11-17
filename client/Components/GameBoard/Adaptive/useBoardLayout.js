@@ -7,7 +7,12 @@ import {
     interfaceScaleProperties,
     removeScaleProperties
 } from '../useHudScale';
-import { classifyLayout, computeAdaptiveScales, widestRowUnits } from './adaptiveScale';
+import {
+    classifyLayout,
+    computeAdaptiveScales,
+    stripExtraUnits,
+    widestRowUnits
+} from './adaptiveScale';
 
 const BoardLayoutContext = createContext('wide');
 export const BoardLayoutProvider = BoardLayoutContext.Provider;
@@ -25,8 +30,9 @@ export const useBoardLayout = ({ containerRef, hud, players, ready }) => {
     const [mode, setMode] = useState(null);
     const modeRef = useRef(null);
     const widestRow = widestRowUnits(players);
-    const widestRowRef = useRef(widestRow);
-    widestRowRef.current = widestRow;
+    const stripExtra = stripExtraUnits(players);
+    const contentRef = useRef({ widestRow, stripExtra });
+    contentRef.current = { widestRow, stripExtra };
     const updateRef = useRef(null);
     const { cards, interface: interfaceSize, auto } = hud;
 
@@ -57,15 +63,19 @@ export const useBoardLayout = ({ containerRef, hud, players, ready }) => {
                 mode: next,
                 ...size,
                 rem,
-                widestRow: widestRowRef.current,
+                ...contentRef.current,
                 cardsSize: resolveHudSize('cards', cards)
             });
             for (const key of Object.keys(fitted)) {
                 settled[key] = settleAutoCardScale(settled[key] ?? null, fitted[key]);
             }
+            // A phone or tablet is held close and tapped, so its interface is never drawn smaller than normal
             const interfaceScale = computeHudScales({
                 hud: { cards, interface: interfaceSize, auto },
-                screen: computeScreenScale({ width: window.innerWidth, height: window.innerHeight })
+                screen: Math.max(
+                    1,
+                    computeScreenScale({ width: window.innerWidth, height: window.innerHeight })
+                )
             }).interface;
 
             applyScaleProperties({
@@ -120,10 +130,10 @@ export const useBoardLayout = ({ containerRef, hud, players, ready }) => {
         };
     }, [cards, interfaceSize, auto, containerRef, ready]);
 
-    // Cards entering or leaving play can make the widest row wider or narrower
+    // Cards entering or leaving play, shadows or out of game change the room the rows and strips need
     useLayoutEffect(() => {
         updateRef.current?.();
-    }, [widestRow]);
+    }, [widestRow, stripExtra]);
 
     return mode ?? 'wide';
 };
