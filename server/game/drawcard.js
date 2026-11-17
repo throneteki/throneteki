@@ -171,7 +171,7 @@ class DrawCard extends BaseCard {
     }
 
     hasPrintedCost() {
-        return !this.facedown && this.cardData.cost !== '-';
+        return this.showsPrintedValues() && this.cardData.cost !== '-';
     }
 
     getPrintedCost() {
@@ -289,7 +289,13 @@ class DrawCard extends BaseCard {
     }
 
     hasPrintedStrength() {
-        return !this.facedown && this.getType() === 'character';
+        return this.showsPrintedValues() && this.getType() === 'character';
+    }
+
+    showsPrintedValues() {
+        return (
+            !this.facedown || (this.location === 'play area' && this.game.currentPhase === 'setup')
+        );
     }
 
     getStrength() {
