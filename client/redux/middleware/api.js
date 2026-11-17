@@ -17,7 +17,8 @@ const TagTypes = {
     BanList: 'BanList',
     AbuseBlock: 'AbuseBlock',
     ProblemReport: 'ProblemReport',
-    DraftCube: 'DraftCube'
+    DraftCube: 'DraftCube',
+    Banner: 'Banner'
 };
 
 const baseQuery = fetchBaseQuery({
@@ -414,6 +415,45 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: [TagTypes.News]
         }),
+        getBanners: builder.query({
+            query: () => '/banners',
+            providesTags: [TagTypes.Banner]
+        }),
+        getAllBanners: builder.query({
+            query: () => '/banners/all',
+            providesTags: [TagTypes.Banner]
+        }),
+        // Saving a banner can take two requests, so the editor refreshes the banners itself with
+        // bannersChanged once both have finished
+        addBanner: builder.mutation({
+            query: (banner) => ({
+                url: '/banners',
+                method: 'POST',
+                body: banner
+            })
+        }),
+        saveBanner: builder.mutation({
+            query: ({ id, banner }) => ({
+                url: `/banners/${id}`,
+                method: 'PUT',
+                body: banner
+            })
+        }),
+        deleteBanner: builder.mutation({
+            query: (id) => ({
+                url: `/banners/${id}`,
+                method: 'DELETE'
+            }),
+            invalidatesTags: [TagTypes.Banner]
+        }),
+        uploadBannerImage: builder.mutation({
+            query: ({ id, image }) => ({
+                url: `/banners/${id}/image`,
+                method: 'PUT',
+                body: image,
+                headers: { 'content-type': image.type }
+            })
+        }),
         getBanList: builder.query({
             query: () => '/banlist',
             providesTags: (result = { data: [] }) => [
@@ -570,6 +610,8 @@ export const apiSlice = createApi({
     })
 });
 
+export const bannersChanged = () => apiSlice.util.invalidateTags([TagTypes.Banner]);
+
 export const {
     useGetNewsQuery,
     useGetAllNewsQuery,
@@ -606,6 +648,12 @@ export const {
     useAddNewsMutation,
     useDeleteNewsMutation,
     useSaveNewsMutation,
+    useGetBannersQuery,
+    useGetAllBannersQuery,
+    useAddBannerMutation,
+    useSaveBannerMutation,
+    useDeleteBannerMutation,
+    useUploadBannerImageMutation,
     useGetBanListQuery,
     useAddBanListEntryMutation,
     useRemoveBanListEntryMutation,

@@ -1,19 +1,11 @@
 import { MaxBackgroundBytes, MaxBackgroundDimension } from '../../../shared/backgrounds';
-
-export const AcceptedBackgroundFiles = 'image/png,image/jpeg,image/webp,image/gif,image/avif';
+import { encodeCanvas, loadBitmap } from '../../imageEncoding';
 
 const CoverWidth = 1920;
 const CoverHeight = 1080;
 
-const toBlob = (canvas, type) => new Promise((resolve) => canvas.toBlob(resolve, type, 0.85));
-
 export async function prepareBackground(file) {
-    let bitmap;
-    try {
-        bitmap = await createImageBitmap(file);
-    } catch {
-        throw new Error('That file could not be read. Try a PNG, JPEG or WebP image.');
-    }
+    const bitmap = await loadBitmap(file);
 
     const scale = Math.min(
         1,
@@ -28,15 +20,7 @@ export async function prepareBackground(file) {
     canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
     bitmap.close();
 
-    let blob = await toBlob(canvas, 'image/webp');
-    // Browsers that can't encode WebP fall back to PNG, which is much larger than JPEG for a photo
-    if (!blob || blob.type !== 'image/webp') {
-        blob = await toBlob(canvas, 'image/jpeg');
-    }
-
-    if (!blob) {
-        throw new Error('That image could not be converted');
-    }
+    const blob = await encodeCanvas(canvas);
 
     if (blob.size > MaxBackgroundBytes) {
         throw new Error(

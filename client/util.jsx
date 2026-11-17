@@ -121,3 +121,4 @@ export const downloadBlob = (blob, fileName) => {
 export const PatreonStateKey = 'patreonOAuthState';
 
 export const customBackgroundUrl = (token) => `/api/backgrounds/${token}`;
+export const bannerImageUrl = (token) => `/api/banners/images/${token}`;

@@ -11,7 +11,14 @@ import NewGameForm from './NewGameForm';
 export const GameNameMaxLength = 64;
 
 const NewGame = forwardRef(function NewGame(
-    { quickJoin = false, defaultGameType, defaultPrivate, defaultTimeLimit, onClosed },
+    {
+        quickJoin = false,
+        defaultGameType,
+        defaultPrivate,
+        defaultTimeLimit,
+        defaultEventId,
+        onClosed
+    },
     ref
 ) {
     const dispatch = useDispatch();
@@ -114,7 +121,11 @@ const NewGame = forwardRef(function NewGame(
                 }}
                 initialValues={initialValues}
             >
-                <NewGameForm quickJoin={quickJoin} onClosed={onClosed} />
+                <NewGameForm
+                    quickJoin={quickJoin}
+                    defaultEventId={defaultEventId}
+                    onClosed={onClosed}
+                />
             </Formik>
         </Panel>
     );

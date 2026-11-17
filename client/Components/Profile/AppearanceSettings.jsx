@@ -11,7 +11,8 @@ import {
     useRemoveBackgroundMutation,
     useUploadBackgroundMutation
 } from '../../redux/middleware/api';
-import { AcceptedBackgroundFiles, prepareBackground } from './prepareBackground';
+import { prepareBackground } from './prepareBackground';
+import { AcceptedImageFiles } from '../../imageEncoding';
 import { BuiltInBackgrounds } from '../../backgrounds';
 import { DefaultBackground, MaxBackgroundBytes } from '../../../shared/backgrounds';
 
@@ -220,7 +221,7 @@ const AppearanceSettings = ({ user, formProps }) => {
                 <input
                     ref={fileInput}
                     type='file'
-                    accept={AcceptedBackgroundFiles}
+                    accept={AcceptedImageFiles}
                     hidden
                     onChange={onFileChosen}
                 />

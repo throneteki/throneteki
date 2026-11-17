@@ -1,18 +1,10 @@
-import bodyParser from 'body-parser';
 import passport from 'passport';
 import ServiceFactory from '../services/ServiceFactory.js';
 import { readImageInfo } from '../imageInfo.js';
 import { backgroundUploadLimiter } from '../rateLimits.js';
 import { wrapAsync } from '../util.js';
-import {
-    BackgroundImageTypes,
-    MaxBackgroundBytes,
-    MaxBackgroundDimension
-} from '../../shared/backgrounds.js';
-
-const TokenPattern = /^[a-f0-9]{32}$/;
-
-const readImageBody = bodyParser.raw({ type: BackgroundImageTypes, limit: MaxBackgroundBytes });
+import { ImageTokenPattern, readImageBody, sendStoredImage } from '../storedImages.js';
+import { MaxBackgroundBytes, MaxBackgroundDimension } from '../../shared/backgrounds.js';
 
 export const init = function (server) {
     const userService = ServiceFactory.userService(ServiceFactory.configService());
@@ -36,7 +28,7 @@ export const init = function (server) {
         '/api/account/:username/background',
         passport.authenticate('jwt', { session: false }),
         backgroundUploadLimiter,
-        readImageBody,
+        readImageBody(MaxBackgroundBytes),
         wrapAsync(async (req, res) => {
             const user = await findOwnUser(req, res);
             if (!user) {
@@ -84,26 +76,15 @@ export const init = function (server) {
         })
     );
 
-    // Public so the board can use it as a CSS background, which can't send credentials. Each upload gets a new
-    // random token, so the response never changes and can be cached for good.
+    // Public so the board can use it as a CSS background, which can't send credentials
     server.get(
         '/api/backgrounds/:token',
         wrapAsync(async (req, res) => {
-            const background = TokenPattern.test(req.params.token)
+            const background = ImageTokenPattern.test(req.params.token)
                 ? await userService.getCustomBackground(req.params.token)
                 : undefined;
 
-            if (!background) {
-                return res.status(404).send({ success: false, message: 'Not found' });
-            }
-
-            res.set({
-                'Content-Type': background.contentType,
-                'Cache-Control': 'public, max-age=31536000, immutable',
-                'X-Content-Type-Options': 'nosniff',
-                'Content-Security-Policy': "default-src 'none'"
-            });
-            res.send(background.image);
+            sendStoredImage(res, background);
         })
     );
 };

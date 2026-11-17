@@ -54,3 +54,9 @@ export const backgroundUploadLimiter = createLimiter({
     limit: 20,
     keyGenerator: usernameKey((req) => req.user?.username)
 });
+
+export const bannerUploadLimiter = createLimiter({
+    windowMs: OneHour,
+    limit: 30,
+    keyGenerator: usernameKey((req) => req.user?.username)
+});

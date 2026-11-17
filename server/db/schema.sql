@@ -108,6 +108,40 @@ ALTER TABLE public.banlist ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 );
 
 --
+-- Name: banners; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.banners (
+    id bigint NOT NULL,
+    title text NOT NULL,
+    link_url text,
+    event_id bigint,
+    event_date date,
+    show_from timestamp with time zone NOT NULL,
+    show_until timestamp with time zone NOT NULL,
+    image_token text,
+    image_content_type text,
+    image bytea,
+    created_by text,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT banners_image_check CHECK ((((image IS NULL) AND (image_token IS NULL) AND (image_content_type IS NULL)) OR ((image IS NOT NULL) AND (image_token IS NOT NULL) AND (image_content_type IS NOT NULL)))),
+    CONSTRAINT banners_window_check CHECK ((show_until > show_from))
+);
+
+--
+-- Name: banners_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+ALTER TABLE public.banners ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.banners_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
 -- Name: cards; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -466,7 +500,7 @@ CREATE TABLE public.user_monthly_stats (
 CREATE TABLE public.user_permissions (
     user_id bigint NOT NULL,
     permission text NOT NULL,
-    CONSTRAINT user_permissions_permission_check CHECK ((permission = ANY (ARRAY['isAdmin'::text, 'isContributor'::text, 'isSupporter'::text, 'canEditNews'::text, 'canManageUsers'::text, 'canManagePermissions'::text, 'canManageGames'::text, 'canManageNodes'::text, 'canModerateChat'::text, 'canManageMotd'::text, 'canManageEvents'::text, 'canManageBanlist'::text, 'canManageProblemReports'::text])))
+    CONSTRAINT user_permissions_permission_check CHECK ((permission = ANY (ARRAY['isAdmin'::text, 'isContributor'::text, 'isSupporter'::text, 'canEditNews'::text, 'canManageUsers'::text, 'canManagePermissions'::text, 'canManageGames'::text, 'canManageNodes'::text, 'canModerateChat'::text, 'canManageMotd'::text, 'canManageEvents'::text, 'canManageBanlist'::text, 'canManageProblemReports'::text, 'canManageBanners'::text])))
 );
 
 --
@@ -593,6 +627,20 @@ ALTER TABLE ONLY public.banlist
 
 ALTER TABLE ONLY public.banlist
     ADD CONSTRAINT banlist_pkey PRIMARY KEY (id);
+
+--
+-- Name: banners banners_image_token_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.banners
+    ADD CONSTRAINT banners_image_token_key UNIQUE (image_token);
+
+--
+-- Name: banners banners_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.banners
+    ADD CONSTRAINT banners_pkey PRIMARY KEY (id);
 
 --
 -- Name: cards cards_pkey; Type: CONSTRAINT; Schema: public; Owner: -
@@ -836,6 +884,12 @@ CREATE INDEX abuse_events_user_id_idx ON public.abuse_events USING btree (user_i
 CREATE INDEX abuse_events_username_idx ON public.abuse_events USING btree (username);
 
 --
+-- Name: banners_show_until_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX banners_show_until_idx ON public.banners USING btree (show_until);
+
+--
 -- Name: decks_event_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -980,6 +1034,13 @@ ALTER TABLE ONLY public.abuse_blocks
 
 ALTER TABLE ONLY public.abuse_events
     ADD CONSTRAINT abuse_events_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE SET NULL;
+
+--
+-- Name: banners banners_event_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.banners
+    ADD CONSTRAINT banners_event_id_fkey FOREIGN KEY (event_id) REFERENCES public.events(id) ON DELETE SET NULL;
 
 --
 -- Name: deck_cards deck_cards_deck_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
