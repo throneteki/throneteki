@@ -11,6 +11,7 @@ import GameButtons from './GameButtons';
 import PasswordGame from './PasswordGame';
 import { toast } from 'react-toastify';
 import {
+    clearEventGameRequest,
     joinPasswordGame,
     sendJoinGameMessage,
     sendWatchGameMessage
@@ -32,9 +33,11 @@ const GameLobby = ({ gameId }) => {
 
     const [quickJoin, setQuickJoin] = useState(false);
     const [newGame, setNewGame] = useState(false);
+    const [newGameEventId, setNewGameEventId] = useState();
     const [currentFilter, setCurrentFilter] = useState(filterDefaults);
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const games = useSelector((state) => state.lobby.games);
+    const eventGameRequest = useSelector((state) => state.lobby.eventGameRequest);
     const passwordGame = useSelector((state) => state.lobby.passwordGame);
 
     useEffect(() => {
@@ -73,6 +76,24 @@ const GameLobby = ({ gameId }) => {
         }
     }, [currentGame, dispatch, gameId, games]);
 
+    useEffect(() => {
+        if (!eventGameRequest) {
+            return;
+        }
+
+        // Cleared whatever happens, so a request can't open the form later on its own
+        dispatch(clearEventGameRequest());
+        if (!user) {
+            toast.info('Log in to start a game for this event');
+        } else if (currentGame) {
+            toast.info('Leave your current game to start one for this event');
+        } else {
+            setQuickJoin(false);
+            setNewGameEventId(eventGameRequest);
+            setNewGame(true);
+        }
+    }, [currentGame, dispatch, eventGameRequest, user]);
+
     // Manages the auto-scrolling, depending on which ref just appeared
     const scrollRef = (node, block = 'start') => {
         if (node !== null) {
@@ -86,7 +107,16 @@ const GameLobby = ({ gameId }) => {
     return (
         <Page>
             {newGame && (
-                <NewGame quickJoin={quickJoin} onClosed={() => setNewGame(false)} ref={scrollRef} />
+                <NewGame
+                    key={newGameEventId}
+                    quickJoin={quickJoin}
+                    defaultEventId={newGameEventId}
+                    onClosed={() => {
+                        setNewGame(false);
+                        setNewGameEventId(undefined);
+                    }}
+                    ref={scrollRef}
+                />
             )}
             {currentGame?.started === false && <PendingGame ref={(n) => scrollRef(n, 'center')} />}
             {passwordGame && <PasswordGame ref={scrollRef} />}
@@ -101,10 +131,12 @@ const GameLobby = ({ gameId }) => {
                 <div className='flex gap-2 lg:flex-row flex-col'>
                     <GameButtons
                         onNewGame={() => {
+                            setNewGameEventId(undefined);
                             setQuickJoin(false);
                             setNewGame(true);
                         }}
                         onQuickJoin={() => {
+                            setNewGameEventId(undefined);
                             setQuickJoin(true);
                             setNewGame(true);
                         }}

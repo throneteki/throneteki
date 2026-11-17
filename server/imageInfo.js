@@ -105,6 +105,8 @@ function readWebp(buffer) {
     return undefined;
 }
 
+export const SupportedImageTypes = ['image/png', 'image/jpeg', 'image/webp'];
+
 export function readImageInfo(buffer) {
     if (!Buffer.isBuffer(buffer)) {
         return undefined;

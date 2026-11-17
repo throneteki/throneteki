@@ -23,6 +23,7 @@ import GameBoard from './Components/GameBoard/GameBoard';
 import BlockList from './pages/BlockList';
 import NodesAdmin from './pages/NodesAdmin';
 import MotdAdmin from './pages/MotdAdmin';
+import BannersAdmin from './pages/BannersAdmin';
 import ProblemReportsAdmin from './pages/ProblemReportsAdmin';
 import Privacy from './pages/Privacy';
 import Patreon from './pages/Patreon';
@@ -111,6 +112,11 @@ const routes = [
         path: '/admin/motd',
         action: () => <MotdAdmin key='motdadmin' />,
         permission: 'canManageMotd'
+    },
+    {
+        path: '/admin/banners',
+        action: () => <BannersAdmin key='bannersadmin' />,
+        permission: 'canManageBanners'
     },
     { path: '/patreon', action: (context) => <Patreon code={context.params.code} /> },
     {

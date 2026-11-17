@@ -5,6 +5,7 @@ import News from '../Components/News/News';
 import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
 import LobbyChat from '../Components/Lobby/LobbyChat';
+import EventBanners from '../Components/Banners/EventBanners';
 import { getMessageWithLinks } from '../util';
 
 import { createSelector } from '@reduxjs/toolkit';
@@ -122,6 +123,7 @@ const Lobby = () => {
                     </Button>
                 </div>
             ) : null}
+            <EventBanners />
             <Panel className='max-h-[20vh]' title='Latest site news'>
                 {newsInfo}
             </Panel>
