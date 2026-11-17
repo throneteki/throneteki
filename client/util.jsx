@@ -119,3 +119,5 @@ export const downloadBlob = (blob, fileName) => {
 
 // sessionStorage key holding the OAuth state for an in-progress Patreon link
 export const PatreonStateKey = 'patreonOAuthState';
+
+export const customBackgroundUrl = (token) => `/api/backgrounds/${token}`;

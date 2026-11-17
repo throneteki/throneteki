@@ -11,20 +11,13 @@ import { setAuthTokens, setUser } from './redux/reducers/auth';
 import { startConnecting } from './redux/reducers/lobby';
 import { navigate } from './redux/reducers/navigation';
 import Background from './assets/img/bgs/mainbg.webp';
-import BlankBg from './assets/img/bgs/blank.webp';
-import StandardBg from './assets/img/bgs/background.webp';
-import WinterBg from './assets/img/bgs/background2.webp';
 import LoadingSpinner from './Components/Site/LoadingSpinner';
 import CardHover from './Components/Images/CardHover';
 import ErrorMessage from './Components/Site/ErrorMessage';
 import classNames from 'classnames';
 import PendingGameAlerter from './Components/Games/PendingGameAlerter';
-
-const backgrounds = {
-    none: BlankBg,
-    BG1: StandardBg,
-    BG2: WinterBg
-};
+import { customBackgroundUrl } from './util';
+import { builtInBackgroundUrl } from './backgrounds';
 
 const Application = () => {
     const router = new Router();
@@ -107,13 +100,12 @@ const Application = () => {
     const gameBoardVisible = currentGame && currentGame.started && component.key === 'gameboard';
     useEffect(() => {
         if (gameBoardVisible && user) {
-            const settings = user.settings;
-            const background = settings.background;
+            const background = user.settings?.background;
 
-            if (bgRef.current && background === 'custom' && settings.customBackgroundUrl) {
-                bgRef.current.style.backgroundImage = `url('/img/bgs/${settings.customBackgroundUrl}')`;
+            if (bgRef.current && background === 'custom' && user.customBackground) {
+                bgRef.current.style.backgroundImage = `url('${customBackgroundUrl(user.customBackground)}')`;
             } else if (bgRef.current) {
-                bgRef.current.style.backgroundImage = `url('${backgrounds[background]}')`;
+                bgRef.current.style.backgroundImage = `url('${builtInBackgroundUrl(background)}')`;
             }
         } else if (bgRef.current) {
             bgRef.current.style.backgroundImage = `url('${Background}')`;

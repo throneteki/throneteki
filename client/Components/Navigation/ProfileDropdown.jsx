@@ -1,8 +1,11 @@
 import React from 'react';
 import { Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
+import { useSelector } from 'react-redux';
 import NavItem from './NavItem';
 
 const ProfileDropdown = ({ user, menu }) => {
+    const avatarVersion = useSelector((state) => state.auth.avatarVersion);
+
     if (!user) {
         return null;
     }
@@ -16,7 +19,7 @@ const ProfileDropdown = ({ user, menu }) => {
                     className='transition-transform'
                     name={user.name}
                     size='sm'
-                    src={`/img/avatar/${user.username}.png`}
+                    src={`/img/avatar/${user.username}.png?v=${avatarVersion}`}
                 />
             </DropdownTrigger>
             <DropdownMenu variant='flat'>

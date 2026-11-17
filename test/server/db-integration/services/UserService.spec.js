@@ -254,6 +254,115 @@ describe('Postgres UserService', function () {
         });
     });
 
+    describe('custom backgrounds', function () {
+        beforeEach(async function () {
+            await this.service.addUser(newUser());
+            this.image = Buffer.from([0x89, 0x50, 0x4e, 0x47, 1, 2, 3]);
+        });
+
+        it('should store a background and give the user its token', async function () {
+            const token = await this.service.setCustomBackground('stark', {
+                contentType: 'image/png',
+                image: this.image
+            });
+
+            const user = await this.service.getUserByUsername('Stark');
+            expect(token).toMatch(/^[a-f0-9]{32}$/);
+            expect(user.getWireSafeDetails().customBackground).toBe(token);
+            expect(await this.service.getCustomBackground(token)).toEqual({
+                contentType: 'image/png',
+                image: this.image
+            });
+        });
+
+        it('should replace the background under a new token', async function () {
+            const first = await this.service.setCustomBackground('Stark', {
+                contentType: 'image/png',
+                image: this.image
+            });
+            const second = await this.service.setCustomBackground('Stark', {
+                contentType: 'image/webp',
+                image: Buffer.from('RIFF')
+            });
+
+            expect(second).not.toBe(first);
+            expect(await this.service.getCustomBackground(first)).toBeUndefined();
+            expect((await this.service.getCustomBackground(second)).contentType).toBe('image/webp');
+        });
+
+        it('should keep the background when the profile is saved', async function () {
+            const token = await this.service.setCustomBackground('Stark', {
+                contentType: 'image/png',
+                image: this.image
+            });
+            const user = (await this.service.getUserByUsername('Stark')).getDetails();
+
+            await this.service.update({ ...user, settings: { background: 'custom' } });
+
+            expect((await this.service.getUserByUsername('Stark')).getWireSafeDetails()).toEqual(
+                expect.objectContaining({ customBackground: token })
+            );
+        });
+
+        it('should remove the background', async function () {
+            const token = await this.service.setCustomBackground('Stark', {
+                contentType: 'image/png',
+                image: this.image
+            });
+
+            await this.service.removeCustomBackground('Stark');
+
+            const user = await this.service.getUserByUsername('Stark');
+            expect(user.getWireSafeDetails().customBackground).toBeNull();
+            expect(await this.service.getCustomBackground(token)).toBeUndefined();
+        });
+
+        it('should move a saved custom background back to the default when it is removed', async function () {
+            await this.service.setCustomBackground('Stark', {
+                contentType: 'image/png',
+                image: this.image
+            });
+            await this.service.updateUserFields(
+                { username: 'Stark' },
+                { settings: { background: 'custom', cardSize: 'large' } }
+            );
+
+            await this.service.removeCustomBackground('Stark');
+
+            const user = await this.service.getUserByUsername('Stark');
+            expect(user.getDetails().settings).toEqual(
+                expect.objectContaining({ background: 'BG1', cardSize: 'large' })
+            );
+        });
+
+        it('should leave another saved background alone when the image is removed', async function () {
+            await this.service.setCustomBackground('Stark', {
+                contentType: 'image/png',
+                image: this.image
+            });
+            await this.service.updateUserFields(
+                { username: 'Stark' },
+                { settings: { background: 'BG2' } }
+            );
+
+            await this.service.removeCustomBackground('Stark');
+
+            const user = await this.service.getUserByUsername('Stark');
+            expect(user.getDetails().settings.background).toBe('BG2');
+        });
+
+        it('should delete the background with the account', async function () {
+            await this.service.setCustomBackground('Stark', {
+                contentType: 'image/png',
+                image: this.image
+            });
+
+            await db.query('DELETE FROM users');
+
+            expect(await db.query('SELECT * FROM user_backgrounds')).toEqual([]);
+        });
+    });
+
     describe('deleteExpiredUnverifiedAccounts()', function () {
         beforeEach(async function () {
             const expired = new Date(Date.now() - 60000);

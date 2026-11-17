@@ -426,6 +426,18 @@ ALTER TABLE public.refresh_tokens ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTI
 );
 
 --
+-- Name: user_backgrounds; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_backgrounds (
+    user_id bigint NOT NULL,
+    token text NOT NULL,
+    content_type text NOT NULL,
+    image bytea NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+--
 -- Name: user_blocks; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -744,6 +756,20 @@ ALTER TABLE ONLY public.refresh_tokens
     ADD CONSTRAINT refresh_tokens_token_id_key UNIQUE (token_id);
 
 --
+-- Name: user_backgrounds user_backgrounds_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_backgrounds
+    ADD CONSTRAINT user_backgrounds_pkey PRIMARY KEY (user_id);
+
+--
+-- Name: user_backgrounds user_backgrounds_token_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_backgrounds
+    ADD CONSTRAINT user_backgrounds_token_key UNIQUE (token);
+
+--
 -- Name: user_blocks user_blocks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1010,6 +1036,13 @@ ALTER TABLE ONLY public.messages
 
 ALTER TABLE ONLY public.refresh_tokens
     ADD CONSTRAINT refresh_tokens_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+--
+-- Name: user_backgrounds user_backgrounds_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_backgrounds
+    ADD CONSTRAINT user_backgrounds_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 --
 -- Name: user_blocks user_blocks_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -

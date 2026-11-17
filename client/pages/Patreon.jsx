@@ -32,7 +32,7 @@ const Patreon = ({ code }) => {
         }
 
         if (completedCode === oauthCode) {
-            dispatch(navigate('/profile'));
+            dispatch(navigate('/profile/integrations'));
             return;
         }
 
@@ -49,7 +49,7 @@ const Patreon = ({ code }) => {
             toast.error(
                 'This Patreon link request was not started from your profile. Please try again.'
             );
-            dispatch(navigate('/profile'));
+            dispatch(navigate('/profile/integrations'));
             return;
         }
 
@@ -76,7 +76,7 @@ const Patreon = ({ code }) => {
             }
 
             toast.success('Your account was linked successfully');
-            dispatch(navigate('/profile'));
+            dispatch(navigate('/profile/integrations'));
         };
 
         doLink();

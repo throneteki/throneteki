@@ -14,7 +14,8 @@ const NavItem = forwardRef(function NavItem(
             className={classNames(
                 'cursor-pointer font-[PoppinsMedium] text-secondary transition-colors duration-500 ease-in-out hover:text-white',
                 {
-                    'brightness-150': path && path === currentPath
+                    'brightness-150':
+                        path && (path === currentPath || currentPath?.startsWith(`${path}/`))
                 },
                 className
             )}

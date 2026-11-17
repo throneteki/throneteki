@@ -1,19 +1,7 @@
 import React from 'react';
 import { Radio, RadioGroup, Switch } from '@heroui/react';
 import Panel from '../Site/Panel';
-import { allowedCardSizes } from '../Profile/CardSizeSettings';
-
-const windows = [
-    { name: 'plot', label: 'Plots revealed' },
-    { name: 'draw', label: 'Draw phase' },
-    { name: 'marshal', label: 'Marshaling phase' },
-    { name: 'challengeBegin', label: 'Before challenge' },
-    { name: 'attackersDeclared', label: 'Attackers declared' },
-    { name: 'defendersDeclared', label: 'Defenders declared' },
-    { name: 'dominance', label: 'Dominance phase' },
-    { name: 'standing', label: 'Standing phase' },
-    { name: 'taxation', label: 'Taxation phase' }
-];
+import { ActionWindows, CardSizeOptions } from '../../constants';
 
 const GameConfiguration = ({
     isSpectating,
@@ -29,7 +17,7 @@ const GameConfiguration = ({
     onActionWindowToggle,
     onPromptDupesToggle
 }) => {
-    const windowsToRender = windows.map((window) => {
+    const windowsToRender = ActionWindows.map((window) => {
         return (
             <div key={window.name}>
                 <Switch
@@ -84,7 +72,7 @@ const GameConfiguration = ({
                         }
                         orientation='horizontal'
                     >
-                        {allowedCardSizes.map(({ name, label }) => (
+                        {CardSizeOptions.map(({ name, label }) => (
                             <Radio key={name} value={name}>
                                 {label}
                             </Radio>

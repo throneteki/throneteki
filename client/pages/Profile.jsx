@@ -1,69 +1,53 @@
-import React, { useEffect, useState } from 'react';
+import React, { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik } from 'formik';
 import { Button } from '@heroui/react';
+import classNames from 'classnames';
 import * as yup from 'yup';
-import AlertPanel from '../Components/Site/AlertPanel';
-import Panel from '../Components/Site/Panel';
-import GameBackgroundOption from '../Components/Profile/GameBackgroundOption';
-import { useSaveProfileMutation, useVerifyAuthenticationQuery } from '../redux/middleware/api';
-import ProfileMain from '../Components/Profile/ProfileMain';
-import ActionWindowOptions from '../Components/Profile/ActionWindowOptions';
-import GameSettings from '../Components/Profile/GameSettings';
-import BlankBg from '../assets/img/bgs/blank.webp';
-import Background1 from '../assets/img/bgs/background.webp';
-import Background2 from '../assets/img/bgs/background2.webp';
-import { setAuthTokens, setUser } from '../redux/reducers/auth';
 import { toast } from 'react-toastify';
-import CardSizeSettings from '../Components/Profile/CardSizeSettings';
+import AlertPanel from '../Components/Site/AlertPanel';
+import { useSaveProfileMutation, useVerifyAuthenticationQuery } from '../redux/middleware/api';
+import { avatarUpdated, setAuthTokens, setUser } from '../redux/reducers/auth';
+import { defaultActionWindows } from '../constants';
+import { DefaultBackground } from '../../shared/backgrounds';
 import Page from './Page';
 import { keyboardShortcutsEnabled } from '../Components/GameBoard/keyboardShortcuts';
+import ProfileNav from '../Components/Profile/ProfileNav';
+import {
+    getProfileSection,
+    ProfileSections,
+    sectionsWithFields
+} from '../Components/Profile/ProfileSections';
+import AccountSettings, { isEmailChanged } from '../Components/Profile/AccountSettings';
+import IntegrationSettings from '../Components/Profile/IntegrationSettings';
+import GameplaySettings from '../Components/Profile/GameplaySettings';
+import AppearanceSettings from '../Components/Profile/AppearanceSettings';
 
-const backgrounds = [
-    { name: 'none', label: 'None', imageUrl: BlankBg },
-    { name: 'BG1', label: 'Standard', imageUrl: Background1 },
-    { name: 'BG2', label: 'Winter', imageUrl: Background2 }
-];
-
-const defaultActionWindows = {
-    plot: false,
-    draw: false,
-    marshal: false,
-    challengeBegin: false,
-    attackersDeclared: true,
-    defendersDeclared: true,
-    dominance: false,
-    standing: false,
-    taxation: false
+const sectionComponents = {
+    account: AccountSettings,
+    integrations: IntegrationSettings,
+    gameplay: GameplaySettings,
+    appearance: AppearanceSettings
 };
 
-const Profile = () => {
-    const dispatch = useDispatch();
-    const user = useSelector((state) => state.auth.user);
-    const [selectedBackground, setSelectedBackground] = useState(
-        user?.settings.background || 'BG1'
+const changedFields = (values, initialValues) =>
+    Object.keys(values).filter(
+        (field) => JSON.stringify(values[field]) !== JSON.stringify(initialValues[field])
     );
 
-    const [saveProfile, { isLoading: isSaveLoading, error: saveError }] = useSaveProfileMutation();
+const Profile = ({ section }) => {
+    const dispatch = useDispatch();
+    const user = useSelector((state) => state.auth.user);
+    const formRef = useRef();
+    const activeSection = getProfileSection(section);
+
+    const [saveProfile, { isLoading: isSaveLoading }] = useSaveProfileMutation();
     // The user in the store comes from the login token, which can be out of date (e.g. after unsubscribing from an
     // email), so load the account as it is now before building the form
     const { data: currentUser, isFetching: isLoadingUser } = useVerifyAuthenticationQuery('', {
         skip: !user,
         refetchOnMountOrArgChange: true
     });
-    const emailUpdates = (currentUser ?? user)?.emailUpdates !== false;
-
-    useEffect(() => {
-        if (saveError) {
-            toast.error(
-                saveError.message || 'An error occured saving your profile. Please try again later.'
-            );
-        }
-    }, [saveError]);
-
-    useEffect(() => {
-        setSelectedBackground(user?.settings?.background || 'BG1');
-    }, [user?.settings?.background, user?.settings?.cardSize]);
 
     if (!user) {
         return (
@@ -76,34 +60,21 @@ const Profile = () => {
     }
 
     const schema = yup.object({
-        // avatar: yup
-        //     .mixed()
-        //     .test(
-        //         'fileSize',
-        //         'Image must be less than 100KB in size',
-        //         (value) => !value || value.size <= 100 * 1024
-        //     )
-        //     .test(
-        //         'fileType',
-        //         'Unsupported image format',
-        //         (value) =>
-        //             !value ||
-        //             ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'].includes(value.type)
-        //     ),
-        // username: yup
-        //     .string()
-        //     .required('You must specify a username')
-        //     .min(3, 'Your username must be at least 3 characters long')
-        //     .max(15, 'Your username cannot be more than 15 charcters')
-        //     .matches(
-        //         /^[A-Za-z0-9_-]+$/,
-        //         'Usernames must only use the characters a-z, 0-9, _ and -'
-        //     ),
         email: yup
             .string()
             .email('Please enter a valid email address')
             .required('You must specify an email address'),
-        currentPassword: yup.string(),
+        currentPassword: yup
+            .string()
+            .test(
+                'currentPasswordRequired',
+                'Enter your current password to change your email address or password',
+                function (value) {
+                    const { email, password } = this.parent;
+
+                    return !(password || isEmailChanged(email, user.email)) || !!value;
+                }
+            ),
         password: yup.string().min(6, 'Password must be at least 6 characters'),
         passwordAgain: yup
             .string()
@@ -114,27 +85,40 @@ const Profile = () => {
 
     const initialValues = {
         enableGravatar: !!user.enableGravatar,
-        emailUpdates,
+        emailUpdates: (currentUser ?? user)?.emailUpdates !== false,
         email: user.email,
         currentPassword: '',
         password: '',
         passwordAgain: '',
         actionWindows: user.promptedActionWindows || defaultActionWindows,
-        chooseOrder: !!settings.keywordSettings.chooseOrder,
-        chooseCards: !!settings.keywordSettings.chooseCards,
+        chooseOrder: !!settings.keywordSettings?.chooseOrder,
+        chooseCards: !!settings.keywordSettings?.chooseCards,
         promptDupes: !!settings.promptDupes,
         hideInterrupts: settings.hideInterrupts ?? true,
         hideReactions: settings.hideReactions ?? true,
         keyboardShortcuts: keyboardShortcutsEnabled(settings),
-        cardSize: settings.cardSize || 'normal'
+        cardSize: settings.cardSize || 'normal',
+        background:
+            !settings.background || (settings.background === 'custom' && !user.customBackground)
+                ? DefaultBackground
+                : settings.background
     };
+
+    const SectionComponent = sectionComponents[activeSection.key];
 
     return (
         <Page>
             <Formik
+                innerRef={formRef}
                 initialValues={initialValues}
                 validationSchema={schema}
-                onSubmit={async (values) => {
+                onSubmit={async (values, { resetForm }) => {
+                    const saved = formRef.current.initialValues;
+                    const savedEmailUpdates = saved.emailUpdates;
+                    const avatarMayChange =
+                        values.enableGravatar !== saved.enableGravatar ||
+                        isEmailChanged(values.email, saved.email);
+
                     try {
                         const ret = await saveProfile({
                             username: user.username,
@@ -147,7 +131,7 @@ const Profile = () => {
                                 // Only sent when changed here, so saving a page loaded before
                                 // unsubscribing from an email doesn't turn emails back on
                                 emailUpdates:
-                                    values.emailUpdates !== emailUpdates
+                                    values.emailUpdates !== savedEmailUpdates
                                         ? values.emailUpdates
                                         : undefined,
                                 settings: {
@@ -159,7 +143,7 @@ const Profile = () => {
                                         chooseOrder: values.chooseOrder,
                                         chooseCards: values.chooseCards
                                     },
-                                    background: selectedBackground,
+                                    background: values.background,
                                     cardSize: values.cardSize
                                 }
                             }
@@ -167,9 +151,21 @@ const Profile = () => {
                         toast.success('Profile saved successfully');
 
                         dispatch(setUser(ret.data?.user ?? ret.user));
+                        if (avatarMayChange) {
+                            dispatch(avatarUpdated());
+                        }
                         if (ret.data?.token && ret.data?.refreshToken) {
                             dispatch(setAuthTokens(ret.data.token, ret.data.refreshToken));
                         }
+
+                        resetForm({
+                            values: {
+                                ...values,
+                                currentPassword: '',
+                                password: '',
+                                passwordAgain: ''
+                            }
+                        });
                     } catch (err) {
                         toast.error(
                             err.data?.message ||
@@ -179,38 +175,78 @@ const Profile = () => {
                     }
                 }}
             >
-                {(formProps) => (
-                    <form onSubmit={formProps.handleSubmit} className='flex flex-col gap-2'>
-                        <ProfileMain user={user} formProps={formProps} />
-                        <ActionWindowOptions formProps={formProps} />
-                        <GameSettings formProps={formProps} />
-                        <CardSizeSettings user={user} formProps={formProps} />
-                        <Panel title='Game Board Background'>
-                            <div className='grid sm:grid-cols-3 gap-2'>
-                                {backgrounds.map((background) => (
-                                    <GameBackgroundOption
-                                        imageUrl={background.imageUrl}
-                                        key={background.name}
-                                        label={background.label}
-                                        name={background.name}
-                                        onSelect={(background) => setSelectedBackground(background)}
-                                        selected={selectedBackground === background.name}
-                                    />
-                                ))}
-                            </div>
-                        </Panel>
-                        <div className='w-full sticky bottom-6 z-50 mt-2 flex justify-center'>
-                            <Button
-                                className='w-1/2'
-                                color='success'
-                                type='submit'
-                                isLoading={isSaveLoading}
-                            >
-                                Save
-                            </Button>
-                        </div>
-                    </form>
-                )}
+                {(formProps) => {
+                    const dirtySections = sectionsWithFields(
+                        changedFields(formProps.values, formProps.initialValues)
+                    );
+                    const errorSections =
+                        formProps.submitCount > 0
+                            ? sectionsWithFields(Object.keys(formProps.errors))
+                            : [];
+
+                    let status = 'No unsaved changes';
+                    let statusClass = 'text-default-500';
+                    if (errorSections.length > 0) {
+                        const names = ProfileSections.filter((s) => errorSections.includes(s.key))
+                            .map((s) => s.label)
+                            .join(', ');
+                        status = `Check the highlighted fields in ${names}`;
+                        statusClass = 'text-danger';
+                    } else if (formProps.dirty) {
+                        status = 'You have unsaved changes';
+                        statusClass = 'text-warning';
+                    }
+
+                    return (
+                        <form
+                            onSubmit={formProps.handleSubmit}
+                            className='grid items-start gap-3 lg:grid-cols-[13rem_minmax(0,1fr)]'
+                        >
+                            <ProfileNav
+                                user={user}
+                                activeSection={activeSection.key}
+                                dirtySections={dirtySections}
+                                errorSections={errorSections}
+                            />
+                            <section className='rounded-large border-2 border-primary bg-black/75 shadow-lg'>
+                                <header className='border-b border-default-200 px-4 py-3'>
+                                    <h1 className='text-large font-bold'>{activeSection.label}</h1>
+                                    <p className='text-small text-default-500'>
+                                        {activeSection.description}
+                                    </p>
+                                </header>
+                                <div className='flex max-w-4xl flex-col gap-6 p-4'>
+                                    <SectionComponent user={user} formProps={formProps} />
+                                </div>
+                                <div className='sticky bottom-0 z-10 flex flex-wrap items-center justify-end gap-2 rounded-b-large border-t border-default-200 bg-black px-4 py-3'>
+                                    <span
+                                        className={classNames(
+                                            'w-full text-small sm:mr-auto sm:w-auto',
+                                            statusClass
+                                        )}
+                                    >
+                                        {status}
+                                    </span>
+                                    <Button
+                                        variant='flat'
+                                        isDisabled={!formProps.dirty || isSaveLoading}
+                                        onPress={() => formProps.resetForm()}
+                                    >
+                                        Discard
+                                    </Button>
+                                    <Button
+                                        color='success'
+                                        type='submit'
+                                        isDisabled={!formProps.dirty}
+                                        isLoading={isSaveLoading}
+                                    >
+                                        Save changes
+                                    </Button>
+                                </div>
+                            </section>
+                        </form>
+                    );
+                }}
             </Formik>
         </Page>
     );

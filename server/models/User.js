@@ -1,4 +1,5 @@
 import Settings from '../settings.js';
+import { DefaultBackground } from '../../shared/backgrounds.js';
 
 class User {
     constructor(userData) {
@@ -166,12 +167,21 @@ class User {
             permissions: this.userData.permissions,
             verified: this.userData.verified,
             enableGravatar: this.userData.enableGravatar,
-            emailUpdates: this.userData.emailUpdates !== false
+            emailUpdates: this.userData.emailUpdates !== false,
+            customBackground: this.userData.customBackground || null
         };
 
         user = Settings.getUserWithDefaultsSet(user);
 
         return user;
+    }
+
+    setCustomBackground(token) {
+        this.userData.customBackground = token || undefined;
+
+        if (!token && this.userData.settings?.background === 'custom') {
+            this.userData.settings = { ...this.userData.settings, background: DefaultBackground };
+        }
     }
 
     getShortSummary() {
