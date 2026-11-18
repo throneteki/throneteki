@@ -50,6 +50,7 @@ const devRoutes = DevBoard
                           manual={context.params.manual}
                           spectate={context.params.spectate}
                           prompt={context.params.prompt}
+                          players={context.params.players}
                       />
                   </React.Suspense>
               )

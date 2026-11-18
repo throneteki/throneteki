@@ -25,8 +25,8 @@ const createFixtureStore = () =>
     });
 
 // With manual mode on, cards can be dragged. Spectating, the page watches the game as someone not playing it.
-const buildFixture = (fixture, { manual, spectate }) => {
-    const state = { ...boardFixtures[fixture].build(), manualMode: manual };
+const buildFixture = (fixture, { manual, spectate, players }) => {
+    const state = { ...boardFixtures[fixture].build({ players }), manualMode: manual };
     if (spectate) {
         state.spectators = [
             { id: spectatorName, name: spectatorName, user: { username: spectatorName } }
@@ -57,7 +57,8 @@ const setQuery = (fixture, board) => {
 };
 
 // Development only: the real game board, showing a canned game state, at /dev/board?fixture=crowded&board=adaptive
-// (&manual=1 for dragging, &spectate=1 to watch, &prompt=right for the prompt on the right, &panel=0 to hide this
+// (&manual=1 for dragging, &spectate=1 to watch, &prompt=right for the prompt on the right, &players=3..6 for how
+// many sit at a melee fixture, &panel=0 to hide this
 // panel). The steps change the game as a
 // server would, to see cards move between zones.
 const DevBoard = ({
@@ -66,10 +67,11 @@ const DevBoard = ({
     panel,
     manual: manualParam,
     spectate: spectateParam,
-    prompt
+    prompt,
+    players
 }) => {
     const promptSide = prompt === 'right' ? 'right' : 'left';
-    const options = { manual: manualParam === '1', spectate: spectateParam === '1' };
+    const options = { manual: manualParam === '1', spectate: spectateParam === '1', players };
     const [fixture, setFixture] = useState(boardFixtures[initialFixture] ? initialFixture : 'mid');
     const [board, setBoard] = useState(initialBoard === 'classic' ? 'classic' : 'adaptive');
     const current = useRef(null);
@@ -93,10 +95,14 @@ const DevBoard = ({
     useEffect(() => {
         hudStore.reset();
         const spectate = spectateParam === '1';
-        current.current = buildFixture(fixture, { manual: manualParam === '1', spectate });
+        current.current = buildFixture(fixture, {
+            manual: manualParam === '1',
+            spectate,
+            players
+        });
         loadFixture(store, current.current, board, spectate, promptSide);
         setQuery(fixture, board);
-    }, [store, fixture, board, manualParam, spectateParam, promptSide]);
+    }, [store, fixture, board, manualParam, spectateParam, promptSide, players]);
 
     return (
         <Provider store={store}>

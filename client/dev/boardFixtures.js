@@ -61,12 +61,51 @@ const cardData = {
     '01045': { name: "The Hand's Judgment", type: 'event' },
     '01100': { name: 'Hear Me Roar!', type: 'event' },
     '01157': { name: 'For the North!', type: 'event' },
-    '01159': { name: 'Winter Is Coming', type: 'event' }
+    '01159': { name: 'Winter Is Coming', type: 'event' },
+    '01046': { name: 'Maester Cressen', type: 'character', strength: 3 },
+    '01047': { name: 'Melisandre', type: 'character', strength: 4 },
+    '01048': { name: 'Robert Baratheon', type: 'character', strength: 5 },
+    '01050': { name: 'Ser Davos Seaworth', type: 'character', strength: 3 },
+    '01052': { name: 'Stannis Baratheon', type: 'character', strength: 5 },
+    '01059': { name: 'Dragonstone Port', type: 'location' },
+    '01065': { name: 'Aeron Damphair', type: 'character', strength: 3 },
+    '01067': { name: 'Asha Greyjoy', type: 'character', strength: 4 },
+    '01068': { name: 'Balon Greyjoy', type: 'character', strength: 5 },
+    '01069': { name: "Euron Crow's Eye", type: 'character', strength: 6 },
+    '01071': { name: 'Theon Greyjoy', type: 'character', strength: 3 },
+    '01078': { name: 'Great Kraken', type: 'location' },
+    '01103': { name: 'Areo Hotah', type: 'character', strength: 5 },
+    '01104': { name: 'Arianne Martell', type: 'character', strength: 4 },
+    '01105': { name: 'Doran Martell', type: 'character', strength: 4 },
+    '01109': { name: 'The Red Viper', type: 'character', strength: 7 },
+    '01117': { name: 'Sunspear', type: 'location' },
+    '01122': { name: 'Benjen Stark', type: 'character', strength: 4 },
+    '01123': { name: 'Ghost', type: 'character', strength: 3 },
+    '01124': { name: 'Jon Snow', type: 'character', strength: 4 },
+    '01126': { name: 'Old Bear Mormont', type: 'character', strength: 6 },
+    '01136': { name: 'Castle Black', type: 'location' },
+    '01137': { name: 'The Wall', type: 'location' },
+    '01181': { name: 'Margaery Tyrell', type: 'character', strength: 3 },
+    '01183': { name: 'Randyll Tarly', type: 'character', strength: 5 },
+    '01185': { name: 'The Knight of Flowers', type: 'character', strength: 5 },
+    '01180': { name: 'Maester Lomys', type: 'character', strength: 3 },
+    '01192': { name: 'Highgarden', type: 'location' },
+    '01206': { name: 'Master of Whispers', type: 'title' },
+    '01207': { name: 'Master of Ships', type: 'title' },
+    '01208': { name: 'Hand of the King', type: 'title' },
+    '01209': { name: 'Master of Coin', type: 'title' },
+    '01210': { name: 'Master of Laws', type: 'title' },
+    '01211': { name: 'Crown Regent', type: 'title' }
 };
 
 const factionCards = {
     stark: { code: 'stark', name: 'House Stark', type: 'faction' },
-    lannister: { code: 'lannister', name: 'House Lannister', type: 'faction' }
+    lannister: { code: 'lannister', name: 'House Lannister', type: 'faction' },
+    baratheon: { code: 'baratheon', name: 'House Baratheon', type: 'faction' },
+    greyjoy: { code: 'greyjoy', name: 'House Greyjoy', type: 'faction' },
+    martell: { code: 'martell', name: 'House Martell', type: 'faction' },
+    thenightswatch: { code: 'thenightswatch', name: "The Night's Watch", type: 'faction' },
+    tyrell: { code: 'tyrell', name: 'House Tyrell', type: 'faction' }
 };
 
 const createDeck = () => {
@@ -619,6 +658,179 @@ const rainsPlotSelection = () => {
     return state;
 };
 
+// Melee: up to six seats around the table, us in seat 1. options.players (3 to 6) says how many sit down.
+const meleeSeats = [
+    {
+        name: fixtureUsername,
+        faction: 'stark',
+        title: '01208',
+        characters: ['01144', '01146', '01143', '01145'],
+        locations: ['01154', '01155'],
+        stats: { claim: 1, initiative: 2, gold: 3, reserve: 6, totalPower: 5 }
+    },
+    {
+        name: 'Ann',
+        faction: 'baratheon',
+        title: '01211',
+        characters: ['01052', '01047', '01048', '01050', '01046'],
+        locations: ['01059'],
+        stats: { claim: 1, initiative: 4, gold: 2, reserve: 6, totalPower: 7 }
+    },
+    {
+        name: 'Bob',
+        faction: 'greyjoy',
+        title: '01209',
+        characters: ['01068', '01069', '01067', '01071', '01065'],
+        locations: ['01078'],
+        stats: { claim: 1, initiative: 1, gold: 5, reserve: 6, totalPower: 3 }
+    },
+    {
+        name: 'Cy',
+        faction: 'martell',
+        title: '01207',
+        characters: ['01109', '01105', '01104', '01103'],
+        locations: ['01117'],
+        stats: { claim: 2, initiative: 0, gold: 4, reserve: 5, totalPower: 9 }
+    },
+    {
+        name: 'Di',
+        faction: 'thenightswatch',
+        title: '01210',
+        characters: ['01126', '01124', '01122', '01123'],
+        locations: ['01136', '01137'],
+        stats: { claim: 1, initiative: 3, gold: 1, reserve: 7, totalPower: 4 }
+    },
+    {
+        name: 'Ed',
+        faction: 'tyrell',
+        title: '01206',
+        characters: ['01181', '01185', '01183', '01180'],
+        locations: ['01192'],
+        stats: { claim: 1, initiative: 2, gold: 6, reserve: 6, totalPower: 6 }
+    }
+];
+
+const meleeGame = ({ players = 4, titles = true } = {}) => {
+    const count = Math.min(6, Math.max(3, Number(players) || 4));
+    const { card, hidden, faction } = createDeck();
+    const seats = meleeSeats.slice(0, count).map((seat, index) => {
+        const isMe = seat.name === fixtureUsername;
+        return player({
+            name: seat.name,
+            seatNo: index + 1,
+            phase: 'challenge',
+            faction: faction(seat.faction, { power: index % 3 }),
+            agenda: card(index === 0 ? '01027' : '01198'),
+            activePlot: card(plotCodes[index % plotCodes.length]),
+            title: titles ? card(seat.title) : undefined,
+            firstPlayer: index === 1,
+            numDrawCards: 20 + index,
+            stats: seat.stats,
+            ...promptState({ menuTitle: 'Waiting for Ann to initiate a challenge' }),
+            cardPiles: {
+                cardsInPlay: [
+                    ...seat.characters.map((code, at) =>
+                        card(code, { kneeled: at === 1, power: at === 0 ? 2 : 0 })
+                    ),
+                    ...seat.locations.map((code) => card(code))
+                ],
+                hand: isMe
+                    ? ['01141', '01157', '01159', '01033'].map((code) => card(code))
+                    : hidden(4 + (index % 3), `${seat.name}-hand`),
+                discardPile: isMe ? ['01142', '01041'].map((code) => card(code)) : [],
+                deadPile: [],
+                plotDeck: isMe
+                    ? plotCodes.slice(2).map((code) => card(code))
+                    : hidden(4, `${seat.name}-plot`),
+                plotDiscard: [card(plotCodes[(index + 1) % plotCodes.length])]
+            }
+        });
+    });
+    return game(seats, { gameFormat: 'melee', maxPlayers: count });
+};
+
+const meleeName = (state, at) => Object.values(state.players).find((p) => p.seatNo === at)?.name;
+
+// Our prompt: initiate a challenge
+const meleeTable = (options) => {
+    const state = meleeGame(options);
+    Object.assign(
+        state.players[fixtureUsername],
+        promptState({
+            isActivePrompt: true,
+            promptTitle: 'Challenges',
+            menuTitle: 'Initiate a challenge?',
+            buttons: [
+                { text: 'Military', arg: 'military', promptId: 'p1', icon: 'military' },
+                { text: 'Intrigue', arg: 'intrigue', promptId: 'p1', icon: 'intrigue' },
+                { text: 'Power', arg: 'power', promptId: 'p1', icon: 'power' },
+                { text: 'Done', arg: 'done', promptId: 'p1' }
+            ]
+        })
+    );
+    return state;
+};
+
+// An opponent across the table has the prompt, and we wait
+const meleeOpponentActing = (options) => {
+    const state = meleeGame(options);
+    const acting = meleeName(state, 3);
+    state.players[acting].isActivePrompt = true;
+    state.players[acting].menuTitle = 'Initiate a challenge?';
+    state.players[fixtureUsername].menuTitle = `Waiting for ${acting} to initiate a challenge`;
+    return state;
+};
+
+// Our prompt chooses characters on two opponents' boards
+const meleeChoosing = (options) => {
+    const state = meleeGame(options);
+    const count = Object.keys(state.players).length;
+    const targets = [meleeName(state, 2), meleeName(state, count)];
+    for (const each of Object.values(state.players)) {
+        const target = targets.includes(each.name);
+        each.cardPiles.cardsInPlay = each.cardPiles.cardsInPlay.map((card) =>
+            target && card.type === 'character'
+                ? { ...card, selectable: true }
+                : { ...card, unselectable: true }
+        );
+    }
+    Object.assign(
+        state.players[fixtureUsername],
+        promptState({
+            isActivePrompt: true,
+            selectCard: true,
+            promptTitle: 'Military claim',
+            menuTitle: 'Select a character to kill',
+            buttons: [{ text: 'Done', arg: 'done', promptId: 'p1' }]
+        })
+    );
+    return state;
+};
+
+// The plot phase's title choice: every title still to choose, as buttons with their cards
+const meleeTitleSelection = (options) => {
+    const state = meleeGame({ ...options, titles: false });
+    for (const each of Object.values(state.players)) {
+        each.phase = 'plot';
+    }
+    const titles = ['01206', '01207', '01208', '01209', '01210', '01211'];
+    Object.assign(
+        state.players[fixtureUsername],
+        promptState({
+            isActivePrompt: true,
+            menuTitle: 'Select a title',
+            buttons: titles.map((code) => ({
+                text: cardData[code].name,
+                arg: `title-${code}`,
+                method: 'chooseTitle',
+                promptId: 'titles',
+                card: { code, name: cardData[code].name, type: 'title' }
+            }))
+        })
+    );
+    return state;
+};
+
 export const boardFixtures = {
     empty: { label: 'Empty board', build: empty },
     mid: { label: 'Mid-game', build: midGame },
@@ -631,7 +843,11 @@ export const boardFixtures = {
     lookup: { label: 'Name a card', build: namingCard },
     reaction: { label: 'Reaction window', build: reactionWindow },
     responder: { label: 'Any reactions? (countdown)', build: possibleResponder },
-    choices: { label: 'Many choices', build: manyChoices }
+    choices: { label: 'Many choices', build: manyChoices },
+    melee: { label: 'Melee: mid-game table', build: meleeTable },
+    meleeActing: { label: 'Melee: an opponent acting', build: meleeOpponentActing },
+    meleeChoose: { label: 'Melee: choosing on two boards', build: meleeChoosing },
+    meleeTitles: { label: 'Melee: title selection', build: meleeTitleSelection }
 };
 
 // Changes to a fixture in the shape a server sends them, keeping each card's uuid, so the board animates the card

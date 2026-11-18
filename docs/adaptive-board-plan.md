@@ -590,6 +590,10 @@ From the review on 2026-11-17 (seventh batch):
       own board, staying at the screen's side as the board scrolls sideways and at its board's edge as it scrolls up
       and down. The prompt sits between them, and the menu, full screen and chat are a row against the screen's edge
       just above our stats, scaled with the interface. Supersedes R152's stacks down the wall and tabs.
+- [ ] **R155 Melee's table, settled (decided 2026-11-18)**: two rows on every layout; stats on each player's own
+      board; joust's card scale; an empty seat for odd counts rather than a span; titles in each player's stack;
+      auto-follow scrolls the target's board into view. Melee dev fixtures with 3 to 6 players. Finished steps are
+      committed as they go. See Layouts (Melee) and phase 6.
 
 - [x] `client/hud.js`: add `board: 'classic'` to `defaultHud`, and accept `'classic' | 'adaptive'` in
       `normalizeHud`.
@@ -761,23 +765,34 @@ change, because they measure the real elements.
 
 ### Melee, on every layout
 
-Decided 2026-11-18 (R149), replacing the carousel and tabs: melee keeps classic's table.
+Decided 2026-11-18 (R149, R155): melee keeps classic's table.
 
-- **Table:** classic's two-row grid, players in clockwise seat order around us, as `MeleeGameBoardLayout`
-  orders them. Share or extract that ordering; don't copy it. The opponents across the table are upside down,
-  as the top player is in joust.
-- **Scrolling:** as in joust (R148). The whole table scrolls sideways as one, and each player's play area
-  scrolls up and down on its own, starting at the edge facing the middle of the table.
-- **Scale:** both play areas use the same scale, across every player, so scrolling never changes card sizes.
+- **Table:** a two-row grid on every layout, portrait included. We are at the bottom left, and everyone else
+  goes clockwise around the table: along the bottom row, then back along the top. Classic's seat ordering
+  (`MeleeGameBoardLayout`) is shared, not copied. The opponents across the table are upside down, as the top
+  player is in joust.
+- **Odd counts:** every board is one seat wide; the bottom row has an empty seat at its end (unlike classic,
+  where our board spans the two above it).
+- **Scrolling:** as in joust (R150). The whole table scrolls as one, both ways, starting at our board.
+- **Scale:** the same as joust: one card scale for every player, fitted as joust fits it. A board wider than
+  the screen is fine.
+- **Stats:** every player's stats bar is on their own board's outer edge (top-row boards at the top,
+  bottom-row boards at the bottom), staying in view as their board scrolls, as classic melee keeps them. In
+  phone landscape these are the stat rows at the top and bottom of the column, one per board, handing over as
+  boards scroll past. Joust keeps its own bars.
+- **Tools:** with no bar of our own at the screen's edge, the menu, full screen and chat go with the prompt.
+- **Hand:** ours stays with our board (below it in portrait, in our strip elsewhere).
+- **Titles:** each player's title card sits in their plot, faction and agenda stack, tapped to view.
 - **Auto-follow** (`followAction`, on by default):
     - Target: during our prompt, the first player in seat order with a selectable card on their board.
       Otherwise, the player with the active prompt. If neither applies, stay where we are.
+    - It smoothly scrolls the target's whole board into view, both ways, and does nothing if it is already
+      in view.
     - Scrolling by hand pauses it. It resumes by itself the next time the active prompt moves to a
       different player.
-    - Never scroll during a drag, while a card is raised or zoomed, or while a sheet is being dragged. Wait
-      until that ends.
-- **Open:** where the prompt, the stats bars and the hand go with more than one player on each row, and
-  what melee looks like in phone landscape and portrait. Settle these with the user before phase 6 starts.
+    - Never scroll during a drag. Wait until that ends.
+- **Dev board:** `/dev/board?fixture=melee&players=3..6`, with fixtures for a mid-game table with titles,
+  an opponent acting, our prompt choosing cards on two opponents' boards, and title selection.
 
 ### `wide` (desktop or tablet landscape)
 
@@ -1121,7 +1136,7 @@ zoom, hold and move to drag.
 
 ### Phase 6: melee
 
-- [ ] Settle the open layout questions in the Layouts section (Melee) with the user first.
+- [x] Settle the open layout questions in the Layouts section (Melee) with the user first (R155).
 - [ ] The table: classic's two-row grid in seat order, scrolling sideways as one (R148, R149).
 - [ ] Each player's seat number is a badge on their stats-bar avatar, at the top left, so it and the "1st"
       badge (bottom right) can show together (from review, 2026-11-18).
