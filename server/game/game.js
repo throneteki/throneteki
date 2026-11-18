@@ -142,7 +142,7 @@ class Game extends EventEmitter {
         this.prizedKeywordListener = new PrizedKeywordListener(this);
         this.muteSpectators = details.muteSpectators;
 
-        this.allowMultipleWinners = options.allowMultipleWinners || false;
+        this.allowMultipleWinners = !!details.allowMultipleWinners;
         this.gameOverHandler = new GameOverHandler(this);
         this.disconnectHandler = new DisconnectHandler(this, 30);
 
@@ -1903,7 +1903,16 @@ class Game extends EventEmitter {
                 name: this.restrictedList.name,
                 cardSet: this.restrictedList.cardSet
             },
-            useChessClocks: this.useChessClocks
+            useChessClocks: this.useChessClocks,
+            ...(options.fullData && {
+                event: this.event,
+                instance: this.instance,
+                useGameTimeLimit: this.useGameTimeLimit,
+                gameTimeLimit: this.gameTimeLimit,
+                chessClockTimeLimit: this.chessClockTimeLimit,
+                chessClockDelay: this.chessClockDelay,
+                allowMultipleWinners: this.allowMultipleWinners
+            })
         };
     }
 

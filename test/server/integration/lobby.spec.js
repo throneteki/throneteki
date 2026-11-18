@@ -1,3 +1,4 @@
+import Game from '../../../server/game/game.js';
 import Lobby from '../../../server/lobby.js';
 
 describe('lobby', function () {
@@ -86,6 +87,87 @@ describe('lobby', function () {
                     'This account is temporarily restricted and cannot create new games.'
                 );
             });
+        });
+    });
+
+    describe('onNodeReconnected', function () {
+        beforeEach(function () {
+            const alice = { username: 'alice', settings: {} };
+            const bob = { username: 'bob', settings: {} };
+            const game = new Game(
+                {
+                    id: 'game1',
+                    name: 'Private melee',
+                    owner: alice,
+                    players: {
+                        alice: { id: 'p1', user: alice, seatNo: 2 },
+                        bob: { id: 'p2', user: bob, seatNo: 1 }
+                    },
+                    spectators: {},
+                    allowSpectators: false,
+                    showHand: true,
+                    gamePrivate: true,
+                    gameFormat: 'melee',
+                    gameType: 'casual',
+                    maxPlayers: 3,
+                    allowMultipleWinners: true,
+                    password: 'secret',
+                    event: { _id: 'event1', name: 'Winter Cup' },
+                    muteSpectators: true,
+                    useGameTimeLimit: true,
+                    gameTimeLimit: 55,
+                    useChessClocks: true,
+                    chessClockTimeLimit: 30,
+                    chessClockDelay: 5
+                },
+                { router: {} }
+            );
+            game.started = true;
+            game.startedAt = new Date();
+
+            const syncedGame = game.getSummary(undefined, { fullData: true });
+            syncedGame.password = game.password;
+            syncedGame.players['alice'].faction = 'stark';
+            syncedGame.players['alice'].agendas = ['01027'];
+
+            this.routerSpy.workers = { node1: { identity: 'node1' } };
+            this.lobby.onNodeReconnected('node1', [syncedGame]);
+
+            this.summary = this.lobby.games['game1'].getSummary();
+        });
+
+        it('should keep the game options', function () {
+            expect(this.summary).toEqual(
+                expect.objectContaining({
+                    name: 'Private melee',
+                    started: true,
+                    allowSpectators: false,
+                    showHand: true,
+                    gamePrivate: true,
+                    gameFormat: 'melee',
+                    gameType: 'casual',
+                    maxPlayers: 3,
+                    allowMultipleWinners: true,
+                    needsPassword: true,
+                    event: expect.objectContaining({ name: 'Winter Cup' }),
+                    muteSpectators: true,
+                    useGameTimeLimit: true,
+                    gameTimeLimit: 55,
+                    useChessClocks: true,
+                    chessClockTimeLimit: 30,
+                    chessClockDelay: 5
+                })
+            );
+        });
+
+        it('should keep the seat order', function () {
+            expect(this.summary.players['alice'].seatNo).toBe(2);
+            expect(this.summary.players['bob'].seatNo).toBe(1);
+        });
+
+        it('should keep faction and agendas hidden for a private game', function () {
+            expect(this.summary.players['alice'].faction).toBeUndefined();
+            expect(this.summary.players['alice'].agendas).toEqual([undefined]);
         });
     });
 });
