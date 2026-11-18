@@ -1140,7 +1140,7 @@ zoom, hold and move to drag.
 - [ ] The table: classic's two-row grid in seat order, scrolling sideways as one (R148, R149).
 - [ ] Each player's seat number is a badge on their stats-bar avatar, at the top left, so it and the "1st"
       badge (bottom right) can show together (from review, 2026-11-18).
-- [ ] Seat order matches the classic melee grid's clockwise order. Share or extract the ordering, and
+- [x] Seat order matches the classic melee grid's clockwise order (`seatOrder.js`, shared with classic). Share or extract the ordering, and
       don't copy it.
 - [ ] `followTarget.js` with a spec covering our prompt with selectable cards on one or several
       boards, another player's active prompt, no target, and selectable cards only on our board.

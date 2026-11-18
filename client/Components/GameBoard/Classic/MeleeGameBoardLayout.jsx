@@ -10,6 +10,7 @@ import classNames from 'classnames';
 import SideBoardPanel from './SideBoardPanel';
 import { useHud } from '../../../hudStore';
 import { promptSideOf } from '../../../hud';
+import { aroundTheTable } from '../seatOrder';
 
 const MeleeGameBoardLayout = ({
     thisPlayer,
@@ -114,14 +115,7 @@ const MeleeGameBoardLayout = ({
             return renderPlayerBoard(thisPlayer, 'bottom', true);
         }
 
-        // Sort players in descending seat number, then rotate so thisPlayer is the 0th index
-        const playersInSeatOrder = [thisPlayer, ...otherPlayers].sort(
-            (a, b) => b.seatNo - a.seatNo
-        );
-        const thisIndex = playersInSeatOrder.findIndex((p) => p === thisPlayer);
-        for (let i = 0; i < thisIndex; i++) {
-            playersInSeatOrder.push(playersInSeatOrder.shift());
-        }
+        const playersInSeatOrder = aroundTheTable(thisPlayer, [thisPlayer, ...otherPlayers]);
 
         const isOdd = playersInSeatOrder.length % 2 !== 0;
         const gridCells = [];
