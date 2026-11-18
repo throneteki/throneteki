@@ -122,15 +122,23 @@ const ScrollArea = ({ anchor = 'start', axis = 'y', className, contentClassName,
         if (!area || anchor !== 'end') {
             return;
         }
+        const along = sideways ? 'scrollLeft' : 'scrollTop';
+        // Where it last scrolled itself to. Its scroll event comes later, by when what it holds may have grown, so
+        // that event is not taken as being scrolled away from the end: it catches up instead.
+        let ownScroll = null;
         const keep = () => {
             if (pinned.current) {
-                area[sideways ? 'scrollLeft' : 'scrollTop'] = sideways
-                    ? area.scrollWidth
-                    : area.scrollHeight;
+                area[along] = sideways ? area.scrollWidth : area.scrollHeight;
+                ownScroll = area[along];
             }
         };
         const onScroll = () => {
-            const at = sideways ? area.scrollLeft : area.scrollTop;
+            const at = area[along];
+            if (ownScroll !== null && Math.abs(at - ownScroll) < 1) {
+                keep();
+                return;
+            }
+            ownScroll = null;
             const size = sideways ? area.clientWidth : area.clientHeight;
             const total = sideways ? area.scrollWidth : area.scrollHeight;
             pinned.current = at + size >= total - edge;

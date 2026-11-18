@@ -410,8 +410,7 @@ const GameBoard = () => {
 
     const hud = useHud();
     const boardStarted = !!currentGame?.started;
-    // Melee keeps the classic board until the adaptive board can show more than one opponent
-    const adaptive = hud.board === 'adaptive' && currentGame?.gameFormat === 'joust';
+    const adaptive = hud.board === 'adaptive';
     adaptiveRef.current = adaptive;
     useHudScale(hud, boardAreaRef, boardStarted && !adaptive);
     const allPlayers = useMemo(

@@ -1137,7 +1137,7 @@ zoom, hold and move to drag.
 ### Phase 6: melee
 
 - [x] Settle the open layout questions in the Layouts section (Melee) with the user first (R155).
-- [ ] The table: classic's two-row grid in seat order, scrolling sideways as one (R148, R149).
+- [x] The table: classic's two-row grid in seat order, scrolling as one (R150, R155), on every layout. Each player's stats bar is on their own board; the tools go with the prompt; the room for the desktop's prompt is a column at the table's sides.
 - [ ] Each player's seat number is a badge on their stats-bar avatar, at the top left, so it and the "1st"
       badge (bottom right) can show together (from review, 2026-11-18).
 - [x] Seat order matches the classic melee grid's clockwise order (`seatOrder.js`, shared with classic). Share or extract the ordering, and
@@ -1156,7 +1156,7 @@ zoom, hold and move to drag.
 - [ ] Acceptance: at every reference size, melee with 3 to 6 players never scrolls the page. Every
       player's board can be reached by scrolling, auto-follow behaves as in the Layouts section (Melee), and
       dragging, flights and sheets work wherever the table is scrolled.
-- [ ] Remove the fallback to the classic board for melee.
+- [x] Remove the fallback to the classic board for melee.
 
 ## Checks each phase
 
