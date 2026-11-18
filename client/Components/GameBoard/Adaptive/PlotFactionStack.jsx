@@ -39,6 +39,8 @@ const PlotFactionStack = ({ player, isMe, side, onCardClick, pileProps, droppabl
                     activePlot={player.activePlot}
                     selectedPlot={player.selectedPlot}
                     mustShowPlotSelection={player.mustShowPlotSelection}
+                    popupId={pileProps?.popupId}
+                    popupLocation={pileProps?.popupLocation}
                 />
             </div>
             <div

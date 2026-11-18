@@ -590,7 +590,7 @@ From the review on 2026-11-17 (seventh batch):
       own board, staying at the screen's side as the board scrolls sideways and at its board's edge as it scrolls up
       and down. The prompt sits between them, and the menu, full screen and chat are a row against the screen's edge
       just above our stats, scaled with the interface. Supersedes R152's stacks down the wall and tabs.
-- [ ] **R155 Melee's table, settled (decided 2026-11-18)**: two rows on every layout; stats on each player's own
+- [x] **R155 Melee's table, settled (decided 2026-11-18)**: two rows on every layout; stats on each player's own
       board; joust's card scale; an empty seat for odd counts rather than a span; titles in each player's stack;
       auto-follow scrolls the target's board into view. Melee dev fixtures with 3 to 6 players. Finished steps are
       committed as they go. See Layouts (Melee) and phase 6.
@@ -1153,7 +1153,7 @@ zoom, hold and move to drag.
 - [x] Spectator arrangement: the watched player sits at the bottom left, as we do, and the table follows the action.
 - [x] Fixtures: melee with 3, 4 and 6 players, with an active prompt on an opponent, and with our
       prompt targeting cards on two opponents' boards.
-- [ ] Acceptance: at every reference size, melee with 3 to 6 players never scrolls the page. Every
+- [x] Acceptance (checked on the dev board, 2026-11-18: every melee fixture, 3 to 6 players, each layout, the prompt on either side; sheets on every board): at every reference size, melee with 3 to 6 players never scrolls the page. Every
       player's board can be reached by scrolling, auto-follow behaves as in the Layouts section (Melee), and
       dragging, flights and sheets work wherever the table is scrolled.
 - [x] Remove the fallback to the classic board for melee.

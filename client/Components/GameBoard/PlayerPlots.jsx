@@ -20,7 +20,9 @@ const PlayerPlots = ({
     selectedPlot,
     mustShowPlotSelection,
     direction,
-    playerName
+    playerName,
+    popupId,
+    popupLocation = isMe ? 'bottom' : 'top'
 }) => {
     const renderPlotPiles = useCallback(() => {
         const showSelectedPlot = mustShowPlotSelection && !!selectedPlot;
@@ -38,7 +40,8 @@ const PlayerPlots = ({
                 orientation='horizontal'
                 style={{ height: plotHeight }}
                 source='revealed plots'
-                popupLocation={isMe ? 'bottom' : 'top'}
+                popupLocation={popupLocation}
+                popupId={popupId}
                 title='Used Plots'
                 titlePosition={!deckAtBottom && frontIsDeck ? 'bottom left' : 'top left'}
                 topCard={activePlot}
@@ -66,7 +69,8 @@ const PlayerPlots = ({
                 source='plot deck'
                 title='Plots'
                 titlePosition={deckAtBottom && !frontIsDeck ? 'bottom left' : 'top left'}
-                popupLocation={isMe ? 'bottom' : 'top'}
+                popupLocation={popupLocation}
+                popupId={popupId}
                 topCard={showSelectedPlot ? selectedPlot : null}
                 disableBackground={true}
                 selected={!!selectedPlot}
@@ -113,7 +117,9 @@ const PlayerPlots = ({
         selectedPlot,
         mustShowPlotSelection,
         direction,
-        playerName
+        playerName,
+        popupId,
+        popupLocation
     ]);
 
     return (
