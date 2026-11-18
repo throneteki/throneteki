@@ -1,61 +1,139 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import { AnimatePresence, motion } from 'framer-motion';
+import { motionOff } from '../../../flip';
 
 const edge = 2;
 
-// Shows that there is more to see past this edge: a fade over the cards and a small marker
-const MoreHint = ({ side }) => (
-    <div
-        aria-hidden
-        className={classNames(
-            'pointer-events-none absolute inset-x-0 z-[240] flex h-7 justify-center from-black/70 to-transparent',
-            side === 'top'
-                ? 'top-0 items-start bg-gradient-to-b'
-                : 'bottom-0 items-end bg-gradient-to-t'
-        )}
-    >
-        <span className='hud-zoom flex items-center gap-1 rounded-full bg-black/80 px-2 text-tiny text-default-300'>
-            <FontAwesomeIcon icon={side === 'top' ? faChevronUp : faChevronDown} />
-            more
-        </span>
-    </div>
-);
+const hints = {
+    start: {
+        y: ['inset-x-0 top-0 h-3 bg-gradient-to-b', 'inset-x-0 top-0 h-px'],
+        x: ['inset-y-0 w-3 bg-gradient-to-r', 'inset-y-0 left-0 w-px']
+    },
+    end: {
+        y: ['inset-x-0 bottom-0 h-3 bg-gradient-to-t', 'inset-x-0 bottom-0 h-px'],
+        x: ['inset-y-0 w-3 bg-gradient-to-l', 'inset-y-0 right-0 w-px']
+    }
+};
 
-// An area that scrolls up and down when what it holds is taller than it, marking the edges with more past them.
-// Anchored to the end, it stays scrolled to the end as it grows, unless it has been scrolled away from there.
-// It cuts off what spills past it, so it is marked for cards to fly into it above the page (data-clips).
-const ScrollArea = ({ anchor = 'start', className, children }) => {
-    const ref = useRef(null);
-    const contentRef = useRef(null);
-    const pinned = useRef(true);
-    const [more, setMore] = useState({ top: false, bottom: false });
+// Shows that there is more to see past this edge: the edge lit and a light fade over the cards, fading in and out
+// as the edge gains and loses more past it. A side of the board covered by the prompt (--board-cover-left and
+// -right) moves the sideways edges in to where the cover ends, so they show beside it.
+const edgeAt = {
+    start: { left: 'var(--board-edge-left, var(--board-cover-left, 0px))' },
+    end: { right: 'var(--board-edge-right, var(--board-cover-right, 0px))' }
+};
+export const MoreHint = ({ show, end, axis }) => {
+    const [place, line] = hints[end][axis];
+    return (
+        <AnimatePresence initial={false}>
+            {show && (
+                <motion.div
+                    aria-hidden
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: motionOff() ? 0 : 0.25, ease: 'easeOut' }}
+                    style={axis === 'x' ? edgeAt[end] : undefined}
+                    className={classNames(
+                        'pointer-events-none absolute z-[240] from-black/50 to-transparent',
+                        place
+                    )}
+                >
+                    <span
+                        className={classNames(
+                            'absolute bg-amber-300 shadow-[0_0_6px_1px_rgba(252,211,77,0.7)]',
+                            line
+                        )}
+                    />
+                </motion.div>
+            )}
+        </AnimatePresence>
+    );
+};
 
+// Whether an element scrolled along an axis has more to see before its start and past its end
+export const useScrollEdges = (ref, axis, contentRef) => {
+    const [more, setMore] = useState({ start: false, end: false });
     useLayoutEffect(() => {
         const area = ref.current;
         if (!area) {
             return;
         }
         const show = () => {
-            const top = area.scrollTop > edge;
-            const bottom = area.scrollTop + area.clientHeight < area.scrollHeight - edge;
+            const at = axis === 'x' ? area.scrollLeft : area.scrollTop;
+            const size = axis === 'x' ? area.clientWidth : area.clientHeight;
+            const total = axis === 'x' ? area.scrollWidth : area.scrollHeight;
+            const start = at > edge;
+            const end = at + size < total - edge;
             setMore((current) =>
-                current.top === top && current.bottom === bottom ? current : { top, bottom }
+                current.start === start && current.end === end ? current : { start, end }
             );
         };
+        show();
+        const observer = new ResizeObserver(show);
+        observer.observe(area);
+        const content = contentRef?.current;
+        [...(content ? [content] : area.children)].forEach((child) => observer.observe(child));
+        const mutations = content ? null : new MutationObserver(show);
+        mutations?.observe(area, { childList: true, subtree: true });
+        area.addEventListener('scroll', show, { passive: true });
+        return () => {
+            observer.disconnect();
+            mutations?.disconnect();
+            area.removeEventListener('scroll', show);
+        };
+    }, [ref, axis, contentRef]);
+    return more;
+};
+
+// An area that scrolls when what it holds does not fit, up and down (axis 'y'), sideways ('x') or both, marking
+// the edges with more past them. Anchored to the end, it stays scrolled to the end (the bottom, scrolling both ways)
+// as it grows, unless it has been scrolled away from there. It cuts off what spills past it, so it is marked for
+// cards to fly into it above the page (data-clips). What it holds is given the width in view as --scroll-view-width,
+// for anything that keeps still in it as it scrolls sideways.
+const ScrollArea = ({ anchor = 'start', axis = 'y', className, contentClassName, children }) => {
+    const ref = useRef(null);
+    const contentRef = useRef(null);
+    useLayoutEffect(() => {
+        const area = ref.current;
+        const content = contentRef.current;
+        if (!area || !content || axis === 'y') {
+            return;
+        }
+        const measure = () =>
+            content.style.setProperty('--scroll-view-width', `${area.clientWidth}px`);
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(area);
+        return () => observer.disconnect();
+    }, [axis]);
+    const pinned = useRef(true);
+    const sideways = axis === 'x';
+    const across = useScrollEdges(ref, 'x', contentRef);
+    const down = useScrollEdges(ref, 'y', contentRef);
+    const edges = {
+        x: axis === 'y' ? null : across,
+        y: axis === 'x' ? null : down
+    };
+
+    useLayoutEffect(() => {
+        const area = ref.current;
+        if (!area || anchor !== 'end') {
+            return;
+        }
         const keep = () => {
-            if (anchor === 'end' && pinned.current) {
-                area.scrollTop = area.scrollHeight;
+            if (pinned.current) {
+                area[sideways ? 'scrollLeft' : 'scrollTop'] = sideways
+                    ? area.scrollWidth
+                    : area.scrollHeight;
             }
-            show();
         };
         const onScroll = () => {
-            pinned.current =
-                anchor === 'end'
-                    ? area.scrollTop + area.clientHeight >= area.scrollHeight - edge
-                    : area.scrollTop <= edge;
-            show();
+            const at = sideways ? area.scrollLeft : area.scrollTop;
+            const size = sideways ? area.clientWidth : area.clientHeight;
+            const total = sideways ? area.scrollWidth : area.scrollHeight;
+            pinned.current = at + size >= total - edge;
         };
         keep();
         const observer = new ResizeObserver(keep);
@@ -68,21 +146,46 @@ const ScrollArea = ({ anchor = 'start', className, children }) => {
             observer.disconnect();
             area.removeEventListener('scroll', onScroll);
         };
-    }, [anchor]);
+    }, [anchor, sideways]);
 
     return (
         <div className={classNames('relative min-h-0 min-w-0', className)}>
             <div
                 ref={ref}
                 data-clips=''
-                className='h-full w-full overflow-y-auto overflow-x-hidden overscroll-contain [scrollbar-width:none]'
+                // Scroll stops at its ends only along the axes it scrolls, so a swipe the other way carries on to the
+                // area around it (the board scrolling sideways around a play area that scrolls up and down)
+                className={classNames('h-full w-full [scrollbar-width:none]', {
+                    'overflow-x-auto overflow-y-hidden overscroll-x-contain': axis === 'x',
+                    'overflow-y-auto overflow-x-hidden overscroll-y-contain': axis === 'y',
+                    'overflow-auto overscroll-contain': axis === 'both'
+                })}
             >
-                <div ref={contentRef} className='flex min-h-full'>
+                <div
+                    ref={contentRef}
+                    className={classNames(
+                        'flex',
+                        {
+                            'h-full w-max min-w-full': axis === 'x',
+                            'min-h-full': axis === 'y',
+                            'min-h-full w-max min-w-full': axis === 'both'
+                        },
+                        contentClassName
+                    )}
+                >
                     {children}
                 </div>
             </div>
-            {more.top && <MoreHint side='top' />}
-            {more.bottom && <MoreHint side='bottom' />}
+            {['x', 'y'].map((along) =>
+                ['start', 'end'].map((end) => (
+                    <MoreHint
+                        key={along + end}
+                        show={!!edges[along]?.[end]}
+                        end={end}
+                        axis={along}
+                    />
+                ))
+            )}
         </div>
     );
 };

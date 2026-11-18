@@ -2,30 +2,19 @@ import React from 'react';
 import Card from '../Card';
 import CardPile from '../CardPile';
 import PlayerPlots from '../PlayerPlots';
-import { Constants } from '../../../constants';
 
-// The faction card lies over the agenda, which shows a strip down its left side
-const peekBehind = { marginLeft: 'calc(var(--card-scale, 1) * -2.6rem)' };
+// The faction card, then the agenda, then any further agendas, each tucked half under the one before it, as on the
+// classic board. While the row has room the agenda shows whole; when it has to squeeze, the agenda's column (and
+// each further agenda's) narrows and the card before it slides over it, down to a strip of it and no further. A
+// column's size is fixed, not taken from the card in it, so the row knows how narrow it can go.
+const agendaColumn =
+    'minmax(calc(var(--card-scale, 1) * 1.4rem), calc(var(--card-scale, 1) * 4rem + 0.25rem))';
+const extraAgendaColumn =
+    'minmax(calc(var(--card-scale, 1) * 1rem), calc(var(--card-scale, 1) * 2rem))';
 
-const plotStats = [
-    { code: 'initiative', name: 'Initiative' },
-    { code: 'claim', name: 'Claim' },
-    { code: 'reserve', name: 'Reserve' }
-];
-
-// The numbers the revealed plot sets this round, along its top edge where they can be read at any size
-const PlotStats = ({ stats }) => (
-    <div className='pointer-events-none absolute right-0 top-0 z-[215] flex justify-end gap-0.5 hud-zoom'>
-        {plotStats.map((stat) => (
-            <span
-                key={stat.code}
-                title={stat.name}
-                className='flex items-center gap-0.5 rounded-b-md bg-black/80 px-1 text-[11px] font-bold leading-4'
-            >
-                <img src={Constants.StatIconImagePaths[stat.code]} alt='' className='h-3.5 w-3.5' />
-                {stats?.[stat.code] ?? 0}
-            </span>
-        ))}
+const AgendaSlot = ({ depth, children }) => (
+    <div className='relative min-w-0' style={{ zIndex: 10 - depth }}>
+        {children}
     </div>
 );
 
@@ -38,8 +27,8 @@ const PlotFactionStack = ({ player, isMe, side, onCardClick, pileProps, droppabl
     const additionalAgendas = player.agendas?.slice(1) || [];
 
     return (
-        <div className='flex items-start gap-1'>
-            <div className='relative'>
+        <div className='flex min-w-0 items-start gap-1'>
+            <div className='relative shrink-0'>
                 <PlayerPlots
                     onCardClick={onCardClick}
                     direction={side === 'bottom' ? 'default' : 'reverse'}
@@ -51,28 +40,31 @@ const PlotFactionStack = ({ player, isMe, side, onCardClick, pileProps, droppabl
                     selectedPlot={player.selectedPlot}
                     mustShowPlotSelection={player.mustShowPlotSelection}
                 />
-                {player.activePlot && <PlotStats stats={player.stats} />}
             </div>
-            <div className='flex items-start'>
-                {additionalAgendas.map((extra, index) => (
-                    <div
-                        key={extra.uuid}
-                        className='relative z-0'
-                        style={index > 0 ? peekBehind : null}
-                    >
-                        <Card
-                            card={extra}
-                            source='agenda'
-                            onClick={onCardClick}
-                            orientation='vertical'
-                        />
-                    </div>
-                ))}
+            <div
+                className='grid min-w-0 grid-flow-col items-start'
+                style={{
+                    gridTemplateColumns: [
+                        'auto',
+                        ...(hasAgenda ? [agendaColumn] : []),
+                        ...additionalAgendas.map(() => extraAgendaColumn)
+                    ].join(' '),
+                    gridAutoColumns: 'auto'
+                }}
+            >
+                <div className='relative z-20 shrink-0'>
+                    <CardPile
+                        className='faction'
+                        source='faction'
+                        cards={[]}
+                        topCard={player.faction}
+                        disablePopup
+                        onCardClick={onCardClick}
+                        orientation={player.faction?.kneeled ? 'horizontal' : 'vertical'}
+                    />
+                </div>
                 {hasAgenda && (
-                    <div
-                        className='relative z-0'
-                        style={additionalAgendas.length > 0 ? peekBehind : null}
-                    >
+                    <AgendaSlot depth={0}>
                         {droppable(
                             'agenda',
                             <CardPile
@@ -87,21 +79,22 @@ const PlotFactionStack = ({ player, isMe, side, onCardClick, pileProps, droppabl
                                 {...pileProps}
                             />
                         )}
-                    </div>
+                    </AgendaSlot>
                 )}
-                <div className='relative z-10' style={hasAgenda ? peekBehind : null}>
-                    <CardPile
-                        className='faction'
-                        source='faction'
-                        cards={[]}
-                        topCard={player.faction}
-                        disablePopup
-                        onCardClick={onCardClick}
-                        orientation={player.faction?.kneeled ? 'horizontal' : 'vertical'}
-                    />
-                </div>
+                {additionalAgendas.map((extra, index) => (
+                    <AgendaSlot key={extra.uuid} depth={index + 1}>
+                        <div className='absolute right-0 top-0'>
+                            <Card
+                                card={extra}
+                                source='agenda'
+                                onClick={onCardClick}
+                                orientation='vertical'
+                            />
+                        </div>
+                    </AgendaSlot>
+                ))}
                 {player.title && (
-                    <div className='relative z-0 ml-1'>
+                    <div className='relative z-20 ml-1 shrink-0'>
                         <Card
                             card={player.title}
                             source='title'

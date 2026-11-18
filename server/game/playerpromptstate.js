@@ -60,13 +60,14 @@ class PlayerPromptState {
         this.controls = [];
     }
 
-    getCardSelectionState(card) {
+    getCardSelectionState(card, player) {
         let selectable = this.selectableCards.includes(card);
         let index = this.selectedCards.indexOf(card);
         let result = {
             // The `card.selected` property here is a hack for plot selection,
-            // which we do differently from normal card selection.
-            selected: card.selected || index !== -1,
+            // which we do differently from normal card selection. The chosen
+            // plot stays secret until revealed, so only its owner sees it.
+            selected: (card.selected && card.owner === player) || index !== -1,
             selectable: selectable,
             unselectable: this.selectCard && !selectable
         };

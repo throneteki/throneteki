@@ -19,6 +19,9 @@ const cardData = {
     '01198': { name: 'Banner of the Stag', type: 'agenda' },
     '01199': { name: 'Banner of the Kraken', type: 'agenda' },
     '06018': { name: 'Alliance', type: 'agenda' },
+    '05045': { name: 'The Rains of Castamere', type: 'agenda' },
+    '05049': { name: "Littlefinger's Meddling", type: 'plot' },
+    '05050': { name: 'Gossip and Lies', type: 'plot' },
     '01028': { name: 'Littlefinger', type: 'character', strength: 4 },
     '01029': { name: 'Varys', type: 'character', strength: 3 },
     '01031': { name: 'Wildling Horde', type: 'character', strength: 5 },
@@ -220,7 +223,7 @@ const midGame = () => {
             ...promptState({
                 isActivePrompt: true,
                 promptTitle: 'Challenges',
-                menuTitle: 'Initiate a challenge',
+                menuTitle: 'Initiate a challenge?',
                 buttons: [
                     { text: 'Military', arg: 'military', promptId: 'p1', icon: 'military' },
                     { text: 'Intrigue', arg: 'intrigue', promptId: 'p1', icon: 'intrigue' },
@@ -231,9 +234,9 @@ const midGame = () => {
             cardPiles: {
                 cardsInPlay: [
                     card('01144', { power: 2, attachments: [card('01153')] }),
-                    card('01146', { kneeled: true }),
-                    card('01143', { power: 1 }),
-                    card('01145'),
+                    card('01146', { kneeled: true, tokens: { gold: 2 } }),
+                    card('01143', { power: 1, tokens: { poison: 1 } }),
+                    card('01145', { power: 5 }),
                     card('01154'),
                     card('01155', { kneeled: true })
                 ],
@@ -315,7 +318,7 @@ const crowded = () => {
             ...promptState({
                 isActivePrompt: true,
                 promptTitle: 'Challenges',
-                menuTitle: 'Initiate a challenge',
+                menuTitle: 'Initiate a challenge?',
                 buttons: [
                     { text: 'Military', arg: 'military', promptId: 'p1', icon: 'military' },
                     { text: 'Intrigue', arg: 'intrigue', promptId: 'p1', icon: 'intrigue' },
@@ -437,7 +440,7 @@ const waiting = () => {
     );
     Object.assign(
         state.players[opponentName],
-        promptState({ isActivePrompt: true, menuTitle: 'Initiate a challenge' })
+        promptState({ isActivePrompt: true, menuTitle: 'Initiate a challenge?' })
     );
     return state;
 };
@@ -591,11 +594,37 @@ const manyChoices = () => {
     return state;
 };
 
+// Plot selection with The Rains of Castamere: the plot deck is grouped into plots and schemes, as the server sends it
+const rainsPlotSelection = () => {
+    const state = plotSelection();
+    const me = state.players[fixtureUsername];
+    me.agendas = [{ ...me.agendas[0], code: '05045', name: cardData['05045'].name, uuid: 'rains' }];
+    const schemes = ['05049', '05050'].map((code) => ({
+        uuid: `scheme-${code}`,
+        code,
+        name: cardData[code].name,
+        type: 'plot',
+        facedown: false,
+        tokens: {},
+        attachments: [],
+        childCards: [],
+        dupes: [],
+        selectable: true,
+        group: 'Scheme'
+    }));
+    me.cardPiles.plotDeck = [
+        ...me.cardPiles.plotDeck.map((plot) => ({ ...plot, group: 'Plot' })),
+        ...schemes
+    ];
+    return state;
+};
+
 export const boardFixtures = {
     empty: { label: 'Empty board', build: empty },
     mid: { label: 'Mid-game', build: midGame },
     crowded: { label: 'Crowded', build: crowded },
     plots: { label: 'Plot selection', build: plotSelection },
+    rains: { label: 'Plot selection (Rains)', build: rainsPlotSelection },
     discard: { label: 'Choose from discard', build: choosingFromDiscard },
     waiting: { label: 'Waiting on opponent', build: waiting },
     select: { label: 'Choose on the board', build: choosingOnBoard },
@@ -663,6 +692,92 @@ export const fixtureSteps = {
                 { ...card, attachments: [], kneeled: false },
                 ...me.cardPiles.deadPile
             ];
+            return state;
+        }
+    },
+    log: {
+        label: 'Log a line',
+        apply: (state) => {
+            const lines = [
+                [{ name: opponentName, argType: 'nonAvatarPlayer' }, ' draws 2 cards'],
+                [
+                    { name: opponentName, argType: 'nonAvatarPlayer' },
+                    ' uses ',
+                    { code: '01088', label: 'Tyrion Lannister', argType: 'card' },
+                    ' to gain 2 gold'
+                ],
+                [{ alert: { type: 'warning', message: ['Military challenge won by 3 STR'] } }],
+                [
+                    { name: fixtureUsername, argType: 'nonAvatarPlayer' },
+                    ' kneels their faction card'
+                ],
+                [
+                    { name: opponentName, argType: 'nonAvatarPlayer' },
+                    ' uses ',
+                    { code: '01088', label: 'Tyrion Lannister', argType: 'card' },
+                    ' to choose and discard 1 card at random from the hand of ',
+                    { name: fixtureUsername, argType: 'nonAvatarPlayer' },
+                    ', then gains 2 power for their faction'
+                ]
+            ];
+            const count = state.messages.length;
+            state.messages = [
+                ...state.messages,
+                { date: new Date().toISOString(), message: lines[count % lines.length] }
+            ];
+            return state;
+        }
+    },
+    chat: {
+        label: 'Opponent chats',
+        apply: (state) => {
+            state.messages = [
+                ...state.messages,
+                {
+                    date: new Date().toISOString(),
+                    message: [{ name: opponentName, argType: 'player' }, ' good luck!']
+                }
+            ];
+            return state;
+        }
+    },
+    pick: {
+        label: 'Choose from their hand',
+        apply: (state) => {
+            const them = state.players[opponentName];
+            const choosing = !them.cardPiles.hand.some((card) => card.selectable);
+            them.cardPiles.hand = them.cardPiles.hand.map((card, index) => {
+                const code = drawPool[index % drawPool.length];
+                return choosing
+                    ? {
+                          ...card,
+                          selectable: true,
+                          facedown: false,
+                          code,
+                          name: cardData[code].name
+                      }
+                    : { uuid: card.uuid, facedown: true };
+            });
+            return state;
+        }
+    },
+    phase: {
+        label: 'Next phase',
+        apply: (state) => {
+            const order = [
+                'setup',
+                'plot',
+                'draw',
+                'marshal',
+                'challenge',
+                'dominance',
+                'standing',
+                'taxation'
+            ];
+            for (const player of Object.values(state.players)) {
+                const index = order.indexOf(player.phase);
+                player.phase = index === order.length - 1 ? 'plot' : order[index + 1];
+            }
             return state;
         }
     }

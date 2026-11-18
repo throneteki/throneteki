@@ -45,6 +45,7 @@ const PlayerPlots = ({
                 lockTopCard
                 disableBackground={true}
                 flipFrom={`plots:${playerName}`}
+                owner={playerName}
             />
         );
 
@@ -70,6 +71,7 @@ const PlayerPlots = ({
                 disableBackground={true}
                 selected={!!selectedPlot}
                 flipDeck={`plots:${playerName}`}
+                owner={playerName}
             />
         );
 

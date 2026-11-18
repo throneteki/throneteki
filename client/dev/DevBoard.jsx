@@ -38,9 +38,13 @@ const buildFixture = (fixture, { manual, spectate }) => {
 const viewerOf = (spectate) => (spectate ? spectatorName : fixtureUsername);
 
 // The board expects a game before it first draws, as it has in a real game
-const loadFixture = (store, state, board, spectate) => {
+const loadFixture = (store, state, board, spectate, promptSide) => {
     store.dispatch(
-        setUser({ username: viewerOf(spectate), permissions: {}, settings: { hud: { board } } })
+        setUser({
+            username: viewerOf(spectate),
+            permissions: {},
+            settings: { hud: { board, promptSide } }
+        })
     );
     store.dispatch(receiveGameState(state, viewerOf(spectate)));
 };
@@ -53,15 +57,18 @@ const setQuery = (fixture, board) => {
 };
 
 // Development only: the real game board, showing a canned game state, at /dev/board?fixture=crowded&board=adaptive
-// (&manual=1 for dragging, &spectate=1 to watch, &panel=0 to hide this panel). The steps change the game as a
+// (&manual=1 for dragging, &spectate=1 to watch, &prompt=right for the prompt on the right, &panel=0 to hide this
+// panel). The steps change the game as a
 // server would, to see cards move between zones.
 const DevBoard = ({
     fixture: initialFixture,
     board: initialBoard,
     panel,
     manual: manualParam,
-    spectate: spectateParam
+    spectate: spectateParam,
+    prompt
 }) => {
+    const promptSide = prompt === 'right' ? 'right' : 'left';
     const options = { manual: manualParam === '1', spectate: spectateParam === '1' };
     const [fixture, setFixture] = useState(boardFixtures[initialFixture] ? initialFixture : 'mid');
     const [board, setBoard] = useState(initialBoard === 'classic' ? 'classic' : 'adaptive');
@@ -69,7 +76,7 @@ const DevBoard = ({
     const [store] = useState(() => {
         const created = createFixtureStore();
         current.current = buildFixture(fixture, options);
-        loadFixture(created, current.current, board, options.spectate);
+        loadFixture(created, current.current, board, options.spectate, promptSide);
         return created;
     });
     const [open, setOpen] = useState(true);
@@ -87,9 +94,9 @@ const DevBoard = ({
         hudStore.reset();
         const spectate = spectateParam === '1';
         current.current = buildFixture(fixture, { manual: manualParam === '1', spectate });
-        loadFixture(store, current.current, board, spectate);
+        loadFixture(store, current.current, board, spectate, promptSide);
         setQuery(fixture, board);
-    }, [store, fixture, board, manualParam, spectateParam]);
+    }, [store, fixture, board, manualParam, spectateParam, promptSide]);
 
     return (
         <Provider store={store}>

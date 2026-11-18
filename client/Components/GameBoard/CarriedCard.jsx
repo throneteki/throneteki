@@ -21,15 +21,6 @@ const cardUnit = () => {
     return scale * (parseFloat(getComputedStyle(root).fontSize) || 16);
 };
 
-// The card is carried at the size it was picked up at, which is not the board's card size when it comes from a
-// hand or pile drawn smaller or larger. Measured without transforms (a loose pile's tilt, a knelt card's turn),
-// its long side is 5.6 card units.
-export const scaleOfCard = (surface) => {
-    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-    const long = Math.max(surface.offsetWidth, surface.offsetHeight);
-    return long > 0 ? long / (5.6 * rem) : undefined;
-};
-
 // Where a card placed underneath this stack will lie. The cards underneath are drawn after the card and its
 // attachments, peeking out below the last of them, each a sixth of a card further right than the one before.
 export const underneathSpot = (stack, carriedUuid) => {

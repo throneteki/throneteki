@@ -9,6 +9,7 @@ import GoldImage from '../../assets/img/stats/gold.png';
 
 import { Constants, ThronesIcons } from '../../constants';
 import ThronesIcon from './ThronesIcon';
+import { isChatMessage } from './chatMessages';
 import CardHoverable from '../Images/CardHoverable';
 
 const tokens = {
@@ -17,7 +18,17 @@ const tokens = {
     gold: { className: 'h-3 w-3 inline mt-1', imageSrc: GoldImage }
 };
 
-const Messages = ({ messages }) => {
+const alertColours = {
+    success: 'text-success',
+    info: 'text-primary-300',
+    danger: 'text-danger',
+    bell: 'text-warning',
+    warning: 'text-warning'
+};
+
+// compact: each message as a line of text, its alerts inline rather than as rules and panels, for showing one
+// message on its own
+const Messages = ({ messages, compact = false }) => {
     const processKeywords = (message) => {
         const messages = [];
         let i = 0;
@@ -28,10 +39,19 @@ const Messages = ({ messages }) => {
             if (tokens[lowerToken]) {
                 const tokenEntry = tokens[lowerToken];
 
+                // On one line of its own (compact) the image sits in the middle of the text, not on its baseline
                 messages.push(
-                    <span key={`${token}-${i++}`} className='inline-flex gap-0.5'>
+                    <span
+                        key={`${token}-${i++}`}
+                        className={compact ? undefined : 'inline-flex gap-0.5'}
+                    >
                         {` ${token} `}
-                        <img className={tokenEntry.className} src={tokenEntry.imageSrc} />
+                        <img
+                            className={classNames(tokenEntry.className, {
+                                '!mt-0 align-middle': compact
+                            })}
+                            src={tokenEntry.imageSrc}
+                        />
                     </span>
                 );
                 messages.push(' ');
@@ -56,6 +76,20 @@ const Messages = ({ messages }) => {
 
             if (key === 'alert') {
                 const message = formatMessageText(fragment.message);
+                if (compact) {
+                    messages.push(
+                        <span
+                            key={index++}
+                            className={classNames(
+                                alertColours[fragment.type] ?? 'font-bold text-foreground',
+                                { capitalize: fragment.type === 'phasestart' }
+                            )}
+                        >
+                            {message}
+                        </span>
+                    );
+                    continue;
+                }
                 switch (fragment.type) {
                     case 'startofround':
                     case 'endofround':
@@ -129,7 +163,13 @@ const Messages = ({ messages }) => {
                     </span>
                 );
             } else if (ThronesIcons.includes(fragment)) {
-                messages.push(<ThronesIcon key={index++} icon={fragment} />);
+                messages.push(
+                    <ThronesIcon
+                        key={index++}
+                        icon={fragment}
+                        className={compact ? 'align-middle leading-none' : undefined}
+                    />
+                );
             } else {
                 const messageFragment = processKeywords(fragment.toString());
                 messages.push(
@@ -146,11 +186,11 @@ const Messages = ({ messages }) => {
     const renderMessages = () => {
         return messages.map((message, index) => {
             // TODO: Re-add chat bubble triangles (left for this player, right for others)
-            const className = classNames('break-words leading-[1.15rem] text-gray-300', {
-                'p-2 bg-default rounded-md': Object.values(message.message).some(
-                    (m) => m.name && m.argType === 'player'
-                )
-            });
+            const className = compact
+                ? 'break-words'
+                : classNames('break-words leading-[1.15rem] text-gray-300', {
+                      'p-2 bg-default rounded-md': isChatMessage(message)
+                  });
             return (
                 <div key={index} className={className}>
                     {formatMessageText(message.message)}

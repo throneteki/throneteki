@@ -325,6 +325,7 @@ const CardView = ({
                 side='bottom'
             >
                 <div
+                    data-pile-popup=''
                     className='flex flex-col box-content border-1 border-default-200 bg-black/75 rounded-b-md overflow-hidden'
                     onClick={(event) => event.stopPropagation()}
                 >
@@ -437,10 +438,17 @@ const CardView = ({
     const { handlers: hoverHandlers, touchActive } = useCardHoverHandlers({
         code: card.code,
         notes: availabilityNotes,
-        details: isFaceup ? card : null,
         isDisabled: !!disableHover || isDragging,
         touchDelay: holdToDrag.hold
     });
+    const previewRef = hoverHandlers.ref;
+    const surfaceRef = useCallback(
+        (element) => {
+            setNodeRef?.(element);
+            previewRef(element);
+        },
+        [setNodeRef, previewRef]
+    );
 
     // Handles the rotating of knelt or horizontally placed vertical cards (eg. dead pile)
     const isRotated =
@@ -495,7 +503,7 @@ const CardView = ({
                     {...listeners}
                     {...attributes}
                     {...hoverHandlers}
-                    ref={setNodeRef}
+                    ref={surfaceRef}
                     data-card-surface=''
                     className={cardClassName}
                     onClick={handleClick}

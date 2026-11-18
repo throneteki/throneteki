@@ -306,6 +306,10 @@ resolved and the costs paid. Abilities add structured entries to `game.logEntrie
 (`{ type, player, source, targets, results }`), and messages and alerts keep a structured template
 and argument snapshot beside the rendered text.
 
+A card's `selected` state in the client view is per player (`PlayerPromptState.getCardSelectionState`).
+Plot selection marks the plot itself (`card.selected`), so that mark is only sent to the plot's
+owner: the chosen plot stays hidden from the opponent until it is revealed.
+
 ## Problem reports and scenarios
 
 A problem report is for working out what went wrong. Report Problem snapshots the game as soon as

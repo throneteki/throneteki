@@ -37,6 +37,14 @@ export const cardBoxClass = (orientation = 'vertical') => {
     }
 };
 
+// The card size an element is drawn at. Parts of the board draw cards at their own sizes (a hand, a pile, a sheet)
+// by setting --card-scale on themselves, so a card taken out of its place to be carried or flown keeps its size by
+// taking this with it.
+export const cardScaleOf = (el) => {
+    const value = el && parseFloat(getComputedStyle(el).getPropertyValue('--card-scale'));
+    return Number.isFinite(value) && value > 0 ? value : undefined;
+};
+
 export const cardWidth = 'calc(var(--card-scale, 1) * 4rem)';
 export const cardHeight = 'calc(var(--card-scale, 1) * 5.6rem)';
 

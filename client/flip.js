@@ -1,4 +1,5 @@
 import { cardImageSrc } from './imageCache';
+import { cardScaleOf } from './cardScale';
 import { liftFrames, slapConfig, slapFrames, slapsInto } from './tableFeel';
 
 export const flipConfig = {
@@ -79,6 +80,7 @@ export const measureCards = (root = document) => {
             under: el.dataset.flipUnder !== undefined,
             underOf: el.dataset.flipUnder || undefined,
             rot: Number(el.dataset.flipRot) || 0,
+            scale: cardScaleOf(el),
             z: el.dataset.flipZ === undefined ? undefined : Number(el.dataset.flipZ)
         });
     });
@@ -573,10 +575,24 @@ const getHost = (behind, area) => {
     return hosts[name];
 };
 
+// A card taken off the board to fly keeps the size it had there (rect.scale), not the size of the page around it
 const detach = (el, rect, behind = false, area = null) => {
     el.style.cssText += `;position:fixed;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;height:${rect.height}px;margin:0;transform:none`;
+    if (rect.scale) {
+        el.style.setProperty('--card-scale', String(rect.scale));
+    }
     getHost(behind, area).appendChild(el);
 };
+
+// Whatever an animation put on the page goes once the animation is over, finished or cancelled: a later update
+// cancels flights still going, and anything left behind would stay over the board for good
+const whenOver = (animation, done) => animation.finished.then(done, done);
+
+// Only animations that end: a card also runs its own endless ones (a loading spinner, a pulsing ring)
+const endingAnimations = (el) =>
+    el
+        .getAnimations({ subtree: true })
+        .filter((animation) => Number.isFinite(animation.effect?.getComputedTiming().endTime));
 
 // Everything on the card moves together: the card with its shadow, and the counters and badges on it
 const originOf = (slot, part) =>
@@ -748,9 +764,7 @@ const turnFace = (el, { from, node, delay, duration }) => {
     }
 
     incoming.before(outgoing);
-    spin(outgoing, incoming, { delay, duration }).addEventListener('finish', () =>
-        outgoing.remove()
-    );
+    whenOver(spin(outgoing, incoming, { delay, duration }), () => outgoing.remove());
     fadeOverlays(el, { delay, duration });
 };
 
@@ -902,7 +916,7 @@ const animateGhost = (item) => {
               easing: flipConfig.easing,
               fill: 'both'
           });
-    animation.onfinish = () => el.remove();
+    whenOver(animation, () => el.remove());
 };
 
 const animateExit = ({ el, rect, duration }) => {
@@ -914,7 +928,7 @@ const animateExit = ({ el, rect, duration }) => {
         ],
         { duration, easing: 'ease-in', fill: 'forwards' }
     );
-    animation.onfinish = () => el.remove();
+    whenOver(animation, () => el.remove());
 };
 
 export const keyframesFor = (item) => {
@@ -970,17 +984,15 @@ const flyAbove = (el) => {
         node.removeAttribute('data-flip');
         node.removeAttribute('data-flip-deck');
     }
-    detach(copy, rectOf(el));
+    detach(copy, { ...rectOf(el), scale: cardScaleOf(el) });
     el.style.visibility = 'hidden';
     return {
         target: copy,
         settle: () =>
-            Promise.allSettled(copy.getAnimations({ subtree: true }).map((a) => a.finished)).then(
-                () => {
-                    copy.remove();
-                    el.style.visibility = '';
-                }
-            )
+            Promise.allSettled(endingAnimations(copy).map((a) => a.finished)).then(() => {
+                copy.remove();
+                el.style.visibility = '';
+            })
     };
 };
 

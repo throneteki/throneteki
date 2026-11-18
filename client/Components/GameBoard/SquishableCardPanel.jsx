@@ -81,7 +81,8 @@ const SquishableCardPanel = ({
 
     const areaRef = useRef(null);
     const fittedCards = useFittedCards(areaRef, fitWidth);
-    const maxCards = fitWidth && fittedCards ? fittedCards : fixedMaxCards;
+    // Fitted, the panel fills its width, but holds no more than maxCards side by side before overlapping them
+    const maxCards = fitWidth && fittedCards ? Math.min(fittedCards, fixedMaxCards) : fixedMaxCards;
 
     const slotCount = cards.length + (incoming ? 1 : 0);
     const needsSquish = slotCount > maxCards;
@@ -218,10 +219,12 @@ const SquishableCardPanel = ({
 
     const style = useMemo(
         () => ({
-            width: fitWidth ? '100%' : `calc(var(--card-scale, 1) * ${4 * maxCards}rem)`,
+            width: fitWidth
+                ? `min(100%, calc(var(--card-scale, 1) * ${4 * fixedMaxCards}rem))`
+                : `calc(var(--card-scale, 1) * ${4 * maxCards}rem)`,
             height: cardHeight
         }),
-        [maxCards, fitWidth]
+        [maxCards, fitWidth, fixedMaxCards]
     );
 
     const retClassName = classNames('box-border relative', className);

@@ -6,50 +6,9 @@ import classNames from 'classnames';
 import { createPortal } from 'react-dom';
 import { useAdaptiveLayoutMode } from '../../boardLayoutStore';
 
-// What is happening to the card now that is too small to read on it: its strength against what is printed, its
-// power and tokens, its dupes and what is attached to it. Only from the card's own summary.
-const CardDetails = ({ card }) => {
-    if (!card) {
-        return null;
-    }
-    const facts = [];
-    if (card.strength !== undefined && card.strength !== null) {
-        const changed = card.baseStrength !== undefined && card.strength !== card.baseStrength;
-        facts.push(`STR ${card.strength}${changed ? ` (printed ${card.baseStrength})` : ''}`);
-    }
-    if (card.power) {
-        facts.push(`${card.power} power`);
-    }
-    for (const [token, count] of Object.entries(card.tokens || {})) {
-        if (count) {
-            facts.push(`${count} ${token}`);
-        }
-    }
-    if (card.dupes?.length) {
-        facts.push(`${card.dupes.length} dupe${card.dupes.length > 1 ? 's' : ''}`);
-    }
-    if (card.kneeled) {
-        facts.push('Knelt');
-    }
-    const attached = (card.attachments || []).map((attachment) => attachment.name).filter(Boolean);
-    if (facts.length === 0 && attached.length === 0) {
-        return null;
-    }
-    return (
-        <div className='mt-1.5 rounded-lg border border-default-300 bg-content1/95 px-3 py-1.5 text-xs shadow-lg shadow-black/60'>
-            {facts.length > 0 && <div className='font-semibold'>{facts.join(' · ')}</div>}
-            {attached.length > 0 && (
-                <div className='text-default-500'>{`Attached: ${attached.join(', ')}`}</div>
-            )}
-        </div>
-    );
-};
-
-const detailsRoom = 56;
-
 // On the adaptive board a card held on a touch screen is shown as large as half the screen allows, in the half away
 // from the finger, so the finger never covers it
-const fittedPlacement = ({ x, y }, orientation, withDetails) => {
+const fittedPlacement = ({ x, y }, orientation) => {
     const width = window.innerWidth;
     const height = window.innerHeight;
     const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
@@ -58,10 +17,7 @@ const fittedPlacement = ({ x, y }, orientation, withDetails) => {
         ? { w: width * 0.92, h: height * 0.46 }
         : { w: width * 0.46, h: height * 0.9 };
     const units = orientation === 'horizontal' ? { w: 5.6, h: 4 } : { w: 4, h: 5.6 };
-    const scale = Math.min(
-        box.w / (units.w * rem),
-        (box.h - (withDetails ? detailsRoom : 0)) / (units.h * rem)
-    );
+    const scale = Math.min(box.w / (units.w * rem), box.h / (units.h * rem));
     const cardWidth = units.w * rem * scale;
     const left = portrait
         ? (width - cardWidth) / 2
@@ -80,7 +36,7 @@ const CardHover = ({ children, size = '3x-large' }) => {
     const wrapperRef = useRef(null);
     const mousePosRef = useRef({ x: 0, y: 0 });
 
-    const { type, code, notes, details } = useCardHover();
+    const { type, code, notes } = useCardHover();
     const adaptiveMode = useAdaptiveLayoutMode();
     const fitted = !!adaptiveMode && type === 'touch';
 
@@ -153,7 +109,7 @@ const CardHover = ({ children, size = '3x-large' }) => {
     });
 
     if (fitted && code) {
-        const place = fittedPlacement(mousePosRef.current, orientation, !!details);
+        const place = fittedPlacement(mousePosRef.current, orientation);
         return (
             <>
                 <div
@@ -199,7 +155,6 @@ const CardHover = ({ children, size = '3x-large' }) => {
                                 }}
                                 disableSkeleton={true}
                             />
-                            {!isLoading && <CardDetails card={details} />}
                         </div>
                     </div>,
                     document.querySelector('[data-overlay-container="true"]')

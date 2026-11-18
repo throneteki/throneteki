@@ -2,7 +2,7 @@ import React from 'react';
 import { Image, Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { Constants } from '../../../constants';
+import { Constants } from '../../constants';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 const StatDisplay = ({
@@ -11,10 +11,14 @@ const StatDisplay = ({
     statName,
     statValue,
     onMinusClick,
-    onPlusClick
+    onPlusClick,
+    compact = false
 }) => {
     return (
-        <div className={`${statName} min-w-12 flex justify-center items-center`}>
+        // Positioned itself, so the icon stays with its stat when the bar around it scrolls
+        <div
+            className={`${statName} relative flex items-center justify-center ${compact ? 'min-w-8' : 'min-w-12'}`}
+        >
             {showControls && (
                 <div className='flex'>
                     <Button
@@ -42,9 +46,14 @@ const StatDisplay = ({
                 </div>
             )}
             <div className='absolute pointer-events-none'>
-                <Image className='h-8 w-8 z-0' src={Constants.StatIconImagePaths[statCode]} />
+                <Image
+                    className={compact ? 'h-6 w-6 z-0' : 'h-8 w-8 z-0'}
+                    src={Constants.StatIconImagePaths[statCode]}
+                />
                 <div className='absolute inset-0 flex justify-center items-center'>
-                    <p className='stat-value font-[PoppinsMedium] text-large text-center select-none text-shadow-sm text-stroke-sm shadow-black leading-[initial]'>
+                    <p
+                        className={`stat-value font-[PoppinsMedium] ${compact ? 'text-medium' : 'text-large'} text-center select-none text-shadow-sm text-stroke-sm shadow-black leading-[initial] [text-shadow:0_0_2px_#000,0_0_2px_#000,0_1px_3px_#000]`}
+                    >
                         {statValue}
                     </p>
                 </div>

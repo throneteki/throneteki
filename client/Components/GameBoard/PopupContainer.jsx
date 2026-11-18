@@ -6,11 +6,11 @@ import BoardSheet from './Adaptive/BoardSheet';
 // a sheet along the bottom of the screen ('sheet', the adaptive board on touch screens and phone layouts)
 export const PopupHostContext = createContext('panel');
 
-// Inside a sheet, how its cards are laid out: { height: 'strip' | 'peek' | 'full', carousel }
+// Inside a sheet, how its cards are laid out: { height: 'strip' | 'peek' | 'full', plots }
 export const SheetContext = createContext(null);
 export const useSheetLayout = () => useContext(SheetContext);
 
-// onOpen and prompting are only used by sheets: one opens the popup again from a sheet's tabs, the other says the
+// pileTitle, playerName and prompting are only used by sheets: the pile's own name and whose it is, and whether the
 // popup is open because its cards are to be chosen from
 const PopupContainer = (props) =>
     useContext(PopupHostContext) === 'sheet' ? (

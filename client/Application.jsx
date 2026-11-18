@@ -128,21 +128,29 @@ const Application = () => {
             {!fullScreenBoard && <NavBar />}
             <main role='main'>
                 <div
+                    // On a phone the board is pinned to the edges of what is visible, so the browser sizes it as its
+                    // toolbars come and go (a height in dvh can come out short of the screen on Android). While the
+                    // chat is typed into it keeps its height instead (--board-height), under the keyboard.
                     className={classNames(
-                        'absolute left-0 right-0 bg-cover bg-center bg-no-repeat',
+                        'left-0 right-0 bg-cover bg-center bg-no-repeat',
                         fullScreenBoard
-                            ? 'top-0 h-dvh overflow-hidden'
-                            : 'bottom-0 top-[3rem] overflow-y-auto'
+                            ? 'fixed inset-0 h-[var(--board-height,auto)] overflow-hidden'
+                            : 'absolute bottom-0 top-[3rem] overflow-y-auto'
                     )}
                     ref={bgRef}
                 >
                     <Sentry.ErrorBoundary
-                        fallback={
+                        fallback={({ error, componentStack }) => (
                             <ErrorMessage
                                 title='Unexpected Error'
                                 message='Report has been automatically submitted'
+                                details={
+                                    import.meta.env.DEV
+                                        ? `${error?.stack || error}\n${componentStack || ''}`
+                                        : undefined
+                                }
                             />
-                        }
+                        )}
                     >
                         <CardHover>
                             {isLoading ? (

@@ -16,7 +16,8 @@ const ChatArea = forwardRef(function ChatArea(
         maxInputLength,
         unreadMessagesLabel = 'Click to view unread messages...',
         onUnreadMessagesChange = () => {},
-        inputRef
+        inputRef,
+        newestFirst = false
     },
     ref
 ) {
@@ -32,26 +33,36 @@ const ChatArea = forwardRef(function ChatArea(
     // Tolerance (px) for scroll position to determine if the user is at the bottom
     const scrollTolerance = 25;
 
-    // Determines if the user is "anchored" to the bottom of the chat
+    // Newest first, the input sits above the messages and the newest are at the top, so the chat is anchored to
+    // its top rather than its bottom
+    const anchor = useCallback(
+        (element) => {
+            element.scrollTop = newestFirst ? 0 : element.scrollHeight;
+        },
+        [newestFirst]
+    );
+
+    // Determines if the user is "anchored" to the newest end of the chat
     const onScroll = useCallback(() => {
         if (messagesRef.current) {
             const { scrollTop, scrollHeight, clientHeight } = messagesRef.current;
-            const isAtBottom = scrollTop + clientHeight >= scrollHeight - scrollTolerance;
-            if (isAtBottom && !isAnchored) {
+            const isAtNewest = newestFirst
+                ? scrollTop <= scrollTolerance
+                : scrollTop + clientHeight >= scrollHeight - scrollTolerance;
+            if (isAtNewest && !isAnchored) {
                 setIsAnchored(true);
-            } else if (!isAtBottom && isAnchored) {
+            } else if (!isAtNewest && isAnchored) {
                 setIsAnchored(false);
             }
         }
-    }, [isAnchored, messagesRef]);
+    }, [isAnchored, messagesRef, newestFirst]);
 
     // Handles unread update & anchoring when new messages are received
     useEffect(() => {
         const unread = messageCount - lastMessageCount;
         if (isOpen && isAnchored) {
             if (messagesRef.current) {
-                // Keep it anchored to the bottom
-                messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+                anchor(messagesRef.current);
             }
             setLastMessageCount(messageCount);
             setUnreadMessages(0);
@@ -60,20 +71,28 @@ const ChatArea = forwardRef(function ChatArea(
             setUnreadMessages(unread);
             onUnreadMessagesChange(unread);
         }
-    }, [isOpen, isAnchored, lastMessageCount, messageCount, messagesRef, onUnreadMessagesChange]);
+    }, [
+        isOpen,
+        isAnchored,
+        lastMessageCount,
+        messageCount,
+        messagesRef,
+        onUnreadMessagesChange,
+        anchor
+    ]);
 
     // Handles anchoring when it changes size (eg. the input box takes up more space due to new line)
     useEffect(() => {
         if (messagesRef.current) {
             const resizeObserver = new ResizeObserver(() => {
                 if (isAnchored) {
-                    messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+                    anchor(messagesRef.current);
                 }
             });
             resizeObserver.observe(messagesRef.current);
             return () => resizeObserver.disconnect();
         }
-    }, [isAnchored, messagesRef]);
+    }, [isAnchored, messagesRef, anchor]);
 
     // Triggers send message
     const onKeyDown = (event) => {
@@ -92,7 +111,14 @@ const ChatArea = forwardRef(function ChatArea(
     };
 
     return (
-        <div className={classNames('flex flex-col', className, classNamesProp?.wrapper)}>
+        <div
+            className={classNames(
+                'flex',
+                newestFirst ? 'flex-col-reverse' : 'flex-col',
+                className,
+                classNamesProp?.wrapper
+            )}
+        >
             <div
                 className={classNames('flex-1 overflow-y-auto', classNamesProp?.messages)}
                 ref={messagesRef}
@@ -103,7 +129,10 @@ const ChatArea = forwardRef(function ChatArea(
             <div className='relative'>
                 {unreadMessages > 0 && (
                     <Button
-                        className='absolute bottom-full bg-default-300 h-5 w-full opacity-80 text-white text-small text-center rounded-t-md'
+                        className={classNames(
+                            'absolute h-5 w-full bg-default-300 text-center text-small text-white opacity-80',
+                            newestFirst ? 'top-full z-10 rounded-b-md' : 'bottom-full rounded-t-md'
+                        )}
                         radius='none'
                         onPress={() => setIsAnchored(true)}
                     >

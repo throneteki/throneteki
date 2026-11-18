@@ -8,6 +8,8 @@ import { useDispatch } from 'react-redux';
 import PlayerStats from './PlayerStats';
 import classNames from 'classnames';
 import SideBoardPanel from './SideBoardPanel';
+import { useHud } from '../../../hudStore';
+import { promptSideOf } from '../../../hud';
 
 const MeleeGameBoardLayout = ({
     thisPlayer,
@@ -18,6 +20,7 @@ const MeleeGameBoardLayout = ({
     isDragging
 }) => {
     const dispatch = useDispatch();
+    const promptRight = promptSideOf(useHud()) === 'right';
 
     const renderPlayerBoard = useCallback(
         (player, side, sideNo, hasSidePanel) => {
@@ -73,7 +76,12 @@ const MeleeGameBoardLayout = ({
                         mustShowPlotSelection={player.mustShowPlotSelection}
                         showHiddenPiles={isMe && isDragging}
                     />
-                    <div className='relative flex flex-row-reverse flex-grow'>
+                    <div
+                        className={classNames(
+                            'relative flex flex-grow',
+                            promptRight ? 'flex-row' : 'flex-row-reverse'
+                        )}
+                    >
                         <PlayerBoard
                             isDroppable={isMe}
                             cardsInPlay={player.cardPiles.cardsInPlay}
@@ -93,7 +101,7 @@ const MeleeGameBoardLayout = ({
                 </div>
             );
         },
-        [dispatch, isDragging, onCardClick, onSettingsClick, thisPlayer, userPlayer]
+        [dispatch, isDragging, onCardClick, onSettingsClick, thisPlayer, userPlayer, promptRight]
     );
 
     // Grid is ordered top to bottom, left to right, ensuring that:

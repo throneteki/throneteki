@@ -4,13 +4,17 @@ import ActivePlayerPrompt from '../ActivePlayerPrompt';
 import { sendButtonClickedMessage } from '../../../redux/reducers/game';
 import classNames from 'classnames';
 import { useDispatch } from 'react-redux';
+import { useHud } from '../../../hudStore';
+import { promptSideOf } from '../../../hud';
 
 const SideBoardPanel = ({ collapsable, player, userPlayer, isMe, side }) => {
     const dispatch = useDispatch();
+    const right = promptSideOf(useHud()) === 'right';
 
     // Side panel must be treated differently for the 2 left-most boards, and for top/bottom
     const sidePanelClassName = classNames(
-        'sticky left-0 z-[250] hud-zoom flex flex-col p-1 pointer-events-none',
+        'sticky z-[250] hud-zoom flex flex-col p-1 pointer-events-none',
+        right ? 'right-0' : 'left-0',
         {
             'bottom-0 justify-end': side === 'bottom',
             'top-0 justify-start': side === 'top',

@@ -1,11 +1,69 @@
-import React, { useRef, useCallback, useState } from 'react';
+import React, { useRef, useCallback, useEffect, useMemo, useState } from 'react';
 import Messages from './Messages';
-import { Button } from '@heroui/react';
+import { Button, Tab, Tabs } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComment, faCopy, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faCommentSlash, faCopy } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
 import classNames from 'classnames';
 import ChatArea from '../Site/ChatArea';
+import { isChatMessage } from './chatMessages';
+
+const filterKey = 'gameChatFilter';
+const swipeDistance = 60;
+
+// On a phone the chat drops down from the top, so it closes upwards; elsewhere it slides in from the right
+const closesUpwards = () =>
+    ['narrow', 'short'].includes(document.documentElement.dataset.boardLayout) ||
+    window.matchMedia('(max-width: 767px)').matches;
+
+const scrollPositions = (root) =>
+    [...root.querySelectorAll('*')]
+        .filter((el) => el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth)
+        .map((el) => [el, el.scrollTop, el.scrollLeft]);
+
+// A swipe across the open chat, the way it closes, closes it. A swipe that scrolled something in it is a scroll.
+const useSwipeToClose = (isOpen, onClose) => {
+    const start = useRef(null);
+    return {
+        onTouchStart: (event) => {
+            const touch = event.touches[0];
+            start.current =
+                isOpen && event.touches.length === 1
+                    ? {
+                          x: touch.clientX,
+                          y: touch.clientY,
+                          scrolls: scrollPositions(event.currentTarget)
+                      }
+                    : null;
+        },
+        onTouchEnd: (event) => {
+            const from = start.current;
+            start.current = null;
+            const touch = event.changedTouches[0];
+            if (!from || !touch) {
+                return;
+            }
+            const scrolled = from.scrolls.some(
+                ([el, top, left]) => el.scrollTop !== top || el.scrollLeft !== left
+            );
+            const dx = touch.clientX - from.x;
+            const dy = touch.clientY - from.y;
+            const closing = closesUpwards()
+                ? -dy > swipeDistance && -dy > Math.abs(dx)
+                : dx > swipeDistance && dx > Math.abs(dy);
+            if (closing && !scrolled) {
+                onClose();
+            }
+        }
+    };
+};
+const savedFilter = () => {
+    try {
+        return localStorage.getItem(filterKey) === 'chat' ? 'chat' : 'all';
+    } catch {
+        return 'all';
+    }
+};
 
 // A tab joined to the chat panel, at the edge of the screen while the chat is closed and on the edge of the
 // panel while it is open, so the same tab opens and closes it. Beside the panel on a wide screen; on a phone the
@@ -29,7 +87,7 @@ const ChatLip = ({ isOpen, unread, onToggle }) => (
                 })}
             />
             <FontAwesomeIcon
-                icon={faXmark}
+                icon={faCommentSlash}
                 className={classNames('chat-lip-icon col-start-1 row-start-1', {
                     'chat-lip-icon-hidden': !isOpen
                 })}
@@ -43,7 +101,9 @@ const ChatLip = ({ isOpen, unread, onToggle }) => (
     </button>
 );
 
-// onUnreadChange: told how many messages arrived while the chat was closed, for a chat button elsewhere
+// onUnreadChange: told how many chat messages (not game log) arrived while the chat was closed, for a chat
+// button elsewhere. newestFirst: the input above the messages and the newest at the top, for a phone, whose
+// keyboard then only ever covers the oldest
 const GameChat = ({
     isOpen,
     onToggle,
@@ -52,10 +112,36 @@ const GameChat = ({
     muted,
     className,
     inputRef,
-    onUnreadChange
+    onUnreadChange,
+    newestFirst = false
 }) => {
     const messagePanel = useRef(null);
-    const [unread, setUnread] = useState(0);
+    const [filter, setFilter] = useState(savedFilter);
+    const chooseFilter = (key) => {
+        setFilter(key);
+        try {
+            localStorage.setItem(filterKey, key);
+        } catch {
+            // Remembering the choice is a nicety
+        }
+    };
+
+    const chatCount = useMemo(() => messages.filter(isChatMessage).length, [messages]);
+    const shown = useMemo(() => {
+        const kept = filter === 'chat' ? messages.filter(isChatMessage) : messages;
+        return newestFirst ? [...kept].reverse() : kept;
+    }, [messages, filter, newestFirst]);
+    // Every chat message is seen while the chat is open
+    const [seen, setSeen] = useState(0);
+    useEffect(() => {
+        if (isOpen) {
+            setSeen(chatCount);
+        }
+    }, [isOpen, chatCount]);
+    const unread = isOpen ? 0 : Math.max(0, chatCount - seen);
+    useEffect(() => {
+        onUnreadChange?.(unread);
+    }, [unread, onUnreadChange]);
 
     const writeChatToClipboard = useCallback(() => {
         if (messagePanel.current) {
@@ -66,6 +152,7 @@ const GameChat = ({
         }
     }, []);
 
+    const swipe = useSwipeToClose(isOpen, onToggle);
     const placeholder = muted ? 'Spectators cannot chat in this game' : 'Chat...';
 
     // The drawer squishes the chat rather than letting it flow off screen, so DnD-kit never auto-scrolls off
@@ -82,9 +169,11 @@ const GameChat = ({
                 <ChatLip isOpen={isOpen} unread={unread} onToggle={onToggle} />
                 <div aria-hidden className='chat-edge bg-default-100' />
                 <div className='h-full w-full overflow-hidden'>
-                    <div className='chat-body flex flex-col hud-zoom bg-black/75 w-full h-full'>
-                        <div className='flex p-2 gap-2 justify-end items-center'>
-                            <span className='w-full text-large font-bold'>Game Log</span>
+                    <div
+                        className='chat-body flex flex-col hud-zoom bg-black/75 w-full h-full'
+                        {...swipe}
+                    >
+                        <div className='flex p-2 gap-2 items-center'>
                             <Button
                                 title={'Copy Chat Log to Clipboard'}
                                 isIconOnly={true}
@@ -94,25 +183,32 @@ const GameChat = ({
                                 className='h-8'
                                 onPress={writeChatToClipboard}
                             />
+                            <Tabs
+                                aria-label='Show'
+                                size='sm'
+                                selectedKey={filter}
+                                onSelectionChange={chooseFilter}
+                                className='ml-auto'
+                            >
+                                <Tab key='chat' title='Chat' />
+                                <Tab key='all' title='Chat + game log' />
+                            </Tabs>
                         </div>
                         <ChatArea
                             ref={messagePanel}
                             classNames={{
                                 wrapper: 'flex-1 min-h-0',
-                                messages: 'flex flex-col gap-1.5 p-2'
+                                messages: 'flex flex-col gap-1.5 p-2 text-sm'
                             }}
                             isOpen={isOpen}
-                            messageCount={messages.length}
+                            messageCount={shown.length}
+                            newestFirst={newestFirst}
                             onSendMessage={onSendChat}
                             isInputDisabled={muted}
                             placeholder={placeholder}
-                            onUnreadMessagesChange={(count) => {
-                                setUnread(count);
-                                onUnreadChange?.(count);
-                            }}
                             inputRef={inputRef}
                         >
-                            <Messages messages={messages} />
+                            <Messages messages={shown} />
                         </ChatArea>
                     </div>
                 </div>

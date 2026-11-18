@@ -88,6 +88,25 @@ const HudSettings = ({ value, onChange }) => {
                         <Radio value='adaptive'>Adaptive (experimental)</Radio>
                     </RadioGroup>
                 </div>
+                <div className='flex flex-col gap-2'>
+                    <div>
+                        <div className='font-bold'>Prompt position</div>
+                        <div className='text-xs text-default-500'>
+                            Which side of the board the prompt and its buttons sit on. On a phone
+                            held upright the prompt runs across the middle instead.
+                        </div>
+                    </div>
+                    <RadioGroup
+                        aria-label='Prompt position'
+                        orientation='horizontal'
+                        size='sm'
+                        value={value.promptSide || 'left'}
+                        onValueChange={(promptSide) => update({ promptSide })}
+                    >
+                        <Radio value='left'>Left</Radio>
+                        <Radio value='right'>Right</Radio>
+                    </RadioGroup>
+                </div>
                 {value.board === 'adaptive' && (
                     <Switch
                         isSelected={value.followAction !== false}
@@ -95,7 +114,8 @@ const HudSettings = ({ value, onChange }) => {
                     >
                         <div>Follow the action in melee</div>
                         <div className='text-xs text-default-500'>
-                            Shows the opponent whose turn it is, or whose cards you are choosing.
+                            Scrolls the table to the player whose turn it is, or whose cards you are
+                            choosing.
                         </div>
                     </Switch>
                 )}

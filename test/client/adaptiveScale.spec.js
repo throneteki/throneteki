@@ -1,6 +1,8 @@
 import {
+    adaptiveInterfaceScale,
     classifyLayout,
     computeAdaptiveScales,
+    effectiveCardsSize,
     stripExtraUnits,
     widestRowUnits
 } from '../../client/Components/GameBoard/Adaptive/adaptiveScale.js';
@@ -105,13 +107,12 @@ describe('computeAdaptiveScales', function () {
         }
     });
 
-    it('always fits the play areas in the height', function () {
+    it('always fits the play areas in the height at the normal card size', function () {
         const height = 340;
         const { card } = computeAdaptiveScales({
             mode: 'short',
             width: 844,
-            height,
-            cardsSize: 3
+            height
         });
         const rem = 16;
         expect(4 * 5.6 * rem * card + 0.4 * 5.6 * rem * card * 1.1).toBeLessThanOrEqual(height);
@@ -140,12 +141,12 @@ describe('computeAdaptiveScales', function () {
         expect(packed.card).toBe(0.85);
     });
 
-    it('wraps a phone strip onto a second line rather than draw its piles too small to read', function () {
+    it("keeps a phone's piles readable, letting the opponent's wider strip squeeze or scroll", function () {
         const phone = computeAdaptiveScales({ mode: 'narrow', width: 390, height: 844 });
         const oneLine = 7.5 * 4 * 16 * phone.pile + 7.5 * 6;
-        expect(phone.pile).toBeGreaterThanOrEqual(0.75);
+        expect(phone.pile).toBeGreaterThanOrEqual(0.7);
         expect(oneLine).toBeGreaterThan(390);
-        expect(phone.card).toBeGreaterThanOrEqual(0.85);
+        expect(phone.card).toBeGreaterThanOrEqual(phone.pile);
     });
 
     it('keeps a phone strip on one line when its piles fit at a readable size', function () {
@@ -156,27 +157,35 @@ describe('computeAdaptiveScales', function () {
     });
 
     it('makes room in the strip for piles that hold cards', function () {
-        const size = { mode: 'wide', width: 1200, height: 950 };
-        expect(computeAdaptiveScales({ ...size, stripExtra: 3 }).card).toBeLessThan(
-            computeAdaptiveScales(size).card
+        const size = { mode: 'narrow', width: 375, height: 1000 };
+        expect(computeAdaptiveScales({ ...size, stripExtra: 3 }).pile).toBeLessThan(
+            computeAdaptiveScales(size).pile
         );
     });
 
-    it('keeps piles at the card size on a wide board, shrinking every card if the strip is too wide', function () {
+    it('keeps piles at the card size on a wide board, whose strips scroll rather than shrink the cards', function () {
         const roomy = computeAdaptiveScales({ mode: 'wide', width: 1600, height: 950 });
-        const tight = computeAdaptiveScales({ mode: 'wide', width: 900, height: 950 });
+        const narrower = computeAdaptiveScales({ mode: 'wide', width: 1000, height: 950 });
         expect(roomy.pile).toBe(roomy.card);
-        expect(tight.pile).toBe(tight.card);
-        expect(tight.card).toBeLessThan(roomy.card);
+        expect(narrower.pile).toBe(narrower.card);
+        expect(narrower.card).toBe(roomy.card);
     });
 
-    it('draws smaller cards for a small card size, but has no room to grow for a large one', function () {
+    it('draws smaller cards for a small card size and larger ones for a large one', function () {
         const size = { mode: 'wide', width: 1600, height: 950 };
         const normal = computeAdaptiveScales(size);
         const small = computeAdaptiveScales({ ...size, cardsSize: 0.7 });
         const large = computeAdaptiveScales({ ...size, cardsSize: 1.4 });
         expect(small.card).toBeLessThan(normal.card);
-        expect(large.card).toBe(normal.card);
+        expect(large.card).toBeGreaterThan(normal.card);
+    });
+
+    it('draws cards at the chosen size, unfitted, without auto scaling', function () {
+        for (const mode of ['narrow', 'short', 'wide']) {
+            const size = { mode, width: 390, height: 844 };
+            expect(computeAdaptiveScales({ ...size, cardsSize: 1.4, auto: false }).card).toBe(1.4);
+            expect(computeAdaptiveScales({ ...size, cardsSize: 0.7, auto: false }).card).toBe(0.7);
+        }
     });
 
     it('steps in twentieths so small resizes do not change it', function () {
@@ -188,5 +197,83 @@ describe('computeAdaptiveScales', function () {
         for (const value of [card, pile, hand]) {
             expect(Math.round(value * 20)).toBeCloseTo(value * 20);
         }
+    });
+});
+
+describe('effectiveCardsSize', function () {
+    it('keeps a larger card size whole on a desktop-sized board', function () {
+        expect(effectiveCardsSize(1.4, { width: 1600, height: 950 })).toBeCloseTo(1.4);
+    });
+
+    it('adds a quarter of a larger card size on a phone, upright or turned', function () {
+        expect(effectiveCardsSize(1.4, { width: 390, height: 844 })).toBeCloseTo(1.1);
+        expect(effectiveCardsSize(1.4, { width: 844, height: 390 })).toBeCloseTo(1.1);
+    });
+
+    it('adds part of a larger card size on a tablet', function () {
+        const tablet = effectiveCardsSize(1.4, { width: 768, height: 1024 });
+        expect(tablet).toBeGreaterThan(1.1);
+        expect(tablet).toBeLessThan(1.4);
+    });
+
+    it('leaves normal and smaller card sizes alone', function () {
+        expect(effectiveCardsSize(1, { width: 390, height: 844 })).toBe(1);
+        expect(effectiveCardsSize(0.7, { width: 390, height: 844 })).toBe(0.7);
+    });
+
+    it('draws large cards on a phone only a little larger than normal ones', function () {
+        const size = { mode: 'narrow', width: 390, height: 844 };
+        const normal = computeAdaptiveScales(size).card;
+        const large = computeAdaptiveScales({ ...size, cardsSize: 1.4 }).card;
+        expect(large).toBeGreaterThan(normal);
+        expect(large).toBeLessThanOrEqual(Math.round(normal * 1.1 * 20) / 20 + 0.05);
+    });
+});
+
+describe('phone landscape card sizes', function () {
+    it('draws the hands and piles as large as the cards in play', function () {
+        for (const [width, height] of [
+            [844, 390],
+            [915, 412]
+        ]) {
+            const { card, pile, hand } = computeAdaptiveScales({ mode: 'short', width, height });
+            expect(pile).toBe(card);
+            expect(hand).toBe(card);
+        }
+    });
+
+    it('fills the height with two strips and two play lines, leaving little spare', function () {
+        const rem = 16;
+        const height = 390;
+        const { card } = computeAdaptiveScales({ mode: 'short', width: 844, height });
+        const cardHeight = 5.6 * rem * card;
+        // Four lines of cards, the strips' padding (1.5rem; the prompt is in a column at the side) and each play
+        // area's margins (1rem)
+        const used = 4 * cardHeight + 1.5 * rem + 2 * rem;
+        expect(used).toBeLessThanOrEqual(height);
+        expect(height - used).toBeLessThan(cardHeight * 0.75);
+    });
+});
+
+describe('adaptiveInterfaceScale', function () {
+    it('is normal on a usual screen for each layout', function () {
+        expect(adaptiveInterfaceScale('narrow', { width: 390, height: 844 })).toBe(1);
+        expect(adaptiveInterfaceScale('short', { width: 844, height: 390 })).toBe(1);
+        expect(adaptiveInterfaceScale('wide', { width: 1600, height: 950 })).toBe(1);
+    });
+
+    it('grows on larger screens and shrinks on smaller ones, within its range', function () {
+        expect(adaptiveInterfaceScale('narrow', { width: 820, height: 1180 })).toBeGreaterThan(1);
+        expect(adaptiveInterfaceScale('wide', { width: 1920, height: 1080 })).toBeGreaterThan(1);
+        expect(adaptiveInterfaceScale('wide', { width: 1280, height: 720 })).toBeLessThan(1);
+        expect(adaptiveInterfaceScale('narrow', { width: 320, height: 568 })).toBe(0.85);
+        expect(adaptiveInterfaceScale('wide', { width: 3840, height: 2160 })).toBe(1.4);
+    });
+
+    it('leaves the cards less room as the interface grows', function () {
+        const size = { mode: 'narrow', width: 390, height: 844 };
+        const normal = computeAdaptiveScales(size).card;
+        const larger = computeAdaptiveScales({ ...size, interfaceScale: 1.4 }).card;
+        expect(larger).toBeLessThan(normal);
     });
 });

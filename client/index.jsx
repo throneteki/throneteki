@@ -92,12 +92,17 @@ root.render(
                         pauseOnHover
                     />
                     <SentryReact.ErrorBoundary
-                        fallback={
+                        fallback={({ error, componentStack }) => (
                             <ErrorMessage
                                 title='Unexpected Error'
                                 message='Report has been automatically submitted'
+                                details={
+                                    import.meta.env.DEV
+                                        ? `${error?.stack || error}\n${componentStack || ''}`
+                                        : undefined
+                                }
                             />
-                        }
+                        )}
                     >
                         <Application />
                     </SentryReact.ErrorBoundary>

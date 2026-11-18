@@ -23,7 +23,8 @@ import {
 import { DndContext, MouseSensor, pointerWithin, rectIntersection, useSensor } from '@dnd-kit/core';
 import { HoldTouchSensor, holdToDrag } from './HoldTouchSensor';
 import CardImage from '../Images/CardImage';
-import CarriedCard, { scaleOfCard } from './CarriedCard';
+import CarriedCard from './CarriedCard';
+import { cardScaleOf } from '../../cardScale';
 import ErrorMessage from '../Site/ErrorMessage';
 import JoustGameBoardLayout from './Classic/JoustGameBoardLayout';
 import MeleeGameBoardLayout from './Classic/MeleeGameBoardLayout';
@@ -195,7 +196,8 @@ const GameBoard = () => {
             orientation: data.orientation,
             source: data.source,
             start,
-            scale: adaptiveRef.current && surface ? scaleOfCard(surface) : undefined,
+            // The card is carried at the size it was picked up at, which a hand or pile may draw it at
+            scale: adaptiveRef.current ? cardScaleOf(surface) : undefined,
             grab: {
                 x: start.x - rect.left,
                 y: start.y - rect.top,
@@ -582,6 +584,7 @@ const GameBoard = () => {
                         muted={!thisPlayer && currentGame.muteSpectators}
                         inputRef={chatInputRef}
                         onUnreadChange={setChatUnread}
+                        newestFirst={phoneLayout}
                     />
                 </div>
             </MotionConfig>

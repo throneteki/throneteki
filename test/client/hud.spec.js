@@ -4,7 +4,8 @@ import {
     defaultHud,
     isHudSize,
     normalizeHud,
-    resolveHudSize
+    resolveHudSize,
+    promptSideOf
 } from '../../client/hud.js';
 
 describe('resolveHudSize', function () {
@@ -131,5 +132,20 @@ describe('computeHudScales', function () {
         expect(desktop.cards).toBeCloseTo(1.05);
         expect(desktop.cards).toBeGreaterThan(small.cards);
         expect(desktop.interface).toBeGreaterThan(small.interface);
+    });
+});
+
+describe('prompt side', function () {
+    it('keeps a valid saved side and ignores an invalid one', function () {
+        expect(normalizeHud({ hud: { promptSide: 'right' } }).promptSide).toBe('right');
+        expect(normalizeHud({ hud: { promptSide: 'left' } }).promptSide).toBe('left');
+        expect(normalizeHud({ hud: { promptSide: 'up' } }).promptSide).toBeUndefined();
+    });
+
+    it('puts the prompt on the left unless the right was chosen', function () {
+        expect(promptSideOf({})).toBe('left');
+        expect(promptSideOf(undefined)).toBe('left');
+        expect(promptSideOf({ promptSide: 'right' })).toBe('right');
+        expect(promptSideOf({ promptSide: 'up' })).toBe('left');
     });
 });

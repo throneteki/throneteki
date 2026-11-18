@@ -1268,7 +1268,7 @@ class Player extends Spectator {
     }
 
     getCardSelectionState(card) {
-        return this.promptState.getCardSelectionState(card);
+        return this.promptState.getCardSelectionState(card, this);
     }
 
     cancelPrompt() {

@@ -12,6 +12,8 @@ const boardStyle = { minHeight: cardHeight };
 
 const holdsCards = (card) => card.attachments?.length > 0 || card.dupes?.length > 0;
 
+const inlineOrder = ['character', 'location', 'other'];
+
 const PlayerBoard = ({
     isDroppable,
     cardsInPlay,
@@ -135,6 +137,31 @@ const PlayerBoard = ({
     const renderRows = useCallback(
         (rows) => {
             // Wrapping, a row too wide for the board carries on below instead of running off its edge
+            if (overflow === 'inline') {
+                // Where height is short every row shares one line, with a thin rule between them; the area scrolls
+                // sideways. Characters come first on either side of the board.
+                const shown = rows
+                    .filter((row) => row.length > 0)
+                    .sort(
+                        (a, b) => inlineOrder.indexOf(a.rowType) - inlineOrder.indexOf(b.rowType)
+                    );
+                return (
+                    <div className='flex flex-nowrap items-start justify-start gap-1.5 card-row'>
+                        {shown.map((row, index) => (
+                            <React.Fragment key={`card-row-${index}`}>
+                                {index > 0 && (
+                                    <div
+                                        aria-hidden
+                                        className='mx-1 w-px self-stretch bg-white/20'
+                                    />
+                                )}
+                                {renderRow(row)}
+                            </React.Fragment>
+                        ))}
+                        {shown.length === 0 && renderRow(rows[0] || [])}
+                    </div>
+                );
+            }
             return rows.map((row, index) => (
                 <div
                     className={classNames('flex justify-start min-h-0 gap-1.5 card-row', {
@@ -176,7 +203,7 @@ const PlayerBoard = ({
         'flex flex-1 flex-col m-2 gap-1.5 justify-between',
         {
             'our-side': rowDirection === 'default',
-            'min-w-0': overflow !== 'grow'
+            'min-w-0': overflow === 'wrap'
         }
     );
     const content = (
@@ -189,7 +216,7 @@ const PlayerBoard = ({
         return (
             <Droppable
                 source='play area'
-                className={classNames('flex flex-grow', { 'min-w-0': overflow !== 'grow' })}
+                className={classNames('flex flex-grow', { 'min-w-0': overflow === 'wrap' })}
                 underCards
             >
                 {content}

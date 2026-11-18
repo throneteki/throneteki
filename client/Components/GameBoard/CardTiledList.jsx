@@ -53,33 +53,30 @@ const CardTiledList = ({
         // In a sheet the cards fill its width: one row that scrolls sideways at peek, every card at full, and
         // one card after another, snapping into place, in a carousel
         if (sheet) {
+            // In a sheet the cards fill it, at the size the sheet sets: one row that scrolls sideways at peek, and
+            // whole rows that the sheet scrolls down through at full. Padding keeps a chosen card's ring in view.
             const cell = unit(hasPlot ? 5.6 : 4);
-            const layouts = {
-                carousel: {
-                    display: 'flex',
-                    gap: unit(gapRem * 2),
-                    overflowX: 'auto',
-                    scrollSnapType: 'x mandatory',
-                    padding: `0 calc(50% - ${cell} / 2)`
-                },
-                row: {
-                    display: 'grid',
-                    gridAutoFlow: 'column',
-                    gridAutoColumns: cell,
-                    gap: unit(gapRem),
-                    overflowX: 'auto'
-                },
-                grid: {
-                    display: 'grid',
-                    gridTemplateColumns: `repeat(auto-fill, ${cell})`,
-                    gap: unit(gapRem),
-                    justifyContent: 'center'
-                }
-            };
-            const layout = sheet.carousel ? 'carousel' : sheet.height === 'full' ? 'grid' : 'row';
+            const full = !sheet.row;
             return {
-                containerStyle: { padding: unit(0.5) },
-                style: { ...layouts[layout], width: '100%', minHeight: unit(hasOther ? 5.6 : 4) }
+                containerStyle: { padding: '0.75rem' },
+                style: {
+                    display: 'grid',
+                    gap: unit(gapRem),
+                    ...(full
+                        ? {
+                              gridTemplateColumns: `repeat(auto-fill, ${cell})`,
+                              justifyContent: 'center'
+                          }
+                        : {
+                              gridAutoFlow: 'column',
+                              gridAutoColumns: cell,
+                              overflowX: 'auto',
+                              overflowY: 'hidden',
+                              padding: '0.5rem',
+                              margin: '-0.5rem'
+                          }),
+                    minHeight: unit(hasOther ? 5.6 : 4)
+                }
             };
         }
         // A pile keeps the width of its full column count, so an empty or small pile is not just as wide as its title
@@ -108,7 +105,7 @@ const CardTiledList = ({
                     {titleText}
                 </div>
             )}
-            <div className={sheet?.carousel ? 'sheet-carousel' : 'grid'} style={style}>
+            <div className='grid' style={style}>
                 {cardList}
             </div>
         </div>

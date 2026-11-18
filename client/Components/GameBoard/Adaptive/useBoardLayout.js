@@ -1,6 +1,6 @@
 import { createContext, useContext, useLayoutEffect, useRef, useState } from 'react';
 import { settleAutoCardScale } from '../../../cardScale';
-import { computeHudScales, computeScreenScale, resolveHudSize } from '../../../hud';
+import { computeHudScales, resolveHudSize } from '../../../hud';
 import { boardLayoutStore } from '../../../boardLayoutStore';
 import {
     applyScaleProperties,
@@ -9,6 +9,7 @@ import {
 } from '../useHudScale';
 import {
     classifyLayout,
+    adaptiveInterfaceScale,
     computeAdaptiveScales,
     stripExtraUnits,
     widestRowUnits
@@ -21,8 +22,11 @@ export const useLayoutMode = () => useContext(BoardLayoutContext);
 const scaleProperties = ['--card-scale', '--pile-scale', '--hand-scale'];
 const allProperties = [...scaleProperties, ...Object.keys(interfaceScaleProperties(1))];
 
-const isTextEntry = (element) =>
-    !!element?.matches?.('input, textarea, select, [contenteditable=""], [contenteditable="true"]');
+// Only something typed into brings up the phone's keyboard: a switch, radio or slider does not
+export const isTextEntry = (element) =>
+    !!element?.matches?.(
+        'input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"]), textarea, [contenteditable=""], [contenteditable="true"]'
+    );
 
 // Measures the board area, picks the layout mode and fits the card scales to it. While a text box has focus the
 // phone's keyboard shrinks the screen, so the board is left as it was until the keyboard goes away.
@@ -34,7 +38,11 @@ export const useBoardLayout = ({ containerRef, hud, players, ready }) => {
     const contentRef = useRef({ widestRow, stripExtra });
     contentRef.current = { widestRow, stripExtra };
     const updateRef = useRef(null);
+    // The HUD settings are read when measuring, not set up with: changing one re-measures the board rather than
+    // taking it down and putting it back, which would drop the layout for a moment
     const { cards, interface: interfaceSize, auto } = hud;
+    const hudRef = useRef(hud);
+    hudRef.current = { cards, interface: interfaceSize, auto };
 
     useLayoutEffect(() => {
         if (!ready) {
@@ -44,6 +52,8 @@ export const useBoardLayout = ({ containerRef, hud, players, ready }) => {
         const root = document.documentElement;
         const container = containerRef.current;
         const settled = {};
+        let measured = null;
+        let measuredSetting = null;
         let frozen = isTextEntry(document.activeElement);
         let frame = 0;
 
@@ -53,30 +63,43 @@ export const useBoardLayout = ({ containerRef, hud, players, ready }) => {
             }
             const size = { width: container.clientWidth, height: container.clientHeight };
             const next = classifyLayout(size, modeRef.current);
-            if (next !== modeRef.current) {
+            // Cards coming and going only grow the board's cards once they would grow by a clear step, so they do
+            // not shrink and grow back as the rows change. A new size of board (the screen turned, the navbar
+            // hidden), a new mode or new HUD settings are fitted to straight away.
+            const settingKey = JSON.stringify(hudRef.current);
+            const resized =
+                !measured ||
+                Math.abs(measured.width - size.width) > 2 ||
+                Math.abs(measured.height - size.height) > 2 ||
+                settingKey !== measuredSetting;
+            measured = size;
+            measuredSetting = settingKey;
+            if (next !== modeRef.current || resized) {
                 modeRef.current = next;
                 Object.keys(settled).forEach((key) => delete settled[key]);
             }
 
             const rem = parseFloat(getComputedStyle(root).fontSize) || 16;
+            const setting = hudRef.current;
+            const interfaceScale = computeHudScales({
+                hud: setting,
+                screen: adaptiveInterfaceScale(next, {
+                    width: window.innerWidth,
+                    height: window.innerHeight
+                })
+            }).interface;
             const fitted = computeAdaptiveScales({
                 mode: next,
                 ...size,
                 rem,
                 ...contentRef.current,
-                cardsSize: resolveHudSize('cards', cards)
+                cardsSize: resolveHudSize('cards', setting.cards),
+                auto: setting.auto !== false,
+                interfaceScale
             });
             for (const key of Object.keys(fitted)) {
                 settled[key] = settleAutoCardScale(settled[key] ?? null, fitted[key]);
             }
-            // A phone or tablet is held close and tapped, so its interface is never drawn smaller than normal
-            const interfaceScale = computeHudScales({
-                hud: { cards, interface: interfaceSize, auto },
-                screen: Math.max(
-                    1,
-                    computeScreenScale({ width: window.innerWidth, height: window.innerHeight })
-                )
-            }).interface;
 
             applyScaleProperties({
                 '--card-scale': settled.card,
@@ -128,12 +151,13 @@ export const useBoardLayout = ({ containerRef, hud, players, ready }) => {
             boardLayoutStore.set(null);
             setMode(null);
         };
-    }, [cards, interfaceSize, auto, containerRef, ready]);
+    }, [containerRef, ready]);
 
-    // Cards entering or leaving play, shadows or out of game change the room the rows and strips need
+    // Cards entering or leaving play, shadows or out of game change the room the rows and strips need, and a new
+    // card or interface size changes how much of it to use
     useLayoutEffect(() => {
         updateRef.current?.();
-    }, [widestRow, stripExtra]);
+    }, [widestRow, stripExtra, cards, interfaceSize, auto]);
 
     return mode ?? 'wide';
 };

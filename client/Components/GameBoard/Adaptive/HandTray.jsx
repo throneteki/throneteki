@@ -1,54 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
-import classNames from 'classnames';
+import React from 'react';
 import SquishableCardPanel from '../SquishableCardPanel';
 import { withoutPendingAttachment } from '../pendingAttachment';
+import Reveal from './Reveal';
+import ShadowsZone from './ShadowsZone';
 
-const peekShare = 0.4;
-const peekHeight = `calc(var(--card-scale, 1) * 5.6rem * ${peekShare})`;
-
-// Our hand along the bottom of the board, as wide as the board. Peeking, only the top of each card shows: a tap
-// raises the whole hand over the board (a hold still picks a card up), and a tap anywhere else lowers it.
-const HandTray = ({ player, onCardClick, droppable, peek = false }) => {
-    const ref = useRef(null);
-    const [raised, setRaised] = useState(false);
-    const lifted = peek && raised;
-
-    useEffect(() => {
-        if (!lifted) {
-            return;
-        }
-        const lower = (event) => {
-            if (!ref.current?.contains(event.target)) {
-                setRaised(false);
-            }
-        };
-        document.addEventListener('pointerdown', lower, true);
-        return () => document.removeEventListener('pointerdown', lower, true);
-    }, [lifted]);
-
-    const onClickCapture = (event) => {
-        if (peek && !raised) {
-            event.stopPropagation();
-            event.preventDefault();
-            setRaised(true);
-        }
-    };
-
+// Our hand below our board in portrait, scrolling with it, from its start and no wider than the view: no more than
+// five cards wide before the cards overlap. Shadows sit beside it while there are cards in them, or empty when offered (manual mode, or
+// while a card is carried).
+const HandTray = ({ player, onCardClick, droppable, offerEmpty = false }) => {
+    const shadows = withoutPendingAttachment(player.cardPiles.shadows);
     return (
-        <div
-            ref={ref}
-            data-hand-tray=''
-            className='relative w-full'
-            style={peek ? { height: peekHeight } : undefined}
-            onClickCapture={onClickCapture}
-        >
-            <div
-                className={classNames('w-full', {
-                    'absolute left-0 top-0 z-[260] transition-[translate] duration-150 ease-out':
-                        peek
-                })}
-                style={lifted ? { translate: `0 calc(-${1 - peekShare} * 100%)` } : undefined}
-            >
+        <div data-hand-tray='' className='flex w-full items-end justify-start gap-2'>
+            <div className='min-w-0 max-w-[var(--scroll-view-width,100%)] flex-1'>
                 {droppable(
                     'hand',
                     <SquishableCardPanel
@@ -67,6 +30,9 @@ const HandTray = ({ player, onCardClick, droppable, peek = false }) => {
                     'w-full'
                 )}
             </div>
+            <Reveal show={shadows.length > 0 || offerEmpty} className='shrink-0 self-stretch'>
+                <ShadowsZone cards={shadows} onCardClick={onCardClick} droppable={droppable} />
+            </Reveal>
         </div>
     );
 };

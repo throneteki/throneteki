@@ -1,4 +1,5 @@
 const boardLayouts = ['classic', 'adaptive'];
+const promptSides = ['left', 'right'];
 const sizePattern = /^(?:small|normal|large|\d{1,2}(?:\.\d{1,2})?)$/;
 
 // The board settings a player may save, in their profile or for one game
@@ -16,6 +17,10 @@ export function sanitizeHud(hud) {
 
     if (boardLayouts.includes(hud.board)) {
         result.board = hud.board;
+    }
+
+    if (promptSides.includes(hud.promptSide)) {
+        result.promptSide = hud.promptSide;
     }
 
     for (const key of ['auto', 'animations', 'followAction']) {

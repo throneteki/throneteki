@@ -44,6 +44,10 @@ body {
 }
 
 :root {
+    /* The top and bottom safe areas; useAdaptivePage zeroes them where a browser reports ones the page never
+       reaches */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
     --chat-scrim: rgb(0 0 0 / 0.6);
     --throneteki-card-width: 65px;
     --throneteki-card-height: 91px;
@@ -342,20 +346,45 @@ html[data-board-layout='narrow'],
 html[data-board-layout='short'] {
     @mixin chat-phone;
 
-    /* The divider's chat button opens and closes the chat instead of the tab, which would cover the board. The
-       chat drops down only as far as the divider, so the button stays in reach and our half stays playable. */
+    /* A chat button in the opponent's bar (or the prompt's column) opens the chat instead of the tab, which would cover
+       the board. Open, the chat fills the screen below that bar (beside the column), which stays above it with the
+       button in the same place, down to what the phone's keyboard leaves where the browser says. */
     .chat-lip,
     .chat-dim {
         display: none;
     }
+    /* It slides down from behind the bar rather than growing, so its height can follow the keyboard straight away:
+       clipped as it moves, so it never shows above where it opens */
+    .chat-drawer,
     .chat-drawer.chat-open {
-        height: var(--chat-open-height, calc(100% - var(--lip-depth)));
+        top: var(--board-chat-top, 0px);
+        left: var(--board-chat-left, 0px);
+        right: var(--board-chat-right, 0px);
+        height: calc(var(--visual-height, 100%) - var(--board-chat-top, 0px));
+        clip-path: inset(0);
+        transition-property: translate, clip-path;
+        transition-duration: 300ms;
+    }
+    .chat-drawer:not(.chat-open) {
+        translate: 0 -100%;
+        clip-path: inset(100% 0 0 0);
+        visibility: hidden;
+        transition-property: translate, clip-path, visibility;
+        transition-delay: 0s, 0s, 300ms;
     }
 }
 
+html[data-motion='off'][data-board-layout] .chat-drawer,
 [data-motion='off'] .chat-drawer,
 [data-motion='off'] .chat-dim {
     transition: none;
+}
+
+/* HeroUI's switches and checkboxes turn off touch gestures on their whole label, so a swipe that starts on one
+   cannot scroll the list it is in. Scrolling from them is let through: a scroll cancels the press, so it never
+   flips the switch. */
+label.touch-none:has(> input[type='checkbox']) {
+    touch-action: pan-x pan-y;
 }
 
 /* Over an area the carried card cannot be put in */
@@ -473,23 +502,31 @@ html.card-dragging.card-drop-refused * {
     -webkit-user-drag: none;
 }
 
-/* Plots being chosen in a sheet: one after another, each snapping to the middle */
-.sheet-carousel > * {
-    flex-shrink: 0;
-    scroll-snap-align: center;
+/* In the board's sheet a pile's cards fill it, with the sheet as their only frame */
+[data-sheet] [data-pile-popup] {
+    min-height: 100%;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
 }
 
-/* On the adaptive board a card eases into being chosen, and a chosen card grows above its neighbours so it is
-   easy to see what has been picked */
-[data-layout] [data-card-surface] {
-    transition:
-        scale 180ms ease-out,
-        box-shadow 180ms ease-out;
-}
+/* On the adaptive board a chosen card pops, growing above its neighbours and settling back, so it is easy to see
+   what was just picked; its ring keeps showing that it is chosen */
 [data-layout] [data-card-surface].ring-selected {
-    scale: 1.12;
-    z-index: 250 !important;
+    scale: 1;
+    animation: select-pop 320ms ease-out;
 }
-[data-motion='off'] [data-layout] [data-card-surface] {
-    transition: none;
+@keyframes select-pop {
+    0% {
+        scale: 1;
+        z-index: 250;
+    }
+    45% {
+        scale: 1.12;
+        z-index: 250;
+    }
+    100% {
+        scale: 1;
+        z-index: 250;
+    }
 }

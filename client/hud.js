@@ -7,6 +7,10 @@ export const hudKinds = Object.keys(sizeKinds);
 export const hudSizeNames = ['small', 'normal', 'large'];
 
 export const boardLayouts = ['classic', 'adaptive'];
+export const promptSides = ['left', 'right'];
+
+// The prompt sits on the left unless the player chose the right
+export const promptSideOf = (hud) => (hud?.promptSide === 'right' ? 'right' : 'left');
 
 export const defaultHud = {
     cards: 'normal',
@@ -80,6 +84,9 @@ export const normalizeHud = (settings) => {
         }
         if (boardLayouts.includes(hud.board)) {
             result.board = hud.board;
+        }
+        if (promptSides.includes(hud.promptSide)) {
+            result.promptSide = hud.promptSide;
         }
         return result;
     }

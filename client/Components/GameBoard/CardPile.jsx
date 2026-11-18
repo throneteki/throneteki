@@ -1,11 +1,20 @@
-import React, { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef } from 'react';
+import React, {
+    useState,
+    useEffect,
+    useLayoutEffect,
+    useCallback,
+    useContext,
+    useMemo,
+    useRef
+} from 'react';
 import classNames from 'classnames';
 import { useRenderCount } from '../../perf';
 
 import Card from './Card';
 import CardTiledList from './CardTiledList';
 import Droppable from './Droppable';
-import PopupContainer from './PopupContainer';
+import PopupContainer, { PopupHostContext } from './PopupContainer';
+import { sheetStore } from './Adaptive/sheetStore';
 import PileDepth, { pileRise, raisedStackStyle } from './PileDepth';
 import LabelledGameArea from './LabelledGameArea';
 
@@ -44,7 +53,8 @@ const CardPile = ({
     flipDeck,
     flipFrom,
     lockTopCard,
-    showDepth
+    showDepth,
+    owner
 }) => {
     useRenderCount('CardPile');
     const [showPopup, setShowPopup] = useState(cards && cards.some((card) => card.selectable));
@@ -79,6 +89,23 @@ const CardPile = ({
 
     const topCardHasAction = !!(topCard?.selectable || topCard?.canPlay);
 
+    // Where piles open in sheets, every pile that can be opened is listed in them, to go to from any other
+    const usesSheets = useContext(PopupHostContext) === 'sheet';
+    const openRef = useRef(null);
+    useEffect(() => {
+        if (!usesSheets || disablePopup || !title) {
+            return;
+        }
+        return sheetStore.register({
+            id: `${source}:${popupId ?? popupLocation}`,
+            player: owner ?? playerName,
+            side: popupLocation,
+            source,
+            title,
+            open: () => openRef.current?.()
+        });
+    }, [usesSheets, disablePopup, title, source, popupId, playerName, owner, popupLocation]);
+
     const updatePopupVisibility = useCallback(
         (value) => {
             setShowPopup(value);
@@ -89,6 +116,8 @@ const CardPile = ({
         },
         [onPopupChange, source]
     );
+
+    openRef.current = () => updatePopupVisibility(true);
 
     const onCollectionClick = useCallback(
         (event) => {
@@ -238,13 +267,19 @@ const CardPile = ({
                 open={!!showPopup}
                 anchorRef={areaRef}
                 title={playerName ? `${playerName}'s ${title}` : title}
+                pileTitle={title}
+                playerName={owner ?? playerName}
                 name={source}
                 onCloseClick={onCloseClick}
                 onOpen={() => updatePopupVisibility(true)}
                 prompting={!!cards?.some((card) => card.selectable)}
                 side={popupLocation}
             >
-                <div className={popupClass} onClick={(event) => event.stopPropagation()}>
+                <div
+                    data-pile-popup=''
+                    className={popupClass}
+                    onClick={(event) => event.stopPropagation()}
+                >
                     {retPopupMenu}
                     <Droppable source={source} popup className='overflow-auto'>
                         {cardList}
@@ -270,7 +305,8 @@ const CardPile = ({
         popupId,
         showCards,
         onPopupMenuItemClick,
-        updatePopupVisibility
+        updatePopupVisibility,
+        owner
     ]);
 
     // A sideways card is laid out as an upright one, so the area is held to the height of a sideways card
@@ -325,6 +361,11 @@ const CardPile = ({
             ref={areaRef}
             label={headerText}
             count={title ? retCardCount : undefined}
+            inspectable={!!title}
+            upright={orientation !== 'horizontal'}
+            inspectSkip={
+                topCardHasAction || isTopCardSelectable || !!cards?.some((card) => card.selectable)
+            }
             position={titlePosition}
             className={retClassName}
             style={areaStyle}

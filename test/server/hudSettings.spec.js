@@ -31,4 +31,10 @@ describe('sanitizeHud', function () {
             cards: 'small'
         });
     });
+
+    it('keeps the prompt side only when it is left or right', function () {
+        expect(sanitizeHud({ promptSide: 'right' })).toEqual({ promptSide: 'right' });
+        expect(sanitizeHud({ promptSide: 'left' })).toEqual({ promptSide: 'left' });
+        expect(sanitizeHud({ promptSide: 'middle' })).toBeUndefined();
+    });
 });
