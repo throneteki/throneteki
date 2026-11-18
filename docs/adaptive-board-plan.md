@@ -1138,7 +1138,7 @@ zoom, hold and move to drag.
 
 - [x] Settle the open layout questions in the Layouts section (Melee) with the user first (R155).
 - [x] The table: classic's two-row grid in seat order, scrolling as one (R150, R155), on every layout. Each player's stats bar is on their own board; the tools go with the prompt; the room for the desktop's prompt is a column at the table's sides.
-- [ ] Each player's seat number is a badge on their stats-bar avatar, at the top left, so it and the "1st"
+- [x] Each player's seat number is a badge on their stats-bar avatar, at the top left, so it and the "1st"
       badge (bottom right) can show together (from review, 2026-11-18).
 - [x] Seat order matches the classic melee grid's clockwise order (`seatOrder.js`, shared with classic). Share or extract the ordering, and
       don't copy it.
@@ -1148,10 +1148,10 @@ zoom, hold and move to drag.
     - [x] Scrolls the table to the target's board, and again as that board changes size.
     - [x] Pauses when the table is scrolled by hand (a wheel, a swipe or the keys).
     - [x] Resumes when the active prompt moves to a different player.
-    - [ ] Waits while a drag, a raised card, a zoom or a sheet drag is in progress. Done for a drag only.
+    - [x] Waits while a card is carried or zoomed. A sheet lies over the table, so scrolling behind it does no harm.
 - [x] Auto-follow control: the HUD setting `followAction` turns it off, and a "Following paused · tap to resume" pill shows while paused.
-- [ ] Spectator arrangement.
-- [ ] Fixtures: melee with 3, 4 and 6 players, with an active prompt on an opponent, and with our
+- [x] Spectator arrangement: the watched player sits at the bottom left, as we do, and the table follows the action.
+- [x] Fixtures: melee with 3, 4 and 6 players, with an active prompt on an opponent, and with our
       prompt targeting cards on two opponents' boards.
 - [ ] Acceptance: at every reference size, melee with 3 to 6 players never scrolls the page. Every
       player's board can be reached by scrolling, auto-follow behaves as in the Layouts section (Melee), and

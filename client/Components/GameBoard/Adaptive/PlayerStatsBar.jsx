@@ -71,6 +71,7 @@ const useRoomBeside = (barRef, statsRef, avatarRef, enabled) => {
 // compact: the smaller size used on phone layouts
 // Stacked (vertical), columns lays the avatar and the stats out that many to a row, filling the last row with the
 // children; mirrored turns the stack upside down, for the player above the prompt.
+// showSeat: a badge of the player's seat number on the avatar, at a melee table
 const PlayerStatsBar = ({
     player,
     vertical = false,
@@ -78,6 +79,7 @@ const PlayerStatsBar = ({
     mirrored = false,
     compact = false,
     canChange = false,
+    showSeat = false,
     edge,
     className,
     children
@@ -198,6 +200,14 @@ const PlayerStatsBar = ({
                             { 'ring-2 ring-warning': player.firstPlayer }
                         )}
                     />
+                    {showSeat && player.seatNo !== undefined && (
+                        <span
+                            title={`Seat ${player.seatNo}`}
+                            className='absolute -left-1.5 -top-0.5 rounded-full border border-zinc-400 bg-zinc-800 px-1 text-[9px] font-bold leading-tight text-zinc-100'
+                        >
+                            {player.seatNo}
+                        </span>
+                    )}
                     {player.firstPlayer && (
                         <span className='absolute -bottom-0.5 -right-1.5 rounded-full bg-warning px-1 text-[9px] font-bold leading-tight text-black'>
                             1st

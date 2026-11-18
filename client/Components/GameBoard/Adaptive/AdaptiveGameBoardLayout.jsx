@@ -34,6 +34,7 @@ import { promptSideOf } from '../../../hud';
 import { tableRows } from '../seatOrder';
 import { activePlayerOf, followTarget } from './followTarget';
 import useAutoFollow from './useAutoFollow';
+import { useCardHover } from '../../Images/cardHoverStore';
 
 // A part drawn at another of the board's scales: every card size inside follows --card-scale
 const Part = ({ area, scale, className, children }) => (
@@ -188,13 +189,15 @@ const AdaptiveGameBoardLayout = ({
     };
     const boardRef = useRef(null);
     const sideFlex = useEqualPlayAreas(boardRef, mode);
-    // At a melee table the view follows the action, unless turned off in the HUD settings
+    // At a melee table the view follows the action, unless turned off in the HUD settings. It waits while a card is
+    // carried or zoomed.
+    const zoomed = useCardHover((current) => !!current.code);
     const followed = useAutoFollow({
         boardRef,
         target: followTarget(thisPlayer, otherPlayers),
         active: activePlayerOf(thisPlayer, otherPlayers),
         enabled: melee && hud.followAction !== false,
-        waiting: isDragging
+        waiting: isDragging || zoomed
     });
     const manualMode = useSelector((state) => !!state.lobby.currentGame?.manualMode);
     const username = useSelector((state) => state.auth.user?.username);
@@ -380,6 +383,7 @@ const AdaptiveGameBoardLayout = ({
                             columns={6}
                             compact
                             canChange={isMe && canChangeStats}
+                            showSeat={melee}
                             className='bg-transparent'
                         />
                     </FitRow>
@@ -400,6 +404,7 @@ const AdaptiveGameBoardLayout = ({
                     player={player}
                     compact={phoneLayout}
                     canChange={isMe && canChangeStats}
+                    showSeat
                     className={classNames(
                         'sticky left-0 w-[min(100%,var(--scroll-view-width,100%))]',
                         side === 'top' ? 'border-b' : 'border-t',
