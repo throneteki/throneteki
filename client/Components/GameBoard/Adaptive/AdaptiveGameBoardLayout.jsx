@@ -32,6 +32,8 @@ import FullscreenToggle from './FullscreenToggle';
 import { useHud } from '../../../hudStore';
 import { promptSideOf } from '../../../hud';
 import { tableRows } from '../seatOrder';
+import { activePlayerOf, followTarget } from './followTarget';
+import useAutoFollow from './useAutoFollow';
 
 // A part drawn at another of the board's scales: every card size inside follows --card-scale
 const Part = ({ area, scale, className, children }) => (
@@ -166,7 +168,8 @@ const AdaptiveGameBoardLayout = ({
     const dispatch = useDispatch();
     const mode = useLayoutMode();
     const dividerRef = useRef(null);
-    const promptSide = promptSideOf(useHud());
+    const hud = useHud();
+    const promptSide = promptSideOf(hud);
     // In phone landscape the prompt and the players' stats share a column down one side of the screen. On a desktop
     // the prompt is a panel over the side of the play areas. In portrait it sits below our hand.
     const short = mode === 'short';
@@ -185,6 +188,14 @@ const AdaptiveGameBoardLayout = ({
     };
     const boardRef = useRef(null);
     const sideFlex = useEqualPlayAreas(boardRef, mode);
+    // At a melee table the view follows the action, unless turned off in the HUD settings
+    const followed = useAutoFollow({
+        boardRef,
+        target: followTarget(thisPlayer, otherPlayers),
+        active: activePlayerOf(thisPlayer, otherPlayers),
+        enabled: melee && hud.followAction !== false,
+        waiting: isDragging
+    });
     const manualMode = useSelector((state) => !!state.lobby.currentGame?.manualMode);
     const username = useSelector((state) => state.auth.user?.username);
     const isPlaying = !!thisPlayer && thisPlayer.user?.username === username;
@@ -662,7 +673,7 @@ const AdaptiveGameBoardLayout = ({
               return (
                   <div
                       data-melee-table=''
-                      className='grid min-h-full flex-1'
+                      className='relative grid min-h-full flex-1'
                       style={{
                           gridTemplateColumns: `${coverOf('left')} repeat(${columns}, auto) ${coverOf('right')}`,
                           gridTemplateRows: floatingPrompt ? '1fr auto 1fr' : '1fr 1fr',
@@ -801,6 +812,16 @@ const AdaptiveGameBoardLayout = ({
                                         )}
                                     </ScrollArea>
                                     {midline}
+                                    {followed.paused && (
+                                        <button
+                                            type='button'
+                                            data-follow-resume=''
+                                            onClick={followed.resume}
+                                            className='absolute left-1/2 top-1 z-[306] -translate-x-1/2 rounded-full border border-default-200/50 bg-black/70 px-2 py-0.5 text-[11px] text-default-200 shadow-[0_2px_8px_rgba(0,0,0,0.5)] hud-zoom hover:text-white'
+                                        >
+                                            Following paused · tap to resume
+                                        </button>
+                                    )}
                                 </div>
                                 {portrait &&
                                     promptBar(

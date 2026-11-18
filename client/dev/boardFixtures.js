@@ -854,7 +854,40 @@ export const boardFixtures = {
 // from where it was to where it went. Development only, for checking flights.
 const drawPool = ['01141', '01142', '01143', '01157', '01153', '01154'];
 
+// The next player round the melee table from the one acting (seat numbers going down, as the table seats them)
+const nextAround = (players, from) => {
+    const ordered = [...players].sort((one, two) => two.seatNo - one.seatNo);
+    const at = ordered.indexOf(from);
+    return ordered[(at + 1) % ordered.length];
+};
+
 export const fixtureSteps = {
+    pass: {
+        label: 'Pass the action on',
+        apply: (state) => {
+            const players = Object.values(state.players);
+            const acting =
+                players.find((each) => each.isActivePrompt) ?? state.players[fixtureUsername];
+            const next = nextAround(players, acting);
+            for (const each of players) {
+                Object.assign(
+                    each,
+                    each === next
+                        ? promptState({
+                              isActivePrompt: true,
+                              promptTitle: 'Challenges',
+                              menuTitle: 'Initiate a challenge?',
+                              buttons:
+                                  each.name === fixtureUsername
+                                      ? [{ text: 'Done', arg: 'done', promptId: 'p1' }]
+                                      : []
+                          })
+                        : promptState({ menuTitle: `Waiting for ${next.name}` })
+                );
+            }
+            return state;
+        }
+    },
     draw: {
         label: 'Draw a card',
         apply: (state) => {

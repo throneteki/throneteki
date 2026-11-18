@@ -126,9 +126,13 @@ const ScrollArea = ({ anchor = 'start', axis = 'y', className, contentClassName,
         // Where it last scrolled itself to. Its scroll event comes later, by when what it holds may have grown, so
         // that event is not taken as being scrolled away from the end: it catches up instead.
         let ownScroll = null;
+        // Only when not at the end already: setting it at all would stop a smooth scroll along the other axis
         const keep = () => {
-            if (pinned.current) {
-                area[along] = sideways ? area.scrollWidth : area.scrollHeight;
+            const end = sideways
+                ? area.scrollWidth - area.clientWidth
+                : area.scrollHeight - area.clientHeight;
+            if (pinned.current && Math.abs(area[along] - end) >= 1) {
+                area[along] = end;
                 ownScroll = area[along];
             }
         };

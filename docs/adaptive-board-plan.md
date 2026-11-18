@@ -1142,14 +1142,14 @@ zoom, hold and move to drag.
       badge (bottom right) can show together (from review, 2026-11-18).
 - [x] Seat order matches the classic melee grid's clockwise order (`seatOrder.js`, shared with classic). Share or extract the ordering, and
       don't copy it.
-- [ ] `followTarget.js` with a spec covering our prompt with selectable cards on one or several
+- [x] `followTarget.js` with a spec covering our prompt with selectable cards on one or several
       boards, another player's active prompt, no target, and selectable cards only on our board.
-- [ ] `useAutoFollow`:
-    - [ ] Scrolls the table to the target's board.
-    - [ ] Pauses when the table is scrolled by hand.
-    - [ ] Resumes when the active prompt moves to a different player.
-    - [ ] Waits while a drag, a raised card, a zoom or a sheet drag is in progress.
-- [ ] Auto-follow control: reads and writes `followAction`, and shows "Paused · tap to resume".
+- [x] `useAutoFollow`:
+    - [x] Scrolls the table to the target's board, and again as that board changes size.
+    - [x] Pauses when the table is scrolled by hand (a wheel, a swipe or the keys).
+    - [x] Resumes when the active prompt moves to a different player.
+    - [ ] Waits while a drag, a raised card, a zoom or a sheet drag is in progress. Done for a drag only.
+- [x] Auto-follow control: the HUD setting `followAction` turns it off, and a "Following paused · tap to resume" pill shows while paused.
 - [ ] Spectator arrangement.
 - [ ] Fixtures: melee with 3, 4 and 6 players, with an active prompt on an opponent, and with our
       prompt targeting cards on two opponents' boards.
