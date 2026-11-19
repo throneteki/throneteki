@@ -1,10 +1,8 @@
 import { useSyncExternalStore } from 'react';
 
-// The board's sheets, one for each player, over that player's board. A pile that opens asks to be shown in its
-// player's sheet (show) and draws its cards into that sheet's body (contentNodes); the sheet draws the frame around
-// them. Opening another of the same player's piles takes their sheet over, closing the pile it showed; other players'
-// sheets stay open. Every pile whose cards can be looked at registers too, so a sheet can offer its player's piles to
-// go to, marking those with cards to choose.
+// One sheet per player, over their board. An open pile shows in its player's sheet (show) and portals its cards into
+// the sheet's body (contentNodes); opening another of that player's piles takes the sheet over. Piles also register,
+// so a sheet can offer chips for its player's other piles.
 let state = { sheets: {}, piles: [], contentNodes: {}, layouts: {} };
 const listeners = new Set();
 
@@ -14,7 +12,7 @@ const change = (next) => {
 };
 
 // The order piles are offered in, which never changes as piles fill or empty
-export const pileOrder = [
+const pileOrder = [
     'plot deck',
     'revealed plots',
     'agenda',
@@ -28,6 +26,9 @@ export const pileOrder = [
 export const sheetKeyOf = ({ playerName, side }) => playerName ?? `side:${side}`;
 
 const keyShowing = (id) => Object.keys(state.sheets).find((key) => state.sheets[key].id === id);
+
+// How long a sheet takes to slide in or out (ms)
+export const slideTime = 220;
 
 export const defaultLayout = { height: 'full', row: false, columns: null };
 

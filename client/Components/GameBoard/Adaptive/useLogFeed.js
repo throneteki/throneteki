@@ -2,7 +2,7 @@ import { useCallback, useEffect, useReducer, useRef } from 'react';
 import { isChatMessage } from '../chatMessages';
 
 export const logMinimum = 1500;
-export const logMaximum = 4000;
+const logMaximum = 4000;
 
 const initial = { current: null, queue: [] };
 

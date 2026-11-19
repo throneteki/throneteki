@@ -87,10 +87,8 @@ const SquishableCardPanel = ({
     const slotCount = cards.length + (incoming ? 1 : 0);
     const needsSquish = slotCount > maxCards;
 
-    // On a touch screen cards here can be covered by their neighbours, so a tap raises a card and a second tap
-    // uses it. Every card works that way, covered or not, so the same tap always does the same thing.
-    // The card being lowered is set in the same update as the raise that replaces it, so it never loses its
-    // transition for a frame and snaps back
+    // On touch, a tap raises a card (it may be covered) and a second tap uses it. The lowering card is set in the
+    // same update as the raise, so it never loses its transition for a frame and snaps back.
     const [lift, setLift] = useState({ raised: null, lowering: null });
     const raisedUuid = lift.raised;
     const loweringUuid = lift.lowering;

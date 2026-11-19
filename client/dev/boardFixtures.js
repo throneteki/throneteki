@@ -831,6 +831,14 @@ const meleeTitleSelection = (options) => {
     return state;
 };
 
+// A prompt whose text runs over several lines on a phone
+const longPrompt = (options) => {
+    const state = choosingFromDiscard(options);
+    state.players[fixtureUsername].menuTitle =
+        'Select a character from your discard pile to put into play, then choose a card in your hand to discard as its cost';
+    return state;
+};
+
 export const boardFixtures = {
     empty: { label: 'Empty board', build: empty },
     mid: { label: 'Mid-game', build: midGame },
@@ -838,6 +846,7 @@ export const boardFixtures = {
     plots: { label: 'Plot selection', build: plotSelection },
     rains: { label: 'Plot selection (Rains)', build: rainsPlotSelection },
     discard: { label: 'Choose from discard', build: choosingFromDiscard },
+    longPrompt: { label: 'Long prompt text', build: longPrompt },
     waiting: { label: 'Waiting on opponent', build: waiting },
     select: { label: 'Choose on the board', build: choosingOnBoard },
     lookup: { label: 'Name a card', build: namingCard },

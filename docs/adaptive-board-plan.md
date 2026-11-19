@@ -5,7 +5,8 @@ up to desktop. It sits beside the current ("classic") board, and a player choose
 HUD settings.
 
 - Branch: `feat/adaptive-board`, branched from `feat/gameboard-overhaul`.
-- Status: planning. Tick items off as they land. **After each phase, re-read this file and check every
+- Status: phases 0–6 built; the open items need a real phone or a real game (see "Review (2026-11-20)").
+  Tick items off as they land. **After each phase, re-read this file and check every
   item in that phase against the code before calling the phase done.**
 
 ## Goals
@@ -64,9 +65,11 @@ These keep the board recognisable when it changes shape:
   outside them.
 - Plots, faction and agenda on the **left**. Draw deck, discard, dead, shadows and out of game on the
   **right**.
-- The prompt and player stats sit at the midline (narrow) or on the right-hand rail (short and wide).
-- Our hand is along the bottom edge, or in our row on the wide layout.
-- The game menu and the chat tab are in the same corner on every layout.
+- The prompt is docked along the bottom (narrow), in a column down one side (short), or a panel beside the
+  play areas (wide). It never changes the board's size.
+- Each player's stats stay with their own board.
+- Our hand is below our board (narrow), or in our strip elsewhere.
+- Our tools (view mode, chat, full screen, menu) sit beside our own stats on every layout (R171).
 
 ## Review notes (open concerns)
 
@@ -117,13 +120,16 @@ From the review on 2026-11-17:
 - [x] **R13 The chat tab on phones** covers the opponent's board. Consider a chat button on the
       divider, and make sure it opens and closes smoothly. **Phase 4** (game menu).
       Done: on phones a chat button on the divider (with the unread count) replaces the tab; the chat slides down to the divider and no further, so it closes from the same button (phase 4).
-- [ ] **R14 (found while building) Phone landscape cards are the smallest of any layout** (about 35–45px
+- [x] **R14 (found while building) Phone landscape cards are the smallest of any layout** (about 35–45px
       wide). Four card rows, two strips' worth of side columns and the divider share 390px of height.
       Next options: smaller location rows (declined earlier), or putting each side's locations beside its
-      characters instead of above them. Judge on a real phone.
-- [ ] **R15 (found while building) The navbar's spectator list and server connection status** aren't on
-      the adaptive board's phone layouts, because the navbar is hidden there. They could go in the game
-      menu.
+      characters instead of above them. Judge on a real phone. **Resolved 2026-11-20 (checked on the phone):** fine as
+      it is; the board scrolls where it overflows, and the edge highlight shows there is more.
+- [x] **R15 (found while building) The navbar's spectator list and server connection status** aren't on
+      the adaptive board's phone layouts, because the navbar is hidden there. Done (2026-11-19): the game menu
+      opens with them, in every layout: the game server's ping (coloured as the navbar does), and the number of
+      spectators with their names. As the navbar warns a player when the number watching changes, a dot on the
+      menu button shows until the menu is opened.
 
 From the review on 2026-11-17 (second batch):
 
@@ -348,19 +354,20 @@ From the review on 2026-11-17 (seventh batch):
 - [x] **R74 The question is never repeated outside the divider**, which always shows it. The sheet no longer shows
       it when its cards are being chosen from. The "more" panel no longer shows it and stops below the divider,
       so the question stays visible. Nothing else repeated it (checked the pile popups, sheets and panels).
-- [ ] **R75 On Android (Firefox) the open chat's input sat behind the keyboard.** The first fix (letting the
+- [x] **R75 On Android (Firefox) the open chat's input sat behind the keyboard.** The first fix (letting the
       page move while typing) did not help: in full screen Firefox never reports the keyboard (the visual viewport
       does not shrink; Mozilla bug 1886881), so no sizing can follow it. Decision (you chose): on phone layouts the
       chat's input sits at the top, under its header, with the newest messages directly below it (`ChatArea`
       `newestFirst`), so the keyboard only ever covers the oldest. `--visual-height` still sizes it where the
-      browser reports the keyboard. **Waiting on a check on the phone.**
+      browser reports the keyboard. **Checked on the phone 2026-11-20: fixed.**
 - [x] **R76 The phone chat button stays in one place.** It is in the opponent's bar (top right) in portrait and at
       the top of the stats rail in landscape, no longer in the divider. The chat opens below that bar (beside the
       rail), which stays above it (z 305), so the button does not move and only changes icon. The chat's own
       close button is gone. `--board-chat-top` and `--board-chat-left` say where it opens.
-- [ ] **R77 A gap above the opponent's bar in portrait full screen**: the top safe area (the status bar) was kept
+- [x] **R77 A gap above the opponent's bar in portrait full screen**: the top safe area (the status bar) was kept
       clear. On Android `--safe-top` is 0: a browser tab sits below the status bar and full screen hides it.
-      **Waiting on a check on the phone.**
+      **Checked on the phone 2026-11-20: fixed.** The bar running under the camera cut-out is wanted, rather than
+      leaving that space empty.
 - [x] **R78 Chat or chat and game log**: a toggle in the chat's header ("Chat" / "Chat + game log"), remembered
       in localStorage. A chat message is one the server starts with the sender's avatar (`isChatMessage`).
 - [x] **R79 New game log lines show in the divider**, fading the prompt out and the line in (not the phase track).
@@ -560,7 +567,7 @@ From the review on 2026-11-17 (seventh batch):
       first and the strips are always whole. A sideways swipe that starts on a play area moves the board: each scroller stops a swipe at its ends only along the axis it scrolls. A play area starts at, and keeps to, the edge facing the other player:
       the opponent's at its bottom, ours at its top. This reverses the strips scrolling on their own (R9, R125) and
       each play area scrolling sideways on its own (R103, R104).
-- [ ] **R149 Melee keeps the table (decided 2026-11-18)**: melee uses classic's arrangement, a two-row grid of
+- [x] **R149 Melee keeps the table (decided 2026-11-18)**: melee uses classic's arrangement, a two-row grid of
       players in clockwise seat order around us, the whole table scrolling sideways (R148). There is no carousel and
       no opponent tabs. Auto-follow stays (`followAction`, on by default) and scrolls the table to the acting
       player's board, or to the board with cards we can select. See phase 6.
@@ -574,7 +581,7 @@ From the review on 2026-11-17 (seventh batch):
       (the left). Portrait's hand and shadows row scrolls with it too, starting at the left and no wider than the view (R153). Supersedes R148's separate up-and-down scrolling for each side.
 - [x] **R151 Portrait's prompt sits below our hand**: it keeps the room of one line of options and reaches up over
       our board, translucent, for the rest (`PromptBar` mode `dock`). A chevron tab on its top edge folds the
-      whole prompt to one line, folding and unfolding smoothly; a new prompt to answer unfolds it. Replaces the Hide/Show options toggle in portrait.
+      whole prompt to one line, folding and unfolding smoothly; a new prompt to answer unfolds it. Replaces the Hide/Show options toggle in portrait. (The fold tab is replaced by R178.)
 - [x] **R152 (superseded by R154) Phone landscape: stats along the wall, the prompt beside them, the tools as tabs (decided 2026-11-18)**:
       each player's stats are a bordered stack down the screen's edge on the prompt's side, stuck to their own board:
       at the wall as it scrolls sideways, the opponent's at the top of theirs and ours at the bottom of ours (as the
@@ -627,7 +634,7 @@ From the review on 2026-11-17 (seventh batch):
 - [x] **R165 The edge hints frame the play area**: the sideways hints stop where the top and bottom hints are moved
       in (`--board-hint-top` and `-bottom`), so the four meet at the corners rather than running on behind the
       stats.
-- [x] **R166 Phone landscape: the column pushes each board's cards (decided 2026-11-19)**: a board's cards start at
+- [x] **R166 Phone landscape: the column pushes each board's cards (decided 2026-11-19; now sticky, R184)**: a board's cards start at
       its edge while the prompt's column is clear of it, so a melee table has no column-wide gap before each board.
       Each board keeps the column's width spare on the side away from the prompt; as the column comes over the
       board its cards are pushed into that room (`--push`, set as the table scrolls), staying beside the column
@@ -650,12 +657,8 @@ From the review on 2026-11-17 (seventh batch):
       run to the screen's edge; only their play areas keep clear of the prompt. Following reads that room from the
       columns kept for it (`data-table-cover`), not from where the first board starts.
 - [x] **R171 Our tools are off the prompt, beside our stats (decided 2026-11-19)**: the view mode, chat, full screen
-      and the menu (outermost) are one tool box beside our own stats in every layout, never in the prompt:
-      - Desktop joust: the end of our stats bar, as before.
-      - Desktop and portrait melee: pinned in the view's bottom corner, beside where our stats sit on our board, so
-        they stay when our board scrolls away. The bottom-row stats leave room for them (`--board-tools-width`).
-      - Portrait joust: beside our stats card. The chat button moves there from the opponent's row.
-      - Phone landscape: the box in the column above our stats, as before.
+      and the menu (outermost) are one tool box beside our own stats in every layout, never in the prompt: - Desktop joust: the end of our stats bar, as before. - Desktop and portrait melee: pinned in the view's bottom corner, beside where our stats sit on our board, so
+      they stay when our board scrolls away. The bottom-row stats leave room for them (`--board-tools-width`). - Portrait joust: beside our stats card. The chat button moves there from the opponent's row. - Phone landscape: the box in the column above our stats, as before.
       In portrait the chat stops just above the tool box (`--board-chat-bottom`), so the button to close it stays
       in reach.
 - [x] **R172 The strips mirror each other (decided 2026-11-19)**: the top and bottom halves' strips have the same
@@ -682,9 +685,51 @@ From the review on 2026-11-17 (seventh batch):
 - [x] **R176 Desktop melee: the rows meet at their line (decided 2026-11-19)**: the prompt's row between the table's
       rows takes no height, so when the table is shorter than the screen the spare room goes to the boards, not
       to a gap between the rows. The active player's tint now reaches the line.
+- [x] **R178 Portrait's prompt draws back only when it spills over (decided 2026-11-19)**: the fold tab (R151),
+      which overlapped our stats card, is gone, and so is folding the whole prompt to one line. The docked prompt
+      keeps the room of one line of options; only when its options take more lines, spilling up over the board
+      (never pushing or squeezing it), do chevrons show on each side of the phase track. A tap anywhere on the
+      prompt but a button draws the extra lines back to that one line, or out again, the lines sliding and the
+      chevrons turning (up drawn back, down spilled out). Each new prompt shows every option. Spilling over, the
+      prompt is near opaque, so the board under it does not show through. Drawn back, the options fade out and a
+      line asking to see them ("Tap to see the 13 options", a pulsing hand) fades in, the height sliding between
+      theirs. The room it keeps is the same whether drawn back or out, so the board above never moves while it
+      slides. Its height never changes, so it never changes the board's size: whatever the prompt, even waiting
+      on someone else, it keeps a title, one line of text and one line of options (empty when there are none).
+      Longer text scrolls up through the rest of it and back by itself, resting at each end (the dev fixture
+      `longPrompt`); only more options than fit spill over, drawn back and out as above.
 - [x] **R177 A way out is grey, as on the classic board (decided 2026-11-19)**: an option the server marks as
       backing out (`cancel`, which only Cancel buttons carry) is a filled grey button rather than only a grey
       outline, so it stands apart from the amber options as classic's grey Cancel does.
+- [x] **R179 Flights keep to the board as it scrolls (decided 2026-11-19)**: a card flying into the board flew as a
+      copy pinned to the screen, so scrolling during its flight left it behind. Copies now fly in a layer inside the
+      board's scrolling content (`data-flight-layer`), and the lower layer under the plots is positioned in its area
+      rather than on the screen, so both scroll with the board. Every card is measured from the board's content,
+      not the screen, so a scroll between two states (by hand, or the board keeping to its end as it grows) moves no
+      card. The classic board, with no such layer, is measured and flies as before.
+- [x] **R180 Drawing moves the hand smoothly (decided 2026-11-19)**: on a phone, the draw that started the hand
+      overlapping made it 2px shorter, and the board, keeping to its end, scrolled by as much. Measured from the
+      screen, every card on the board seemed to move, more than are ever animated at once, so none were and the
+      hand jumped. Measured from the board (R179), only the hand moves, and it animates.
+- [x] **R181 Portrait stats keep to the left (decided 2026-11-19)**: the stats in portrait's stats cards start at
+      the card's left rather than its middle, and the top card is closer to the top of the screen. Phone
+      landscape's column keeps its stats centred.
+- [x] **R182 A strip's cards keep together (decided 2026-11-19)**: portrait pushed the piles to the end of the
+      strip, leaving a gap after the hand on a wide board. They now follow the hand, the room left at the end.
+- [x] **R183 A first tap on a pile says a second opens it (decided 2026-11-19)**: on a phone, the name and count a
+      first tap shows have "Tap again to open" beneath them, for piles that open. The icons beside the name are
+      gone, as nothing else uses them.
+- [x] **Fixed (2026-11-19)**: the portrait prompt measured itself after every render and asked to be drawn again
+      even when nothing had changed, which could loop until React stopped it (the board vanished after a prompt
+      passed to another player in manual view). It now updates only on a real change.
+- [x] **R184 Phone landscape: the column's push no longer jitters (decided 2026-11-20)**: R166's push was set from
+      a scroll listener, so on a phone the cards were laid out a frame behind the (compositor-driven) scroll. The
+      play area's cards are now `position: sticky` against the column's edge, inside a box with the column's width
+      spare, which gives the same positions (checked at every scroll offset, joust and melee, prompt either side)
+      without any script while scrolling. `--push` is gone.
+- [x] **R185 Going between piles in a sheet eases (decided 2026-11-20)**: tapping another pile's chip fades the new
+      pile's cards in, and the sheet's height eases to theirs (200ms) rather than jumping. The body only scrolls once
+      settled, so no scroll bar flashes while it eases. Its width still changes at once (see the review below).
 
 - [x] `client/hud.js`: add `board: 'classic'` to `defaultHud`, and accept `'classic' | 'adaptive'` in
       `normalizeHud`.
@@ -732,27 +777,28 @@ client --include=*.js*` lists only `GameBoard.jsx`). The client builds, and the 
 
 New code goes under `client/Components/GameBoard/Adaptive/`:
 
-| File                          | Role                                                                                              |
-| ----------------------------- | ------------------------------------------------------------------------------------------------- |
-| `AdaptiveGameBoardLayout.jsx` | Lays out both sides for the current mode                                                          |
-| `useBoardLayout.js`           | Watches the board area and returns the mode and scales; sets `data-layout`                        |
-| `adaptiveScale.js`            | Pure functions: mode classification (with hysteresis) and per-mode scale fitting                  |
-| `PlayerStrip.jsx`             | One player's non-play row: plot/faction/agenda stack, piles cluster, opponent hand                |
-| `PileCluster.jsx`             | Deck, discard, dead, shadows and out of game as a compact cluster with counts                     |
-| `PlotFactionStack.jsx`        | Active plot with the faction and agenda peeking behind it                                         |
-| `OpponentHand.jsx`            | A short fan of card backs and a count                                                             |
-| `HandTray.jsx`                | Our hand along the bottom edge (fully shown, or peeking in `short`)                               |
-| `Scoreboard.jsx`              | The midline strip: opponent stats, then the prompt, then our stats                                |
-| `PromptBar.jsx`               | The phone prompt: phase, text, button chips, "More", and a waiting pill                           |
-| `BoardSheet.jsx`              | The edge-anchored sheet that replaces `MovablePanel` on the adaptive board                        |
-| `sheetStore.js`               | One sheet for each player, over their board, with chips for their piles (R175)                     |
-| `GameMenu.jsx`                | Settings, mute, manual mode, report, shortcuts, concede and leave                                 |
-| `DropTray.jsx`                | Drop targets for hidden piles (shadows, out of game) that appear over the board while dragging    |
-| `useAutoFollow.js`            | Scrolls the melee table to the board to show, and handles pausing and resuming                    |
-| `followTarget.js`             | Pure: the follow target from the players' state (active prompt, our selectable cards, seat order) |
-| `adaptive.css`                | Layout CSS keyed off `[data-layout]` (not needed yet: grid areas are inline)                      |
-| `useAdaptivePage.js`          | Page-level settings while the board shows: `viewport-fit=cover` and no overscroll                 |
-| `LeaveGameButton.jsx`         | Temporary Leave Game while the navbar is hidden; replaced by `GameMenu` in phase 4                |
+| File                          | Role                                                                                         |
+| ----------------------------- | -------------------------------------------------------------------------------------------- |
+| `AdaptiveGameBoardLayout.jsx` | Lays out joust and melee for the current mode; `StatsCard`, `FitRow` and the tool box        |
+| `useBoardLayout.js`           | Watches the board area and returns the mode and scales; sets `data-layout`                   |
+| `adaptiveScale.js`            | Pure functions: mode classification (with hysteresis) and per-mode scale fitting             |
+| `PileCluster.jsx`             | Deck, discard, dead, shadows and out of game as a compact cluster                            |
+| `PlotFactionStack.jsx`        | Plots, faction, agenda and title as a stack                                                  |
+| `HandTray.jsx`, `HandFan.jsx` | Our hand (portrait's row below our board), and a hand of backs fanned over a board           |
+| `ShadowsZone.jsx`             | Our shadows beside the hand                                                                  |
+| `Reveal.jsx`                  | Fades a part in and out                                                                      |
+| `PlayerStatsBar.jsx`          | A player's avatar and stats, as a bar or a stack                                             |
+| `PromptBar.jsx`               | The prompt: phase track, text, option chips; modes `panel` and `dock` (R178)                 |
+| `PhaseRoll.jsx`, `useLogFeed` | The phase track and the latest game-log lines shown in it                                    |
+| `ScrollArea.jsx`              | The board's scroll view, with its edge hints (R157, R165)                                    |
+| `BoardSheet.jsx`              | A pile's part in its player's sheet: portals its cards into it                               |
+| `SheetHost.jsx`               | Draws each player's sheet over their board (R175)                                            |
+| `sheetStore.js`               | One sheet per player, their open pile, and the piles offered as chips                        |
+| `GameMenu.jsx`                | Status, settings, spectators, manual mode, report, shortcuts, concede and leave              |
+| `FullscreenToggle.jsx`        | Full screen on and off                                                                       |
+| `useAutoFollow.js`            | Scrolls the melee table to the board to show, and handles pausing and resuming               |
+| `followTarget.js`             | Pure: the follow target from the players' state (active prompt, our selectable cards)        |
+| `useAdaptivePage.js`          | Page-level settings while the board shows: `viewport-fit=cover`, no overscroll, the keyboard |
 
 Outside `Adaptive/`: `client/boardLayoutStore.js` (the current mode, for the navbar) and `client/dev/`
 (the fixture page, development only).
@@ -760,15 +806,15 @@ Outside `Adaptive/`: `client/boardLayoutStore.js` (the current mode, for the nav
 Changes to shared components follow one rule: **add an optional prop or context whose default is the
 classic behaviour.** That leaves the classic board unchanged. The planned shared changes are:
 
-- [ ] Extract a `usePromptActions` hook from `ActivePlayerPrompt`, covering the fresh-press guard, the
+- [x] Extract a `usePromptActions` hook from `ActivePlayerPrompt`, covering the fresh-press guard, the
       Google form link, `pausesTimer`, keyboard shortcuts, lookups and the response-delay text.
       `ActivePlayerPrompt` must behave exactly as before.
-- [ ] Add a `PopupHostContext` (`'panel'` by default, `'sheet'` on the adaptive board). `CardPile`'s
+- [x] Add a `PopupHostContext` (`'panel'` by default, `'sheet'` on the adaptive board). `CardPile`'s
       popup and `Card`'s underneath popup render through a `PopupContainer` that picks
       `MovablePanel` or `BoardSheet`.
-- [ ] `PlayerBoard`: add an optional `overflow` prop (`'grow'` by default, as today, or
+- [x] `PlayerBoard`: add an optional `overflow` prop (`'grow'` by default, as today, or
       `'squish-then-scroll'`).
-- [ ] `SquishableCardPanel`: add an optional `fitWidth` that squishes to the width available instead
+- [x] `SquishableCardPanel`: add an optional `fitWidth` that squishes to the width available instead
       of to `maxCards`.
 
 ### Layout modes
@@ -810,8 +856,8 @@ change, because they measure the real elements.
 ### Play-area overflow, in order
 
 1. Fit: shrink `--card-scale` until the widest row fits, down to the readable minimum for the mode.
-2. Scroll: the whole board scrolls sideways as one, and each play area scrolls up and down on its own, with a
-   lit edge wherever there is more (R126, R148). Cards never overlap. Characters keep to one row and locations to
+2. Scroll: the whole board scrolls as one, both ways, with a lit edge wherever there is more (R150, R157).
+   Cards never overlap. Characters keep to one row and locations to
    another, except in phone landscape, where they share one line (R125). The page never scrolls.
 
 ## Layouts
@@ -820,39 +866,38 @@ change, because they measure the real elements.
 
 ```
 ┌───────────────────────────┐
-│ [plot▸fac▸ag]  ▭▭▭ 7  [piles]│  opponent strip (pile scale)
-│ opponent locations        │
-│ opponent characters       │  play areas (same card scale)
-│ ⚔9 ⛁3 │ CHALLENGES · Pass? │ ⛁5 ⚔7 │  scoreboard
-│ [   Pass   ] [ Military ▸ ]│  prompt buttons (chips)
-│ our characters            │
-│ our locations             │
-│ [plot▸fac▸ag]     [piles] │  our strip (pile scale)
-│ ▕hand  hand  hand  hand ▏ │  hand tray (hand scale, fully shown)
+│ [opponent stats card]     │  screen bar (outside the scroll)
+│ opponent strip            │ ┐
+│ opponent locations        │ │
+│ opponent characters       │ │ the board, scrolling as one, both ways (R150)
+│ ───────────────────────── │ │
+│ our characters            │ │
+│ our locations             │ │
+│ our strip                 │ │
+│ hand · shadows            │ ┘ (R153)
+│ [our stats card] [tools]  │  screen bar
+│ phase track · prompt      │  docked prompt, fixed height (R162, R178)
 └───────────────────────────┘
 ```
 
-- The hand is fully shown, because portrait has height to spare. Tapping still raises a card first,
-  as today.
-- The chat tab hangs from the top right, as now. The game menu sits beside it.
+- The prompt's options spill up over the board when they need more than one line, and draw back with a tap.
+- Piles open in their player's sheet, sliding from the board's outer edge (R175).
 
-### `short` (landscape)
+### `short` (phone landscape)
 
 ```
-┌──┬─────────┬──────────────────────────┬────────┐
-│op│plot▸fac │ opponent locations       │ piles  │
-│⚔⛁│         │ opponent characters      │ hand 7 │
-│──│─────────┼──────────────────────────┤ PROMPT │
-│me│         │ our characters           │ [btn]  │
-│⚔⛁│plot▸fac │ our locations            │ piles  │
-└──┴─────────┴──────────▁▁▁hand peek▁▁▁──┴────────┘
+┌────────┬──────────────────────────────────┐
+│ [their │ opponent strip                   │
+│ stats] │ opponent locations · characters  │  the board scrolls under the column;
+│ PROMPT │ ──────────────────────────────── │  its cards stick beside it (R166, R184)
+│ [tools]│ our characters · locations       │
+│ [our   │ our strip (hand included)        │
+│ stats] │                                  │
+└────────┴──────────────────────────────────┘
 ```
 
-- Height is scarce, so the stats go in a thin rail on the left (not the scoreboard). The prompt goes
-  in the right-hand column between the two pile clusters.
-- The hand tray peeks about 40% of a card's height. Tapping it raises the whole hand over the bottom
-  of the board, and tapping elsewhere lowers it. Dragging works from the peek.
-- The site navbar is hidden during a game. See the open questions.
+- The column is on the left or right (the HUD's prompt side). Characters and locations share one row (R125).
+- The site navbar is hidden during a game.
 
 ### Melee, on every layout
 
@@ -871,7 +916,7 @@ Decided 2026-11-18 (R149, R155): melee keeps classic's table.
   bottom-row boards at the bottom), staying in view as their board scrolls, as classic melee keeps them. In
   phone landscape these are the stat rows at the top and bottom of the column, one per board, handing over as
   boards scroll past. Joust keeps its own bars.
-- **Tools:** with no bar of our own at the screen's edge, the menu, full screen and chat go with the prompt.
+- **Tools:** pinned in the view's bottom corner beside our stats (R171); in the column in phone landscape.
 - **Hand:** ours stays with our board (below it in portrait, in our strip elsewhere).
 - **Titles:** each player's title card sits in their plot, faction and agenda stack, tapped to view.
 - **Auto-follow** (`followAction`, on by default):
@@ -892,7 +937,7 @@ Decided 2026-11-18 (R149, R155): melee keeps classic's table.
   `CardPile`, `DrawDeck`, `ActivePlayerPrompt` and `GameTimer`), never by importing classic
   `PlayerRow` or `SideBoardPanel`.
 - From this plan it gains the game menu. It keeps the classic full-size piles, and the navbar stays.
-  Popups use `MovablePanel` with a mouse, and sheets on a touch screen (tablet).
+  Piles open in sheets, as on phones (R175).
 
 ## Phases
 
@@ -1195,10 +1240,10 @@ zoom, hold and move to drag.
       strip fit one line (0.7–0.8, more on tall screens, never more than the cards in play). The
       opponent's strip, which also holds their hand, wraps onto a second line when it must. The two
       play areas are kept the same height (`useEqualPlayAreas`), however the strips wrap.
-- [ ] Acceptance: everything classic `PlayerStats` and the in-game navbar can do is reachable.
+- [x] Acceptance: everything classic `PlayerStats` and the in-game navbar can do is reachable.
       **Checked:** settings, shortcuts, mute, manual mode, report, concede, leave, and the stat
-      changes. **Not on the adaptive board yet:** the navbar's spectator list and the game server's
-      connection status.
+      changes. The navbar's spectator list and the game server's connection status are in the game menu
+      (R15).
 - Trade-off to judge: on a 390×844 phone, larger piles on a wrapped strip cost the play cards some
   size (0.9, down from 1.1).
 
@@ -1258,6 +1303,47 @@ zoom, hold and move to drag.
 - A manual check at every reference size and orientation, by switching between classic and adaptive
   mid-game.
 - Re-read this file and tick off or flag every item in the phase.
+
+## Review (2026-11-20)
+
+A review of the whole branch against `master`, and of this plan. Done without the user, so the assumptions are
+listed for them to check.
+
+**Changed in the review**
+
+- `FitRow` (stats cards) made a new `ResizeObserver` and read the layout on every render, i.e. every game update for
+  every stats card. It now observes once and re-measures on resize or the board's rescale event.
+- `GameMenu` drew its hidden row of buttons to measure even where it has no room for any (every layout but
+  desktop joust). It now only does so when given room.
+- Removed an unused export (`layoutModes`) and `export` from 16 names only used in their own files; the sheet's
+  slide time is defined once (`sheetStore.slideTime`); a duplicated `place()` effect in `SheetHost` removed.
+- Slimmed the long comments (the 4+ line blocks, and the verbose ones in `PromptBar` and
+  `AdaptiveGameBoardLayout`), and fixed comments left stale by R171 (where the chat button and tools are).
+- Phone landscape's column uses `tools()` (mirrored so the menu is against the screen's edge) rather than its own
+  copy of the tool box.
+- `ScrollArea`'s `useChoicesPast` re-checks only when a card gains or loses `ring-selectable` (or cards are added
+  or removed), not on every class change on the board.
+- This plan: the status line, "Rules that hold", the Files table (it listed files never made, such as
+  `Scoreboard.jsx` and `DropTray.jsx`, and missed `SheetHost`, `ScrollArea` and others), the overflow order, the
+  portrait and phone landscape sketches, and the melee and desktop notes now match the board as built.
+
+**Assumptions to check**
+
+- Sheet width is not animated when switching piles: only the height eases. Easing the width too would mean
+  measuring the cards' natural width, which fights phone landscape's single scrolling row. Say if you want it.
+- The height also eases when the open pile's own cards change (a card added or taken), not only on a switch.
+- Comments were slimmed to what is not obvious from the code. Ones I judged still useful at 1–2 lines were kept.
+- The R-items (R1–R185) are kept as the record. Most are ticked; they could move to an archive file to shorten
+  this plan, which I didn't do without asking.
+
+**Noticed, not changed**
+
+- Server: `DropCommand.promptPlotPlacement` moves the plot with `player.moveCard`, a legacy helper the engine
+  guide asks not to add uses of (manual-mode drops already use it). `pendingAttachments` is cleared each round
+  as a backstop for a prompt that ends without select or cancel.
+- R14, R75 and R77 were checked on the phone and resolved (2026-11-20); every R-item is now closed. Still open:
+  the checks that need a real phone or game (performance, plot reveal
+  and redeal flights, first-player selection).
 
 ## Open questions
 

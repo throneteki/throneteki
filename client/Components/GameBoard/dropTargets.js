@@ -1,4 +1,4 @@
-export const validTargets = {
+const validTargets = {
     hand: [
         'play area',
         'discard pile',

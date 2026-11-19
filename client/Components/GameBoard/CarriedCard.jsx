@@ -23,7 +23,7 @@ const cardUnit = () => {
 
 // Where a card placed underneath this stack will lie. The cards underneath are drawn after the card and its
 // attachments, peeking out below the last of them, each a sixth of a card further right than the one before.
-export const underneathSpot = (stack, carriedUuid) => {
+const underneathSpot = (stack, carriedUuid) => {
     const unit = cardUnit();
     const width = 4 * unit;
     const height = 5.6 * unit;

@@ -63,15 +63,10 @@ const useRoomBeside = (barRef, statsRef, avatarRef, enabled) => {
     return room;
 };
 
-// A player's power, gold and plot values as classic draws them, in a thin bar along the outside of their half of
-// the board, or stacked in a rail down the side of the screen where height is short. In manual mode our own stats
-// have +/- beside them, as in classic. children: anything else that belongs to the player, such as our game menu,
-// kept at the far end, outside the stats, which scroll sideways when the bar is too narrow for them. When children
-// is a function it is given how much room the stats leave, to fit itself into.
-// compact: the smaller size used on phone layouts
-// Stacked (vertical), columns lays the avatar and the stats out that many to a row, filling the last row with the
-// children; mirrored turns the stack upside down, for the player above the prompt.
-// showSeat: a badge of the player's seat number on the avatar, at a melee table
+// A player's avatar and stats, as a bar or (vertical) a stack. In manual mode our own stats get +/- as in classic.
+// children: kept at the bar's far end; as a function it is given the room the stats leave.
+// columns/mirrored: the stack's items per row, and drawn upside down for the player above the prompt.
+// showSeat: a seat-number badge on the avatar, at a melee table.
 const PlayerStatsBar = ({
     player,
     vertical = false,

@@ -17,9 +17,30 @@ export const flipConfig = {
 
 const plotDeckPrefix = 'plots:';
 
+// Where cards are measured from: the board's content, where the board scrolls as a whole (its flight layer, which
+// covers it), or else the screen. Measured from the board, a scroll (by hand, or the board keeping to its end as it
+// grows) moves no card, so only cards that really moved are animated. Measured once for each pass over the board.
+let originNow = null;
+const boardOrigin = () => {
+    if (!originNow) {
+        const layer = document.querySelector('[data-flight-layer]');
+        const rect = layer?.getBoundingClientRect();
+        originNow = rect ? { left: rect.left, top: rect.top } : { left: 0, top: 0 };
+        queueMicrotask(() => {
+            originNow = null;
+        });
+    }
+    return originNow;
+};
+
+const fromScreen = (rect) => {
+    const origin = boardOrigin();
+    return { ...rect, left: rect.left - origin.left, top: rect.top - origin.top };
+};
+
 const rectOf = (el) => {
     const rect = el.getBoundingClientRect();
-    return { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+    return fromScreen({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
 };
 
 // Cards go into and come off the top of a pile, which stands above the pile's outline when it is deep
@@ -54,7 +75,7 @@ export const setLandInPopup = (uuid) => {
     landInPopup = uuid;
 };
 
-export const measureCards = (root = document) => {
+const measureCards = (root = document) => {
     const cards = new Map();
     root.querySelectorAll('[data-flip]').forEach((el) => {
         const inPopup = !!el.closest('[data-popup]');
@@ -87,7 +108,7 @@ export const measureCards = (root = document) => {
     return cards;
 };
 
-export const measureDecks = (root = document) => {
+const measureDecks = (root = document) => {
     const decks = new Map();
     root.querySelectorAll('[data-flip-deck]').forEach((el) => {
         decks.set(el.dataset.flipDeck, topOfPile(el));
@@ -97,10 +118,8 @@ export const measureDecks = (root = document) => {
 
 const centre = (rect) => ({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
 
-// The one rule for what a card shows on its way from one place to another, whatever the two places are.
-// Each end is described the same way (where it is, the angle it lies at, the face it shows), and the
-// card turns over when the face differs and turns to the new angle when the angle differs. Kneeling,
-// standing, lying sideways in a pile and going facedown into a deck all come from this comparison.
+// What a card shows in flight: each end is described by its place, angle and face, and the card turns over when the
+// faces differ and rotates when the angles do. Kneeling, standing and going facedown into a deck all follow.
 export const changeBetween = (from, to, back = cardImageSrc('cardback')) => {
     const turnsOver = !!from.face && !!to.face && from.face !== to.face;
     // A facedown plot is drawn as an upright card back laid on its side, and a plot is drawn as it is.
@@ -458,8 +477,9 @@ export const setFlipIgnored = (uuid) => {
     ignored = uuid;
 };
 
+// The place a card was let go, as measured on the screen
 export const setDropOrigin = (origin) => {
-    dropOrigin = origin;
+    dropOrigin = origin?.rect ? { ...origin, rect: fromScreen(origin.rect) } : origin;
 };
 
 export const registerPile = (id, entry) => {
@@ -545,10 +565,9 @@ const bodyAround = (face) => {
     return body;
 };
 
-// Cards in flight are kept in one of two layers: above the board, or just below the cards on it, for a
-// card that comes from or goes under the card on top of a pile
-// The lower layer sits inside the area the piles are drawn in (marked data-flip-layers), so it is ordered
-// against the piles by z-index however the rest of the page stacks.
+// Cards in flight go in one of two layers: above the board, or below the cards on it (for a card passing under a
+// pile's top card, inside data-flip-layers so z-index orders it against the piles). The adaptive board's scrolling
+// content has its own upper layer (data-flight-layer), so flights scroll with the board.
 const hosts = {};
 const areaHosts = new WeakMap();
 const getHost = (behind, area) => {
@@ -556,13 +575,15 @@ const getHost = (behind, area) => {
         let inner = areaHosts.get(area);
         if (!inner?.isConnected) {
             inner = document.createElement('div');
-            inner.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:199';
+            inner.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:199';
             area.appendChild(inner);
             areaHosts.set(area, inner);
         }
-        const { left, top } = inner.getBoundingClientRect();
-        inner.style.transform = left || top ? `translate(${-left}px, ${-top}px)` : '';
         return inner;
+    }
+    const board = !behind && document.querySelector('[data-flight-layer]');
+    if (board) {
+        return board;
     }
 
     const name = behind ? 'behind' : 'above';
@@ -575,13 +596,17 @@ const getHost = (behind, area) => {
     return hosts[name];
 };
 
-// A card taken off the board to fly keeps the size it had there (rect.scale), not the size of the page around it
+// A card taken off the board to fly keeps the size it had there (rect.scale), not the size of the page around it.
+// It is placed in its layer where it was (measured from the board, as every card is).
 const detach = (el, rect, behind = false, area = null) => {
-    el.style.cssText += `;position:fixed;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;height:${rect.height}px;margin:0;transform:none`;
+    const host = getHost(behind, area);
+    const origin = host.getBoundingClientRect();
+    const board = boardOrigin();
+    el.style.cssText += `;position:absolute;left:${rect.left + board.left - origin.left}px;top:${rect.top + board.top - origin.top}px;width:${rect.width}px;height:${rect.height}px;margin:0;transform:none`;
     if (rect.scale) {
         el.style.setProperty('--card-scale', String(rect.scale));
     }
-    getHost(behind, area).appendChild(el);
+    host.appendChild(el);
 };
 
 // Whatever an animation put on the page goes once the animation is over, finished or cancelled: a later update
@@ -855,10 +880,8 @@ const slapKeyframes = (item) => {
     return [...lead, { ...end, offset: slapShare }, { ...end, offset: 1 }];
 };
 
-// A card that was being carried has no element of its own left on the board, so one is put together
-// from its face, as big as the card was on the screen. A card that lay on its side as an upright one
-// (a card back in a sideways pile) keeps its face turned inside, so the face can be swapped for a card
-// that is drawn on its side without being stretched.
+// A carried card has no element left on the board, so one is built from its face. A card back lying sideways keeps
+// its face rotated inside, so the face can be swapped for a sideways one without stretching.
 const buildGhost = ({ uuid, faceNode, rot }, rect) => {
     const surface = document.createElement('div');
     surface.dataset.cardSurface = '';
@@ -971,10 +994,9 @@ export const landingFrames = (item, point = landingPoint) =>
           ]
         : null;
 
-// Cards still on their way to a place are left to finish, so a later update never cuts a flight short
-// A card landing inside an area that cuts off what spills out of it (marked data-clips, such as a play area
-// that scrolls) would be cut off on its way in. A copy flies above the page instead, and the card shows once the
-// copy has landed. The copy loses its flip markers, so the board never measures it as a card.
+// Cards still in flight are left to finish, so a later update never cuts a flight short.
+// A card landing inside a clipping area (data-clips) would be cut off on its way in, so a copy flies above it instead
+// and the card shows once it lands. The copy loses its flip markers, so it is never measured as a card.
 const flyAbove = (el) => {
     if (!el.closest('[data-clips]')) {
         return { target: el, settle: () => {} };

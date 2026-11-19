@@ -1,12 +1,10 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { SheetContext } from '../PopupContainer';
-import { defaultLayout, sheetKeyOf, sheetStore, useSheetState } from './sheetStore';
+import { defaultLayout, sheetKeyOf, sheetStore, slideTime, useSheetState } from './sheetStore';
 
 const plotSources = ['plot deck', 'revealed plots'];
 const ignoreEvent = { preventDefault: () => {}, stopPropagation: () => {} };
-// As long as the sheet takes to slide away (SheetHost)
-const slideTime = 220;
 
 // A pile's part in its player's sheet (SheetHost): while open it asks to be shown, and draws its cards into the
 // sheet's body. The sheet draws the frame, so going from pile to pile only changes what is inside it.

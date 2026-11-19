@@ -374,6 +374,7 @@ const CardPile = ({
             label={headerText}
             count={title ? retCardCount : undefined}
             inspectable={!!title}
+            opens={!disablePopup}
             upright={orientation !== 'horizontal'}
             inspectSkip={
                 topCardHasAction || isTopCardSelectable || !!cards?.some((card) => card.selectable)

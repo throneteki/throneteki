@@ -89,7 +89,7 @@ const useCounterMotion = (id, value, countsUp) => {
 };
 
 // The colour each kind of counter is drawn in
-export const counterColours = (name) => ({
+const counterColours = (name) => ({
     'bg-success-100/85': name === 'dupe',
     'bg-red-800/85': name === 'strength' || name === 'blood',
     'bg-blue-900/85': name === 'card-power',

@@ -56,11 +56,9 @@ const setQuery = (fixture, board) => {
     window.history.replaceState(window.history.state, '', url);
 };
 
-// Development only: the real game board, showing a canned game state, at /dev/board?fixture=crowded&board=adaptive
-// (&manual=1 for dragging, &spectate=1 to watch, &prompt=right for the prompt on the right, &players=3..6 for how
-// many sit at a melee fixture, &panel=0 to hide this
-// panel). The steps change the game as a
-// server would, to see cards move between zones.
+// Development only: the real game board with a canned state, at /dev/board?fixture=crowded&board=adaptive
+// (&manual=1, &spectate=1, &prompt=right, &players=3..6 for melee fixtures, &panel=0 to hide this panel). The steps
+// change the game as a server would, to see cards move.
 const DevBoard = ({
     fixture: initialFixture,
     board: initialBoard,

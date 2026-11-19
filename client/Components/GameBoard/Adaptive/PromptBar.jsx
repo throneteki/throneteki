@@ -8,6 +8,7 @@ import {
     faChevronDown,
     faChevronUp,
     faForwardStep,
+    faHandPointer,
     faXmark
 } from '@fortawesome/free-solid-svg-icons';
 import ThronesIcon from '../ThronesIcon';
@@ -90,9 +91,8 @@ const LogText = ({ entry, hurry, onHold }) => {
     );
 };
 
-// The phase track, or the game log's newest line in its place: the track fades out while a line shows and comes
-// back after. Tapping the line goes on to the next one; the skip button beside it, showing how many more wait,
-// puts the track back straight away.
+// The phase track, giving way to the game log's newest line while one shows. Tapping a line moves to the next; the
+// skip button brings the track back.
 const PhaseOrLog = ({ phase, feed, className }) => (
     <div className={classNames('relative', className)}>
         <PhaseRoll
@@ -179,8 +179,7 @@ const useSelection = (active) => {
     }, [active, players]);
 };
 
-// The divider's buttons: dark, with a thin gold edge and cream small capitals; a way out (cancel, pass) is grey,
-// as on the classic board. With a pointer over it, it lights up.
+// An option's style; a way out (cancel) is grey, as on the classic board
 const chipClass = (quiet) =>
     classNames(
         'min-w-0 gap-1 rounded-md border px-2 text-[11px] font-semibold uppercase tracking-wide shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-[background-color,border-color,color,box-shadow] duration-150 data-[pressed=true]:bg-amber-400/20 data-[disabled=true]:opacity-40',
@@ -214,9 +213,8 @@ const Chip = ({ button, onPress, fullWidth = false }) => {
     return button.card ? <CardHoverable code={button.card.code}>{chip}</CardHoverable> : chip;
 };
 
-// The buttons as chips, on up to maxRows lines, when they all fit (stacked: each on a line of its own, the full width). When they do not, none show here (only children,
-// if any): the options open in a panel over our board instead (onOverflow, once for each prompt), and a button hides
-// and shows them again. Whether they fit is told to onFitChange, so that button can go beside the prompt's text.
+// The buttons as chips on up to maxRows lines (stacked: one full-width chip per line). When they don't fit, none
+// show and onOverflow opens them in a panel instead; onFitChange reports whether they fit.
 const ChipRows = ({
     buttons,
     chipsKey,
@@ -295,8 +293,7 @@ const ChipRows = ({
     );
 };
 
-// Every button and control of the prompt, in a panel along the bottom of the screen. It stays below the divider,
-// which shows the question, so the question is not repeated here.
+// Every option of the prompt, in a panel along the bottom of the screen (the question stays in the bar)
 const MorePanel = ({ buttons, onPress, onClose, children }) => (
     <div
         className='fixed inset-x-0 bottom-0 z-[320] flex flex-col rounded-t-lg border-t border-default-200 bg-black/90 pb-[var(--safe-bottom)] hud-zoom'
@@ -329,10 +326,78 @@ const Rule = ({ vertical = false }) => (
     />
 );
 
-// The round's phases along the top edge of the divider, rolling along as the game moves on, giving way to the
-// game log's new lines. Inline, it sits at the
-// start of the divider's one row instead of taking a line of its own.
-const PhaseTrack = ({ phase, feed, inline = false, inPanel = false, start, end }) => {
+// Seconds the line rests at each end before scrolling, and how fast it scrolls (pixels a second)
+const lineRest = 1.6;
+const lineSpeed = 18;
+
+// Text kept to one line's height, scrolling up through the rest and back by itself, resting at each end. With
+// motion off it scrolls by hand instead.
+const OneLine = ({ lines, children }) => {
+    const boxRef = useRef(null);
+    const innerRef = useRef(null);
+    const [over, setOver] = useState(0);
+    useLayoutEffect(() => {
+        const box = boxRef.current;
+        const inner = innerRef.current;
+        if (!lines || !box || !inner) {
+            return;
+        }
+        const measure = () => {
+            const next = Math.max(0, inner.offsetHeight - box.clientHeight);
+            setOver((current) => (Math.abs(current - next) < 1 ? current : next));
+        };
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(box);
+        observer.observe(inner);
+        return () => observer.disconnect();
+    }, [lines]);
+    if (!lines) {
+        return <div>{children}</div>;
+    }
+    // Only the setting, not motionOff()'s moments without motion (a page loading), which would leave it still
+    const still = document.documentElement.dataset.motion === 'off';
+    const travel = Math.max(1, over / lineSpeed);
+    const total = lineRest * 2 + travel * 2;
+    return (
+        <div
+            ref={boxRef}
+            data-prompt-line=''
+            data-scrolls={over > 1 ? '' : undefined}
+            className={classNames(
+                still ? 'overflow-y-auto [scrollbar-width:none]' : 'overflow-hidden'
+            )}
+            style={{ maxHeight: '1.375em' }}
+        >
+            <motion.div
+                ref={innerRef}
+                animate={over > 1 && !still ? { y: [0, 0, -over, -over, 0] } : { y: 0 }}
+                transition={
+                    over > 1 && !still
+                        ? {
+                              duration: total,
+                              times: [
+                                  0,
+                                  lineRest / total,
+                                  (lineRest + travel) / total,
+                                  (lineRest * 2 + travel) / total,
+                                  1
+                              ],
+                              ease: 'easeInOut',
+                              repeat: Infinity
+                          }
+                        : { duration: 0 }
+                }
+            >
+                {children}
+            </motion.div>
+        </div>
+    );
+};
+
+// The round's phases, giving way to new log lines. inline: at the start of the bar's row rather than on its own line.
+// beside: shown on each side of it (the dock's chevrons).
+const PhaseTrack = ({ phase, feed, inline = false, inPanel = false, start, end, beside }) => {
     if (inline) {
         return <PhaseOrLog phase={phase} feed={feed} className='w-40 shrink-0' />;
     }
@@ -343,20 +408,19 @@ const PhaseTrack = ({ phase, feed, inline = false, inPanel = false, start, end }
             })}
         >
             <div className='flex min-w-0 flex-1 justify-start'>{start}</div>
+            {beside}
             <PhaseOrLog phase={phase} feed={feed} className='w-[min(100%,36rem)] shrink' />
+            {beside}
             <div className='flex min-w-0 flex-1 justify-end'>{end}</div>
         </div>
     );
 };
 
-// The prompt: the phase track along its top, what to do and the buttons as chips beneath, and anything more in a
-// panel. While waiting on someone else it is one line. Narrow, the text and the chips each take a line; wider, they
-// share one. As a panel at the side of the board (mode 'panel'), it is laid out as narrow, its chips wrapping onto a
-// few lines before they give way to the options panel. Docked below our hand in portrait (mode 'dock'), it shows
-// every option, keeping the room of one line of them and reaching up over the board for the rest, and folds away
-// from the tab on its top edge. allOptions: every option shows as a chip, however many lines they take (phone
-// landscape's column, which scrolls the prompt when it outgrows it). stackOptions: every option on a line of its own,
-// the full width (the desktop's panel, as on the classic board).
+// The prompt: the phase track, the prompt's text, and its buttons as chips.
+// mode 'panel': beside the board, laid out narrow. mode 'dock': portrait's bottom bar, which keeps a fixed height (one
+// line of text, scrolling when longer, and one line of chips) so it never resizes the board; more options spill up
+// over the board, and can be drawn back by tapping the bar anywhere but a button.
+// allOptions: every option as a chip (phone landscape's column). stackOptions: one full-width option per line (desktop).
 const PromptBar = ({
     className,
     mode,
@@ -391,8 +455,7 @@ const PromptBar = ({
     useEffect(() => {
         setMoreOpen(needsInput);
     }, [promptKey, needsInput]);
-    // Options too many for the divider open in a panel over our board, by themselves for each new prompt, and stay
-    // until hidden or chosen from. Open for one prompt is closed for the next.
+    // Options that don't fit open in a panel by themselves, once per prompt, until hidden or chosen from
     const chipsKey = buttons.map((button) => `${button.promptId}:${button.text}`).join('|');
     const [openFor, setOpenFor] = useState(null);
     const [chipsFit, setChipsFit] = useState(true);
@@ -407,25 +470,11 @@ const PromptBar = ({
         }
     }, []);
     const barRef = useRef(null);
-    const [folded, setFoldedState] = useState(false);
-    const foldedRef = useRef(folded);
-    foldedRef.current = folded;
-    // Folding and unfolding animate its height, during which what it would keep below the hand is left as it was.
-    // Marked here rather than when the animation starts, which is after the room is measured for the new state.
-    const folding = useRef(false);
-    const setFolded = useCallback((next) => {
-        if (next !== foldedRef.current) {
-            folding.current = true;
-            setFoldedState(next);
-        }
-    }, []);
-    // A new prompt to answer unfolds it
-    const asks = buttons.length > 0 || panelControls.length > 0;
+    // Docked: whether the options past their first line are drawn back. Reset for each new prompt.
+    const [retracted, setRetracted] = useState(false);
     useEffect(() => {
-        if (asks) {
-            setFolded(false);
-        }
-    }, [promptKey, asks, setFolded]);
+        setRetracted(false);
+    }, [promptKey]);
 
     const narrow = mode === 'narrow';
     const short = mode === 'short';
@@ -433,38 +482,97 @@ const PromptBar = ({
     const dock = mode === 'dock';
     const stacked = narrow || inPanel || dock;
     const [room, setRoom] = useState(null);
-    const keeps = useRef(null);
-    const [settled, setSettled] = useState(0);
-    // Docked, it keeps the room it needs with one line of options, and the lines past that lie over the board
+    const chipsClipRef = useRef(null);
+    const chipsLayerRef = useRef(null);
+    const hintRef = useRef(null);
+    // Docked: the room it keeps (the same drawn back or out, so the board never moves), whether the options spill
+    // past one line, and the heights of the options and of the hint. The bar is zoomed, so heights set inside it
+    // are divided by its zoom.
+    const [spill, setSpill] = useState({ over: false, full: null, hint: null });
+    // Measured after every render, so only a real change may set state, or it loops
+    const roomNow = useRef(null);
+    const spillNow = useRef(spill);
     useLayoutEffect(() => {
         const bar = barRef.current;
+        const clip = chipsClipRef.current;
         if (!dock || !bar) {
             return;
         }
-        const measure = () => {
-            const height = bar.getBoundingClientRect().height;
-            const body = bar.querySelector('[data-prompt-body]');
-            if (body && !folded && !folding.current) {
-                const chips = body.querySelector('[data-prompt-chips]');
-                const first = chips?.firstElementChild;
-                const extra =
-                    chips && first
-                        ? Math.max(
-                              0,
-                              chips.getBoundingClientRect().height -
-                                  first.getBoundingClientRect().height
-                          )
-                        : 0;
-                keeps.current = height - extra;
+        const close = (a, b) => a !== null && b !== null && Math.abs(a - b) < 0.5;
+        const keepRoom = (next) => {
+            if (roomNow.current === null || Math.abs(roomNow.current - next) >= 1) {
+                roomNow.current = next;
+                setRoom(next);
             }
-            const next = Math.round(Math.min(height, keeps.current ?? height));
-            setRoom((current) => (current === next ? current : next));
+        };
+        const keepSpill = (next) => {
+            const current = spillNow.current;
+            const same =
+                current.over === next.over &&
+                (next.full === null
+                    ? current.full === null
+                    : close(current.full, next.full) && close(current.hint, next.hint));
+            if (!same) {
+                spillNow.current = next;
+                setSpill(next);
+            }
+        };
+        const measure = () => {
+            const zoom = parseFloat(getComputedStyle(bar).zoom) || 1;
+            const height = bar.getBoundingClientRect().height;
+            const layer = chipsLayerRef.current;
+            const chips = layer?.querySelector('[data-prompt-chips]');
+            const first = chips?.firstElementChild;
+            if (!clip || !layer || !chips || !first) {
+                keepRoom(Math.round(height));
+                if (spillNow.current.over) {
+                    keepSpill({ over: false, full: null, hint: null });
+                }
+                return;
+            }
+            const over =
+                chips.getBoundingClientRect().bottom - first.getBoundingClientRect().bottom > 1;
+            const fullPx = layer.getBoundingClientRect().height;
+            const hintPx = hintRef.current?.getBoundingClientRect().height ?? 0;
+            const around = height - clip.getBoundingClientRect().height;
+            const next = Math.round(around + (over ? hintPx : fullPx));
+            keepRoom(next);
+            keepSpill({ over, full: fullPx / zoom, hint: hintPx / zoom });
         };
         measure();
         const observer = new ResizeObserver(measure);
         observer.observe(bar);
+        if (chipsLayerRef.current) {
+            observer.observe(chipsLayerRef.current);
+        }
         return () => observer.disconnect();
-    }, [dock, settled, folded]);
+    });
+    const drawnBack = dock && spill.over && retracted;
+    // A tap on the docked prompt, anywhere but something to press, draws its options back or out again
+    const toggleSpill = (event) => {
+        if (
+            !dock ||
+            !spill.over ||
+            event.target.closest(
+                'button, a, input, select, textarea, [role="button"], [role="menuitem"]'
+            )
+        ) {
+            return;
+        }
+        setRetracted((current) => !current);
+    };
+    const spillMotion = { duration: motionOff() ? 0 : 0.25, ease: 'easeInOut' };
+    const chevrons = dock && spill.over && (
+        <FontAwesomeIcon
+            icon={faChevronUp}
+            aria-hidden
+            data-prompt-spill={retracted ? 'back' : 'out'}
+            className={classNames(
+                'shrink-0 text-[10px] text-default-400 transition-transform duration-300 ease-in-out',
+                { 'rotate-180': !retracted }
+            )}
+        />
+    );
     const waiting = buttons.length === 0 && panelControls.length === 0 && !selection;
     const messages = useSelector((state) => state.lobby.currentGame?.messages);
     const feed = useLogFeed(messages);
@@ -478,6 +586,8 @@ const PromptBar = ({
         <div
             className={classNames(
                 'text-center leading-snug',
+                // Docked, a fixed height whatever it says
+                dock && 'flex h-8 flex-col justify-center overflow-hidden',
                 stacked ? null : 'max-w-[45%] flex-initial',
                 stacked ? 'min-w-0' : 'min-w-[11rem]',
                 {
@@ -491,19 +601,19 @@ const PromptBar = ({
                     {promptTitle}
                 </div>
             )}
-            <div>
+            {/* Docked, the prompt keeps its height whatever it says: longer text scrolls through one line */}
+            <OneLine lines={dock}>
                 {promptText}
                 {selection && selection.selected > 0 && (
                     <span className='ml-2 whitespace-nowrap rounded-full bg-warning px-2 text-tiny font-bold text-black'>
                         {`${selection.selected} selected`}
                     </span>
                 )}
-            </div>
+            </OneLine>
         </div>
     );
     const corner = <div className='flex shrink-0 items-center gap-1'>{timer}</div>;
-    // The button that hides and shows options too many for the divider. In portrait it goes beside the prompt's
-    // text rather than taking a line of its own.
+    // The button that hides and shows the options panel; in portrait, beside the prompt's text
     const optionsToggle = !chipsFit && buttons.length > 0 && (
         <Button
             type='button'
@@ -563,44 +673,6 @@ const PromptBar = ({
         </div>
     );
 
-    const foldTab = dock && (
-        <button
-            type='button'
-            data-prompt-fold=''
-            aria-expanded={!folded}
-            title={folded ? 'Show the prompt' : 'Hide the prompt'}
-            onClick={() => setFolded(!folded)}
-            className='absolute left-1/2 top-0 z-10 flex h-4 w-12 -translate-x-1/2 -translate-y-full items-center justify-center rounded-t-md border border-b-0 border-default-200/60 bg-black/60 text-[9px] text-default-300 hover:text-white'
-        >
-            <FontAwesomeIcon icon={folded ? faChevronUp : faChevronDown} />
-        </button>
-    );
-    // The whole prompt and its folded line both stay, one shrinking away as the other grows
-    const foldMotion = (shown) => ({
-        initial: false,
-        animate: shown ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 },
-        transition: { duration: motionOff() ? 0 : 0.25, ease: 'easeInOut' },
-        onAnimationStart: () => {
-            folding.current = true;
-        },
-        onAnimationComplete: () => {
-            folding.current = false;
-            setSettled((count) => count + 1);
-        }
-    });
-    const foldedLine = (
-        <div className='flex min-w-0 items-center gap-2 px-2 py-0.5 text-xs'>
-            <span
-                className={classNames('min-w-0 flex-1 truncate text-center', {
-                    'italic text-default-500': waiting
-                })}
-            >
-                {promptText}
-            </span>
-            {corner}
-        </div>
-    );
-
     const body = (
         <>
             {!short && (
@@ -611,6 +683,7 @@ const PromptBar = ({
                         inPanel={inPanel || dock}
                         start={startOfTrack}
                         end={endOfTrack}
+                        beside={chevrons}
                     />
                     <Rule />
                 </>
@@ -630,7 +703,52 @@ const PromptBar = ({
                             <div className='justify-self-end'>{corner}</div>
                         </div>
                     )}
-                    {chips}
+                    {dock ? (
+                        // Drawn back, the options cross-fade with a hint to tap, as the height slides
+                        <motion.div
+                            ref={chipsClipRef}
+                            data-prompt-clip=''
+                            className='relative overflow-hidden'
+                            initial={false}
+                            animate={{
+                                height:
+                                    spill.over && spill.full !== null
+                                        ? drawnBack
+                                            ? spill.hint
+                                            : spill.full
+                                        : 'auto'
+                            }}
+                            transition={spillMotion}
+                        >
+                            <motion.div
+                                ref={chipsLayerRef}
+                                className={classNames('flow-root', {
+                                    'pointer-events-none': drawnBack
+                                })}
+                                aria-hidden={drawnBack}
+                                initial={false}
+                                animate={{ opacity: drawnBack ? 0 : 1 }}
+                                transition={spillMotion}
+                            >
+                                {/* With nothing to choose, the line of options is kept, empty */}
+                                {chips || <div aria-hidden className='h-8' />}
+                            </motion.div>
+                            <motion.div
+                                ref={hintRef}
+                                data-prompt-hint=''
+                                aria-hidden={!drawnBack}
+                                className='pointer-events-none absolute inset-x-0 top-0 flex h-8 items-center pt-1 justify-center gap-1.5 text-xs text-amber-200/90'
+                                initial={false}
+                                animate={{ opacity: drawnBack ? 1 : 0 }}
+                                transition={spillMotion}
+                            >
+                                <FontAwesomeIcon icon={faHandPointer} className='animate-pulse' />
+                                {`Tap to see the ${buttons.length} options`}
+                            </motion.div>
+                        </motion.div>
+                    ) : (
+                        chips
+                    )}
                 </div>
             ) : (
                 <div
@@ -656,34 +774,19 @@ const PromptBar = ({
             ref={barRef}
             data-prompt-bar=''
             className={classNames(
-                'hud-zoom relative w-full border-y border-default-200/60 bg-black/60',
+                'hud-zoom relative w-full border-y border-default-200/60',
+                dock && spill.over ? null : 'bg-black/60',
                 // Docked at the bottom of the screen, it fills the gesture area below it
-                { 'pb-[var(--safe-bottom)]': dock },
+                {
+                    'pb-[var(--safe-bottom)]': dock,
+                    // Spilling over the board, it hides what it lies over
+                    'cursor-pointer bg-zinc-950/95': dock && spill.over
+                },
                 className
             )}
+            onClick={toggleSpill}
         >
-            {foldTab}
-            {dock ? (
-                <>
-                    <motion.div
-                        data-prompt-body=''
-                        aria-hidden={folded}
-                        className='overflow-hidden'
-                        {...foldMotion(!folded)}
-                    >
-                        {body}
-                    </motion.div>
-                    <motion.div
-                        aria-hidden={!folded}
-                        className='overflow-hidden'
-                        {...foldMotion(folded)}
-                    >
-                        {foldedLine}
-                    </motion.div>
-                </>
-            ) : (
-                body
-            )}
+            {body}
             <AnimatePresence initial={false}>
                 {optionsOpen && (
                     <motion.div

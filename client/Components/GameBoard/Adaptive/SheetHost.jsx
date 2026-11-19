@@ -6,9 +6,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useDragSource } from '../dragStore';
 import { motionOff } from '../../../flip';
-import { pilesOf, sheetStore, useSheetState } from './sheetStore';
+import { pilesOf, sheetStore, slideTime, useSheetState } from './sheetStore';
 
-const slideTime = 220;
+// Going from pile to pile: the body eases to the new pile's height as its cards fade in
+const resizeTime = 200;
 
 const chipFade = ({ start, end }) => {
     if (!start && !end) {
@@ -28,8 +29,8 @@ const margin = 8;
 // The header's height, near enough, for sizing the cards to what is left
 const headerPx = 36;
 
-// The cards' size and how many fit across the room a sheet may take: in phone landscape, where height is short, one
-// row as tall as the room allows, scrolling sideways; elsewhere at a size that reads well, as many to a row as fit
+// The cards' scale and columns for a sheet's room: one row as tall as fits in phone landscape (row), else a readable
+// size with as many columns as fit
 const sizeFor = ({ width, height }, row, rem) => {
     const free = width - paddingRem * 2 * rem;
     if (row) {
@@ -87,13 +88,9 @@ const PlayerTag = ({ player }) => (
     </span>
 );
 
-// A player's sheet, for looking into one of their piles: it slides out from their board's outer edge in view (the
-// top of a board in the top row, the bottom of one in the bottom row), as big as its cards need, up to the room the
-// board has in view, and across the middle of what of the board is in view. It keeps to its board as the table
-// scrolls, leaving the screen with it, cut off where the board's view ends, never over the site's own bar above it.
-// The pile draws its cards into it; going to another of the player's piles only changes what is inside. It closes
-// with its button, by tapping its pile again, or (on a phone) by swiping its handle towards its edge. Picking a card
-// up out of it shrinks it to its header, out of the way, until the card is put down.
+// A player's sheet: slides out from their board's outer edge, sized to its cards up to the board's visible room, and
+// centred on the visible part of the board. It is clipped to the board's view as the table scrolls. Closes with its
+// button, its pile, or (phones) a swipe on the handle; shrinks to its header while a card from it is carried.
 const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
     const row = mode === 'short';
     const phone = mode !== 'wide';
@@ -125,9 +122,7 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
         });
     }, [sheetKey, strip, row, size]);
 
-    // Kept over its board as the board moves, without drawing again: only its place and size change. The box it
-    // slides out of spans the board, and what of it is in view up and down; the sheet keeps across the middle of
-    // what of the board is in view.
+    // Placed by style rather than state, so following the board as it scrolls never re-renders
     const place = useCallback(() => {
         const frame = frameRef.current;
         const box = boxRef.current;
@@ -185,9 +180,6 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
     useLayoutEffect(() => {
         place();
     });
-    useLayoutEffect(() => {
-        place();
-    });
     useEffect(() => {
         let frame = null;
         const soon = () => {
@@ -215,6 +207,64 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
             }
         };
     }, [place, sheet]);
+
+    // The body is held to its cards' height, so a change of pile can ease from one height to the next. It only
+    // scrolls once settled, so no scroll bar shows while it eases.
+    const bodyRef = useRef(null);
+    const contentRef = useRef(null);
+    const bindContent = useCallback(
+        (node) => {
+            contentRef.current = node;
+            setContent(node);
+        },
+        [setContent]
+    );
+    useLayoutEffect(() => {
+        const body = bodyRef.current;
+        const content = contentRef.current;
+        if (!body || !content) {
+            return;
+        }
+        let last = 0;
+        let settle = null;
+        const fit = () => {
+            const next = content.offsetHeight;
+            if (next === last) {
+                return;
+            }
+            const ease = last > 0 && next > 0 && !motionOff();
+            last = next;
+            clearTimeout(settle);
+            body.style.transition = ease ? `height ${resizeTime}ms ease-out` : 'none';
+            body.style.overflowY = ease ? 'hidden' : '';
+            body.style.height = `${next}px`;
+            if (ease) {
+                settle = setTimeout(() => {
+                    body.style.overflowY = '';
+                }, resizeTime);
+            }
+        };
+        fit();
+        const observer = new ResizeObserver(fit);
+        observer.observe(content);
+        return () => {
+            observer.disconnect();
+            clearTimeout(settle);
+        };
+    }, []);
+    const shownId = useRef(sheet.id);
+    useLayoutEffect(() => {
+        if (shownId.current === sheet.id) {
+            return;
+        }
+        shownId.current = sheet.id;
+        if (!motionOff()) {
+            contentRef.current?.animate([{ opacity: 0 }, { opacity: 1 }], {
+                duration: resizeTime,
+                easing: 'ease-out'
+            });
+        }
+    }, [sheet.id]);
 
     // A card picked up from the sheet is carried over the board, so the sheet gets out of its way
     const pressedInside = useRef(false);
@@ -390,12 +440,14 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
                     </Button>
                 </div>
                 <div
-                    ref={setContent}
-                    className={classNames('min-h-0 flex-1 overflow-y-auto overflow-x-hidden', {
+                    ref={bodyRef}
+                    className={classNames('min-h-0 shrink overflow-y-auto overflow-x-hidden', {
                         hidden: strip
                     })}
                     style={size ? { '--card-scale': String(size.scale) } : undefined}
-                />
+                >
+                    <div ref={bindContent} />
+                </div>
             </div>
         </div>,
         document.querySelector('[data-overlay-container="true"]') || document.body

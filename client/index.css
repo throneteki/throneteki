@@ -349,9 +349,8 @@ html[data-board-layout='narrow'],
 html[data-board-layout='short'] {
     @mixin chat-phone;
 
-    /* A chat button in the opponent's bar (or the prompt's column) opens the chat instead of the tab, which would cover
-       the board. Open, the chat fills the screen below that bar (beside the column), which stays above it with the
-       button in the same place, down to what the phone's keyboard leaves where the browser says. */
+    /* The chat button among our tools opens the chat instead of the tab, which would cover the board. Open, it fills
+       the screen down to the tools (--board-chat-bottom) or what the keyboard leaves. */
     .chat-lip,
     .chat-dim {
         display: none;

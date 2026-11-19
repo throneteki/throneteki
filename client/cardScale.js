@@ -1,5 +1,5 @@
-export const autoMinScale = 0.5;
-export const autoMaxScale = 2;
+const autoMinScale = 0.5;
+const autoMaxScale = 2;
 const autoStep = 0.05;
 
 // Space the board needs at scale 1 (in rem), including the parts that do not scale with cards

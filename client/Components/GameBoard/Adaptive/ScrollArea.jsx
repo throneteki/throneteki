@@ -16,11 +16,8 @@ const hints = {
     }
 };
 
-// Shows that there is more to see past this edge: the edge lit and a light fade over the cards, fading in and out
-// as the edge gains and loses more past it. When a card that can be chosen lies past it (choose), the edge is lit
-// as that card's ring is, the one fading into the other. Anything kept along the top or bottom of the view
-// (--board-hint-top and -bottom) moves those edges in past it, and the sideways edges stop at it, so the four meet
-// at the corners of what is left.
+// Marks an edge with more past it. choose: a selectable card lies past it, so the edge takes the selection colour.
+// The top and bottom edges sit inside anything kept along the view's top and bottom (--board-hint-top/-bottom).
 const insetAt = {
     y: {
         start: { top: 'var(--board-hint-top, 0px)' },
@@ -31,7 +28,7 @@ const insetAt = {
         end: { top: 'var(--board-hint-top, 0px)', bottom: 'var(--board-hint-bottom, 0px)' }
     }
 };
-export const MoreHint = ({ show, choose, end, axis }) => {
+const MoreHint = ({ show, choose, end, axis }) => {
     const [place, line] = hints[end][axis];
     const kind = !show ? null : choose ? 'choose' : 'more';
     return (
@@ -105,12 +102,25 @@ const useChoicesPast = (ref, contentRef) => {
         const observer = new ResizeObserver(soon);
         observer.observe(area);
         observer.observe(content);
-        const mutations = new MutationObserver(soon);
+        const selectable = (classes) => /(^|\s)ring-selectable(\s|$)/.test(classes ?? '');
+        const mutations = new MutationObserver((records) => {
+            if (
+                records.some(
+                    (record) =>
+                        record.type === 'childList' ||
+                        selectable(record.oldValue) !==
+                            selectable(record.target.getAttribute('class'))
+                )
+            ) {
+                soon();
+            }
+        });
         mutations.observe(content, {
             subtree: true,
             childList: true,
             attributes: true,
-            attributeFilter: ['class']
+            attributeFilter: ['class'],
+            attributeOldValue: true
         });
         area.addEventListener('scroll', soon, { passive: true });
         return () => {
@@ -131,7 +141,7 @@ const sides = {
 };
 
 // Whether an element scrolled along an axis has more to see before its start and past its end
-export const useScrollEdges = (ref, axis, contentRef) => {
+const useScrollEdges = (ref, axis, contentRef) => {
     const [more, setMore] = useState({ start: false, end: false });
     useLayoutEffect(() => {
         const area = ref.current;
@@ -165,11 +175,8 @@ export const useScrollEdges = (ref, axis, contentRef) => {
     return more;
 };
 
-// An area that scrolls when what it holds does not fit, up and down (axis 'y'), sideways ('x') or both, marking
-// the edges with more past them. Anchored to the end, it stays scrolled to the end (the bottom, scrolling both ways)
-// as it grows, unless it has been scrolled away from there. It cuts off what spills past it, so it is marked for
-// cards to fly into it above the page (data-clips). What it holds is given the width in view as --scroll-view-width,
-// for anything that keeps still in it as it scrolls sideways.
+// Scrolls on axis 'x', 'y' or 'both', marking edges with more past them. anchor 'end' keeps it scrolled to the end
+// as it grows, unless scrolled away. Marked data-clips for flip.js. Sets --scroll-view-width on its content.
 const ScrollArea = ({ anchor = 'start', axis = 'y', className, contentClassName, children }) => {
     const ref = useRef(null);
     const contentRef = useRef(null);

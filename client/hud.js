@@ -3,11 +3,11 @@ const sizeKinds = {
     interface: { presets: { small: 0.85, normal: 1, large: 1.2 }, min: 0.6, max: 2 }
 };
 
-export const hudKinds = Object.keys(sizeKinds);
+const hudKinds = Object.keys(sizeKinds);
 export const hudSizeNames = ['small', 'normal', 'large'];
 
-export const boardLayouts = ['classic', 'adaptive'];
-export const promptSides = ['left', 'right'];
+const boardLayouts = ['classic', 'adaptive'];
+const promptSides = ['left', 'right'];
 
 // The prompt sits on the left unless the player chose the right
 export const promptSideOf = (hud) => (hud?.promptSide === 'right' ? 'right' : 'left');

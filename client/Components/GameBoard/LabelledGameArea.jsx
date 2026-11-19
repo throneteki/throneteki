@@ -1,16 +1,6 @@
 import React, { createContext, forwardRef, useContext, useEffect, useId, useMemo } from 'react';
 import { useSyncExternalStore } from 'react';
 import classNames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    faBan,
-    faClockRotateLeft,
-    faFlag,
-    faLayerGroup,
-    faRecycle,
-    faScroll,
-    faSkull
-} from '@fortawesome/free-solid-svg-icons';
 import { raisedStyle } from './PileDepth';
 import { useAdaptiveBoard } from './adaptiveContext';
 import { Tooltip } from '@heroui/react';
@@ -20,15 +10,6 @@ import { Tooltip } from '@heroui/react';
 // shows its name and count above the tap instead, and the next tap anywhere, or a moment, puts it away.
 export const AreaLabelContext = createContext('full');
 
-const inspectIcons = {
-    Draw: faLayerGroup,
-    Discard: faRecycle,
-    Dead: faSkull,
-    Plots: faScroll,
-    'Used Plots': faClockRotateLeft,
-    'Out of Game': faBan,
-    Agenda: faFlag
-};
 const inspectTime = 2500;
 
 const nameOf = (label) => label.replace(/ \(\d+\)$/, '');
@@ -51,25 +32,32 @@ const subscribe = (listener) => {
 };
 const useInspecting = () => useSyncExternalStore(subscribe, () => inspecting);
 
-// A pile's name and count as a phone shows them when it is tapped. name: what to call it, when not its label
-export const InspectLabel = ({ label, count, name }) => (
-    <div className='flex items-center gap-1.5 text-xs font-semibold'>
-        {inspectIcons[label] && (
-            <FontAwesomeIcon icon={inspectIcons[label]} className='text-default-400' />
+// A pile's name and count as a phone shows them when it is tapped. name: what to call it, when not its label.
+// opens: a second tap opens the pile, which it says beneath.
+export const InspectLabel = ({ label, count, name, opens = false }) => (
+    <div className='flex flex-col items-center'>
+        <div className='flex items-center gap-1.5 text-xs font-semibold'>
+            <span>{name ?? label}</span>
+            <span className='text-warning'>{count}</span>
+        </div>
+        {opens && (
+            <span data-inspect-hint='' className='text-[10px] leading-tight text-default-400'>
+                Tap again to open
+            </span>
         )}
-        <span>{name ?? label}</span>
-        <span className='text-warning'>{count}</span>
     </div>
 );
 
 // inspectable: a stacked pile whose count cannot be seen by looking at it, which on phones shows its name and count
 // on a first tap. inspectSkip: a pile whose top card is to be used straight away is tapped through as usual.
+// opens: a second tap opens the pile.
 const LabelledGameArea = forwardRef(function LabelledGameArea(
     {
         label,
         count,
         inspectable = false,
         inspectSkip = false,
+        opens = false,
         upright = false,
         disableBackground = false,
         className,
@@ -187,7 +175,11 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
     return (
         <Tooltip
             isOpen={!!shown}
-            content={shown ? <InspectLabel label={shown.label} count={shown.count} /> : null}
+            content={
+                shown ? (
+                    <InspectLabel label={shown.label} count={shown.count} opens={opens} />
+                ) : null
+            }
             placement='top'
             showArrow
             shouldFlip

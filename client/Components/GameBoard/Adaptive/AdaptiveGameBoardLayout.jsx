@@ -40,6 +40,7 @@ import { tableRows } from '../seatOrder';
 import { activePlayerOf, followTarget } from './followTarget';
 import useAutoFollow from './useAutoFollow';
 import { useCardHover } from '../../Images/cardHoverStore';
+import { boardRescaleEvent } from '../useHudScale';
 
 // A part drawn at another of the board's scales: every card size inside follows --card-scale
 const Part = ({ area, scale, className, style, children }) => (
@@ -94,8 +95,7 @@ const useEqualPlayAreas = (boardRef, mode) => {
 const floatingPromptWidth = 'calc(var(--ui-scale, 1) * clamp(12rem, 20vw, 16rem))';
 // On the right it keeps clear of the chat's tab, which reaches over the board's right edge
 const chatTabDepth = 'calc(var(--ui-scale, 1) * 1.75rem)';
-// The column down one side of the screen in phone landscape: the players' stats at its top and bottom, the prompt
-// and our tools between them. The board starts where it ends, and runs on under it once scrolled.
+// Phone landscape's column down one side: the stats at its top and bottom, the prompt and our tools between
 const columnWidth = 'clamp(13rem, 30vw, 20rem)';
 
 // Room at the start and end of a play area for what lies over the board's sides (the prompt), so its cards only go
@@ -104,22 +104,42 @@ const Room = ({ width }) => <div aria-hidden className='shrink-0' style={{ width
 const coverBefore = 'var(--board-cover-left, 0px)';
 const coverAfter = 'var(--board-cover-right, 0px)';
 
-// Characters and locations take a row each, except in phone landscape, where there is height for only one and
-// they share it. The whole board scrolls as one, both ways, so a play area is as tall as its cards.
-const PlayArea = ({ inline, style, children }) => (
-    <Part area='play' className='flex flex-1 !min-h-[auto]' style={style}>
-        <Room width={coverBefore} />
-        {children(inline ? 'inline' : 'nowrap')}
-        <Room width={coverAfter} />
-    </Part>
-);
+// Characters and locations take a row each, or share one in phone landscape (inline).
+// promptSide (phone landscape): the play area keeps the column's width spare on the far side, and its cards stick
+// beside the column as the board scrolls under it. Sticky rather than set on scroll, which lags a frame on phones.
+const PlayArea = ({ inline, promptSide, children }) => {
+    const cards = children(inline ? 'inline' : 'nowrap');
+    return (
+        <Part area='play' className='flex flex-1 !min-h-[auto]'>
+            <Room width={coverBefore} />
+            {promptSide ? (
+                <div
+                    className={classNames('flex min-w-0 flex-1', {
+                        'flex-row-reverse': promptSide === 'right'
+                    })}
+                >
+                    <div
+                        className='sticky flex min-w-0 flex-1'
+                        style={{ [promptSide]: columnWidth }}
+                    >
+                        {cards}
+                    </div>
+                    <Room width={columnWidth} />
+                </div>
+            ) : (
+                cards
+            )}
+            <Room width={coverAfter} />
+        </Part>
+    );
+};
 
 // A row drawn smaller, as a whole, when it is wider than the room it has. It sets the interface's size for what is
 // inside it, which every part of a stats bar follows.
-const FitRow = ({ className, children }) => {
+const FitRow = ({ className, start = false, children }) => {
     const outerRef = useRef(null);
     const innerRef = useRef(null);
-    const fitRef = useRef(1);
+    const scaleRef = useRef({ ui: null, fit: 1 });
     const [scale, setScale] = useState(null);
     useLayoutEffect(() => {
         const outer = outerRef.current;
@@ -132,10 +152,13 @@ const FitRow = ({ className, children }) => {
                 parseFloat(
                     getComputedStyle(document.documentElement).getPropertyValue('--ui-scale')
                 ) || 1;
-            const natural = inner.getBoundingClientRect().width / fitRef.current;
+            const current = scaleRef.current;
+            // The row is drawn at the scale it was last given (the page's, before the first measure)
+            const shown = (current.ui ?? ui) * current.fit;
+            const natural = (inner.getBoundingClientRect().width * ui) / shown;
             const fit = natural > 0 ? Math.min(1, outer.clientWidth / natural) : 1;
-            if (Math.abs(fit - fitRef.current) > 0.01 || scale?.ui !== ui) {
-                fitRef.current = fit;
+            if (Math.abs(fit - current.fit) > 0.01 || current.ui !== ui) {
+                scaleRef.current = { ui, fit };
                 setScale({ ui, fit });
             }
         };
@@ -143,12 +166,20 @@ const FitRow = ({ className, children }) => {
         const observer = new ResizeObserver(measure);
         observer.observe(outer);
         observer.observe(inner);
-        return () => observer.disconnect();
-    });
+        window.addEventListener(boardRescaleEvent, measure);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener(boardRescaleEvent, measure);
+        };
+    }, []);
     return (
         <div
             ref={outerRef}
-            className={classNames('flex min-w-0 justify-center overflow-hidden', className)}
+            className={classNames(
+                'flex min-w-0 overflow-hidden',
+                start ? 'justify-start' : 'justify-center',
+                className
+            )}
         >
             <div
                 ref={innerRef}
@@ -161,21 +192,17 @@ const FitRow = ({ className, children }) => {
     );
 };
 
-// In phone landscape each board's play area keeps the column's width spare on the side away from the prompt, and its
-// cards are pushed into it as the column comes over the board (--push, set as the board scrolls), so they keep beside
-// the column until it is wholly over the board, and start at the board's edge while it is clear of it
-const pushedBy = (promptSide) => {
-    const near = 'var(--push, 0px)';
-    const far = `calc(${columnWidth} - var(--push, 0px))`;
-    return promptSide === 'right'
-        ? { paddingRight: near, paddingLeft: far }
-        : { paddingLeft: near, paddingRight: far };
-};
-
-// A player's stats as a card of their own, standing off the screen's edge: the avatar and stats in a row, drawn
-// smaller as a whole when the row is narrower than they are. Phone landscape's column and portrait's bars use it.
-// active: the player is the one being waited on, at a melee table
-const StatsCard = ({ player, canChange, showSeat, active = false, className, ...props }) => (
+// A player's avatar and stats in a bordered card, shrunk to fit (phone landscape and portrait).
+// active: tinted while they are waited on, at a melee table. start: left-aligned rather than centred (portrait).
+const StatsCard = ({
+    player,
+    canChange,
+    showSeat,
+    active = false,
+    start = false,
+    className,
+    ...props
+}) => (
     <div
         {...props}
         className={classNames(
@@ -184,7 +211,7 @@ const StatsCard = ({ player, canChange, showSeat, active = false, className, ...
             className
         )}
     >
-        <FitRow className='px-1'>
+        <FitRow className='px-1' start={start}>
             <PlayerStatsBar
                 player={player}
                 vertical
@@ -275,39 +302,6 @@ const AdaptiveGameBoardLayout = ({
             board.style.removeProperty('--board-hint-bottom');
         };
     }, [mode, melee, otherPlayers.length]);
-    // How far the prompt's column in phone landscape lies over each board, as the board scrolls under it. Set as it
-    // scrolls, before it is drawn, so the cards keep still beside the column.
-    useLayoutEffect(() => {
-        const board = boardRef.current;
-        const scroller = board?.querySelector('[data-board-scroll] > div > [data-clips]');
-        const column = board?.parentElement?.querySelector('[data-region="prompt-column"]');
-        if (!short || !scroller || !column) {
-            return;
-        }
-        const place = () => {
-            const view = scroller.getBoundingClientRect();
-            const width = column.getBoundingClientRect().width;
-            const sides = [...scroller.querySelectorAll('[data-side]')];
-            const pushes = sides.map((side) => {
-                const box = side.getBoundingClientRect();
-                const over =
-                    promptSide === 'right'
-                        ? box.right - (view.right - width)
-                        : view.left + width - box.left;
-                return Math.round(Math.min(width, Math.max(0, over)));
-            });
-            sides.forEach((side, index) => side.style.setProperty('--push', `${pushes[index]}px`));
-        };
-        place();
-        scroller.addEventListener('scroll', place, { passive: true });
-        const observer = new ResizeObserver(place);
-        observer.observe(scroller);
-        observer.observe(column);
-        return () => {
-            observer.disconnect();
-            scroller.removeEventListener('scroll', place);
-        };
-    }, [short, promptSide, melee, otherPlayers.length]);
     const followEnabled = hud.followAction !== false;
     const followed = useAutoFollow({
         boardRef,
@@ -370,9 +364,7 @@ const AdaptiveGameBoardLayout = ({
                 panel
             );
 
-        // Plots, agenda and faction, the hand, and the piles, in one row, which scrolls sideways with the rest of the
-        // board and never gives up height. A dark band with a thin edge on the play area's side, so cards scrolling
-        // under it end on a clean line.
+        // Plots, agenda, faction, hand and piles in one row, as a dark band so cards scrolling under it end cleanly
         const strip = (
             <div
                 data-region='strip'
@@ -453,11 +445,7 @@ const AdaptiveGameBoardLayout = ({
                         </Part>
                     </Reveal>
                 )}
-                <Part
-                    area='piles'
-                    scale={pileScale}
-                    className={classNames('flex shrink-0', { 'ml-auto': portrait })}
-                >
+                <Part area='piles' scale={pileScale} className='flex shrink-0'>
                     <PileCluster
                         player={player}
                         isMe={isMe}
@@ -471,7 +459,7 @@ const AdaptiveGameBoardLayout = ({
         );
 
         const play = (
-            <PlayArea inline={short} style={short ? pushedBy(promptSide) : undefined}>
+            <PlayArea inline={short} promptSide={short ? promptSide : null}>
                 {(overflow) => (
                     <PlayerBoard
                         isDroppable={isMe}
@@ -486,11 +474,9 @@ const AdaptiveGameBoardLayout = ({
             </PlayArea>
         );
 
-        // In phone landscape the player's stats are a card at the top (the opponent's) or bottom (ours) of the column
-        // down the screen's side. It keeps to its own board: in room kept for it at the start of the board's strip
-        // while the column is clear of the board, at the screen's side as the board scrolls under the column, and at
-        // the board's edge as it scrolls up and down. It lies in a layer over the whole board, so it can keep to the screen's
-        // side until the board's end reaches it, handing over to the next board's.
+        // Phone landscape: the player's stats card, at the top (theirs) or bottom (ours) of the prompt's column. It sits
+        // in its board's strip while the column is clear of the board, then sticks to the screen's side until the
+        // board's end reaches it. It is in a layer over the whole board so it can stick across boards.
         const rail = short && (
             <div
                 className={classNames(
@@ -516,8 +502,7 @@ const AdaptiveGameBoardLayout = ({
             </div>
         );
 
-        // At a melee table each player's stats bar is on their own board's outer edge, staying in view as the board
-        // scrolls: at the board's top or bottom as it scrolls up and down, and along the view as it scrolls sideways
+        // At a melee table each player's stats bar sticks to their board's outer edge as the table scrolls
         const seatBar = melee && !short && (
             <div
                 data-seat-bar={side}
@@ -529,12 +514,14 @@ const AdaptiveGameBoardLayout = ({
                 {portrait ? (
                     <div
                         className={classNames(
-                            'sticky left-0 w-[min(100%,var(--scroll-view-width,100%))] p-1',
+                            'sticky left-0 w-[min(100%,var(--scroll-view-width,100%))] px-1',
+                            side === 'top' ? 'pb-1 pt-0.5' : 'py-1',
                             { 'pr-[calc(var(--board-tools-width,0px)+0.5rem)]': side === 'bottom' }
                         )}
                     >
                         <StatsCard
                             player={player}
+                            start
                             canChange={isMe && canChangeStats}
                             showSeat
                             active={player.isActivePrompt}
@@ -599,8 +586,7 @@ const AdaptiveGameBoardLayout = ({
         dispatch(
             sendButtonClickedMessage(button.promptId, button.command, button.method, button.arg)
         );
-    // On a phone the chat opens under the opponent's bar (beside the prompt's column in landscape), which stays above
-    // it, so its button stays in the same place, open or closed
+    // On a phone the chat button replaces the chat's tab, which would cover the board
     const chatButton = phoneLayout && chat && (
         <Button
             isIconOnly
@@ -619,8 +605,7 @@ const AdaptiveGameBoardLayout = ({
             )}
         </Button>
     );
-    // At a melee table, how the view moves: directed (following the action) or manual (scrolled by hand, or turned
-    // off here), switched between with it
+    // At a melee table: whether the view follows the action (directed) or not (manual), and switches it
     const followToggle = melee && followEnabled && (
         <Button
             isIconOnly
@@ -643,26 +628,22 @@ const AdaptiveGameBoardLayout = ({
             <FontAwesomeIcon icon={followed.paused ? faUpDownLeftRight : faVideo} />
         </Button>
     );
-    // Our game menu belongs to us, at the end of our own stats
-    // Given the room our stats leave, it shows what fits as buttons and keeps the rest in its menu
-    // On phone layouts a full-screen toggle stays beside it, out of the menu
+    // Our game menu, given the room our stats leave (the desktop's joust bar) to show what fits as buttons
     const gameMenu = (room) => (
-        <>
-            {phoneLayout && <FullscreenToggle />}
-            <GameMenu
-                isPlaying={isPlaying}
-                onSettingsClick={onSettingsClick}
-                onShortcutsClick={onShortcutsClick}
-                room={phoneLayout ? Math.max(0, room - 28) : room}
-            />
-        </>
+        <GameMenu
+            isPlaying={isPlaying}
+            onSettingsClick={onSettingsClick}
+            onShortcutsClick={onShortcutsClick}
+            room={room}
+        />
     );
 
-    // Our tools, beside our own stats in every layout: the view's mode, the chat, full screen and the menu, outermost
+    // Our tools, beside our own stats: the view's mode, the chat, full screen (phones) and the menu, outermost
     const tools = (className) => (
         <ToolBox data-region='tools' className={className}>
             {followToggle}
             {chatButton}
+            {phoneLayout && <FullscreenToggle />}
             {gameMenu(0)}
         </ToolBox>
     );
@@ -721,9 +702,8 @@ const AdaptiveGameBoardLayout = ({
         />
     );
 
-    // What lies over a player's half (an opponent's hand fanned out, the prompt's options) stops at the divider's edges
-    // (the prompt panel's, on a desktop). The phone chat opens below the opponent's bar, or beside the prompt in phone
-    // landscape.
+    // Publishes where the divider, prompt, view, tools and column are, for what lies over the board (fanned hands,
+    // the prompt's options, the phone chat) to keep to
     const topBarsRef = useRef(null);
     useLayoutEffect(() => {
         const divider = dividerRef.current;
@@ -794,7 +774,7 @@ const AdaptiveGameBoardLayout = ({
         ].forEach((element) => element && observer.observe(element));
         window.addEventListener('resize', place);
         // The desktop's prompt, and the stats in phone landscape, move with the board as it scrolls
-        const scroller = boardRef.current?.querySelector('[data-board-scroll] > [data-clips]');
+        const scroller = boardRef.current?.querySelector('[data-board-scroll] [data-clips]');
         scroller?.addEventListener('scroll', place, { passive: true });
         return () => {
             observer.disconnect();
@@ -849,10 +829,8 @@ const AdaptiveGameBoardLayout = ({
         </div>
     );
 
-    // A melee table: two rows of boards, a column for each pair, us at the bottom left. On a desktop the prompt's
-    // panel lies along the line between the rows. The room kept for the prompt is kept once, as a column at each of
-    // the table's sides rather than in every board. The boards at the table's ends reach into it, their stats and
-    // strips running to the screen's edge, and only their play areas keep clear of the prompt.
+    // A melee table: two rows of boards, us at the bottom left. The room for the desktop's prompt is a column at each
+    // side of the table, which the end boards' stats and strips reach into; only their play areas keep clear of it.
     const table = melee
         ? (() => {
               const rows = tableRows(thisPlayer, [thisPlayer, ...otherPlayers]);
@@ -884,9 +862,8 @@ const AdaptiveGameBoardLayout = ({
                       className='relative grid min-h-full flex-1'
                       style={{
                           gridTemplateColumns: `${coverOf('left')} repeat(${columns}, auto) ${coverOf('right')}`,
-                          // Sized to their own boards, sharing only what room is spare: equal (fr) rows would
-                          // stretch the top row to ours, hand and all, opening a gap in each opponent's play area. The
-                          // prompt's row between them takes none, so the rows meet at the line between them.
+                          // auto, not fr: equal rows would stretch the top row to ours, opening gaps in the
+                          // opponents' play areas. The prompt's row takes no height.
                           gridTemplateRows: floatingPrompt ? 'auto 0px auto' : 'auto auto',
                           '--board-cover-left': '0px',
                           '--board-cover-right': '0px'
@@ -965,22 +942,9 @@ const AdaptiveGameBoardLayout = ({
                                         promptSide === 'right' ? 'justify-end' : 'justify-start'
                                     )}
                                 >
-                                    <div
-                                        className={classNames(
-                                            'pointer-events-auto flex items-center gap-0.5 rounded-md border border-default-200/40 bg-black/60 p-0.5 shadow-[0_2px_8px_rgba(0,0,0,0.5)] hud-zoom',
-                                            { 'flex-row-reverse': promptSide === 'right' }
-                                        )}
-                                    >
-                                        <GameMenu
-                                            isPlaying={isPlaying}
-                                            onSettingsClick={onSettingsClick}
-                                            onShortcutsClick={onShortcutsClick}
-                                            room={0}
-                                        />
-                                        <FullscreenToggle />
-                                        {chatButton}
-                                        {followToggle}
-                                    </div>
+                                    {tools(
+                                        classNames({ 'flex-row-reverse': promptSide !== 'right' })
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -990,12 +954,13 @@ const AdaptiveGameBoardLayout = ({
                             {portrait && !melee && (
                                 <div
                                     ref={topBarsRef}
-                                    className='relative z-[305] flex shrink-0 items-center gap-1 px-1 pb-1 pt-[calc(var(--safe-top)+0.25rem)]'
+                                    className='relative z-[305] flex shrink-0 items-center gap-1 px-1 pb-1 pt-[calc(var(--safe-top)+0.125rem)]'
                                 >
                                     {otherPlayers.map((player) => (
                                         <StatsCard
                                             key={player.name ?? player.seatNo}
                                             player={player}
+                                            start
                                             className='min-w-0 flex-1'
                                         />
                                     ))}
@@ -1034,7 +999,7 @@ const AdaptiveGameBoardLayout = ({
                                         className='flex-1'
                                         axis='both'
                                         anchor='end'
-                                        contentClassName='flex-col'
+                                        contentClassName='relative flex-col'
                                     >
                                         {melee ? (
                                             table
@@ -1046,6 +1011,12 @@ const AdaptiveGameBoardLayout = ({
                                                 {handTray}
                                             </>
                                         )}
+                                        {/* Cards in flight, scrolling with the board (flip.js) */}
+                                        <div
+                                            data-flight-layer=''
+                                            aria-hidden
+                                            className='pointer-events-none absolute inset-0 z-[290]'
+                                        />
                                     </ScrollArea>
                                     {midline}
                                     {/* At a melee table our stats keep to our own board, so our tools are pinned to
@@ -1059,6 +1030,7 @@ const AdaptiveGameBoardLayout = ({
                                 <div className='relative z-[245] flex shrink-0 items-center gap-1 p-1'>
                                     <StatsCard
                                         player={thisPlayer}
+                                        start
                                         canChange={canChangeStats}
                                         className='min-w-0 flex-1'
                                     />

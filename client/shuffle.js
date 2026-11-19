@@ -41,7 +41,7 @@ const cardUnderTop = (stack) =>
     stack.querySelector(':scope > :not([data-pile-top]) [data-card-body]') ||
     stack.querySelector('[data-pile-top] [data-card-body]');
 
-export const playShuffle = (deck, delay = 0) => {
+const playShuffle = (deck, delay = 0) => {
     const stack = deck?.querySelector('[data-pile-stack]');
     const top = stack?.querySelector(':scope > [data-pile-top]');
     const under = stack && cardUnderTop(stack);

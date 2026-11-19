@@ -1,5 +1,3 @@
-export const layoutModes = ['narrow', 'short', 'wide'];
-
 const thresholds = { narrowAspect: 0.9, narrowWidth: 900, shortHeight: 560 };
 const hysteresis = { aspect: 0.05, px: 40 };
 
@@ -81,7 +79,7 @@ const playMarginRem = 2;
 // widths at pile scale (at card scale where pilesAtCardSize), before the optional piles (stripExtraUnits). Chrome is the space taken by the prompt divider,
 // side columns and padding, in rem. Cards grow to fill the room, up to max, and shrink for a wide row only to
 // min before the row overlaps its cards instead.
-export const layoutBudgets = {
+const layoutBudgets = {
     narrow: {
         pileRatio: 0.7,
         handRatio: 1.1,

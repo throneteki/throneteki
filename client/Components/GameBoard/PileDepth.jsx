@@ -6,7 +6,7 @@ const steps = [1, 4, 10, 20, 30, 40];
 const stepRem = 0.075;
 
 // How many edges of cards show under the top card of a pile: one for a few cards, more as it grows
-export const depthLayers = (count) => steps.filter((step) => count >= step).length;
+const depthLayers = (count) => steps.filter((step) => count >= step).length;
 
 // How far the top of a pile stands above the table: the bottom card lies on the pile's outline
 export const pileRise = (count) =>
