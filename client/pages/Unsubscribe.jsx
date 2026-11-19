@@ -1,8 +1,8 @@
 import React from 'react';
-import { Button } from '@heroui/react';
+import { Button, Spinner } from '@heroui/react';
 
-import AlertPanel from '../Components/Site/AlertPanel';
-import Panel from '../Components/Site/Panel';
+import Frame from '../Components/Site/Frame';
+import Notice from '../Components/Site/Notice';
 import { useUnsubscribeMutation } from '../redux/middleware/api';
 import Page from './Page';
 
@@ -12,44 +12,42 @@ const Unsubscribe = ({ id, token }) => {
 
     let content;
     if (!id || !token) {
-        content = <AlertPanel variant='danger' message='This unsubscribe link is not valid' />;
+        content = <Notice kind='error'>This unsubscribe link is not valid.</Notice>;
     } else if (isSuccess) {
         content = (
-            <AlertPanel
-                variant='success'
-                message="You won't get any more emails like this. You can turn them back on in your profile."
-            />
+            <Notice kind='success'>
+                You won&apos;t get any more emails like this. You can turn them back on in your
+                profile.
+            </Notice>
         );
     } else {
         content = (
-            <div className='flex flex-col items-center gap-3 py-2 text-center'>
+            <div className='flex flex-col gap-4'>
                 {error && (
-                    <AlertPanel
-                        variant='danger'
-                        message={
-                            (typeof error === 'string' ? error : error.data?.message) ||
-                            'Something went wrong. Please try again.'
-                        }
-                    />
+                    <Notice kind='error'>
+                        {(typeof error === 'string' ? error : error.data?.message) ||
+                            'Something went wrong. Please try again.'}
+                    </Notice>
                 )}
-                <p className='m-0 leading-5'>
+                <p className='text-ink-dim'>
                     Stop occasional emails, such as your yearly page in the White Book? Emails about
                     your account, like password resets, will still be sent.
                 </p>
                 <Button
-                    color='primary'
-                    isLoading={isLoading}
+                    className='w-full'
+                    isPending={isLoading}
                     onPress={() => unsubscribe({ id, token })}
+                    variant='primary'
                 >
-                    Stop these emails
+                    {isLoading && <Spinner color='current' size='sm' />}Stop these emails
                 </Button>
             </div>
         );
     }
 
     return (
-        <Page size='small'>
-            <Panel title='Unsubscribe'>{content}</Panel>
+        <Page size='narrow'>
+            <Frame title='Unsubscribe'>{content}</Frame>
         </Page>
     );
 };

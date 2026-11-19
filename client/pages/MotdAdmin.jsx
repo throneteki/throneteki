@@ -1,80 +1,99 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Button } from '@heroui/react';
 
-import Panel from '../Components/Site/Panel';
+import { TextAreaField } from '../Components/Site/Field';
+import Group from '../Components/Site/Group';
+import Notice from '../Components/Site/Notice';
+import RadioField from '../Components/Site/RadioField';
 import { sendMotdMessage } from '../redux/reducers/lobby';
-import { Button, Radio, RadioGroup, Textarea } from '@heroui/react';
-import Page from './Page';
+import { getMessageWithLinks } from '../util';
+import AdminPage from './AdminPage';
+
+const MotdTypes = [
+    { value: 'info', label: 'Info' },
+    { value: 'success', label: 'Good news' },
+    { value: 'warning', label: 'Warning' },
+    { value: 'error', label: 'Problem' }
+];
 
 const MotdAdmin = () => {
     const motd = useSelector((state) => state.lobby.motd);
     const dispatch = useDispatch();
 
-    const [motdText, setMotdText] = useState(motd?.message);
-    const [selectedMotdType, setSelectedMotdType] = useState(motd ? motd.motdType : 'info');
-
-    const motdTypes = [
-        { value: 'error', label: 'Error (red)' },
-        { value: 'warning', label: 'Warning (yellow)' },
-        { value: 'info', label: 'Info (blue)' },
-        { value: 'success', label: 'Success (green)' }
-    ];
+    const [motdText, setMotdText] = useState(motd?.message ?? '');
+    const [motdType, setMotdType] = useState(motd?.motdType ?? 'info');
 
     useEffect(() => {
-        setMotdText(motd?.message);
-        setSelectedMotdType(motd ? motd.motdType : 'info');
+        setMotdText(motd?.message ?? '');
+        setMotdType(motd?.motdType ?? 'info');
     }, [motd]);
 
-    const onMotdTextChange = useCallback((value) => {
-        setMotdText(value);
-    }, []);
-
-    const onMotdTypeChange = useCallback((value) => {
-        setSelectedMotdType(value);
-    }, []);
-
-    const onSaveClick = useCallback(() => {
-        dispatch(
-            sendMotdMessage({
-                message: motdText,
-                motdType: selectedMotdType
-            })
-        );
-    }, [dispatch, motdText, selectedMotdType]);
+    const liveText = motd?.message ?? '';
+    const isChanged = motdText !== liveText || (!!motdText && motdType !== motd?.motdType);
+    const publish = (message, type) => dispatch(sendMotdMessage({ message, motdType: type }));
 
     return (
-        <Page>
-            <Panel title='Motd administration'>
-                <div className='flex flex-col gap-2'>
-                    <Textarea
-                        name='motd'
-                        value={motdText}
-                        onValueChange={onMotdTextChange}
-                        rows='4'
-                        placeholder='Enter a motd message'
-                    />
-                    <RadioGroup
-                        orientation='horizontal'
-                        buttons={motdTypes}
-                        onValueChange={onMotdTypeChange}
-                        value={selectedMotdType}
-                    >
-                        <Radio value='error'>Error (Red)</Radio>
-                        <Radio value='warning'>Warning (Yellow)</Radio>
-                        <Radio value='info'>Info (Blue)</Radio>
-                        <Radio value='success'>Success (Green)</Radio>
-                    </RadioGroup>
-                    <Button
-                        color='primary'
-                        type='button'
-                        className='self-start'
-                        onPress={onSaveClick}
-                    >
-                        Save
-                    </Button>
+        <AdminPage
+            section='motd'
+            title='Message of the day'
+            description='One line at the top of the lobby, shown to everyone as soon as you publish it.'
+            footer={
+                <div className='flex flex-wrap items-center gap-3'>
+                    <span className={isChanged ? 'text-sm text-warning' : 'text-sm text-ink-faint'}>
+                        {isChanged
+                            ? 'Not published yet'
+                            : liveText
+                              ? 'This is the live message'
+                              : 'No message is showing'}
+                    </span>
+                    <div className='ms-auto flex gap-2'>
+                        <Button
+                            variant='tertiary'
+                            isDisabled={!liveText}
+                            onPress={() => publish('', motdType)}
+                        >
+                            Clear
+                        </Button>
+                        <Button
+                            variant='primary'
+                            isDisabled={!isChanged}
+                            onPress={() => publish(motdText, motdType)}
+                        >
+                            Publish
+                        </Button>
+                    </div>
                 </div>
-            </Panel>
-        </Page>
+            }
+        >
+            <Group title='Message'>
+                <div className='flex flex-col gap-4'>
+                    <TextAreaField
+                        aria-label='Message'
+                        value={motdText}
+                        onValueChange={setMotdText}
+                        minRows={3}
+                        placeholder='Nothing shows while this is empty'
+                    />
+                    <RadioField
+                        label='Type'
+                        orientation='horizontal'
+                        value={motdType}
+                        onChange={setMotdType}
+                        options={MotdTypes}
+                    />
+                </div>
+            </Group>
+            <Group title='Preview' description='How it will look in the lobby.'>
+                {motdText ? (
+                    <Notice kind={motdType} isBoxed>
+                        {getMessageWithLinks(motdText)}
+                    </Notice>
+                ) : (
+                    <p className='text-sm text-ink-faint'>Nothing will show.</p>
+                )}
+            </Group>
+        </AdminPage>
     );
 };
 

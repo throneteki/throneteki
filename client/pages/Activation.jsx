@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import AlertPanel from '../Components/Site/AlertPanel';
+import Notice from '../Components/Site/Notice';
 import { navigate } from '../redux/reducers/navigation';
 import { useActivateAccountMutation } from '../redux/middleware/api';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
@@ -15,7 +15,9 @@ const Activation = ({ id, token }) => {
             try {
                 await activateAccount({ id, token }).unwrap();
             } catch (err) {
-                toast.error(err.message || 'An error occurred activating your account');
+                toast.error(
+                    err.data?.message || err.message || 'An error occurred activating your account'
+                );
 
                 return;
             }
@@ -32,10 +34,10 @@ const Activation = ({ id, token }) => {
 
     if (!id || !token) {
         return (
-            <AlertPanel
-                variant='danger'
-                message='This page is not intended to be viewed directly.  Please click on the link in your email to activate your account'
-            />
+            <Notice kind='error' isBoxed className='mx-auto mt-10 max-w-xl'>
+                This page only works from the link in your activation email. Please click that link
+                to activate your account.
+            </Notice>
         );
     }
 

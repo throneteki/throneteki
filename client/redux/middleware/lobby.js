@@ -1,5 +1,3 @@
-/* global window */
-
 import { io } from 'socket.io-client';
 import {
     lobbyConnected,

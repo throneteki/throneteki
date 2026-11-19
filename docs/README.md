@@ -10,6 +10,11 @@
 - [Testing cards](testing-cards.md): the test harness, `setupTest`, assertions and the coverage
   checklist.
 
+## Working on the site
+
+- [Site design](design.md): the look of the site, its tokens and shared components. Read this
+  before building or restyling a page.
+
 ## Other
 
 - [Database](database.md)

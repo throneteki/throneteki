@@ -9,22 +9,21 @@ const ServerStatus = ({ connecting, connected, responseTime, serverType }) => {
 
     const toolTip = `${serverType} is ${connectionStatus}`;
 
-    const pingLevel = `text-medium text-${
-        connected
-            ? responseTime
-                ? (responseTime < 150 && 'success') || (responseTime < 300 && 'warning') || 'danger'
-                : 'neutral'
-            : connecting
-              ? 'warning'
-              : 'danger'
-    }`;
+    let pingLevel = 'text-danger';
+    if (connected && !responseTime) {
+        pingLevel = 'text-ink-dim';
+    } else if (connected && responseTime < 150) {
+        pingLevel = 'text-success';
+    } else if ((connected && responseTime < 300) || (!connected && connecting)) {
+        pingLevel = 'text-warning';
+    }
 
     const pingText2 = `${serverType[0]}: ${
         connected ? (responseTime ? `${responseTime}ms` : 'Waiting') : connectionStatus
     }`;
 
     return (
-        <div className='font-[PoppinsMedium] text-large text-nowrap'>
+        <div className='font-medium text-lg text-nowrap'>
             <span className={pingLevel}>
                 {pingText2} <FontAwesomeIcon icon={connectionIcon} title={toolTip} />
             </span>

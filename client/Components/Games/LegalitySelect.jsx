@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, SelectItem } from '@heroui/react';
+import SelectField from '../Site/SelectField';
 import { useEffect, useMemo } from 'react';
 import { useGetRestrictedListQuery } from '../../redux/middleware/api';
 
@@ -18,16 +18,16 @@ const LegalitySelect = ({
     isDisabled
 }) => {
     const { data, isLoading } = useGetRestrictedListQuery();
-    const handleChange = (e) => {
+    const handleChange = (value) => {
         let legalityObj = null;
-        if (e.target.value === 'latest') {
+        if (value === 'latest') {
             legalityObj = data.find(
                 (rl) => rl.format === format && rl.variant === variant && rl.active
             );
         } else {
-            legalityObj = data.find((rl) => rl._id === e.target.value);
+            legalityObj = data.find((rl) => rl._id === value);
         }
-        onSelected(e.target.value, legalityObj);
+        onSelected(value, legalityObj);
     };
     const legalities = useMemo(() => {
         if (!format || !variant || !data) {
@@ -52,6 +52,10 @@ const LegalitySelect = ({
     }, [allowCustom, data, format, variant]);
 
     useEffect(() => {
+        if (!data) {
+            return;
+        }
+
         // If legality no longer exists after data is updated, default it to latest, custom, or undefined
         let legality = legalities?.find((rl) => rl._id === selected);
         let legalityObj = data?.find((rl) => rl._id === selected);
@@ -71,31 +75,29 @@ const LegalitySelect = ({
     }, [allowCustom, data, format, legalities, onSelected, selected, variant]);
 
     return (
-        <Select
+        <SelectField
             label={label}
-            selectedKeys={selected ? [selected] : []}
+            value={selected || null}
             onChange={handleChange}
-            isDisabled={isDisabled || (!disallowEmptySelection && legalities.length === 0)}
+            isDisabled={
+                isDisabled || isLoading || (!disallowEmptySelection && legalities.length === 0)
+            }
             isInvalid={isInvalid}
             errorMessage={errorMessage}
-            disallowEmptySelection={disallowEmptySelection}
-            isLoading={isLoading}
             className={className}
             style={style}
-        >
-            {legalities.map((l) => (
-                <SelectItem
-                    key={l._id}
-                    value={l._id}
-                    textValue={`${l.label}${l._id === 'latest' ? ` (${l.description})` : ''}`}
-                >
+            items={legalities.map((l) => ({
+                id: l._id,
+                label: l.label,
+                textValue: `${l.label}${l._id === 'latest' ? ` (${l.description})` : ''}`,
+                content: (
                     <div className='flex flex-col'>
-                        <span className='text-md'>{l.label}</span>
+                        <span className='text-base'>{l.label}</span>
                         <span className='text-xs'>{l.description}</span>
                     </div>
-                </SelectItem>
-            ))}
-        </Select>
+                )
+            }))}
+        />
     );
 };
 

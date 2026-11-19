@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, SelectItem } from '@heroui/react';
+import SelectField from '../Site/SelectField';
 import { Constants } from '../../constants';
 import ThronesIcon from '../GameBoard/ThronesIcon';
 
@@ -11,40 +11,39 @@ const FactionSelect = ({
     onSelected,
     isInvalid,
     errorMessage,
-    disallowEmptySelection,
     isDisabled
 }) => {
-    const handleChange = (e) => {
-        onSelected(e.target.value);
+    const handleChange = (value) => {
+        onSelected(value);
     };
 
     return (
-        <Select
+        <SelectField
             label={label}
-            selectedKeys={selected ? [selected] : []}
+            value={selected || null}
             onChange={handleChange}
             isInvalid={isInvalid}
             errorMessage={errorMessage}
-            disallowEmptySelection={disallowEmptySelection}
             isDisabled={isDisabled}
             className={className}
             style={style}
-            renderValue={([f]) => (
+            renderValue={(key) => (
                 <div className='flex gap-2 items-center'>
-                    <ThronesIcon icon={f.key} />
-                    <div>{f.textValue}</div>
+                    <ThronesIcon icon={key} />
+                    <div>{Constants.Factions.find((f) => f.value === key)?.name}</div>
                 </div>
             )}
-        >
-            {Constants.Factions.map((f) => (
-                <SelectItem key={f.value} value={f.value} textValue={f.name}>
+            items={Constants.Factions.map((f) => ({
+                id: f.value,
+                label: f.name,
+                content: (
                     <div className='flex gap-2 items-center'>
                         <ThronesIcon icon={f.value} />
                         <div>{f.name}</div>
                     </div>
-                </SelectItem>
-            ))}
-        </Select>
+                )
+            }))}
+        />
     );
 };
 

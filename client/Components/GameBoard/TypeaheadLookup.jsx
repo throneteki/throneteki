@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { Autocomplete, AutocompleteItem, Button } from '@heroui/react';
+import { Button } from '@heroui/react';
+import ComboField from '../Site/ComboField';
 
 const TypeaheadLookup = ({ onValueSelected, values }) => {
     const [selectedValue, setSelectedValue] = useState('');
@@ -15,21 +16,20 @@ const TypeaheadLookup = ({ onValueSelected, values }) => {
     }, [onValueSelected, selectedValue]);
 
     const labelsAndValues = useMemo(() => {
-        return values.map((value) => ({ label: value, value }));
+        return values.map((value) => ({ id: value, label: value }));
     }, [values]);
 
     return (
         <div>
-            <Autocomplete
-                className='px-2 mt-2'
-                defaultItems={labelsAndValues}
+            <ComboField
+                className='mt-2 px-2'
+                aria-label='Choose a value'
+                items={labelsAndValues}
+                selectedKey={selectedValue || null}
                 onSelectionChange={handleChange}
-                inputProps={{ classNames: { inputWrapper: 'rounded-md' } }}
-            >
-                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-            </Autocomplete>
+            />
             <div className='mt-2 mx-2 flex flex-col mb-2'>
-                <Button onPress={handleDoneClick} color='primary'>
+                <Button onPress={handleDoneClick} variant='primary'>
                     Done
                 </Button>
             </div>

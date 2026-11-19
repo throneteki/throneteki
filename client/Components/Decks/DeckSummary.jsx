@@ -49,21 +49,21 @@ const DeckSummary = ({ className, deck }) => {
     const getContainers = (groupedCards) => {
         return Object.entries(groupedCards).map(([type, cards]) => {
             const header = (
-                <div>
-                    <div key={type} className='m-1'>
-                        <ThronesIcon icon={type} className='me-1' />
-                        <strong>
-                            {type[0].toUpperCase() + type.slice(1)} (
-                            {cards.reduce((acc, card) => acc + card.count, 0)})
-                        </strong>
-                    </div>
-                </div>
+                <h4 className='mb-1 flex items-baseline gap-1.5 font-display text-sm font-semibold text-gold'>
+                    <ThronesIcon icon={type} />
+                    {type[0].toUpperCase() + type.slice(1)}
+                    <span className='font-sans font-normal tabular-nums text-ink-faint'>
+                        {cards.reduce((acc, card) => acc + card.count, 0)}
+                    </span>
+                </h4>
             );
 
             const sortedCards = sortBy(cards, (card) => card.card.name).map((card, index) => (
                 <CardHoverable key={index} code={card.card.code} type={card.card.type}>
-                    <div className='flex flex-row gap-1'>
-                        {`${card.count}x`}
+                    <div className='flex flex-row items-baseline gap-1.5 text-sm'>
+                        <span className='w-4 shrink-0 text-right tabular-nums text-ink-dim'>
+                            {card.count}
+                        </span>
                         <ThronesIcon icon={type} color={card.card.faction} />
                         <span>{card.card.label}</span>
                     </div>
@@ -71,7 +71,7 @@ const DeckSummary = ({ className, deck }) => {
             ));
 
             return (
-                <div key={type} className='break-inside-avoid pt-1'>
+                <div key={type} className='break-inside-avoid pb-4'>
                     {header}
                     <div className='flex flex-col items-start'>{sortedCards}</div>
                 </div>
@@ -84,15 +84,16 @@ const DeckSummary = ({ className, deck }) => {
 
     const containerClass = classNames(
         className,
-        'columns-2 md:columns-3 xl:columns-2 2xl:columns-3 gap-2'
+        'columns-1 sm:columns-2 md:columns-3 xl:columns-2 gap-6'
     );
     return (
         <div>
             <div className={containerClass}>{deckContainers}</div>
             {poolContainers && (
                 <>
-                    <div className='my-4 border-t border-gray-300' />
-                    <label className='font-bold'>Draft Pool</label>
+                    <h3 className='mb-3 mt-2 border-t border-gold-hair pt-4 font-display text-lg font-semibold text-gold'>
+                        Draft pool
+                    </h3>
                     <div className={containerClass}>{poolContainers}</div>
                 </>
             )}

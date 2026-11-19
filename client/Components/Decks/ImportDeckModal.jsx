@@ -1,22 +1,14 @@
 import React, { useState } from 'react';
+import { TextAreaField } from '../Site/Field';
+import Toggle from '../Site/Toggle';
 import { useGetCardsQuery, useGetPacksQuery } from '../../redux/middleware/api';
 import { processDeckText } from './DeckHelper';
 import { Constants, GameFormats } from '../../constants';
-import {
-    Button,
-    Link,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    Select,
-    SelectItem,
-    Switch,
-    Textarea
-} from '@heroui/react';
+import { Button, Link, Spinner } from '@heroui/react';
+import Dialog from '../Site/Dialog';
+import SelectField from '../Site/SelectField';
 import LoadingSpinner from '../Site/LoadingSpinner';
-import AlertPanel from '../Site/AlertPanel';
+import Notice from '../Site/Notice';
 import { toast } from 'react-toastify';
 
 const ImportDeckModal = ({
@@ -35,119 +27,118 @@ const ImportDeckModal = ({
     const { data: cards, isLoading: isCardsLoading, isError: isCardsError } = useGetCardsQuery({});
     const { data: packs, isLoading: isPacksLoading, isError: isPacksError } = useGetPacksQuery({});
 
+    const onSubmit = async () => {
+        setIsProcessing(true);
+        const deck = processDeckText(
+            Constants.Factions,
+            packs,
+            cards,
+            deckText,
+            isDraftpool ? 'draft' : undefined,
+            isDraftpool ? gameVariant : undefined,
+            isDraftpool
+        );
+        if (!deck) {
+            toast.error(
+                'There was an error processing your deck. Please ensure you have pasted a plain text export from ThronesDB, card name export from Draftmancer, or a plain card list.'
+            );
+        } else {
+            await onProcessed(deck);
+        }
+        setIsProcessing(false);
+    };
+
     return (
-        <Modal placement={placement} {...modalProps}>
-            <ModalContent>
-                {(onClose) => (
+        <Dialog
+            placement={placement}
+            isOpen={modalProps.isOpen}
+            onOpenChange={modalProps.onOpenChange}
+            title='Import deck'
+            size='lg'
+            footer={({ close }) => (
+                <div className='flex justify-end gap-2'>
+                    <Button onPress={close} variant='tertiary'>
+                        Close
+                    </Button>
+                    <Button
+                        isDisabled={deckText === ''}
+                        isPending={isProcessing || isLoading}
+                        onPress={onSubmit}
+                        variant='primary'
+                    >
+                        {(isProcessing || isLoading) && <Spinner color='current' size='sm' />}
+                        {submitLabel}
+                    </Button>
+                </div>
+            )}
+        >
+            <div className='flex flex-col gap-4'>
+                {(isCardsError || isPacksError) && (
+                    <Notice kind='error'>
+                        The card data couldn&apos;t be loaded. Please try again later.
+                    </Notice>
+                )}
+                {isCardsLoading || isPacksLoading ? (
+                    <LoadingSpinner />
+                ) : (
                     <>
-                        <ModalHeader className='flex flex-col gap-1'>Import Decklist</ModalHeader>
-                        <ModalBody>
-                            <div className='flex flex-col gap-2'>
-                                {(isCardsError || isPacksError) && (
-                                    <AlertPanel
-                                        variant='danger'
-                                        message='An error occured loading the card data. Please try again later'
-                                    />
-                                )}
-                                {isCardsLoading || isPacksLoading ? (
-                                    <LoadingSpinner />
-                                ) : (
-                                    <>
-                                        <span>{message}</span>
-                                        <div className='flex flex-row gap-2'>
-                                            <Switch
-                                                id='importDraftPool'
-                                                onValueChange={(isSelected) => {
-                                                    setIsDraftpool(isSelected);
-                                                    if (isSelected) {
-                                                        setGameVariant('towerofjoy');
-                                                    }
-                                                }}
-                                                isSelected={isDraftpool}
-                                            >
-                                                {'Import as draft pool'}
-                                            </Switch>
-                                            {isDraftpool && (
-                                                <Select
-                                                    label={'Game variant'}
-                                                    className='md:w-2/6'
-                                                    onChange={(e) => setGameVariant(e.target.value)}
-                                                    selectedKeys={new Set([gameVariant])}
-                                                >
-                                                    {GameFormats.find(
-                                                        (gf) => gf.name === 'draft'
-                                                    )?.variants.map((gv) => (
-                                                        <SelectItem key={gv.name} value={gv.name}>
-                                                            {gv.label}
-                                                        </SelectItem>
-                                                    )) || []}
-                                                </Select>
-                                            )}
-                                        </div>
-                                        {isDraftpool ? (
-                                            <span>
-                                                After building your deck on{' '}
-                                                <Link href='https://draftmancer.com'>
-                                                    Draftmancer
-                                                </Link>
-                                                , copy the list by clicking on{' '}
-                                                <strong>Export {'>'} Card Names</strong>, and paste
-                                                it below.
-                                            </span>
-                                        ) : (
-                                            <span>
-                                                Open your deck on{' '}
-                                                <Link href='https://thronesdb.com'>ThronesDB</Link>,
-                                                copy the plain text export from{' '}
-                                                <strong>Actions {'>'} Plain Text</strong>, and paste
-                                                it below.
-                                            </span>
-                                        )}
-                                        <Textarea
-                                            minRows={20}
-                                            value={deckText}
-                                            isDisabled={isProcessing || isLoading}
-                                            placeholder={'Paste your deck export here...'}
-                                            onValueChange={setDeckText}
-                                        />
-                                    </>
-                                )}
-                            </div>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button onPress={onClose}>Close</Button>
-                            <Button
-                                color='primary'
-                                isDisabled={deckText === ''}
-                                isLoading={isProcessing || isLoading}
-                                onPress={async () => {
-                                    setIsProcessing(true);
-                                    const deck = processDeckText(
-                                        Constants.Factions,
-                                        packs,
-                                        cards,
-                                        deckText,
-                                        isDraftpool ? 'draft' : undefined,
-                                        isDraftpool ? gameVariant : undefined,
-                                        isDraftpool
-                                    );
-                                    if (!deck) {
-                                        toast.error(
-                                            'There was an error processing your deck. Please ensure you have pasted a plain text export from ThronesDB, card name export from Draftmancer, or a plain card list.'
-                                        );
-                                    } else {
-                                        await onProcessed(deck);
+                        {message}
+                        <div className='flex flex-wrap items-end gap-4'>
+                            <Toggle
+                                onValueChange={(isSelected) => {
+                                    setIsDraftpool(isSelected);
+                                    if (isSelected) {
+                                        setGameVariant('towerofjoy');
                                     }
-                                    setIsProcessing(false);
                                 }}
+                                isSelected={isDraftpool}
                             >
-                                {submitLabel}
-                            </Button>
-                        </ModalFooter>
+                                {'Import as draft pool'}
+                            </Toggle>
+                            {isDraftpool && (
+                                <SelectField
+                                    label='Game variant'
+                                    className='md:w-2/6'
+                                    value={gameVariant}
+                                    onChange={setGameVariant}
+                                    items={
+                                        GameFormats.find((gf) => gf.name === 'draft')?.variants.map(
+                                            (gv) => ({
+                                                id: gv.name,
+                                                label: gv.label
+                                            })
+                                        ) || []
+                                    }
+                                />
+                            )}
+                        </div>
+                        {isDraftpool ? (
+                            <p className='text-sm text-ink-dim'>
+                                After building your deck on{' '}
+                                <Link href='https://draftmancer.com'>Draftmancer</Link>, copy the
+                                list by clicking on <strong>Export {'>'} Card Names</strong>, and
+                                paste it below.
+                            </p>
+                        ) : (
+                            <p className='text-sm text-ink-dim'>
+                                Open your deck on{' '}
+                                <Link href='https://thronesdb.com'>ThronesDB</Link>, copy the plain
+                                text export from <strong>Actions {'>'} Plain Text</strong>, and
+                                paste it below.
+                            </p>
+                        )}
+                        <TextAreaField
+                            aria-label='Deck list'
+                            minRows={20}
+                            value={deckText}
+                            isDisabled={isProcessing || isLoading}
+                            placeholder={'Paste your deck export here...'}
+                            onValueChange={setDeckText}
+                        />
                     </>
                 )}
-            </ModalContent>
-        </Modal>
+            </div>
+        </Dialog>
     );
 };
 

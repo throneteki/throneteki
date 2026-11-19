@@ -1,8 +1,16 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Avatar, Link } from '@heroui/react';
-
-import AlertPanel from '../Site/AlertPanel';
+import { useSelector } from 'react-redux';
+import { Link } from '@heroui/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faBell,
+    faCircleCheck,
+    faCircleExclamation,
+    faCircleInfo,
+    faTriangleExclamation
+} from '@fortawesome/free-solid-svg-icons';
+import UserAvatar from '../Site/UserAvatar';
 
 import CardBackImage from '../../assets/img/cardback.png';
 import GoldImage from '../../assets/img/stats/gold.png';
@@ -17,7 +25,48 @@ const tokens = {
     gold: { className: 'h-3 w-3 inline mt-1', imageSrc: GoldImage }
 };
 
+const alertStyles = {
+    success: {
+        icon: faCircleCheck,
+        className: 'border-gold-hair bg-gold/[0.05]',
+        iconClass: 'text-gold'
+    },
+    info: {
+        icon: faCircleInfo,
+        className: 'border-gold-hair bg-gold/[0.05]',
+        iconClass: 'text-gold'
+    },
+    bell: { icon: faBell, className: 'border-gold-line bg-gold/[0.08]', iconClass: 'text-gold' },
+    warning: {
+        icon: faTriangleExclamation,
+        className: 'border-warning/40 bg-warning/[0.06]',
+        iconClass: 'text-warning'
+    },
+    danger: {
+        icon: faCircleExclamation,
+        className: 'border-danger/40 bg-danger/[0.06]',
+        iconClass: 'text-danger'
+    }
+};
+
+const isChatFragment = (fragment) => fragment?.name && fragment.argType === 'player';
+
+const Divider = ({ isRound, children }) => (
+    <div
+        className={classNames(
+            'flex items-center gap-3 font-display font-semibold',
+            isRound ? 'pt-3 text-sm text-gold' : 'pt-1 text-xs text-ink-dim'
+        )}
+    >
+        <span className='h-px flex-1 bg-gold-hair' />
+        <span className='first-letter:uppercase'>{children}</span>
+        <span className='h-px flex-1 bg-gold-hair' />
+    </div>
+);
+
 const Messages = ({ messages }) => {
+    const username = useSelector((state) => state.auth.user?.username);
+
     const processKeywords = (message) => {
         const messages = [];
         let i = 0;
@@ -59,34 +108,37 @@ const Messages = ({ messages }) => {
                 switch (fragment.type) {
                     case 'startofround':
                     case 'endofround':
-                    case 'phasestart': {
-                        const className = classNames('font-bold text-foreground', {
-                            'text-large': fragment.type === 'startofround',
-                            'text-medium': fragment.type === 'phasestart',
-                            capitalize: fragment.type === 'phasestart'
-                        });
+                    case 'phasestart':
                         messages.push(
-                            <div className={className} key={index++}>
-                                <hr className='border-primary' />
-                                <div className='my-3'>{message}</div>
-                                {fragment.type === 'phasestart' && (
-                                    <hr className='border-primary' />
-                                )}
-                            </div>
+                            <Divider key={index++} isRound={fragment.type !== 'phasestart'}>
+                                {message}
+                            </Divider>
                         );
                         break;
-                    }
                     case 'success':
                     case 'info':
                     case 'danger':
                     case 'bell':
-                    case 'warning':
+                    case 'warning': {
+                        const style = alertStyles[fragment.type];
                         messages.push(
-                            <AlertPanel variant={fragment.type} key={index++} size={'sm'}>
-                                {message}
-                            </AlertPanel>
+                            <div
+                                key={index++}
+                                role={fragment.type === 'danger' ? 'alert' : undefined}
+                                className={classNames(
+                                    'flex items-start gap-2 border px-2.5 py-1.5 text-ink',
+                                    style.className
+                                )}
+                            >
+                                <FontAwesomeIcon
+                                    icon={style.icon}
+                                    className={classNames('mt-0.5 shrink-0', style.iconClass)}
+                                />
+                                <span className='min-w-0'>{message}</span>
+                            </div>
                         );
                         break;
+                    }
 
                     default:
                         messages.concat(message);
@@ -96,32 +148,36 @@ const Messages = ({ messages }) => {
                 messages.concat(formatMessageText(fragment.message));
             } else if (fragment.link && fragment.label) {
                 messages.push(
-                    <Link key={index++} isExternal href={fragment.link}>
+                    <Link
+                        key={index++}
+                        href={fragment.link}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                    >
                         {fragment.label}
                     </Link>
                 );
             } else if (fragment.code && fragment.label) {
                 messages.push(
-                    <span key={index++} className='cursor-pointer text-secondary hover:text-info'>
+                    <span key={index++} className='cursor-pointer text-gold hover:text-ink'>
                         <CardHoverable code={fragment.code}>{fragment.label}</CardHoverable>
                     </span>
                 );
-            } else if (fragment.name && fragment.argType === 'player') {
+            } else if (isChatFragment(fragment)) {
                 messages.push(
-                    <div key={index++} className='message-chat flex items-center gap-1'>
-                        <Avatar
-                            src={`/img/avatar/${fragment.name}.png`}
-                            showFallback
-                            className='w-6 h-6 text-tiny'
-                        />
-                        <span key={index++} className={Constants.ColorClassByRole[fragment.role]}>
-                            {fragment.name}
-                        </span>
-                    </div>
+                    <span
+                        key={index++}
+                        className={classNames(
+                            'font-semibold',
+                            Constants.ColorClassByRole[fragment.role] || 'text-ink'
+                        )}
+                    >
+                        {fragment.name}
+                    </span>
                 );
             } else if (fragment.argType === 'nonAvatarPlayer') {
                 const roleClass = Constants.ColorClassByRole[fragment.role?.toLowerCase()];
-                const userClass = classNames('username font-bold', roleClass);
+                const userClass = classNames('username font-semibold', roleClass || 'text-ink');
 
                 messages.push(
                     <span key={index++} className={userClass}>
@@ -143,21 +199,44 @@ const Messages = ({ messages }) => {
         return messages;
     };
 
-    const renderMessages = () => {
-        return messages.map((message, index) => {
-            // TODO: Re-add chat bubble triangles (left for this player, right for others)
-            const className = classNames('break-words leading-[1.15rem] text-gray-300', {
-                'p-2 bg-default rounded-md': Object.values(message.message).some(
-                    (m) => m.name && m.argType === 'player'
-                )
-            });
+    const renderMessages = () =>
+        messages.map((message, index) => {
+            const fragments = Object.values(message.message || {});
+            const sender = fragments.find(isChatFragment);
+
+            if (sender) {
+                const text = fragments.slice(fragments.indexOf(sender) + 1);
+
+                return (
+                    <div
+                        key={index}
+                        className={classNames(
+                            'flex gap-2 py-1',
+                            sender.name === username && '-mx-2 bg-white/[0.035] px-2'
+                        )}
+                    >
+                        <UserAvatar username={sender.name} size='sm' className='mt-0.5 shrink-0' />
+                        <div className='min-w-0 flex-1 break-words'>
+                            <span
+                                className={classNames(
+                                    'block text-sm font-semibold',
+                                    Constants.ColorClassByRole[sender.role] || 'text-ink'
+                                )}
+                            >
+                                {sender.name}
+                            </span>
+                            <span className='text-ink'>{formatMessageText(text)}</span>
+                        </div>
+                    </div>
+                );
+            }
+
             return (
-                <div key={index} className={className}>
+                <div key={index} className='break-words leading-[1.2rem] text-ink-dim'>
                     {formatMessageText(message.message)}
                 </div>
             );
         });
-    };
 
     return <>{renderMessages()} </>;
 };

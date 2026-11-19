@@ -1,9 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Button, Input, Radio, RadioGroup } from '@heroui/react';
+import classNames from 'classnames';
+import Field from '../Site/Field';
+import { Button, Spinner } from '@heroui/react';
+import RadioField from '../Site/RadioField';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import moment from 'moment';
-import Panel from '../Site/Panel';
+import Group from '../Site/Group';
 import EventSelect from '../Games/EventSelect';
 import BannerSlide from './BannerSlide';
 import { prepareBannerImage } from './prepareBannerImage';
@@ -68,6 +71,7 @@ const BannerEditor = ({ banner, onDone }) => {
     const [fields, setFields] = useState(() => initialFields(banner));
     const [pendingImage, setPendingImage] = useState();
     const [isPreparing, setIsPreparing] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
     // Kept once a new banner is created, so retrying a failed image upload doesn't add it again
     const [savedId, setSavedId] = useState(banner?._id);
     const fileInput = useRef();
@@ -130,9 +134,7 @@ const BannerEditor = ({ banner, onDone }) => {
         return undefined;
     }, [fields, imageUrl]);
 
-    const onFileChosen = async (event) => {
-        const file = event.target.files?.[0];
-        event.target.value = '';
+    const prepareFile = async (file) => {
         if (!file) {
             return;
         }
@@ -199,33 +201,87 @@ const BannerEditor = ({ banner, onDone }) => {
     };
 
     return (
-        <Panel title={savedId ? 'Edit banner' : 'Add banner'}>
-            <div className='flex flex-col gap-3'>
-                <div className='flex flex-wrap items-center gap-2'>
-                    <Button
-                        size='sm'
-                        variant='flat'
-                        isLoading={isPreparing}
-                        isDisabled={isBusy}
-                        onPress={() => fileInput.current?.click()}
-                    >
-                        {imageUrl ? 'Replace image' : 'Choose image'}
-                    </Button>
-                    <span className='text-sm text-default-500'>
-                        Images are cropped from the centre to {BannerWidth} by {BannerHeight}{' '}
-                        pixels.
-                    </span>
-                    <input
-                        ref={fileInput}
-                        type='file'
-                        accept={AcceptedImageFiles}
-                        hidden
-                        onChange={onFileChosen}
-                    />
+        <Group
+            title={savedId ? 'Edit banner' : 'New banner'}
+            description={`Images are cropped from the centre to ${BannerWidth} by ${BannerHeight} pixels. Days run midnight to midnight UTC.`}
+        >
+            <form
+                className='flex flex-col gap-5 border border-gold-line bg-black/20 px-4 py-4 sm:px-5'
+                onSubmit={(event) => {
+                    event.preventDefault();
+                    if (!validationError && !isBusy) {
+                        onSave();
+                    }
+                }}
+            >
+                <input
+                    ref={fileInput}
+                    type='file'
+                    accept={AcceptedImageFiles}
+                    hidden
+                    onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        event.target.value = '';
+                        prepareFile(file);
+                    }}
+                />
+                <div
+                    onDragOver={(event) => {
+                        event.preventDefault();
+                        setIsDragging(true);
+                    }}
+                    onDragLeave={() => setIsDragging(false)}
+                    onDrop={(event) => {
+                        event.preventDefault();
+                        setIsDragging(false);
+                        prepareFile(event.dataTransfer.files?.[0]);
+                    }}
+                    className={classNames(
+                        'flex flex-col gap-2',
+                        isDragging && 'outline outline-2 outline-offset-4 outline-gold'
+                    )}
+                >
+                    {imageUrl ? (
+                        <>
+                            <BannerSlide banner={{ title: fields.title }} imageUrl={imageUrl} />
+                            <div className='flex flex-wrap items-center justify-center gap-2 text-sm text-ink-faint'>
+                                <span>How it will look in the lobby.</span>
+                                <Button
+                                    size='sm'
+                                    variant='tertiary'
+                                    isPending={isPreparing}
+                                    isDisabled={isBusy}
+                                    onPress={() => fileInput.current?.click()}
+                                >
+                                    {isPreparing && <Spinner color='current' size='sm' />}
+                                    Replace image
+                                </Button>
+                            </div>
+                        </>
+                    ) : (
+                        <button
+                            type='button'
+                            disabled={isBusy}
+                            onClick={() => fileInput.current?.click()}
+                            className='mx-auto flex aspect-[6/1] w-full max-w-[calc(18vh*6)] min-h-24 flex-col items-center justify-center gap-1 border border-dashed border-gold-line text-ink-dim transition-colors hover:border-gold hover:text-ink'
+                        >
+                            {isPreparing ? (
+                                <Spinner color='current' size='sm' />
+                            ) : (
+                                <>
+                                    <span className='text-sm'>
+                                        Choose an image or drop one here
+                                    </span>
+                                    <span className='text-xs text-ink-faint'>
+                                        {BannerWidth} by {BannerHeight} pixels or larger
+                                    </span>
+                                </>
+                            )}
+                        </button>
+                    )}
                 </div>
-                {imageUrl && <BannerSlide banner={{ title: fields.title }} imageUrl={imageUrl} />}
-                <div className='grid grid-cols-1 gap-2 md:grid-cols-2'>
-                    <Input
+                <div className='grid grid-cols-1 gap-x-5 gap-y-4 md:grid-cols-2'>
+                    <Field
                         label='Description'
                         description='Read out by screen readers in place of the image'
                         maxLength={MaxBannerTitleLength}
@@ -233,22 +289,48 @@ const BannerEditor = ({ banner, onDone }) => {
                         onValueChange={setField('title')}
                         isRequired
                     />
-                    <RadioGroup
+                    <Field
+                        label='Event date'
+                        type='date'
+                        description='Banners show soonest event first'
+                        value={fields.eventDate}
+                        onValueChange={onEventDateChange}
+                    />
+                    <Field
+                        label='First day shown'
+                        type='date'
+                        value={fields.showFrom}
+                        onValueChange={setField('showFrom')}
+                        isRequired
+                    />
+                    <Field
+                        label='Last day shown'
+                        type='date'
+                        description='Follows the event date until you change it'
+                        value={fields.showUntil}
+                        onValueChange={setField('showUntil')}
+                        isRequired
+                    />
+                </div>
+                <div className='flex flex-col gap-3'>
+                    <RadioField
                         label='When clicked'
                         orientation='horizontal'
                         value={fields.action}
-                        onValueChange={setField('action')}
-                    >
-                        <Radio value='link'>Open a link</Radio>
-                        <Radio value='event'>Start a game for an event</Radio>
-                        <Radio value='none'>Nothing</Radio>
-                    </RadioGroup>
+                        onChange={setField('action')}
+                        options={[
+                            { value: 'link', label: 'Open a link' },
+                            { value: 'event', label: 'Start a game for an event' },
+                            { value: 'none', label: 'Nothing' }
+                        ]}
+                    />
                     {fields.action === 'link' && (
-                        <Input
-                            label='Link'
+                        <Field
+                            aria-label='Link'
                             type='url'
                             placeholder='https://'
-                            description='Such as the sign up page'
+                            description='Such as the sign-up page. Opens in a new tab.'
+                            className='max-w-xl'
                             maxLength={MaxBannerUrlLength}
                             value={fields.linkUrl}
                             onValueChange={setField('linkUrl')}
@@ -257,51 +339,36 @@ const BannerEditor = ({ banner, onDone }) => {
                     )}
                     {fields.action === 'event' && (
                         <EventSelect
-                            label='Event'
+                            label={null}
+                            aria-label='Event'
                             placeholder='Choose an event'
+                            className='max-w-xl'
                             selected={fields.eventId}
                             onSelected={(event) => setField('eventId')(event?._id ?? null)}
                         />
                     )}
-                    <Input
-                        label='Event date'
-                        type='date'
-                        description='Orders the banners, soonest first'
-                        value={fields.eventDate}
-                        onValueChange={onEventDateChange}
-                    />
-                    <Input
-                        label='Show from'
-                        type='date'
-                        value={fields.showFrom}
-                        onValueChange={setField('showFrom')}
-                        isRequired
-                    />
-                    <Input
-                        label='Show until'
-                        type='date'
-                        description='The last day the banner is shown. Days run midnight to midnight UTC.'
-                        value={fields.showUntil}
-                        onValueChange={setField('showUntil')}
-                        isRequired
-                    />
                 </div>
-                {validationError && <span className='text-sm text-warning'>{validationError}</span>}
-                <div className='flex gap-2'>
-                    <Button
-                        color='primary'
-                        isDisabled={!!validationError || isPreparing}
-                        isLoading={isSubmitting}
-                        onPress={onSave}
-                    >
-                        Save
-                    </Button>
-                    <Button isDisabled={isBusy} onPress={onDone}>
+                <div className='flex flex-wrap items-center justify-end gap-2 border-t border-gold-hair pt-4'>
+                    {validationError && (
+                        <span className='w-full text-sm text-ink-faint sm:me-auto sm:w-auto'>
+                            {validationError}
+                        </span>
+                    )}
+                    <Button variant='tertiary' isDisabled={isBusy} onPress={onDone}>
                         Cancel
                     </Button>
+                    <Button
+                        type='submit'
+                        variant='primary'
+                        isDisabled={!!validationError || isPreparing}
+                        isPending={isSubmitting}
+                    >
+                        {isSubmitting && <Spinner color='current' size='sm' />}
+                        {savedId ? 'Save changes' : 'Add banner'}
+                    </Button>
                 </div>
-            </div>
-        </Panel>
+            </form>
+        </Group>
     );
 };
 

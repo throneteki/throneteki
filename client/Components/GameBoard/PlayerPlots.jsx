@@ -30,7 +30,7 @@ const PlayerPlots = ({
                 size={cardSize}
                 source='revealed plots'
                 popupLocation={isMe ? 'bottom' : 'top'}
-                title='Used Plots'
+                title='Used plots'
                 titlePosition={direction === 'reverse' && plotsInFront ? 'bottom left' : 'top left'}
                 topCard={activePlot}
                 disableBackground={true}
@@ -52,6 +52,7 @@ const PlayerPlots = ({
                 orientation='horizontal'
                 source='plot deck'
                 title='Plots'
+                popupTitle='plot deck'
                 titlePosition={direction !== 'reverse' && activePlot ? 'bottom left' : 'top left'}
                 popupLocation={isMe ? 'bottom' : 'top'}
                 topCard={showSelectedPlot ? selectedPlot : null}
@@ -102,7 +103,7 @@ const PlayerPlots = ({
 
     return (
         <div className='relative flex flex-col'>
-            <div className=' inner-border absolute border-2 border-default-100/55 bg-black/55 w-full h-full rounded-md' />
+            <div className=' inner-border absolute border-2 border-white/5 bg-black/55 w-full h-full rounded-md' />
             {renderPlotPiles()}
         </div>
     );

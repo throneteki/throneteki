@@ -4,8 +4,10 @@ import { Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
-import AlertPanel from '../Components/Site/AlertPanel';
-import Panel from '../Components/Site/Panel';
+import Frame from '../Components/Site/Frame';
+import LoadingSpinner from '../Components/Site/LoadingSpinner';
+import Notice from '../Components/Site/Notice';
+import SelectField from '../Components/Site/SelectField';
 import MonthlyStats from '../Components/Stats/MonthlyStats';
 import { useGetMonthlyStatsQuery } from '../redux/middleware/api';
 import Page from './Page';
@@ -25,7 +27,11 @@ const Stats = () => {
 
     if (!user) {
         return (
-            <AlertPanel variant='danger' message='You need to be logged in to view your stats' />
+            <Page size='narrow'>
+                <Frame title='Your stats'>
+                    <Notice kind='warning'>Log in to see your stats.</Notice>
+                </Frame>
+            </Page>
         );
     }
 
@@ -39,19 +45,16 @@ const Stats = () => {
     let content;
     if (error) {
         content = (
-            <AlertPanel
-                variant='danger'
-                message={
-                    (typeof error === 'string' ? error : error.data?.message) ||
-                    'Your stats could not be loaded.'
-                }
-            />
+            <Notice kind='error'>
+                {(typeof error === 'string' ? error : error.data?.message) ||
+                    'Your stats could not be loaded. Try again in a moment.'}
+            </Notice>
         );
     } else if (!data) {
-        content = <p className='py-6 text-center'>Loading...</p>;
+        content = <LoadingSpinner className='py-10' />;
     } else if (!shownMonth) {
         content = (
-            <p className='py-6 text-center'>
+            <p className='py-10 text-center text-sm text-ink-dim'>
                 Your stats will appear here once you have finished a game.
             </p>
         );
@@ -59,51 +62,49 @@ const Stats = () => {
         content = <MonthlyStats month={shownMonth} stats={data.stats} />;
     }
 
+    const monthPicker = months.length > 0 && (
+        <div className='flex items-center gap-1'>
+            <Button
+                aria-label='Older month'
+                isDisabled={!older || isFetching}
+                isIconOnly
+                size='sm'
+                onPress={() => setMonth(older)}
+                variant='ghost'
+            >
+                <FontAwesomeIcon icon={faChevronLeft} />
+            </Button>
+            <SelectField
+                aria-label='Month'
+                className='w-44'
+                value={shownMonth}
+                onChange={(value) => value && setMonth(value)}
+                items={months.map((value) => ({ id: value, label: monthName(value) }))}
+            />
+            <Button
+                aria-label='Newer month'
+                isDisabled={!newer || isFetching}
+                isIconOnly
+                size='sm'
+                onPress={() => setMonth(newer)}
+                variant='ghost'
+            >
+                <FontAwesomeIcon icon={faChevronRight} />
+            </Button>
+        </div>
+    );
+
     return (
         <Page>
-            <Panel title='Your Stats'>
-                <div className='flex flex-col gap-4'>
-                    {months.length > 0 && (
-                        <div className='flex flex-wrap items-center justify-center gap-2'>
-                            <Button
-                                aria-label='Older month'
-                                isDisabled={!older || isFetching}
-                                isIconOnly
-                                size='sm'
-                                variant='light'
-                                onPress={() => setMonth(older)}
-                            >
-                                <FontAwesomeIcon icon={faChevronLeft} />
-                            </Button>
-                            <select
-                                aria-label='Month'
-                                className='rounded-md border border-default-300 bg-default-100 px-2 py-1'
-                                value={shownMonth}
-                                onChange={(event) => setMonth(event.target.value)}
-                            >
-                                {months.map((value) => (
-                                    <option key={value} value={value}>
-                                        {monthName(value)}
-                                    </option>
-                                ))}
-                            </select>
-                            <Button
-                                aria-label='Newer month'
-                                isDisabled={!newer || isFetching}
-                                isIconOnly
-                                size='sm'
-                                variant='light'
-                                onPress={() => setMonth(newer)}
-                            >
-                                <FontAwesomeIcon icon={faChevronRight} />
-                            </Button>
-                        </div>
-                    )}
-                    <div className={isFetching ? 'opacity-60 transition-opacity' : ''}>
-                        {content}
-                    </div>
+            <Frame
+                title='Your stats'
+                description="Your games month by month. They're only for you: nobody else can see them."
+                actions={monthPicker}
+            >
+                <div className={isFetching ? 'opacity-60 transition-opacity' : undefined}>
+                    {content}
                 </div>
-            </Panel>
+            </Frame>
         </Page>
     );
 };

@@ -1,12 +1,13 @@
 import React, { useState, useCallback } from 'react';
+import Field from '../Components/Site/Field';
 import HCaptcha from '@hcaptcha/react-hcaptcha';
-import Panel from '../Components/Site/Panel';
+import Frame from '../Components/Site/Frame';
+import Notice from '../Components/Site/Notice';
 
 import { useForgotPasswordMutation } from '../redux/middleware/api';
-import { Button, Input } from '@heroui/react';
+import { Button, Spinner } from '@heroui/react';
 import { toast } from 'react-toastify';
 import Page from './Page';
-import ErrorMessage from '../Components/Site/ErrorMessage';
 
 const ForgotPassword = () => {
     const [captcha, setCaptcha] = useState('');
@@ -25,22 +26,29 @@ const ForgotPassword = () => {
                 'Your request was submitted.  If the username you entered is registered with the site, an email will be sent to the address registered on the account, detailing what to do next.'
             );
         } catch (err) {
-            toast.error(err.message || 'An error occurred submitting your request');
+            toast.error(
+                err.data?.message || err.message || 'An error occurred submitting your request'
+            );
         }
     }, [forgotPassword, username, captcha]);
     const siteKey = import.meta.env.VITE_HCAPTCHA_SITE_KEY;
     return (
-        <Page size='small'>
-            <Panel title='Forgot password'>
-                <div className='flex flex-col gap-2'>
-                    <p>
-                        Please enter your username and click the submit button to start the password
-                        recovery process. If the username exists, the email for that account will be
-                        emailed with instructions on how to reset your password.
-                    </p>
-                    <Input
-                        label={'Username'}
+        <Page size='narrow'>
+            <Frame
+                title='Forgot password'
+                description="Enter your username. If it's registered, we'll email the address on the account with a link to reset your password."
+            >
+                <form
+                    className='flex flex-col gap-4'
+                    onSubmit={(event) => {
+                        event.preventDefault();
+                        onSubmit();
+                    }}
+                >
+                    <Field
+                        label='Username'
                         name='username'
+                        autoComplete='username'
                         value={username}
                         onValueChange={setUsername}
                         isDisabled={!siteKey}
@@ -48,21 +56,22 @@ const ForgotPassword = () => {
                     {siteKey ? (
                         <HCaptcha sitekey={siteKey} onVerify={onCaptchaChange} />
                     ) : (
-                        <ErrorMessage
-                            title='Failed to load Captcha'
-                            message='Invalid or missing site key'
-                        />
+                        <Notice kind='error'>
+                            The captcha couldn&apos;t load, so password resets aren&apos;t available
+                            right now. Please try again later.
+                        </Notice>
                     )}
                     <Button
-                        color='primary'
-                        onPress={onSubmit}
-                        loading={isLoading}
+                        className='w-full'
+                        type='submit'
+                        isPending={isLoading}
                         isDisabled={!username || !siteKey}
+                        variant='primary'
                     >
-                        Submit
+                        {isLoading && <Spinner color='current' size='sm' />}Send reset link
                     </Button>
-                </div>
-            </Panel>
+                </form>
+            </Frame>
         </Page>
     );
 };

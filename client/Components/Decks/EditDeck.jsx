@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 
 import DeckEditor from './DeckEditor';
-import AlertPanel from '../Site/AlertPanel';
-import Panel from '../Site/Panel';
+import Frame from '../Site/Frame';
+import Notice from '../Site/Notice';
 import { useDispatch } from 'react-redux';
 import { navigate } from '../../redux/reducers/navigation';
 import { useGetCardsQuery, useGetDeckQuery, useGetPacksQuery } from '../../redux/middleware/api';
@@ -30,15 +30,21 @@ const EditDeckPage = ({ deckId }) => {
         () => isErrorDeck || isErrorCards || isErrorPacks,
         [isErrorCards, isErrorDeck, isErrorPacks]
     );
-    let content;
 
+    let content;
     if (isLoading) {
-        content = <LoadingSpinner label={'Loading deck...'} />;
+        content = (
+            <Frame title='Edit deck'>
+                <LoadingSpinner label='Loading deck...' />
+            </Frame>
+        );
     } else if (isError) {
         content = (
-            <AlertPanel variant='danger'>
-                An error occured loading your deck. Please try again later.
-            </AlertPanel>
+            <Frame title='Edit deck'>
+                <Notice kind='error'>
+                    Your deck couldn&apos;t be loaded. Please try again later.
+                </Notice>
+            </Frame>
         );
     } else {
         content = (
@@ -51,11 +57,7 @@ const EditDeckPage = ({ deckId }) => {
         );
     }
 
-    return (
-        <Page>
-            <Panel title={deck?.name}>{content}</Panel>
-        </Page>
-    );
+    return <Page size='wide'>{content}</Page>;
 };
 
 export default EditDeckPage;

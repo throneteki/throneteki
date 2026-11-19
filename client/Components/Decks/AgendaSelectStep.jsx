@@ -1,10 +1,12 @@
 import React, { useMemo, useState } from 'react';
+import classNames from 'classnames';
 import CardImage from '../Images/CardImage';
-import AlertPanel from '../Site/AlertPanel';
 import { Button } from '@heroui/react';
 import { useGetCardsQuery } from '../../redux/middleware/api';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import CardHoverable from '../Images/CardHoverable';
+import Frame from '../Site/Frame';
+import Notice from '../Site/Notice';
 
 const AgendaSelectStep = ({ onBackClick, onNextClick }) => {
     const { data, isLoading, isError } = useGetCardsQuery({});
@@ -37,62 +39,76 @@ const AgendaSelectStep = ({ onBackClick, onNextClick }) => {
         return selectedAgendas.length == 0;
     };
 
+    let content;
     if (isLoading) {
-        return <LoadingSpinner />;
+        content = <LoadingSpinner />;
     } else if (isError) {
-        return (
-            <AlertPanel variant='danger'>
-                An error occurred loading data from the server. Please try again later.
-            </AlertPanel>
+        content = (
+            <Notice kind='error'>
+                The agendas couldn&apos;t be loaded. Please try again later.
+            </Notice>
         );
-    }
+    } else {
+        content = (
+            <div className='grid max-h-[70vh] grid-cols-[repeat(auto-fill,minmax(7rem,1fr))] justify-items-center gap-3 overflow-y-auto p-1'>
+                {agendas.map((agenda) => {
+                    const isSelected = selectedAgendas.some((a) => a.code === agenda.code);
+                    const isSelectable = canSelectAgenda(agenda.code);
 
-    return (
-        <>
-            <div className='mb-2'>
-                <Button color='default' className='mr-2' onPress={() => onBackClick()}>
-                    Back
-                </Button>
-                <Button color='primary' onPress={() => onNextClick(selectedAgendas)}>
-                    Next
-                </Button>
-            </div>
-            <div className='grid h-[75vh] grid-cols-3 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-8 overflow-y-auto'>
-                {agendas.map((agenda) => (
-                    <div key={agenda.code} className='m-2 flex content-center'>
-                        <div
-                            role={canSelectAgenda(agenda.code) ? 'button' : undefined}
-                            onPointerDown={() => {
-                                if (!canSelectAgenda(agenda.code)) {
-                                    return;
-                                }
-
-                                const isSelected = selectedAgendas.some(
-                                    (a) => a.code === agenda.code
-                                );
-
+                    return (
+                        <button
+                            key={agenda.code}
+                            type='button'
+                            aria-pressed={isSelected}
+                            aria-label={agenda.label}
+                            disabled={!isSelectable}
+                            className={classNames(
+                                'rounded-sm transition-opacity duration-150',
+                                isSelected
+                                    ? 'outline-3 outline-offset-2 outline-accent'
+                                    : 'outline-none',
+                                { 'cursor-not-allowed opacity-35': !isSelectable }
+                            )}
+                            onClick={() =>
                                 setAgendas(
                                     isSelected
                                         ? selectedAgendas.filter((a) => a.code !== agenda.code)
                                         : selectedAgendas.concat(agenda)
-                                );
-                            }}
+                                )
+                            }
                         >
                             <CardHoverable code={agenda.code}>
-                                <CardImage
-                                    code={agenda.code}
-                                    size='large'
-                                    className={
-                                        selectedAgendas.some((a) => a.code === agenda.code) &&
-                                        'outline outline-4 outline-green-600'
-                                    }
-                                />
+                                <CardImage code={agenda.code} size='large' />
                             </CardHoverable>
-                        </div>
-                    </div>
-                ))}
+                        </button>
+                    );
+                })}
             </div>
-        </>
+        );
+    }
+
+    const description =
+        selectedAgendas.length === 0
+            ? 'Choose an agenda, or go on without one. Alliance lets you add two Banners.'
+            : `Chosen: ${selectedAgendas.map((a) => a.label).join(', ')}.`;
+
+    return (
+        <Frame
+            title='Choose an agenda'
+            description={description}
+            actions={
+                <>
+                    <Button onPress={() => onBackClick()} variant='tertiary'>
+                        Back
+                    </Button>
+                    <Button onPress={() => onNextClick(selectedAgendas)} variant='primary'>
+                        Next
+                    </Button>
+                </>
+            }
+        >
+            {content}
+        </Frame>
     );
 };
 

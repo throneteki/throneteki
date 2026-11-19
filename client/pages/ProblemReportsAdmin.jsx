@@ -2,13 +2,16 @@ import React, { useCallback, useEffect, useState } from 'react';
 import moment from 'moment';
 import classNames from 'classnames';
 import { toast } from 'react-toastify';
-import { Button, Checkbox, Chip, Input, Pagination } from '@heroui/react';
+import { Button, Checkbox, Spinner } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRefresh, faSearch, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faRotateRight, faSearch } from '@fortawesome/free-solid-svg-icons';
 
-import LoadingSpinner from '../Components/Site/LoadingSpinner';
-import AlertPanel from '../Components/Site/AlertPanel';
 import ConfirmDialog from '../Components/Site/ConfirmDialog';
+import Field from '../Components/Site/Field';
+import LoadingSpinner from '../Components/Site/LoadingSpinner';
+import Notice from '../Components/Site/Notice';
+import Pager from '../Components/Site/Pager';
+import Tag from '../Components/Site/Tag';
 import {
     useDeleteProblemReportsMutation,
     useGetProblemReportsQuery,
@@ -16,8 +19,8 @@ import {
 } from '../redux/middleware/api';
 import { downloadBlob } from '../util';
 import { MaxDeleteCount } from '../../shared/problemReportLimits';
+import AdminPage from './AdminPage';
 import ProblemReportDetails from './ProblemReportDetails';
-import Page from './Page';
 
 const PageSize = 20;
 
@@ -50,49 +53,49 @@ const ReportListItem = ({ report, isSelected, isChecked, onSelect, onCheck }) =>
         .join(', ');
 
     return (
-        <div
-            role='button'
-            tabIndex={0}
-            onClick={onSelect}
-            onKeyDown={(event) => event.key === 'Enter' && onSelect()}
+        <li
             className={classNames(
-                'flex gap-2 p-2 rounded-medium border-1 cursor-pointer transition-colors',
-                {
-                    'border-primary bg-primary/15': isSelected,
-                    'border-transparent hover:bg-default/30': !isSelected
-                }
+                'flex gap-3 border-b border-gold-hair px-2 py-2.5 transition-colors',
+                isSelected ? 'bg-gold/[0.08]' : 'hover:bg-white/[0.03]'
             )}
         >
-            <div onClick={(event) => event.stopPropagation()} className='pt-0.5'>
-                <Checkbox
-                    size='sm'
-                    isSelected={isChecked}
-                    onValueChange={onCheck}
-                    aria-label='Select report'
-                />
-            </div>
-            <div className='flex flex-col gap-1 min-w-0 flex-1'>
+            <Checkbox
+                isSelected={isChecked}
+                onChange={onCheck}
+                aria-label='Select report'
+                className='pt-0.5'
+            >
+                <Checkbox.Content>
+                    <Checkbox.Control>
+                        <Checkbox.Indicator />
+                    </Checkbox.Control>
+                </Checkbox.Content>
+            </Checkbox>
+            <button
+                type='button'
+                onClick={onSelect}
+                aria-current={isSelected || undefined}
+                className='flex min-w-0 flex-1 flex-col gap-1 text-left'
+            >
                 {report.description ? (
-                    <span className='font-semibold line-clamp-2'>{report.description}</span>
+                    <span className='line-clamp-2 text-sm text-ink'>{report.description}</span>
                 ) : (
-                    <span className='italic text-default-500'>No description</span>
+                    <span className='text-sm text-ink-faint'>
+                        {report.source === 'cancel-prompt'
+                            ? 'Sent by /cancel-prompt'
+                            : 'No description'}
+                    </span>
                 )}
-                <div className='flex flex-wrap items-center gap-x-2 gap-y-1 text-tiny text-default-500'>
-                    <span className='font-bold text-default-700'>{report.reporter}</span>
-                    <span title={created.format('YYYY-MM-DD HH:mm:ss')}>{created.fromNow()}</span>
-                    {state && (
-                        <Chip size='sm' variant='bordered' className='capitalize h-5'>
-                            {state}
-                        </Chip>
+                <span className='flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-faint'>
+                    <span className='text-ink-dim'>{report.reporter}</span>
+                    <span title={created.format('D MMM YYYY, H:mm:ss')}>{created.fromNow()}</span>
+                    {state && <span className='first-letter:uppercase'>{state}</span>}
+                    {report.source === 'cancel-prompt' && report.description && (
+                        <Tag tone='warning'>/cancel-prompt</Tag>
                     )}
-                    {report.source === 'cancel-prompt' && (
-                        <Chip size='sm' variant='flat' color='warning' className='h-5'>
-                            /cancel-prompt
-                        </Chip>
-                    )}
-                </div>
-            </div>
-        </div>
+                </span>
+            </button>
+        </li>
     );
 };
 
@@ -196,123 +199,165 @@ const ProblemReportsAdmin = () => {
             }
             setChecked((current) => {
                 const next = new Map(current);
-                processed.forEach((id) => next.delete(id));
+                for (const id of processed) {
+                    next.delete(id);
+                }
                 return next;
             });
             setReportsToDelete([]);
         }
     }, [deleteProblemReports, reportsToDelete, selectedId]);
 
+    let detail;
+    if (!selectedId) {
+        detail = (
+            <div className='flex flex-1 items-center justify-center py-16 text-sm text-ink-faint'>
+                Choose a report to see the game state when it was sent.
+            </div>
+        );
+    } else if (isReportFetching) {
+        detail = <LoadingSpinner className='py-16' />;
+    } else if (isReportError || !report) {
+        detail = (
+            <Notice kind='error'>The report couldn&apos;t be loaded. It may have expired.</Notice>
+        );
+    } else {
+        detail = (
+            <ProblemReportDetails
+                report={report}
+                onDownload={onDownload}
+                onDelete={() => setReportsToDelete([report])}
+            />
+        );
+    }
+
     return (
-        <Page size='wide'>
-            <div className='flex flex-col lg:flex-row gap-3 lg:h-[calc(100vh-7rem)]'>
-                <aside className='lg:w-[380px] shrink-0 flex flex-col gap-2 bg-zinc-950/95 backdrop-blur-md shadow-lg border-1 border-default-200 rounded-large p-3 min-h-0 max-lg:max-h-[60vh]'>
-                    <div className='flex items-center justify-between gap-2'>
-                        <div>
-                            <h2 className='font-bold text-large'>Problem reports</h2>
-                            <p className='text-tiny text-default-500'>
-                                {list ? `${list.totalCount} reports · ` : ''}kept for 30 days
-                            </p>
-                        </div>
-                        <Button
-                            size='sm'
-                            variant='light'
-                            isIconOnly
-                            aria-label='Refresh'
-                            isLoading={isListFetching}
-                            onPress={() => refetch()}
-                        >
-                            <FontAwesomeIcon icon={faRefresh} />
-                        </Button>
-                    </div>
-                    <Input
-                        size='sm'
-                        placeholder='Search reports'
+        <AdminPage
+            section='reports'
+            title='Problem reports'
+            description={`${list ? `${list.totalCount} ${list.totalCount === 1 ? 'report' : 'reports'}, kept` : 'Kept'} for 30 days. Players send these with Report a problem in a game, and /cancel-prompt sends one before it clears a stuck prompt.`}
+            actions={
+                <Button variant='tertiary' isPending={isListFetching} onPress={() => refetch()}>
+                    {isListFetching ? (
+                        <Spinner color='current' size='sm' />
+                    ) : (
+                        <FontAwesomeIcon icon={faRotateRight} />
+                    )}
+                    Refresh
+                </Button>
+            }
+        >
+            <div className='grid grid-cols-1 gap-6 lg:h-[calc(100dvh-12rem)] lg:min-h-[36rem] lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]'>
+                <section
+                    aria-label='Reports'
+                    className={classNames(
+                        'flex min-h-0 flex-col gap-3',
+                        selectedId && 'max-lg:hidden'
+                    )}
+                >
+                    <Field
+                        aria-label='Search reports'
+                        placeholder='Search descriptions and players'
                         startContent={<FontAwesomeIcon icon={faSearch} />}
                         value={search}
                         onValueChange={setSearch}
-                        isClearable
-                        onClear={() => setSearch('')}
                     />
-                    <div className='flex items-center justify-between gap-2 min-h-8'>
+                    <div className='flex min-h-8 items-center justify-between gap-2 px-2'>
                         <Checkbox
-                            size='sm'
                             isSelected={allOnPageChecked}
                             isDisabled={reports.length === 0}
-                            onValueChange={(isChecked) =>
-                                reports.forEach((item) => toggleChecked(item, isChecked))
-                            }
+                            onChange={(isChecked) => {
+                                for (const item of reports) {
+                                    toggleChecked(item, isChecked);
+                                }
+                            }}
                         >
-                            <span className='text-small'>Select page</span>
+                            <Checkbox.Content className='flex items-center gap-3'>
+                                <Checkbox.Control>
+                                    <Checkbox.Indicator />
+                                </Checkbox.Control>
+                                <span className='text-sm text-ink-dim'>
+                                    {checked.size > 0
+                                        ? `${checked.size} selected`
+                                        : 'Select this page'}
+                                </span>
+                            </Checkbox.Content>
                         </Checkbox>
                         {checked.size > 0 && (
                             <Button
                                 size='sm'
-                                color='danger'
-                                variant='flat'
-                                startContent={<FontAwesomeIcon icon={faTrashAlt} />}
-                                isLoading={isDeleting}
+                                variant='ghost'
+                                className='text-danger'
+                                isPending={isDeleting}
                                 onPress={() => setReportsToDelete([...checked.values()])}
                             >
+                                {isDeleting && <Spinner color='current' size='sm' />}
                                 Delete {checked.size}
                             </Button>
                         )}
                     </div>
-                    <div className='flex-1 min-h-0 overflow-y-auto flex flex-col gap-1 -mx-1 px-1'>
-                        {isListLoading && <LoadingSpinner />}
+                    <div className='min-h-0 flex-1 overflow-y-auto border-t border-gold-hair'>
+                        {isListLoading && <LoadingSpinner className='py-10' />}
                         {isListError && (
-                            <AlertPanel variant='danger' message='Could not load the reports.' />
+                            <Notice kind='error' className='mt-3'>
+                                The reports couldn&apos;t be loaded.
+                            </Notice>
                         )}
                         {!isListLoading && !isListError && reports.length === 0 && (
-                            <p className='text-default-500 text-small p-2'>
-                                {debouncedSearch ? 'No reports match' : 'No problem reports'}
+                            <p className='py-6 text-center text-sm text-ink-faint'>
+                                {debouncedSearch ? 'No reports match.' : 'No problem reports.'}
                             </p>
                         )}
-                        {reports.map((item) => (
-                            <ReportListItem
-                                key={item.id}
-                                report={item}
-                                isSelected={item.id === selectedId}
-                                isChecked={checked.has(item.id)}
-                                onSelect={() => setSelectedId(item.id)}
-                                onCheck={(isChecked) => toggleChecked(item, isChecked)}
-                            />
-                        ))}
+                        <ul>
+                            {reports.map((item) => (
+                                <ReportListItem
+                                    key={item.id}
+                                    report={item}
+                                    isSelected={item.id === selectedId}
+                                    isChecked={checked.has(item.id)}
+                                    onSelect={() => setSelectedId(item.id)}
+                                    onCheck={(isChecked) => toggleChecked(item, isChecked)}
+                                />
+                            ))}
+                        </ul>
                     </div>
                     {pageCount > 1 && (
-                        <Pagination
-                            size='sm'
+                        <Pager
                             className='self-center'
                             total={pageCount}
                             page={page}
                             onChange={setPage}
-                            showControls
                         />
                     )}
-                </aside>
+                </section>
 
-                <main className='flex-1 min-w-0 min-h-0 bg-zinc-950/95 backdrop-blur-md shadow-lg border-1 border-default-200 rounded-large p-4 flex flex-col'>
-                    {!selectedId && (
-                        <div className='flex-1 flex items-center justify-center text-default-500'>
-                            Select a report to see what went wrong
-                        </div>
+                <section
+                    aria-label='Report'
+                    className={classNames(
+                        'flex min-h-0 min-w-0 flex-col gap-3 lg:border-l lg:border-gold-hair lg:pl-6',
+                        !selectedId && 'max-lg:hidden'
                     )}
-                    {selectedId && isReportFetching && <LoadingSpinner label='Loading report...' />}
-                    {selectedId && isReportError && !isReportFetching && (
-                        <AlertPanel variant='danger' message='Could not load the problem report.' />
+                >
+                    {selectedId && (
+                        <Button
+                            size='sm'
+                            variant='tertiary'
+                            className='self-start lg:hidden'
+                            onPress={() => setSelectedId(null)}
+                        >
+                            <FontAwesomeIcon icon={faArrowLeft} />
+                            All reports
+                        </Button>
                     )}
-                    {selectedId && report && !isReportFetching && (
-                        <ProblemReportDetails
-                            report={report}
-                            onDownload={onDownload}
-                            onDelete={() => setReportsToDelete([report])}
-                        />
-                    )}
-                </main>
+                    {detail}
+                </section>
             </div>
 
             <ConfirmDialog
                 isOpen={reportsToDelete.length > 0}
+                isDestructive
+                okLabel='Delete'
+                cancelLabel='Keep'
                 onOpenChange={(open) => !open && setReportsToDelete([])}
                 title={
                     reportsToDelete.length === 1
@@ -321,13 +366,13 @@ const ProblemReportsAdmin = () => {
                 }
                 message={
                     <div className='flex flex-col gap-2'>
-                        <ul className='flex flex-col gap-1 text-small max-h-64 overflow-y-auto'>
+                        <ul className='flex max-h-64 flex-col gap-1 overflow-y-auto text-sm'>
                             {reportsToDelete.map((toDelete) => (
                                 <li key={toDelete.id}>
-                                    <span className='font-bold'>{toDelete.reporter}</span>,{' '}
-                                    {moment(toDelete.createdAt).local().format('YYYY-MM-DD HH:mm')}
+                                    <span className='text-ink'>{toDelete.reporter}</span>,{' '}
+                                    {moment(toDelete.createdAt).local().format('D MMM, H:mm')}
                                     {': '}
-                                    <span className='text-default-500'>
+                                    <span className='text-ink-dim'>
                                         {toDelete.description || 'No description'}
                                     </span>
                                 </li>
@@ -338,7 +383,7 @@ const ProblemReportsAdmin = () => {
                 }
                 onOk={onConfirmDelete}
             />
-        </Page>
+        </AdminPage>
     );
 };
 

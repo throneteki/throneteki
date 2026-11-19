@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import Panel from '../Components/Site/Panel';
+import classNames from 'classnames';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { GameFormats } from '../constants';
+import Frame from '../Components/Site/Frame';
 import DeckList from '../Components/Decks/DeckList';
 import { useDispatch } from 'react-redux';
 import { navigate } from '../redux/reducers/navigation';
@@ -13,44 +17,69 @@ const Decks = () => {
     const [format, setFormat] = useState('joust');
     const [variant, setVariant] = useState(null);
     const [legality, setLegality] = useState(null);
+    const [showOptions, setShowOptions] = useState(false);
+    const formatInfo = GameFormats.find((f) => f.name === format);
+    const variantLabel = formatInfo?.variants.find((v) => v.name === variant)?.label;
 
     return (
-        <Page>
-            <Panel title='Decks'>
-                <div className='flex flex-col gap-2'>
-                    <div className='flex gap-2'>
-                        <FormatSelect
-                            label='Format'
-                            selected={format}
-                            onSelected={setFormat}
-                            disallowEmptySelection
-                            className='basis-1/3'
+        <Page size='wide'>
+            <Frame title='Decks' bodyClassName='gap-5'>
+                <button
+                    type='button'
+                    className='flex items-center justify-between gap-3 border-y border-gold-hair py-2.5 text-left text-sm text-ink-dim sm:hidden'
+                    aria-expanded={showOptions}
+                    onClick={() => setShowOptions(!showOptions)}
+                >
+                    <span>
+                        Showing{' '}
+                        <span className='text-ink'>
+                            {[formatInfo?.label, variantLabel].filter(Boolean).join(', ')}
+                        </span>{' '}
+                        decks
+                    </span>
+                    <span className='flex items-center gap-1.5 text-gold'>
+                        {showOptions ? 'Done' : 'Change'}
+                        <FontAwesomeIcon
+                            icon={faChevronDown}
+                            className={classNames('text-xs transition-transform', {
+                                'rotate-180': showOptions
+                            })}
                         />
-                        <VariantSelect
-                            label='Variant'
-                            format={format}
-                            selected={variant}
-                            onSelected={setVariant}
-                            disallowEmptySelection
-                            className='basis-1/3'
-                        />
-                        <LegalitySelect
-                            label='Legality'
-                            format={format}
-                            variant={variant}
-                            selected={legality}
-                            onSelected={setLegality}
-                            className='basis-1/3'
-                        />
-                    </div>
-                    <DeckList
+                    </span>
+                </button>
+                <div
+                    className={classNames('grid grid-cols-1 gap-3 sm:grid-cols-3', {
+                        'max-sm:hidden': !showOptions
+                    })}
+                >
+                    <FormatSelect
+                        label='Format'
+                        selected={format}
+                        onSelected={setFormat}
+                        disallowEmptySelection
+                    />
+                    <VariantSelect
+                        label='Variant'
+                        format={format}
+                        selected={variant}
+                        onSelected={setVariant}
+                        disallowEmptySelection
+                    />
+                    <LegalitySelect
+                        label='Legality'
                         format={format}
                         variant={variant}
-                        legality={legality}
-                        onDeckSelected={(deck) => dispatch(navigate(`/decks/edit/${deck._id}/`))}
+                        selected={legality}
+                        onSelected={setLegality}
                     />
                 </div>
-            </Panel>
+                <DeckList
+                    format={format}
+                    variant={variant}
+                    legality={legality}
+                    onDeckSelected={(deck) => dispatch(navigate(`/decks/edit/${deck._id}/`))}
+                />
+            </Frame>
         </Page>
     );
 };

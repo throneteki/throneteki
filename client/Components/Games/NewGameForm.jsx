@@ -1,11 +1,14 @@
 import React from 'react';
+import Field from '../Site/Field';
+import Group from '../Site/Group';
+import Notice from '../Site/Notice';
+import SettingSwitch from '../Site/SettingSwitch';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getIn, useFormikContext } from 'formik';
-import { Button, Input, Switch } from '@heroui/react';
+import { Button, Spinner } from '@heroui/react';
 
 import GameOptions from './GameOptions';
 import GameTypes from './GameTypes';
-import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import { GameFormats } from '../../constants';
 import FormatSelect from './FormatSelect';
 import VariantSelect from './VariantSelect';
@@ -16,17 +19,10 @@ import { useGetEventsQuery } from '../../redux/middleware/api';
 import { toast } from 'react-toastify';
 
 const NewGameForm = ({ quickJoin, defaultEventId, onClosed = () => true }) => {
-    const {
-        values,
-        errors,
-        touched,
-        isSubmitting,
-        handleChange,
-        getFieldProps,
-        setFieldValue,
-        handleSubmit
-    } = useFormikContext();
+    const { values, errors, touched, isSubmitting, getFieldProps, setFieldValue, handleSubmit } =
+        useFormikContext();
     const [isEventGameOptions, setIsEventGameOptions] = useState(false);
+    const [isEventSpectators, setIsEventSpectators] = useState(false);
     const [userCachedOptions, setUserCachedOptions] = useState();
 
     const handleFormatChange = useCallback(
@@ -54,6 +50,10 @@ const NewGameForm = ({ quickJoin, defaultEventId, onClosed = () => true }) => {
         (newEvent) => {
             const isUsingEventGameOptions = newEvent?.useEventGameOptions ?? false;
             setIsEventGameOptions(isUsingEventGameOptions);
+            const eventAllowsSpectators =
+                (isUsingEventGameOptions && newEvent.eventGameOptions?.spectators === true) ||
+                Array.isArray(newEvent?.validSpectators);
+            setIsEventSpectators(eventAllowsSpectators);
             if (newEvent) {
                 if (!userCachedOptions) {
                     setUserCachedOptions({ ...values });
@@ -67,6 +67,10 @@ const NewGameForm = ({ quickJoin, defaultEventId, onClosed = () => true }) => {
                     gameType: newEvent.gameType,
                     ...(newEvent.useEventGameOptions ? newEvent.eventGameOptions : {})
                 };
+                delete gameOptions.spectators;
+                if (eventAllowsSpectators) {
+                    gameOptions.allowSpectators = true;
+                }
 
                 // Override with event options
                 for (const [key, value] of Object.entries(gameOptions)) {
@@ -124,38 +128,47 @@ const NewGameForm = ({ quickJoin, defaultEventId, onClosed = () => true }) => {
         [values.gameFormat, values.gameLegality, values.gameVariant]
     );
 
+    const experimental = GameFormats.find((f) => f.name === values.gameFormat)?.experimental;
+    const formatLabel = GameFormats.find((f) => f.name === values.gameFormat)?.label;
+    const rowSwitch = (name, label) => (
+        <SettingSwitch
+            label={label}
+            isSelected={values[name]}
+            isDisabled={isEventGameOptions}
+            onValueChange={(selected) => setFieldValue(name, selected)}
+            className='flex w-full items-stretch border-b border-gold-hair'
+        />
+    );
+
     return (
         <form
-            onSubmit={async (event) => {
+            className='flex flex-col gap-7'
+            onSubmit={(event) => {
                 event.preventDefault();
-
                 handleSubmit(event);
             }}
         >
-            <div className='flex flex-col gap-2'>
-                {quickJoin && (
-                    <AlertPanel variant={AlertType.Info}>
-                        Select the type of game you&apos;d like to play and either you&apos;ll join
-                        the next one available, or one will be created for you with default options.
-                    </AlertPanel>
-                )}
-                {!quickJoin && (
-                    <>
-                        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2'>
-                            <Input
+            {!quickJoin && (
+                <>
+                    <Group title='Game'>
+                        <div className='grid grid-cols-1 gap-3 md:grid-cols-3'>
+                            <Field
                                 label='Name'
-                                endContent={<span>{GameNameMaxLength - values.name.length}</span>}
+                                endContent={
+                                    <span className='text-xs tabular-nums text-ink-faint'>
+                                        {GameNameMaxLength - values.name.length}
+                                    </span>
+                                }
                                 type='text'
-                                placeholder='Game Name'
                                 maxLength={GameNameMaxLength}
                                 {...getFieldProps('name')}
                                 {...getValidationProps('name')}
                             />
-                            <Input
+                            <Field
                                 autoComplete='off'
                                 label='Password'
                                 type='password'
-                                placeholder={'Enter a password'}
+                                placeholder='None'
                                 {...getFieldProps('password')}
                                 isDisabled={isEventGameOptions}
                             />
@@ -166,6 +179,17 @@ const NewGameForm = ({ quickJoin, defaultEventId, onClosed = () => true }) => {
                                 onSelected={handleEventChange}
                                 {...getValidationProps('eventId')}
                             />
+                        </div>
+                        {values.eventId && (
+                            <p className='mt-2 text-sm text-ink-faint'>
+                                {isEventGameOptions
+                                    ? 'The event sets the format, type and options.'
+                                    : 'The event sets the format and type.'}
+                            </p>
+                        )}
+                    </Group>
+                    <Group title='Format'>
+                        <div className='grid grid-cols-1 gap-3 md:grid-cols-3'>
                             <FormatSelect
                                 label='Format'
                                 selected={values.gameFormat}
@@ -195,62 +219,57 @@ const NewGameForm = ({ quickJoin, defaultEventId, onClosed = () => true }) => {
                                 allowCustom={!!values.eventId}
                             />
                         </div>
-                        {GameFormats.find((f) => f.name === values.gameFormat)?.experimental && (
-                            <AlertPanel
-                                variant='warning'
-                                message={`The ${values.gameFormat} format is experimental and may not work as expected. Please report any issues to the developers on Github.`}
-                            />
+                        {experimental && (
+                            <Notice kind='warning' className='mt-4'>
+                                {formatLabel} is experimental and may not work as expected. Please
+                                report problems on GitHub.
+                            </Notice>
                         )}
-                        <GameOptions isDisabled={isEventGameOptions} />
-                        {values.gameFormat === 'melee' && (
-                            <div>
-                                <div className='font-bold'>Melee Options</div>
-                                <div className='flex gap-2'>
-                                    <Input
-                                        label={'Max. players'}
-                                        className='max-w-32'
-                                        type='number'
-                                        {...getFieldProps('maxPlayers')}
-                                        {...getValidationProps('maxPlayers')}
-                                        isDisabled={isEventGameOptions}
-                                    />
-                                    <Switch
-                                        classNames={{ label: 'text-sm' }}
-                                        name={'randomSeats'}
-                                        onChange={handleChange}
-                                        isSelected={values.randomSeats}
-                                        isDisabled={isEventGameOptions}
-                                    >
-                                        Random Seats
-                                    </Switch>
-                                    <Switch
-                                        classNames={{ label: 'text-sm' }}
-                                        name={'allowMultipleWinners'}
-                                        onChange={handleChange}
-                                        isSelected={values.allowMultipleWinners}
-                                        isDisabled={isEventGameOptions}
-                                    >
-                                        Allow Multiple Winners
-                                    </Switch>
-                                </div>
-                            </div>
-                        )}
-                    </>
-                )}
+                    </Group>
+                </>
+            )}
+            <Group title='Type'>
                 <GameTypes isDisabled={!!values.eventId} />
-                <div className='flex gap-2'>
-                    <Button
-                        color='success'
-                        type='submit'
-                        isDisabled={!canStart}
-                        isLoading={isSubmitting}
-                    >
-                        Start
-                    </Button>
-                    <Button color='primary' onPress={() => onClosed()}>
-                        Cancel
-                    </Button>
-                </div>
+            </Group>
+            {!quickJoin && (
+                <Group title='Options'>
+                    <GameOptions
+                        isDisabled={isEventGameOptions}
+                        isSpectatorsDisabled={isEventSpectators}
+                    />
+                </Group>
+            )}
+            {!quickJoin && values.gameFormat === 'melee' && (
+                <Group title='Melee'>
+                    <div className='flex flex-col gap-4'>
+                        <Field
+                            label='Most players'
+                            className='w-40'
+                            type='number'
+                            {...getFieldProps('maxPlayers')}
+                            {...getValidationProps('maxPlayers')}
+                            isDisabled={isEventGameOptions}
+                        />
+                        <div className='grid grid-cols-1 gap-x-8 border-t border-gold-hair md:grid-cols-2'>
+                            {rowSwitch('randomSeats', 'Random seats')}
+                            {rowSwitch('allowMultipleWinners', 'Allow more than one winner')}
+                        </div>
+                    </div>
+                </Group>
+            )}
+            <div className='flex justify-end gap-2'>
+                <Button onPress={() => onClosed()} variant='tertiary'>
+                    Cancel
+                </Button>
+                <Button
+                    type='submit'
+                    isDisabled={!canStart}
+                    isPending={isSubmitting}
+                    variant='primary'
+                >
+                    {isSubmitting && <Spinner color='current' size='sm' />}
+                    {quickJoin ? 'Find a game' : 'Create game'}
+                </Button>
             </div>
         </form>
     );

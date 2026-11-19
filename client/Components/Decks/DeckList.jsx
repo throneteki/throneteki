@@ -15,12 +15,13 @@ import { navigate } from '../../redux/reducers/navigation';
 import {
     useAddDeckMutation,
     useDeleteDecksMutation,
+    useGetCardsQuery,
     useGetDecksQuery,
     useToggleDeckFavouriteMutation
 } from '../../redux/middleware/api';
+import { Checkbox } from '@heroui/react';
 import CardImage from '../Images/CardImage';
 
-import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import DeckStatus from './DeckStatus';
 import ConfirmDialog from '../Site/ConfirmDialog';
 import { toast } from 'react-toastify';
@@ -49,6 +50,93 @@ const DeckList = ({
     const [toggleFavourite] = useToggleDeckFavouriteMutation();
     const [factionFilter, setFactionFilter] = useState([]);
     const [showImportModal, setShowImportModal] = useState(false);
+    const { data: cards } = useGetCardsQuery({});
+
+    const agendaText = (deck) => {
+        const label = (code) => cards?.[code]?.label ?? code;
+
+        if (!deck.agenda) {
+            return 'No agenda';
+        }
+
+        const banners = (deck.bannerCards || []).map((code) =>
+            label(code).replace(/^Banner of the /, '')
+        );
+
+        return banners.length > 0
+            ? `${label(deck.agenda)}: ${banners.join(', ')}`
+            : label(deck.agenda);
+    };
+
+    const renderDeckCard = (row, { isSelected, toggleSelected }) => {
+        const deck = row.original;
+        const record = deck.record;
+
+        return (
+            <div className='relative flex items-center gap-3 py-3'>
+                {!readOnly && (
+                    <Checkbox
+                        className='relative z-10'
+                        aria-label={`Select ${deck.name}`}
+                        isSelected={isSelected}
+                        onChange={toggleSelected}
+                    >
+                        <Checkbox.Content>
+                            <Checkbox.Control>
+                                <Checkbox.Indicator />
+                            </Checkbox.Control>
+                        </Checkbox.Content>
+                    </Checkbox>
+                )}
+                <CardImage size='small' code={deck.faction.value} className='shrink-0' />
+                <div className='flex min-w-0 flex-1 flex-col gap-1'>
+                    <span className='flex items-center gap-2 text-base text-ink'>
+                        <button
+                            type='button'
+                            className='truncate text-left after:absolute after:inset-0'
+                            onClick={() => onDeckSelected && onDeckSelected(deck)}
+                        >
+                            {deck.name}
+                        </button>
+                        {deck.locked && (
+                            <FontAwesomeIcon
+                                className='shrink-0 text-xs text-ink-faint'
+                                icon={faLock}
+                                title='Locked for an event'
+                            />
+                        )}
+                    </span>
+                    <span className='truncate text-sm text-ink-dim'>{agendaText(deck)}</span>
+                    <span className='flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-faint'>
+                        <span className='relative z-10'>
+                            <DeckStatus deck={deck} showDeckDetails={false} />
+                        </span>
+                        {record && (
+                            <span className='tabular-nums'>
+                                {record.wins}-{record.games - record.wins}
+                            </span>
+                        )}
+                        <span>{moment(deck.lastUpdated).local().format('D MMM YYYY')}</span>
+                    </span>
+                </div>
+                {readOnly ? (
+                    deck.isFavourite && (
+                        <FontAwesomeIcon className='shrink-0 text-gold' icon={faHeart} />
+                    )
+                ) : (
+                    <button
+                        type='button'
+                        className='relative z-10 grid h-10 w-10 shrink-0 place-items-center text-gold'
+                        aria-pressed={!!deck.isFavourite}
+                        aria-label={`Favourite ${deck.name}`}
+                        onClick={() => toggleFavourite(deck._id)}
+                    >
+                        <FontAwesomeIcon icon={deck.isFavourite ? faHeart : faHeartRegular} />
+                    </button>
+                )}
+            </div>
+        );
+    };
     const columns = useMemo(
         () => [
             {
@@ -56,17 +144,22 @@ const DeckList = ({
                 header: 'Name',
                 cell: (info) => {
                     return (
-                        <span className='cursor-pointer flex gap-2 items-center'>
+                        <span className='flex cursor-pointer items-center gap-2 text-ink'>
                             {info.getValue()}
                             {info.row.original.locked && (
-                                <FontAwesomeIcon className='ml-auto' icon={faLock} />
+                                <FontAwesomeIcon
+                                    className='ml-auto text-ink-faint'
+                                    icon={faLock}
+                                    title='Locked for an event'
+                                />
                             )}
                         </span>
                     );
                 },
                 meta: {
                     colWidth: '45%',
-                    className: 'min-w-34'
+                    className: 'min-w-34',
+                    sortLabels: { asc: 'Name, A to Z', desc: 'Name, Z to A' }
                 }
             },
             {
@@ -127,7 +220,7 @@ const DeckList = ({
                             })
                         );
 
-                    return <div className='flex flex-col sm:flex-row gap-0.5'>{content}</div>;
+                    return <div className='flex sm:gap-0.5 max-sm:[&>*+*]:-ml-6'>{content}</div>;
                 },
                 meta: {
                     colWidth: '15%'
@@ -142,7 +235,8 @@ const DeckList = ({
                 header: 'Updated',
                 meta: {
                     colWidth: '15%',
-                    className: 'max-lg:hidden'
+                    className: 'max-lg:hidden',
+                    sortLabels: { desc: 'Recently updated', asc: 'Least recently updated' }
                 },
                 enableColumnFilter: false
             },
@@ -192,8 +286,11 @@ const DeckList = ({
                 accessorKey: 'isFavourite',
                 cell: (info) => (
                     <div
-                        className='justify-center flex text-danger h-full'
-                        role={readOnly ? 'false' : 'button'}
+                        className='flex h-full justify-center text-gold'
+                        role={readOnly ? undefined : 'button'}
+                        aria-label={
+                            info.getValue() ? 'Remove from favourites' : 'Add to favourites'
+                        }
                         onPointerDown={async (event) => {
                             event.stopPropagation();
 
@@ -210,7 +307,8 @@ const DeckList = ({
                 header: 'Favourite',
                 meta: {
                     colWidth: '5%',
-                    className: 'max-sm:hidden'
+                    className: 'max-sm:hidden',
+                    sortLabels: { desc: 'Favourites first' }
                 },
                 enableColumnFilter: false
             }
@@ -221,9 +319,9 @@ const DeckList = ({
         ? []
         : [
               {
-                  color: 'default',
+                  color: 'primary',
                   icon: <FontAwesomeIcon icon={faFileCirclePlus} />,
-                  label: 'New',
+                  label: 'New deck',
                   onPress: () => dispatch(navigate('/decks/new'))
               },
               {
@@ -259,12 +357,7 @@ const DeckList = ({
                         desc: true
                     }
                 ]}
-                emptyContent={
-                    <AlertPanel variant={AlertType.Info}>
-                        You have no decks or none have been found using the specific filter. Create
-                        or import a new deck above, or clear the filter
-                    </AlertPanel>
-                }
+                emptyContent='No decks match. Create or import a deck, or clear the filters.'
                 remote
                 disableSelection={readOnly}
                 columns={columns}
@@ -274,15 +367,15 @@ const DeckList = ({
                     setIsLockedDeckSelected(rows.some((r) => r.original.locked));
                 }}
                 selectedRows={selectedRows}
-                classNames={{
-                    td: 'max-sm:px-2',
-                    th: 'max-sm:px-2'
-                }}
-                isStriped={false}
+                renderCard={renderDeckCard}
             />
             <ConfirmDialog
                 isOpen={showConfirm}
-                message={`Are you sure you want to delete ${selectedIds.length === 1 ? 'this deck' : 'these decks'}?`}
+                isDestructive
+                title={selectedIds.length === 1 ? 'Delete this deck?' : 'Delete these decks?'}
+                message="Deleted decks can't be recovered."
+                okLabel='Delete'
+                cancelLabel='Cancel'
                 onOpenChange={setShowConfirm}
                 onCancel={() => setShowConfirm(false)}
                 onOk={async () => {

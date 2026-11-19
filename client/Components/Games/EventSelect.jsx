@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, SelectItem } from '@heroui/react';
+import SelectField from '../Site/SelectField';
 import { useGetEventsQuery } from '../../redux/middleware/api';
 
 const EventSelect = ({
@@ -9,32 +9,29 @@ const EventSelect = ({
     onSelected,
     isInvalid,
     errorMessage,
-    disallowEmptySelection,
-    isDisabled
+    isDisabled,
+    className,
+    'aria-label': ariaLabel
 }) => {
     const { data } = useGetEventsQuery();
-    const handleChange = (e) => {
-        const newEvent = data.find((d) => d._id === e.target.value);
+    const handleChange = (value) => {
+        const newEvent = data.find((d) => d._id === value);
         onSelected(newEvent);
     };
 
     return (
-        <Select
+        <SelectField
             label={label}
-            selectedKeys={selected ? [selected] : []}
+            value={selected || null}
             placeholder={placeholder}
             onChange={handleChange}
             isInvalid={isInvalid}
             errorMessage={errorMessage}
-            disallowEmptySelection={disallowEmptySelection}
             isDisabled={isDisabled}
-        >
-            {data?.map((d) => (
-                <SelectItem key={d._id} value={d._id} textValue={d.name}>
-                    {d.name}
-                </SelectItem>
-            ))}
-        </Select>
+            className={className}
+            aria-label={ariaLabel}
+            items={(data || []).map((d) => ({ id: d._id, label: d.name }))}
+        />
     );
 };
 

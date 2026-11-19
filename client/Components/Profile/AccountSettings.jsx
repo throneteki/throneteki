@@ -1,7 +1,7 @@
 import React from 'react';
-import { Input } from '@heroui/react';
-import SettingsGroup from './SettingsGroup';
-import SettingSwitch from './SettingSwitch';
+import Field from '../Site/Field';
+import Group from '../Site/Group';
+import SettingSwitch from '../Site/SettingSwitch';
 
 export const isEmailChanged = (email, currentEmail) =>
     (email || '').trim().toLowerCase() !== (currentEmail || '').trim().toLowerCase();
@@ -13,30 +13,35 @@ const AccountSettings = ({ user, formProps }) => {
 
     return (
         <>
-            <SettingsGroup title='Email'>
-                <div className='p-3'>
-                    <Input
+            <Group title='Email'>
+                <div className='flex flex-col gap-4'>
+                    <Field
                         {...getFieldProps('email')}
                         type='email'
                         label='Email address'
                         autoComplete='email'
+                        className='sm:max-w-md'
                         isInvalid={!!fieldError('email')}
                         errorMessage={fieldError('email')}
                     />
+                    <div>
+                        <SettingSwitch
+                            label='Email me occasional updates'
+                            hint='Such as my yearly page in the White Book.'
+                            isSelected={values.emailUpdates}
+                            onValueChange={(isSelected) =>
+                                setFieldValue('emailUpdates', isSelected)
+                            }
+                        />
+                    </div>
                 </div>
-                <SettingSwitch
-                    label='Email me occasional updates'
-                    description='Such as my yearly page in the White Book.'
-                    isSelected={values.emailUpdates}
-                    onValueChange={(isSelected) => setFieldValue('emailUpdates', isSelected)}
-                />
-            </SettingsGroup>
-            <SettingsGroup
+            </Group>
+            <Group
                 title='Change password'
                 description='Leave these blank to keep your current password.'
             >
-                <div className='grid gap-3 p-3 sm:grid-cols-2'>
-                    <Input
+                <div className='grid gap-4 sm:grid-cols-2'>
+                    <Field
                         {...getFieldProps('password')}
                         type='password'
                         label='New password'
@@ -44,7 +49,7 @@ const AccountSettings = ({ user, formProps }) => {
                         isInvalid={!!fieldError('password')}
                         errorMessage={fieldError('password')}
                     />
-                    <Input
+                    <Field
                         {...getFieldProps('passwordAgain')}
                         type='password'
                         label='New password (again)'
@@ -53,23 +58,22 @@ const AccountSettings = ({ user, formProps }) => {
                         errorMessage={fieldError('passwordAgain')}
                     />
                 </div>
-            </SettingsGroup>
+            </Group>
             {needsCurrentPassword && (
-                <SettingsGroup
+                <Group
                     title='Current password'
                     description='Enter your current password to save a new email address or password.'
                 >
-                    <div className='p-3 sm:max-w-sm'>
-                        <Input
-                            {...getFieldProps('currentPassword')}
-                            type='password'
-                            label='Current password'
-                            autoComplete='current-password'
-                            isInvalid={!!fieldError('currentPassword')}
-                            errorMessage={fieldError('currentPassword')}
-                        />
-                    </div>
-                </SettingsGroup>
+                    <Field
+                        {...getFieldProps('currentPassword')}
+                        type='password'
+                        label='Current password'
+                        autoComplete='current-password'
+                        className='sm:max-w-sm'
+                        isInvalid={!!fieldError('currentPassword')}
+                        errorMessage={fieldError('currentPassword')}
+                    />
+                </Group>
             )}
         </>
     );

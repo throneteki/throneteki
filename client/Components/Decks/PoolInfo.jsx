@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Chip, Divider, Tooltip } from '@heroui/react';
+import { Chip, Separator, Tooltip } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
@@ -21,7 +21,9 @@ const PoolInfo = ({ className, compact = false, isPool = false }) => {
         [pointerType]
     );
 
-    const chipClass = isPool ? classNames('pointer-events-none h-8', className) : 'hidden';
+    const chipClass = isPool
+        ? classNames('pointer-events-none h-7 whitespace-nowrap', className)
+        : 'hidden';
 
     let labelClass = null;
     // Compacts if true, or at the provided size step
@@ -32,36 +34,33 @@ const PoolInfo = ({ className, compact = false, isPool = false }) => {
     }
 
     return (
-        <Tooltip
-            placement={'right'}
-            showArrow={true}
-            closeDelay={100}
-            isOpen={!!pointerType}
-            content={
+        <Tooltip delay={0} closeDelay={100} isOpen={!!pointerType}>
+            <Tooltip.Trigger>
+                <div
+                    className={wrapperClass}
+                    onPointerEnter={(e) => setPointerType(e.pointerType)}
+                    onPointerLeave={() => setPointerType(null)}
+                >
+                    <Chip className={chipClass} color={info.color} variant='soft'>
+                        <div className='flex flex-row gap-1 items-center'>
+                            <span>{info.icon}</span>
+                            <span className={labelClass}>{info.label}</span>
+                        </div>
+                    </Chip>
+                </div>
+            </Tooltip.Trigger>
+            <Tooltip.Content placement='right' showArrow>
                 <div className='flex flex-col gap-1 max-w-64'>
                     <span className={`text-${info.color} flex flex-row gap-1 items-center`}>
                         {info.icon}
                         <b>{info.label}</b>
                     </span>
-                    <Divider />
+                    <Separator />
                     <span className={`text-${info.color} flex flex-row gap-1 items-center`}>
                         This deck is limited to cards from the drafted card pool.
                     </span>
                 </div>
-            }
-        >
-            <div
-                className={wrapperClass}
-                onPointerEnter={(e) => setPointerType(e.pointerType)}
-                onPointerLeave={() => setPointerType(null)}
-            >
-                <Chip className={chipClass} color={info.color} radius='md'>
-                    <div className='flex flex-row gap-1 items-center'>
-                        <span>{info.icon}</span>
-                        <span className={labelClass}>{info.label}</span>
-                    </div>
-                </Chip>
-            </div>
+            </Tooltip.Content>
         </Tooltip>
     );
 };

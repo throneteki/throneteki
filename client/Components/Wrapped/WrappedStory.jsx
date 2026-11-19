@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Button } from '@heroui/react';
+import { Button, Spinner } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight, faShareNodes } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
@@ -162,27 +162,22 @@ const WrappedStory = ({ wrapped, username }) => {
                     isDisabled={index === 0}
                     isIconOnly
                     size='sm'
-                    variant='light'
                     onPress={() => go(-1)}
+                    variant='ghost'
                 >
                     <FontAwesomeIcon icon={faChevronLeft} />
                 </Button>
-                <Button
-                    color='primary'
-                    isLoading={isSharing}
-                    size='sm'
-                    startContent={!isSharing && <FontAwesomeIcon icon={faShareNodes} />}
-                    onPress={share}
-                >
-                    Share this page
+                <Button isPending={isSharing} size='sm' onPress={share} variant='primary'>
+                    {!isSharing && <FontAwesomeIcon icon={faShareNodes} />}
+                    {isSharing && <Spinner color='current' size='sm' />}Share this page
                 </Button>
                 <Button
                     aria-label='Next'
                     isDisabled={index === cards.length - 1}
                     isIconOnly
                     size='sm'
-                    variant='light'
                     onPress={() => go(1)}
+                    variant='ghost'
                 >
                     <FontAwesomeIcon icon={faChevronRight} />
                 </Button>

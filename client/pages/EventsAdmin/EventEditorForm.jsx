@@ -1,13 +1,18 @@
-import React, { useCallback } from 'react';
-import Panel from '../../Components/Site/Panel';
-import { navigate } from '../../redux/reducers/navigation';
-import { Button, Input, Switch, Textarea } from '@heroui/react';
-import CustomLegalityEditor from './CustomLegalityEditor';
+import React, { useCallback, useState } from 'react';
 import { getIn, setNestedObjectValues, useFormikContext } from 'formik';
+
+import Field, { TextAreaField } from '../../Components/Site/Field';
+import Group from '../../Components/Site/Group';
+import SettingSwitch from '../../Components/Site/SettingSwitch';
 import FormatSelect from '../../Components/Games/FormatSelect';
 import VariantSelect from '../../Components/Games/VariantSelect';
 import LegalitySelect from '../../Components/Games/LegalitySelect';
 import GameTypes from '../../Components/Games/GameTypes';
+import CustomLegalityEditor from './CustomLegalityEditor';
+
+export const EventFormId = 'event-form';
+
+const switchRowClass = 'flex w-full items-stretch border-b border-gold-hair';
 
 const getUsernameList = (value) =>
     value
@@ -15,31 +20,46 @@ const getUsernameList = (value) =>
         .map((s) => s.trim())
         .filter(Boolean);
 
-const EventEditorForm = ({ isNew, isSaving, dispatch }) => {
+const UsernameList = ({ label, initialNames, onChange, errorMessage }) => {
+    const [text, setText] = useState(() => initialNames?.join('\n') ?? '');
+
+    return (
+        <TextAreaField
+            label={label}
+            description='One username per line'
+            minRows={5}
+            inputClassName='font-mono text-sm'
+            value={text}
+            onValueChange={(value) => {
+                setText(value);
+                onChange(getUsernameList(value));
+            }}
+            isInvalid={!!errorMessage}
+            errorMessage={errorMessage}
+        />
+    );
+};
+
+const EventEditorForm = () => {
     const {
         values,
         errors,
         touched,
-        isSubmitting,
         validateForm,
         setTouched,
         submitForm,
-        handleChange,
         getFieldProps,
         setFieldValue
     } = useFormikContext();
+    const options = values.eventGameOptions ?? {};
 
     const handleFormatChange = useCallback(
-        (newFormat) => {
-            setFieldValue('format', newFormat);
-        },
+        (newFormat) => setFieldValue('format', newFormat),
         [setFieldValue]
     );
 
     const handleVariantChange = useCallback(
-        (newVariant) => {
-            setFieldValue('variant', newVariant);
-        },
+        (newVariant) => setFieldValue('variant', newVariant),
         [setFieldValue]
     );
 
@@ -66,18 +86,60 @@ const EventEditorForm = ({ isNew, isSaving, dispatch }) => {
 
             return {
                 isInvalid: !!touch && !!error,
-                errorMessage: error
+                errorMessage: touch ? error : undefined
             };
         },
         [errors, touched]
     );
 
+    const numberField = (name, label, unit) => (
+        <Field
+            key={name}
+            label={label}
+            type='number'
+            className='w-32'
+            endContent={unit && <span className='text-sm text-ink-faint'>{unit}</span>}
+            {...getFieldProps(`eventGameOptions.${name}`)}
+            {...getValidationProps(`eventGameOptions.${name}`)}
+        />
+    );
+
+    const optionSwitch = (name, label, hint, isDisabled, fields) => (
+        <div key={name} className='border-b border-gold-hair'>
+            <SettingSwitch
+                label={label}
+                hint={hint}
+                isSelected={options[name]}
+                isDisabled={isDisabled}
+                onValueChange={(selected) => setFieldValue(`eventGameOptions.${name}`, selected)}
+                className='flex w-full items-stretch'
+            />
+            {fields && options[name] && (
+                <div className='flex flex-wrap items-start gap-3 px-0.5 pb-3'>
+                    {fields.map((field) => numberField(field.name, field.label, field.unit))}
+                </div>
+            )}
+        </div>
+    );
+
+    const listField = (name, label) => (
+        <UsernameList
+            label={label}
+            initialNames={values[name]}
+            onChange={(names) => setFieldValue(name, names)}
+            errorMessage={touched[name] ? errors[name] : undefined}
+        />
+    );
+
+    const isMelee = values.format === 'melee';
+
     return (
         <form
-            className='flex gap-2 flex-col'
+            id={EventFormId}
+            className='contents'
             onSubmit={async (e) => {
                 e.preventDefault();
-                // Working around Formik bug of not marking nested object (like eventGameOptions.x) as touched on submit
+                // Formik doesn't mark nested fields such as eventGameOptions.x as touched on submit
                 const errors = await validateForm();
                 setTouched(setNestedObjectValues(errors, true));
                 if (Object.keys(errors).length === 0) {
@@ -85,22 +147,21 @@ const EventEditorForm = ({ isNew, isSaving, dispatch }) => {
                 }
             }}
         >
-            <Panel title='Event Details'>
-                <div className='flex gap-2 flex-col'>
-                    <div className='flex flex-col md:flex-row gap-2 items-center'>
-                        <Input
-                            label='Event Name'
-                            placeholder='Event Name'
-                            type='text'
-                            {...getFieldProps('name')}
-                            {...getValidationProps('name')}
-                        />
+            <Group title='Details'>
+                <div className='flex flex-col gap-4'>
+                    <Field
+                        label='Name'
+                        placeholder='Such as Winter Court Regionals'
+                        className='max-w-xl'
+                        {...getFieldProps('name')}
+                        {...getValidationProps('name')}
+                    />
+                    <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
                         <FormatSelect
                             label='Format'
                             selected={values.format}
                             onSelected={handleFormatChange}
                             {...getValidationProps('format')}
-                            disallowEmptySelection
                         />
                         <VariantSelect
                             label='Variant'
@@ -111,7 +172,7 @@ const EventEditorForm = ({ isNew, isSaving, dispatch }) => {
                             disallowEmptySelection
                         />
                         <LegalitySelect
-                            label='Legality'
+                            label='Card list'
                             format={values.format}
                             variant={values.variant}
                             selected={values.legality}
@@ -121,199 +182,9 @@ const EventEditorForm = ({ isNew, isSaving, dispatch }) => {
                             allowCustom
                         />
                     </div>
-                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-2'>
-                        <div className='flex flex-col gap-1'>
-                            <Switch
-                                name='lockDecks'
-                                onChange={handleChange}
-                                isSelected={values.lockDecks}
-                            >
-                                Lock decks for this event
-                            </Switch>
-                            <div>
-                                Deck selections & edits will be locked after a player starts their
-                                first game with this event.
-                            </div>
-                        </div>
-                        <div className='flex flex-col gap-1'>
-                            <Switch
-                                name='useEventGameOptions'
-                                onChange={handleChange}
-                                isSelected={values.useEventGameOptions}
-                            >
-                                Custom Game Options
-                            </Switch>
-                            <div>Forces specific game options for games under this event.</div>
-                        </div>
-                    </div>
                     <GameTypes />
                 </div>
-            </Panel>
-
-            {values.useEventGameOptions && (
-                <Panel title='Event Game Options'>
-                    <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
-                        <Input
-                            label='Password'
-                            placeholder='Password'
-                            type='text'
-                            {...getFieldProps('eventGameOptions.password')}
-                            {...getValidationProps('eventGameOptions.password')}
-                        />
-                        <div>
-                            <Switch
-                                name='eventGameOptions.spectators'
-                                onChange={handleChange}
-                                isSelected={values.eventGameOptions?.spectators}
-                            >
-                                Allow spectators
-                            </Switch>
-                            {values.eventGameOptions?.spectators && (
-                                <div className='flex flex-col gap-2 border-l-1 pl-2 pt-2 border-default-200'>
-                                    <Switch
-                                        name='eventGameOptions.muteSpectators'
-                                        onChange={handleChange}
-                                        isSelected={values.eventGameOptions?.muteSpectators}
-                                    >
-                                        Mute spectators
-                                    </Switch>
-                                    <Switch
-                                        name='eventGameOptions.showHand'
-                                        onChange={handleChange}
-                                        isSelected={values.eventGameOptions?.showHand}
-                                    >
-                                        Show hands to spectators
-                                    </Switch>
-                                </div>
-                            )}
-                        </div>
-                        <div>
-                            <Switch
-                                name='eventGameOptions.useGameTimeLimit'
-                                onChange={handleChange}
-                                isSelected={values.eventGameOptions?.useGameTimeLimit}
-                            >
-                                Use game time limit
-                            </Switch>
-                            {values.eventGameOptions?.useGameTimeLimit && (
-                                <div className='border-l-1 pl-2 pt-2 border-default-200'>
-                                    <Input
-                                        label='Limit (minutes)'
-                                        type='number'
-                                        {...getFieldProps('eventGameOptions.gameTimeLimit')}
-                                        {...getValidationProps('eventGameOptions.gameTimeLimit')}
-                                    />
-                                </div>
-                            )}
-                        </div>
-                        <div>
-                            <Switch
-                                name='eventGameOptions.useChessClocks'
-                                onChange={handleChange}
-                                isSelected={values.eventGameOptions?.useChessClocks}
-                            >
-                                Use chess clocks (time limit per player)
-                            </Switch>
-                            {values.eventGameOptions?.useChessClocks && (
-                                <div className='flex flex-row gap-2 border-l-1 pl-2 pt-2 border-default-200'>
-                                    <Input
-                                        label='Limit (minutes)'
-                                        type='number'
-                                        {...getFieldProps('eventGameOptions.chessClockTimeLimit')}
-                                        {...getValidationProps(
-                                            'eventGameOptions.chessClockTimeLimit'
-                                        )}
-                                    />
-                                    <Input
-                                        label='Delay (seconds)'
-                                        type='number'
-                                        {...getFieldProps('eventGameOptions.chessClockDelay')}
-                                        {...getValidationProps('eventGameOptions.chessClockDelay')}
-                                    />
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                    {values.format === 'melee' && (
-                        <div className='my-2 border-t-1 border-default-200'>
-                            <h2 className='text-lg py-2 font-bold'>Melee Options</h2>
-                            <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
-                                <Switch
-                                    name='eventGameOptions.randomSeats'
-                                    onChange={handleChange}
-                                    isSelected={values.eventGameOptions?.randomSeats}
-                                >
-                                    Random Seats
-                                </Switch>
-                                <Switch
-                                    name='eventGameOptions.allowMultipleWinners'
-                                    onChange={handleChange}
-                                    isSelected={values.eventGameOptions?.allowMultipleWinners}
-                                >
-                                    Allow Multiple Winners
-                                </Switch>
-                            </div>
-                        </div>
-                    )}
-                </Panel>
-            )}
-
-            <Panel title='Settings for Judges/Streamers'>
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-2'>
-                    <div className='flex flex-col gap-1'>
-                        <Switch
-                            name='restrictTableCreators'
-                            onChange={handleChange}
-                            isSelected={values.restrictTableCreators}
-                        >
-                            Enable creator whitelist
-                        </Switch>
-                        {values.restrictTableCreators && (
-                            <>
-                                <div>Separate username per line</div>
-                                <Textarea
-                                    label='Valid Creators'
-                                    rows='10'
-                                    defaultValue={values.validTableCreators?.join('\n') ?? ''}
-                                    onValueChange={(value) =>
-                                        setFieldValue('validTableCreators', getUsernameList(value))
-                                    }
-                                    isInvalid={
-                                        !!(errors.validTableCreators && touched.validTableCreators)
-                                    }
-                                    errorMessage={errors.validTableCreators}
-                                />
-                            </>
-                        )}
-                    </div>
-                    <div className='flex flex-col gap-1'>
-                        <Switch
-                            name='restrictSpectators'
-                            onChange={handleChange}
-                            isSelected={values.restrictSpectators}
-                        >
-                            Enable spectator whitelist
-                        </Switch>
-                        {values.restrictSpectators && (
-                            <>
-                                <div>Separate username per line</div>
-                                <Textarea
-                                    label='Valid Spectators'
-                                    rows='10'
-                                    defaultValue={values.validSpectators?.join('\n') ?? ''}
-                                    onValueChange={(value) =>
-                                        setFieldValue('validSpectators', getUsernameList(value))
-                                    }
-                                    isInvalid={
-                                        !!(errors.validSpectators && touched.validSpectators)
-                                    }
-                                    errorMessage={errors.validSpectators}
-                                />
-                            </>
-                        )}
-                    </div>
-                </div>
-            </Panel>
+            </Group>
 
             {values.legality === 'custom' && (
                 <CustomLegalityEditor
@@ -324,14 +195,121 @@ const EventEditorForm = ({ isNew, isSaving, dispatch }) => {
                 />
             )}
 
-            <div className='flex gap-2'>
-                <Button isLoading={isSaving || isSubmitting} color='success' type='submit'>
-                    {isNew ? 'Create' : 'Save'}
-                </Button>
-                <Button color='primary' onPress={() => dispatch(navigate('/events'))}>
-                    Back
-                </Button>
-            </div>
+            <Group title='Rules'>
+                <div className='grid grid-cols-1 gap-x-8 border-t border-gold-hair md:grid-cols-2'>
+                    <SettingSwitch
+                        label='Lock decks'
+                        hint='Once a player starts their first game in the event, they can’t switch or edit that deck'
+                        isSelected={values.lockDecks}
+                        onValueChange={(selected) => setFieldValue('lockDecks', selected)}
+                        className={switchRowClass}
+                    />
+                    <SettingSwitch
+                        label='Set the game options'
+                        hint='Every game in the event uses the options below, and players can’t change them'
+                        isSelected={values.useEventGameOptions}
+                        onValueChange={(selected) => setFieldValue('useEventGameOptions', selected)}
+                        className={switchRowClass}
+                    />
+                </div>
+            </Group>
+
+            {values.useEventGameOptions && (
+                <Group title='Game options'>
+                    <div className='flex flex-col gap-4'>
+                        <div className='grid grid-cols-1 gap-x-8 border-t border-gold-hair md:grid-cols-2'>
+                            {optionSwitch(
+                                'spectators',
+                                'Always allow spectators',
+                                'When off, the player who creates each game decides'
+                            )}
+                            {optionSwitch('showHand', 'Show hands to spectators')}
+                            {optionSwitch(
+                                'muteSpectators',
+                                'Mute spectators',
+                                'Spectators can’t post in the chat'
+                            )}
+                            {optionSwitch(
+                                'gamePrivate',
+                                'Private',
+                                'Hidden from the games list, so only people with the link can join'
+                            )}
+                            {optionSwitch(
+                                'useGameTimeLimit',
+                                'Game time limit',
+                                'When time runs out, the player with the most power wins',
+                                false,
+                                [{ name: 'gameTimeLimit', label: 'Length', unit: 'min' }]
+                            )}
+                            {optionSwitch(
+                                'useChessClocks',
+                                'Chess clocks',
+                                'Each player has their own clock',
+                                false,
+                                [
+                                    { name: 'chessClockTimeLimit', label: 'Clock', unit: 'min' },
+                                    {
+                                        name: 'chessClockDelay',
+                                        label: 'Delay per move',
+                                        unit: 'sec'
+                                    }
+                                ]
+                            )}
+                            {isMelee &&
+                                optionSwitch(
+                                    'randomSeats',
+                                    'Random seats',
+                                    'Players are seated in a random order'
+                                )}
+                            {isMelee &&
+                                optionSwitch(
+                                    'allowMultipleWinners',
+                                    'Allow more than one winner',
+                                    'When time runs out, everyone tied for the most power wins'
+                                )}
+                        </div>
+                        <div className='flex flex-wrap items-start gap-4'>
+                            <Field
+                                label='Password'
+                                description='Leave empty for none'
+                                className='w-full sm:w-64'
+                                {...getFieldProps('eventGameOptions.password')}
+                                {...getValidationProps('eventGameOptions.password')}
+                            />
+                            {isMelee && numberField('maxPlayers', 'Players per game')}
+                        </div>
+                    </div>
+                </Group>
+            )}
+
+            <Group
+                title='Who can take part'
+                description='For judged games and streams. Anyone can still join a game as a player once it exists.'
+            >
+                <div className='grid grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-2'>
+                    <div className='flex flex-col gap-3'>
+                        <SettingSwitch
+                            label='Only listed players create games'
+                            isSelected={values.restrictTableCreators}
+                            onValueChange={(selected) =>
+                                setFieldValue('restrictTableCreators', selected)
+                            }
+                        />
+                        {values.restrictTableCreators &&
+                            listField('validTableCreators', 'Can create games')}
+                    </div>
+                    <div className='flex flex-col gap-3'>
+                        <SettingSwitch
+                            label='Only listed players watch'
+                            isSelected={values.restrictSpectators}
+                            onValueChange={(selected) =>
+                                setFieldValue('restrictSpectators', selected)
+                            }
+                        />
+                        {values.restrictSpectators && listField('validSpectators', 'Can watch')}
+                    </div>
+                </div>
+            </Group>
         </form>
     );
 };

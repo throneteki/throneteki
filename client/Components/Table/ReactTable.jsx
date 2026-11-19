@@ -1,4 +1,5 @@
-import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import Field from '../Site/Field';
 import {
     flexRender,
     getCoreRowModel,
@@ -16,34 +17,20 @@ import {
     faRefresh,
     faSearch
 } from '@fortawesome/free-solid-svg-icons';
-import FaIconButton from '../Site/FaIconButton';
-import {
-    Button,
-    Input,
-    Pagination,
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-    Select,
-    SelectItem,
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow
-} from '@heroui/react';
-import AlertPanel, { AlertType } from '../Site/AlertPanel';
+import { Button, Checkbox, Popover, Table, Spinner } from '@heroui/react';
+import classNames from 'classnames';
+import SelectField from '../Site/SelectField';
+import Pager from '../Site/Pager';
+import Notice from '../Site/Notice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-// eslint-disable-next-line react/display-name
-const TableWrapper = forwardRef(({ children }, ref) => {
-    return (
-        <div className='h-full overflow-y-auto'>
-            <table ref={ref}>{children}</table>
-        </div>
-    );
-});
+const buttonProps = (color) => {
+    if (color === 'danger') {
+        return { variant: 'ghost', className: 'text-danger' };
+    }
+
+    return { variant: color === 'primary' ? 'primary' : 'tertiary' };
+};
 
 function ReactTable({
     buttons = [],
@@ -61,8 +48,8 @@ function ReactTable({
     startPageNumber = 0,
     selectedRows,
     remote = false,
-    classNames,
-    isStriped = true
+    renderCard,
+    classNames: tableClasses
 }) {
     const tableRef = useRef(null);
     const [pagination, setPagination] = useState({
@@ -106,7 +93,10 @@ function ReactTable({
             onPaginationChange: setPagination,
             onColumnFiltersChange: setColumnFilters,
             onSortingChange: setSorting,
-            pageCount: Math.ceil(response?.totalCount / pagination.pageSize) ?? -1,
+            pageCount:
+                response?.totalCount != null
+                    ? Math.ceil(response.totalCount / pagination.pageSize)
+                    : -1,
             state: {
                 sorting: sorting || [],
                 pagination: pagination,
@@ -145,33 +135,38 @@ function ReactTable({
 
     const table = useReactTable(tableOptions);
 
-    const topContent = useMemo(
-        () => (
-            <div className='flex justify-between'>
-                <div className='flex gap-2 flex-wrap'>
-                    {buttons.map((b) => (
-                        <Button
-                            key={b.label}
-                            color={b.color}
-                            endContent={b.icon}
-                            onPress={b.onPress}
-                            isDisabled={b.disabled}
-                            isLoading={b.isLoading}
-                        >
-                            {b.label}
-                        </Button>
-                    ))}
-                    {refetch && (
-                        <FaIconButton
-                            color='default'
-                            icon={faRefresh}
-                            onPress={() => refetch()}
-                        ></FaIconButton>
-                    )}
-                </div>
-            </div>
-        ),
-        [buttons, refetch]
+    const topContent = (
+        <div className='flex flex-wrap items-center gap-2'>
+            {buttons.map((b) => (
+                <Button
+                    key={b.label}
+                    {...buttonProps(b.color)}
+                    onPress={b.onPress}
+                    isDisabled={b.disabled}
+                    isPending={b.isLoading}
+                >
+                    {b.isLoading ? <Spinner color='current' size='sm' /> : b.icon}
+                    <span
+                        className={classNames({
+                            'max-sm:sr-only': renderCard && b.color !== 'primary' && b.icon
+                        })}
+                    >
+                        {b.label}
+                    </span>
+                </Button>
+            ))}
+            {refetch && (
+                <Button
+                    aria-label='Refresh'
+                    className='ms-auto text-ink-dim'
+                    isIconOnly
+                    onPress={() => refetch()}
+                    variant='ghost'
+                >
+                    <FontAwesomeIcon icon={faRefresh} />
+                </Button>
+            )}
+        </div>
     );
 
     useEffect(() => {
@@ -192,191 +187,280 @@ function ReactTable({
     if (isLoading) {
         return <LoadingSpinner />;
     } else if (isError) {
-        return <AlertPanel variant='danger'>{'An error occurred loading data.'}</AlertPanel>;
+        return (
+            <Notice kind='error'>Something went wrong loading this list. Please try again.</Notice>
+        );
     }
 
     const currPage = table.getState().pagination.pageIndex + 1;
     const pageCount = table.getPageCount();
-    const totalCount = remote ? response?.totalCount : response[dataProperty]?.length || 0;
+    const totalCount =
+        (remote ? response?.totalCount : table.getPrePaginationRowModel().rows.length) || 0;
 
-    const tableFooter = (
-        <div className='flex flex-col'>
-            <div className='flex flex-wrap gap-1 items-center'>
-                <Pagination
-                    className='w-full sm:w-auto'
-                    total={pageCount}
-                    showControls
-                    initialPage={table.getState().pagination.pageIndex + 1}
-                    onChange={(page) => table.setPageIndex(page - 1)}
-                />
-                <Select
-                    className='w-20 sm:order-first'
-                    onChange={(e) => {
-                        table.setPageSize(parseInt(e.target.value));
+    const selectionCheckbox = (label) => (
+        <Checkbox aria-label={label} slot='selection'>
+            <Checkbox.Content>
+                <Checkbox.Control>
+                    <Checkbox.Indicator />
+                </Checkbox.Control>
+            </Checkbox.Content>
+        </Checkbox>
+    );
+
+    const toggleFilterPopover = (headerId, open) => {
+        setFilterPopOverOpen({ ...isFilterPopOverOpen, [headerId]: open });
+    };
+
+    const headers = table.getHeaderGroups()[0].headers.filter((header) => !header.isPlaceholder);
+
+    const filterField = (header, className) => (
+        <Field
+            className={classNames('select-text font-sans font-normal', className)}
+            inputClassName='font-sans'
+            aria-label={header.column.columnDef.header}
+            placeholder={header.column.columnDef.header}
+            startContent={<FontAwesomeIcon icon={faSearch} />}
+            onKeyDown={(event) => event.stopPropagation()}
+            onValueChange={header.column.setFilterValue}
+            value={header.column.getFilterValue() || ''}
+        />
+    );
+
+    const groupingFilter = (header, key, trigger) => (
+        <Popover
+            key={key}
+            isOpen={!!isFilterPopOverOpen[key]}
+            onOpenChange={(open) => toggleFilterPopover(key, open)}
+        >
+            {trigger}
+            <Popover.Content offset={12}>
+                <Popover.Dialog>
+                    {header.column.columnDef.meta.groupingFilter(header.getContext().table, () =>
+                        toggleFilterPopover(key, !isFilterPopOverOpen[key])
+                    )}
+                </Popover.Dialog>
+            </Popover.Content>
+        </Popover>
+    );
+
+    const emptyMessage = emptyContent || 'There is nothing to show here yet.';
+
+    const toggleRowSelected = (id) =>
+        setRowSelection((current) => {
+            const next = new Set(current);
+            if (next.has(id)) {
+                next.delete(id);
+            } else {
+                next.add(id);
+            }
+            return next;
+        });
+
+    const sortOptions = headers
+        .filter((header) => header.column.getCanSort())
+        .flatMap((header) => {
+            const name = header.column.columnDef.header;
+            const labels = header.column.columnDef.meta?.sortLabels || {
+                asc: `${name}, A to Z`,
+                desc: `${name}, Z to A`
+            };
+
+            return Object.keys(labels).map((direction) => ({
+                id: `${header.id}:${direction}`,
+                label: labels[direction]
+            }));
+        });
+    const currentSort = sorting?.[0];
+
+    const cardList = renderCard && (
+        <div className='flex flex-col gap-3 sm:hidden'>
+            {sortOptions.length > 0 && (
+                <SelectField
+                    aria-label='Sort by'
+                    items={sortOptions}
+                    value={
+                        currentSort
+                            ? `${currentSort.id}:${currentSort.desc ? 'desc' : 'asc'}`
+                            : null
+                    }
+                    placeholder='Sort by'
+                    renderValue={(key) =>
+                        `Sort: ${sortOptions.find((option) => option.id === key)?.label ?? ''}`
+                    }
+                    onChange={(key) => {
+                        const [id, direction] = String(key).split(':');
+                        setSorting([{ id, desc: direction === 'desc' }]);
                     }}
-                    disallowEmptySelection
-                    selectedKeys={new Set([table.getState().pagination.pageSize.toString()])}
-                    classNames={{ base: 'sm:order-first', trigger: 'h-9' }}
-                    aria-label='Page Select'
-                >
-                    {[10, 25, 50].map((pageSize) => (
-                        <SelectItem key={pageSize.toString()} value={pageSize}>
-                            {pageSize.toString()}
-                        </SelectItem>
-                    ))}
-                </Select>
-                <span className='w-52 sm:w-full'>
-                    Page {currPage} of {pageCount} ({totalCount} items)
-                </span>
+                />
+            )}
+            <div className='flex gap-2'>
+                {headers
+                    .filter((header) => header.column.getCanFilter())
+                    .map((header) =>
+                        header.column.columnDef.meta?.groupingFilter
+                            ? groupingFilter(
+                                  header,
+                                  `${header.id}-card`,
+                                  <Button variant='tertiary'>
+                                      <FontAwesomeIcon icon={faFilter} />
+                                      {header.column.columnDef.header}
+                                  </Button>
+                              )
+                            : filterField(header, 'min-w-0 flex-1')
+                    )}
             </div>
+            {table.getRowModel().rows.length === 0 ? (
+                <p className='py-8 text-center text-sm text-ink-dim'>{emptyMessage}</p>
+            ) : (
+                <ul className='border-t border-gold-hair'>
+                    {table.getRowModel().rows.map((row) => (
+                        <li key={row.id} className='border-b border-gold-hair'>
+                            {renderCard(row, {
+                                isSelected: rowSelection.has(row.id),
+                                toggleSelected: () => toggleRowSelected(row.id)
+                            })}
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
-    const tableClassNames = { ...{ base: 'h-full' }, ...classNames };
+
     return (
-        <>
+        <div className={classNames('flex h-full flex-col gap-3', tableClasses?.base)}>
+            {topContent}
+            {cardList}
             <Table
-                isStriped={isStriped}
-                isHeaderSticky
-                showSelectionCheckboxes
-                selectionMode={disableSelection ? 'none' : 'multiple'}
-                selectedKeys={rowSelection}
-                onSelectionChange={(keys) =>
-                    setRowSelection(
-                        keys === 'all'
-                            ? new Set(table.getPrePaginationRowModel().rows.map((row) => row.id))
-                            : keys
-                    )
-                }
-                onRowAction={(key) => onRowClick && onRowClick(table.getRowModel().rows[key])}
-                topContent={topContent}
-                bottomContent={tableFooter}
-                removeWrapper
-                classNames={tableClassNames}
-                as={TableWrapper}
+                variant='secondary'
                 ref={tableRef}
-                aria-label='Generic Table'
+                className={classNames('min-h-0 flex-1', { 'max-sm:hidden': renderCard })}
             >
-                <TableHeader>
-                    {table.getHeaderGroups()[0].headers.map((header) =>
-                        header.isPlaceholder ? null : (
-                            <TableColumn
-                                className={header.column.columnDef.meta?.className}
-                                key={header.id}
-                                width={header.column.columnDef.meta?.colWidth}
-                                allowsSorting={false}
-                            >
-                                {/* // Filter column via built-in input */}
-                                {header.column.getCanFilter() &&
-                                !header.column.columnDef.meta?.groupingFilter ? (
-                                    <div className='flex items-center'>
-                                        <FontAwesomeIcon icon={faSearch} />
-                                        <Input
-                                            className='select-text'
-                                            onPointerDown={(e) => {
-                                                // Something steals focus, probably the parent, without this code
-                                                e.target.focus();
-                                                e.stopPropagation();
-                                                e.preventDefault();
-                                            }}
-                                            onKeyDown={() => {
-                                                // Something is preventing space key from changing value; overriding this event fixes it
-                                                return;
-                                            }}
-                                            onValueChange={header.column.setFilterValue}
-                                            onClear={() => header.column.setFilterValue('')}
-                                            value={header.column.getFilterValue() || ''}
-                                            size='sm'
-                                            isClearable
-                                            label={header.column.columnDef.header}
-                                            classNames={{
-                                                inputWrapper: 'px-2',
-                                                label: 'text-tiny'
-                                            }}
-                                        />
-                                    </div>
-                                ) : (
-                                    <div
-                                        className='flex gap-1 items-center'
-                                        role={header.column.getCanSort() ? 'button' : ''}
-                                        onPointerDown={header.column.getToggleSortingHandler()}
-                                    >
-                                        <span className='flex-grow-1'>
-                                            {flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
-                                        </span>
-                                        {
-                                            {
-                                                asc: <FontAwesomeIcon icon={faArrowUpLong} />,
-                                                desc: <FontAwesomeIcon icon={faArrowDownLong} />
-                                            }[header.column.getIsSorted()]
-                                        }
-                                        {/* // Filter column via custom grouping filter */}
-                                        {header.column.getCanFilter() &&
-                                            header.column.columnDef.meta?.groupingFilter && (
-                                                <Popover
-                                                    isOpen={isFilterPopOverOpen[header.id]}
-                                                    onOpenChange={(open) => {
-                                                        isFilterPopOverOpen[header.id] = open;
-                                                        setFilterPopOverOpen({
-                                                            ...isFilterPopOverOpen
-                                                        });
-                                                    }}
-                                                    offset={20}
-                                                    portalContainer={tableRef.current}
-                                                >
-                                                    <PopoverTrigger>
-                                                        <FontAwesomeIcon icon={faFilter} />
-                                                    </PopoverTrigger>
-                                                    <PopoverContent>
-                                                        {header.column.columnDef.meta?.groupingFilter(
-                                                            header.getContext().table,
-                                                            () => {
-                                                                isFilterPopOverOpen[header.id] =
-                                                                    !isFilterPopOverOpen[header.id];
-                                                                setFilterPopOverOpen({
-                                                                    ...isFilterPopOverOpen
-                                                                });
-                                                            }
-                                                        )}
-                                                    </PopoverContent>
-                                                </Popover>
-                                            )}
-                                    </div>
-                                )}
-                            </TableColumn>
-                        )
-                    )}
-                </TableHeader>
-                <TableBody
-                    isLoading={isLoading}
-                    loadingContent={<LoadingSpinner label='Loading data...' />}
-                    emptyContent={
-                        emptyContent || (
-                            <AlertPanel variant={AlertType.Info}>
-                                {'There is no data to display'}
-                            </AlertPanel>
-                        )
-                    }
-                >
-                    {table.getRowModel().rows.map((row) => (
-                        <TableRow key={row.id}>
-                            {row.getVisibleCells().map((cell) => (
-                                <TableCell
-                                    key={cell.id}
-                                    className={cell.column.columnDef.meta?.className}
+                <Table.ScrollContainer className='h-full overflow-y-auto'>
+                    <Table.Content
+                        aria-label='Generic Table'
+                        selectionMode={disableSelection ? 'none' : 'multiple'}
+                        selectedKeys={rowSelection}
+                        onSelectionChange={(keys) =>
+                            setRowSelection(
+                                keys === 'all'
+                                    ? new Set(
+                                          table.getPrePaginationRowModel().rows.map((row) => row.id)
+                                      )
+                                    : keys
+                            )
+                        }
+                        onRowAction={(key) =>
+                            onRowClick && onRowClick(table.getRowModel().rows[key])
+                        }
+                    >
+                        <Table.Header>
+                            {!disableSelection && (
+                                <Table.Column className='w-8 pe-0'>
+                                    {selectionCheckbox('Select all')}
+                                </Table.Column>
+                            )}
+                            {headers.map((header, index) => (
+                                <Table.Column
+                                    key={header.id}
+                                    id={header.id}
+                                    isRowHeader={index === 0}
+                                    className={header.column.columnDef.meta?.className}
+                                    width={header.column.columnDef.meta?.colWidth}
                                 >
-                                    <div>
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                    </div>
-                                </TableCell>
+                                    {header.column.getCanFilter() &&
+                                    !header.column.columnDef.meta?.groupingFilter ? (
+                                        filterField(header)
+                                    ) : (
+                                        <div className='flex items-center gap-1'>
+                                            <button
+                                                type='button'
+                                                className='flex items-center gap-1'
+                                                disabled={!header.column.getCanSort()}
+                                                onClick={header.column.getToggleSortingHandler()}
+                                            >
+                                                {flexRender(
+                                                    header.column.columnDef.header,
+                                                    header.getContext()
+                                                )}
+                                                {header.column.getIsSorted() === 'asc' && (
+                                                    <FontAwesomeIcon icon={faArrowUpLong} />
+                                                )}
+                                                {header.column.getIsSorted() === 'desc' && (
+                                                    <FontAwesomeIcon icon={faArrowDownLong} />
+                                                )}
+                                            </button>
+                                            {header.column.getCanFilter() &&
+                                                header.column.columnDef.meta?.groupingFilter &&
+                                                groupingFilter(
+                                                    header,
+                                                    header.id,
+                                                    <Popover.Trigger
+                                                        aria-label={`Filter ${header.column.columnDef.header}`}
+                                                    >
+                                                        <FontAwesomeIcon icon={faFilter} />
+                                                    </Popover.Trigger>
+                                                )}
+                                        </div>
+                                    )}
+                                </Table.Column>
                             ))}
-                        </TableRow>
-                    ))}
-                </TableBody>
+                        </Table.Header>
+                        <Table.Body
+                            renderEmptyState={() => (
+                                <p className='sticky left-0 max-w-[calc(100vw-4.5rem)] whitespace-normal py-8 text-center text-sm text-ink-dim'>
+                                    {emptyMessage}
+                                </p>
+                            )}
+                        >
+                            {table.getRowModel().rows.map((row) => (
+                                <Table.Row key={row.id} id={row.id}>
+                                    {!disableSelection && (
+                                        <Table.Cell className='pe-0'>
+                                            {selectionCheckbox('Select row')}
+                                        </Table.Cell>
+                                    )}
+                                    {row.getVisibleCells().map((cell) => (
+                                        <Table.Cell
+                                            key={cell.id}
+                                            className={cell.column.columnDef.meta?.className}
+                                        >
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
+                                        </Table.Cell>
+                                    ))}
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table.Content>
+                </Table.ScrollContainer>
             </Table>
-        </>
+            {totalCount > 10 && (
+                <div className='flex flex-wrap items-center gap-3'>
+                    {pageCount > 1 && (
+                        <Pager
+                            page={currPage}
+                            total={pageCount}
+                            onChange={(page) => table.setPageIndex(page - 1)}
+                        />
+                    )}
+                    <span className='text-sm tabular-nums text-ink-dim'>
+                        Page {currPage} of {pageCount}, {totalCount} in all
+                    </span>
+                    <SelectField
+                        aria-label='Rows per page'
+                        className='ms-auto w-20'
+                        value={table.getState().pagination.pageSize.toString()}
+                        onChange={(value) => table.setPageSize(parseInt(value))}
+                        items={[10, 25, 50].map((pageSize) => ({
+                            id: pageSize.toString(),
+                            label: pageSize.toString()
+                        }))}
+                    />
+                </div>
+            )}
+        </div>
     );
 }
 

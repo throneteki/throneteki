@@ -8,7 +8,6 @@ import Lobby from './pages/Lobby';
 import Decks from './pages/Decks';
 import HowToPlay from './pages/HowToPlay';
 import About from './pages/About';
-import Security from './pages/Security';
 import Activation from './pages/Activation';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
@@ -20,7 +19,7 @@ import AddDeck from './Components/Decks/AddDeck';
 import EditDeck from './Components/Decks/EditDeck';
 import GameLobby from './Components/Games/GameLobby';
 import GameBoard from './Components/GameBoard/GameBoard';
-import BlockList from './pages/BlockList';
+import Redirect from './Components/Site/Redirect';
 import NodesAdmin from './pages/NodesAdmin';
 import MotdAdmin from './pages/MotdAdmin';
 import BannersAdmin from './pages/BannersAdmin';
@@ -29,7 +28,6 @@ import Privacy from './pages/Privacy';
 import Patreon from './pages/Patreon';
 import BanlistAdmin from './pages/BanlistAdmin';
 import EventsAdmin from './pages/EventsAdmin';
-import DraftingTable from './Components/Drafting/DraftingTable';
 import EventEditor from './pages/EventsAdmin/EventEditor';
 import Stats from './pages/Stats';
 import Unsubscribe from './pages/Unsubscribe';
@@ -44,7 +42,7 @@ const routes = [
             <Activation key='activation' id={context.params.id} token={context.params.token} />
         )
     },
-    { path: '/blocklist', action: () => <BlockList key='blocklist' /> },
+    { path: '/blocklist', action: () => <Redirect key='blocklist' to='/profile/blocklist' /> },
     { path: '/decks', action: () => <Decks key='decks' /> },
     { path: '/decks/new', action: () => <AddDeck key='adddecks' /> },
     {
@@ -60,10 +58,6 @@ const routes = [
         path: '/play',
         action: (context) => {
             if (context.currentGame && context.currentGame.started) {
-                if (context.currentGame.tableType === 'drafting-session') {
-                    return <DraftingTable key='drafting-table' />;
-                }
-
                 return <GameBoard key='gameboard' />;
             }
 
@@ -88,7 +82,7 @@ const routes = [
             />
         )
     },
-    { path: '/security', action: () => <Security key='security' /> },
+    { path: '/security', action: () => <Redirect key='security' to='/profile/sessions' /> },
     { path: '/stats', action: () => <Stats key='stats' /> },
     {
         path: '/unsubscribe',

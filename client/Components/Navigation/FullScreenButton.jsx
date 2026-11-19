@@ -11,22 +11,26 @@ const FullScreenButton = () => {
     const [isFullscreen, setIsFullscreen] = useState(screenfull.isFullscreen);
     return (
         <Button
-            variant='flat'
             onPress={() => {
                 if (screenfull.isEnabled) {
                     screenfull.toggle();
                     setIsFullscreen(!isFullscreen);
                 }
             }}
-            startContent={
+            aria-label={isFullscreen ? 'Leave full screen' : 'Full screen'}
+            className='text-gold'
+            isIconOnly
+            size='sm'
+            variant='ghost'
+        >
+            {
                 <FontAwesomeIcon
                     icon={
                         isFullscreen ? faDownLeftAndUpRightToCenter : faUpRightAndDownLeftFromCenter
                     }
                 />
             }
-            isIconOnly={true}
-        />
+        </Button>
     );
 };
 

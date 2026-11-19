@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
-import {
-    Button,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    Textarea
-} from '@heroui/react';
+import { TextAreaField } from '../Site/Field';
+import { Button } from '@heroui/react';
+import Dialog from '../Site/Dialog';
 import { MaxDescriptionLength } from '../../../shared/problemReportLimits';
 
 const ReportProblemModal = ({ isOpen, onCancel, onSend }) => {
@@ -28,35 +22,39 @@ const ReportProblemModal = ({ isOpen, onCancel, onSend }) => {
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={close} isDismissable={false} size='md'>
-            <ModalContent>
-                <ModalHeader>Report a problem</ModalHeader>
-                <ModalBody>
-                    <p className='text-sm'>
-                        The game has been saved as it was when you opened this. Describe what went
-                        wrong and what you expected to happen, so the report can be looked into.
-                    </p>
-                    <Textarea
-                        autoFocus
-                        isRequired
-                        label='What went wrong?'
-                        placeholder='For example: I tried to use a card ability and nothing happened'
-                        value={description}
-                        onValueChange={setDescription}
-                        maxLength={MaxDescriptionLength}
-                        minRows={3}
-                    />
-                </ModalBody>
-                <ModalFooter>
-                    <Button variant='light' onPress={close}>
+        <Dialog
+            isOpen={isOpen}
+            onOpenChange={(open) => !open && close()}
+            isDismissable={false}
+            title='Report a problem'
+            footer={
+                <div className='flex justify-end gap-2'>
+                    <Button onPress={close} variant='tertiary'>
                         Cancel
                     </Button>
-                    <Button color='primary' onPress={send} isDisabled={!description.trim()}>
+                    <Button onPress={send} isDisabled={!description.trim()} variant='primary'>
                         Send report
                     </Button>
-                </ModalFooter>
-            </ModalContent>
-        </Modal>
+                </div>
+            }
+        >
+            <div className='flex flex-col gap-4'>
+                <p className='text-sm text-ink-dim'>
+                    The game has been saved as it was when you opened this. Describe what went wrong
+                    and what you expected to happen, so the report can be looked into.
+                </p>
+                <TextAreaField
+                    autoFocus
+                    isRequired
+                    label='What went wrong?'
+                    placeholder='For example: I tried to use a card ability and nothing happened'
+                    value={description}
+                    onValueChange={setDescription}
+                    maxLength={MaxDescriptionLength}
+                    minRows={3}
+                />
+            </div>
+        </Dialog>
     );
 };
 
