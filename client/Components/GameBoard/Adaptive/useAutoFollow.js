@@ -1,16 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { motionOff } from '../../../flip';
 
-// How much of the view the table's sides keep for what covers them (the desktop's prompt), read from where the first
-// and last boards start and end within it
+// How much of the view the table's sides keep for what covers them (the desktop's prompt): the width of the columns
+// it keeps for it at each side
 const insetsOf = (table) => {
-    const seats = [...table.querySelectorAll('[data-seat]')];
-    if (seats.length === 0) {
-        return { left: 0, right: 0 };
-    }
-    const start = Math.min(...seats.map((seat) => seat.offsetLeft));
-    const end = Math.max(...seats.map((seat) => seat.offsetLeft + seat.offsetWidth));
-    return { left: start, right: Math.max(0, table.offsetWidth - end) };
+    const width = (end) => table.querySelector(`[data-table-cover='${end}']`)?.offsetWidth ?? 0;
+    return { left: width('left'), right: width('right') };
 };
 
 // The scroll that brings a board wholly into view, moving as little as it can; a board larger than the view shows
@@ -33,13 +28,16 @@ const scrollFor = (scroller, seat, insets) => {
 };
 
 // Melee: scroll the table to whose board matters (target), unless the table has been scrolled by hand since the
-// action last moved to a different player (active). Waits while a card is carried.
+// action last moved to a different player (active), or following has been turned off (manual, until turned back on).
+// Waits while a card is carried.
 const useAutoFollow = ({ boardRef, target, active, enabled, waiting }) => {
-    const [paused, setPaused] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+    const [manual, setManual] = useState(false);
+    const paused = scrolled || manual;
 
-    // The action moving on to someone else picks following back up
+    // The action moving on to someone else picks following back up after scrolling by hand
     useEffect(() => {
-        setPaused(false);
+        setScrolled(false);
     }, [active]);
 
     const scrollerOf = useCallback(
@@ -91,7 +89,7 @@ const useAutoFollow = ({ boardRef, target, active, enabled, waiting }) => {
         if (!enabled || !scroller) {
             return;
         }
-        const byHand = () => setPaused(true);
+        const byHand = () => setScrolled(true);
         const keys = (event) => {
             if (
                 ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown'].includes(
@@ -112,11 +110,13 @@ const useAutoFollow = ({ boardRef, target, active, enabled, waiting }) => {
     }, [enabled, scrollerOf]);
 
     const resume = useCallback(() => {
-        setPaused(false);
+        setScrolled(false);
+        setManual(false);
         follow();
     }, [follow]);
+    const stop = useCallback(() => setManual(true), []);
 
-    return { paused: enabled && paused, resume };
+    return { paused: enabled && paused, resume, stop };
 };
 
 export default useAutoFollow;

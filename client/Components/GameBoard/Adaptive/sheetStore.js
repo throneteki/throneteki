@@ -1,9 +1,11 @@
 import { useSyncExternalStore } from 'react';
 
-// The one sheet the board has. A pile that opens asks to be shown in it (show) and draws its cards into the sheet's
-// body (contentNode); the sheet draws the frame around them. Opening another pile takes the sheet over, closing the
-// last one. Every pile whose cards can be looked at registers too, so the sheet can offer a player's piles to go to.
-let state = { active: null, piles: [], contentNode: null, layout: { height: 'full', row: false } };
+// The board's sheets, one for each player, over that player's board. A pile that opens asks to be shown in its
+// player's sheet (show) and draws its cards into that sheet's body (contentNodes); the sheet draws the frame around
+// them. Opening another of the same player's piles takes their sheet over, closing the pile it showed; other players'
+// sheets stay open. Every pile whose cards can be looked at registers too, so a sheet can offer its player's piles to
+// go to, marking those with cards to choose.
+let state = { sheets: {}, piles: [], contentNodes: {}, layouts: {} };
 const listeners = new Set();
 
 const change = (next) => {
@@ -22,41 +24,50 @@ export const pileOrder = [
     'out of game'
 ];
 
+// Which sheet a pile shows in: its player's, or its side's for a pile with no player
+export const sheetKeyOf = ({ playerName, side }) => playerName ?? `side:${side}`;
+
+const keyShowing = (id) => Object.keys(state.sheets).find((key) => state.sheets[key].id === id);
+
+export const defaultLayout = { height: 'full', row: false, columns: null };
+
 export const sheetStore = {
-    // sheet: { id, side, name, title, playerName, prompting, close }
+    // sheet: { id, key, side, name, title, playerName, prompting, close }
     show(sheet) {
-        const previous = state.active;
-        change({ active: sheet });
+        const previous = state.sheets[sheet.key];
+        change({ sheets: { ...state.sheets, [sheet.key]: sheet } });
         if (previous && previous.id !== sheet.id) {
             previous.close();
         }
     },
     // A pile already shown may change what the frame says about it (its title, whether it is being chosen from)
     update(id, details) {
-        const current = state.active;
-        if (
-            current?.id === id &&
-            Object.keys(details).some((key) => current[key] !== details[key])
-        ) {
-            change({ active: { ...current, ...details } });
+        const key = keyShowing(id);
+        const current = key && state.sheets[key];
+        if (current && Object.keys(details).some((name) => current[name] !== details[name])) {
+            change({ sheets: { ...state.sheets, [key]: { ...current, ...details } } });
         }
     },
     hide(id) {
-        if (state.active?.id === id) {
-            change({ active: null });
+        const key = keyShowing(id);
+        if (key) {
+            const { [key]: gone, ...rest } = state.sheets; // eslint-disable-line no-unused-vars
+            change({ sheets: rest });
         }
     },
-    setContentNode(node) {
-        if (node !== state.contentNode) {
-            change({ contentNode: node });
+    setContentNode(key, node) {
+        if (node !== (state.contentNodes[key] ?? null)) {
+            const { [key]: gone, ...rest } = state.contentNodes; // eslint-disable-line no-unused-vars
+            change({ contentNodes: node ? { ...rest, [key]: node } : rest });
         }
     },
-    setLayout(layout) {
-        if (layout.height !== state.layout.height || layout.row !== state.layout.row) {
-            change({ layout });
+    setLayout(key, layout) {
+        const current = state.layouts[key] ?? defaultLayout;
+        if (Object.keys(layout).some((name) => layout[name] !== current[name])) {
+            change({ layouts: { ...state.layouts, [key]: { ...current, ...layout } } });
         }
     },
-    // pile: { id, player, side, source, title, open }
+    // pile: { id, player, side, source, title, selectable, open }
     register(pile) {
         change({ piles: [...state.piles.filter((entry) => entry.id !== pile.id), pile] });
         return () => {

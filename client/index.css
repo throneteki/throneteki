@@ -68,6 +68,9 @@ body {
     --attachment-offset-xl: calc(var(--attachment-offset) * 2);
 
     --layer-cards: 10;
+
+    /* The colour of the ring round a card that can be chosen, which the board's edges also light in */
+    --select-ring: 74 222 128;
 }
 
 .rrt-message {
@@ -360,7 +363,10 @@ html[data-board-layout='short'] {
         top: var(--board-chat-top, 0px);
         left: var(--board-chat-left, 0px);
         right: var(--board-chat-right, 0px);
-        height: calc(var(--visual-height, 100%) - var(--board-chat-top, 0px));
+        height: calc(
+            min(var(--visual-height, 100%), 100% - var(--board-chat-bottom, 0px)) -
+                var(--board-chat-top, 0px)
+        );
         clip-path: inset(0);
         transition-property: translate, clip-path;
         transition-duration: 300ms;
@@ -440,7 +446,7 @@ html.card-dragging.card-drop-refused * {
     scale: 1.03;
 }
 .ring-selectable {
-    box-shadow: 0 0 3px 3px rgb(74 222 128);
+    box-shadow: 0 0 3px 3px rgb(var(--select-ring));
     animation: ring-breathe 1.8s ease-in-out infinite;
 }
 .ring-participating {
@@ -469,7 +475,7 @@ html.card-dragging.card-drop-refused * {
 
 @keyframes ring-breathe {
     50% {
-        box-shadow: 0 0 9px 3px rgb(74 222 128 / 0.55);
+        box-shadow: 0 0 9px 3px rgb(var(--select-ring) / 0.55);
     }
 }
 @keyframes ring-danger {
@@ -502,9 +508,8 @@ html.card-dragging.card-drop-refused * {
     -webkit-user-drag: none;
 }
 
-/* In the board's sheet a pile's cards fill it, with the sheet as their only frame */
+/* In a board's sheet the sheet is a pile's cards' only frame */
 [data-sheet] [data-pile-popup] {
-    min-height: 100%;
     border: 0;
     border-radius: 0;
     background: transparent;

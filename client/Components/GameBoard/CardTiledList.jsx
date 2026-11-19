@@ -53,10 +53,15 @@ const CardTiledList = ({
         // In a sheet the cards fill its width: one row that scrolls sideways at peek, every card at full, and
         // one card after another, snapping into place, in a carousel
         if (sheet) {
-            // In a sheet the cards fill it, at the size the sheet sets: one row that scrolls sideways at peek, and
-            // whole rows that the sheet scrolls down through at full. Padding keeps a chosen card's ring in view.
+            // In a sheet the cards are at the size the sheet sets: one row that scrolls sideways in a row, and
+            // otherwise rows of as many as the sheet has room for (or as there are cards, so a sheet is only as wide
+            // as its cards), which the sheet scrolls down through. Padding keeps a chosen card's ring in view.
             const cell = unit(hasPlot ? 5.6 : 4);
             const full = !sheet.row;
+            const fits = hasPlot ? sheet.plotColumns : sheet.columns;
+            const across = fits
+                ? `repeat(${Math.max(1, Math.min(list.length, fits))}, ${cell})`
+                : null;
             return {
                 containerStyle: { padding: '0.75rem' },
                 style: {
@@ -64,7 +69,7 @@ const CardTiledList = ({
                     gap: unit(gapRem),
                     ...(full
                         ? {
-                              gridTemplateColumns: `repeat(auto-fill, ${cell})`,
+                              gridTemplateColumns: across ?? `repeat(auto-fill, ${cell})`,
                               justifyContent: 'center'
                           }
                         : {

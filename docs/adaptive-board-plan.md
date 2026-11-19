@@ -311,7 +311,7 @@ From the review on 2026-11-17 (seventh batch):
       game; browsers only allow it in answer to a tap. A full-screen toggle stays beside the game menu on
       phone layouts (`FullscreenToggle`, using `screenfull`). iPhones don't allow full screen for pages, so
       there it's hidden. (Superseded by R146: only the button asks for full screen.)
-- [x] **R67 One sheet, not many.** `SheetHost` is the board's single sheet: frame, slide, header, chips, swipe,
+- [x] **R67 One sheet, not many.** (Superseded by R175: one sheet for each player.) `SheetHost` is the board's single sheet: frame, slide, header, chips, swipe,
       tap-away and card sizing. A pile's `BoardSheet` now only asks to be shown and draws its cards into the
       host's body through a portal. Going between piles just changes what's inside, so there's nothing to
       animate (the earlier switch flag is gone). A closing pile keeps its cards in the sheet while it slides
@@ -594,6 +594,97 @@ From the review on 2026-11-17 (seventh batch):
       board; joust's card scale; an empty seat for odd counts rather than a span; titles in each player's stack;
       auto-follow scrolls the target's board into view. Melee dev fixtures with 3 to 6 players. Finished steps are
       committed as they go. See Layouts (Melee) and phase 6.
+- [x] **R156 The board's edge hints sit at the screen's edge (decided 2026-11-19)**: in phone landscape and on a
+      desktop the sideways hints are on the board's own edges, not moved in beside the prompt.
+- [x] **R157 An edge with a choice past it lights as the choice does**: when more than half of a card that can be
+      chosen lies past an edge, that edge's hint is drawn with the select ring (`ring-selectable`, its colour shared
+      as `--select-ring`), fading to and from the usual hint.
+- [x] **R158 No warning border on the prompt**: the prompt no longer lights its border while choosing, which looked
+      like an edge hint.
+- [x] **R159 Melee rows keep to their own boards**: the table's rows are sized to their content (`auto`), sharing
+      only spare room. Equal (`fr`) rows stretched the top row to ours, hand included, opening a gap in each
+      opponent's play area between its locations and characters.
+- [x] **R160 Phone landscape's prompt grows with its options (decided 2026-11-19)**: every option shows as a chip
+      in the prompt (no options panel), which stays centred between the stats rows and scrolls once it is taller
+      than the room between them.
+- [x] **R161 A view-mode button replaces the paused pill (decided 2026-11-19)**: the pill covered cards and was
+      hard to read. At a melee table our tools (beside our stats since R171; the column's tools in
+      phone landscape) hold a button showing the view's mode: directed (a camera, blue), following the action, or
+      manual (move arrows, amber). Scrolling by hand makes it manual until the action moves to someone else;
+      tapping it to manual keeps it there until tapped back.
+- [x] **R162 Portrait's prompt is at the very bottom (decided 2026-11-19)**: below our stats bar, filling the
+      gesture area. The hints of more above and below keep inside the stats bars: the screen's bars sit outside the
+      board's scroll, and at a melee table the sticky seat bars move the hints in past them (`--board-hint-top` and
+      `-bottom`).
+- [x] **R163 Bottom-row opponents' hands fan, mirrored (decided 2026-11-19)**: at a melee table an opponent seated
+      along the bottom row has the same board as one along the top, flipped (play area, strip, stats), and their
+      hand fans out over the bottom half: from the divider to the board's bottom (`--board-view-bottom`), bending
+      as the top half's fan does, with the label below the fan.
+- [x] **R164 Portrait's stats are cards, as phone landscape's are (decided 2026-11-19)**: one component
+      (`StatsCard`) for both: the avatar and stats in a row in a bordered card standing off the screen's edge, the
+      tools in a box of their own beside it (chat beside the opponent's, full screen and the menu beside ours). At
+      a melee table each board's sticky stats are the same card, tinted while that player is being waited on.
+- [x] **R165 The edge hints frame the play area**: the sideways hints stop where the top and bottom hints are moved
+      in (`--board-hint-top` and `-bottom`), so the four meet at the corners rather than running on behind the
+      stats.
+- [x] **R166 Phone landscape: the column pushes each board's cards (decided 2026-11-19)**: a board's cards start at
+      its edge while the prompt's column is clear of it, so a melee table has no column-wide gap before each board.
+      Each board keeps the column's width spare on the side away from the prompt; as the column comes over the
+      board its cards are pushed into that room (`--push`, set as the table scrolls), staying beside the column
+      until it is wholly over the board, then scrolling under it. The board's stats card lies in a layer over the
+      board, at its outer corner until the board reaches the column, then at the column's top or bottom until the
+      board's end hands it over to the next board's. Joust looks as before, its board always starting under the
+      column.
+- [x] **R167 Phone landscape: the stats card has room in its strip (decided 2026-11-19)**: the stats card no
+      longer covers the plots and agenda. The strip (plots, agenda, hand, piles) keeps the column's width at its
+      start for the card, as before R166, so the card sits beside those cards while the board is clear of the
+      column. Only the play area is pushed as in R166, so its cards still start at the board's edge.
+- [x] **R168 The title sits beside the agenda (decided 2026-11-19)**: a title no longer covers the agenda. With a
+      title the agenda keeps its whole width and the row grows to make room for it (the board widening); without
+      one the agenda still narrows under the faction card when the strip squeezes, keeping to the right of its
+      column so the faction card slides over it.
+- [x] **R169 Desktop melee: the seat bars have room for the avatar (decided 2026-11-19)**: the bars are taller, so
+      the avatar's ring and seat badge are no longer cut off at the top of the view.
+- [x] **R170 Desktop melee: the end boards reach the screen's edge (decided 2026-11-19)**: the room kept for the
+      prompt at the table's sides is now covered by the boards at the ends of the rows. Their stats bars and strips
+      run to the screen's edge; only their play areas keep clear of the prompt. Following reads that room from the
+      columns kept for it (`data-table-cover`), not from where the first board starts.
+- [x] **R171 Our tools are off the prompt, beside our stats (decided 2026-11-19)**: the view mode, chat, full screen
+      and the menu (outermost) are one tool box beside our own stats in every layout, never in the prompt:
+      - Desktop joust: the end of our stats bar, as before.
+      - Desktop and portrait melee: pinned in the view's bottom corner, beside where our stats sit on our board, so
+        they stay when our board scrolls away. The bottom-row stats leave room for them (`--board-tools-width`).
+      - Portrait joust: beside our stats card. The chat button moves there from the opponent's row.
+      - Phone landscape: the box in the column above our stats, as before.
+      In portrait the chat stops just above the tool box (`--board-chat-bottom`), so the button to close it stays
+      in reach.
+- [x] **R172 The strips mirror each other (decided 2026-11-19)**: the top and bottom halves' strips have the same
+      room above and below their cards, mirrored. A title's inline box no longer adds room under the strip, and in
+      phone landscape every strip keeps the room for a raised card on its play area's side (top strips below,
+      bottom strips above), not only ours.
+- [x] **R173 A line between the halves (decided 2026-11-19)**: in melee each top-row board has the same light line
+      along its bottom as between boards side by side, and in joust the same line runs between the halves.
+- [x] **R174 Desktop: the prompt's options span its width (decided 2026-11-19)**: in the desktop's panel each
+      option is on a line of its own, the panel's full width, as on the classic board (`stackOptions`), scrolling
+      past 60% of the screen's height. With a pointer over an option it lights up: amber with a glow, or white on
+      grey for a way out.
+- [x] **R175 One sheet for each player, over their board (decided 2026-11-19)**: a pile's sheet still slides out
+      from an edge, but from its own player's board's outer edge in view (the top row's from the top, the bottom
+      row's from the bottom), never over the site's bar above the board. It is as big as its cards need (as many
+      to a row as there are, up to what fits), up to the room the board has in view, and sits across the middle of
+      what of the board is in view, clear of the prompt's column in phone landscape. It keeps to its board as the
+      table scrolls, leaving the screen with it. Each player has their own sheet, so several players' piles can be
+      open at once; opening another of the same player's piles takes their sheet over. A sheet closes with its
+      button, by tapping its pile again, or (on a phone) by swiping its handle towards its edge; tapping elsewhere
+      no longer closes it. Piles with cards to choose still open themselves, and a pile's chip pulses with the
+      select ring while it has cards to choose and is not the one shown. A closing sheet stays drawn until it has
+      slid away (it was dropped for a moment and drawn afresh, already gone, so it vanished).
+- [x] **R176 Desktop melee: the rows meet at their line (decided 2026-11-19)**: the prompt's row between the table's
+      rows takes no height, so when the table is shorter than the screen the spare room goes to the boards, not
+      to a gap between the rows. The active player's tint now reaches the line.
+- [x] **R177 A way out is grey, as on the classic board (decided 2026-11-19)**: an option the server marks as
+      backing out (`cancel`, which only Cancel buttons carry) is a filled grey button rather than only a grey
+      outline, so it stands apart from the amber options as classic's grey Cancel does.
 
 - [x] `client/hud.js`: add `board: 'classic'` to `defaultHud`, and accept `'classic' | 'adaptive'` in
       `normalizeHud`.
@@ -654,7 +745,7 @@ New code goes under `client/Components/GameBoard/Adaptive/`:
 | `Scoreboard.jsx`              | The midline strip: opponent stats, then the prompt, then our stats                                |
 | `PromptBar.jsx`               | The phone prompt: phase, text, button chips, "More", and a waiting pill                           |
 | `BoardSheet.jsx`              | The edge-anchored sheet that replaces `MovablePanel` on the adaptive board                        |
-| `sheetStore.js`               | Allows one sheet at a time, with tabs for recently opened piles                                   |
+| `sheetStore.js`               | One sheet for each player, over their board, with chips for their piles (R175)                     |
 | `GameMenu.jsx`                | Settings, mute, manual mode, report, shortcuts, concede and leave                                 |
 | `DropTray.jsx`                | Drop targets for hidden piles (shadows, out of game) that appear over the board while dragging    |
 | `useAutoFollow.js`            | Scrolls the melee table to the board to show, and handles pausing and resuming                    |
@@ -1037,7 +1128,7 @@ Causes:
     - [x] No dimmed backdrop. It slides up from the bottom and away again.
     - [x] The pile's popup menu and drop zones are the same children as before (dropping underneath a
           card included).
-- [x] `sheetStore`: one sheet at a time. Opening one closes the last, and the header has tabs for up to
+- [x] `sheetStore`: one sheet at a time (superseded by R175). Opening one closes the last, and the header has tabs for up to
       four recently opened piles. A sheet whose pile leaves the board is forgotten. Checked by probe:
       opening the opponent's discard closes ours, and its tab brings ours back. A peek sheet covers our
       own piles, so the tabs are how to switch between them.
@@ -1137,7 +1228,7 @@ zoom, hold and move to drag.
 ### Phase 6: melee
 
 - [x] Settle the open layout questions in the Layouts section (Melee) with the user first (R155).
-- [x] The table: classic's two-row grid in seat order, scrolling as one (R150, R155), on every layout. Each player's stats bar is on their own board; the tools go with the prompt; the room for the desktop's prompt is a column at the table's sides.
+- [x] The table: classic's two-row grid in seat order, scrolling as one (R150, R155), on every layout. Each player's stats bar is on their own board; our tools are pinned in the view's bottom corner (R171); the room for the desktop's prompt is a column at the table's sides, which the end boards reach into (R170).
 - [x] Each player's seat number is a badge on their stats-bar avatar, at the top left, so it and the "1st"
       badge (bottom right) can show together (from review, 2026-11-18).
 - [x] Seat order matches the classic melee grid's clockwise order (`seatOrder.js`, shared with classic). Share or extract the ordering, and
@@ -1149,7 +1240,7 @@ zoom, hold and move to drag.
     - [x] Pauses when the table is scrolled by hand (a wheel, a swipe or the keys).
     - [x] Resumes when the active prompt moves to a different player.
     - [x] Waits while a card is carried or zoomed. A sheet lies over the table, so scrolling behind it does no harm.
-- [x] Auto-follow control: the HUD setting `followAction` turns it off, and a "Following paused · tap to resume" pill shows while paused.
+- [x] Auto-follow control: the HUD setting `followAction` turns it off, and a view-mode button among our tools shows "directed" (following) or "manual" and switches between them (R161).
 - [x] Spectator arrangement: the watched player sits at the bottom left, as we do, and the table follows the action.
 - [x] Fixtures: melee with 3, 4 and 6 players, with an active prompt on an opponent, and with our
       prompt targeting cards on two opponents' boards.

@@ -1,14 +1,14 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { SheetContext } from '../PopupContainer';
-import { sheetStore, useSheetState } from './sheetStore';
+import { defaultLayout, sheetKeyOf, sheetStore, useSheetState } from './sheetStore';
 
 const plotSources = ['plot deck', 'revealed plots'];
 const ignoreEvent = { preventDefault: () => {}, stopPropagation: () => {} };
 // As long as the sheet takes to slide away (SheetHost)
 const slideTime = 220;
 
-// A pile's part in the board's one sheet (SheetHost): while open it asks to be shown, and draws its cards into the
+// A pile's part in its player's sheet (SheetHost): while open it asks to be shown, and draws its cards into the
 // sheet's body. The sheet draws the frame, so going from pile to pile only changes what is inside it.
 const BoardSheet = ({
     open,
@@ -23,13 +23,17 @@ const BoardSheet = ({
     children
 }) => {
     const sheetId = `${name}:${id ?? side}`;
+    const key = sheetKeyOf({ playerName, side });
     const title = pileTitle ?? fullTitle;
     const closeRef = useRef(onCloseClick);
     closeRef.current = onCloseClick;
     const details = { side, name, title, playerName, prompting };
     const detailsRef = useRef(details);
     detailsRef.current = details;
-    const { active, contentNode, layout } = useSheetState();
+    const { sheets, contentNodes, layouts } = useSheetState();
+    const active = sheets[key];
+    const contentNode = contentNodes[key];
+    const layout = layouts[key] ?? defaultLayout;
 
     useLayoutEffect(() => {
         if (!open) {
@@ -38,11 +42,12 @@ const BoardSheet = ({
         // Shown once each time it opens; what it says about itself is kept up to date below
         sheetStore.show({
             id: sheetId,
+            key,
             ...detailsRef.current,
             close: () => closeRef.current?.(ignoreEvent)
         });
         return () => sheetStore.hide(sheetId);
-    }, [open, sheetId]);
+    }, [open, sheetId, key]);
 
     useLayoutEffect(() => {
         if (open) {

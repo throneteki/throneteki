@@ -9,11 +9,13 @@ import PlayerPlots from '../PlayerPlots';
 // column's size is fixed, not taken from the card in it, so the row knows how narrow it can go.
 const agendaColumn =
     'minmax(calc(var(--card-scale, 1) * 1.4rem), calc(var(--card-scale, 1) * 4rem + 0.25rem))';
+// With a title beside it the agenda keeps its whole width, and the row grows to make room for the title
+const fullAgendaColumn = 'calc(var(--card-scale, 1) * 4rem + 0.25rem)';
 const extraAgendaColumn =
     'minmax(calc(var(--card-scale, 1) * 1rem), calc(var(--card-scale, 1) * 2rem))';
 
 const AgendaSlot = ({ depth, children }) => (
-    <div className='relative min-w-0' style={{ zIndex: 10 - depth }}>
+    <div className='relative flex min-w-0 justify-end' style={{ zIndex: 10 - depth }}>
         {children}
     </div>
 );
@@ -48,7 +50,7 @@ const PlotFactionStack = ({ player, isMe, side, onCardClick, pileProps, droppabl
                 style={{
                     gridTemplateColumns: [
                         'auto',
-                        ...(hasAgenda ? [agendaColumn] : []),
+                        ...(hasAgenda ? [player.title ? fullAgendaColumn : agendaColumn] : []),
                         ...additionalAgendas.map(() => extraAgendaColumn)
                     ].join(' '),
                     gridAutoColumns: 'auto'
@@ -96,7 +98,7 @@ const PlotFactionStack = ({ player, isMe, side, onCardClick, pileProps, droppabl
                     </AgendaSlot>
                 ))}
                 {player.title && (
-                    <div className='relative z-20 ml-1 shrink-0'>
+                    <div className='relative z-20 ml-1 flex shrink-0'>
                         <Card
                             card={player.title}
                             source='title'

@@ -179,14 +179,14 @@ const useSelection = (active) => {
     }, [active, players]);
 };
 
-// The divider's buttons: dark, with a thin gold edge and cream small capitals; a way out (cancel, pass) has a grey
-// edge instead
+// The divider's buttons: dark, with a thin gold edge and cream small capitals; a way out (cancel, pass) is grey,
+// as on the classic board. With a pointer over it, it lights up.
 const chipClass = (quiet) =>
     classNames(
-        'min-w-0 gap-1 rounded-md border bg-black/70 px-2 text-[11px] font-semibold uppercase tracking-wide shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] data-[hover=true]:bg-black/40 data-[pressed=true]:bg-amber-400/20 data-[disabled=true]:opacity-40',
+        'min-w-0 gap-1 rounded-md border px-2 text-[11px] font-semibold uppercase tracking-wide shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-[background-color,border-color,color,box-shadow] duration-150 data-[pressed=true]:bg-amber-400/20 data-[disabled=true]:opacity-40',
         quiet
-            ? 'border-default-400/60 text-default-300'
-            : 'border-amber-400/70 text-amber-100 data-[hover=true]:border-amber-300'
+            ? 'border-zinc-400/70 bg-zinc-700/80 text-zinc-100 data-[hover=true]:border-zinc-300 data-[hover=true]:bg-zinc-600 data-[hover=true]:text-white'
+            : 'border-amber-400/70 bg-black/70 text-amber-100 data-[hover=true]:border-amber-300 data-[hover=true]:bg-amber-400/15 data-[hover=true]:text-white data-[hover=true]:shadow-[0_0_8px_rgba(251,191,36,0.45)]'
     );
 
 const Chip = ({ button, onPress, fullWidth = false }) => {
@@ -214,13 +214,14 @@ const Chip = ({ button, onPress, fullWidth = false }) => {
     return button.card ? <CardHoverable code={button.card.code}>{chip}</CardHoverable> : chip;
 };
 
-// The buttons as chips, on up to maxRows lines, when they all fit. When they do not, none show here (only children,
+// The buttons as chips, on up to maxRows lines, when they all fit (stacked: each on a line of its own, the full width). When they do not, none show here (only children,
 // if any): the options open in a panel over our board instead (onOverflow, once for each prompt), and a button hides
 // and shows them again. Whether they fit is told to onFitChange, so that button can go beside the prompt's text.
 const ChipRows = ({
     buttons,
     chipsKey,
     maxRows = 1,
+    stacked = false,
     onPress,
     onFitChange,
     onOverflow,
@@ -280,11 +281,14 @@ const ChipRows = ({
         <div
             ref={ref}
             data-prompt-chips=''
-            className='flex min-w-0 flex-1 flex-wrap justify-center gap-1'
+            className={classNames(
+                'flex min-w-0 flex-1 gap-1',
+                stacked ? 'max-h-[60dvh] flex-col overflow-y-auto' : 'flex-wrap justify-center'
+            )}
         >
             {fits
                 ? buttons.map((button, index) => (
-                      <Chip key={index} button={button} onPress={onPress} />
+                      <Chip key={index} button={button} onPress={onPress} fullWidth={stacked} />
                   ))
                 : children}
         </div>
@@ -350,7 +354,9 @@ const PhaseTrack = ({ phase, feed, inline = false, inPanel = false, start, end }
 // share one. As a panel at the side of the board (mode 'panel'), it is laid out as narrow, its chips wrapping onto a
 // few lines before they give way to the options panel. Docked below our hand in portrait (mode 'dock'), it shows
 // every option, keeping the room of one line of them and reaching up over the board for the rest, and folds away
-// from the tab on its top edge.
+// from the tab on its top edge. allOptions: every option shows as a chip, however many lines they take (phone
+// landscape's column, which scrolls the prompt when it outgrows it). stackOptions: every option on a line of its own,
+// the full width (the desktop's panel, as on the classic board).
 const PromptBar = ({
     className,
     mode,
@@ -362,9 +368,10 @@ const PromptBar = ({
     selecting,
     onButtonClick,
     timer,
-    actions,
     startOfTrack,
-    endOfTrack
+    endOfTrack,
+    allOptions = false,
+    stackOptions = false
 }) => {
     const buttons = useMemo(() => allButtons || [], [allButtons]);
     const {
@@ -494,12 +501,7 @@ const PromptBar = ({
             </div>
         </div>
     );
-    const corner = (
-        <div className='flex shrink-0 items-center gap-1'>
-            {timer}
-            {actions}
-        </div>
-    );
+    const corner = <div className='flex shrink-0 items-center gap-1'>{timer}</div>;
     // The button that hides and shows options too many for the divider. In portrait it goes beside the prompt's
     // text rather than taking a line of its own.
     const optionsToggle = !chipsFit && buttons.length > 0 && (
@@ -538,7 +540,8 @@ const PromptBar = ({
                 <ChipRows
                     buttons={buttons}
                     chipsKey={chipsKey}
-                    maxRows={dock ? Infinity : inPanel ? 3 : 1}
+                    maxRows={dock || allOptions || stackOptions ? Infinity : inPanel ? 3 : 1}
+                    stacked={stackOptions}
                     onPress={press}
                     onFitChange={setChipsFit}
                     onOverflow={onOverflow}
@@ -653,10 +656,9 @@ const PromptBar = ({
             ref={barRef}
             data-prompt-bar=''
             className={classNames(
-                'hud-zoom relative w-full border-y bg-black/60',
-                selection
-                    ? 'border-warning shadow-[0_0_14px_rgba(245,165,36,0.35)]'
-                    : 'border-default-200/60',
+                'hud-zoom relative w-full border-y border-default-200/60 bg-black/60',
+                // Docked at the bottom of the screen, it fills the gesture area below it
+                { 'pb-[var(--safe-bottom)]': dock },
                 className
             )}
         >

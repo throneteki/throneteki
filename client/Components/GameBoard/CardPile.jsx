@@ -92,6 +92,7 @@ const CardPile = ({
     // Where piles open in sheets, every pile that can be opened is listed in them, to go to from any other
     const usesSheets = useContext(PopupHostContext) === 'sheet';
     const openRef = useRef(null);
+    const hasSelectable = !!cards?.some((card) => card.selectable);
     useEffect(() => {
         if (!usesSheets || disablePopup || !title) {
             return;
@@ -102,9 +103,20 @@ const CardPile = ({
             side: popupLocation,
             source,
             title,
+            selectable: hasSelectable,
             open: () => openRef.current?.()
         });
-    }, [usesSheets, disablePopup, title, source, popupId, playerName, owner, popupLocation]);
+    }, [
+        usesSheets,
+        disablePopup,
+        title,
+        source,
+        popupId,
+        playerName,
+        owner,
+        popupLocation,
+        hasSelectable
+    ]);
 
     const updatePopupVisibility = useCallback(
         (value) => {

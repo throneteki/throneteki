@@ -11,14 +11,25 @@ const spreadShare = 0.55;
 
 const remSize = () => parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
 
-// The opponent's half of the screen, below their bar (which stays above the fan) and down to the divider
-const halfArea = () => {
+// The opponent's half of the screen: at the top, below their bar (which stays above the fan) and down to the divider;
+// at the bottom (a melee table's bottom row), from the divider down to the bottom of the board. Room is kept for the
+// fan's label on the side away from the divider.
+const halfArea = (side) => {
     const style = getComputedStyle(document.documentElement);
-    const bottom = parseFloat(style.getPropertyValue('--board-divider-top'));
-    const top = parseFloat(style.getPropertyValue('--board-chat-top')) || 0;
-    const end = bottom > 0 ? bottom : window.innerHeight / 2;
-    // Room above the fan for its label
+    const read = (name) => parseFloat(style.getPropertyValue(name));
     const label = 2.5 * remSize();
+    if (side === 'bottom') {
+        const top =
+            read('--board-divider-bottom') > 0
+                ? read('--board-divider-bottom')
+                : window.innerHeight / 2;
+        const end =
+            read('--board-view-bottom') > 0 ? read('--board-view-bottom') : window.innerHeight;
+        return { width: window.innerWidth, top, height: end - top - label };
+    }
+    const bottom = read('--board-divider-top');
+    const top = read('--board-chat-top') || 0;
+    const end = bottom > 0 ? bottom : window.innerHeight / 2;
     return { width: window.innerWidth, top: top + label, height: end - top - label };
 };
 
@@ -51,7 +62,7 @@ const fanLayout = (count, area) => {
             scale: 1
         };
     });
-    return { scale, cardWidth, places, top: first };
+    return { scale, cardWidth, places, top: first, bottom: first + tall * cardHeight };
 };
 
 // Where a card lies in the strip, as a place for the fan to start from and go back to
@@ -69,10 +80,11 @@ const stripPlace = (strip, uuid, cardWidth, cardHeight) => {
     };
 };
 
-// The opponent's hand. Tapped, it fans out over their half of the board, which darkens, to count or look at; a tap
-// anywhere else puts it back. It fans out by itself when its cards are to be chosen from, and stays until the
+// The opponent's hand. Tapped, it fans out over their half of the board (side), which darkens, to count or look at;
+// a tap anywhere else puts it back. It fans out by itself when its cards are to be chosen from, and stays until the
 // choosing is done, or when cards in it are shown to us.
-const HandFan = ({ cards, playerName, onCardClick, children }) => {
+const HandFan = ({ cards, side = 'top', playerName, onCardClick, children }) => {
+    const below = side === 'bottom';
     const stripRef = useRef(null);
     const [state, setState] = useState('closed');
     const [layout, setLayout] = useState(null);
@@ -83,9 +95,9 @@ const HandFan = ({ cards, playerName, onCardClick, children }) => {
         .join(',');
 
     const open = useCallback(() => {
-        setLayout(fanLayout(cards.length, halfArea()));
+        setLayout(fanLayout(cards.length, halfArea(side)));
         setState('open');
-    }, [cards.length]);
+    }, [cards.length, side]);
     const close = useCallback(
         () => setState((current) => (current === 'open' ? 'closing' : current)),
         []
@@ -114,9 +126,9 @@ const HandFan = ({ cards, playerName, onCardClick, children }) => {
     // The fan follows the hand while it is out
     useLayoutEffect(() => {
         if (state === 'open') {
-            setLayout(fanLayout(cards.length, halfArea()));
+            setLayout(fanLayout(cards.length, halfArea(side)));
         }
-    }, [cards.length, state]);
+    }, [cards.length, state, side]);
 
     useEffect(() => {
         if (state !== 'open' || selecting) {
@@ -159,17 +171,28 @@ const HandFan = ({ cards, playerName, onCardClick, children }) => {
                     <div className='pointer-events-none fixed inset-0 z-[290]'>
                         <motion.div
                             className={classNames(
-                                'absolute inset-x-0 top-0 bg-black/70',
+                                'absolute inset-x-0 bg-black/70',
                                 state === 'open' && 'pointer-events-auto'
                             )}
-                            style={{ height: 'var(--board-divider-top, 50%)' }}
+                            style={
+                                below
+                                    ? {
+                                          top: 'var(--board-divider-bottom, 50%)',
+                                          height: 'calc(var(--board-view-bottom, 100%) - var(--board-divider-bottom, 50%))'
+                                      }
+                                    : { top: 0, height: 'var(--board-divider-top, 50%)' }
+                            }
                             initial={{ opacity: 0 }}
                             animate={{ opacity: state === 'open' ? 1 : 0 }}
                             transition={{ duration: fanTime }}
                         />
                         <motion.div
                             className='absolute inset-x-0 flex justify-center'
-                            style={{ top: `calc(${layout.top}px - 2.25rem)` }}
+                            style={{
+                                top: below
+                                    ? `calc(${layout.bottom}px + 0.25rem)`
+                                    : `calc(${layout.top}px - 2.25rem)`
+                            }}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: state === 'open' ? 1 : 0 }}
                             transition={{ duration: fanTime }}

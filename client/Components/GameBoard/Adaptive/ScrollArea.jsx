@@ -8,41 +8,56 @@ const edge = 2;
 const hints = {
     start: {
         y: ['inset-x-0 top-0 h-3 bg-gradient-to-b', 'inset-x-0 top-0 h-px'],
-        x: ['inset-y-0 w-3 bg-gradient-to-r', 'inset-y-0 left-0 w-px']
+        x: ['inset-y-0 left-0 w-3 bg-gradient-to-r', 'inset-y-0 left-0 w-px']
     },
     end: {
         y: ['inset-x-0 bottom-0 h-3 bg-gradient-to-t', 'inset-x-0 bottom-0 h-px'],
-        x: ['inset-y-0 w-3 bg-gradient-to-l', 'inset-y-0 right-0 w-px']
+        x: ['inset-y-0 right-0 w-3 bg-gradient-to-l', 'inset-y-0 right-0 w-px']
     }
 };
 
 // Shows that there is more to see past this edge: the edge lit and a light fade over the cards, fading in and out
-// as the edge gains and loses more past it. A side of the board covered by the prompt (--board-cover-left and
-// -right) moves the sideways edges in to where the cover ends, so they show beside it.
-const edgeAt = {
-    start: { left: 'var(--board-edge-left, var(--board-cover-left, 0px))' },
-    end: { right: 'var(--board-edge-right, var(--board-cover-right, 0px))' }
+// as the edge gains and loses more past it. When a card that can be chosen lies past it (choose), the edge is lit
+// as that card's ring is, the one fading into the other. Anything kept along the top or bottom of the view
+// (--board-hint-top and -bottom) moves those edges in past it, and the sideways edges stop at it, so the four meet
+// at the corners of what is left.
+const insetAt = {
+    y: {
+        start: { top: 'var(--board-hint-top, 0px)' },
+        end: { bottom: 'var(--board-hint-bottom, 0px)' }
+    },
+    x: {
+        start: { top: 'var(--board-hint-top, 0px)', bottom: 'var(--board-hint-bottom, 0px)' },
+        end: { top: 'var(--board-hint-top, 0px)', bottom: 'var(--board-hint-bottom, 0px)' }
+    }
 };
-export const MoreHint = ({ show, end, axis }) => {
+export const MoreHint = ({ show, choose, end, axis }) => {
     const [place, line] = hints[end][axis];
+    const kind = !show ? null : choose ? 'choose' : 'more';
     return (
         <AnimatePresence initial={false}>
-            {show && (
+            {kind && (
                 <motion.div
+                    key={kind}
                     aria-hidden
+                    data-more-hint={kind}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: motionOff() ? 0 : 0.25, ease: 'easeOut' }}
-                    style={axis === 'x' ? edgeAt[end] : undefined}
+                    style={insetAt[axis][end]}
                     className={classNames(
-                        'pointer-events-none absolute z-[240] from-black/50 to-transparent',
+                        'pointer-events-none absolute z-[240] to-transparent',
+                        kind === 'choose' ? 'from-[rgb(var(--select-ring)/0.18)]' : 'from-black/50',
                         place
                     )}
                 >
                     <span
                         className={classNames(
-                            'absolute bg-amber-300 shadow-[0_0_6px_1px_rgba(252,211,77,0.7)]',
+                            'absolute',
+                            kind === 'choose'
+                                ? 'ring-selectable bg-[rgb(var(--select-ring))]'
+                                : 'bg-amber-300 shadow-[0_0_6px_1px_rgba(252,211,77,0.7)]',
                             line
                         )}
                     />
@@ -50,6 +65,69 @@ export const MoreHint = ({ show, end, axis }) => {
             )}
         </AnimatePresence>
     );
+};
+
+// Whether a card that can be chosen lies past each edge of an element scrolled along both axes: more than half of it
+// beyond that edge
+const useChoicesPast = (ref, contentRef) => {
+    const [past, setPast] = useState({});
+    useLayoutEffect(() => {
+        const area = ref.current;
+        const content = contentRef.current;
+        if (!area || !content) {
+            return;
+        }
+        let frame = null;
+        const check = () => {
+            frame = null;
+            const view = area.getBoundingClientRect();
+            const next = { left: false, right: false, top: false, bottom: false };
+            content.querySelectorAll('.ring-selectable').forEach((card) => {
+                const box = card.getBoundingClientRect();
+                if (box.width === 0 && box.height === 0) {
+                    return;
+                }
+                const x = box.left + box.width / 2;
+                const y = box.top + box.height / 2;
+                next.left ||= x < view.left;
+                next.right ||= x > view.right;
+                next.top ||= y < view.top;
+                next.bottom ||= y > view.bottom;
+            });
+            setPast((current) =>
+                Object.keys(next).every((side) => !!current[side] === next[side]) ? current : next
+            );
+        };
+        const soon = () => {
+            frame ??= requestAnimationFrame(check);
+        };
+        check();
+        const observer = new ResizeObserver(soon);
+        observer.observe(area);
+        observer.observe(content);
+        const mutations = new MutationObserver(soon);
+        mutations.observe(content, {
+            subtree: true,
+            childList: true,
+            attributes: true,
+            attributeFilter: ['class']
+        });
+        area.addEventListener('scroll', soon, { passive: true });
+        return () => {
+            observer.disconnect();
+            mutations.disconnect();
+            area.removeEventListener('scroll', soon);
+            if (frame !== null) {
+                cancelAnimationFrame(frame);
+            }
+        };
+    }, [ref, contentRef]);
+    return past;
+};
+
+const sides = {
+    x: { start: 'left', end: 'right' },
+    y: { start: 'top', end: 'bottom' }
 };
 
 // Whether an element scrolled along an axis has more to see before its start and past its end
@@ -112,6 +190,7 @@ const ScrollArea = ({ anchor = 'start', axis = 'y', className, contentClassName,
     const sideways = axis === 'x';
     const across = useScrollEdges(ref, 'x', contentRef);
     const down = useScrollEdges(ref, 'y', contentRef);
+    const choices = useChoicesPast(ref, contentRef);
     const edges = {
         x: axis === 'y' ? null : across,
         y: axis === 'x' ? null : down
@@ -193,6 +272,7 @@ const ScrollArea = ({ anchor = 'start', axis = 'y', className, contentClassName,
                     <MoreHint
                         key={along + end}
                         show={!!edges[along]?.[end]}
+                        choose={!!choices[sides[along][end]]}
                         end={end}
                         axis={along}
                     />

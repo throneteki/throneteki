@@ -3,7 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import { Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComment, faCommentSlash } from '@fortawesome/free-solid-svg-icons';
+import {
+    faComment,
+    faCommentSlash,
+    faUpDownLeftRight,
+    faVideo
+} from '@fortawesome/free-solid-svg-icons';
 
 import Droppable from '../Droppable';
 import GameTimer from '../GameTimer';
@@ -37,11 +42,11 @@ import useAutoFollow from './useAutoFollow';
 import { useCardHover } from '../../Images/cardHoverStore';
 
 // A part drawn at another of the board's scales: every card size inside follows --card-scale
-const Part = ({ area, scale, className, children }) => (
+const Part = ({ area, scale, className, style, children }) => (
     <div
         data-region={area}
         className={classNames('relative min-w-0 min-h-0', className)}
-        style={scale ? { '--card-scale': `var(--${scale}-scale)` } : undefined}
+        style={scale ? { '--card-scale': `var(--${scale}-scale)`, ...style } : style}
     >
         {children}
     </div>
@@ -101,8 +106,8 @@ const coverAfter = 'var(--board-cover-right, 0px)';
 
 // Characters and locations take a row each, except in phone landscape, where there is height for only one and
 // they share it. The whole board scrolls as one, both ways, so a play area is as tall as its cards.
-const PlayArea = ({ inline, children }) => (
-    <Part area='play' className='flex flex-1 !min-h-[auto]'>
+const PlayArea = ({ inline, style, children }) => (
+    <Part area='play' className='flex flex-1 !min-h-[auto]' style={style}>
         <Room width={coverBefore} />
         {children(inline ? 'inline' : 'nowrap')}
         <Room width={coverAfter} />
@@ -156,6 +161,56 @@ const FitRow = ({ className, children }) => {
     );
 };
 
+// In phone landscape each board's play area keeps the column's width spare on the side away from the prompt, and its
+// cards are pushed into it as the column comes over the board (--push, set as the board scrolls), so they keep beside
+// the column until it is wholly over the board, and start at the board's edge while it is clear of it
+const pushedBy = (promptSide) => {
+    const near = 'var(--push, 0px)';
+    const far = `calc(${columnWidth} - var(--push, 0px))`;
+    return promptSide === 'right'
+        ? { paddingRight: near, paddingLeft: far }
+        : { paddingLeft: near, paddingRight: far };
+};
+
+// A player's stats as a card of their own, standing off the screen's edge: the avatar and stats in a row, drawn
+// smaller as a whole when the row is narrower than they are. Phone landscape's column and portrait's bars use it.
+// active: the player is the one being waited on, at a melee table
+const StatsCard = ({ player, canChange, showSeat, active = false, className, ...props }) => (
+    <div
+        {...props}
+        className={classNames(
+            'pointer-events-auto rounded-md border border-default-200/40 shadow-[0_2px_8px_rgba(0,0,0,0.5)]',
+            active ? 'bg-sky-950/80' : 'bg-black/60',
+            className
+        )}
+    >
+        <FitRow className='px-1'>
+            <PlayerStatsBar
+                player={player}
+                vertical
+                columns={6}
+                compact
+                canChange={canChange}
+                showSeat={showSeat}
+                className='bg-transparent'
+            />
+        </FitRow>
+    </div>
+);
+
+// Tools beside a stats card, in a box of their own
+const ToolBox = ({ className, children, ...props }) => (
+    <div
+        {...props}
+        className={classNames(
+            'pointer-events-auto flex items-center gap-0.5 rounded-md border border-default-200/40 bg-black/60 p-0.5 shadow-[0_2px_8px_rgba(0,0,0,0.5)] hud-zoom',
+            className
+        )}
+    >
+        {children}
+    </div>
+);
+
 const AdaptiveGameBoardLayout = ({
     thisPlayer,
     otherPlayers,
@@ -192,11 +247,73 @@ const AdaptiveGameBoardLayout = ({
     // At a melee table the view follows the action, unless turned off in the HUD settings. It waits while a card is
     // carried or zoomed.
     const zoomed = useCardHover((current) => !!current.code);
+    // At a melee table the stats bars keep to the view's top and bottom, so the hints of more above and below show
+    // inside them rather than under them
+    useLayoutEffect(() => {
+        const board = boardRef.current;
+        if (!board) {
+            return;
+        }
+        const bars = [...board.querySelectorAll('[data-seat-bar]')];
+        const measure = () => {
+            for (const side of ['top', 'bottom']) {
+                const height = Math.max(
+                    0,
+                    ...bars
+                        .filter((bar) => bar.dataset.seatBar === side)
+                        .map((bar) => bar.offsetHeight)
+                );
+                board.style.setProperty(`--board-hint-${side}`, `${height}px`);
+            }
+        };
+        measure();
+        const observer = new ResizeObserver(measure);
+        bars.forEach((bar) => observer.observe(bar));
+        return () => {
+            observer.disconnect();
+            board.style.removeProperty('--board-hint-top');
+            board.style.removeProperty('--board-hint-bottom');
+        };
+    }, [mode, melee, otherPlayers.length]);
+    // How far the prompt's column in phone landscape lies over each board, as the board scrolls under it. Set as it
+    // scrolls, before it is drawn, so the cards keep still beside the column.
+    useLayoutEffect(() => {
+        const board = boardRef.current;
+        const scroller = board?.querySelector('[data-board-scroll] > div > [data-clips]');
+        const column = board?.parentElement?.querySelector('[data-region="prompt-column"]');
+        if (!short || !scroller || !column) {
+            return;
+        }
+        const place = () => {
+            const view = scroller.getBoundingClientRect();
+            const width = column.getBoundingClientRect().width;
+            const sides = [...scroller.querySelectorAll('[data-side]')];
+            const pushes = sides.map((side) => {
+                const box = side.getBoundingClientRect();
+                const over =
+                    promptSide === 'right'
+                        ? box.right - (view.right - width)
+                        : view.left + width - box.left;
+                return Math.round(Math.min(width, Math.max(0, over)));
+            });
+            sides.forEach((side, index) => side.style.setProperty('--push', `${pushes[index]}px`));
+        };
+        place();
+        scroller.addEventListener('scroll', place, { passive: true });
+        const observer = new ResizeObserver(place);
+        observer.observe(scroller);
+        observer.observe(column);
+        return () => {
+            observer.disconnect();
+            scroller.removeEventListener('scroll', place);
+        };
+    }, [short, promptSide, melee, otherPlayers.length]);
+    const followEnabled = hud.followAction !== false;
     const followed = useAutoFollow({
         boardRef,
         target: followTarget(thisPlayer, otherPlayers),
         active: activePlayerOf(thisPlayer, otherPlayers),
-        enabled: melee && hud.followAction !== false,
+        enabled: melee && followEnabled,
         waiting: isDragging || zoomed
     });
     const manualMode = useSelector((state) => !!state.lobby.currentGame?.manualMode);
@@ -237,10 +354,16 @@ const AdaptiveGameBoardLayout = ({
         const handInStrip = !(isMe && handTrayShown);
         const hand = withoutPendingAttachment(player.cardPiles.hand);
         const shadows = withoutPendingAttachment(player.cardPiles.shadows);
-        // The opponent's hand fans out over their half when tapped or chosen from
+        // An opponent's hand fans out over their half when tapped or chosen from: the top half, or at a melee table
+        // the bottom half for those seated along the bottom row
         const fanned = (panel) =>
-            side === 'top' ? (
-                <HandFan cards={hand} playerName={player.user?.username} onCardClick={onCardClick}>
+            player !== thisPlayer ? (
+                <HandFan
+                    cards={hand}
+                    side={side}
+                    playerName={player.user?.username}
+                    onCardClick={onCardClick}
+                >
                     {panel}
                 </HandFan>
             ) : (
@@ -258,16 +381,24 @@ const AdaptiveGameBoardLayout = ({
                     portrait
                         ? 'gap-1 py-2'
                         : short
-                          ? // A card raised in our hand needs room above it in the strip, which clips what spills out
-                            classNames('gap-2 pb-1', {
-                                'pt-[calc(var(--pile-scale,1)*0.75rem+0.25rem)]': isMe,
-                                'pt-1': !isMe
-                            })
+                          ? // A card raised in our hand needs room above it in the strip, which clips what spills out.
+                            // Every strip keeps that room on its play area's side, so the halves mirror each other.
+                            classNames(
+                                'gap-2',
+                                side === 'top'
+                                    ? 'pb-[calc(var(--pile-scale,1)*0.75rem+0.25rem)] pt-1'
+                                    : 'pb-1 pt-[calc(var(--pile-scale,1)*0.75rem+0.25rem)]'
+                            )
                           : 'gap-2 py-3',
                     side === 'top'
                         ? 'border-b border-default-200/40'
                         : 'border-t border-default-200/40'
                 )}
+                style={
+                    short
+                        ? { [promptSide === 'right' ? 'paddingRight' : 'paddingLeft']: columnWidth }
+                        : undefined
+                }
             >
                 <Part area='id' scale={pileScale} className='shrink !min-w-min'>
                     <PlotFactionStack
@@ -340,7 +471,7 @@ const AdaptiveGameBoardLayout = ({
         );
 
         const play = (
-            <PlayArea inline={short}>
+            <PlayArea inline={short} style={short ? pushedBy(promptSide) : undefined}>
                 {(overflow) => (
                     <PlayerBoard
                         isDroppable={isMe}
@@ -355,39 +486,33 @@ const AdaptiveGameBoardLayout = ({
             </PlayArea>
         );
 
-        // In phone landscape the player's stats are a row at the top (the opponent's) or bottom (ours) of the column
-        // down the screen's side. The column belongs to each board, so the board starts beside it, and its stats keep
-        // to their own board: at the screen's side as the board scrolls sideways, and at the board's edge as it
-        // scrolls up and down.
+        // In phone landscape the player's stats are a card at the top (the opponent's) or bottom (ours) of the column
+        // down the screen's side. It keeps to its own board: in room kept for it at the start of the board's strip
+        // while the column is clear of the board, at the screen's side as the board scrolls under the column, and at
+        // the board's edge as it scrolls up and down. It lies in a layer over the whole board, so it can keep to the screen's
+        // side until the board's end reaches it, handing over to the next board's.
         const rail = short && (
             <div
                 className={classNames(
-                    'pointer-events-none sticky z-[300] flex shrink-0 flex-col',
-                    promptSide === 'right' ? 'right-0' : 'left-0',
+                    'pointer-events-none absolute inset-0 z-[300] flex flex-col',
+                    promptSide === 'right' ? 'items-end' : 'items-start',
                     side === 'top' ? 'justify-start' : 'justify-end'
                 )}
-                style={{ width: columnWidth }}
             >
-                <div
+                <StatsCard
                     data-region='stats-rail'
                     data-rail-side={side}
+                    player={player}
+                    canChange={isMe && canChangeStats}
+                    showSeat={melee}
+                    active={melee && player.isActivePrompt}
+                    style={{ width: `calc(${columnWidth} - 0.5rem)` }}
                     className={classNames(
-                        'pointer-events-auto sticky m-1 rounded-md border border-default-200/40 bg-black/60 shadow-[0_2px_8px_rgba(0,0,0,0.5)]',
+                        'sticky my-1',
+                        promptSide === 'right' ? 'right-1' : 'left-1',
                         side === 'top' ? 'top-1' : 'bottom-1'
                     )}
-                >
-                    <FitRow className='px-1'>
-                        <PlayerStatsBar
-                            player={player}
-                            vertical
-                            columns={6}
-                            compact
-                            canChange={isMe && canChangeStats}
-                            showSeat={melee}
-                            className='bg-transparent'
-                        />
-                    </FitRow>
-                </div>
+                />
             </div>
         );
 
@@ -395,22 +520,48 @@ const AdaptiveGameBoardLayout = ({
         // scrolls: at the board's top or bottom as it scrolls up and down, and along the view as it scrolls sideways
         const seatBar = melee && !short && (
             <div
+                data-seat-bar={side}
                 className={classNames(
                     'sticky z-[245] shrink-0',
                     side === 'top' ? 'top-0' : 'bottom-0'
                 )}
             >
-                <PlayerStatsBar
-                    player={player}
-                    compact={phoneLayout}
-                    canChange={isMe && canChangeStats}
-                    showSeat
-                    className={classNames(
-                        'sticky left-0 w-[min(100%,var(--scroll-view-width,100%))]',
-                        side === 'top' ? 'border-b' : 'border-t',
-                        { 'bg-sky-950/80': player.isActivePrompt }
-                    )}
-                />
+                {portrait ? (
+                    <div
+                        className={classNames(
+                            'sticky left-0 w-[min(100%,var(--scroll-view-width,100%))] p-1',
+                            { 'pr-[calc(var(--board-tools-width,0px)+0.5rem)]': side === 'bottom' }
+                        )}
+                    >
+                        <StatsCard
+                            player={player}
+                            canChange={isMe && canChangeStats}
+                            showSeat
+                            active={player.isActivePrompt}
+                        />
+                    </div>
+                ) : (
+                    <PlayerStatsBar
+                        player={player}
+                        compact={phoneLayout}
+                        canChange={isMe && canChangeStats}
+                        showSeat
+                        className={classNames(
+                            'sticky left-0 w-[min(100%,var(--scroll-view-width,100%))] py-1.5',
+                            side === 'top' ? 'border-b' : 'border-t',
+                            { 'bg-sky-950/80': player.isActivePrompt }
+                        )}
+                    >
+                        {/* Along the bottom, room for our tools pinned in the view's corner */}
+                        {side === 'bottom' && (
+                            <span
+                                aria-hidden
+                                className='block'
+                                style={{ width: 'var(--board-tools-width, 0px)' }}
+                            />
+                        )}
+                    </PlayerStatsBar>
+                )}
             </div>
         );
 
@@ -418,7 +569,7 @@ const AdaptiveGameBoardLayout = ({
             <div
                 data-side={side}
                 data-player={player.user?.username}
-                className={classNames('flex w-full flex-1', {
+                className={classNames('relative flex w-full flex-1', {
                     'bg-sky-300/5': melee && player.isActivePrompt
                 })}
             >
@@ -468,6 +619,30 @@ const AdaptiveGameBoardLayout = ({
             )}
         </Button>
     );
+    // At a melee table, how the view moves: directed (following the action) or manual (scrolled by hand, or turned
+    // off here), switched between with it
+    const followToggle = melee && followEnabled && (
+        <Button
+            isIconOnly
+            size='sm'
+            variant='flat'
+            data-follow={followed.paused ? 'manual' : 'directed'}
+            className={classNames(
+                'h-7 w-7 min-w-7 border',
+                followed.paused
+                    ? 'border-amber-400/70 bg-amber-500/25 text-amber-300'
+                    : 'border-sky-400/70 bg-sky-500/25 text-sky-300'
+            )}
+            title={
+                followed.paused
+                    ? 'View: manual. Tap to follow the action.'
+                    : 'View: directed, following the action. Tap to move it yourself.'
+            }
+            onPress={followed.paused ? followed.resume : followed.stop}
+        >
+            <FontAwesomeIcon icon={followed.paused ? faUpDownLeftRight : faVideo} />
+        </Button>
+    );
     // Our game menu belongs to us, at the end of our own stats
     // Given the room our stats leave, it shows what fits as buttons and keeps the rest in its menu
     // On phone layouts a full-screen toggle stays beside it, out of the menu
@@ -483,11 +658,19 @@ const AdaptiveGameBoardLayout = ({
         </>
     );
 
-    // At a melee table there is no bar of our own along the screen's edge, so our tools go with the prompt
-    const promptBar = (barMode, className, actions) => (
+    // Our tools, beside our own stats in every layout: the view's mode, the chat, full screen and the menu, outermost
+    const tools = (className) => (
+        <ToolBox data-region='tools' className={className}>
+            {followToggle}
+            {chatButton}
+            {gameMenu(0)}
+        </ToolBox>
+    );
+    const promptBar = (barMode, className, allOptions = false, stackOptions = false) => (
         <PromptBar
             className={className}
-            actions={actions}
+            allOptions={allOptions}
+            stackOptions={stackOptions}
             mode={barMode}
             phase={thisPlayer?.phase}
             promptTitle={userPlayer?.promptTitle}
@@ -523,7 +706,8 @@ const AdaptiveGameBoardLayout = ({
                         'border shadow-[0_6px_18px_rgba(0,0,0,0.6)]',
                         promptSide === 'right' ? 'rounded-md' : 'rounded-r-md border-l-0'
                     ),
-                    melee ? gameMenu(0) : undefined
+                    false,
+                    true
                 )}
             </div>
         </div>
@@ -537,9 +721,9 @@ const AdaptiveGameBoardLayout = ({
         />
     );
 
-    // Sheets keep to their own player's half: they stop at the divider's edges (the prompt panel's, on a desktop),
-    // and keep clear of the prompt in phone landscape. The phone chat opens below the opponent's bar, or beside the
-    // prompt in phone landscape.
+    // What lies over a player's half (an opponent's hand fanned out, the prompt's options) stops at the divider's edges
+    // (the prompt panel's, on a desktop). The phone chat opens below the opponent's bar, or beside the prompt in phone
+    // landscape.
     const topBarsRef = useRef(null);
     useLayoutEffect(() => {
         const divider = dividerRef.current;
@@ -553,11 +737,27 @@ const AdaptiveGameBoardLayout = ({
             root.style.setProperty('--board-divider-bottom', `${rect.bottom}px`);
             const bar = document.querySelector('[data-prompt-bar]')?.getBoundingClientRect();
             root.style.setProperty('--board-prompt-bottom', `${bar ? bar.bottom : rect.bottom}px`);
+            const view = boardRef.current
+                ?.querySelector('[data-board-scroll]')
+                ?.getBoundingClientRect();
+            root.style.setProperty(
+                '--board-view-bottom',
+                `${view ? view.bottom : window.innerHeight}px`
+            );
             const bars = topBarsRef.current?.getBoundingClientRect();
             const column = columnRef.current?.getBoundingClientRect();
             const onRight = promptSide === 'right';
             const width = document.documentElement.clientWidth;
             root.style.setProperty('--board-chat-top', `${bars ? bars.bottom : 0}px`);
+            // In portrait our tools are at the bottom, and the chat stops above them, the chat button in reach
+            const toolsRect = boardRef.current
+                ?.querySelector('[data-region="tools"]')
+                ?.getBoundingClientRect();
+            root.style.setProperty('--board-tools-width', `${toolsRect ? toolsRect.width : 0}px`);
+            root.style.setProperty(
+                '--board-chat-bottom',
+                `${mode === 'narrow' && toolsRect ? window.innerHeight - toolsRect.top + 4 : 0}px`
+            );
             // The prompt and our tools keep between the stats at the top and bottom of the column
             const topRail = boardRef.current
                 ?.querySelector('[data-rail-side="top"]')
@@ -578,14 +778,6 @@ const AdaptiveGameBoardLayout = ({
                 '--board-chat-right',
                 `${column && onRight ? width - column.left : 0}px`
             );
-            root.style.setProperty(
-                '--board-sheet-left',
-                `${column && !onRight ? column.right : 0}px`
-            );
-            root.style.setProperty(
-                '--board-sheet-right',
-                `${column && onRight ? width - column.left : 0}px`
-            );
         };
         place();
         const observer = new ResizeObserver(place);
@@ -594,6 +786,8 @@ const AdaptiveGameBoardLayout = ({
         [
             topBarsRef.current,
             columnRef.current,
+            boardRef.current?.querySelector('[data-region="tools"]'),
+            boardRef.current?.querySelector('[data-board-scroll]'),
             document.querySelector('[data-prompt-bar]'),
             boardRef.current?.querySelector('[data-side="top"]'),
             ...(boardRef.current?.querySelectorAll('[data-region="stats-rail"]') ?? [])
@@ -610,11 +804,12 @@ const AdaptiveGameBoardLayout = ({
                 '--board-divider-top',
                 '--board-divider-bottom',
                 '--board-prompt-bottom',
+                '--board-view-bottom',
                 '--board-chat-top',
+                '--board-chat-bottom',
+                '--board-tools-width',
                 '--board-chat-left',
                 '--board-chat-right',
-                '--board-sheet-left',
-                '--board-sheet-right',
                 '--board-rail-top',
                 '--board-rail-bottom'
             ].forEach((name) => root.style.removeProperty(name));
@@ -622,7 +817,11 @@ const AdaptiveGameBoardLayout = ({
     }, [mode, promptSide]);
 
     const opponents = otherPlayers.map((player) => (
-        <div key={player.name ?? player.seatNo} className='flex flex-1' style={sideFlex.top}>
+        <div
+            key={player.name ?? player.seatNo}
+            className='flex flex-1 border-b border-default-200/30'
+            style={sideFlex.top}
+        >
             {renderSide(player, 'top')}
         </div>
     ));
@@ -652,7 +851,8 @@ const AdaptiveGameBoardLayout = ({
 
     // A melee table: two rows of boards, a column for each pair, us at the bottom left. On a desktop the prompt's
     // panel lies along the line between the rows. The room kept for the prompt is kept once, as a column at each of
-    // the table's sides rather than in every board, so the line between the rows still runs from the screen's edge.
+    // the table's sides rather than in every board. The boards at the table's ends reach into it, their stats and
+    // strips running to the screen's edge, and only their play areas keep clear of the prompt.
     const table = melee
         ? (() => {
               const rows = tableRows(thisPlayer, [thisPlayer, ...otherPlayers]);
@@ -661,12 +861,15 @@ const AdaptiveGameBoardLayout = ({
                   <div
                       key={player.user?.username ?? player.seatNo}
                       data-seat={player.user?.username}
-                      className={classNames('flex', {
-                          'border-l border-default-200/30': index > 0
+                      className={classNames('flex border-default-200/30', {
+                          'border-l': index > 0,
+                          'border-b': side === 'top'
                       })}
                       style={{
-                          gridColumn: index + 2,
-                          gridRow: side === 'top' ? 1 : floatingPrompt ? 3 : 2
+                          gridColumn: `${index === 0 ? 1 : index + 2} / ${index === columns - 1 ? columns + 3 : index + 3}`,
+                          gridRow: side === 'top' ? 1 : floatingPrompt ? 3 : 2,
+                          '--board-cover-left': index === 0 ? coverOf('left') : '0px',
+                          '--board-cover-right': index === columns - 1 ? coverOf('right') : '0px'
                       }}
                   >
                       {renderSide(player, side, {
@@ -681,11 +884,22 @@ const AdaptiveGameBoardLayout = ({
                       className='relative grid min-h-full flex-1'
                       style={{
                           gridTemplateColumns: `${coverOf('left')} repeat(${columns}, auto) ${coverOf('right')}`,
-                          gridTemplateRows: floatingPrompt ? '1fr auto 1fr' : '1fr 1fr',
+                          // Sized to their own boards, sharing only what room is spare: equal (fr) rows would
+                          // stretch the top row to ours, hand and all, opening a gap in each opponent's play area. The
+                          // prompt's row between them takes none, so the rows meet at the line between them.
+                          gridTemplateRows: floatingPrompt ? 'auto 0px auto' : 'auto auto',
                           '--board-cover-left': '0px',
                           '--board-cover-right': '0px'
                       }}
                   >
+                      {['left', 'right'].map((end) => (
+                          <div
+                              key={end}
+                              aria-hidden
+                              data-table-cover={end}
+                              style={{ gridRow: 1, gridColumn: end === 'left' ? 1 : columns + 2 }}
+                          />
+                      ))}
                       {rows.top.map((player, index) => cell(player, 'top', index))}
                       {floatingPrompt && (
                           <div className='self-center' style={{ gridRow: 2, gridColumn: '1 / -1' }}>
@@ -710,15 +924,12 @@ const AdaptiveGameBoardLayout = ({
                             '--board-prompt-inset':
                                 floatingPrompt && promptSide === 'right' ? chatTabDepth : '0px',
                             '--board-cover-left': coverOf('left'),
-                            '--board-cover-right': coverOf('right'),
-                            ...(short && {
-                                '--board-edge-left': promptSide === 'left' ? columnWidth : '0px',
-                                '--board-edge-right': promptSide === 'right' ? columnWidth : '0px'
-                            })
+                            '--board-cover-right': coverOf('right')
                         }}
                     >
                         {short && (
                             <div
+                                data-region='prompt-column'
                                 className={classNames(
                                     'pointer-events-none absolute z-[305] flex flex-col pb-[calc(var(--board-rail-bottom,0px)+0.25rem)] pt-[calc(var(--board-rail-top,0px)+0.25rem)]',
                                     promptSide === 'right'
@@ -727,16 +938,21 @@ const AdaptiveGameBoardLayout = ({
                                 )}
                                 style={{ width: columnWidth }}
                             >
-                                {/* The prompt, between the players' stats */}
-                                <div className='flex min-h-0 flex-1 flex-col justify-center px-1'>
+                                {/* The prompt, between the players' stats, centred until it grows too tall for
+                                    the room and scrolls (auto margins, which unlike centring leave its top in reach) */}
+                                <div
+                                    data-region='prompt-scroll'
+                                    className='flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-1 [scrollbar-width:none]'
+                                >
                                     <div
                                         ref={columnRef}
                                         data-region='prompt-panel'
-                                        className='pointer-events-auto'
+                                        className='pointer-events-auto my-auto shrink-0'
                                     >
                                         {promptBar(
                                             'panel',
-                                            'rounded-md border shadow-[0_6px_18px_rgba(0,0,0,0.6)]'
+                                            'rounded-md border shadow-[0_6px_18px_rgba(0,0,0,0.6)]',
+                                            true
                                         )}
                                     </div>
                                 </div>
@@ -763,6 +979,7 @@ const AdaptiveGameBoardLayout = ({
                                         />
                                         <FullscreenToggle />
                                         {chatButton}
+                                        {followToggle}
                                     </div>
                                 </div>
                             </div>
@@ -770,7 +987,21 @@ const AdaptiveGameBoardLayout = ({
                         {/* The bars run to the screen's edges; what lies between them keeps clear of a notch or
                             rounded corners at the sides */}
                         <div ref={boardRef} className='flex min-w-0 flex-1 flex-col'>
-                            {!short && !melee && (
+                            {portrait && !melee && (
+                                <div
+                                    ref={topBarsRef}
+                                    className='relative z-[305] flex shrink-0 items-center gap-1 px-1 pb-1 pt-[calc(var(--safe-top)+0.25rem)]'
+                                >
+                                    {otherPlayers.map((player) => (
+                                        <StatsCard
+                                            key={player.name ?? player.seatNo}
+                                            player={player}
+                                            className='min-w-0 flex-1'
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                            {floatingPrompt && !melee && (
                                 <div ref={topBarsRef} className='relative z-[305] shrink-0'>
                                     {otherPlayers.map((player, index) => (
                                         <PlayerStatsBar
@@ -817,30 +1048,24 @@ const AdaptiveGameBoardLayout = ({
                                         )}
                                     </ScrollArea>
                                     {midline}
-                                    {followed.paused && (
-                                        <button
-                                            type='button'
-                                            data-follow-resume=''
-                                            onClick={followed.resume}
-                                            className='absolute left-1/2 top-1 z-[306] -translate-x-1/2 rounded-full border border-default-200/50 bg-black/70 px-2 py-0.5 text-[11px] text-default-200 shadow-[0_2px_8px_rgba(0,0,0,0.5)] hud-zoom hover:text-white'
-                                        >
-                                            Following paused · tap to resume
-                                        </button>
-                                    )}
+                                    {/* At a melee table our stats keep to our own board, so our tools are pinned to
+                                        the view's bottom corner beside them, staying when our board scrolls away */}
+                                    {melee &&
+                                        !short &&
+                                        tools('absolute bottom-1.5 right-1 z-[246]')}
                                 </div>
-                                {portrait &&
-                                    promptBar(
-                                        'dock',
-                                        undefined,
-                                        melee ? (
-                                            <>
-                                                {chatButton}
-                                                {gameMenu(0)}
-                                            </>
-                                        ) : undefined
-                                    )}
                             </div>
-                            {!short && !melee && (
+                            {portrait && !melee && (
+                                <div className='relative z-[245] flex shrink-0 items-center gap-1 p-1'>
+                                    <StatsCard
+                                        player={thisPlayer}
+                                        canChange={canChangeStats}
+                                        className='min-w-0 flex-1'
+                                    />
+                                    {tools('shrink-0')}
+                                </div>
+                            )}
+                            {floatingPrompt && !melee && (
                                 <PlayerStatsBar
                                     player={thisPlayer}
                                     canChange={canChangeStats}
@@ -851,6 +1076,8 @@ const AdaptiveGameBoardLayout = ({
                                     {gameMenu}
                                 </PlayerStatsBar>
                             )}
+                            {/* In portrait the prompt is at the very bottom, below our stats */}
+                            {portrait && promptBar('dock')}
                         </div>
                     </div>
                     <SheetHost mode={mode} />
