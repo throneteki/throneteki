@@ -1,7 +1,12 @@
 import React from 'react';
-import { Radio, RadioGroup, Switch } from '@heroui/react';
-import Panel from '../Site/Panel';
-import { ActionWindows, CardSizeOptions } from '../../constants';
+import Group from '../Site/Group';
+import PhaseTrack from '../Site/PhaseTrack';
+import RadioField, { RadioOption } from '../Site/RadioField';
+import SettingSwitch from '../Site/SettingSwitch';
+import { CardSizeOptions } from '../../constants';
+
+const tileClassName =
+    'w-full cursor-pointer rounded-sm border border-gold-hair p-2 hover:bg-quiet data-[selected=true]:border-gold data-[selected=true]:bg-quiet';
 
 const GameConfiguration = ({
     isSpectating,
@@ -16,108 +21,74 @@ const GameConfiguration = ({
     onCardSizeSettingChange,
     onActionWindowToggle,
     onPromptDupesToggle
-}) => {
-    const windowsToRender = ActionWindows.map((window) => {
-        return (
-            <div key={window.name}>
-                <Switch
-                    onValueChange={(checked) =>
-                        onActionWindowToggle && onActionWindowToggle(window.name, checked)
-                    }
-                    name={'promptedActionWindows.' + window.name}
-                    isSelected={actionWindows[window.name]}
-                    isDisabled={isSpectating}
-                >
-                    {window.label}
-                </Switch>
-            </div>
-        );
-    });
-
-    return (
-        <form>
-            <div className='flex flex-col gap-2 overflow-y-auto'>
-                <Panel title={'Action window defaults'}>
-                    <div className='grid sm:grid-cols-2 gap-2'>{windowsToRender}</div>
-                </Panel>
-                <Panel title={'Responses'}>
-                    <div className='flex flex-col gap-2'>
-                        <Switch
-                            onValueChange={(value) =>
-                                onHideResponsesToggle && onHideResponsesToggle('interrupts', value)
-                            }
-                            name='hideInterrupts'
-                            isSelected={hideInterrupts !== false}
-                            isDisabled={isSpectating}
-                        >
-                            {'Hide whether I have interrupts'}
-                        </Switch>
-                        <Switch
-                            onValueChange={(value) =>
-                                onHideResponsesToggle && onHideResponsesToggle('reactions', value)
-                            }
-                            name='hideReactions'
-                            isSelected={hideReactions !== false}
-                            isDisabled={isSpectating}
-                        >
-                            {'Hide whether I have reactions'}
-                        </Switch>
-                    </div>
-                </Panel>
-                <Panel title='Card Sizing'>
-                    <RadioGroup
-                        value={cardSizeSetting}
-                        onValueChange={(value) =>
-                            onCardSizeSettingChange && onCardSizeSettingChange(value)
-                        }
-                        orientation='horizontal'
-                    >
-                        {CardSizeOptions.map(({ name, label }) => (
-                            <Radio key={name} value={name}>
-                                {label}
-                            </Radio>
-                        ))}
-                    </RadioGroup>
-                </Panel>
-                <Panel title={'Other Settings'}>
-                    <div className='flex flex-col gap-2'>
-                        <Switch
-                            onValueChange={(value) =>
-                                onKeywordSettingToggle &&
-                                onKeywordSettingToggle('chooseOrder', value)
-                            }
-                            name='keywordSettings.chooseOrder'
-                            isSelected={keywordSettings.chooseOrder}
-                            isDisabled={isSpectating}
-                        >
-                            {'Choose order of keywords'}
-                        </Switch>
-                        <Switch
-                            onValueChange={(value) =>
-                                onKeywordSettingToggle &&
-                                onKeywordSettingToggle('chooseCards', value)
-                            }
-                            name='keywordSettings.chooseCards'
-                            isSelected={keywordSettings.chooseCards}
-                            isDisabled={isSpectating}
-                        >
-                            {'Ask before resolving challenge keywords'}
-                        </Switch>
-                        <Switch
-                            onValueChange={(value) =>
-                                onPromptDupesToggle && onPromptDupesToggle(value)
-                            }
-                            name='promptDupes'
-                            isSelected={promptDupes}
-                            isDisabled={isSpectating}
-                        >
-                            {'Prompt before using dupes to save'}
-                        </Switch>
-                    </div>
-                </Panel>
-            </div>
-        </form>
-    );
-};
+}) => (
+    <div className='flex flex-col gap-7 pb-4'>
+        <Group
+            title='Action windows'
+            description='The game stops at the windows you choose to ask whether you want to act. These apply to this game; your defaults are in your profile.'
+        >
+            <PhaseTrack
+                idPrefix='game-window'
+                value={actionWindows}
+                isDisabled={isSpectating}
+                onChange={(name, isSelected) => onActionWindowToggle?.(name, isSelected)}
+            />
+        </Group>
+        <Group title='Automation' description='Choices the game can make for you.'>
+            <SettingSwitch
+                label='Choose order of keywords'
+                hint='When you are first player, pick the order challenge keywords resolve in.'
+                isSelected={keywordSettings.chooseOrder}
+                isDisabled={isSpectating}
+                onValueChange={(value) => onKeywordSettingToggle?.('chooseOrder', value)}
+            />
+            <SettingSwitch
+                label='Ask before resolving challenge keywords'
+                hint='Pick which of your cards resolve each keyword, instead of all of them resolving automatically.'
+                isSelected={keywordSettings.chooseCards}
+                isDisabled={isSpectating}
+                onValueChange={(value) => onKeywordSettingToggle?.('chooseCards', value)}
+            />
+            <SettingSwitch
+                label='Prompt before using dupes to save'
+                hint='Otherwise a duplicate saves your card automatically.'
+                isSelected={promptDupes}
+                isDisabled={isSpectating}
+                onValueChange={(value) => onPromptDupesToggle?.(value)}
+            />
+        </Group>
+        <Group
+            title='Hidden information'
+            description="Pause at windows where you could have a response, even when you don't, so your opponent can't tell what is in your hand."
+        >
+            <SettingSwitch
+                label='Hide whether I have interrupts'
+                isSelected={hideInterrupts !== false}
+                isDisabled={isSpectating}
+                onValueChange={(value) => onHideResponsesToggle?.('interrupts', value)}
+            />
+            <SettingSwitch
+                label='Hide whether I have reactions'
+                isSelected={hideReactions !== false}
+                isDisabled={isSpectating}
+                onValueChange={(value) => onHideResponsesToggle?.('reactions', value)}
+            />
+        </Group>
+        <Group title='Card size'>
+            <RadioField
+                aria-label='Card size'
+                value={cardSizeSetting}
+                onChange={(value) => onCardSizeSettingChange?.(value)}
+                optionsClassName='grid grid-cols-2 gap-2 sm:grid-cols-4'
+            >
+                {CardSizeOptions.map(({ name, label }) => (
+                    <RadioOption key={name} value={name} className={tileClassName}>
+                        {label}
+                    </RadioOption>
+                ))}
+            </RadioField>
+        </Group>
+    </div>
+);
 
 export default GameConfiguration;

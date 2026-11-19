@@ -3,15 +3,30 @@ import moment from 'moment';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { Avatar, Link } from '@heroui/react';
+import { Button } from '@heroui/react';
+import classNames from 'classnames';
+import UserAvatar from '../Site/UserAvatar';
 import { Constants } from '../../constants';
 import { useRemoveMessageMutation } from '../../redux/middleware/api';
 import { toast } from 'react-toastify';
 import ChatArea from '../Site/ChatArea';
 import { useDispatch } from 'react-redux';
 import { clearChatStatus, sendLobbyChatMessage } from '../../redux/reducers/lobby';
+import { getMessageWithLinks } from '../../util';
 
-const LobbyChat = ({ isLoggedIn, messages, isModerator, lobbyError }) => {
+const GroupMinutes = 5;
+
+const RoleLabels = {
+    admin: 'Admin',
+    contributor: 'Contributor',
+    supporter: 'Supporter',
+    winner: 'Winner',
+    previouswinner: 'Past winner'
+};
+
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const LobbyChat = ({ isLoggedIn, username, messages, isModerator, lobbyError }) => {
     const dispatch = useDispatch();
     const [removeMessage] = useRemoveMessageMutation();
 
@@ -27,144 +42,184 @@ const LobbyChat = ({ isLoggedIn, messages, isModerator, lobbyError }) => {
         [removeMessage]
     );
 
-    const checkChatError = useCallback(() => {
-        if (lobbyError) {
-            toast.error('New users are limited from chatting in the lobby, try again later');
-
-            setTimeout(() => {
-                dispatch(clearChatStatus());
-            }, 5000);
+    useEffect(() => {
+        if (!lobbyError) {
+            return;
         }
+
+        toast.error('New users are limited from chatting in the lobby, try again later');
+
+        const timer = setTimeout(() => dispatch(clearChatStatus()), 5000);
+
+        return () => clearTimeout(timer);
     }, [lobbyError, dispatch]);
 
-    useEffect(() => {
-        checkChatError();
-    }, [checkChatError, dispatch]);
-
-    useEffect(() => {
-        checkChatError();
-    }, [checkChatError, lobbyError]);
-
     const getMessages = useCallback(() => {
-        const groupedMessages = {};
-        let index = 0;
         const today = moment();
-        const yesterday = moment().add(-1, 'days');
-        let lastUser;
-        let currentGroup = 0;
-        for (let message of messages) {
+        const yesterday = moment().subtract(1, 'day');
+        const mention = username
+            ? new RegExp(`(^|[^\\w])@?${escapeRegExp(username)}(?![\\w])`, 'i')
+            : null;
+        const dayLabel = (time) => {
+            if (today.isSame(time, 'day')) {
+                return 'Today';
+            }
+
+            if (yesterday.isSame(time, 'day')) {
+                return 'Yesterday';
+            }
+
+            return moment(time).format(today.isSame(time, 'year') ? 'D MMMM' : 'D MMMM YYYY');
+        };
+
+        const groups = [];
+        for (const message of messages) {
             if (!message.user) {
-                return undefined;
+                continue;
             }
-            const formattedTime = moment(message.time).format('YYYYMMDDHHmm');
-            if (lastUser && message.user && lastUser !== message.user.username) {
-                currentGroup++;
-            }
-            const key = message.user.username + formattedTime + currentGroup;
-            if (!groupedMessages[key]) {
-                groupedMessages[key] = [];
-            }
-            groupedMessages[key].push(message);
-            lastUser = message.user.username;
-        }
-        return Object.values(groupedMessages).map((messages) => {
-            let timestamp;
-            const firstMessage = messages[0];
 
-            if (!firstMessage.user) {
-                return undefined;
-            }
-            if (today.isSame(firstMessage.time, 'd')) {
-                timestamp = moment(firstMessage.time).format('H:mm');
-            } else if (yesterday.isSame(firstMessage.time, 'd')) {
-                timestamp = 'yesterday ' + moment(firstMessage.time).format('H:mm');
+            const last = groups[groups.length - 1];
+            const lastMessage = last?.messages[last.messages.length - 1];
+            const sameDay = lastMessage && moment(lastMessage.time).isSame(message.time, 'day');
+            if (
+                last &&
+                sameDay &&
+                last.user.username === message.user.username &&
+                moment(message.time).diff(lastMessage.time, 'minutes') < GroupMinutes
+            ) {
+                last.messages.push(message);
             } else {
-                timestamp = moment(firstMessage.time).format('MMM Do H:mm');
+                groups.push({
+                    user: message.user,
+                    day: sameDay ? null : dayLabel(message.time),
+                    messages: [message]
+                });
             }
-            let i = 0;
-            const renderedMessages = messages.map((message) => {
-                if (!message.user) {
-                    return undefined;
-                }
+        }
 
-                let messageText;
+        const renderLine = (message, isFirst) => {
+            const isMention =
+                !message.deleted &&
+                mention &&
+                message.user.username !== username &&
+                mention.test(message.message);
+            let messageText;
 
-                if (message.deleted) {
-                    if (isModerator) {
-                        messageText = (
-                            <>
-                                <span className='italic line-through'>{message.message}</span>
-                                <span className='italic'>
-                                    {` - (Message removed by ${message.deletedBy})`}
-                                </span>
-                            </>
-                        );
-                    } else {
-                        messageText = (
-                            <span className='italic'>Message deleted by a moderator</span>
-                        );
-                    }
-                } else {
-                    messageText = message.message;
-                }
-
-                return (
-                    <div
-                        key={message.user.username + i++}
-                        className='group text-gray-300 text-sm leading-[1.15rem] flex gap-2 pr-4'
-                    >
-                        <span className='min-w-0 [overflow-wrap:anywhere]'>{messageText}</span>
-                        {isModerator && !message.deleted && (
-                            <Link
-                                className='text-danger text-small ml-auto shrink-0 self-start [@media(hover:hover)]:opacity-0 group-hover:opacity-100 focus-visible:opacity-100'
-                                onPress={() => onRemoveMessageClick(message._id)}
-                            >
-                                <FontAwesomeIcon icon={faTimes} />
-                            </Link>
-                        )}
-                    </div>
-                );
-            });
-
-            const userClass =
-                'username font-bold' +
-                (firstMessage.user.role
-                    ? ` ${Constants.ColorClassByRole[firstMessage.user.role.toLowerCase()]}`
-                    : '');
+            if (message.deleted) {
+                const removedBy = message.deletedBy
+                    ? `Removed by ${message.deletedBy}`
+                    : 'Removed by a moderator';
+                messageText =
+                    isModerator && message.message ? (
+                        <>
+                            <span className='line-through'>{message.message}</span>{' '}
+                            <span className='italic text-ink-faint'>({removedBy})</span>
+                        </>
+                    ) : (
+                        <span className='italic text-ink-faint'>{removedBy}</span>
+                    );
+            } else {
+                messageText = getMessageWithLinks(message.message);
+            }
 
             return (
                 <div
-                    key={timestamp + firstMessage.user.username + (index++).toString()}
-                    className='mb-2 flex'
+                    key={message._id ?? message.time}
+                    className={classNames(
+                        'group/line relative flex gap-2 py-px pr-1 text-sm leading-relaxed',
+                        isMention ? '-mx-1.5 bg-gold/10 px-1.5 text-ink' : 'text-ink/90'
+                    )}
                 >
-                    <div className='mr-2'>
-                        <Avatar
-                            src={`/img/avatar/${firstMessage.user.username}.png`}
-                            showFallback
-                        />
-                    </div>
-                    <div className='flex-1 min-w-0'>
-                        <div className='flex'>
-                            <span className={userClass}>{firstMessage.user.username}</span>
-                            <span className='ml-2 text-gray-300 text-small'>{timestamp}</span>
-                        </div>
-                        {renderedMessages}
-                    </div>
+                    {!isFirst && (
+                        <time
+                            dateTime={moment(message.time).toISOString()}
+                            className='absolute -left-11 top-px w-8 text-right text-[11px] leading-relaxed tabular-nums text-ink-faint opacity-0 group-hover/line:opacity-100'
+                        >
+                            {moment(message.time).format('H:mm')}
+                        </time>
+                    )}
+                    <span className='min-w-0 [overflow-wrap:anywhere]'>{messageText}</span>
+                    {isModerator && !message.deleted && (
+                        <Button
+                            isIconOnly
+                            size='sm'
+                            variant='ghost'
+                            aria-label='Remove message'
+                            className='ms-auto h-6 w-6 min-w-6 shrink-0 text-danger [@media(hover:hover)]:opacity-0 group-hover/line:opacity-100 focus-visible:opacity-100'
+                            onPress={() => onRemoveMessageClick(message._id)}
+                        >
+                            <FontAwesomeIcon icon={faTimes} />
+                        </Button>
+                    )}
                 </div>
             );
+        };
+
+        return groups.map((group) => {
+            const role = group.user.role?.toLowerCase();
+            const isMine = group.user.username === username;
+            const first = group.messages[0];
+
+            return (
+                <React.Fragment key={first._id ?? `${group.user.username}${first.time}`}>
+                    {group.day && (
+                        <div
+                            role='separator'
+                            className='flex items-center gap-3 pt-1 font-display text-xs font-semibold text-gold/80'
+                        >
+                            <span className='h-px flex-1 bg-gold-hair' />
+                            {group.day}
+                            <span className='h-px flex-1 bg-gold-hair' />
+                        </div>
+                    )}
+                    <div
+                        className={classNames(
+                            'flex gap-3',
+                            isMine && '-mx-2 bg-white/[0.035] px-2 py-1.5'
+                        )}
+                    >
+                        <UserAvatar username={group.user.username} size='sm' />
+                        <div className='min-w-0 flex-1'>
+                            <div className='flex items-baseline gap-2'>
+                                <span
+                                    className={classNames(
+                                        'font-medium',
+                                        (role && Constants.ColorClassByRole[role]) || 'text-ink'
+                                    )}
+                                >
+                                    {group.user.username}
+                                </span>
+                                {RoleLabels[role] && (
+                                    <span className='text-xs text-ink-faint'>
+                                        {RoleLabels[role]}
+                                    </span>
+                                )}
+                                <time
+                                    dateTime={moment(first.time).toISOString()}
+                                    className='text-xs tabular-nums text-ink-faint'
+                                >
+                                    {moment(first.time).format('H:mm')}
+                                </time>
+                            </div>
+                            {group.messages.map((message, index) =>
+                                renderLine(message, index === 0)
+                            )}
+                        </div>
+                    </div>
+                </React.Fragment>
+            );
         });
-    }, [messages, isModerator, onRemoveMessageClick]);
+    }, [messages, username, isModerator, onRemoveMessageClick]);
 
     const noMessagesLabel = (
-        <div className='bg-default-200 rounded-lg p-2'>There are no messages at the moment</div>
+        <p className='py-6 text-center text-sm text-ink-dim'>No messages yet. Say hello.</p>
     );
 
-    const placeholder = isLoggedIn
-        ? 'Enter a message...'
-        : 'You must be logged in to send lobby chat messages';
+    const placeholder = isLoggedIn ? 'Send a message' : 'Log in to chat';
     return (
         <ChatArea
-            className='flex-1 min-h-0 overflow-hidden rounded-b-xl'
+            className='min-h-0 flex-1'
+            classNames={{ messages: 'flex flex-col gap-3 overflow-x-hidden px-2 pb-3' }}
             messageCount={messages.length}
             noMessagesLabel={noMessagesLabel}
             onSendMessage={(message) => dispatch(sendLobbyChatMessage(message))}

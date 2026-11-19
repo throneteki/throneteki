@@ -39,7 +39,7 @@ const ThronesIcon = ({ className, icon, color, noSize = true, withBackground = f
     };
 
     const wrapperClassName = classNames(
-        'rounded-xl font-[thronesdb] inline text-center leading-6',
+        'rounded-xl font-icons inline text-center leading-6',
         withBackground ? bgClasses[color || icon] : fgClasses[color || icon],
         {
             'w-6 h-6': !noSize

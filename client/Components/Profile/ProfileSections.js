@@ -30,6 +30,22 @@ export const ProfileSections = [
         label: 'Appearance',
         description: 'Card size and the game board background.',
         fields: ['cardSize', 'background']
+    },
+    {
+        key: 'sessions',
+        label: 'Sessions',
+        description:
+            "Where you are logged in. Remove any you don't recognise and consider changing your password.",
+        fields: [],
+        savesImmediately: true
+    },
+    {
+        key: 'blocklist',
+        label: 'Block list',
+        description:
+            "Blocked players can't join your games, and you won't see their messages or games.",
+        fields: [],
+        savesImmediately: true
     }
 ];
 

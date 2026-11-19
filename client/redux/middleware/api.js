@@ -17,7 +17,6 @@ const TagTypes = {
     BanList: 'BanList',
     AbuseBlock: 'AbuseBlock',
     ProblemReport: 'ProblemReport',
-    DraftCube: 'DraftCube',
     Banner: 'Banner'
 };
 
@@ -341,10 +340,7 @@ export const apiSlice = createApi({
         }),
         getUser: builder.query({
             query: (username) => `/user/${username}`,
-            providesTags: (result = { data: [] }) => [
-                TagTypes.User,
-                ...(result.data || []).map(({ id }) => ({ type: TagTypes.User, id }))
-            ]
+            providesTags: (_result, _error, username) => [{ type: TagTypes.User, id: username }]
         }),
         getUserAbuseProfile: builder.query({
             query: (username) => `/user/${username}/abuse-profile`,
@@ -356,7 +352,7 @@ export const apiSlice = createApi({
                 method: 'PUT',
                 body: user
             }),
-            invalidatesTags: (result, error, arg) => [{ type: TagTypes.User, id: arg.id }]
+            invalidatesTags: (_result, _error, arg) => [{ type: TagTypes.User, id: arg.username }]
         }),
         restrictUser: builder.mutation({
             query: ({ username, days = 7, reason }) => ({

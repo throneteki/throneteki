@@ -21,7 +21,7 @@ const BannerSlide = ({ banner, imageUrl, onPlay, children }) => {
     }
 
     return (
-        <div className='relative mx-auto w-full max-w-[calc(18vh*6)] overflow-hidden rounded-lg border-2 border-primary shadow-lg'>
+        <div className='relative mx-auto w-full max-w-[calc(18vh*6)] overflow-hidden border border-gold-line shadow-[0_18px_40px_rgba(0,0,0,0.55)]'>
             {content}
             {children}
         </div>

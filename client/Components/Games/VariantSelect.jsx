@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, SelectItem } from '@heroui/react';
+import SelectField from '../Site/SelectField';
 import { GameFormats } from '../../constants';
 import { useEffect, useMemo } from 'react';
 
@@ -15,39 +15,32 @@ const VariantSelect = ({
     disallowEmptySelection,
     isDisabled
 }) => {
-    const handleChange = (e) => {
-        onSelected(e.target.value);
+    const handleChange = (value) => {
+        onSelected(value);
     };
     const variants = useMemo(
         () => GameFormats.find(({ name }) => name === format)?.variants ?? [],
         [format]
     );
 
-    // Defaults to first on formats list
     useEffect(() => {
-        const newVariant =
-            GameFormats.find(({ name }) => name === format)?.variants?.[0]?.name ?? null;
-        onSelected(newVariant);
-    }, [format, onSelected]);
+        if (!variants.some((variant) => variant.name === selected)) {
+            onSelected(variants[0]?.name ?? null);
+        }
+    }, [variants, selected, onSelected]);
 
     return (
-        <Select
+        <SelectField
             label={label}
-            selectedKeys={selected ? [selected] : []}
+            value={selected || null}
             onChange={handleChange}
             isDisabled={isDisabled || (!disallowEmptySelection && variants.length === 0)}
             isInvalid={isInvalid}
             errorMessage={errorMessage}
-            disallowEmptySelection={disallowEmptySelection}
             className={className}
             style={style}
-        >
-            {variants.map((v) => (
-                <SelectItem key={v.name} value={v.name}>
-                    {v.label}
-                </SelectItem>
-            ))}
-        </Select>
+            items={variants.map((v) => ({ id: v.name, label: v.label }))}
+        />
     );
 };
 

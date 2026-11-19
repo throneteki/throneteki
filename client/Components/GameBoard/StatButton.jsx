@@ -1,10 +1,10 @@
 import React from 'react';
-import { Button, Image } from '@heroui/react';
+import { Button } from '@heroui/react';
 
 const StatButton = ({ image, onClick }) => {
     return (
-        <Button className='bg-transparent' onPress={onClick} isIconOnly size='sm'>
-            <Image src={image} />
+        <Button className='bg-transparent' onPress={onClick} isIconOnly size='sm' variant='ghost'>
+            <img src={image} alt='' />
         </Button>
     );
 };

@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import GameFilter from './GameFilter';
 import GameList from './GameList';
 import NewGame from './NewGame';
 import PendingGame from './PendingGame';
-import Panel from '../Site/Panel';
+import Frame from '../Site/Frame';
+import Notice from '../Site/Notice';
+import { Button } from '@heroui/react';
 import { useDispatch, useSelector } from 'react-redux';
-import AlertPanel, { AlertType } from '../Site/AlertPanel';
-import GameButtons from './GameButtons';
 import PasswordGame from './PasswordGame';
 import { toast } from 'react-toastify';
 import {
@@ -18,14 +18,7 @@ import {
 } from '../../redux/reducers/lobby';
 import { setUrl } from '../../redux/reducers/navigation';
 import Page from '../../pages/Page';
-
-const filterDefaults = {
-    ['beginner']: true,
-    ['casual']: true,
-    ['competitive']: true,
-    ['joust']: true,
-    ['melee']: true
-};
+import { createMockLobbyGames, createMockPendingGame, isMockMode } from '../../dev/mockData';
 
 const GameLobby = ({ gameId }) => {
     const dispatch = useDispatch();
@@ -34,16 +27,31 @@ const GameLobby = ({ gameId }) => {
     const [quickJoin, setQuickJoin] = useState(false);
     const [newGame, setNewGame] = useState(false);
     const [newGameEventId, setNewGameEventId] = useState();
-    const [currentFilter, setCurrentFilter] = useState(filterDefaults);
+    const [currentFilter, setCurrentFilter] = useState({});
     const currentGame = useSelector((state) => state.lobby.currentGame);
-    const games = useSelector((state) => state.lobby.games);
+    const lobbyGames = useSelector((state) => state.lobby.games);
+    const [mockGames] = useState(() =>
+        import.meta.env.DEV && isMockMode() ? createMockLobbyGames() : null
+    );
+    const mockPendingGame = useMemo(
+        () =>
+            import.meta.env.DEV && user && isMockMode('pending')
+                ? createMockPendingGame(user.username)
+                : undefined,
+        [user]
+    );
+    const games = mockGames ?? lobbyGames;
     const eventGameRequest = useSelector((state) => state.lobby.eventGameRequest);
     const passwordGame = useSelector((state) => state.lobby.passwordGame);
 
     useEffect(() => {
-        const filter = localStorage.getItem('gameFilter');
-        if (filter) {
-            setCurrentFilter(JSON.parse(filter));
+        try {
+            const filter = localStorage.getItem('gameFilter');
+            if (filter) {
+                setCurrentFilter(JSON.parse(filter));
+            }
+        } catch {
+            // A broken saved filter just means every game shows
         }
     }, []);
 
@@ -94,18 +102,13 @@ const GameLobby = ({ gameId }) => {
         }
     }, [currentGame, dispatch, eventGameRequest, user]);
 
-    // Manages the auto-scrolling, depending on which ref just appeared
-    const scrollRef = (node, block = 'start') => {
-        if (node !== null) {
-            node.scrollIntoView({
-                behavior: 'smooth',
-                block
-            });
-        }
-    };
+    // Kept stable so it only runs when a panel appears; a new callback each render scrolls on every lobby update
+    const scrollRef = useCallback((node) => {
+        node?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, []);
 
     return (
-        <Page>
+        <Page size='wide'>
             {newGame && (
                 <NewGame
                     key={newGameEventId}
@@ -118,52 +121,54 @@ const GameLobby = ({ gameId }) => {
                     ref={scrollRef}
                 />
             )}
-            {currentGame?.started === false && <PendingGame ref={(n) => scrollRef(n, 'center')} />}
+            {(mockPendingGame || currentGame?.started === false) && (
+                <PendingGame mockGame={mockPendingGame} ref={scrollRef} />
+            )}
             {passwordGame && <PasswordGame ref={scrollRef} />}
-            <Panel title={'Current Games'}>
-                {!user && (
-                    <div className='mb-2 text-center'>
-                        <AlertPanel variant={AlertType.Warning}>
-                            {'Please log in to be able to start a new game'}
-                        </AlertPanel>
-                    </div>
-                )}
-                <div className='flex gap-2 lg:flex-row flex-col'>
-                    <GameButtons
-                        onNewGame={() => {
-                            setNewGameEventId(undefined);
-                            setQuickJoin(false);
-                            setNewGame(true);
-                        }}
-                        onQuickJoin={() => {
-                            setNewGameEventId(undefined);
-                            setQuickJoin(true);
-                            setNewGame(true);
-                        }}
-                    />
-                    <div className='flex-1'>
-                        <GameFilter
-                            filter={currentFilter}
-                            onFilterChanged={(filter) => {
-                                setCurrentFilter(filter);
-                                localStorage.setItem('gameFilter', JSON.stringify(filter));
+            <Frame
+                title='Play'
+                actions={
+                    <>
+                        <Button
+                            isDisabled={!user || !!currentGame}
+                            onPress={() => {
+                                setNewGameEventId(undefined);
+                                setQuickJoin(true);
+                                setNewGame(true);
                             }}
-                        />
-                    </div>
-                </div>
-                <div className='mt-3'>
-                    <div className='text-center'>
-                        {games.length === 0 ? (
-                            <AlertPanel variant={AlertType.Info}>
-                                No games are currently in progress. Click the buttons above to start
-                                one.
-                            </AlertPanel>
-                        ) : (
-                            <GameList games={games} gameFilter={currentFilter} />
-                        )}
-                    </div>
-                </div>
-            </Panel>
+                            variant='tertiary'
+                        >
+                            Quick join
+                        </Button>
+                        <Button
+                            isDisabled={!user || !!currentGame}
+                            onPress={() => {
+                                setNewGameEventId(undefined);
+                                setQuickJoin(false);
+                                setNewGame(true);
+                            }}
+                            variant='primary'
+                        >
+                            New game
+                        </Button>
+                    </>
+                }
+                bodyClassName='gap-5'
+            >
+                {!user && <Notice kind='warning'>Log in to start or join a game.</Notice>}
+                <GameFilter
+                    filter={currentFilter}
+                    onFilterChanged={(filter) => {
+                        setCurrentFilter(filter);
+                        try {
+                            localStorage.setItem('gameFilter', JSON.stringify(filter));
+                        } catch {
+                            // Filters still apply for this visit
+                        }
+                    }}
+                />
+                <GameList games={games} gameFilter={currentFilter} />
+            </Frame>
         </Page>
     );
 };

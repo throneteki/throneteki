@@ -1,11 +1,12 @@
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
+import tailwindcss from '@tailwindcss/vite';
 import inject from '@rollup/plugin-inject';
 import commonjs from 'vite-plugin-commonjs';
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [react(), inject({
+    plugins: [react(), tailwindcss(), inject({
         $: ['jquery', '*'],
         jQuery: 'jquery'
     }), commonjs({

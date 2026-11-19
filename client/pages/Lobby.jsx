@@ -2,27 +2,22 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import News from '../Components/News/News';
-import AlertPanel from '../Components/Site/AlertPanel';
-import Panel from '../Components/Site/Panel';
+import Frame from '../Components/Site/Frame';
+import Notice from '../Components/Site/Notice';
 import LobbyChat from '../Components/Lobby/LobbyChat';
 import EventBanners from '../Components/Banners/EventBanners';
 import { getMessageWithLinks } from '../util';
 
 import { createSelector } from '@reduxjs/toolkit';
 import { useGetNewsQuery } from '../redux/middleware/api';
-import LoadingSpinner from '../Components/Site/LoadingSpinner';
 import Page from './Page';
+import { createMockLobbyMessages, createMockLobbyUsers, isMockMode } from '../dev/mockData';
 import { Button, Link } from '@heroui/react';
 
 const PatreonRelinkDismissKey = 'dismissedPatreonRelinkNotice';
 
 const Lobby = () => {
-    const {
-        data: news,
-        isLoading: newsLoading,
-        isError: newsError,
-        isSuccess: newsSuccess
-    } = useGetNewsQuery();
+    const { data: news, isError: newsError, isSuccess: newsSuccess } = useGetNewsQuery();
 
     const getLobbyState = (state) => state.lobby;
 
@@ -34,8 +29,15 @@ const Lobby = () => {
     const getLobbyError = createSelector([getLobbyState], (lobby) => lobby.lobbyError);
     const getMotd = createSelector([getLobbyState], (lobby) => lobby.motd);
 
-    const messages = useSelector(getMessages);
-    const users = useSelector(getUsers);
+    const lobbyMessages = useSelector(getMessages);
+    const lobbyUsers = useSelector(getUsers);
+    const [mock] = useState(() =>
+        import.meta.env.DEV && isMockMode()
+            ? { messages: createMockLobbyMessages(), users: createMockLobbyUsers() }
+            : null
+    );
+    const messages = mock?.messages ?? lobbyMessages;
+    const users = mock?.users ?? lobbyUsers;
     const { user } = useSelector((state) => state.auth);
     const bannerNotice = useSelector(getBannerNotice);
     const lobbyError = useSelector(getLobbyError);
@@ -91,53 +93,61 @@ const Lobby = () => {
     };
 
     let newsInfo = null;
-    if (newsLoading) {
-        newsInfo = <LoadingSpinner />;
-    } else if (newsError) {
-        newsInfo = <AlertPanel variant='danger'>Site news failed to load</AlertPanel>;
+    if (newsError) {
+        newsInfo = <Notice kind='error'>The news couldn&apos;t be loaded.</Notice>;
     } else if (newsSuccess) {
         newsInfo = <News news={news} />;
     }
 
+    const notices = [
+        motd?.message && (
+            <Notice key='motd' kind={motd.motdType} isBoxed>
+                {getMessageWithLinks(motd.message)}
+            </Notice>
+        ),
+        bannerNotice && (
+            <Notice key='banner' kind='error' isBoxed>
+                {bannerNotice}
+            </Notice>
+        ),
+        patreonState?.needsRelink && !patreonNoticeDismissed && (
+            <div
+                key='patreon'
+                className='flex flex-wrap items-center gap-x-4 gap-y-2 border border-gold-line bg-frame px-4 py-3 sm:px-5'
+            >
+                <Notice kind='warning' className='min-w-0 flex-1'>
+                    {patreonState.message ||
+                        'Your Patreon link has expired. Please relink your account.'}{' '}
+                    <Link href='/profile/integrations'>Open your profile</Link>
+                </Notice>
+                <Button size='sm' onPress={dismissPatreonNotice} variant='tertiary'>
+                    Dismiss
+                </Button>
+            </div>
+        )
+    ].filter(Boolean);
+
     return (
-        <Page className='h-full'>
-            {motd && motd.message && (
-                <AlertPanel variant={motd.motdType}>{getMessageWithLinks(motd.message)}</AlertPanel>
-            )}
-            {bannerNotice ? <AlertPanel message={bannerNotice} variant='danger' /> : null}
-            {patreonState?.needsRelink && !patreonNoticeDismissed ? (
-                <div className='mb-2 flex items-start gap-2'>
-                    <div className='flex-1'>
-                        <AlertPanel variant='warning'>
-                            <>
-                                {patreonState.message ||
-                                    'Your Patreon link has expired. Please relink your account.'}{' '}
-                                <Link href='/profile/integrations' size='sm'>
-                                    Open profile
-                                </Link>
-                            </>
-                        </AlertPanel>
-                    </div>
-                    <Button color='warning' variant='flat' size='sm' onPress={dismissPatreonNotice}>
-                        Dismiss
-                    </Button>
-                </div>
-            ) : null}
+        <Page size='wide' className='max-w-[1040px] lg:h-full'>
+            {notices.length > 0 && <div className='flex flex-col gap-3'>{notices}</div>}
             <EventBanners />
-            <Panel className='max-h-[20vh]' title='Latest site news'>
-                {newsInfo}
-            </Panel>
-            <Panel
-                className='flex-grow overflow-y-auto min-h-64'
-                title={`Lobby Chat (${users.length} online)`}
+            {newsInfo}
+            <Frame
+                title='Lobby'
+                description={
+                    users.length === 1 ? '1 person online' : `${users.length} people online`
+                }
+                className='h-[75dvh] min-h-[26rem] lg:h-auto lg:min-h-[24rem] lg:flex-1'
+                bodyClassName='min-h-0'
             >
                 <LobbyChat
                     isLoggedIn={!!user}
+                    username={user?.username}
                     messages={messages}
                     isModerator={user && user.permissions.canModerateChat}
                     lobbyError={lobbyError}
                 />
-            </Panel>
+            </Frame>
         </Page>
     );
 };

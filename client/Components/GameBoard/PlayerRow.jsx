@@ -175,6 +175,7 @@ const PlayerRow = ({
             numRows={2.2}
             className='discard'
             title='Discard'
+            popupTitle='discard pile'
             source='discard pile'
             cards={discardPile}
             {...cardPileProps}
@@ -186,6 +187,7 @@ const PlayerRow = ({
             numRows={2.2}
             className='dead'
             title='Dead'
+            popupTitle='dead pile'
             source='dead pile'
             cards={deadPile}
             orientation='horizontal'
@@ -209,7 +211,7 @@ const PlayerRow = ({
             cards={outOfGamePile}
             orientation='horizontal'
             source='out of game'
-            title='Out of Game'
+            title='Out of game'
             size={cardSize}
             {...cardPileProps}
         />

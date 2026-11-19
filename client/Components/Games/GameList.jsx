@@ -1,21 +1,207 @@
 import React, { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import classNames from 'classnames';
+import moment from 'moment';
+import { Button } from '@heroui/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
+import { toast } from 'react-toastify';
 
-import AlertPanel from '../Site/AlertPanel';
-import Game from './Game';
 import {
     joinPasswordGame,
     sendJoinGameMessage,
     sendRemoveGameMessage,
     sendWatchGameMessage
 } from '../../redux/reducers/lobby';
-import { toast } from 'react-toastify';
+import { useGetCardsQuery } from '../../redux/middleware/api';
+import { GameFormats, GameTypes } from '../../constants';
+import ThronesIcon from '../GameBoard/ThronesIcon';
+import UserAvatar from '../Site/UserAvatar';
+
+const labelFor = (list, name) => list.find((item) => item.name === name)?.label ?? name;
+
+const gameAge = (createdAt) => {
+    const minutes = Math.max(0, moment().diff(moment(createdAt), 'minutes'));
+    if (minutes < 1) {
+        return 'Just now';
+    }
+
+    return minutes < 60
+        ? `${minutes} min`
+        : `${Math.floor(minutes / 60)} hr ${String(minutes % 60).padStart(2, '0')}`;
+};
+
+const playersBySeat = (game) => Object.values(game.players).sort((a, b) => a.seatNo - b.seatNo);
+
+const GameDetails = ({ game, isAdmin, className }) => {
+    const flags = [
+        game.needsPassword && (
+            <span key='password' className='flex items-center gap-1'>
+                <FontAwesomeIcon icon={faLock} className='text-[0.7em]' />
+                Password
+            </span>
+        ),
+        game.useGameTimeLimit && <span key='time'>Time limit</span>,
+        game.useChessClocks && <span key='clocks'>Chess clocks</span>,
+        game.showHand && <span key='hands'>Shows hands</span>,
+        game.started && game.spectators?.length > 0 && (
+            <span key='watching'>{game.spectators.length} watching</span>
+        ),
+        isAdmin && game.node && <span key='node'>{game.node}</span>
+    ].filter(Boolean);
+
+    return (
+        <div
+            className={classNames(
+                'flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-sm text-ink-dim',
+                className
+            )}
+        >
+            {game.event?.name && <span className='text-gold'>{game.event.name}</span>}
+            <span className={classNames({ 'text-ink': game.gameType === 'competitive' })}>
+                {labelFor(GameTypes, game.gameType)}
+            </span>
+            <span>{labelFor(GameFormats, game.gameFormat)}</span>
+            {flags.length > 0 && (
+                <span className='flex flex-wrap items-center gap-x-2.5 text-xs text-ink-faint'>
+                    {flags}
+                </span>
+            )}
+        </div>
+    );
+};
+
+const OpenGame = ({ game, canJoin, canWatch, isAdmin, onJoin, onWatch, onRemove }) => {
+    const players = playersBySeat(game);
+    const openSeats = Math.max(0, game.maxPlayers - players.length);
+    const isStarting = !canJoin && game.full;
+
+    return (
+        <article
+            className={classNames(
+                'flex flex-col gap-2 border px-4 py-3.5',
+                isStarting
+                    ? 'border-gold-hair bg-white/[0.02]'
+                    : 'border-gold-line bg-accent/[0.08]'
+            )}
+        >
+            <div className='flex items-start justify-between gap-3'>
+                <h3 className='min-w-0 break-words pt-1 font-medium text-ink'>{game.name}</h3>
+                <div className='flex shrink-0 items-center gap-1'>
+                    {isAdmin && (
+                        <Button
+                            size='sm'
+                            variant='ghost'
+                            className='text-danger'
+                            onPress={onRemove}
+                        >
+                            Remove
+                        </Button>
+                    )}
+                    {canJoin && (
+                        <Button size='sm' variant='primary' onPress={onJoin}>
+                            {game.maxPlayers > 2
+                                ? `Join ${players.length}/${game.maxPlayers}`
+                                : 'Join'}
+                        </Button>
+                    )}
+                    {isStarting && canWatch && (
+                        <Button size='sm' variant='tertiary' onPress={onWatch}>
+                            Watch
+                        </Button>
+                    )}
+                </div>
+            </div>
+            <GameDetails game={game} isAdmin={isAdmin} />
+            <div className='flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 text-sm'>
+                {players.map((player) => (
+                    <span key={player.name} className='flex min-w-0 items-center gap-1.5'>
+                        <UserAvatar username={player.name} size='sm' />
+                        <span className='truncate'>{player.name}</span>
+                    </span>
+                ))}
+                {openSeats > 0 && (
+                    <span className='italic text-ink-faint'>
+                        {openSeats === 1 ? 'Open seat' : `${openSeats} open seats`}
+                    </span>
+                )}
+                {isStarting && <span className='text-ink-faint'>Starting</span>}
+                <span className='ms-auto text-xs tabular-nums text-ink-faint'>
+                    {gameAge(game.createdAt)}
+                </span>
+            </div>
+        </article>
+    );
+};
+
+const GameInProgress = ({ game, cards, canWatch, isAdmin, onWatch, onRemove }) => {
+    const players = playersBySeat(game);
+    const agendaLabel = (player) =>
+        player.agendas
+            ?.map((code) => cards?.[code]?.label)
+            .filter(Boolean)
+            .join(', ');
+
+    return (
+        <li className='grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 border-b border-gold-hair px-1 py-2.5 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_4.5rem_7.5rem] sm:gap-x-4'>
+            <div className='flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1'>
+                {players.map((player, index) => (
+                    <React.Fragment key={player.name}>
+                        {index > 0 && players.length === 2 && (
+                            <span className='font-display text-xs text-ink-faint'>vs</span>
+                        )}
+                        <span
+                            className='flex min-w-0 items-center gap-1.5'
+                            title={agendaLabel(player) || undefined}
+                        >
+                            {player.faction && (
+                                <ThronesIcon icon={player.faction} className='text-base' />
+                            )}
+                            <span className='truncate'>{player.name}</span>
+                        </span>
+                    </React.Fragment>
+                ))}
+            </div>
+            <div className='col-start-1 row-start-2 min-w-0 sm:col-start-auto sm:row-start-auto'>
+                <span className='block truncate text-sm text-ink-dim'>{game.name}</span>
+                <GameDetails game={game} isAdmin={isAdmin} className='text-xs sm:text-sm' />
+            </div>
+            <span className='hidden text-xs tabular-nums text-ink-faint sm:block'>
+                {gameAge(game.createdAt)}
+            </span>
+            <div className='col-start-2 row-span-2 row-start-1 flex items-center justify-end gap-1 sm:col-start-auto sm:row-span-1 sm:row-start-auto'>
+                {isAdmin && (
+                    <Button size='sm' variant='ghost' className='text-danger' onPress={onRemove}>
+                        Remove
+                    </Button>
+                )}
+                {canWatch ? (
+                    <Button size='sm' variant='tertiary' onPress={onWatch}>
+                        Watch
+                    </Button>
+                ) : (
+                    !game.allowSpectators && (
+                        <span className='text-xs text-ink-faint'>No spectators</span>
+                    )
+                )}
+            </div>
+        </li>
+    );
+};
+
+const SectionHeading = ({ children, count }) => (
+    <h3 className='flex items-baseline gap-2 font-display text-lg font-semibold text-gold'>
+        {children}
+        <span className='font-sans text-sm font-normal tabular-nums text-ink-faint'>{count}</span>
+    </h3>
+);
 
 const GameList = ({ gameFilter, games, onJoinOrWatch = () => true }) => {
     const dispatch = useDispatch();
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const user = useSelector((state) => state.auth.user);
     const isAdmin = !!user?.permissions?.canManageGames;
+    const { data: cards } = useGetCardsQuery({});
 
     const joinGame = useCallback(
         (game) => {
@@ -32,13 +218,6 @@ const GameList = ({ gameFilter, games, onJoinOrWatch = () => true }) => {
             onJoinOrWatch();
         },
         [user, dispatch, onJoinOrWatch]
-    );
-
-    const canWatch = useCallback(
-        (game) => {
-            return !currentGame && (game.allowSpectators || isAdmin);
-        },
-        [currentGame, isAdmin]
     );
 
     const watchGame = useCallback(
@@ -58,84 +237,87 @@ const GameList = ({ gameFilter, games, onJoinOrWatch = () => true }) => {
         [user, isAdmin, dispatch, onJoinOrWatch]
     );
 
-    const removeGame = useCallback(
-        (game) => {
-            dispatch(sendRemoveGameMessage(game.id));
-        },
-        [dispatch]
-    );
+    const canWatch = (game) => !currentGame && (game.allowSpectators || isAdmin);
+    const canJoin = (game) => !currentGame && !game.started && !game.full;
 
-    const canJoin = useCallback(
-        (game) => {
-            if (currentGame || game.started || game.full) {
-                return false;
-            }
+    const { open, inProgress } = useMemo(() => {
+        const visible = games.filter(
+            (game) =>
+                gameFilter[game.gameType] !== false &&
+                gameFilter[game.gameFormat] !== false &&
+                (game.started || !game.gamePrivate || isAdmin)
+        );
+        const newestFirst = (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
 
-            return true;
-        },
-        [currentGame]
-    );
-
-    const gameList = useMemo(() => {
-        let gamesToReturn = [];
-
-        // Orders games by whether they've started, followed by the time it was created (earliest first)
-        const compareGames = (a, b) => {
-            if (!a.started && b.started) {
-                return -1;
-            }
-            if (a.started && !b.started) {
-                return 1;
-            }
-            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        return {
+            open: visible
+                .filter((game) => !game.started)
+                .sort((a, b) => Number(a.full) - Number(b.full) || newestFirst(a, b)),
+            inProgress: visible.filter((game) => game.started).sort(newestFirst)
         };
+    }, [games, gameFilter, isAdmin]);
 
-        for (const game of [...games].sort(compareGames)) {
-            if (gameFilter.showOnlyNewGames && game.started) {
-                continue;
-            }
-
-            if (!gameFilter[game.gameType]) {
-                continue;
-            }
-
-            if (!gameFilter[game.gameFormat]) {
-                continue;
-            }
-
-            if (!game.started && game.gamePrivate && !isAdmin) {
-                continue;
-            }
-
-            gamesToReturn.push(
-                <Game
-                    key={game.id}
-                    game={game}
-                    showJoinButton={canJoin(game)}
-                    showWatchButton={canWatch(game)}
-                    onJoinGame={() => joinGame(game)}
-                    onRemoveGame={() => removeGame(game)}
-                    onWatchGame={() => watchGame(game)}
-                    isAdmin={isAdmin}
-                />
-            );
-        }
-
-        return <div>{gamesToReturn}</div>;
-    }, [isAdmin, games, gameFilter, canJoin, canWatch, joinGame, removeGame, watchGame]);
-
-    if (gameList.length === 0) {
+    if (games.length === 0) {
         return (
-            <div>
-                <AlertPanel
-                    variant='info'
-                    message='There are no games matching the filters you have selected'
-                />
-            </div>
+            <p className='py-8 text-center text-sm text-ink-dim'>
+                No one is playing right now. Start a new game and others can join it.
+            </p>
         );
     }
 
-    return <div>{gameList}</div>;
+    if (open.length === 0 && inProgress.length === 0) {
+        return (
+            <p className='py-8 text-center text-sm text-ink-dim'>No games match your filters.</p>
+        );
+    }
+
+    const handlers = (game) => ({
+        isAdmin,
+        canWatch: canWatch(game),
+        onWatch: () => watchGame(game),
+        onRemove: () => dispatch(sendRemoveGameMessage(game.id))
+    });
+
+    return (
+        <div className='flex flex-col gap-7'>
+            <section className='flex flex-col gap-3'>
+                <SectionHeading count={open.length}>Looking for players</SectionHeading>
+                {open.length === 0 ? (
+                    <p className='text-sm text-ink-dim'>
+                        No games are looking for players. Start one with New game.
+                    </p>
+                ) : (
+                    <div className='grid grid-cols-1 gap-3 md:grid-cols-2 2xl:grid-cols-3'>
+                        {open.map((game) => (
+                            <OpenGame
+                                key={game.id}
+                                game={game}
+                                canJoin={canJoin(game)}
+                                onJoin={() => joinGame(game)}
+                                {...handlers(game)}
+                            />
+                        ))}
+                    </div>
+                )}
+            </section>
+            {inProgress.length > 0 && (
+                <section className='flex flex-col gap-2'>
+                    <SectionHeading count={inProgress.length}>Being played</SectionHeading>
+                    <ul className='border-t border-gold-hair'>
+                        {inProgress.map((game) => (
+                            <GameInProgress
+                                key={game.id}
+                                game={game}
+                                cards={cards}
+                                {...handlers(game)}
+                            />
+                        ))}
+                    </ul>
+                </section>
+            )}
+        </div>
+    );
 };
 
 export default GameList;

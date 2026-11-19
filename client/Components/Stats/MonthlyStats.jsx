@@ -12,9 +12,9 @@ const ChallengeLabels = { military: 'Military', intrigue: 'Intrigue', power: 'Po
 
 const Section = ({ title, note, children }) => (
     <section className='flex flex-col gap-3'>
-        <div className='flex flex-wrap items-baseline justify-between gap-x-3 border-b border-default-300/50 pb-1'>
-            <h2 className='text-xl font-semibold leading-7'>{title}</h2>
-            {note && <span className='text-sm text-default-500'>{note}</span>}
+        <div className='flex flex-wrap items-baseline justify-between gap-x-3 border-b border-gold-hair pb-1.5'>
+            <h2 className='font-display text-lg font-semibold text-gold'>{title}</h2>
+            {note && <span className='text-sm text-ink-faint'>{note}</span>}
         </div>
         {children}
     </section>
@@ -26,12 +26,12 @@ const TileGrid = ({ children }) => (
 
 const Table = ({ columns, rows }) => (
     <table className='w-full table-fixed'>
-        <thead className='text-left text-sm text-default-500'>
+        <thead className='text-left text-sm text-ink-dim'>
             <tr>
                 {columns.map((column, index) => (
                     <th
                         key={column}
-                        className={`pb-1 font-normal ${index > 0 ? 'w-20 text-right' : ''}`}
+                        className={`pb-1 font-normal ${index > 0 ? 'w-[4.5rem] text-right sm:w-20' : ''}`}
                     >
                         {column}
                     </th>
@@ -40,7 +40,7 @@ const Table = ({ columns, rows }) => (
         </thead>
         <tbody className='tabular-nums'>
             {rows.map(({ key, cells }) => (
-                <tr key={key} className='border-t border-default-300/30'>
+                <tr key={key} className='border-t border-gold-hair'>
                     {cells.map((cell, index) => (
                         <td
                             key={index}
@@ -66,7 +66,7 @@ const MonthlyStats = ({ month, stats }) => {
     const weekdayName = (isoDay) => formatDay(`2024-01-0${isoDay}`, { weekday: 'short' });
 
     if (stats.games === 0) {
-        return <p className='py-6 text-center'>No games this month.</p>;
+        return <p className='py-10 text-center text-sm text-ink-dim'>No games this month.</p>;
     }
 
     const [year, monthNumber] = month.split('-').map(Number);
@@ -143,7 +143,7 @@ const MonthlyStats = ({ month, stats }) => {
             </TileGrid>
 
             {winReasons.length > 0 && (
-                <p className='text-sm leading-5 text-default-500'>
+                <p className='text-sm leading-5 text-ink-dim'>
                     How you won:{' '}
                     {winReasons
                         .map(([reason, count]) => `${WinReasonLabels[reason] || reason} ${count}`)
@@ -263,7 +263,7 @@ const MonthlyStats = ({ month, stats }) => {
                     </p>
                     {stats.decks.length > 0 && (
                         <>
-                            <h3 className='m-0 font-semibold'>Decks</h3>
+                            <h3 className='font-medium text-ink'>Decks</h3>
                             <Table
                                 columns={['Deck', 'Games', 'Record', 'Dominant']}
                                 rows={stats.decks.map((deck) => ({
@@ -316,7 +316,7 @@ const MonthlyStats = ({ month, stats }) => {
 
                     <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
                         <div className='flex flex-col gap-2'>
-                            <h3 className='m-0 font-semibold'>Challenges</h3>
+                            <h3 className='font-medium text-ink'>Challenges</h3>
                             <Table
                                 columns={['Type', 'Initiated', 'Won', 'Lost']}
                                 rows={ChallengeTypes.map((type) => ({
@@ -347,7 +347,7 @@ const MonthlyStats = ({ month, stats }) => {
                         </div>
 
                         <div className='flex flex-col gap-2'>
-                            <h3 className='m-0 font-semibold'>Most played cards</h3>
+                            <h3 className='font-medium text-ink'>Most played cards</h3>
                             {detailed.mvp && (
                                 <p className='text-sm leading-5'>
                                     MVP: {cardName(detailed.mvp.code)} attacked{' '}

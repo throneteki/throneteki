@@ -1,9 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Button, Radio, RadioGroup } from '@heroui/react';
+import { Button, Spinner } from '@heroui/react';
+import RadioField, { RadioOption } from '../Site/RadioField';
 import { toast } from 'react-toastify';
 import CardImage from '../Images/CardImage';
-import SettingsGroup from './SettingsGroup';
+import Group from '../Site/Group';
 import { CardSizeOptions } from '../../constants';
 import { customBackgroundUrl } from '../../util';
 import { setUser } from '../../redux/reducers/auth';
@@ -18,18 +19,10 @@ import { DefaultBackground, MaxBackgroundBytes } from '../../../shared/backgroun
 
 const previewCards = ['01144', '01089', '01160', 'cardback'];
 
-const tileClassNames = {
-    base: 'm-0 inline-flex w-full max-w-full cursor-pointer items-center gap-2 rounded-medium border-2 border-default-200 p-2 hover:bg-default-100/50 data-[selected=true]:border-primary',
-    labelWrapper: 'ms-0 min-w-0 flex-1'
-};
+const tileClassName =
+    'w-full cursor-pointer rounded-sm border border-gold-hair p-2 hover:bg-quiet data-[selected=true]:border-gold data-[selected=true]:bg-quiet';
 
-const backgroundTileClassNames = {
-    ...tileClassNames,
-    base: `${tileClassNames.base} items-start`
-};
-
-const previewClassName =
-    'mb-1 aspect-video w-full rounded-small border border-default-200 object-cover';
+const previewClassName = 'mb-1 aspect-video w-full rounded-sm border border-white/10 object-cover';
 
 const uploadErrorMessage = (err) => {
     if (err.status === 413) {
@@ -119,25 +112,22 @@ const AppearanceSettings = ({ user, formProps }) => {
 
     return (
         <>
-            <SettingsGroup
-                title='Card size'
-                className='grid gap-3 p-3 sm:grid-cols-[11rem_minmax(0,1fr)]'
-            >
-                <RadioGroup
+            <Group title='Card size' className='grid gap-3 sm:grid-cols-[11rem_minmax(0,1fr)]'>
+                <RadioField
                     aria-label='Card size'
                     value={values.cardSize}
-                    onValueChange={(value) => setFieldValue('cardSize', value)}
-                    classNames={{ wrapper: 'grid grid-cols-2 gap-2 sm:grid-cols-1' }}
+                    onChange={(value) => setFieldValue('cardSize', value)}
+                    optionsClassName='grid grid-cols-2 gap-2 sm:grid-cols-1'
                 >
                     {CardSizeOptions.map(({ name, label }) => (
-                        <Radio key={name} value={name} classNames={tileClassNames}>
+                        <RadioOption key={name} value={name} className={tileClassName}>
                             {label}
-                        </Radio>
+                        </RadioOption>
                     ))}
-                </RadioGroup>
+                </RadioField>
                 <div
                     aria-hidden
-                    className='flex items-center overflow-hidden rounded-medium bg-black/40 p-3 sm:h-[12.75rem]'
+                    className='flex items-center overflow-hidden rounded-sm bg-well p-3 sm:h-[12.75rem]'
                 >
                     <div className='mx-auto flex items-end gap-2'>
                         {previewCards.map((code) => (
@@ -150,71 +140,83 @@ const AppearanceSettings = ({ user, formProps }) => {
                         ))}
                     </div>
                 </div>
-            </SettingsGroup>
-            <SettingsGroup
+            </Group>
+            <Group
                 title='Game board background'
                 description='You can also upload your own image to play on. Large images are resized to fit the screen.'
-                className='flex flex-col gap-3 p-3'
+                className='flex flex-col gap-3'
             >
-                <RadioGroup
+                <RadioField
                     aria-label='Game board background'
                     value={values.background}
-                    onValueChange={(value) => setFieldValue('background', value)}
-                    classNames={{ wrapper: 'grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4' }}
+                    onChange={(value) => setFieldValue('background', value)}
+                    optionsClassName='grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4'
                 >
                     {BuiltInBackgrounds.map((background) => (
-                        <Radio
+                        <RadioOption
                             key={background.name}
                             value={background.name}
-                            classNames={backgroundTileClassNames}
+                            className={tileClassName}
+                            contentClassName='items-start'
                         >
-                            <img src={background.imageUrl} alt='' className={previewClassName} />
-                            {background.label}
-                        </Radio>
+                            <span className='flex min-w-0 flex-1 flex-col'>
+                                <img
+                                    src={background.imageUrl}
+                                    alt=''
+                                    className={previewClassName}
+                                />
+                                {background.label}
+                            </span>
+                        </RadioOption>
                     ))}
                     {user.customBackground ? (
-                        <Radio value='custom' classNames={backgroundTileClassNames}>
-                            <img
-                                src={customBackgroundUrl(user.customBackground)}
-                                alt=''
-                                className={previewClassName}
-                            />
-                            Custom
-                        </Radio>
+                        <RadioOption
+                            value='custom'
+                            className={tileClassName}
+                            contentClassName='items-start'
+                        >
+                            <span className='flex min-w-0 flex-1 flex-col'>
+                                <img
+                                    src={customBackgroundUrl(user.customBackground)}
+                                    alt=''
+                                    className={previewClassName}
+                                />
+                                Custom
+                            </span>
+                        </RadioOption>
                     ) : (
                         <button
                             type='button'
                             disabled={isBusy}
                             onClick={chooseFile}
-                            className='flex flex-col gap-1 rounded-medium border-2 border-dashed border-default-300 p-2 text-left hover:bg-default-100/50 disabled:opacity-50'
+                            className='flex flex-col gap-1 rounded-sm border border-dashed border-gold-line p-2 text-left hover:bg-quiet disabled:opacity-50'
                         >
-                            <span className='flex aspect-video w-full items-center justify-center rounded-small bg-black/40 text-small text-default-500'>
+                            <span className='flex aspect-video w-full items-center justify-center rounded-sm bg-well text-sm text-ink-dim'>
                                 {isUploadBusy ? 'Uploading...' : 'Upload an image'}
                             </span>
                             Custom
                         </button>
                     )}
-                </RadioGroup>
+                </RadioField>
                 {user.customBackground && (
                     <div className='flex flex-wrap gap-2'>
                         <Button
                             size='sm'
-                            variant='flat'
-                            isLoading={isUploadBusy}
+                            isPending={isUploadBusy}
                             isDisabled={isBusy}
                             onPress={chooseFile}
+                            variant='tertiary'
                         >
-                            Replace image
+                            {isUploadBusy && <Spinner color='current' size='sm' />}Replace image
                         </Button>
                         <Button
                             size='sm'
-                            variant='flat'
-                            color='danger'
-                            isLoading={isRemoving}
+                            isPending={isRemoving}
                             isDisabled={isBusy}
                             onPress={onRemoveClick}
+                            variant='danger-soft'
                         >
-                            Remove image
+                            {isRemoving && <Spinner color='current' size='sm' />}Remove image
                         </Button>
                     </div>
                 )}
@@ -225,7 +227,7 @@ const AppearanceSettings = ({ user, formProps }) => {
                     hidden
                     onChange={onFileChosen}
                 />
-            </SettingsGroup>
+            </Group>
         </>
     );
 };

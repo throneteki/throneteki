@@ -8,13 +8,13 @@ const BarChart = ({ title, bars, describe, summary }) => {
     return (
         <figure className='m-0 flex min-w-0 flex-col gap-1'>
             <figcaption className='flex flex-wrap items-baseline justify-between gap-x-3 leading-5'>
-                <span className='font-semibold'>{title}</span>
-                <span className='text-sm tabular-nums text-default-500'>
+                <span className='font-medium text-ink'>{title}</span>
+                <span className='text-sm tabular-nums text-ink-dim'>
                     {activeBar ? describe(activeBar) : summary}
                 </span>
             </figcaption>
             <div
-                className='flex h-28 items-end gap-[2px] border-b border-default-300/60'
+                className='flex h-28 items-end gap-[2px] border-b border-gold-line'
                 onMouseLeave={() => setActive(null)}
             >
                 {bars.map((bar) => (
@@ -22,14 +22,14 @@ const BarChart = ({ title, bars, describe, summary }) => {
                         key={bar.key}
                         type='button'
                         aria-label={describe(bar)}
-                        className='group flex h-full min-w-0 flex-1 cursor-default items-end focus:outline-none'
+                        className='group flex h-full min-w-0 flex-1 cursor-default items-end focus:outline-hidden'
                         onBlur={() => setActive(null)}
                         onClick={() => setActive(bar.key)}
                         onFocus={() => setActive(bar.key)}
                         onMouseEnter={() => setActive(bar.key)}
                     >
                         <span
-                            className={`block w-full rounded-t bg-secondary transition-opacity ${
+                            className={`block w-full rounded-t bg-gold transition-opacity ${
                                 active && active !== bar.key ? 'opacity-40' : ''
                             } group-focus-visible:ring-2 group-focus-visible:ring-white/40`}
                             style={{
@@ -39,7 +39,7 @@ const BarChart = ({ title, bars, describe, summary }) => {
                     </button>
                 ))}
             </div>
-            <div className='flex gap-[2px] text-xs leading-3 text-default-500'>
+            <div className='flex gap-[2px] text-xs leading-3 text-ink-dim'>
                 {bars.map((bar) => (
                     <span
                         key={bar.key}

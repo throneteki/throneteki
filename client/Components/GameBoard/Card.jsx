@@ -218,7 +218,7 @@ const Card = ({
             <button
                 type='button'
                 title='Cards underneath'
-                className='absolute bottom-1 right-1 z-[230] min-w-6 h-6 px-1 text-white bg-black/80 font-bold text-center rounded-md border-1'
+                className='absolute bottom-1 right-1 z-[230] min-w-6 h-6 px-1 text-white bg-black/80 font-bold text-center rounded-md border'
                 onClick={(event) => {
                     event.stopPropagation();
                     setShowUnderneath(!showUnderneath);
@@ -249,7 +249,7 @@ const Card = ({
                 side='bottom'
             >
                 <div
-                    className='flex flex-col box-content border-1 border-default-200 bg-black/75 rounded-b-md overflow-hidden'
+                    className='flex flex-col box-content border border-white/10 bg-black/75 rounded-b-md overflow-hidden'
                     onClick={(event) => event.stopPropagation()}
                 >
                     <CardTiledList
@@ -271,7 +271,7 @@ const Card = ({
         }
 
         return (
-            <div className='absolute w-6 h-6 -ml-3 top-1 z-[230] left-1/2 text-white bg-black/80 font-bold text-center rounded-md border-1'>
+            <div className='absolute w-6 h-6 -ml-3 top-1 z-[230] left-1/2 text-white bg-black/80 font-bold text-center rounded-md border'>
                 {card.order}
             </div>
         );
@@ -288,8 +288,11 @@ const Card = ({
         const content = <span className='select-none'>{card.alertStatus.message}</span>;
         return (
             <div className='absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[200]'>
-                <Tooltip content={content} showArrow={true}>
-                    <FontAwesomeIcon className={iconClass} icon={faExclamationCircle} />
+                <Tooltip delay={0}>
+                    <Tooltip.Trigger>
+                        <FontAwesomeIcon className={iconClass} icon={faExclamationCircle} />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content showArrow>{content}</Tooltip.Content>
                 </Tooltip>
             </div>
         );

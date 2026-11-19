@@ -73,6 +73,87 @@ describe('lobby', function () {
             });
         });
 
+        describe('when the game is for an event that sets the game options', function () {
+            beforeEach(async function () {
+                this.eventService.getEventById.mockResolvedValue({
+                    _id: '7',
+                    name: 'Regionals',
+                    format: 'joust',
+                    variant: 'standard',
+                    legality: 'latest',
+                    gameType: 'competitive',
+                    useEventGameOptions: true,
+                    eventGameOptions: { spectators: true, gamePrivate: true }
+                });
+                await this.lobby.onNewGame(this.socketSpy, {
+                    eventId: '7',
+                    allowSpectators: false,
+                    gamePrivate: false
+                });
+            });
+
+            it('should use the event options, including allowing spectators', function () {
+                const game = Object.values(this.lobby.games)[0];
+
+                expect(game.allowSpectators).toBe(true);
+                expect(game.gamePrivate).toBe(true);
+            });
+        });
+
+        describe('when the game is for an event whose game options leave spectators off', function () {
+            beforeEach(async function () {
+                this.eventService.getEventById.mockResolvedValue({
+                    _id: '7',
+                    name: 'Regionals',
+                    format: 'joust',
+                    variant: 'standard',
+                    legality: 'latest',
+                    gameType: 'competitive',
+                    useEventGameOptions: true,
+                    eventGameOptions: { spectators: false }
+                });
+            });
+
+            it('should let the creator allow spectators', async function () {
+                await this.lobby.onNewGame(this.socketSpy, { eventId: '7', allowSpectators: true });
+
+                expect(Object.values(this.lobby.games)[0].allowSpectators).toBe(true);
+            });
+
+            it('should let the creator turn spectators off', async function () {
+                await this.lobby.onNewGame(this.socketSpy, {
+                    eventId: '7',
+                    allowSpectators: false
+                });
+
+                expect(Object.values(this.lobby.games)[0].allowSpectators).toBe(false);
+            });
+        });
+
+        describe('when the game is for an event with a list of spectators', function () {
+            beforeEach(async function () {
+                this.eventService.getEventById.mockResolvedValue({
+                    _id: '7',
+                    name: 'Regionals',
+                    format: 'joust',
+                    variant: 'standard',
+                    legality: 'latest',
+                    gameType: 'competitive',
+                    useEventGameOptions: true,
+                    eventGameOptions: { spectators: false },
+                    validSpectators: ['judge1']
+                });
+                await this.lobby.onNewGame(this.socketSpy, {
+                    eventId: '7',
+                    allowSpectators: false
+                });
+            });
+
+            it('should allow spectators so the list decides who can watch', function () {
+                expect(Object.values(this.lobby.games)[0].allowSpectators).toBe(true);
+            });
+        });
+
         describe('when the user is restricted', function () {
             beforeEach(function () {
                 this.userSpy.trustState = 'restricted';

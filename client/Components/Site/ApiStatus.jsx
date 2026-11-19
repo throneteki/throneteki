@@ -1,5 +1,5 @@
 import React from 'react';
-import AlertPanel from './AlertPanel';
+import Notice from './Notice';
 
 const ApiStatus = ({ apiState, successMessage }) => {
     if (!apiState || apiState.loading) {
@@ -20,13 +20,9 @@ const ApiStatus = ({ apiState, successMessage }) => {
     }
 
     return (
-        <div>
-            {apiState.success || (
-                <AlertPanel type='error' multiLine>
-                    {error}
-                </AlertPanel>
-            )}
-            {successMessage && <AlertPanel type='success' message={successMessage} />}
+        <div className='flex flex-col gap-3'>
+            {apiState.success || <Notice kind='error'>{error}</Notice>}
+            {successMessage && <Notice kind='success'>{successMessage}</Notice>}
         </div>
     );
 };

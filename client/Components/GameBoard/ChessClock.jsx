@@ -3,7 +3,7 @@ import moment from 'moment';
 import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClockRotateLeft, faPauseCircle } from '@fortawesome/free-solid-svg-icons';
-import { Avatar } from '@heroui/react';
+import UserAvatar from '../Site/UserAvatar';
 
 const formatTime = (seconds) => {
     if (!seconds && seconds !== 0) {
@@ -91,11 +91,7 @@ const ChessClock = ({
     return (
         <div className={wrapperClassName}>
             <div className='flex items-center gap-2'>
-                <Avatar
-                    src={`/img/avatar/${username}.png`}
-                    showFallback
-                    className='w-7 h-7 text-tiny'
-                />
+                <UserAvatar username={username} className='w-7 h-7 text-xs' />
                 <span className='text-2xl'>{time}</span>
                 {icon && <div className='w-5'>{icon}</div>}
             </div>

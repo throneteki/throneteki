@@ -141,7 +141,7 @@ const MovablePanel = ({
 
     const wrapperClass = classNames(
         className,
-        'max-h-screen max-w-screen fixed flex flex-col border-primary bg-black/65 rounded-md overflow-hidden'
+        'max-h-screen max-w-screen fixed flex min-w-60 flex-col overflow-hidden border border-gold-line bg-[#0c0d11]/95 shadow-[0_18px_40px_rgba(0,0,0,0.6)]'
     );
 
     return createPortal(
@@ -150,19 +150,25 @@ const MovablePanel = ({
                 {...attributes}
                 {...listeners}
                 ref={setNodeRef}
-                className='flex justify-end border-b-1 border-foreground border-transparent bg-primary p-1.5 text-center font-bold text-white opacity-100 h-auto touch-none'
+                className='flex h-auto cursor-grab touch-none items-center gap-2 border-b border-gold-line py-1 pl-3 pr-1 active:cursor-grabbing'
                 onClick={(event) => event.stopPropagation()}
             >
-                <span className='flex-1 text-center'>{title}</span>
-                <span className='cursor-pointer'>
-                    <a onClick={onCloseClick}>
-                        <FontAwesomeIcon icon={faTimes} />
-                    </a>
+                <span className='min-w-0 flex-1 break-words font-display text-sm font-semibold text-gold'>
+                    {title}
                 </span>
+                <button
+                    type='button'
+                    aria-label='Close'
+                    className='flex size-7 items-center justify-center text-ink-dim hover:text-ink'
+                    onPointerDown={(event) => event.stopPropagation()}
+                    onClick={onCloseClick}
+                >
+                    <FontAwesomeIcon icon={faTimes} />
+                </button>
             </div>
             {children}
         </div>,
-        document.querySelector('[data-overlay-container="true"]')
+        document.body
     );
 };
 

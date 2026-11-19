@@ -1,6 +1,5 @@
-import React, { forwardRef, useMemo } from 'react';
+import React, { forwardRef, useMemo, useState } from 'react';
 import classNames from 'classnames';
-import { Image } from '@heroui/react';
 import { Constants } from '../../constants';
 import { cardClass } from '../../util';
 
@@ -23,20 +22,22 @@ const CardImage = forwardRef(function CardImage(
 
     // When "code" is faction, point to that path instead
     const src = Constants.FactionsImagePaths[code] || `/img/cards/${code}.png`;
+    const [loadedSrc, setLoadedSrc] = useState(null);
+    const isLoaded = loadedSrc === src;
 
     return (
         <div className={containerClass} ref={ref}>
-            {/* Heroui forces an unnecessary "z-10" on the img tag, so we need to override it */}
-            <Image
+            <img
                 key={src}
                 src={src}
-                radius='none'
-                classNames={{
-                    img: 'z-0 pointer-events-none w-full h-full',
-                    wrapper: 'w-full h-full'
+                alt=''
+                className={classNames('pointer-events-none h-full w-full', {
+                    'animate-pulse bg-white/5': !disableSkeleton && !isLoaded
+                })}
+                onLoad={(event) => {
+                    setLoadedSrc(src);
+                    onLoad(event);
                 }}
-                disableSkeleton={disableSkeleton}
-                onLoad={onLoad}
                 onError={onError}
             />
         </div>

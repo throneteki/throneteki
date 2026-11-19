@@ -128,10 +128,10 @@ const EventBanners = () => {
                             <Button
                                 isIconOnly
                                 size='sm'
-                                variant='light'
                                 className='text-white'
                                 aria-label='Previous event'
                                 onPress={() => step(-1)}
+                                variant='ghost'
                             >
                                 <FontAwesomeIcon icon={faChevronLeft} />
                             </Button>
@@ -141,10 +141,10 @@ const EventBanners = () => {
                             <Button
                                 isIconOnly
                                 size='sm'
-                                variant='light'
                                 className='text-white'
                                 aria-label='Next event'
                                 onPress={() => step(1)}
+                                variant='ghost'
                             >
                                 <FontAwesomeIcon icon={faChevronRight} />
                             </Button>
@@ -152,10 +152,10 @@ const EventBanners = () => {
                                 <Button
                                     isIconOnly
                                     size='sm'
-                                    variant='light'
                                     className='text-white'
                                     aria-label={paused ? 'Start rotating' : 'Stop rotating'}
                                     onPress={() => setPaused(!paused)}
+                                    variant='ghost'
                                 >
                                     <FontAwesomeIcon icon={paused ? faPlay : faPause} />
                                 </Button>

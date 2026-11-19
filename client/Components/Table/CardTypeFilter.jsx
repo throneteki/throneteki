@@ -1,7 +1,6 @@
-import { ButtonGroup } from '@heroui/react';
+import { Button, ButtonGroup } from '@heroui/react';
 import React from 'react';
 import { Constants } from '../../constants';
-import { SmallButton } from '../Site/Variants';
 import ThronesIcon from '../GameBoard/ThronesIcon';
 
 const CardTypeFilter = ({ className, filter, setFilter, types = Constants.CardTypes }) => {
@@ -9,10 +8,13 @@ const CardTypeFilter = ({ className, filter, setFilter, types = Constants.CardTy
         <ButtonGroup className={className}>
             {types.map((type) => {
                 return (
-                    <SmallButton
+                    <Button
                         key={type.value}
-                        size='xs'
-                        color={filter.some((t) => t === type.value) ? 'primary' : null}
+                        size='sm'
+                        isIconOnly
+                        aria-label={type.name}
+                        aria-pressed={filter.some((t) => t === type.value)}
+                        variant={filter.some((t) => t === type.value) ? 'primary' : 'tertiary'}
                         onPress={() =>
                             setFilter(
                                 filter.some((t) => t === type.value)
@@ -22,7 +24,7 @@ const CardTypeFilter = ({ className, filter, setFilter, types = Constants.CardTy
                         }
                     >
                         <ThronesIcon icon={type.value} />
-                    </SmallButton>
+                    </Button>
                 );
             })}
         </ButtonGroup>

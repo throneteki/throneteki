@@ -1,10 +1,11 @@
 import React, { useState, useCallback } from 'react';
+import Field from '../Components/Site/Field';
 import { useDispatch } from 'react-redux';
 
-import Panel from '../Components/Site/Panel';
+import Frame from '../Components/Site/Frame';
 import { navigate } from '../redux/reducers/navigation';
 import { useResetPasswordMutation } from '../redux/middleware/api';
-import { Button, Input } from '@heroui/react';
+import { Button, Spinner } from '@heroui/react';
 import { toast } from 'react-toastify';
 import ErrorMessage from '../Components/Site/ErrorMessage';
 import Page from './Page';
@@ -29,44 +30,49 @@ const ResetPassword = ({ id, token }) => {
 
             dispatch(navigate('/login'));
         } catch (err) {
-            toast.error(err.message || 'An error occurred resetting your password');
+            toast.error(
+                err.data?.message || err.message || 'An error occurred resetting your password'
+            );
         }
     }, [dispatch, id, password, resetPassword, token]);
 
     if (!id || !token) {
         return (
-            <Page className='h-full'>
-                <ErrorMessage
-                    title='This page is not intended to be viewed directly'
-                    message='Please click on the link in your email to reset your password.'
-                />
-            </Page>
+            <ErrorMessage
+                title='Link not valid'
+                message='Use the link in your password reset email to open this page.'
+            />
         );
     }
 
     return (
-        <Page size='small'>
-            <Panel title='Reset password'>
-                <div className='flex flex-col gap-2'>
-                    <p>
-                        Please provide your new password, and click submit to finalise your reset.
-                    </p>
-                    <Input
+        <Page size='narrow'>
+            <Frame title='Reset password' description='Choose a new password for your account.'>
+                <form
+                    className='flex flex-col gap-4'
+                    onSubmit={(event) => {
+                        event.preventDefault();
+                        onSubmit();
+                    }}
+                >
+                    <Field
                         name='password'
                         label='New password'
                         type='password'
+                        autoComplete='new-password'
                         onValueChange={setPassword}
                     />
                     <Button
-                        className='sm:self-start'
-                        onPress={onSubmit}
-                        loading={isLoading}
-                        color='primary'
+                        className='w-full'
+                        type='submit'
+                        isPending={isLoading}
+                        isDisabled={!password}
+                        variant='primary'
                     >
-                        Submit
+                        {isLoading && <Spinner color='current' size='sm' />}Set password
                     </Button>
-                </div>
-            </Panel>
+                </form>
+            </Frame>
         </Page>
     );
 };

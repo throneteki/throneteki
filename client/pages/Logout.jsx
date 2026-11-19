@@ -20,7 +20,9 @@ const Logout = () => {
                 await logout(refreshToken.id).unwrap();
             } catch (err) {
                 toast.error(
-                    err.message || 'An error occurred logging you out. Please try again later.'
+                    err.data?.message ||
+                        err.message ||
+                        'An error occurred logging you out. Please try again later.'
                 );
 
                 return;

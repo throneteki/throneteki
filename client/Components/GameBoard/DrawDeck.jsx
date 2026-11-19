@@ -45,13 +45,13 @@ const DrawDeck = ({
     if (isMe && manualMode) {
         if (!showDeck) {
             drawDeckPopupMenu.push({
-                text: 'View Hidden',
+                text: 'View hidden',
                 icon: faEye,
                 handler: handleShowDeckClick
             });
         }
         drawDeckPopupMenu.push({
-            text: 'Close and Shuffle',
+            text: 'Close and shuffle',
             icon: faShuffle,
             handler: handleShuffleClick,
             close: true
@@ -77,6 +77,7 @@ const DrawDeck = ({
             size={size}
             source='draw deck'
             title='Draw'
+            popupTitle='draw deck'
             playerName={playerName}
         />
     );

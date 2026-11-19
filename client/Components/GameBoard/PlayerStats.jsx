@@ -8,7 +8,8 @@ import {
     sendCancelProblemReportMessage,
     sendToggleMuteSpectatorsMessage
 } from '../../redux/reducers/game';
-import { Avatar, Badge, Button } from '@heroui/react';
+import { Badge, Button } from '@heroui/react';
+import UserAvatar from '../Site/UserAvatar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faBug,
@@ -82,33 +83,30 @@ const PlayerStats = ({
         <StatContainer title={title}>
             <Button
                 isIconOnly={!text}
+                aria-label={title}
                 onPress={onClick}
-                startContent={icon ? <FontAwesomeIcon icon={icon} /> : null}
-                radius='none'
-                variant='light'
-                className={classNames('h-8 p-2', { 'text-danger': active })}
+                size='sm'
+                className={classNames('h-8 px-2', active ? 'text-danger' : 'text-ink-dim')}
+                variant='ghost'
             >
-                {text}
+                {icon ? <FontAwesomeIcon icon={icon} /> : null}
+                {text && <span className='max-md:hidden'>{text}</span>}
             </Button>
         </StatContainer>
     );
 
     const wrapperClassName = classNames(
-        'relative border-1 border-default-100 bg-black/35 border-x-0',
+        'relative shrink-0 overflow-x-auto border-y border-gold-hair bg-[#0c0d11]/85 [scrollbar-width:none]',
         className
     );
     return (
         <div className={wrapperClassName}>
             <div className='sticky left-0 flex items-center w-fit px-2'>
                 <div className='pr-1 py-1 flex items-center'>
-                    <Avatar
-                        src={`/img/avatar/${userProp?.username}.png`}
-                        showFallback
-                        className='w-7 h-7 text-tiny'
-                    />
+                    <UserAvatar username={userProp?.username} className='w-7 h-7 text-xs' />
 
-                    <span className='pl-2 font-bold max-md:hidden'>
-                        {userProp?.username || 'Noone'}
+                    <span className='pl-2 font-semibold text-ink max-md:hidden'>
+                        {userProp?.username || 'Empty seat'}
                     </span>
                 </div>
                 {getStatDisplay('totalPower', 'Power', 'power')}
@@ -118,19 +116,22 @@ const PlayerStats = ({
                 {getStatDisplay('reserve', 'Reserve')}
                 {seatNo && (
                     <StatContainer>
-                        <div className='px-2'>{`Seat ${seatNo}`}</div>
+                        <div className='px-2 text-sm text-ink-dim'>{`Seat ${seatNo}`}</div>
                     </StatContainer>
                 )}
                 {firstPlayer && (
                     <StatContainer>
-                        <div className='px-2'>First player</div>
+                        <div className='px-2 text-sm text-gold' title='First player'>
+                            <span className='max-md:hidden'>First player</span>
+                            <span className='md:hidden'>1st</span>
+                        </div>
                     </StatContainer>
                 )}
 
                 <StatContainer>
                     {showControls && (
                         <>
-                            {getStatButton(onSettingsClick, faCogs, 'Open Settings', 'Settings')}
+                            {getStatButton(onSettingsClick, faCogs, 'Game settings', 'Settings')}
                             {isMe &&
                                 getStatButton(
                                     () => dispatch(sendToggleMuteSpectatorsMessage()),
@@ -146,7 +147,7 @@ const PlayerStats = ({
                                     currentGame.manualMode
                                         ? 'Manual mode is on: the rules are not fully enforced, and players can change the game by hand. Click to turn it off.'
                                         : 'Manual mode is off: the game enforces the rules, and manual changes are disabled. Click to ask your opponent to turn it on.',
-                                    'Manual Mode',
+                                    currentGame.manualMode ? 'Manual mode on' : 'Manual mode',
                                     currentGame.manualMode
                                 )}
                             {isMe &&
@@ -157,17 +158,21 @@ const PlayerStats = ({
                                     },
                                     faBug,
                                     'Report a problem with this game',
-                                    'Report Problem'
+                                    'Report a problem'
                                 )}
                             <StatContainer>
-                                <Badge
-                                    shape='circle'
-                                    color='danger'
-                                    content={unreadMessages > 99 ? '99+' : unreadMessages}
-                                    isInvisible={!unreadMessages || unreadMessages === 0}
-                                >
-                                    {getStatButton(onChatToggle, faComment, 'Toggle chat')}
-                                </Badge>
+                                <Badge.Anchor>
+                                    {getStatButton(
+                                        onChatToggle,
+                                        faComment,
+                                        'Show or hide the game log'
+                                    )}
+                                    {unreadMessages > 0 && (
+                                        <Badge color='danger' size='sm'>
+                                            {unreadMessages > 99 ? '99+' : unreadMessages}
+                                        </Badge>
+                                    )}
+                                </Badge.Anchor>
                             </StatContainer>
                         </>
                     )}

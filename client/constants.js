@@ -135,15 +135,15 @@ export const CardSizeOptions = [
 ];
 
 export const ActionWindows = [
-    { name: 'plot', label: 'Plots revealed', default: false },
-    { name: 'draw', label: 'Draw phase', default: false },
-    { name: 'marshal', label: 'Marshaling phase', default: false },
-    { name: 'challengeBegin', label: 'Before challenge', default: false },
-    { name: 'attackersDeclared', label: 'Attackers declared', default: true },
-    { name: 'defendersDeclared', label: 'Defenders declared', default: true },
-    { name: 'dominance', label: 'Dominance phase', default: false },
-    { name: 'standing', label: 'Standing phase', default: false },
-    { name: 'taxation', label: 'Taxation phase', default: false }
+    { name: 'plot', phase: 'Plot', label: 'Plots revealed', default: false },
+    { name: 'draw', phase: 'Draw', label: 'Draw phase', default: false },
+    { name: 'marshal', phase: 'Marshaling', label: 'Marshaling phase', default: false },
+    { name: 'challengeBegin', phase: 'Challenges', label: 'Before challenge', default: false },
+    { name: 'attackersDeclared', phase: 'Challenges', label: 'Attackers declared', default: true },
+    { name: 'defendersDeclared', phase: 'Challenges', label: 'Defenders declared', default: true },
+    { name: 'dominance', phase: 'Dominance', label: 'Dominance phase', default: false },
+    { name: 'standing', phase: 'Standing', label: 'Standing phase', default: false },
+    { name: 'taxation', phase: 'Taxation', label: 'Taxation phase', default: false }
 ];
 
 export const defaultActionWindows = Object.fromEntries(

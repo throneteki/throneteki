@@ -24,7 +24,7 @@ const MeleeGameBoardLayout = ({
             const isMe = thisPlayer && player === thisPlayer;
             const isActivePrompt = player.isActivePrompt;
 
-            const wrapperClassName = classNames('flex flex-grow', {
+            const wrapperClassName = classNames('flex grow', {
                 'flex-col': side === 'top',
                 'flex-col-reverse': side === 'bottom',
                 'bg-blue-300/5': isActivePrompt
@@ -75,7 +75,7 @@ const MeleeGameBoardLayout = ({
                         mustShowPlotSelection={player.mustShowPlotSelection}
                         showHiddenPiles={isMe && isDragging}
                     />
-                    <div className='relative flex flex-row-reverse flex-grow'>
+                    <div className='relative flex flex-row-reverse grow'>
                         <PlayerBoard
                             isDroppable={isMe}
                             cardsInPlay={player.cardPiles.cardsInPlay}
@@ -143,7 +143,7 @@ const MeleeGameBoardLayout = ({
                     gridCells.push(
                         <div
                             key={`seat_${player.seatNo}_${otherPlayer.seatNo}`}
-                            className='flex flex-grow'
+                            className='flex grow'
                         >
                             {renderPlayerBoard(player, 'top', ++tc, true)}
                             {renderPlayerBoard(otherPlayer, 'top', ++tc, false)}

@@ -30,6 +30,8 @@ function extractEventFromRequest(req) {
         eventGameOptions: useEventGameOptions
             ? {
                   password: eventGameOptions.password,
+                  gamePrivate: eventGameOptions.gamePrivate,
+                  maxPlayers: eventGameOptions.maxPlayers || undefined,
                   spectators: eventGameOptions.spectators,
                   muteSpectators: eventGameOptions.muteSpectators,
                   showHand: eventGameOptions.showHand,

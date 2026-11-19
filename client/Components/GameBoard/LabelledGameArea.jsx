@@ -31,7 +31,7 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
     return (
         <div ref={ref} className={areaClassName} onClick={onClick} style={style}>
             {!disableBackground && (
-                <div className='absolute border-2 border-default-100/55 bg-black/55 w-full h-full rounded-md' />
+                <div className='absolute border-2 border-white/5 bg-black/55 w-full h-full rounded-md' />
             )}
             {children}
             {areaLabel}

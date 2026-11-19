@@ -1,5 +1,7 @@
 import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
-import { Button, Textarea } from '@heroui/react';
+import { TextAreaField } from './Field';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
 
 const ChatArea = forwardRef(function ChatArea(
@@ -14,7 +16,6 @@ const ChatArea = forwardRef(function ChatArea(
         isInputDisabled,
         placeholder,
         maxInputLength,
-        unreadMessagesLabel = 'Click to view unread messages...',
         onUnreadMessagesChange = () => {},
         inputRef
     },
@@ -101,27 +102,30 @@ const ChatArea = forwardRef(function ChatArea(
                 {messageCount > 0 ? children : noMessagesLabel}
             </div>
             <div className='relative'>
-                {unreadMessages > 0 && (
-                    <Button
-                        className='absolute bottom-full bg-default-300 h-5 w-full opacity-80 text-white text-small text-center rounded-t-md'
-                        radius='none'
-                        onPress={() => setIsAnchored(true)}
+                {!isAnchored && messageCount > 0 && (
+                    <button
+                        type='button'
+                        onClick={() => setIsAnchored(true)}
+                        className='absolute bottom-full left-1/2 z-10 mb-2 flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-gold-line bg-[#0c0d11] px-3 py-1 text-xs text-ink shadow-[0_6px_16px_rgba(0,0,0,0.5)] hover:border-gold'
                     >
-                        {unreadMessagesLabel}
-                    </Button>
+                        <FontAwesomeIcon icon={faArrowDown} className='text-[0.7rem] text-gold' />
+                        {unreadMessages > 0
+                            ? `${unreadMessages} new ${unreadMessages === 1 ? 'message' : 'messages'}`
+                            : 'Jump to latest'}
+                    </button>
                 )}
-                <Textarea
-                    className={typeof classNamesProp?.input !== 'object' && classNamesProp?.input}
-                    classNames={{
-                        inputWrapper: 'rounded-none',
-                        ...(typeof classNamesProp?.input === 'object' && classNamesProp?.input)
-                    }}
+                <TextAreaField
+                    className={
+                        typeof classNamesProp?.input === 'string' ? classNamesProp.input : undefined
+                    }
+                    inputClassName='max-h-40 min-h-10 resize-none [field-sizing:content]'
+                    aria-label={placeholder || 'Message'}
                     ref={inputRef}
                     onKeyDown={onKeyDown}
                     onValueChange={setMessage}
                     maxLength={maxInputLength}
                     placeholder={placeholder}
-                    disabled={isInputDisabled}
+                    isDisabled={isInputDisabled}
                     value={message}
                     minRows={1}
                 />

@@ -1,29 +1,44 @@
 import React from 'react';
-import GameTypeInfo from './GameTypeInfo';
-import { Radio, RadioGroup } from '@heroui/react';
-import { GameTypes as gameTypes } from '../../constants';
+import classNames from 'classnames';
+import { RadioGroup } from '@heroui/react';
 import { useFormikContext } from 'formik';
+import { RadioOption } from '../Site/RadioField';
+import { GameTypeDescriptions } from './GameTypeInfo';
+import { GameTypes as gameTypes } from '../../constants';
 
 const GameTypes = ({ isDisabled = false }) => {
     const { values, setFieldValue } = useFormikContext();
+
     return (
-        <div className='flex flex-col gap-2'>
-            <RadioGroup
-                name='gameType'
-                label={'Type'}
-                orientation='horizontal'
-                value={values.gameType}
-                onValueChange={(value) => setFieldValue('gameType', value)}
-                isDisabled={isDisabled}
-            >
-                {gameTypes.map((type) => (
-                    <Radio key={type.name} id={type.name} value={type.name}>
-                        {type.label}
-                    </Radio>
-                ))}
-            </RadioGroup>
-            <GameTypeInfo gameType={values.gameType} />
-        </div>
+        <RadioGroup
+            name='gameType'
+            aria-label='Type of game'
+            value={values.gameType ?? null}
+            onChange={(value) => setFieldValue('gameType', value)}
+            isDisabled={isDisabled}
+            className='grid grid-cols-1 gap-2 sm:grid-cols-3'
+        >
+            {gameTypes.map((type) => (
+                <RadioOption
+                    key={type.name}
+                    value={type.name}
+                    className={classNames(
+                        'border px-3.5 py-3 transition-colors duration-150',
+                        values.gameType === type.name
+                            ? 'border-gold-line bg-accent/[0.08]'
+                            : 'border-gold-hair hover:border-gold-line'
+                    )}
+                    contentClassName='items-start gap-3 cursor-pointer'
+                >
+                    <span className='flex flex-col gap-0.5'>
+                        <span className='text-ink'>{type.label}</span>
+                        <span className='text-sm text-ink-faint'>
+                            {GameTypeDescriptions[type.name]}
+                        </span>
+                    </span>
+                </RadioOption>
+            ))}
+        </RadioGroup>
     );
 };
 

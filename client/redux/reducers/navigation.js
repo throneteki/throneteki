@@ -1,5 +1,3 @@
-/* global window, history */
-
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
@@ -11,16 +9,17 @@ const navigationSlice = createSlice({
     initialState,
     reducers: (create) => ({
         navigate: create.preparedReducer(
-            (newPath, search) => {
-                return { payload: { newPath, search } };
+            (newPath, search, replace = false) => {
+                return { payload: { newPath, search, replace } };
             },
             (state, action) => {
                 try {
-                    window.history.pushState(
-                        {},
-                        '',
-                        action.payload.newPath + (action.payload.search || '')
-                    );
+                    const url = action.payload.newPath + (action.payload.search || '');
+                    if (action.payload.replace) {
+                        window.history.replaceState({}, '', url);
+                    } else {
+                        window.history.pushState({}, '', url);
+                    }
 
                     state.path = action.payload.newPath;
                     state.search = action.payload.search;

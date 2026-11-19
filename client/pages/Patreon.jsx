@@ -63,7 +63,9 @@ const Patreon = ({ code }) => {
                 }
             } catch (err) {
                 hasLinkedRef.current = false;
-                toast.error(err.message || 'An error occurred linking your account');
+                toast.error(
+                    err.data?.message || err.message || 'An error occurred linking your account'
+                );
 
                 return;
             }
@@ -84,12 +86,10 @@ const Patreon = ({ code }) => {
 
     if (!oauthCode) {
         return (
-            <Page className='h-full'>
-                <ErrorMessage
-                    title='This page is not intended to be viewed directly'
-                    message='Please click on one of the links at the top of the page or your browser back button to return to the site.'
-                />
-            </Page>
+            <ErrorMessage
+                title='Nothing to show here'
+                message='This page is only reached from Patreon. Use the links at the top of the page to return to the site.'
+            />
         );
     }
     return (

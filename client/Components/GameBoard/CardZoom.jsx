@@ -12,7 +12,7 @@ const CardZoom = ({ card, cardName, imageUrl, orientation, show }) => {
     return (
         <div className={zoomClass}>
             {show ? (
-                <div className='w-full h-full shadow'>
+                <div className='w-full h-full shadow-sm'>
                     <span className='block text-sm font-[Lucida Sans] uppercase text-center whitespace-nowrap overflow-hidden'>
                         {cardName}
                     </span>

@@ -90,22 +90,29 @@ const CardHover = ({ children, size = '3x-large' }) => {
             {code &&
                 createPortal(
                     <div ref={wrapperRef} className='fixed z-10 pointer-events-none'>
-                        {isLoading && <Spinner ref={spinnerRef} size='lg' color='white' />}
+                        {isLoading && (
+                            <Spinner
+                                ref={spinnerRef}
+                                size='lg'
+                                color='current'
+                                className='text-white'
+                            />
+                        )}
                         <div ref={imageCallback} className={imageClassName}>
                             {!isLoading && notes?.length > 0 && (
-                                <div className='mb-1.5 w-0 min-w-full overflow-hidden rounded-lg border border-default-300 bg-content1/95 shadow-lg shadow-black/60'>
+                                <div className='mb-1.5 w-0 min-w-full overflow-hidden rounded-sm border border-gold-line bg-[#0e0f13]/95 shadow-lg shadow-black/60'>
                                     {notes.map((note, index) => (
                                         <div
                                             key={index}
-                                            className='border-l-3 border-l-warning px-3 py-2 [&+&]:border-t [&+&]:border-t-default-200'
+                                            className='px-3 py-2 [&+&]:border-t [&+&]:border-gold-hair'
                                         >
-                                            <div className='text-[10px] font-semibold uppercase tracking-wider text-warning'>
+                                            <div className='text-xs font-medium text-warning'>
                                                 {note.label}
                                             </div>
-                                            <div className='text-sm font-semibold leading-snug text-foreground'>
+                                            <div className='text-sm font-medium text-ink'>
                                                 {note.title}
                                             </div>
-                                            <div className='text-xs leading-snug text-default-500'>
+                                            <div className='text-xs text-ink-dim'>
                                                 {note.reason}
                                             </div>
                                         </div>
@@ -118,7 +125,9 @@ const CardHover = ({ children, size = '3x-large' }) => {
                                 orientation={orientation}
                                 onLoad={(e) => {
                                     setOrientation(
-                                        e.target.width > e.target.height ? 'horizontal' : 'vertical'
+                                        e.target.naturalWidth > e.target.naturalHeight
+                                            ? 'horizontal'
+                                            : 'vertical'
                                     );
                                     setIsLoading(false);
                                 }}
@@ -126,7 +135,7 @@ const CardHover = ({ children, size = '3x-large' }) => {
                             />
                         </div>
                     </div>,
-                    document.querySelector('[data-overlay-container="true"]')
+                    document.body
                 )}
         </CardHoverContext.Provider>
     );

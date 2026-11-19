@@ -9,7 +9,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import * as Sentry from '@sentry/browser';
 import * as SentryReact from '@sentry/react';
 import { createRoot } from 'react-dom/client';
-import { HeroUIProvider } from '@heroui/react';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 
 import { store } from './configureStore';
@@ -81,28 +80,26 @@ const root = createRoot(container);
 
 root.render(
     <Provider store={store}>
-        <HeroUIProvider>
-            <NextThemesProvider attribute='class' defaultTheme='dark'>
-                <div className='body'>
-                    <ToastContainer
-                        position='top-right'
-                        autoClose={5000}
-                        newestOnTop={false}
-                        closeOnClick
-                        pauseOnHover
-                    />
-                    <SentryReact.ErrorBoundary
-                        fallback={
-                            <ErrorMessage
-                                title='Unexpected Error'
-                                message='Report has been automatically submitted'
-                            />
-                        }
-                    >
-                        <Application />
-                    </SentryReact.ErrorBoundary>
-                </div>
-            </NextThemesProvider>
-        </HeroUIProvider>
+        <NextThemesProvider attribute='class' defaultTheme='dark'>
+            <div className='body'>
+                <ToastContainer
+                    position='top-right'
+                    autoClose={5000}
+                    newestOnTop={false}
+                    closeOnClick
+                    pauseOnHover
+                />
+                <SentryReact.ErrorBoundary
+                    fallback={
+                        <ErrorMessage
+                            title='Unexpected Error'
+                            message='Report has been automatically submitted'
+                        />
+                    }
+                >
+                    <Application />
+                </SentryReact.ErrorBoundary>
+            </div>
+        </NextThemesProvider>
     </Provider>
 );

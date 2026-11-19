@@ -1,19 +1,13 @@
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
+import Frame from './Frame';
+import Notice from './Notice';
 
-const ErrorMessage = ({ includeIcon = true, title, message, color = 'white' }) => {
-    return (
-        <div className='w-full h-full flex justify-center items-center'>
-            <div className='text-center'>
-                {includeIcon && (
-                    <FontAwesomeIcon icon={faExclamationTriangle} size='5x' color={color} />
-                )}
-                {title && <h1 className='text-large'>{title}</h1>}
-                {message && <p>{message}</p>}
-            </div>
-        </div>
-    );
-};
+const ErrorMessage = ({ title = 'Something went wrong', message }) => (
+    <div className='mx-auto w-full max-w-[440px] px-2 py-4 sm:px-4 sm:py-6'>
+        <Frame title={title}>
+            <Notice kind='error'>{message}</Notice>
+        </Frame>
+    </div>
+);
 
 export default ErrorMessage;

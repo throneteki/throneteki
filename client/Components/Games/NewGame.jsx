@@ -3,9 +3,9 @@ import { forwardRef } from 'react';
 import { Formik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import * as yup from 'yup';
-import Panel from '../Site/Panel';
+import Frame from '../Site/Frame';
+import Notice from '../Site/Notice';
 import { sendNewGameMessage } from '../../redux/reducers/lobby';
-import AlertPanel, { AlertType } from '../Site/AlertPanel';
 import NewGameForm from './NewGameForm';
 
 export const GameNameMaxLength = 64;
@@ -92,11 +92,13 @@ const NewGame = forwardRef(function NewGame(
         eventId: null,
         allowSpectators: true,
         gameFormat: 'joust',
+        gameVariant: 'standard',
+        gameLegality: 'latest',
         gameType: defaultGameType || 'casual',
         useGameTimeLimit: !!defaultTimeLimit,
         gameTimeLimit: defaultTimeLimit || 55,
         gamePrivate: defaultPrivate,
-        useChessBlocks: false,
+        useChessClocks: false,
         chessClockTimeLimit: 30,
         chessClockDelay: 5,
         maxPlayers: 4,
@@ -104,16 +106,28 @@ const NewGame = forwardRef(function NewGame(
         allowMultipleWinners: false
     };
 
+    const title = quickJoin ? 'Quick join' : 'New game';
+
     if (!connected) {
         return (
-            <AlertPanel variant={AlertType.Danger}>
-                The connection to the lobby has been lost, waiting for it to be restored. If this
-                message persists, please refresh the page.
-            </AlertPanel>
+            <Frame title={title} ref={ref}>
+                <Notice kind='error' title='Lost connection to the lobby'>
+                    Waiting for it to come back. If this stays, refresh the page.
+                </Notice>
+            </Frame>
         );
     }
+
     return (
-        <Panel title={quickJoin ? 'Quick Join' : 'New game'} ref={ref}>
+        <Frame
+            title={title}
+            description={
+                quickJoin
+                    ? "Pick a type of game. You'll join the next one that's open, or a new game starts with the usual options."
+                    : 'Set up a game, then wait for players to join it.'
+            }
+            ref={ref}
+        >
             <Formik
                 validationSchema={schema}
                 onSubmit={(values) => {
@@ -127,7 +141,7 @@ const NewGame = forwardRef(function NewGame(
                     onClosed={onClosed}
                 />
             </Formik>
-        </Panel>
+        </Frame>
     );
 });
 

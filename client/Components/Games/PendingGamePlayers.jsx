@@ -1,76 +1,86 @@
-import React, { useMemo } from 'react';
-import { Avatar, Button, Divider } from '@heroui/react';
-import Panel from '../Site/Panel';
+import React from 'react';
+import { Button } from '@heroui/react';
+import classNames from 'classnames';
+import UserAvatar from '../Site/UserAvatar';
 import DeckStatus from '../Decks/DeckStatus';
 import { Constants } from '../../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock, faUnlock } from '@fortawesome/free-solid-svg-icons';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
 
 const PendingGamePlayers = ({ currentGame, user, onSelectDeck }) => {
-    const isDeckLocked = useMemo(() => {
-        const currentPlayer = Object.values(currentGame.players).find(
-            (player) => player && player.name === user?.username
-        );
-        return currentGame.event?.lockDecks && currentPlayer.deck && currentPlayer.deck.locked;
-    }, [currentGame.event?.lockDecks, currentGame.players, user?.username]);
+    const players = Object.values(currentGame.players).sort((a, b) => a.seatNo - b.seatNo);
+    const openSeats = Math.max(0, (currentGame.maxPlayers ?? 2) - players.length);
+    const me = players.find((player) => player.name === user?.username);
+    const isDeckLocked = !!(currentGame.event?.lockDecks && me?.deck?.locked);
 
     return (
-        <Panel title={'Players'}>
-            <div className='flex flex-col gap-2'>
-                {Object.values(currentGame.players).map((player, index) => {
-                    const playerIsMe = player && player.name === user?.username;
+        <ul className='border-t border-gold-hair'>
+            {players.map((player) => {
+                const playerIsMe = player.name === user?.username;
+                const deck = player.deck;
 
-                    let deckButton = null;
-                    let status = null;
-
-                    if (player && player.deck?.selected) {
-                        const startContent = currentGame.event?.lockDecks ? (
-                            <FontAwesomeIcon icon={isDeckLocked ? faLock : faUnlock} />
-                        ) : null;
-                        if (playerIsMe) {
-                            deckButton = (
+                return (
+                    <li
+                        key={player.name}
+                        className='flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-gold-hair px-0.5 py-3'
+                    >
+                        <span className='flex min-w-[min(100%,11rem)] flex-1 items-center gap-2.5'>
+                            <UserAvatar username={player.name} />
+                            <span
+                                className={classNames(
+                                    'truncate text-ink',
+                                    player.role &&
+                                        Constants.ColorClassByRole[player.role.toLowerCase()]
+                                )}
+                            >
+                                {player.name}
+                            </span>
+                            {player.name === currentGame.owner && (
+                                <span className='text-xs text-ink-faint'>Host</span>
+                            )}
+                        </span>
+                        {playerIsMe ? (
+                            <span className='flex min-w-0 flex-wrap items-center gap-2'>
+                                {deck?.selected && <DeckStatus deck={deck} />}
                                 <Button
-                                    className='text-wrap'
+                                    size='sm'
+                                    variant={deck?.selected ? 'tertiary' : 'primary'}
+                                    className='max-w-full'
                                     onPress={onSelectDeck}
                                     isDisabled={isDeckLocked}
-                                    startContent={startContent}
                                 >
-                                    {player.deck.name}
+                                    {isDeckLocked && <FontAwesomeIcon icon={faLock} />}
+                                    <span className='truncate'>
+                                        {deck?.selected ? deck.name : 'Choose a deck'}
+                                    </span>
                                 </Button>
-                            );
-                        } else {
-                            deckButton = <Button isDisabled>Deck Selected</Button>;
-                        }
-
-                        status = <DeckStatus showDeckDetails={playerIsMe} deck={player.deck} />;
-                    } else if (player && playerIsMe) {
-                        deckButton = (
-                            <Button onPress={onSelectDeck} isDisabled={isDeckLocked}>
-                                Select Deck
-                            </Button>
-                        );
-                    }
-                    const userClass =
-                        'username' +
-                        (player.role
-                            ? ` ${Constants.ColorClassByRole[player.role.toLowerCase()]}`
-                            : '');
-                    return (
-                        <div className={'flex gap-2 flex-wrap'} key={player.name}>
-                            {index > 0 && <Divider />}
-                            <div className='flex items-center gap-2 w-full md:w-auto'>
-                                <Avatar src={`/img/avatar/${player.name}.png`} />
-                                <span className={userClass}>{player.name}</span>
-                            </div>
-                            <span className='flex items-center gap-1'>
-                                {deckButton}
-                                {status}
                             </span>
-                        </div>
-                    );
-                })}
-            </div>
-        </Panel>
+                        ) : (
+                            <span
+                                className={classNames(
+                                    'text-sm',
+                                    deck?.selected ? 'text-ink-dim' : 'text-ink-faint'
+                                )}
+                            >
+                                {deck?.selected ? 'Deck chosen' : 'Choosing a deck'}
+                            </span>
+                        )}
+                    </li>
+                );
+            })}
+            {Array.from({ length: openSeats }, (_, index) => (
+                <li
+                    key={`open-${index}`}
+                    className='flex items-center gap-2.5 border-b border-gold-hair px-0.5 py-3 text-sm italic text-ink-faint'
+                >
+                    <span
+                        aria-hidden
+                        className='size-10 shrink-0 rounded-full border border-dashed border-gold-line'
+                    />
+                    Open seat
+                </li>
+            ))}
+        </ul>
     );
 };
 
