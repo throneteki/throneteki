@@ -2,9 +2,16 @@ import React from 'react';
 import { Label, Radio, RadioGroup } from '@heroui/react';
 import classNames from 'classnames';
 
+// The label is what selects the option, so it is stretched over the whole option; otherwise a
+// tile's padding and the space beside its text ignore clicks
 export const RadioOption = ({ value, className, contentClassName, children }) => (
-    <Radio value={value} className={className}>
-        <Radio.Content className={classNames('flex items-center gap-2', contentClassName)}>
+    <Radio value={value} className={classNames('relative', className)}>
+        <Radio.Content
+            className={classNames(
+                'static flex items-center gap-2 after:absolute after:inset-0',
+                contentClassName
+            )}
+        >
             <Radio.Control>
                 <Radio.Indicator />
             </Radio.Control>

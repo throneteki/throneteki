@@ -55,15 +55,10 @@ const PendingGamePlayers = ({ currentGame, user, onSelectDeck }) => {
                                     </span>
                                 </Button>
                             </span>
+                        ) : deck?.selected ? (
+                            <DeckStatus deck={deck} showDeckDetails={false} />
                         ) : (
-                            <span
-                                className={classNames(
-                                    'text-sm',
-                                    deck?.selected ? 'text-ink-dim' : 'text-ink-faint'
-                                )}
-                            >
-                                {deck?.selected ? 'Deck chosen' : 'Choosing a deck'}
-                            </span>
+                            <span className='text-sm text-ink-faint'>Choosing a deck</span>
                         )}
                     </li>
                 );

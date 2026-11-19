@@ -175,7 +175,20 @@ export const createMockPendingGame = (username = 'designreview') =>
                     }
                 }
             }),
-            player('Lady_Stoneheart', 2, { deck: {} })
+            player('Lady_Stoneheart', 2, {
+                deck: {
+                    selected: true,
+                    status: {
+                        format: 'joust',
+                        variant: 'standard',
+                        legality: '2.1',
+                        basicRules: true,
+                        valid: true,
+                        noUnreleasedCards: true,
+                        extendedStatus: []
+                    }
+                }
+            })
         ),
         messages: [
             chat('Lady_Stoneheart', 'hi, give me a minute to pick a deck', 2),

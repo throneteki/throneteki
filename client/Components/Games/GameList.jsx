@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import moment from 'moment';
 import { Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faTrophy } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
 
 import {
@@ -14,7 +14,8 @@ import {
     sendWatchGameMessage
 } from '../../redux/reducers/lobby';
 import { useGetCardsQuery } from '../../redux/middleware/api';
-import { GameFormats, GameTypes } from '../../constants';
+import { GameFormats } from '../../constants';
+import GameTypeMark from './GameTypeMark';
 import ThronesIcon from '../GameBoard/ThronesIcon';
 import UserAvatar from '../Site/UserAvatar';
 
@@ -57,10 +58,13 @@ const GameDetails = ({ game, isAdmin, className }) => {
                 className
             )}
         >
-            {game.event?.name && <span className='text-gold'>{game.event.name}</span>}
-            <span className={classNames({ 'text-ink': game.gameType === 'competitive' })}>
-                {labelFor(GameTypes, game.gameType)}
-            </span>
+            {game.event?.name && (
+                <span className='inline-flex items-center gap-1.5 border border-gold-line px-1.5 py-px text-xs text-gold'>
+                    <FontAwesomeIcon icon={faTrophy} className='text-[0.85em]' />
+                    {game.event.name}
+                </span>
+            )}
+            <GameTypeMark gameType={game.gameType} />
             <span>{labelFor(GameFormats, game.gameFormat)}</span>
             {flags.length > 0 && (
                 <span className='flex flex-wrap items-center gap-x-2.5 text-xs text-ink-faint'>
@@ -144,20 +148,24 @@ const GameInProgress = ({ game, cards, canWatch, isAdmin, onWatch, onRemove }) =
 
     return (
         <li className='grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 border-b border-gold-hair px-1 py-2.5 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_4.5rem_7.5rem] sm:gap-x-4'>
-            <div className='flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1'>
+            <div className='flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5'>
                 {players.map((player, index) => (
                     <React.Fragment key={player.name}>
                         {index > 0 && players.length === 2 && (
                             <span className='font-display text-xs text-ink-faint'>vs</span>
                         )}
-                        <span
-                            className='flex min-w-0 items-center gap-1.5'
-                            title={agendaLabel(player) || undefined}
-                        >
+                        <span className='flex min-w-0 items-center gap-2'>
                             {player.faction && (
-                                <ThronesIcon icon={player.faction} className='text-base' />
+                                <ThronesIcon icon={player.faction} className='text-lg' />
                             )}
-                            <span className='truncate'>{player.name}</span>
+                            <span className='flex min-w-0 flex-col leading-tight'>
+                                <span className='truncate'>{player.name}</span>
+                                {agendaLabel(player) && (
+                                    <span className='truncate text-xs text-ink-faint'>
+                                        {agendaLabel(player)}
+                                    </span>
+                                )}
+                            </span>
                         </span>
                     </React.Fragment>
                 ))}

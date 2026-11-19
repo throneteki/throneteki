@@ -4,6 +4,7 @@ import { RadioGroup } from '@heroui/react';
 import { useFormikContext } from 'formik';
 import { RadioOption } from '../Site/RadioField';
 import { GameTypeDescriptions } from './GameTypeInfo';
+import { GameTypeDiamond } from './GameTypeMark';
 import { GameTypes as gameTypes } from '../../constants';
 
 const GameTypes = ({ isDisabled = false }) => {
@@ -31,7 +32,10 @@ const GameTypes = ({ isDisabled = false }) => {
                     contentClassName='items-start gap-3 cursor-pointer'
                 >
                     <span className='flex flex-col gap-0.5'>
-                        <span className='text-ink'>{type.label}</span>
+                        <span className='flex items-center gap-2 text-ink'>
+                            <GameTypeDiamond gameType={type.name} />
+                            {type.label}
+                        </span>
                         <span className='text-sm text-ink-faint'>
                             {GameTypeDescriptions[type.name]}
                         </span>

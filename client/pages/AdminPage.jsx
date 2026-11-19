@@ -3,22 +3,7 @@ import { useSelector } from 'react-redux';
 import BannerNav from '../Components/Site/BannerNav';
 import Frame from '../Components/Site/Frame';
 import Page from './Page';
-
-export const AdminSections = [
-    { key: 'news', label: 'News', path: '/news', permission: 'canEditNews' },
-    { key: 'motd', label: 'Message', path: '/admin/motd', permission: 'canManageMotd' },
-    { key: 'banners', label: 'Banners', path: '/admin/banners', permission: 'canManageBanners' },
-    { key: 'events', label: 'Events', path: '/events', permission: 'canManageEvents' },
-    { key: 'users', label: 'Users', path: '/users', permission: 'canManageUsers' },
-    { key: 'banlist', label: 'Ban list', path: '/banlist', permission: 'canManageBanlist' },
-    {
-        key: 'reports',
-        label: 'Reports',
-        path: '/admin/problem-reports',
-        permission: 'canManageProblemReports'
-    },
-    { key: 'nodes', label: 'Nodes', path: '/nodes', permission: 'canManageNodes' }
-];
+import { AdminSections } from '../menus';
 
 const AdminPage = ({
     section,
@@ -31,7 +16,10 @@ const AdminPage = ({
     children
 }) => {
     const permissions = useSelector((state) => state.auth.user?.permissions);
-    const items = AdminSections.filter((item) => permissions?.[item.permission]);
+    const items = AdminSections.filter((item) => permissions?.[item.permission]).map((item) => ({
+        ...item,
+        label: item.title
+    }));
 
     return (
         <Page size='wide' className='max-w-[1240px]'>

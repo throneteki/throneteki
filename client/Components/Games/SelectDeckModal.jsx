@@ -14,8 +14,8 @@ const SelectDeckModal = ({ isOpen, onClose, onDeckSelected, game }) => {
             isOpen={isOpen}
             onOpenChange={(open) => !open && onClose()}
             title='Select deck'
-            size='full'
-            className='max-h-screen'
+            size='lg'
+            className='w-full max-w-[calc(100vw-1rem)] sm:max-w-[38rem] md:max-w-[46rem] lg:max-w-[62rem] xl:max-w-[78rem] 2xl:max-w-[94rem]'
         >
             <Tabs>
                 <Tabs.ListContainer>

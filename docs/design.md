@@ -199,18 +199,19 @@ in `text-sm` `danger`.
 ### Notice
 
 `<Notice kind='info' | 'success' | 'warning' | 'error'>`. A seal (a round
-`gold-line` ring) holds an icon from the thronesdb font, with the message beside it in `text-sm`
+`gold-line` ring) holds an icon, with the message beside it in `text-sm`
 `ink-dim`. It has no box and no coloured fill. Outside a frame, straight on the background art, pass
 `isBoxed` so it gets the `frame` fill and a `gold-line` border.
 
-| Kind      | Icon     | Icon colour |
-| --------- | -------- | ----------- |
-| `info`    | intrigue | `gold`      |
-| `success` | power    | `gold`      |
-| `warning` | military | `warning`   |
-| `error`   | military | `danger`    |
+| Kind      | Icon        | Icon colour |
+| --------- | ----------- | ----------- |
+| `info`    | info circle | `gold`      |
+| `success` | check       | `gold`      |
+| `warning` | triangle    | `warning`   |
+| `error`   | exclamation | `danger`    |
 
-Toasts use the same seal and colours on the `frame` fill.
+The icons are plain Font Awesome icons. Faction and challenge icons mean something in the game, so
+don't use them for site messages.
 
 ### Tag
 

@@ -130,7 +130,7 @@ const GameLobby = ({ gameId }) => {
                 actions={
                     <>
                         <Button
-                            isDisabled={!user || !!currentGame}
+                            isDisabled={!user || !!currentGame || newGame}
                             onPress={() => {
                                 setNewGameEventId(undefined);
                                 setQuickJoin(true);
@@ -141,7 +141,7 @@ const GameLobby = ({ gameId }) => {
                             Quick join
                         </Button>
                         <Button
-                            isDisabled={!user || !!currentGame}
+                            isDisabled={!user || !!currentGame || newGame}
                             onPress={() => {
                                 setNewGameEventId(undefined);
                                 setQuickJoin(false);
