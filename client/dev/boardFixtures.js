@@ -954,6 +954,57 @@ export const fixtureSteps = {
             return state;
         }
     },
+    drawSeven: {
+        label: 'Draw 7 (a new hand)',
+        apply: (state) => {
+            const me = state.players[fixtureUsername];
+            const drawn = me.cardPiles.drawDeck.slice(0, 7);
+            me.cardPiles.drawDeck = me.cardPiles.drawDeck.slice(7);
+            me.numDrawCards = me.cardPiles.drawDeck.length;
+            me.cardPiles.discardPile = [...me.cardPiles.hand, ...me.cardPiles.discardPile];
+            me.cardPiles.hand = drawn.map((top, index) => {
+                const code = drawPool[index % drawPool.length];
+                return {
+                    ...top,
+                    facedown: false,
+                    code,
+                    name: cardData[code].name,
+                    type: cardData[code].type,
+                    attachments: [],
+                    dupes: [],
+                    childCards: []
+                };
+            });
+            return state;
+        }
+    },
+    pillage: {
+        label: 'Pillage (discard the top of the deck)',
+        apply: (state) => {
+            const me = state.players[fixtureUsername];
+            const [top, ...rest] = me.cardPiles.drawDeck;
+            if (!top) {
+                return state;
+            }
+            const code = drawPool[me.cardPiles.discardPile.length % drawPool.length];
+            me.cardPiles.drawDeck = rest;
+            me.numDrawCards = rest.length;
+            me.cardPiles.discardPile = [
+                {
+                    ...top,
+                    facedown: false,
+                    code,
+                    name: cardData[code].name,
+                    type: cardData[code].type,
+                    attachments: [],
+                    dupes: [],
+                    childCards: []
+                },
+                ...me.cardPiles.discardPile
+            ];
+            return state;
+        }
+    },
     play: {
         label: 'Play a character from hand',
         apply: (state) => {

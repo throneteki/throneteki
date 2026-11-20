@@ -1,3 +1,5 @@
+import { desktopInterfaceFit } from '../../../hud';
+
 const thresholds = { narrowAspect: 0.9, narrowWidth: 900, shortHeight: 560 };
 const hysteresis = { aspect: 0.05, px: 40 };
 
@@ -109,12 +111,14 @@ const layoutBudgets = {
         stripUnits: 0,
         chrome: { width: 15, height: 1.5 }
     },
+    // On a desktop the cards fill most of the room rather than all of it, and stop growing at max
     wide: {
         pilesAtCardSize: true,
         pileRatio: 1,
         handRatio: 1,
+        fill: 0.9,
         min: 0.8,
-        max: 2,
+        max: 1.5,
         rows: { play: 4, pile: 2, hand: 0 },
         stripUnits: 0,
         chrome: { width: 2, height: 4 }
@@ -190,7 +194,12 @@ const fitScales = (
     // elsewhere the piles shrink on their own and the play areas keep their size
     const stripLimit = budget.pilesAtCardSize ? stripPileFit : Infinity;
     const fitted =
-        Math.min(budget.max, heightFit, stripLimit, Math.max(rowFit, budget.min)) * cardsSize;
+        Math.min(
+            budget.max,
+            heightFit * (budget.fill ?? 1),
+            stripLimit,
+            Math.max(rowFit, budget.min)
+        ) * cardsSize;
     const scale = toStep(clamp(fitted, absoluteMin, budget.max * Math.max(1, cardsSize)));
     const pile =
         (ownPile !== null ? Math.min(ownPile * Math.max(1, cardsSize), scale) : null) ??
@@ -210,15 +219,18 @@ const interfaceReferences = {
     short: { width: 844, height: 390 },
     wide: { width: 1600, height: 950 }
 };
-const interfaceRange = { min: 0.85, max: 1.4 };
+const interfaceRanges = { phone: { min: 0.85, max: 1.4 }, wide: { min: 0.8, max: 1.15 } };
 
+// A desktop's interface follows the classic board's (desktopInterfaceFit): a step below normal, growing slowly
 export const adaptiveInterfaceScale = (mode, { width, height } = {}) => {
-    const reference = interfaceReferences[mode] || interfaceReferences.wide;
+    const wide = !interfaceReferences[mode] || mode === 'wide';
+    const reference = wide ? interfaceReferences.wide : interfaceReferences[mode];
     if (!width || !height) {
         return 1;
     }
     const fit = Math.min(width / reference.width, height / reference.height);
-    return clamp(toStep(fit), interfaceRange.min, interfaceRange.max);
+    const range = wide ? interfaceRanges.wide : interfaceRanges.phone;
+    return clamp(toStep(wide ? desktopInterfaceFit(fit) : fit), range.min, range.max);
 };
 
 // How much of a larger card size than normal the board adds, by the length of its shorter side: all of it on a

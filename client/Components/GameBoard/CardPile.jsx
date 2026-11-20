@@ -254,23 +254,43 @@ const CardPile = ({
             'flex flex-col box-content border-1 border-default-200 bg-black/75 rounded-b-md overflow-hidden'
         );
 
-        const retPopupMenu = popupMenu && (
-            <div className='flex gap-1.5 p-2'>
-                {popupMenu.map((menuItem, index) => {
-                    return (
-                        <Button
-                            color='primary'
-                            className='flex-1'
-                            key={index}
-                            onPress={() => onPopupMenuItemClick(menuItem)}
-                            startContent={<FontAwesomeIcon icon={menuItem.icon} />}
-                        >
-                            {menuItem.text}
-                        </Button>
-                    );
-                })}
-            </div>
-        );
+        // In a sheet the pile's actions are pills, as the sheet's own chips are
+        const retPopupMenu = usesSheets
+            ? popupMenu?.length > 0 && (
+                  <div
+                      data-pile-actions=''
+                      className='hud-zoom flex flex-wrap justify-center gap-2 px-3 pb-1 pt-2'
+                  >
+                      {popupMenu.map((menuItem, index) => (
+                          <button
+                              key={index}
+                              type='button'
+                              className='flex h-7 items-center gap-1.5 rounded-full border border-amber-400/60 bg-amber-400/10 px-3 text-xs font-semibold uppercase tracking-wide text-amber-100 transition-colors hover:border-amber-300 hover:bg-amber-400/25 hover:text-white'
+                              onClick={() => onPopupMenuItemClick(menuItem)}
+                          >
+                              <FontAwesomeIcon icon={menuItem.icon} className='text-[11px]' />
+                              {menuItem.text}
+                          </button>
+                      ))}
+                  </div>
+              )
+            : popupMenu && (
+                  <div className='flex gap-1.5 p-2'>
+                      {popupMenu.map((menuItem, index) => {
+                          return (
+                              <Button
+                                  color='primary'
+                                  className='flex-1'
+                                  key={index}
+                                  onPress={() => onPopupMenuItemClick(menuItem)}
+                                  startContent={<FontAwesomeIcon icon={menuItem.icon} />}
+                              >
+                                  {menuItem.text}
+                              </Button>
+                          );
+                      })}
+                  </div>
+              );
 
         return (
             <PopupContainer
@@ -316,7 +336,8 @@ const CardPile = ({
         showCards,
         onPopupMenuItemClick,
         updatePopupVisibility,
-        owner
+        owner,
+        usesSheets
     ]);
 
     // A sideways card is laid out as an upright one, so the area is held to the height of a sideways card

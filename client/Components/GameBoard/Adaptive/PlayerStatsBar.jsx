@@ -134,6 +134,7 @@ const PlayerStatsBar = ({
             onPlusClick={() => dispatch(sendChangeStatMessage(stat.change, 1))}
             compact={small}
             reach={reach}
+            flank
         />
     );
 
@@ -214,13 +215,13 @@ const PlayerStatsBar = ({
                     {showSeat && player.seatNo !== undefined && (
                         <span
                             title={`Seat ${player.seatNo}`}
-                            className='absolute -left-1.5 -top-0.5 rounded-full border border-zinc-400 bg-zinc-800 px-1 text-[9px] font-bold leading-tight text-zinc-100'
+                            className='absolute -left-1.5 -top-0.5 rounded-full border border-zinc-400 bg-zinc-800 px-1 text-[10px] font-bold leading-tight text-zinc-100'
                         >
                             {player.seatNo}
                         </span>
                     )}
                     {player.firstPlayer && (
-                        <span className='absolute -bottom-0.5 -right-1.5 rounded-full bg-warning px-1 text-[9px] font-bold leading-tight text-black'>
+                        <span className='absolute -bottom-0.5 -right-1.5 rounded-full bg-warning px-1 text-[10px] font-bold leading-tight text-black'>
                             1st
                         </span>
                     )}
@@ -276,7 +277,11 @@ const PlayerStatsBar = ({
                     style={placeOf(items, endSpan)}
                     className={classNames(
                         'flex shrink-0 items-center',
-                        grid ? 'flex-row justify-center' : vertical ? 'mt-auto flex-col' : 'pl-1'
+                        grid
+                            ? 'flex-row justify-center'
+                            : vertical
+                              ? 'mt-auto flex-col'
+                              : 'self-stretch pl-1'
                     )}
                 >
                     {end}

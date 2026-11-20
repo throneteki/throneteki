@@ -122,7 +122,7 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
             pos
         );
         return (
-            <div className={labelClassName} style={raisedStyle}>
+            <div data-area-label='' className={labelClassName} style={raisedStyle}>
                 {label}
             </div>
         );
@@ -161,6 +161,7 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
             onClick={onClick}
             onClickCapture={onClickCapture}
             style={style}
+            data-labelled-area=''
             data-inspect-key={inspectMode && inspectable ? key : undefined}
             title={inspectMode && label && !inspectable ? nameOf(label) : undefined}
             {...rest}

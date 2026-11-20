@@ -37,6 +37,7 @@ const FullscreenToggle = () => {
         >
             <FontAwesomeIcon
                 icon={full ? faDownLeftAndUpRightToCenter : faUpRightAndDownLeftFromCenter}
+                className='text-base'
             />
         </Button>
     );

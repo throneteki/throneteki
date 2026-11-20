@@ -27,6 +27,8 @@ const paddingRem = 0.75;
 const margin = 8;
 // The header's height, near enough, for sizing the cards to what is left
 const headerPx = 36;
+// The most cards a row holds, however wide the sheet: sideways cards (plots), and upright ones
+const maxAcross = { sideways: 5, upright: 10 };
 
 // The cards' scale and columns for a sheet's room: one row as tall as fits in phone landscape (row), else a readable
 // size with as many columns as fit
@@ -46,7 +48,11 @@ const sizeFor = ({ width, height }, row, rem) => {
             1,
             Math.floor((free + unit.gap * scale * rem) / ((cell + unit.gap) * scale * rem))
         );
-    return { scale, columns: across(unit.w), plotColumns: across(unit.h) };
+    return {
+        scale,
+        columns: Math.min(maxAcross.upright, across(unit.w)),
+        plotColumns: Math.min(maxAcross.sideways, across(unit.h))
+    };
 };
 
 const boardOf = (sheet) =>
@@ -104,6 +110,66 @@ const underStats = (fromTop, view, edge) => {
     return edge >= view.bottom - 2 && stats.top >= view.bottom - 2 ? stats.bottom - edge : 0;
 };
 
+// On a desktop a sheet's handle can pull it off its edge into a panel that floats over the board. It holds to the edge
+// at first, giving a little (tugGive of the pull), and comes away once pulled detachAt px. Moved until its own edge
+// touches the board's edge it came from, where it would dock is outlined, and let go there it docks again. Where each
+// player's floating sheet was left is kept, so it opens there again.
+const detachAt = 64;
+const tugGive = 0.3;
+const popTime = 180;
+
+// Where each seat's sheet was left on a desktop, kept in the browser as the classic board keeps its panels: docked,
+// where its middle lies across the board (0 to 1); floating, its top left corner in the window
+const placeKey = (seat) => `sheet-place-${seat}`;
+const readPlace = (seat) => {
+    try {
+        const saved = JSON.parse(localStorage.getItem(placeKey(seat)));
+        return {
+            dock: Number.isFinite(saved?.dock) ? saved.dock : null,
+            float:
+                Number.isFinite(saved?.float?.left) && Number.isFinite(saved?.float?.top)
+                    ? { left: saved.float.left, top: saved.float.top }
+                    : null
+        };
+    } catch {
+        return { dock: null, float: null };
+    }
+};
+const writePlace = (seat, { dock, float }) => {
+    try {
+        localStorage.setItem(placeKey(seat), JSON.stringify({ dock, float }));
+    } catch {
+        // Kept for this visit only
+    }
+};
+
+// How much of a board can be seen across, and where its edges are
+const seenSpan = (sheet) => {
+    const view = viewRect();
+    const board = boardOf(sheet)?.getBoundingClientRect() ?? view;
+    return {
+        left: Math.max(board.left, view.left),
+        right: Math.min(board.right, view.right),
+        top: Math.max(board.top, view.top),
+        bottom: Math.min(board.bottom, view.bottom)
+    };
+};
+
+const clampTo = (value, min, max) => Math.min(Math.max(value, min), Math.max(min, max));
+
+// Where a floating sheet would dock, outlined while it touches its edge
+const DockHint = ({ spot, fromTop }) => (
+    <div
+        aria-hidden
+        data-sheet-dock-hint=''
+        className={classNames(
+            'pointer-events-none fixed z-[299] border-2 border-amber-400/90 bg-amber-400/15 shadow-[0_0_24px_rgba(251,191,36,0.45)]',
+            fromTop ? 'rounded-b-xl border-t-0' : 'rounded-t-xl border-b-0'
+        )}
+        style={{ left: spot.left, top: spot.top, width: spot.width, height: spot.height }}
+    />
+);
+
 // Whose piles these are: the avatar alone on a phone, with the name where there is room
 const PlayerTag = ({ player }) => (
     <span className='flex min-w-0 shrink-0 items-center gap-1.5' title={player}>
@@ -125,6 +191,17 @@ const PlayerTag = ({ player }) => (
 const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
     const row = mode === 'short';
     const phone = mode !== 'wide';
+    // Where it was left, by seat (desktop): docked, where its middle lies across the board; floating, where its top
+    // left corner is, in the window
+    const seat = sheet.seat ?? sheetKey;
+    const [saved] = useState(() => (phone ? { dock: null, float: null } : readPlace(seat)));
+    const dockRef = useRef(saved.dock);
+    const floatRef = useRef(saved.float);
+    const [floating, setFloating] = useState(!!floatRef.current);
+    const [tug, setTug] = useState(0);
+    const [held, setHeld] = useState(false);
+    const [dockSpot, setDockSpot] = useState(null);
+    const popFrom = useRef(null);
     const [visible, setVisible] = useState(false);
     const [strip, setStrip] = useState(false);
     const frameRef = useRef(null);
@@ -165,6 +242,51 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
             if (!frame || !box) {
                 return;
             }
+            const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+            if (floatRef.current) {
+                // Floating, it may go anywhere over the game board, and is kept within it
+                const area = document.querySelector('[data-layout]')?.getBoundingClientRect() ?? {
+                    left: 0,
+                    top: 0,
+                    width: window.innerWidth,
+                    height: window.innerHeight
+                };
+                Object.assign(box.style, {
+                    left: `${area.left}px`,
+                    top: `${area.top}px`,
+                    width: `${area.width}px`,
+                    height: `${area.height}px`,
+                    clipPath: 'none'
+                });
+                frame.style.paddingTop = '';
+                frame.style.paddingBottom = '';
+                // No taller than the player's board, as it is docked
+                const span = seenSpan(sheet);
+                const tall = Math.min(area.height - margin * 2, span.bottom - span.top);
+                frame.style.maxWidth = `${area.width - margin * 2}px`;
+                frame.style.maxHeight = `${tall}px`;
+                if (resize || !sized.current) {
+                    sized.current = true;
+                    setSize(sizeFor({ width: area.width - margin * 2, height: tall }, row, rem));
+                }
+                const at = floatRef.current;
+                at.left = clampTo(
+                    at.left,
+                    area.left + margin,
+                    area.left + area.width - frame.offsetWidth - margin
+                );
+                at.top = clampTo(
+                    at.top,
+                    area.top + margin,
+                    area.top + area.height - frame.offsetHeight - margin
+                );
+                frame.style.left = `${at.left - area.left}px`;
+                frame.style.top = `${at.top - area.top}px`;
+                frame.style.bottom = 'auto';
+                return;
+            }
+            frame.style.top = '';
+            frame.style.bottom = '';
             const view = viewRect();
             const boardRect = boardElement
                 ? boardElement.getBoundingClientRect()
@@ -200,7 +322,6 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
             frame.style.maxHeight = `${room.height + under}px`;
             if (resize || !sized.current) {
                 sized.current = true;
-                const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
                 const next = sizeFor(room, row, rem);
                 setSize((current) =>
                     current &&
@@ -215,7 +336,9 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
             const seenLeft = Math.max(board.left, view.left);
             const seenRight = Math.min(board.right, view.right);
             const middle =
-                seenRight > seenLeft ? (seenLeft + seenRight) / 2 : (board.left + board.right) / 2;
+                seenRight > seenLeft
+                    ? seenLeft + (dockRef.current ?? 0.5) * (seenRight - seenLeft)
+                    : (board.left + board.right) / 2;
             const left =
                 boardWidth < width + margin * 2
                     ? (boardWidth - width) / 2
@@ -266,6 +389,114 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
         };
     }, [place, sheet]);
 
+    // Coming off its edge or docking again, the sheet glides from where it was to where it now is
+    useLayoutEffect(() => {
+        const from = popFrom.current;
+        const frame = frameRef.current;
+        popFrom.current = null;
+        if (!from || !frame || motionOff()) {
+            return;
+        }
+        const to = frame.getBoundingClientRect();
+        frame.animate(
+            [
+                { transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` },
+                { transform: 'none' }
+            ],
+            { duration: popTime, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }
+        );
+    }, [floating]);
+
+    // Desktop: pulling the handle (or the header, away from its buttons) off the edge floats the sheet; a floating
+    // sheet is moved the same way, and docks when let go with its edge against the board's
+    const dockSpotOf = useCallback(
+        (frame) => {
+            const { left, right, top, bottom } = seenSpan(sheet);
+            const width = Math.min(frame.offsetWidth, right - left - margin * 2);
+            const height = Math.min(frame.offsetHeight, bottom - top - margin);
+            const rect = frame.getBoundingClientRect();
+            // It docks below or above where it floats, as near as the board allows
+            const spotLeft = clampTo(
+                rect.left + rect.width / 2 - width / 2,
+                left + margin,
+                right - margin - width
+            );
+            return {
+                left: spotLeft,
+                top: fromTop ? top : bottom - height,
+                width,
+                height,
+                dock: right > left ? (spotLeft + width / 2 - left) / (right - left) : 0.5,
+                touching: fromTop ? rect.top <= top + 1 : rect.bottom >= bottom - 1
+            };
+        },
+        [sheet, fromTop]
+    );
+    const startMove = (event) => {
+        const frame = frameRef.current;
+        if (phone || !frame || event.button !== 0 || event.target.closest('button')) {
+            return;
+        }
+        event.preventDefault();
+        const start = { x: event.clientX, y: event.clientY };
+        const rect = frame.getBoundingClientRect();
+        let over = false;
+        setHeld(true);
+        const move = (moved) => {
+            const dx = moved.clientX - start.x;
+            const dy = moved.clientY - start.y;
+            if (!floatRef.current) {
+                // Docked, it slides along its edge with the pointer
+                const span = seenSpan(sheet);
+                if (span.right > span.left) {
+                    const middle = rect.left + rect.width / 2 + dx;
+                    dockRef.current = clampTo(
+                        (middle - span.left) / (span.right - span.left),
+                        0,
+                        1
+                    );
+                    place();
+                }
+                const away = Math.max(0, fromTop ? dy : -dy);
+                if (away < detachAt) {
+                    setTug((fromTop ? 1 : -1) * away * tugGive);
+                    return;
+                }
+                popFrom.current = frame.getBoundingClientRect();
+                floatRef.current = { left: rect.left + dx, top: rect.top + dy };
+                setTug(0);
+                setFloating(true);
+                return;
+            }
+            floatRef.current = { left: rect.left + dx, top: rect.top + dy };
+            place();
+            const spot = dockSpotOf(frame);
+            over = spot.touching ? spot : null;
+            setDockSpot(over);
+        };
+        const up = () => {
+            window.removeEventListener('pointermove', move);
+            window.removeEventListener('pointerup', up);
+            window.removeEventListener('pointercancel', up);
+            setHeld(false);
+            setTug(0);
+            setDockSpot(null);
+            if (floatRef.current && over) {
+                popFrom.current = frame.getBoundingClientRect();
+                floatRef.current = null;
+                dockRef.current = over.dock;
+                setFloating(false);
+            }
+            writePlace(seat, {
+                dock: dockRef.current,
+                float: floatRef.current && { ...floatRef.current }
+            });
+        };
+        window.addEventListener('pointermove', move);
+        window.addEventListener('pointerup', up);
+        window.addEventListener('pointercancel', up);
+    };
+
     // The body is held to its cards' height, so a change of pile can ease from one height to the next. It only
     // scrolls once settled, so no scroll bar shows while it eases.
     const bodyRef = useRef(null);
@@ -310,6 +541,41 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
             clearTimeout(settle);
         };
     }, []);
+    // ...and so does its width (except in phone landscape's single row, which is as wide as the board). The frame
+    // takes its cards' width at once; it is drawn from its last width to that, and checked again once there.
+    useLayoutEffect(() => {
+        const frame = frameRef.current;
+        const content = contentRef.current;
+        if (!frame || !content || row) {
+            return;
+        }
+        let last = null;
+        let easing = null;
+        const fitWidth = () => {
+            if (easing) {
+                return;
+            }
+            const next = frame.getBoundingClientRect().width;
+            if (last !== null && Math.abs(next - last) > 1 && next > 0 && !motionOff()) {
+                easing = frame.animate([{ width: `${last}px` }, { width: `${next}px` }], {
+                    duration: resizeTime,
+                    easing: 'ease-out'
+                });
+                easing.onfinish = easing.oncancel = () => {
+                    easing = null;
+                    fitWidth();
+                };
+            }
+            last = next;
+        };
+        fitWidth();
+        const observer = new ResizeObserver(fitWidth);
+        observer.observe(content);
+        return () => {
+            observer.disconnect();
+            easing?.cancel();
+        };
+    }, [row]);
     const shownId = useRef(sheet.id);
     useLayoutEffect(() => {
         if (shownId.current === sheet.id) {
@@ -485,7 +751,7 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
                         data-choose={choose ? '' : undefined}
                         title={choose ? `${pile.title}: has cards to choose` : pile.title}
                         className={classNames(
-                            'shrink-0 rounded-full border px-2 text-[10px] font-semibold uppercase leading-5 tracking-wide lg:px-2.5 lg:py-0.5 lg:text-[11px]',
+                            'shrink-0 rounded-full border px-2 text-[11px] font-semibold uppercase leading-5 tracking-wide lg:px-2.5 lg:py-0.5 lg:text-xs',
                             current
                                 ? 'border-amber-400 bg-amber-400/20 text-amber-100'
                                 : choose
@@ -503,79 +769,122 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
 
     const shown = visible && open;
     const pulled = Math.max(toEdge(pull), 0) * (fromTop ? -1 : 1);
-    const grabber = phone && (
-        <div className='hud-zoom shrink-0 cursor-grab touch-none select-none'>
-            <div className='mx-auto my-1 h-1 w-10 rounded-full bg-default-400' />
+    const grabber = (
+        <div
+            data-sheet-handle=''
+            title={
+                phone
+                    ? undefined
+                    : floating
+                      ? 'Drag to move it, or to its edge to dock it'
+                      : 'Drag off the edge to float it'
+            }
+            className={classNames(
+                'hud-zoom group shrink-0 touch-none select-none',
+                held ? 'cursor-grabbing' : 'cursor-grab',
+                { 'py-1.5': !phone }
+            )}
+            onPointerDown={startMove}
+        >
+            {/* On a desktop the handle is taller, and wider, to take hold of with a mouse */}
+            <div
+                className={classNames(
+                    'mx-auto my-1 rounded-full bg-default-400 transition-colors',
+                    phone ? 'h-1 w-10' : 'h-1.5 w-16 group-hover:bg-default-200'
+                )}
+            />
         </div>
     );
+    const still = motionOff() || !!pull || held;
     // Drawn in the board's own layers, not over the page, so the players' stats bars lie over it
     return (
-        <div ref={boxRef} className='pointer-events-none fixed z-[300] overflow-hidden'>
-            <div
-                ref={frameRef}
-                data-popup=''
-                data-sheet={sheet.id}
-                data-sheet-player={sheet.playerName}
-                className={classNames(
-                    'absolute flex w-max flex-col border-x border-default-200 bg-zinc-950/95',
-                    fromTop
-                        ? 'top-0 flex-col-reverse rounded-b-xl border-b shadow-[0_8px_24px_rgba(0,0,0,0.6)]'
-                        : 'bottom-0 flex-col rounded-t-xl border-t shadow-[0_-8px_24px_rgba(0,0,0,0.6)]',
-                    { 'pointer-events-auto': open }
-                )}
-                style={{
-                    translate: shown ? `0 ${pulled}px` : fromTop ? '0 -100%' : '0 100%',
-                    transition: motionOff() || pull ? 'none' : `translate ${slideTime}ms ease-out`
-                }}
-                onPointerDownCapture={() => {
-                    pressedInside.current = true;
-                }}
-                onPointerUpCapture={() => {
-                    if (!dragSource) {
-                        pressedInside.current = false;
+        <>
+            {dockSpot && <DockHint spot={dockSpot} fromTop={fromTop} />}
+            <div ref={boxRef} className='pointer-events-none fixed z-[300] overflow-hidden'>
+                <div
+                    ref={frameRef}
+                    data-popup=''
+                    data-sheet={sheet.id}
+                    data-sheet-player={sheet.playerName}
+                    data-sheet-floating={floating ? '' : undefined}
+                    className={classNames(
+                        'absolute flex w-max flex-col border-default-200 bg-zinc-950/95',
+                        floating
+                            ? 'rounded-xl border shadow-[0_12px_40px_rgba(0,0,0,0.75)]'
+                            : fromTop
+                              ? 'top-0 flex-col-reverse rounded-b-xl border-x border-b shadow-[0_8px_24px_rgba(0,0,0,0.6)]'
+                              : 'bottom-0 rounded-t-xl border-x border-t shadow-[0_-8px_24px_rgba(0,0,0,0.6)]',
+                        { 'pointer-events-auto': open }
+                    )}
+                    style={
+                        floating
+                            ? {
+                                  opacity: shown ? 1 : 0,
+                                  transition: still ? 'none' : `opacity ${slideTime}ms ease-out`
+                              }
+                            : {
+                                  translate: shown
+                                      ? `0 ${pulled + tug}px`
+                                      : fromTop
+                                        ? '0 -100%'
+                                        : '0 100%',
+                                  transition: still ? 'none' : `translate ${slideTime}ms ease-out`
+                              }
                     }
-                }}
-                onClick={(event) => event.stopPropagation()}
-            >
-                {grabber}
-                <div
-                    className={classNames(
-                        'hud-zoom flex min-w-0 shrink-0 touch-pan-x select-none items-center gap-1.5 px-2 lg:gap-2 lg:px-3',
-                        fromTop ? 'pt-0.5 lg:pt-1' : 'pb-0.5 lg:pb-1'
-                    )}
-                    onPointerDown={stopDrag}
-                >
-                    {sheet.playerName && <PlayerTag player={sheet.playerName} />}
-                    {chips || (
-                        <span className='min-w-0 flex-1 truncate text-sm font-bold text-amber-100'>
-                            {sheet.title}
-                        </span>
-                    )}
-                    <Button
-                        isIconOnly
-                        size='sm'
-                        variant='light'
-                        title='Close'
-                        className='h-6 w-6 min-w-6 shrink-0 lg:h-8 lg:w-8 lg:min-w-8'
-                        onPress={() => sheet.close()}
-                    >
-                        <FontAwesomeIcon icon={faXmark} />
-                    </Button>
-                </div>
-                <div
-                    ref={bodyRef}
-                    className={classNames(
-                        'min-h-0 shrink overflow-y-auto overflow-x-hidden overscroll-contain',
-                        {
-                            hidden: strip
+                    onPointerDownCapture={() => {
+                        pressedInside.current = true;
+                    }}
+                    onPointerUpCapture={() => {
+                        if (!dragSource) {
+                            pressedInside.current = false;
                         }
-                    )}
-                    style={size ? { '--card-scale': String(size.scale) } : undefined}
+                    }}
+                    onClick={(event) => event.stopPropagation()}
                 >
-                    <div ref={bindContent} />
+                    {grabber}
+                    <div
+                        className={classNames(
+                            'hud-zoom flex min-w-0 shrink-0 touch-pan-x select-none items-center gap-1.5 px-2 lg:gap-2 lg:px-3',
+                            fromTop ? 'pt-0.5 lg:pt-1' : 'pb-0.5 lg:pb-1'
+                        )}
+                        onPointerDown={(event) => {
+                            stopDrag(event);
+                            startMove(event);
+                        }}
+                    >
+                        {sheet.playerName && <PlayerTag player={sheet.playerName} />}
+                        {chips || (
+                            <span className='min-w-0 flex-1 truncate text-sm font-bold text-amber-100'>
+                                {sheet.title}
+                            </span>
+                        )}
+                        <Button
+                            isIconOnly
+                            size='sm'
+                            variant='light'
+                            title='Close'
+                            className='h-6 w-6 min-w-6 shrink-0 lg:h-8 lg:w-8 lg:min-w-8'
+                            onPress={() => sheet.close()}
+                        >
+                            <FontAwesomeIcon icon={faXmark} className='text-base' />
+                        </Button>
+                    </div>
+                    <div
+                        ref={bodyRef}
+                        className={classNames(
+                            'min-h-0 shrink overflow-y-auto overflow-x-hidden overscroll-contain',
+                            {
+                                hidden: strip,
+                                '[&_*]:!pointer-events-none': held
+                            }
+                        )}
+                        style={size ? { '--card-scale': String(size.scale) } : undefined}
+                    >
+                        <div ref={bindContent} />
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

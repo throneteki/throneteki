@@ -859,6 +859,81 @@ From the review on 2026-11-17 (seventh batch):
       is drawn in units of `--card-scale`, so it keeps its weight on large cards and small piles alike, never under
       0.75px a unit. Rings around interface things (a sheet's chips, the edge hints' lines) use `--ring-scale: 1`.
 
+From the review on 2026-11-20 (second batch):
+
+- [x] **R219 The stats bar's buttons fill its height**: the game menu's buttons and the chat button are as tall as the
+      desktop's bar (they were `h-7` in an `h-8` bar).
+- [x] **R220 Spectators shows who is watching**: its button in the bar opens a list of the spectators (it only
+      cleared the "changed" dot, the names being in its tooltip). The phone menu already lists them.
+- [x] **R221 The desktop's prompt is a size up**: the floating prompt is drawn at 1.15 of the interface's size, and
+      is as much wider, as it read smaller than the bars.
+- [x] **R222 Smaller sizes by default, capped on a desktop (decided 2026-11-20: both boards)**: fitted cards fill 90%
+      of the room they could and stop at 1.5 (they went to 2): the classic board's fit (`cardScale.js`) and the
+      adaptive desktop's (`wide.fill`, `max`). The desktop interface starts a step down (0.9 on a 1600×950 screen),
+      grows half as fast as the screen and stops at 1.15 (was 1.4), on both boards (`desktopInterfaceFit`). Phone
+      layouts are unchanged. 1600×950 is now cards 1.2 / interface 0.9; 2560×1440 cards 1.5 / interface 1.1.
+- [x] **R223 A card's order number pops with it**: the number on a card being ordered is on the card's surface, so it
+      moves with the card when chosen rather than staying where the card was.
+- [x] **R224 Naming a card works again**: beside the board (desktop, phone landscape) the lookup is drawn in the
+      prompt itself; its panel was `position: fixed` inside the desktop prompt's transform, so it was a clipped
+      sliver. In portrait the panel lies over our stats while open (it was under them, which took its taps), and is
+      no longer zoomed twice.
+- [ ] **R225 An empty bar at the bottom of the board**: a blank strip between the hand row and our stats bar.
+      Not reproduced in the fixtures; on hold until it is narrowed down.
+- [x] **R226 Manual mode's +/-**: on the adaptive board each stat has a small round − and + either side of it, the
+      stats spaced apart (classic keeps its own).
+- [x] **R227 Pillage flies the top card into the discard**: a card new to a discard pile flies from its owner's deck,
+      turning over (both boards). A card uncovered under a pile's top only flies with it when the top card came too.
+      A "Pillage" fixture step shows it.
+- [x] **R228 Cards load behind a skeleton**: an opaque card-shaped placeholder (frame, art and text box, pulsing)
+      until the image has loaded, rather than a see-through tint.
+- [x] **R229 The desktop's bar is slimmer**: spectators (with their count), mute, settings, shortcuts, manual mode and
+      report are icons; concede and leave keep their names. They are grouped (watching, tools, ways out) with a thin
+      line between groups.
+- [x] **R230 A desktop sheet can float (decided 2026-11-20)**: it has the phone's handle. Pulled off its edge it
+      holds, giving a little, then comes away at 64px into a panel over the board, with a border and rounded corners
+      all round. Dragged by its handle or header it moves; held within 72px of its edge, the edge lights up with
+      "Release to dock", and let go it docks again. It glides between the two. Where a player's floating sheet was
+      left is kept for when it next opens. Its cards take no hover while it is dragged.
+- [x] **R231 Rows in a sheet hold at most 5 sideways cards (plots) or 10 upright ones**, however wide the screen.
+- [x] **R232 The draw deck's View Hidden and Close and Shuffle** are amber pills in the sheet, as its chips are.
+- [x] **R233 A pile's label fades in once a card has settled on it**: hidden while cards fly in (it was covered by
+      the flying card, then appeared at once), then fading in over 450ms (desktop, where piles are labelled).
+- [x] **R235 A floating sheet docks by touching its edge**: not when the pointer is near it. Once the sheet's own edge
+      meets the board's edge it came from, where it would dock is outlined in amber (no text); let go there, it docks
+      (supersedes R230's 72px zone and "Release to dock").
+- [x] **R236 The desktop sheet's handle is taller and wider**, to take hold of with a mouse.
+- [x] **R237 Card and Interface sizes always stack** in the profile and game settings, each with the full width.
+- [x] **R238 An opponent's hand is as wide as ours on a desktop**: it is only squeezed to fit on phone layouts.
+- [x] **R239 An opponent's hand fans as they would hold it**: across the table the fan is turned to face them (outer
+      cards higher, leaning the other way; the overlap stays as the hand's, R242), centred on their hand as far as it fits, and the
+      dimming covers their board only (strips and play area, as far as can be seen).
+- [x] **R240 Interface sizes in a narrow range**: the desktop bar's actions were 12px text and icons beside a 16px
+      name. Now icons in the bars, tools and sheet headers are 16px, the bar's named buttons 14px, chips and pills
+      12px (11px on phones' sheet chips), small uppercase labels (phase roll, prompt title, options toggle, log skip)
+      at least 11px, and badges 10px.
+- [x] **R241 A sheet's width eases too**: going from pile to pile it grows or shrinks to the new width over 200ms, as
+      its height does (not in phone landscape's single row). Supersedes the review's note that only the height eases.
+- [x] **R242 The fan overlaps as the hand does**: each card over the one before it, as in the strip (R239 had
+      reversed it).
+- [x] **R243 A floating sheet is no taller than its player's board** (as far as it can be seen), its cards sized to
+      that.
+- [x] **R244 A desktop sheet keeps its place, by seat**: docked, it slides along its edge when its handle or header is
+      dragged sideways; floating, it stays where it was left. Both are kept in the browser (`sheet-place-<seat>`,
+      the seat being the pile's popup id, as the classic board keeps its panels), docked as where its middle lies across the board so
+      it holds as the screen changes. A floating sheet docks below or above where it floats, the outline showing
+      where, and keeps that place docked.
+- [x] **R245 Drawing several cards no longer jerks the hand (both boards)**: a card still in the air when the next
+      arrived was left out of that update, so when the hand closed up (from the sixth card) its flying copy carried on
+      to its old place and the card jumped there on landing (about 60px). A card's copy also stayed for its landing
+      glow after the flight was counted as over, so the hidden card moved in the next update while the copy stood
+      still, and jumped when the copy went. Now a card counts as in the air until its copy is gone, and a card whose
+      place moves while in the air is steered to the new place for the rest of its flight (or over 200ms once landed).
+      Sampled each frame while drawing 7 (desktop and portrait, the "Draw 7" fixture step): no card jumps after it
+      lands.
+- [x] **R234 Tokens are in the middle of the card again, and their changes stand out**: the +x / −x that floats off a
+      counter is a larger bold pill, green or red, and stays a little longer (both boards).
+
 - [x] `client/hud.js`: add `board: 'classic'` to `defaultHud`, and accept `'classic' | 'adaptive'` in
       `normalizeHud`.
 - [x] `server/hudSettings.js`: allow `board` through `sanitizeHud`, as one of those two values only.

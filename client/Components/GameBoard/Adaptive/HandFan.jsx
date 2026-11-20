@@ -11,31 +11,44 @@ const spreadShare = 0.55;
 
 const remSize = () => parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
 
-// The opponent's half of the screen: at the top, below their bar (which stays above the fan) and down to the divider;
-// at the bottom (a melee table's bottom row), from the divider down to the bottom of the board. Room is kept for the
-// fan's label on the side away from the divider.
-const halfArea = (side) => {
-    const style = getComputedStyle(document.documentElement);
-    const read = (name) => parseFloat(style.getPropertyValue(name));
+// The player's own board (their strips and play area), as far as it can be seen: the fan's backdrop covers it, and
+// the fan keeps within it. Room is kept for the fan's label on the side away from the divider.
+const boardArea = (side, playerName) => {
+    const view = document.querySelector('[data-board-scroll]')?.getBoundingClientRect() ?? {
+        left: 0,
+        top: 0,
+        right: window.innerWidth,
+        bottom: window.innerHeight
+    };
+    const board = playerName
+        ? document
+              .querySelector(`[data-side][data-player="${CSS.escape(playerName)}"]`)
+              ?.getBoundingClientRect()
+        : null;
+    const rect = board ?? {
+        left: view.left,
+        right: view.right,
+        top: side === 'bottom' ? (view.top + view.bottom) / 2 : view.top,
+        bottom: side === 'bottom' ? view.bottom : (view.top + view.bottom) / 2
+    };
+    const left = Math.max(rect.left, view.left);
+    const right = Math.min(rect.right, view.right);
+    const top = Math.max(rect.top, view.top);
+    const bottom = Math.min(rect.bottom, view.bottom);
     const label = 2.5 * remSize();
-    if (side === 'bottom') {
-        const top =
-            read('--board-divider-bottom') > 0
-                ? read('--board-divider-bottom')
-                : window.innerHeight / 2;
-        const end =
-            read('--board-view-bottom') > 0 ? read('--board-view-bottom') : window.innerHeight;
-        return { width: window.innerWidth, top, height: end - top - label };
-    }
-    const bottom = read('--board-divider-top');
-    const top = read('--board-chat-top') || 0;
-    const end = bottom > 0 ? bottom : window.innerHeight / 2;
-    return { width: window.innerWidth, top: top + label, height: end - top - label };
+    return {
+        backdrop: { left, top, width: right - left, height: bottom - top },
+        left,
+        width: right - left,
+        top: side === 'bottom' ? top : top + label,
+        height: bottom - top - label
+    };
 };
 
-// Where each card lies in the fan, and the card size that fits the whole fan into the area: the outer cards sit
-// lower round the arc and lean out, so the fan is taller than a card
-const fanLayout = (count, area) => {
+// Where each card lies in the fan, and the card size that fits the whole fan into the area, centred as near the hand
+// (centreX) as it fits. The outer cards sit lower round the arc and lean out, as a hand held by the player at the
+// bottom; held by a player across the table (mirrored) the fan is turned to face them, its outer cards higher.
+const fanLayout = (count, area, centreX, mirrored) => {
     const rem = remSize();
     const step = count > 1 ? Math.min(8, 48 / (count - 1)) : 0;
     const drop = (offset) => offset * offset * step * 0.006;
@@ -52,17 +65,31 @@ const fanLayout = (count, area) => {
     );
     const cardWidth = 4 * rem * scale;
     const cardHeight = 5.6 * rem * scale;
+    const half = (spanCards * cardWidth) / 2 + cardWidth * 0.2;
+    const middle = Math.min(
+        Math.max(centreX ?? area.left + area.width / 2, area.left + half),
+        area.left + area.width - half
+    );
     const first = area.top + (area.height - tall * cardHeight) / 2;
     const places = Array.from({ length: count }, (_, index) => {
         const offset = index - outer;
+        const lower = mirrored ? drop(outer) - drop(offset) : drop(offset);
         return {
-            x: area.width / 2 + offset * cardWidth * spreadShare - cardWidth / 2,
-            y: first + drop(offset) * cardHeight,
-            rotate: offset * step,
+            x: middle + offset * cardWidth * spreadShare - cardWidth / 2,
+            y: first + lower * cardHeight,
+            rotate: (mirrored ? -offset : offset) * step,
             scale: 1
         };
     });
-    return { scale, cardWidth, places, top: first, bottom: first + tall * cardHeight };
+    return {
+        scale,
+        cardWidth,
+        places,
+        middle,
+        top: first,
+        bottom: first + tall * cardHeight,
+        backdrop: area.backdrop
+    };
 };
 
 // Where a card lies in the strip, as a place for the fan to start from and go back to
@@ -94,10 +121,21 @@ const HandFan = ({ cards, side = 'top', playerName, onCardClick, children }) => 
         .map((card) => card.uuid)
         .join(',');
 
+    // Across the table the player holds their cards facing them, so the fan is turned their way
+    const mirrored = side === 'top';
+    const measure = useCallback(() => {
+        const hand = stripRef.current?.getBoundingClientRect();
+        return fanLayout(
+            cards.length,
+            boardArea(side, playerName),
+            hand && hand.width > 0 ? hand.left + hand.width / 2 : null,
+            mirrored
+        );
+    }, [cards.length, side, playerName, mirrored]);
     const open = useCallback(() => {
-        setLayout(fanLayout(cards.length, halfArea(side)));
+        setLayout(measure());
         setState('open');
-    }, [cards.length, side]);
+    }, [measure]);
     const close = useCallback(
         () => setState((current) => (current === 'open' ? 'closing' : current)),
         []
@@ -126,9 +164,9 @@ const HandFan = ({ cards, side = 'top', playerName, onCardClick, children }) => 
     // The fan follows the hand while it is out
     useLayoutEffect(() => {
         if (state === 'open') {
-            setLayout(fanLayout(cards.length, halfArea(side)));
+            setLayout(measure());
         }
-    }, [cards.length, state, side]);
+    }, [state, measure]);
 
     useEffect(() => {
         if (state !== 'open' || selecting) {
@@ -171,24 +209,18 @@ const HandFan = ({ cards, side = 'top', playerName, onCardClick, children }) => 
                     <div className='pointer-events-none fixed inset-0 z-[290]'>
                         <motion.div
                             className={classNames(
-                                'absolute inset-x-0 bg-black/70',
+                                'absolute bg-black/70',
                                 state === 'open' && 'pointer-events-auto'
                             )}
-                            style={
-                                below
-                                    ? {
-                                          top: 'var(--board-divider-bottom, 50%)',
-                                          height: 'calc(var(--board-view-bottom, 100%) - var(--board-divider-bottom, 50%))'
-                                      }
-                                    : { top: 0, height: 'var(--board-divider-top, 50%)' }
-                            }
+                            style={layout.backdrop}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: state === 'open' ? 1 : 0 }}
                             transition={{ duration: fanTime }}
                         />
                         <motion.div
-                            className='absolute inset-x-0 flex justify-center'
+                            className='absolute flex -translate-x-1/2 justify-center'
                             style={{
+                                left: layout.middle,
                                 top: below
                                     ? `calc(${layout.bottom}px + 0.25rem)`
                                     : `calc(${layout.top}px - 2.25rem)`
@@ -219,7 +251,10 @@ const HandFan = ({ cards, side = 'top', playerName, onCardClick, children }) => 
                                     key={card.uuid}
                                     data-fan-card=''
                                     className='pointer-events-auto absolute left-0 top-0'
-                                    style={{ '--card-scale': layout.scale, zIndex: index }}
+                                    style={{
+                                        '--card-scale': layout.scale,
+                                        zIndex: index
+                                    }}
                                     initial={home}
                                     animate={state === 'open' ? place : home}
                                     transition={{ duration: fanTime, ease: 'easeInOut' }}

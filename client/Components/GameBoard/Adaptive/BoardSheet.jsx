@@ -25,7 +25,8 @@ const BoardSheet = ({
     const title = pileTitle ?? fullTitle;
     const closeRef = useRef(onCloseClick);
     closeRef.current = onCloseClick;
-    const details = { side, name, title, playerName, prompting };
+    // seat: where the pile sits (its popup id), by which a desktop sheet's place is kept
+    const details = { side, name, title, playerName, prompting, seat: id ?? side };
     const detailsRef = useRef(details);
     detailsRef.current = details;
     const { sheets, contentNodes, layouts } = useSheetState();

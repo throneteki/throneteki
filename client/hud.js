@@ -32,7 +32,14 @@ const legacyCardSizes = {
 
 const screenReference = { width: 1600, height: 950 };
 const screenStep = 0.05;
-const screenRange = { min: 0.8, max: 1.4 };
+const screenRange = { min: 0.8, max: 1.15 };
+// On a usual desktop the interface is drawn a step below normal, and on a larger screen it grows half as fast as the
+// screen does, up to screenRange.max
+const screenBase = 0.9;
+const screenGrowth = 0.5;
+
+export const desktopInterfaceFit = (fit) =>
+    screenBase * (fit >= 1 ? 1 + (fit - 1) * screenGrowth : fit);
 const absoluteRange = { cards: { min: 0.3, max: 5 }, interface: { min: 0.5, max: 2.5 } };
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
@@ -100,8 +107,14 @@ export const normalizeHud = (settings) => {
 };
 
 export const computeScreenScale = ({ width, height }) => {
-    const fit = Math.min(width / screenReference.width, height / screenReference.height);
-    return clamp(Math.floor(fit / screenStep) * screenStep, screenRange.min, screenRange.max);
+    const fit = desktopInterfaceFit(
+        Math.min(width / screenReference.width, height / screenReference.height)
+    );
+    return clamp(
+        Math.round(Math.floor(fit / screenStep + 1e-9) * screenStep * 100) / 100,
+        screenRange.min,
+        screenRange.max
+    );
 };
 
 export const computeHudScales = ({ hud, cardFit = 1, screen = 1 }) => {

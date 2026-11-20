@@ -46,6 +46,7 @@ const PileCluster = ({ player, isMe, spectating, pileProps, droppable, offerEmpt
                     title='Discard'
                     source='discard pile'
                     cards={discard}
+                    flipFrom={player.user?.username}
                     {...pileProps}
                 />,
                 discard.length

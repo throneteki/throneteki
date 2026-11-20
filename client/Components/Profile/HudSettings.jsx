@@ -326,7 +326,7 @@ const HudSettings = ({ value, onChange, inGame = false }) => {
                         </Radio>
                     </RadioGroup>
                 </Choice>
-                <div className='grid gap-4 p-3 sm:grid-cols-2'>
+                <div className='grid gap-4 p-3'>
                     <SizeSlider
                         kind='cards'
                         label='Cards'

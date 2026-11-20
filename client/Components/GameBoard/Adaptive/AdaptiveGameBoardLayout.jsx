@@ -90,11 +90,13 @@ const useEqualPlayAreas = (boardRef, mode) => {
     };
 };
 
+// The desktop's prompt is drawn a size up from the rest of the interface, its text being what is read most
+const promptBoost = 1.15;
 // How wide the prompt is as a panel over the side of the play areas (on a desktop): like classic's, following the
 // interface size
-const floatingPromptWidth = 'calc(var(--ui-scale, 1) * clamp(12rem, 20vw, 16rem))';
+const floatingPromptWidth = `calc(var(--ui-scale, 1) * ${promptBoost} * clamp(12rem, 20vw, 16rem))`;
 // The room the chat button takes beside the game menu in the desktop's bar, in pixels at the interface's size
-const chatButtonRoom = 32;
+const chatButtonRoom = 36;
 // Phone landscape's column down one side: the stats at its top and bottom, the prompt and our tools between
 const columnWidth = 'clamp(13rem, 30vw, 20rem)';
 
@@ -338,6 +340,8 @@ const AdaptiveGameBoardLayout = ({
                 children
             );
         const handInStrip = !(isMe && handTrayShown);
+        // An opponent's hand is squeezed to fit on a phone; on a desktop it is as wide as ours
+        const squishHand = !isMe && phoneLayout;
         const hand = withoutPendingAttachment(player.cardPiles.hand);
         const shadows = withoutPendingAttachment(player.cardPiles.shadows);
         // An opponent's hand fans out over their half when tapped or chosen from: the top half, or at a melee table
@@ -399,9 +403,9 @@ const AdaptiveGameBoardLayout = ({
                         area='hand'
                         scale={pileScale}
                         className={
-                            isMe
-                                ? 'shrink-0'
-                                : 'min-w-[calc(var(--card-scale,1)*4.4rem)] shrink grow-0 basis-[calc(var(--card-scale,1)*12rem)]'
+                            squishHand
+                                ? 'min-w-[calc(var(--card-scale,1)*4.4rem)] shrink grow-0 basis-[calc(var(--card-scale,1)*12rem)]'
+                                : 'shrink-0'
                         }
                     >
                         {fanned(
@@ -410,8 +414,8 @@ const AdaptiveGameBoardLayout = ({
                                 <SquishableCardPanel
                                     cards={hand}
                                     groupVisibleCards
-                                    fitWidth={!isMe}
-                                    maxCards={isMe ? 5 : 3}
+                                    fitWidth={squishHand}
+                                    maxCards={squishHand ? 3 : 5}
                                     onCardClick={onCardClick}
                                     source='hand'
                                     title='Hand'
@@ -579,24 +583,38 @@ const AdaptiveGameBoardLayout = ({
             sendButtonClickedMessage(button.promptId, button.command, button.method, button.arg)
         );
     // The chat button among our tools, in place of the chat's tab
-    const chatButton = chat && (
-        <Button
-            isIconOnly
-            size='sm'
-            variant='light'
-            className='relative h-7 w-7 min-w-7 overflow-visible'
-            title={chat.open ? 'Hide chat' : 'Show chat'}
-            aria-expanded={chat.open}
-            onPress={chat.onToggle}
-        >
-            <FontAwesomeIcon icon={chat.open ? faCommentSlash : faComment} />
-            {!chat.open && chat.unread > 0 && (
-                <span className='absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-bold text-white'>
-                    {chat.unread > 99 ? '99+' : chat.unread}
-                </span>
-            )}
-        </Button>
-    );
+    // inBar: in the desktop's stats bar, as tall as the bar
+    const chatButton = (inBar = false) =>
+        chat && (
+            <Button
+                isIconOnly
+                size='sm'
+                variant='light'
+                radius={inBar ? 'none' : undefined}
+                className={classNames(
+                    'relative min-w-7 overflow-visible',
+                    inBar ? 'h-full w-9' : 'h-7 w-7'
+                )}
+                title={chat.open ? 'Hide chat' : 'Show chat'}
+                aria-expanded={chat.open}
+                onPress={chat.onToggle}
+            >
+                <FontAwesomeIcon
+                    icon={chat.open ? faCommentSlash : faComment}
+                    className='text-base'
+                />
+                {!chat.open && chat.unread > 0 && (
+                    <span
+                        className={classNames(
+                            'absolute flex h-4 min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-bold text-white',
+                            inBar ? 'right-0.5 top-0.5' : '-right-1 -top-1'
+                        )}
+                    >
+                        {chat.unread > 99 ? '99+' : chat.unread}
+                    </span>
+                )}
+            </Button>
+        );
     // At a melee table: whether the view follows the action (directed) or not (manual), and switches it
     const followToggle = melee && (
         <Button
@@ -617,7 +635,10 @@ const AdaptiveGameBoardLayout = ({
             }
             onPress={followed.paused ? followed.resume : followed.stop}
         >
-            <FontAwesomeIcon icon={followed.paused ? faUpDownLeftRight : faVideo} />
+            <FontAwesomeIcon
+                icon={followed.paused ? faUpDownLeftRight : faVideo}
+                className='text-base'
+            />
         </Button>
     );
     // Our game menu, given the room our stats leave (the desktop's joust bar) to show what fits as buttons
@@ -634,7 +655,7 @@ const AdaptiveGameBoardLayout = ({
     const tools = (className) => (
         <ToolBox data-region='tools' className={className}>
             {followToggle}
-            {chatButton}
+            {chatButton()}
             {phoneLayout && <FullscreenToggle />}
             {gameMenu(0)}
         </ToolBox>
@@ -672,7 +693,11 @@ const AdaptiveGameBoardLayout = ({
                     'absolute top-0 -translate-y-1/2',
                     promptSide === 'right' ? 'right-[var(--board-prompt-inset)]' : 'left-0'
                 )}
-                style={{ width: 'var(--board-prompt-width)' }}
+                style={{
+                    width: 'var(--board-prompt-width)',
+                    // --text-scale carries the interface's scale too (interfaceScaleProperties)
+                    '--ui-scale': `calc(var(--text-scale, 1) * ${promptBoost})`
+                }}
             >
                 {promptBar(
                     'panel',
@@ -1042,7 +1067,7 @@ const AdaptiveGameBoardLayout = ({
                                     {(room) => (
                                         <>
                                             {gameMenu(Math.max(0, room - chatButtonRoom))}
-                                            {chatButton}
+                                            {chatButton(true)}
                                         </>
                                     )}
                                 </PlayerStatsBar>

@@ -91,8 +91,9 @@ describe('normalizeHud', function () {
 describe('computeScreenScale', function () {
     it('is smaller on phones and larger on big screens within limits', function () {
         expect(computeScreenScale({ width: 390, height: 800 })).toBe(0.8);
-        expect(computeScreenScale({ width: 1600, height: 950 })).toBe(1);
-        expect(computeScreenScale({ width: 5000, height: 3000 })).toBe(1.4);
+        expect(computeScreenScale({ width: 1600, height: 950 })).toBe(0.9);
+        expect(computeScreenScale({ width: 2560, height: 1440 })).toBe(1.1);
+        expect(computeScreenScale({ width: 5000, height: 3000 })).toBe(1.15);
     });
 });
 

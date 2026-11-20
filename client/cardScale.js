@@ -1,5 +1,7 @@
 const autoMinScale = 0.5;
-const autoMaxScale = 2;
+const autoMaxScale = 1.5;
+// Fitted cards fill this much of the room they could, so the board is not packed edge to edge
+const autoFill = 0.9;
 const autoStep = 0.05;
 
 // Space the board needs at scale 1 (in rem), including the parts that do not scale with cards
@@ -8,12 +10,15 @@ const autoLayoutRem = { width: 56, height: 56 };
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
 export const computeAutoCardScale = ({ width, height, rem = 16 }) => {
-    const fit = Math.min(
-        width / (autoLayoutRem.width * rem),
-        height / (autoLayoutRem.height * rem)
-    );
+    const fit =
+        autoFill *
+        Math.min(width / (autoLayoutRem.width * rem), height / (autoLayoutRem.height * rem));
 
-    return clamp(Math.floor(fit / autoStep) * autoStep, autoMinScale, autoMaxScale);
+    return clamp(
+        Math.round(Math.floor(fit / autoStep + 1e-9) * autoStep * 100) / 100,
+        autoMinScale,
+        autoMaxScale
+    );
 };
 
 export const settleAutoCardScale = (current, next) => {

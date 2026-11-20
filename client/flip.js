@@ -261,7 +261,10 @@ export const planFlip = ({
         }
 
         const origin = now.from && decks.get(now.from);
-        if (!origin && (now.under || findPile(uuid))) {
+        // A card newly shown under a pile's top card only came from the deck if the top card did too: otherwise it
+        // was already in the pile, and is uncovered by the top card leaving
+        const uncovered = now.under && (!now.underOf || before.has(now.underOf));
+        if ((!origin && (now.under || findPile(uuid))) || (origin && uncovered)) {
             continue;
         }
         if (!origin) {
@@ -325,6 +328,7 @@ export const planFlip = ({
             travel: true,
             behind: !!was.under || !!pile.covered || isCovered(was.source),
             area: pile.area,
+            pileEl: pile.pileEl,
             old: { left: was.left, top: was.top },
             now: { left: pile.left, top: pile.top },
             fromSource: was.source,
@@ -500,6 +504,7 @@ const findPile = (uuid) => {
             const code = entry.codes?.get(uuid);
             return {
                 ...topOfPile(entry.el),
+                pileEl: entry.el,
                 source: entry.source,
                 depth: entry.uuids.get(uuid),
                 covered: !!entry.covered,
@@ -904,7 +909,43 @@ const buildGhost = ({ uuid, faceNode, rot }, rect) => {
     return el;
 };
 
+// A pile's label stays hidden while cards fly into it, and fades in once the last has settled on top
+const labelFade = 450;
+const labelHolds = new WeakMap();
+const labelOf = (el) =>
+    el?.closest?.('[data-labelled-area]')?.querySelector(':scope > [data-area-label]') ?? null;
+
+const holdLabel = (label) => {
+    if (!label) {
+        return () => {};
+    }
+    const holds = (labelHolds.get(label) ?? 0) + 1;
+    labelHolds.set(label, holds);
+    if (holds === 1) {
+        label.getAnimations().forEach((animation) => animation.cancel());
+        label.animate([{ opacity: 0 }, { opacity: 0 }], { duration: 60000, fill: 'both' });
+    }
+    let released = false;
+    return () => {
+        if (released) {
+            return;
+        }
+        released = true;
+        const left = (labelHolds.get(label) ?? 1) - 1;
+        labelHolds.set(label, left);
+        if (left > 0) {
+            return;
+        }
+        label.getAnimations().forEach((animation) => animation.cancel());
+        label.animate([{ opacity: 0 }, { opacity: 1 }], {
+            duration: labelFade,
+            easing: 'ease-out'
+        });
+    };
+};
+
 const animateGhost = (item) => {
+    const showLabel = holdLabel(labelOf(item.pileEl));
     const { rect, dx, dy, rotate, origin, turnTo, delay, duration, returning, toSource } = item;
     const el = item.el ?? buildGhost(item.built, rect);
     detach(el, rect, item.behind, item.area);
@@ -943,7 +984,10 @@ const animateGhost = (item) => {
               easing: flipConfig.easing,
               fill: 'both'
           });
-    whenOver(animation, () => el.remove());
+    whenOver(animation, () => {
+        el.remove();
+        showLabel();
+    });
 };
 
 const animateExit = ({ el, rect, duration }) => {
@@ -1010,28 +1054,78 @@ const flyAbove = (el) => {
         node.removeAttribute('data-flip');
         node.removeAttribute('data-flip-deck');
     }
+    copy.dataset.flipCopy = el.dataset.flip;
     detach(copy, { ...rectOf(el), scale: cardScaleOf(el) });
     el.style.visibility = 'hidden';
     return {
         target: copy,
-        settle: () =>
-            Promise.allSettled(endingAnimations(copy).map((a) => a.finished)).then(() => {
+        settle: () => {
+            const running = () =>
+                endingAnimations(copy).filter((animation) => animation.playState !== 'finished');
+            const done = () =>
+                running().length > 0
+                    ? Promise.allSettled(running().map((a) => a.finished)).then(done)
+                    : Promise.resolve();
+            return done().then(() => {
                 copy.remove();
                 el.style.visibility = '';
-            })
+            });
+        }
     };
 };
 
+// Once every animation the card was given has ended
+const settledFlight = (el) =>
+    Promise.allSettled(endingAnimations(el).map((animation) => animation.finished));
+
+// Cards in the air: when each is done with (a card flying as a copy, once the copy is gone), when it lands, the copy
+// flying above for it (if any), and where it is headed
 const flights = new Map();
+const staleAfter = 3000;
 
 const inFlight = () => {
     const now = performance.now();
-    for (const [uuid, end] of flights) {
-        if (end <= now) {
+    for (const [uuid, flight] of flights) {
+        // A copy gone some other way, or long overdue, no longer holds its card
+        const stale = flight.copy && (!flight.copy.isConnected || now > flight.land + staleAfter);
+        if (flight.end <= now || stale) {
             flights.delete(uuid);
         }
     }
     return new Set(flights.keys());
+};
+
+// A card in the air whose place moves before it lands (a hand closing up as the next card is drawn) is steered to its
+// new place for the rest of its flight, rather than landing where its place was and jumping
+// A copy already landed (still showing its landing glow) slides over in this long
+const steerTime = 200;
+
+const steerFlights = (flying, after) => {
+    const now = performance.now();
+    for (const uuid of flying) {
+        const flight = flights.get(uuid);
+        const place = after.get(uuid);
+        if (!flight?.copy?.isConnected || !flight.to || !place) {
+            continue;
+        }
+        const dx = place.left - flight.to.left;
+        const dy = place.top - flight.to.top;
+        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
+            continue;
+        }
+        const from = flight.shift;
+        const to = { x: from.x + dx, y: from.y + dy };
+        flight.copy.animate(
+            [{ translate: `${from.x}px ${from.y}px` }, { translate: `${to.x}px ${to.y}px` }],
+            {
+                duration: Math.max(steerTime, flight.land - now),
+                easing: 'ease-out',
+                fill: 'forwards'
+            }
+        );
+        flight.shift = to;
+        flight.to = { left: place.left, top: place.top };
+    }
 };
 
 export const playPendingFlip = (root = document) => {
@@ -1055,6 +1149,7 @@ export const playPendingFlip = (root = document) => {
     if (landInPopup && after.has(landInPopup)) {
         landInPopup = null;
     }
+    steerFlights(flying, after);
     for (const uuid of [ignored, ...flying]) {
         before.delete(uuid);
         after.delete(uuid);
@@ -1087,7 +1182,8 @@ export const playPendingFlip = (root = document) => {
         const flies = item.type === 'move' && item.travel && !item.nested;
         const { target, settle } = flies
             ? flyAbove(item.el)
-            : { target: item.el, settle: () => {} };
+            : { target: item.el, settle: () => null };
+        const showLabel = flies ? holdLabel(labelOf(item.el)) : () => {};
         target.animate(slap ? slapKeyframes(item) : keyframesFor(item), {
             id: 'flip',
             duration,
@@ -1110,7 +1206,14 @@ export const playPendingFlip = (root = document) => {
         }
 
         if (flies) {
-            flights.set(item.uuid, performance.now() + item.delay + duration);
+            const land = performance.now() + item.delay + duration;
+            flights.set(item.uuid, {
+                end: target === item.el ? land : Infinity,
+                land,
+                copy: target === item.el ? null : target,
+                to: item.now,
+                shift: { x: 0, y: 0 }
+            });
             if (slap) {
                 bounceCard(target, item);
             } else {
@@ -1128,6 +1231,12 @@ export const playPendingFlip = (root = document) => {
                 fill: 'backwards'
             });
         }
-        settle();
+        const landed = () => {
+            if (target !== item.el && flights.get(item.uuid)?.copy === target) {
+                flights.delete(item.uuid);
+            }
+            showLabel();
+        };
+        (settle() ?? settledFlight(target)).then(landed, landed);
     }
 };

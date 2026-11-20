@@ -14,14 +14,35 @@ const StatDisplay = ({
     onMinusClick,
     onPlusClick,
     compact = false,
-    reach
+    reach,
+    flank = false
 }) => {
+    // flank (adaptive board): a small round - and + either side of the stat, rather than under its edges
+    const flankButton = (label, icon, onPress) => (
+        <Button
+            isIconOnly
+            title={`${label} ${statName}`}
+            variant='flat'
+            size='sm'
+            radius='full'
+            className='h-5 w-5 min-w-5 shrink-0 border border-white/25 bg-white/10 text-[10px] text-white data-[hover=true]:bg-white/25'
+            onPress={onPress}
+        >
+            <FontAwesomeIcon icon={icon} />
+        </Button>
+    );
     return (
         // Positioned itself, so the icon stays with its stat when the bar around it scrolls
         <div
-            className={`${statName} relative flex items-center justify-center ${compact ? 'min-w-8' : 'min-w-12'}`}
+            className={classNames(
+                statName,
+                'relative flex items-center justify-center',
+                compact ? 'min-w-8' : 'min-w-12',
+                { 'px-2': flank && showControls }
+            )}
         >
-            {showControls && (
+            {showControls && flank && flankButton('Reduce', faMinus, onMinusClick)}
+            {showControls && !flank && (
                 <div className='flex'>
                     <Button
                         isIconOnly
@@ -50,7 +71,7 @@ const StatDisplay = ({
             {/* reach: the icon stands a little proud of its bar towards the board ('up' or 'down'), as the avatar does,
                 its edge at the screen's side staying where it is */}
             <div
-                className={classNames('absolute pointer-events-none', {
+                className={classNames('pointer-events-none', flank ? 'relative mx-1' : 'absolute', {
                     'origin-bottom scale-[1.15]': reach === 'up',
                     'origin-top scale-[1.15]': reach === 'down'
                 })}
@@ -67,6 +88,7 @@ const StatDisplay = ({
                     </p>
                 </div>
             </div>
+            {showControls && flank && flankButton('Raise', faPlus, onPlusClick)}
         </div>
     );
 };

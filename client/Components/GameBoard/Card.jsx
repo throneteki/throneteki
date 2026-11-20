@@ -479,6 +479,8 @@ const CardView = ({
                         />
                         {isFaceup && getAlertStatus()}
                     </div>
+                    {/* On the card's surface, so it pops and turns with the card when chosen */}
+                    {getCardOrder()}
                 </div>
                 {!hideTokens && (
                     <CardCounters cardUuid={card.uuid} counters={getCountersForCard(card)} />
@@ -494,7 +496,6 @@ const CardView = ({
                         </span>
                     </div>
                 )}
-                {getCardOrder()}
                 {getUnderneathBadge()}
                 {getUnderneathPopup()}
             </div>

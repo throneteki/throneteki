@@ -188,6 +188,7 @@ const PlayerRow = ({
             title='Discard'
             source='discard pile'
             cards={discardPile}
+            flipFrom={playerName}
             {...cardPileProps}
         />
     );

@@ -256,18 +256,21 @@ describe('phone landscape card sizes', function () {
 });
 
 describe('adaptiveInterfaceScale', function () {
-    it('is normal on a usual screen for each layout', function () {
+    it('is normal on a usual phone, and a step smaller on a usual desktop', function () {
         expect(adaptiveInterfaceScale('narrow', { width: 390, height: 844 })).toBe(1);
         expect(adaptiveInterfaceScale('short', { width: 844, height: 390 })).toBe(1);
-        expect(adaptiveInterfaceScale('wide', { width: 1600, height: 950 })).toBe(1);
+        expect(adaptiveInterfaceScale('wide', { width: 1600, height: 950 })).toBe(0.9);
     });
 
     it('grows on larger screens and shrinks on smaller ones, within its range', function () {
         expect(adaptiveInterfaceScale('narrow', { width: 820, height: 1180 })).toBeGreaterThan(1);
-        expect(adaptiveInterfaceScale('wide', { width: 1920, height: 1080 })).toBeGreaterThan(1);
-        expect(adaptiveInterfaceScale('wide', { width: 1280, height: 720 })).toBeLessThan(1);
+        const desktop = adaptiveInterfaceScale('wide', { width: 1600, height: 950 });
+        expect(adaptiveInterfaceScale('wide', { width: 1920, height: 1080 })).toBeGreaterThan(
+            desktop
+        );
+        expect(adaptiveInterfaceScale('wide', { width: 1280, height: 720 })).toBeLessThan(desktop);
         expect(adaptiveInterfaceScale('narrow', { width: 320, height: 568 })).toBe(0.85);
-        expect(adaptiveInterfaceScale('wide', { width: 3840, height: 2160 })).toBe(1.4);
+        expect(adaptiveInterfaceScale('wide', { width: 3840, height: 2160 })).toBe(1.15);
     });
 
     it('leaves the cards less room as the interface grows', function () {

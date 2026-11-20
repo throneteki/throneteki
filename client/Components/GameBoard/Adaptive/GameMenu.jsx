@@ -7,7 +7,10 @@ import {
     DropdownItem,
     DropdownMenu,
     DropdownSection,
-    DropdownTrigger
+    DropdownTrigger,
+    Popover,
+    PopoverContent,
+    PopoverTrigger
 } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -39,7 +42,32 @@ import {
 
 const icon = (glyph) => <FontAwesomeIcon icon={glyph} className='w-4' />;
 // Room kept for the menu button, when anything is left for it to hold
-const menuButtonWidth = 32;
+const menuButtonWidth = 36;
+// The line between two groups of buttons in the bar, with its margins
+const groupGapWidth = 9;
+const GroupGap = () => (
+    <span aria-hidden className='mx-1 my-2 w-px shrink-0 self-stretch bg-default-200/40' />
+);
+
+const SpectatorList = ({ spectators }) => (
+    <div className='flex min-w-[10rem] flex-col gap-1 text-small'>
+        <div className='flex items-center gap-2 font-semibold'>
+            <FontAwesomeIcon icon={faUsers} className='w-4' />
+            {`Spectators (${spectators.length})`}
+        </div>
+        {spectators.length > 0 ? (
+            <ul className='flex max-h-60 flex-col gap-0.5 overflow-y-auto'>
+                {spectators.map((spectator) => (
+                    <li key={spectator.id ?? spectator.name} className='truncate text-default-600'>
+                        {spectator.name}
+                    </li>
+                ))}
+            </ul>
+        ) : (
+            <span className='text-default-500'>No one is watching</span>
+        )}
+    </div>
+);
 // Which items keep their place in the bar first when not all of them fit
 const priority = [
     'settings',
@@ -54,7 +82,7 @@ const priority = [
 
 // The game's menu, standing in for the navbar that phone layouts hide: connection, spectators (a dot when their
 // number changes, until looked at), settings, manual mode, reporting, shortcuts, conceding and leaving.
-// room (px): the room in the bar for its items as buttons, with their names (the desktop's bar). As many as fit
+// room (px): the room in the bar for its items as buttons (the desktop's bar). As many as fit
 // are shown, in the bar's order: who is watching, then the game's tools, then the ways out. What does not fit is in
 // the menu, which is only shown when it holds something. With no room (phones) everything is in the menu, and while
 // manual mode is on a wrench beside it says so and turns it off.
@@ -87,10 +115,12 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
     const spectatorNames =
         spectators.length > 0 ? spectators.map((spectator) => spectator.name).join(', ') : 'None';
 
-    // In the bar's order. Spectators is only a button in the bar; in the menu it is part of the status.
+    // In the bar's order, in groups: who is watching, the game's tools, then the ways out. In the bar only the ways
+    // out are named; the rest are icons. Spectators is only a button in the bar; in the menu it is part of the status.
     const items = [
         {
             key: 'spectators',
+            group: 'watch',
             label: `Spectators: ${spectators.length}`,
             glyph: faUsers,
             description: spectatorNames,
@@ -100,24 +130,24 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
         },
         isPlaying && {
             key: 'mute',
+            group: 'watch',
             label: muted ? 'Un-mute spectators' : 'Mute spectators',
             glyph: muted ? faEyeSlash : faEye,
             description: muted ? 'Spectators cannot chat' : 'Spectators can chat',
-            run: () => dispatch(sendToggleMuteSpectatorsMessage()),
-            iconOnly: true
+            run: () => dispatch(sendToggleMuteSpectatorsMessage())
         },
-        { key: 'settings', label: 'Settings', glyph: faCogs, run: onSettingsClick },
+        { key: 'settings', group: 'tools', label: 'Settings', glyph: faCogs, run: onSettingsClick },
         hasKeyboard && {
             key: 'shortcuts',
+            group: 'tools',
             label: 'Keyboard shortcuts',
-            short: 'Shortcuts',
             glyph: faKeyboard,
             run: onShortcutsClick
         },
         isPlaying && {
             key: 'manual',
+            group: 'tools',
             label: manualMode ? 'Turn manual mode off' : 'Manual mode',
-            short: 'Manual Mode',
             glyph: faWrench,
             danger: manualMode,
             description: manualMode
@@ -127,8 +157,8 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
         },
         isPlaying && {
             key: 'report',
+            group: 'tools',
             label: 'Report a problem',
-            short: 'Report Problem',
             glyph: faBug,
             run: () => {
                 dispatch(sendReportProblemMessage());
@@ -137,18 +167,23 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
         },
         isPlaying && {
             key: 'concede',
+            group: 'out',
             label: 'Concede',
             glyph: faFlag,
             run: () => dispatch(sendConcedeMessage()),
-            leaving: true
+            leaving: true,
+            named: true
         },
         {
             key: 'leave',
+            group: 'out',
             label: 'Leave game',
+            short: 'Leave',
             glyph: faRightFromBracket,
             run: leave,
             danger: true,
-            leaving: true
+            leaving: true,
+            named: true
         }
     ].filter(Boolean);
 
@@ -203,11 +238,15 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
     const widthOf = (item) => widths[item.key] ?? Infinity;
     let inBar = new Set();
     if (measuring) {
-        const total = items.reduce((sum, item) => sum + widthOf(item), 0);
+        const groups = new Set(items.map((item) => item.group)).size;
+        const total = items.reduce(
+            (sum, item) => sum + widthOf(item),
+            (groups - 1) * groupGapWidth
+        );
         if (total <= room) {
             inBar = new Set(items.map((item) => item.key));
         } else {
-            let used = menuButtonWidth;
+            let used = menuButtonWidth + groups * groupGapWidth;
             for (const key of priority) {
                 const item = items.find((entry) => entry.key === key);
                 if (item && used + widthOf(item) <= room) {
@@ -224,31 +263,76 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
     const showMenu = !measuring || inMenu.length > 0;
     const run = (key) => items.find((item) => item.key === key)?.run?.();
 
-    const barButton = (item) => (
-        <Button
-            key={item.key}
-            data-key={item.key}
-            isIconOnly={item.iconOnly}
-            size='sm'
-            radius='none'
-            variant='light'
-            title={item.description ? `${item.label}: ${item.description}` : item.label}
-            startContent={item.iconOnly ? undefined : <FontAwesomeIcon icon={item.glyph} />}
-            className={classNames('relative h-7 shrink-0 overflow-visible px-2', item.tone, {
-                'text-danger': item.danger
-            })}
-            onPress={item.run}
-            onMouseEnter={item.key === 'spectators' ? item.run : undefined}
-        >
-            {item.iconOnly ? <FontAwesomeIcon icon={item.glyph} /> : (item.short ?? item.label)}
-            {item.key === 'spectators' && newSpectators && (
-                <span
-                    data-spectators-changed=''
-                    className='absolute right-0.5 top-0.5 h-2 w-2 rounded-full bg-warning'
-                />
-            )}
-        </Button>
-    );
+    // A button in the bar, as tall as the bar: the ways out are named, the rest are icons (spectators with their count)
+    const barButton = (item, measure = false) => {
+        const button = (
+            <Button
+                key={item.key}
+                data-key={item.key}
+                size='sm'
+                radius='none'
+                variant='light'
+                title={item.description ? `${item.label}: ${item.description}` : item.label}
+                aria-label={item.label}
+                startContent={
+                    item.named ? (
+                        <FontAwesomeIcon icon={item.glyph} className='text-base' />
+                    ) : undefined
+                }
+                className={classNames(
+                    'relative h-full shrink-0 overflow-visible',
+                    item.named ? 'min-w-0 gap-1.5 px-2.5 text-small' : 'min-w-9 gap-1 px-2',
+                    item.tone,
+                    { 'text-danger': item.danger }
+                )}
+                onPress={item.key === 'spectators' ? undefined : item.run}
+            >
+                {item.named ? (
+                    (item.short ?? item.label)
+                ) : (
+                    <FontAwesomeIcon icon={item.glyph} className='text-base' />
+                )}
+                {item.key === 'spectators' && (
+                    <span className='text-xs font-semibold tabular-nums'>{spectators.length}</span>
+                )}
+                {item.key === 'spectators' && newSpectators && (
+                    <span
+                        data-spectators-changed=''
+                        className='absolute right-0.5 top-1 h-2 w-2 rounded-full bg-warning'
+                    />
+                )}
+            </Button>
+        );
+        if (measure || item.key !== 'spectators') {
+            return button;
+        }
+        // Spectators opens a list of who is watching
+        return (
+            <Popover
+                key={item.key}
+                placement='top'
+                showArrow
+                offset={6}
+                onOpenChange={(open) => open && item.run()}
+            >
+                <PopoverTrigger>{button}</PopoverTrigger>
+                <PopoverContent className='hud-zoom border border-default-200 bg-black/90 p-2'>
+                    <SpectatorList spectators={spectators} />
+                </PopoverContent>
+            </Popover>
+        );
+    };
+    // The bar's buttons in their groups, a thin line between each group
+    const barGroups = (list) =>
+        list.reduce((groups, item) => {
+            const last = groups[groups.length - 1];
+            if (last && last.group === item.group) {
+                last.items.push(item);
+            } else {
+                groups.push({ group: item.group, items: [item] });
+            }
+            return groups;
+        }, []);
     const menuItem = (item) => (
         <DropdownItem
             key={item.key}
@@ -262,27 +346,41 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
     );
 
     return (
-        <div className='relative flex items-center'>
+        <div
+            className={classNames(
+                'relative flex',
+                measuring ? 'h-full items-stretch' : 'items-center'
+            )}
+        >
             {measuring && (
                 <div
                     ref={measureRef}
                     aria-hidden
-                    className='pointer-events-none invisible absolute right-0 top-0 flex'
+                    className='pointer-events-none invisible absolute right-0 top-0 flex h-full'
                 >
-                    {items.map(barButton)}
+                    {items.map((item) => barButton(item, true))}
                 </div>
             )}
-            {bar.map(barButton)}
+            {barGroups(bar).map(({ group, items: grouped }, index) => (
+                <React.Fragment key={group}>
+                    {index > 0 && <GroupGap />}
+                    {grouped.map((item) => barButton(item))}
+                </React.Fragment>
+            ))}
+            {bar.length > 0 && showMenu && <GroupGap />}
             {manualMode && isPlaying && !inBar.has('manual') && (
                 <Button
                     isIconOnly
                     size='sm'
                     variant='light'
-                    className='h-7 w-7 min-w-7 text-danger'
+                    className={classNames(
+                        'min-w-7 text-danger',
+                        measuring ? 'h-full w-9' : 'h-7 w-7'
+                    )}
                     title='Manual mode is on: the rules are not fully enforced. Tap to turn it off.'
                     onPress={() => run('manual')}
                 >
-                    <FontAwesomeIcon icon={faWrench} />
+                    <FontAwesomeIcon icon={faWrench} className='text-base' />
                 </Button>
             )}
             {showMenu && (
@@ -295,14 +393,18 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
                             isIconOnly
                             size='sm'
                             variant='light'
-                            className='relative h-7 w-7 min-w-7 overflow-visible'
+                            radius={measuring ? 'none' : undefined}
+                            className={classNames(
+                                'relative min-w-7 overflow-visible',
+                                measuring ? 'h-full w-9' : 'h-7 w-7'
+                            )}
                             title={
                                 newSpectators
                                     ? 'Game menu: the spectators have changed'
                                     : 'Game menu'
                             }
                         >
-                            <FontAwesomeIcon icon={faBars} />
+                            <FontAwesomeIcon icon={faBars} className='text-base' />
                             {newSpectators && !inBar.has('spectators') && (
                                 <span
                                     data-spectators-changed=''

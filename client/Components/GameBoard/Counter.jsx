@@ -17,15 +17,16 @@ const pop = (el) =>
 const floatChange = (el, change) => {
     const delta = document.createElement('span');
     delta.textContent = change > 0 ? `+${change}` : `${change}`;
-    delta.className = `counter-delta ${change > 0 ? 'text-green-300' : 'text-red-300'}`;
+    delta.className = `counter-delta ${change > 0 ? 'counter-delta-up' : 'counter-delta-down'}`;
     el.append(delta);
     const float = delta.animate(
         [
-            { opacity: 0, translate: '-50% 0' },
-            { opacity: 1, translate: '-50% -60%', offset: 0.2 },
-            { opacity: 0, translate: '-50% -160%' }
+            { opacity: 0, translate: '-50% 10%', scale: 0.6 },
+            { opacity: 1, translate: '-50% -70%', scale: 1.2, offset: 0.18 },
+            { opacity: 1, translate: '-50% -95%', scale: 1, offset: 0.7 },
+            { opacity: 0, translate: '-50% -150%', scale: 1 }
         ],
-        { duration: 900, easing: 'ease-out' }
+        { duration: 1400, easing: 'ease-out' }
     );
     float.onfinish = float.oncancel = () => delta.remove();
 };

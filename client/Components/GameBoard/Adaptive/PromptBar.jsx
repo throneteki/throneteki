@@ -116,7 +116,7 @@ const PhaseOrLog = ({ phase, feed, className }) => (
                         type='button'
                         title='Next'
                         onClick={feed.skip}
-                        className='flex h-full min-w-0 flex-1 items-center text-center text-[11px] leading-none text-foreground'
+                        className='flex h-full min-w-0 flex-1 items-center text-center text-xs leading-none text-foreground'
                     >
                         <LogText entry={feed.current} hurry={feed.queued > 0} onHold={feed.hold} />
                     </button>
@@ -125,7 +125,7 @@ const PhaseOrLog = ({ phase, feed, className }) => (
                         data-log-skip=''
                         title='Skip the game log'
                         onClick={feed.dismiss}
-                        className='flex h-full shrink-0 items-center gap-0.5 rounded px-1 text-[9px] leading-none text-default-400 hover:text-default-200'
+                        className='flex h-full shrink-0 items-center gap-0.5 rounded px-1 text-[11px] leading-none text-default-400 hover:text-default-200'
                     >
                         {feed.queued > 0 && <span>{`+${feed.queued}`}</span>}
                         <FontAwesomeIcon icon={faForwardStep} />
@@ -182,7 +182,7 @@ const useSelection = (active) => {
 // An option's style; a way out (cancel) is grey, as on the classic board
 export const chipClass = (quiet) =>
     classNames(
-        'min-w-0 gap-1 rounded-md border px-2 text-[11px] font-semibold uppercase tracking-wide shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-[background-color,border-color,color,box-shadow] duration-150 data-[pressed=true]:bg-amber-400/20 data-[disabled=true]:opacity-40',
+        'min-w-0 gap-1 rounded-md border px-2 text-xs font-semibold uppercase tracking-wide shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-[background-color,border-color,color,box-shadow] duration-150 data-[pressed=true]:bg-amber-400/20 data-[disabled=true]:opacity-40',
         quiet
             ? 'border-zinc-400/70 bg-zinc-700/80 text-zinc-100 data-[hover=true]:border-zinc-300 data-[hover=true]:bg-zinc-600 data-[hover=true]:text-white'
             : 'border-amber-400/70 bg-black/70 text-amber-100 data-[hover=true]:border-amber-300 data-[hover=true]:bg-amber-400/15 data-[hover=true]:text-white data-[hover=true]:shadow-[0_0_8px_rgba(251,191,36,0.45)]'
@@ -296,7 +296,7 @@ const ChipRows = ({
 // Every option of the prompt, in a panel along the bottom of the screen (the question stays in the bar)
 const MorePanel = ({ buttons, onPress, onClose, children }) => (
     <div
-        className='fixed inset-x-0 bottom-0 z-[320] flex flex-col rounded-t-lg border-t border-default-200 bg-black/90 pb-[var(--safe-bottom)] hud-zoom'
+        className='fixed inset-x-0 bottom-0 z-[320] flex flex-col rounded-t-lg border-t border-default-200 bg-black/90 pb-[var(--safe-bottom)]'
         style={{ maxHeight: 'calc(100% - var(--board-divider-bottom, 30%))' }}
     >
         <div className='flex justify-end px-1 pt-1'>
@@ -584,7 +584,7 @@ const PromptBar = ({
             aria-hidden
             data-prompt-spill={retracted ? 'back' : 'out'}
             className={classNames(
-                'shrink-0 text-[10px] text-default-400 transition-transform duration-300 ease-in-out',
+                'shrink-0 text-[11px] text-default-400 transition-transform duration-300 ease-in-out',
                 { 'rotate-180': !retracted }
             )}
         />
@@ -615,7 +615,7 @@ const PromptBar = ({
             {promptTitle && !waiting && (
                 <div
                     className={classNames(
-                        'text-[10px] uppercase leading-tight tracking-wider',
+                        'text-[11px] uppercase leading-tight tracking-wider',
                         endsTurn ? 'font-bold text-primary' : 'font-normal text-default-500'
                     )}
                 >
@@ -642,13 +642,13 @@ const PromptBar = ({
             variant='bordered'
             aria-expanded={optionsOpen}
             title={optionsOpen ? 'Hide the options' : `Show the options (${buttons.length})`}
-            className='h-5 w-[3.25rem] min-w-0 shrink-0 justify-center gap-1 rounded-full border border-zinc-500/70 bg-zinc-800/90 px-1.5 text-[10px] font-medium text-zinc-200 data-[hover=true]:bg-zinc-700 data-[pressed=true]:bg-zinc-600'
+            className='h-6 w-[3.75rem] min-w-0 shrink-0 justify-center gap-1 rounded-full border border-zinc-500/70 bg-zinc-800/90 px-1.5 text-[11px] font-medium text-zinc-200 data-[hover=true]:bg-zinc-700 data-[pressed=true]:bg-zinc-600'
             onPress={() => setOpenFor(optionsOpen ? null : chipsKey)}
             disableRipple
             startContent={
                 <FontAwesomeIcon
                     icon={optionsOpen ? faChevronUp : faChevronDown}
-                    className='text-[8px]'
+                    className='text-[10px]'
                 />
             }
         >
@@ -658,7 +658,10 @@ const PromptBar = ({
     const toggleBesideText = stacked && !!optionsToggle;
     const hasChips = buttons.length > 0 || panelControls.length > 0;
     // Left with nothing to show in portrait, the chips' line takes no room, though it stays to be measured
-    const chipsEmpty = toggleBesideText && !(panelControls.length > 0 && !moreOpen);
+    // Beside the board (not docked) the prompt has room for a lookup's input, so it is drawn in the prompt itself
+    const inlineControls = !dock && panelControls.length > 0;
+    const chipsEmpty =
+        toggleBesideText && !(panelControls.length > 0 && !moreOpen && !inlineControls);
     const chips = hasChips && (
         <div
             className={classNames('flex min-w-0 flex-1 justify-center gap-1', {
@@ -680,7 +683,7 @@ const PromptBar = ({
                     {!toggleBesideText && optionsToggle}
                 </ChipRows>
             )}
-            {panelControls.length > 0 && !moreOpen && (
+            {panelControls.length > 0 && !moreOpen && !inlineControls && (
                 <Button
                     type='button'
                     size='sm'
@@ -691,6 +694,17 @@ const PromptBar = ({
                     {needsInput ? 'Choose…' : 'Details'}
                 </Button>
             )}
+        </div>
+    );
+
+    const controlsInline = inlineControls && (
+        <div data-prompt-controls='' className='flex flex-col'>
+            <PromptControls
+                controls={panelControls}
+                cards={cards}
+                pausedPromptId={pausedPromptId}
+                onLookupValueSelected={handleLookupValueSelected}
+            />
         </div>
     );
 
@@ -768,7 +782,10 @@ const PromptBar = ({
                             </motion.div>
                         </motion.div>
                     ) : (
-                        chips
+                        <>
+                            {controlsInline}
+                            {chips}
+                        </>
                     )}
                 </div>
             ) : (
@@ -783,6 +800,7 @@ const PromptBar = ({
                     {short && <PhaseTrack phase={phase} feed={feed} inline />}
                     {short && <Rule vertical />}
                     {text}
+                    {controlsInline}
                     {chips}
                     {corner}
                     {short && <div className='shrink-0'>{endOfTrack}</div>}
@@ -839,7 +857,7 @@ const PromptBar = ({
                     />
                 </div>
             )}
-            {moreOpen && (
+            {moreOpen && dock && (
                 <MorePanel buttons={buttons} onPress={press} onClose={() => setMoreOpen(false)}>
                     <PromptControls
                         controls={panelControls}
@@ -860,7 +878,7 @@ const PromptBar = ({
     return (
         <div
             data-prompt-dock=''
-            className='relative z-[260] shrink-0'
+            className={classNames('relative shrink-0', moreOpen ? 'z-[320]' : 'z-[260]')}
             style={room === null ? undefined : { height: room }}
         >
             <div className={room === null ? 'relative' : 'absolute inset-x-0 bottom-0'}>{bar}</div>
