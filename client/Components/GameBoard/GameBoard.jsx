@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom';
-import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import LoadingSpinner from '../Site/LoadingSpinner';
 
@@ -10,7 +10,6 @@ import { isShortcutEvent, keyboardShortcutsEnabled } from './keyboardShortcuts';
 import { navigate } from '../../redux/reducers/navigation';
 import {
     sendCardClickedMessage,
-    sendCardMenuItemClickedMessage,
     sendDragDropMessage,
     sendGameChatMessage,
     sendHudChangeMessage,
@@ -505,7 +504,6 @@ const GameBoard = () => {
                 otherPlayer={otherPlayers[0]}
                 userPlayer={userPlayer}
                 onCardClick={onCardClick}
-                onMenuItemClick={onMenuItemClick}
                 onSettingsClick={onSettingsClick}
                 isDragging={showDropZones}
             />
@@ -517,7 +515,6 @@ const GameBoard = () => {
                 otherPlayers={otherPlayers}
                 userPlayer={userPlayer}
                 onCardClick={onCardClick}
-                onMenuItemClick={onMenuItemClick}
                 onSettingsClick={onSettingsClick}
                 isDragging={showDropZones}
             />

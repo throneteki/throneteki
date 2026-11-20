@@ -437,15 +437,31 @@ const PromptBar = ({
     allOptions = false,
     stackOptions = false
 }) => {
-    const buttons = useMemo(() => allButtons || [], [allButtons]);
+    const promptButtons = useMemo(() => allButtons || [], [allButtons]);
     const {
         cards,
         pausedPromptId,
         responseDelay,
         promptText,
+        endsTurn,
+        endTurnReady,
         handleButtonClick,
         handleLookupValueSelected
-    } = usePromptActions({ buttons, controls, promptText: serverPromptText, onButtonClick });
+    } = usePromptActions({
+        buttons: promptButtons,
+        controls,
+        promptText: serverPromptText,
+        onButtonClick
+    });
+    const buttons = useMemo(
+        () =>
+            endTurnReady
+                ? promptButtons
+                : promptButtons.map((button) =>
+                      button.endsTurn ? { ...button, disabled: true } : button
+                  ),
+        [promptButtons, endTurnReady]
+    );
     const selection = useSelection(selecting);
     const panelControls = (controls || []).filter((control) => !isInlineControl(control));
     const needsInput = panelControls.some((control) => inputControls.includes(control.type));
@@ -597,7 +613,12 @@ const PromptBar = ({
             )}
         >
             {promptTitle && !waiting && (
-                <div className='text-[10px] font-normal uppercase leading-tight tracking-wider text-default-500'>
+                <div
+                    className={classNames(
+                        'text-[10px] uppercase leading-tight tracking-wider',
+                        endsTurn ? 'font-bold text-primary' : 'font-normal text-default-500'
+                    )}
+                >
                     {promptTitle}
                 </div>
             )}

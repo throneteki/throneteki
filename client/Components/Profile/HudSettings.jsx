@@ -240,8 +240,6 @@ const HudSettings = ({ value, onChange, inGame = false }) => {
                 <Choice label='Layout'>
                     <RadioGroup
                         aria-label='Board layout'
-                        orientation='horizontal'
-                        size='sm'
                         value={value.board}
                         onValueChange={(board) => update({ board })}
                         classNames={{ wrapper: 'grid gap-2 sm:grid-cols-2' }}
@@ -273,13 +271,16 @@ const HudSettings = ({ value, onChange, inGame = false }) => {
                 >
                     <RadioGroup
                         aria-label='Prompt position'
-                        orientation='horizontal'
-                        size='sm'
                         value={value.promptSide || 'left'}
                         onValueChange={(promptSide) => update({ promptSide })}
+                        classNames={{ wrapper: 'grid grid-cols-2 gap-2' }}
                     >
-                        <Radio value='left'>Left</Radio>
-                        <Radio value='right'>Right</Radio>
+                        <Radio value='left' classNames={tileClassNames}>
+                            Left
+                        </Radio>
+                        <Radio value='right' classNames={tileClassNames}>
+                            Right
+                        </Radio>
                     </RadioGroup>
                 </Choice>
                 <SettingSwitch

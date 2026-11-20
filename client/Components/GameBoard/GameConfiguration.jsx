@@ -1,7 +1,8 @@
 import React from 'react';
-import { Switch } from '@heroui/react';
-import Panel from '../Site/Panel';
+import ActionWindowSettings from '../Profile/ActionWindowSettings';
 import HudSettings from '../Profile/HudSettings';
+import SettingsGroup from '../Profile/SettingsGroup';
+import SettingSwitch from '../Profile/SettingSwitch';
 
 // This game's settings, laid out as the profile's are, a section at a time. values: the settings as changed so far;
 // onChange is given the ones that change.

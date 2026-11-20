@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import classNames from 'classnames';
 
 import { Button, Kbd } from '@heroui/react';
 import ThronesIcon from './ThronesIcon';
@@ -6,8 +7,6 @@ import LoadingSpinner from '../Site/LoadingSpinner';
 import CardHoverable from '../Images/CardHoverable';
 import { getButtonShortcutLabel } from './keyboardShortcuts';
 import { PromptControls, usePromptActions } from './usePromptActions';
-
-const EndTurnDelay = 500;
 
 const ActivePlayerPrompt = ({
     className,
@@ -24,6 +23,8 @@ const ActivePlayerPrompt = ({
         pausedPromptId,
         shortcutsEnabled,
         promptText,
+        endsTurn,
+        endTurnReady,
         handleButtonClick,
         handleLookupValueSelected
     } = usePromptActions({ buttons, controls, promptText: serverPromptText, onButtonClick });

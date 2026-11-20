@@ -28,6 +28,7 @@ import {
 import ConfirmDialog from '../../Site/ConfirmDialog';
 import ReportProblemModal from '../ReportProblemModal';
 import {
+    sendCancelProblemReportMessage,
     sendConcedeMessage,
     sendDescribeProblemMessage,
     sendLeaveGameMessage,
@@ -352,8 +353,14 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
             {isPlaying && (
                 <ReportProblemModal
                     isOpen={reporting}
-                    onClose={() => setReporting(false)}
-                    onSend={(description) => dispatch(sendDescribeProblemMessage(description))}
+                    onCancel={() => {
+                        dispatch(sendCancelProblemReportMessage());
+                        setReporting(false);
+                    }}
+                    onSend={(description) => {
+                        dispatch(sendDescribeProblemMessage(description));
+                        setReporting(false);
+                    }}
                 />
             )}
         </div>

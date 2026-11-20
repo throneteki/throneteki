@@ -115,7 +115,6 @@ const PlayerBoard = ({
                             card={card}
                             disableHover={card.facedown && !card.code}
                             onClick={onCardClick}
-                            onMenuItemClick={onMenuItemClick}
                             source='play area'
                             flip
                             shell={shells.has(card.uuid)}

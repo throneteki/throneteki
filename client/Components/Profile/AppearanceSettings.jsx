@@ -16,13 +16,6 @@ import { AcceptedImageFiles } from '../../imageEncoding';
 import { BuiltInBackgrounds } from '../../backgrounds';
 import { DefaultBackground, MaxBackgroundBytes } from '../../../shared/backgrounds';
 
-const previewCards = ['01144', '01089', '01160', 'cardback'];
-
-const tileClassNames = {
-    base: 'm-0 inline-flex w-full max-w-full cursor-pointer items-center gap-2 rounded-medium border-2 border-default-200 p-2 hover:bg-default-100/50 data-[selected=true]:border-primary',
-    labelWrapper: 'ms-0 min-w-0 flex-1'
-};
-
 const backgroundTileClassNames = {
     ...tileClassNames,
     base: `${tileClassNames.base} items-start`
@@ -119,38 +112,7 @@ const AppearanceSettings = ({ user, formProps }) => {
 
     return (
         <>
-            <SettingsGroup
-                title='Card size'
-                className='grid gap-3 p-3 sm:grid-cols-[11rem_minmax(0,1fr)]'
-            >
-                <RadioGroup
-                    aria-label='Card size'
-                    value={values.cardSize}
-                    onValueChange={(value) => setFieldValue('cardSize', value)}
-                    classNames={{ wrapper: 'grid grid-cols-2 gap-2 sm:grid-cols-1' }}
-                >
-                    {CardSizeOptions.map(({ name, label }) => (
-                        <Radio key={name} value={name} classNames={tileClassNames}>
-                            {label}
-                        </Radio>
-                    ))}
-                </RadioGroup>
-                <div
-                    aria-hidden
-                    className='flex items-center overflow-hidden rounded-medium bg-black/40 p-3 sm:h-[12.75rem]'
-                >
-                    <div className='mx-auto flex items-end gap-2'>
-                        {previewCards.map((code) => (
-                            <CardImage
-                                key={code}
-                                code={code}
-                                size={values.cardSize}
-                                className='shrink-0 transition-all'
-                            />
-                        ))}
-                    </div>
-                </div>
-            </SettingsGroup>
+            <HudSettings value={values.hud} onChange={(hud) => setFieldValue('hud', hud)} />
             <SettingsGroup
                 title='Game board background'
                 description='You can also upload your own image to play on. Large images are resized to fit the screen.'

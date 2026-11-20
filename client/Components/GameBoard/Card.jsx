@@ -32,11 +32,6 @@ import { restingAngle } from '../../tableFeel';
 import { motionOff, pulseCard } from '../../flip';
 import { useRenderCount } from '../../perf';
 
-// Opening one card menu closes any other that is open.
-const cardMenus = new EventTarget();
-let nextMenuId = 0;
-
-const defaultMenu = [{ hideable: true, command: 'click', text: 'Select Card' }];
 const noDrag = {};
 
 const CardView = ({
@@ -44,7 +39,6 @@ const CardView = ({
     className,
     disableHover,
     hideTokens,
-    menu = defaultMenu,
     onClick,
     orientation = 'vertical',
     source,
@@ -123,38 +117,6 @@ const CardView = ({
         tale: 'A',
         ghost: 'H'
     };
-
-    const isAllowedMenuSource = useCallback(
-        () => ['play area', 'agenda', 'revealed plots'].includes(source),
-        [source]
-    );
-
-    const handleMenuItemClick = useCallback(
-        (menuItem) => {
-            if (onMenuItemClick) {
-                onMenuItemClick(card, menuItem);
-                setShowMenu(!showMenu);
-            }
-        },
-        [card, onMenuItemClick, showMenu]
-    );
-
-    const getMenu = useCallback(() => {
-        const retMenu = [...menu] || [];
-
-        if (card.menu) {
-            retMenu.push(...card.menu);
-        }
-
-        return retMenu;
-    }, [card.menu, menu]);
-
-    const shouldShowMenu = useCallback(
-        () =>
-            getMenu().some((item) => item.command !== 'click' && !item.disabled) &&
-            isAllowedMenuSource(),
-        [getMenu, isAllowedMenuSource]
-    );
 
     const handleClick = useCallback(
         (event) => {

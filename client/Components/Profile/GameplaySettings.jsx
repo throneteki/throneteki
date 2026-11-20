@@ -1,8 +1,7 @@
 import React from 'react';
-import { Switch } from '@heroui/react';
 import SettingsGroup from './SettingsGroup';
 import SettingSwitch from './SettingSwitch';
-import { ActionWindows } from '../../constants';
+import ActionWindowSettings from './ActionWindowSettings';
 
 const GameplaySettings = ({ formProps }) => {
     const { values, setFieldValue } = formProps;
@@ -10,26 +9,11 @@ const GameplaySettings = ({ formProps }) => {
 
     return (
         <>
-            <SettingsGroup
-                title='Action windows'
+            <ActionWindowSettings
                 description='Choose where the game stops to ask whether you want to take an action. Anywhere else you pass automatically, and a window nobody stops in (such as dominance) may be skipped. You can also change these during a game from the settings button.'
-                className='grid gap-2 p-3 sm:grid-cols-3'
-            >
-                {ActionWindows.map((window) => (
-                    <Switch
-                        key={window.name}
-                        size='sm'
-                        isSelected={values.actionWindows[window.name]}
-                        onValueChange={toggle(`actionWindows.${window.name}`)}
-                        classNames={{
-                            base: 'm-0 inline-flex w-full max-w-full cursor-pointer flex-row-reverse items-center justify-between gap-2 rounded-medium border border-default-200 px-3 py-2 hover:bg-default-100/50 data-[selected=true]:border-primary',
-                            label: 'ms-0 text-small'
-                        }}
-                    >
-                        {window.label}
-                    </Switch>
-                ))}
-            </SettingsGroup>
+                values={values.actionWindows}
+                onToggle={(name, isSelected) => setFieldValue(`actionWindows.${name}`, isSelected)}
+            />
             <SettingsGroup title='Automation'>
                 <SettingSwitch
                     label='Choose order of keywords'

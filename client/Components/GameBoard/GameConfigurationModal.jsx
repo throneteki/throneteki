@@ -122,7 +122,7 @@ const GameConfigurationModal = ({
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            size={fullScreen ? 'full' : 'lg'}
+            size={fullScreen ? 'full' : '2xl'}
             scrollBehavior='inside'
             motionProps={fullScreen ? slideUp : undefined}
             classNames={

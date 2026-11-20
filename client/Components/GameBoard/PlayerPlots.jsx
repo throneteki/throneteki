@@ -14,7 +14,6 @@ const plotAreaHeight = 'calc(var(--card-scale, 1) * 5.4rem)';
 const PlayerPlots = ({
     plotDiscard,
     onCardClick,
-    onMenuItemClick,
     isMe,
     activePlot,
     plotDeck,
@@ -112,7 +111,6 @@ const PlayerPlots = ({
     }, [
         plotDiscard,
         onCardClick,
-        onMenuItemClick,
         isMe,
         activePlot,
         plotDeck,

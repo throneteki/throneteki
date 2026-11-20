@@ -17,12 +17,8 @@ import ErrorMessage from './Components/Site/ErrorMessage';
 import classNames from 'classnames';
 import PendingGameAlerter from './Components/Games/PendingGameAlerter';
 import { hidesNavbar, useAdaptiveLayoutMode } from './boardLayoutStore';
-
-const backgrounds = {
-    none: BlankBg,
-    BG1: StandardBg,
-    BG2: WinterBg
-};
+import { customBackgroundUrl } from './util';
+import { builtInBackgroundUrl } from './backgrounds';
 
 const Application = () => {
     const router = new Router();

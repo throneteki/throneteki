@@ -126,7 +126,7 @@ const PlayerRow = ({
             );
             return <div className='relative flex flex-row-reverse'>{retAgendas}</div>;
         },
-        [agendas, renderDroppablePile, onCardClick, onMenuItemClick]
+        [agendas, renderDroppablePile, onCardClick]
     );
 
     const cardPileProps = {
@@ -150,7 +150,7 @@ const PlayerRow = ({
                 orientation='vertical'
             />
         );
-    }, [title, onCardClick, onMenuItemClick]);
+    }, [title, onCardClick]);
 
     const retHand = (
         <SquishableCardPanel

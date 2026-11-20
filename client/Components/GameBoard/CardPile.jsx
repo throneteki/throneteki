@@ -35,7 +35,6 @@ const CardPile = ({
     disableHover,
     numColumns,
     numRows,
-    onMenuItemClick: propsOnMenuItemClick,
     popupMenu,
     title,
     titlePosition,
@@ -219,7 +218,6 @@ const CardPile = ({
         const listProps = {
             disableHover: disableHover,
             onCardClick: onCardClick,
-            onMenuItemClick: onMenuItemClick,
             source: source,
             numColumns,
             numRows,
@@ -303,7 +301,6 @@ const CardPile = ({
     }, [
         disableHover,
         onCardClick,
-        onMenuItemClick,
         source,
         numColumns,
         numRows,

@@ -28,8 +28,8 @@ export const ProfileSections = [
     {
         key: 'appearance',
         label: 'Appearance',
-        description: 'Card size and the game board background.',
-        fields: ['cardSize', 'background']
+        description: 'The game board: its layout, sizes, animations and background.',
+        fields: ['hud', 'background']
     }
 ];
 

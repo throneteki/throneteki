@@ -115,3 +115,19 @@ export const BannersForFaction = {
     '01204': 'targaryen',
     '01205': 'tyrell'
 };
+
+export const ActionWindows = [
+    { name: 'plot', label: 'Plots revealed', default: false },
+    { name: 'draw', label: 'Draw phase', default: false },
+    { name: 'marshal', label: 'Marshaling phase', default: false },
+    { name: 'challengeBegin', label: 'Before challenge', default: false },
+    { name: 'attackersDeclared', label: 'Attackers declared', default: true },
+    { name: 'defendersDeclared', label: 'Defenders declared', default: true },
+    { name: 'dominance', label: 'Dominance phase', default: false },
+    { name: 'standing', label: 'Standing phase', default: false },
+    { name: 'taxation', label: 'Taxation phase', default: false }
+];
+
+export const defaultActionWindows = Object.fromEntries(
+    ActionWindows.map((window) => [window.name, window.default])
+);

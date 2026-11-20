@@ -13,7 +13,6 @@ const CardTiledList = ({
     numColumns,
     numRows,
     onCardClick,
-    onMenuItemClick,
     source,
     title,
     titleCount,

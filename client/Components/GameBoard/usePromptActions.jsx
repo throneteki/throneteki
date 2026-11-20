@@ -13,6 +13,9 @@ import {
     keyboardShortcutsEnabled
 } from './keyboardShortcuts';
 
+const pressDelay = 300;
+const endTurnDelay = 500;
+
 // What every prompt does with its buttons and controls, however it is drawn
 export const usePromptActions = ({ buttons, controls, promptText, onButtonClick }) => {
     const { data: cards, isLoading } = useGetCardsQuery();
@@ -22,15 +25,27 @@ export const usePromptActions = ({ buttons, controls, promptText, onButtonClick 
     );
 
     // Ignore a press that lands just after the buttons change, such as one meant for a window
-    // that closed under the cursor.
+    // that closed under the cursor. A button that ends your turn in the phase waits longer, and
+    // shows as disabled while it does, as it often replaces a Pass button the player is pressing.
     const buttonsShownAt = useRef(0);
+    const freshFor = useRef(pressDelay);
+    const [endTurnReady, setEndTurnReady] = useState(true);
     const buttonsKey = (buttons || [])
         .map((button) => `${button.promptId}:${button.text}`)
         .join('|');
+    const endsTurn = (buttons || []).some((button) => button.endsTurn);
     useEffect(() => {
         buttonsShownAt.current = Date.now();
-    }, [buttonsKey]);
-    const isFreshPress = () => Date.now() - buttonsShownAt.current < 300;
+        freshFor.current = endsTurn ? endTurnDelay : pressDelay;
+        if (!endsTurn) {
+            return;
+        }
+
+        setEndTurnReady(false);
+        const timer = setTimeout(() => setEndTurnReady(true), endTurnDelay);
+        return () => clearTimeout(timer);
+    }, [buttonsKey, endsTurn]);
+    const isFreshPress = () => Date.now() - buttonsShownAt.current < freshFor.current;
 
     const handleButtonClick = useCallback(
         (event, button) => {
@@ -129,6 +144,8 @@ export const usePromptActions = ({ buttons, controls, promptText, onButtonClick 
         shortcutsEnabled,
         responseDelay,
         promptText: shownText,
+        endsTurn,
+        endTurnReady,
         handleButtonClick,
         handleLookupValueSelected
     };

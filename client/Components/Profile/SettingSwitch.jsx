@@ -1,9 +1,10 @@
 import React from 'react';
 import { Switch } from '@heroui/react';
 
-const SettingSwitch = ({ label, description, isSelected, onValueChange }) => (
+const SettingSwitch = ({ label, description, isSelected, isDisabled, onValueChange }) => (
     <Switch
         isSelected={isSelected}
+        isDisabled={isDisabled}
         onValueChange={onValueChange}
         classNames={{
             base: 'm-0 inline-flex w-full max-w-full cursor-pointer flex-row-reverse items-center justify-between gap-4 px-3 py-2.5 hover:bg-default-100/50',
