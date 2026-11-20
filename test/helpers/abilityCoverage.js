@@ -10,7 +10,7 @@ import StateCheckAbility from '../../server/game/StateCheckAbility.js';
 const repoRoot = path.join(import.meta.dirname, '../..');
 
 const state = (globalThis.__abilityCoverage ??= {
-    patched: false,
+    patchedGame: null,
     cards: [],
     resolved: new WeakSet(),
     applied: new WeakSet()
@@ -36,10 +36,11 @@ function wrapTextProperties(cardClass) {
 }
 
 function patch() {
-    if (state.patched) {
+    // State outlives vi.resetModules, which loads fresh engine classes that need patching too
+    if (state.patchedGame === Game) {
         return;
     }
-    state.patched = true;
+    state.patchedGame = Game;
 
     wrapTextProperties(BaseCard);
     wrapTextProperties(DrawCard);
