@@ -471,6 +471,35 @@ const choosingFromDiscard = () => {
     return state;
 };
 
+// Cards to choose that are not on top of their pile: the draw deck, face down, searched for a character
+const searchingDeck = () => {
+    const state = midGame();
+    const me = state.players[fixtureUsername];
+    const codes = ['01142', '01144', '01089', '01160'];
+    me.cardPiles.drawDeck = me.cardPiles.drawDeck.map((card, index) =>
+        index < 8
+            ? {
+                  uuid: card.uuid,
+                  code: codes[index % codes.length],
+                  type: 'character',
+                  tokens: {},
+                  selectable: index % 2 === 1,
+                  unselectable: index % 2 === 0
+              }
+            : card
+    );
+    Object.assign(
+        me,
+        promptState({
+            isActivePrompt: true,
+            promptTitle: 'Search',
+            menuTitle: 'Select a character from your deck',
+            buttons: [{ text: 'Done', arg: 'done', promptId: 'p1' }]
+        })
+    );
+    return state;
+};
+
 const waiting = () => {
     const state = midGame();
     Object.assign(
@@ -846,6 +875,7 @@ export const boardFixtures = {
     plots: { label: 'Plot selection', build: plotSelection },
     rains: { label: 'Plot selection (Rains)', build: rainsPlotSelection },
     discard: { label: 'Choose from discard', build: choosingFromDiscard },
+    search: { label: 'Search the deck', build: searchingDeck },
     longPrompt: { label: 'Long prompt text', build: longPrompt },
     waiting: { label: 'Waiting on opponent', build: waiting },
     select: { label: 'Choose on the board', build: choosingOnBoard },

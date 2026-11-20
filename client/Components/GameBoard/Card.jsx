@@ -470,9 +470,10 @@ const CardView = ({
                 'brightness-[.75] saturate-[.5]':
                     card.unselectable ||
                     (card.canPlay === false && !card.selected && !card.selectable),
+                // A card that does something when clicked says so, even where it can also be dragged
                 'cursor-grabbing': isDragging,
-                'cursor-grab': !isDragging && !!listeners,
-                'cursor-pointer': !isDragging && !listeners && isInteractive,
+                'cursor-pointer': !isDragging && isInteractive,
+                'cursor-grab': !isDragging && !!listeners && !isInteractive,
                 'cursor-not-allowed':
                     !isDragging && !listeners && !isInteractive && card.unselectable,
                 'select-none': touchActive

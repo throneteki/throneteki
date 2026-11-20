@@ -54,7 +54,8 @@ const CardPile = ({
     flipFrom,
     lockTopCard,
     showDepth,
-    owner
+    owner,
+    slotLabel
 }) => {
     useRenderCount('CardPile');
     const [showPopup, setShowPopup] = useState(cards && cards.some((card) => card.selectable));
@@ -353,6 +354,10 @@ const CardPile = ({
         [shownTopCard, hiddenTopCard, selected, hiddenUuid, hiddenUnselectable]
     );
 
+    // A pile with cards to choose in it, while they are not on show, breathes as a card to choose does; a top card
+    // that can be chosen already does
+    const pileChoose = hasSelectable && !showPopup && !retTopCard?.selectable;
+
     // The card under the top one is drawn too, so it is already there when the top card is taken away
     const nextCard = cards
         ? topCard
@@ -372,6 +377,7 @@ const CardPile = ({
         <LabelledGameArea
             ref={areaRef}
             label={headerText}
+            slotLabel={slotLabel}
             count={title ? retCardCount : undefined}
             inspectable={!!title}
             opens={!disablePopup}
@@ -408,7 +414,15 @@ const CardPile = ({
                                 />
                             </div>
                         )}
-                        <div key={retTopCard.uuid} data-pile-top='' className='relative flex'>
+                        <div
+                            key={retTopCard.uuid}
+                            data-pile-top=''
+                            data-pile-choose={pileChoose ? '' : undefined}
+                            className={classNames('relative flex', {
+                                'ring-selectable rounded-[calc(var(--card-scale,1)*0.25rem)]':
+                                    pileChoose
+                            })}
+                        >
                             <Card
                                 card={retTopCard}
                                 source={source}

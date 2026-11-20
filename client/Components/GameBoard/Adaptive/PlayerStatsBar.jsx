@@ -67,6 +67,8 @@ const useRoomBeside = (barRef, statsRef, avatarRef, enabled) => {
 // children: kept at the bar's far end; as a function it is given the room the stats leave.
 // columns/mirrored: the stack's items per row, and drawn upside down for the player above the prompt.
 // showSeat: a seat-number badge on the avatar, at a melee table.
+// backdrop: a stack in one row draws its background as a band behind it (with these classes), slimmer than its
+// stats, so they stand a little proud of it above and below, starting under the avatar, which caps its end.
 const PlayerStatsBar = ({
     player,
     vertical = false,
@@ -76,6 +78,7 @@ const PlayerStatsBar = ({
     canChange = false,
     showSeat = false,
     edge,
+    backdrop,
     className,
     children
 }) => {
@@ -95,6 +98,8 @@ const PlayerStatsBar = ({
     const username = player.user?.username;
     const statClass = 'border-none';
     const statHeight = vertical ? 'h-7' : compact ? 'h-6' : 'h-8';
+    // In a bar at the screen's edge the stats stand a little proud of it towards the board, as the avatar does
+    const reach = vertical ? undefined : { bottom: 'up', top: 'down' }[edge];
     const end = typeof children === 'function' ? children(vertical ? 0 : room) : children;
     const changerPlacement = vertical
         ? edge === 'right'
@@ -128,6 +133,7 @@ const PlayerStatsBar = ({
             onMinusClick={() => dispatch(sendChangeStatMessage(stat.change, -1))}
             onPlusClick={() => dispatch(sendChangeStatMessage(stat.change, 1))}
             compact={small}
+            reach={reach}
         />
     );
 
@@ -137,7 +143,8 @@ const PlayerStatsBar = ({
             data-stats-bar={username}
             style={grid ? { gridTemplateColumns: `repeat(${columns}, auto)` } : undefined}
             className={classNames(
-                'hud-zoom items-center bg-black/60',
+                'hud-zoom items-center',
+                backdrop ? 'relative isolate' : 'bg-black/60',
                 grid
                     ? 'grid min-h-0 shrink justify-center justify-items-center gap-x-1.5 px-0.5'
                     : vertical
@@ -159,6 +166,15 @@ const PlayerStatsBar = ({
                 className
             )}
         >
+            {backdrop && (
+                <div
+                    aria-hidden
+                    className={classNames(
+                        'pointer-events-none absolute left-4 right-0 top-1/2 -z-10 h-[1.125rem] -translate-y-1/2 rounded-r-md border border-l-0 border-default-200/40 shadow-[0_2px_8px_rgba(0,0,0,0.5)]',
+                        backdrop
+                    )}
+                />
+            )}
             <div
                 ref={avatarRef}
                 style={placeOf(0)}
@@ -220,7 +236,15 @@ const PlayerStatsBar = ({
                                 'flex min-h-0 w-full flex-1 items-center overflow-y-auto overflow-x-hidden [scrollbar-width:none] [&>*]:shrink-0',
                                 mirrored ? 'flex-col-reverse' : 'flex-col'
                             )
-                          : 'flex h-full min-w-0 flex-1 items-center overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&>*]:shrink-0'
+                          : classNames(
+                                'flex min-w-0 flex-1 items-center overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&>*]:shrink-0',
+                                // Room for them to stand proud of the bar, which the scrolling would clip
+                                {
+                                    'h-full': !reach,
+                                    '-mt-1.5 h-[calc(100%+0.375rem)] pt-1.5': reach === 'up',
+                                    '-mb-1.5 h-[calc(100%+0.375rem)] pb-1.5': reach === 'down'
+                                }
+                            )
                 )}
             >
                 {!vertical && (

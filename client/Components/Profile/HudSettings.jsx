@@ -1,101 +1,276 @@
-import React from 'react';
-import { Radio, RadioGroup, Slider, Switch } from '@heroui/react';
-import Panel from '../Site/Panel';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import classNames from 'classnames';
+import { Button, Chip, Radio, RadioGroup, Slider } from '@heroui/react';
+import CardImage from '../Images/CardImage';
+import PlayerStats from '../GameBoard/Classic/PlayerStats';
+import PlayerStatsBar from '../GameBoard/Adaptive/PlayerStatsBar';
+import PhaseRoll from '../GameBoard/Adaptive/PhaseRoll';
+import { chipClass } from '../GameBoard/Adaptive/PromptBar';
+import SettingsGroup, { tileClassNames } from './SettingsGroup';
+import SettingSwitch from './SettingSwitch';
 import { useBrowserReducedMotion } from '../../motion';
-import { hudSizeNames, hudSizeRange, resolveHudSize } from '../../hud';
+import { motion } from 'framer-motion';
+import { resolveHudSize } from '../../hud';
+import { interfaceScaleProperties } from '../GameBoard/useHudScale';
+import { boardMeasure, boardScales, estimateBoardMeasure } from '../GameBoard/boardScales';
 
-const groups = [
-    { kind: 'cards', label: 'Cards', description: 'Card images, piles and counters' },
-    {
-        kind: 'interface',
-        label: 'Interface',
-        description: 'Player bar, prompt, chat, popups and all text'
-    }
-];
+const sliderRanges = { cards: { min: 0.5, max: 3 }, interface: { min: 0.6, max: 2 } };
 
-const sizeOptions = [
-    ...hudSizeNames.map((name) => ({ name, label: name[0].toUpperCase() + name.slice(1) })),
-    { name: 'custom', label: 'Custom' }
-];
+const fixedSizes = {
+    cards: [0.5, 0.7, 1, 1.4, 2, 3],
+    interface: [0.7, 0.85, 1, 1.2, 1.5]
+};
+const fixedSizeNames = ['X-Small', 'Small', 'Medium', 'Large', 'X-Large', 'XX-Large'];
 
-const defaultCustomScale = { cards: 1.25, interface: 1.1 };
+const previewCards = ['01144', '01089', '01160', 'cardback'];
 
-const radioValue = (value) => (hudSizeNames.includes(value) ? value : 'custom');
+const previewStats = { totalPower: 4, gold: 5, initiative: 1, claim: 1, reserve: 6 };
 
-const SizeGroup = ({ kind, label, description, value, onChange }) => {
-    const selected = radioValue(value);
-    const { min, max } = hudSizeRange(kind);
-    const customScale =
-        selected === 'custom' ? resolveHudSize(kind, value) : defaultCustomScale[kind];
+const describedTileClassNames = {
+    ...tileClassNames,
+    base: classNames(tileClassNames.base, 'items-start'),
+    description: 'text-tiny text-default-500'
+};
+
+const percent = (scale) => `${Math.round(scale * 100)}%`;
+
+const useScreen = () => {
+    const measure = () => ({ width: window.innerWidth, height: window.innerHeight });
+    const [screen, setScreen] = useState(measure);
+    useEffect(() => {
+        const update = () => setScreen(measure());
+        window.addEventListener('resize', update);
+        return () => window.removeEventListener('resize', update);
+    }, []);
+    return screen;
+};
+
+// The scales the board would draw at, worked out as the board works them out: in a game against the board as it
+// was last measured, otherwise against the room a board would have in this window, with nothing in play
+const previewScales = (hud, screen, inGame) =>
+    boardScales(hud, (inGame && boardMeasure()) || estimateBoardMeasure(hud, screen));
+
+const Choice = ({ label, description, children }) => (
+    <div className='flex flex-col gap-2 px-3 py-2.5'>
+        <div className='flex flex-col gap-0.5'>
+            <span className='text-medium'>{label}</span>
+            {description && <span className='text-small text-default-500'>{description}</span>}
+        </div>
+        {children}
+    </div>
+);
+
+const PreviewBox = ({ kind, style, children }) => (
+    <div
+        aria-hidden
+        style={style}
+        className={classNames(
+            'pointer-events-none flex max-h-72 min-h-36 items-center overflow-hidden rounded-medium bg-black/40 p-3 [justify-content:safe_center]',
+            kind === 'cards' ? 'preview-cards' : 'preview-interface'
+        )}
+    >
+        {children}
+    </div>
+);
+
+const CardPreview = () => (
+    <div className='flex items-end gap-2'>
+        {previewCards.map((code) => (
+            <CardImage key={code} code={code} className='shrink-0' />
+        ))}
+    </div>
+);
+
+const ClassicPrompt = () => (
+    <div className='hud-zoom w-56 text-center'>
+        <div className='rounded-t-md border-1 border-default-200 bg-secondary-200 py-1 text-small font-bold uppercase'>
+            Marshaling phase
+        </div>
+        <div className='rounded-b-md border-1 border-default-200 bg-black/65 px-2 pb-2'>
+            <p className='my-1 text-small'>Marshal your cards</p>
+            <span className='flex h-8 items-center justify-center rounded-small bg-primary text-small text-primary-foreground'>
+                Done
+            </span>
+        </div>
+    </div>
+);
+
+const AdaptivePrompt = () => (
+    <div className='hud-zoom w-80 border-y border-default-200/60 bg-black/60'>
+        <div className='px-2 pt-1'>
+            <PhaseRoll phase='marshal' className='w-full' />
+        </div>
+        <div className='mx-auto mt-1 h-px w-4/5 bg-gradient-to-r from-transparent via-default-400/50 to-transparent' />
+        <div className='flex flex-col items-center gap-1 px-2 py-1'>
+            <div className='text-center text-sm font-semibold leading-snug'>
+                <div className='text-[10px] font-normal uppercase leading-tight tracking-wider text-default-500'>
+                    Marshaling
+                </div>
+                Marshal your cards
+            </div>
+            <span className={classNames(chipClass(false), 'inline-flex h-7 items-center')}>
+                Done
+            </span>
+        </div>
+    </div>
+);
+
+// Our player bar and a prompt, as the chosen board draws them
+const InterfacePreview = ({ board }) => {
+    const username = useSelector((state) => state.auth.user?.username);
+    const player = { user: { username }, stats: previewStats };
 
     return (
-        <div className='flex flex-col gap-2'>
-            <div>
-                <div className='font-bold'>{label}</div>
-                <div className='text-xs text-default-500 min-h-[2em]'>{description}</div>
-            </div>
-            <RadioGroup
-                aria-label={`${label} size`}
-                value={selected}
-                size='sm'
-                onValueChange={(next) => onChange(next === 'custom' ? String(customScale) : next)}
-            >
-                {sizeOptions.map(({ name, label: optionLabel }) => (
-                    <Radio key={name} value={name}>
-                        {optionLabel}
-                    </Radio>
-                ))}
-            </RadioGroup>
-            {selected === 'custom' && (
-                <Slider
-                    aria-label={`Custom ${label.toLowerCase()} size`}
-                    size='sm'
-                    step={0.05}
-                    minValue={min}
-                    maxValue={max}
-                    value={customScale}
-                    getValue={(scale) => `${Math.round(scale * 100)}%`}
-                    onChange={(next) => onChange(String(next))}
-                />
+        <div className='flex w-max flex-col gap-2'>
+            {board === 'adaptive' ? (
+                <>
+                    <PlayerStatsBar player={player} className='!z-0' />
+                    <AdaptivePrompt />
+                </>
+            ) : (
+                <>
+                    <PlayerStats user={player.user} stats={previewStats} />
+                    <ClassicPrompt />
+                </>
             )}
         </div>
     );
 };
 
-const HudSettings = ({ value, onChange }) => {
-    const update = (changes) => onChange && onChange({ ...value, ...changes });
-    const reducedMotion = useBrowserReducedMotion();
+const nearestIndex = (sizes, scale) =>
+    sizes.reduce(
+        (best, size, index) =>
+            Math.abs(size - scale) < Math.abs(sizes[best] - scale) ? index : best,
+        0
+    );
+
+// A size saved off the named steps (from before they were named) sits at the nearest step, unnamed, until moved
+const stepMarks = (sizes, scale) =>
+    sizes.map((size, index) => ({
+        value: index,
+        label: Math.abs(size - scale) < 0.001 ? fixedSizeNames[index] : ''
+    }));
+
+// The slider moves freely while dragged, and the size is only changed once it is let go, so a game is not refitted
+// (and sent to the server) at every step. Fixed, it steps between named sizes; fitted, it scales the fit smoothly.
+const SizeSlider = ({ kind, label, description, value, fixed, onChange, preview }) => {
+    const { min, max } = sliderRanges[kind];
+    const sizes = fixedSizes[kind];
+    const saved = resolveHudSize(kind, value);
+    const [draft, setDraft] = useState(null);
+    const shown = draft ?? saved;
+    const scaleOf = (next) => (Array.isArray(next) ? next[0] : next);
+    const commit = (scale) => {
+        setDraft(null);
+        onChange(String(Math.round(scale * 100) / 100));
+    };
+    const sliderProps = fixed
+        ? {
+              step: 1,
+              minValue: 0,
+              maxValue: sizes.length - 1,
+              showSteps: true,
+              value: nearestIndex(sizes, shown),
+              marks: stepMarks(sizes, shown),
+              onChange: (next) => setDraft(sizes[scaleOf(next)]),
+              onChangeEnd: (next) => commit(sizes[scaleOf(next)])
+          }
+        : {
+              step: 0.05,
+              minValue: min,
+              maxValue: max,
+              value: Math.min(max, Math.max(min, shown)),
+              onChange: (next) => setDraft(scaleOf(next)),
+              onChangeEnd: (next) => commit(scaleOf(next))
+          };
 
     return (
-        <Panel title='HUD Settings'>
-            <div className='flex flex-col gap-4'>
-                <div className='flex flex-col gap-2'>
-                    <div>
-                        <div className='font-bold'>Board layout</div>
-                        <div className='text-xs text-default-500'>
-                            The adaptive board rearranges itself to fit phones and tablets in either
-                            orientation. It is experimental.
-                        </div>
-                    </div>
+        <div className='flex min-w-0 flex-col gap-2'>
+            <div className='flex items-start justify-between gap-2'>
+                <div className='flex flex-col gap-0.5'>
+                    <span className='text-medium'>{label}</span>
+                    <span className='text-small text-default-500'>{description}</span>
+                </div>
+                <div className='flex shrink-0 items-center gap-1'>
+                    <span className='text-small tabular-nums'>{percent(shown)}</span>
+                    <Button
+                        size='sm'
+                        variant='light'
+                        isDisabled={shown === 1}
+                        onPress={() => commit(1)}
+                    >
+                        Reset
+                    </Button>
+                </div>
+            </div>
+            <motion.div
+                key={fixed ? 'fixed' : 'fit'}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.25 }}
+            >
+                <Slider
+                    aria-label={`${label} size`}
+                    size='sm'
+                    hideValue
+                    classNames={{
+                        mark: '!opacity-100 pointer-events-none whitespace-nowrap text-tiny'
+                    }}
+                    {...sliderProps}
+                />
+            </motion.div>
+            {preview(shown)}
+        </div>
+    );
+};
+
+// The board's own settings, shared by the profile and the game (inGame), where the previews are sized against the
+// board in play
+const HudSettings = ({ value, onChange, inGame = false }) => {
+    const update = (changes) => onChange && onChange({ ...value, ...changes });
+    const reducedMotion = useBrowserReducedMotion();
+    const screen = useScreen();
+    const scalesFor = (kind, scale) =>
+        previewScales({ ...value, [kind]: String(scale) }, screen, inGame);
+
+    return (
+        <>
+            <SettingsGroup title='Game board'>
+                <Choice label='Layout'>
                     <RadioGroup
                         aria-label='Board layout'
                         orientation='horizontal'
                         size='sm'
                         value={value.board}
                         onValueChange={(board) => update({ board })}
+                        classNames={{ wrapper: 'grid gap-2 sm:grid-cols-2' }}
                     >
-                        <Radio value='classic'>Classic</Radio>
-                        <Radio value='adaptive'>Adaptive (experimental)</Radio>
+                        <Radio
+                            value='classic'
+                            description="Designed for desktop and laptop screens. It works on a phone, but isn't laid out for one."
+                            classNames={describedTileClassNames}
+                        >
+                            Classic
+                        </Radio>
+                        <Radio
+                            value='adaptive'
+                            description='Rearranges itself to suit any screen: a phone or tablet in portrait or landscape, or a desktop.'
+                            classNames={describedTileClassNames}
+                        >
+                            <span className='flex items-center gap-2'>
+                                Adaptive
+                                <Chip size='sm' color='warning' variant='flat'>
+                                    Experimental
+                                </Chip>
+                            </span>
+                        </Radio>
                     </RadioGroup>
-                </div>
-                <div className='flex flex-col gap-2'>
-                    <div>
-                        <div className='font-bold'>Prompt position</div>
-                        <div className='text-xs text-default-500'>
-                            Which side of the board the prompt and its buttons sit on. On a phone
-                            held upright the prompt runs across the middle instead.
-                        </div>
-                    </div>
+                </Choice>
+                <Choice
+                    label='Prompt position'
+                    description='Which side of the board the prompt and its buttons sit on in a landscape view.'
+                >
                     <RadioGroup
                         aria-label='Prompt position'
                         orientation='horizontal'
@@ -106,49 +281,88 @@ const HudSettings = ({ value, onChange }) => {
                         <Radio value='left'>Left</Radio>
                         <Radio value='right'>Right</Radio>
                     </RadioGroup>
-                </div>
-                {value.board === 'adaptive' && (
-                    <Switch
-                        isSelected={value.followAction !== false}
-                        onValueChange={(followAction) => update({ followAction })}
-                    >
-                        <div>Follow the action in melee</div>
-                        <div className='text-xs text-default-500'>
-                            Scrolls the table to the player whose turn it is, or whose cards you are
-                            choosing.
-                        </div>
-                    </Switch>
-                )}
-                <Switch isSelected={value.auto} onValueChange={(auto) => update({ auto })}>
-                    <div>Scale with screen</div>
-                    <div className='text-xs text-default-500'>
-                        Combines the sizes below with your screen size: smaller on phones, larger on
-                        big monitors.
-                    </div>
-                </Switch>
-                <Switch
+                </Choice>
+                <SettingSwitch
+                    label='Animate the game board'
+                    description={
+                        reducedMotion
+                            ? 'Your browser asks for reduced motion, so animations stay off.'
+                            : 'Cards and effects move between states instead of changing instantly.'
+                    }
                     isSelected={value.animations !== false}
                     onValueChange={(animations) => update({ animations })}
-                >
-                    <div>Animate the gameboard</div>
-                    <div className='text-xs text-default-500'>
-                        {reducedMotion
-                            ? 'Your browser asks for reduced motion, so animations stay off.'
-                            : 'Cards and effects move between states instead of changing instantly.'}
-                    </div>
-                </Switch>
-                <div className='grid gap-4 sm:grid-cols-2'>
-                    {groups.map((group) => (
-                        <SizeGroup
-                            key={group.kind}
-                            {...group}
-                            value={value[group.kind]}
-                            onChange={(size) => update({ [group.kind]: size })}
-                        />
-                    ))}
+                />
+            </SettingsGroup>
+            <SettingsGroup
+                title='Sizes'
+                description='The previews show how the board will look on this screen once saved.'
+            >
+                <Choice label='Sizing'>
+                    <RadioGroup
+                        aria-label='Sizing'
+                        value={value.auto ? 'fit' : 'fixed'}
+                        onValueChange={(sizing) => update({ auto: sizing === 'fit' })}
+                        classNames={{ wrapper: 'grid gap-2 sm:grid-cols-2' }}
+                    >
+                        <Radio
+                            value='fixed'
+                            description='The sliders set the sizes, whatever the screen.'
+                            classNames={describedTileClassNames}
+                        >
+                            Fixed size
+                        </Radio>
+                        <Radio
+                            value='fit'
+                            description='Sized to your screen; the sliders scale the fit.'
+                            classNames={describedTileClassNames}
+                        >
+                            <span className='flex items-center gap-2'>
+                                Fit to screen
+                                <Chip size='sm' color='warning' variant='flat'>
+                                    Experimental
+                                </Chip>
+                            </span>
+                        </Radio>
+                    </RadioGroup>
+                </Choice>
+                <div className='grid gap-4 p-3 sm:grid-cols-2'>
+                    <SizeSlider
+                        kind='cards'
+                        label='Cards'
+                        description='Card images, piles and counters.'
+                        value={value.cards}
+                        fixed={!value.auto}
+                        onChange={(cards) => update({ cards })}
+                        preview={(scale) => (
+                            <PreviewBox
+                                kind='cards'
+                                style={{ '--card-scale': scalesFor('cards', scale).cards }}
+                            >
+                                <CardPreview />
+                            </PreviewBox>
+                        )}
+                    />
+                    <SizeSlider
+                        kind='interface'
+                        label='Interface'
+                        description='Player bar, prompt, chat, popups and all text.'
+                        value={value.interface}
+                        fixed={!value.auto}
+                        onChange={(size) => update({ interface: size })}
+                        preview={(scale) => (
+                            <PreviewBox
+                                kind='interface'
+                                style={interfaceScaleProperties(
+                                    scalesFor('interface', scale).interface
+                                )}
+                            >
+                                <InterfacePreview board={value.board} />
+                            </PreviewBox>
+                        )}
+                    />
                 </div>
-            </div>
-        </Panel>
+            </SettingsGroup>
+        </>
     );
 };
 

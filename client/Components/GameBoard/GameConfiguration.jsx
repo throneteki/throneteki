@@ -3,118 +3,71 @@ import { Switch } from '@heroui/react';
 import Panel from '../Site/Panel';
 import HudSettings from '../Profile/HudSettings';
 
-const windows = [
-    { name: 'plot', label: 'Plots revealed' },
-    { name: 'draw', label: 'Draw phase' },
-    { name: 'marshal', label: 'Marshaling phase' },
-    { name: 'challengeBegin', label: 'Before challenge' },
-    { name: 'attackersDeclared', label: 'Attackers declared' },
-    { name: 'defendersDeclared', label: 'Defenders declared' },
-    { name: 'dominance', label: 'Dominance phase' },
-    { name: 'standing', label: 'Standing phase' },
-    { name: 'taxation', label: 'Taxation phase' }
-];
-
-const GameConfiguration = ({
-    isSpectating,
-    actionWindows,
-    keywordSettings,
-    promptDupes,
-    hideInterrupts,
-    hideReactions,
-    hud,
-    onKeywordSettingToggle,
-    onHideResponsesToggle,
-    onHudChange,
-    onActionWindowToggle,
-    onPromptDupesToggle
-}) => {
-    const windowsToRender = ActionWindows.map((window) => {
+// This game's settings, laid out as the profile's are, a section at a time. values: the settings as changed so far;
+// onChange is given the ones that change.
+const GameConfiguration = ({ section, isSpectating, values, onChange }) => {
+    if (section === 'appearance') {
         return (
-            <div key={window.name}>
-                <Switch
-                    onValueChange={(checked) =>
-                        onActionWindowToggle && onActionWindowToggle(window.name, checked)
-                    }
-                    name={'promptedActionWindows.' + window.name}
-                    isSelected={actionWindows[window.name]}
-                    isDisabled={isSpectating}
-                >
-                    {window.label}
-                </Switch>
+            <div className='flex flex-col gap-6'>
+                <HudSettings value={values.hud} onChange={(hud) => onChange({ hud })} inGame />
             </div>
         );
-    });
+    }
+
+    const setKeyword = (name) => (value) =>
+        onChange({ keywordSettings: { ...values.keywordSettings, [name]: value } });
 
     return (
-        <form>
-            <div className='flex flex-col gap-2 overflow-y-auto'>
-                <Panel title={'Action window defaults'}>
-                    <div className='grid sm:grid-cols-2 gap-2'>{windowsToRender}</div>
-                </Panel>
-                <Panel title={'Responses'}>
-                    <div className='flex flex-col gap-2'>
-                        <Switch
-                            onValueChange={(value) =>
-                                onHideResponsesToggle && onHideResponsesToggle('interrupts', value)
-                            }
-                            name='hideInterrupts'
-                            isSelected={hideInterrupts !== false}
-                            isDisabled={isSpectating}
-                        >
-                            {'Hide whether I have interrupts'}
-                        </Switch>
-                        <Switch
-                            onValueChange={(value) =>
-                                onHideResponsesToggle && onHideResponsesToggle('reactions', value)
-                            }
-                            name='hideReactions'
-                            isSelected={hideReactions !== false}
-                            isDisabled={isSpectating}
-                        >
-                            {'Hide whether I have reactions'}
-                        </Switch>
-                    </div>
-                </Panel>
-                <HudSettings value={hud} onChange={onHudChange} />
-                <Panel title={'Other Settings'}>
-                    <div className='flex flex-col gap-2'>
-                        <Switch
-                            onValueChange={(value) =>
-                                onKeywordSettingToggle &&
-                                onKeywordSettingToggle('chooseOrder', value)
-                            }
-                            name='keywordSettings.chooseOrder'
-                            isSelected={keywordSettings.chooseOrder}
-                            isDisabled={isSpectating}
-                        >
-                            {'Choose order of keywords'}
-                        </Switch>
-                        <Switch
-                            onValueChange={(value) =>
-                                onKeywordSettingToggle &&
-                                onKeywordSettingToggle('chooseCards', value)
-                            }
-                            name='keywordSettings.chooseCards'
-                            isSelected={keywordSettings.chooseCards}
-                            isDisabled={isSpectating}
-                        >
-                            {'Ask before resolving challenge keywords'}
-                        </Switch>
-                        <Switch
-                            onValueChange={(value) =>
-                                onPromptDupesToggle && onPromptDupesToggle(value)
-                            }
-                            name='promptDupes'
-                            isSelected={promptDupes}
-                            isDisabled={isSpectating}
-                        >
-                            {'Prompt before using dupes to save'}
-                        </Switch>
-                    </div>
-                </Panel>
-            </div>
-        </form>
+        <div className='flex flex-col gap-6'>
+            <ActionWindowSettings
+                description='Where the game stops to ask whether you want to take an action.'
+                values={values.actionWindows}
+                isDisabled={isSpectating}
+                onToggle={(name, isSelected) =>
+                    onChange({ actionWindows: { ...values.actionWindows, [name]: isSelected } })
+                }
+            />
+            <SettingsGroup title='Automation'>
+                <SettingSwitch
+                    label='Choose order of keywords'
+                    description='When you are first player, pick the order challenge keywords resolve in.'
+                    isSelected={!!values.keywordSettings?.chooseOrder}
+                    isDisabled={isSpectating}
+                    onValueChange={setKeyword('chooseOrder')}
+                />
+                <SettingSwitch
+                    label='Ask before resolving challenge keywords'
+                    description='Pick which of your cards resolve each keyword, instead of all of them resolving automatically.'
+                    isSelected={!!values.keywordSettings?.chooseCards}
+                    isDisabled={isSpectating}
+                    onValueChange={setKeyword('chooseCards')}
+                />
+                <SettingSwitch
+                    label='Prompt before using dupes to save'
+                    description='Otherwise a duplicate saves your card automatically.'
+                    isSelected={!!values.promptDupes}
+                    isDisabled={isSpectating}
+                    onValueChange={(promptDupes) => onChange({ promptDupes })}
+                />
+            </SettingsGroup>
+            <SettingsGroup
+                title='Hidden information'
+                description="Pause at windows where you could have a response, even when you don't, so your opponent can't tell what is in your hand."
+            >
+                <SettingSwitch
+                    label='Hide whether I have interrupts'
+                    isSelected={values.hideInterrupts !== false}
+                    isDisabled={isSpectating}
+                    onValueChange={(hideInterrupts) => onChange({ hideInterrupts })}
+                />
+                <SettingSwitch
+                    label='Hide whether I have reactions'
+                    isSelected={values.hideReactions !== false}
+                    isDisabled={isSpectating}
+                    onValueChange={(hideReactions) => onChange({ hideReactions })}
+                />
+            </SettingsGroup>
+        </div>
     );
 };
 

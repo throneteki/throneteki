@@ -50,10 +50,12 @@ export const InspectLabel = ({ label, count, name, opens = false }) => (
 
 // inspectable: a stacked pile whose count cannot be seen by looking at it, which on phones shows its name and count
 // on a first tap. inspectSkip: a pile whose top card is to be used straight away is tapped through as usual.
-// opens: a second tap opens the pile.
+// opens: a second tap opens the pile. slotLabel: the name drawn faintly behind the area (adaptive board) where it
+// has no label, or a different one.
 const LabelledGameArea = forwardRef(function LabelledGameArea(
     {
         label,
+        slotLabel,
         count,
         inspectable = false,
         inspectSkip = false,
@@ -138,7 +140,7 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
                     : 'border-2 border-default-100/55 bg-black/55 rounded-md'
             )}
         >
-            {adaptive && label && (
+            {adaptive && (slotLabel || label) && (
                 <span
                     className={classNames(
                         'select-none overflow-hidden whitespace-nowrap text-center text-[calc(var(--card-scale,1)*0.55rem)] font-semibold uppercase leading-none tracking-wider text-white/30',
@@ -147,7 +149,7 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
                             : 'max-w-[90%]'
                     )}
                 >
-                    {nameOf(label)}
+                    {slotLabel ?? nameOf(label)}
                 </span>
             )}
         </div>

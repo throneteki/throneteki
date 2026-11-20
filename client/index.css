@@ -345,6 +345,11 @@ html.card-dragging * {
     @mixin chat-phone;
 }
 
+/* On the adaptive board the chat button beside our game menu opens the chat, in place of the tab */
+html[data-board-layout='wide'] .chat-lip {
+    display: none;
+}
+
 html[data-board-layout='narrow'],
 html[data-board-layout='short'] {
     @mixin chat-phone;
@@ -439,52 +444,65 @@ html.card-dragging.card-drop-refused * {
     transition: none;
 }
 
-/* What is happening to a card is drawn as a ring around it. The few that need attention breathe. */
+/* What is happening to a card is drawn as a ring around it. The few that need attention breathe. A ring is
+   drawn to the size of the cards it is around (--card-scale, which hands, piles and sheets set for their own cards),
+   or to --ring-scale where it is around something else, such as a chip that is sized with the interface. */
+.ring-selected,
+.ring-selectable,
+.ring-participating,
+.ring-danger,
+.ring-saved,
+.ring-contributing,
+.ring-keyword,
+.ring-controlled,
+.ring-new {
+    --ring: max(0.75px, calc(1px * var(--ring-scale, var(--card-scale, 1))));
+}
 .ring-selected {
-    box-shadow: 0 0 0 3px rgb(56 189 248);
+    box-shadow: 0 0 0 calc(var(--ring) * 3) rgb(56 189 248);
     scale: 1.03;
 }
 .ring-selectable {
-    box-shadow: 0 0 3px 3px rgb(var(--select-ring));
+    box-shadow: 0 0 calc(var(--ring) * 3) calc(var(--ring) * 3) rgb(var(--select-ring));
     animation: ring-breathe 1.8s ease-in-out infinite;
 }
 .ring-participating {
-    box-shadow: 0 0 1px 2px rgb(239 68 68);
+    box-shadow: 0 0 var(--ring) calc(var(--ring) * 2) rgb(239 68 68);
 }
 .ring-danger {
-    box-shadow: 0 0 2px 2px rgb(153 27 27);
+    box-shadow: 0 0 calc(var(--ring) * 2) calc(var(--ring) * 2) rgb(153 27 27);
     animation: ring-danger 1.1s ease-in-out infinite;
 }
 .ring-saved {
-    box-shadow: 0 0 1px 2px rgb(34 197 94);
+    box-shadow: 0 0 var(--ring) calc(var(--ring) * 2) rgb(34 197 94);
 }
 .ring-contributing {
-    box-shadow: 0 0 1px 2px rgb(254 215 170);
+    box-shadow: 0 0 var(--ring) calc(var(--ring) * 2) rgb(254 215 170);
 }
 .ring-keyword {
-    box-shadow: 0 0 1px 2px rgb(154 52 18);
+    box-shadow: 0 0 var(--ring) calc(var(--ring) * 2) rgb(154 52 18);
 }
 .ring-controlled {
-    box-shadow: 0 0 1px 2px rgb(253 224 71);
+    box-shadow: 0 0 var(--ring) calc(var(--ring) * 2) rgb(253 224 71);
 }
 .ring-new {
-    box-shadow: 0 0 1px 2px rgb(219 234 254 / 0.5);
+    box-shadow: 0 0 var(--ring) calc(var(--ring) * 2) rgb(219 234 254 / 0.5);
     animation: ring-arrive 1.6s ease-out;
 }
 
 @keyframes ring-breathe {
     50% {
-        box-shadow: 0 0 9px 3px rgb(var(--select-ring) / 0.55);
+        box-shadow: 0 0 calc(var(--ring) * 9) calc(var(--ring) * 3) rgb(var(--select-ring) / 0.55);
     }
 }
 @keyframes ring-danger {
     50% {
-        box-shadow: 0 0 8px 4px rgb(220 38 38 / 0.85);
+        box-shadow: 0 0 calc(var(--ring) * 8) calc(var(--ring) * 4) rgb(220 38 38 / 0.85);
     }
 }
 @keyframes ring-arrive {
     from {
-        box-shadow: 0 0 12px 5px rgb(219 234 254 / 0.95);
+        box-shadow: 0 0 calc(var(--ring) * 12) calc(var(--ring) * 5) rgb(219 234 254 / 0.95);
     }
 }
 
@@ -532,5 +550,45 @@ html.card-dragging.card-drop-refused * {
     100% {
         scale: 1;
         z-index: 250;
+    }
+}
+
+/* The settings' previews ease between sizes. Only these copies of the scales are registered, so the board itself
+   never animates a rescale. */
+@property --preview-card-scale {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 1;
+}
+
+@property --preview-ui-scale {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 1;
+}
+
+.preview-cards {
+    --preview-card-scale: var(--card-scale, 1);
+    transition: --preview-card-scale 250ms ease-out;
+}
+
+.preview-cards > * {
+    --card-scale: var(--preview-card-scale);
+}
+
+.preview-interface {
+    --preview-ui-scale: var(--ui-scale, 1);
+    transition: --preview-ui-scale 250ms ease-out;
+}
+
+.preview-interface > * {
+    --ui-scale: var(--preview-ui-scale);
+    --text-scale: var(--preview-ui-scale);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .preview-cards,
+    .preview-interface {
+        transition: none;
     }
 }

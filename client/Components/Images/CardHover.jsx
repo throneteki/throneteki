@@ -174,7 +174,7 @@ const CardHover = ({ children, size = '3x-large' }) => {
             </div>
             {code &&
                 createPortal(
-                    <div ref={wrapperRef} className='fixed z-10 pointer-events-none'>
+                    <div ref={wrapperRef} className='fixed z-[450] pointer-events-none'>
                         <div ref={imageCallback} className={imageClassName}>
                             {!isLoading && notes?.length > 0 && (
                                 <div className='mb-1.5 w-0 min-w-full overflow-hidden rounded-lg border border-default-300 bg-content1/95 shadow-lg shadow-black/60'>

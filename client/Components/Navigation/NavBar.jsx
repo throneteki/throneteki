@@ -28,9 +28,12 @@ import ConfirmDialog from '../Site/ConfirmDialog';
 import { sendLeaveGameMessage } from '../../redux/reducers/game';
 import FullScreenButton from './FullScreenButton';
 import NavItem from './NavItem';
+import { useAdaptiveLayoutMode } from '../../boardLayoutStore';
 
 const NavBar = () => {
     const dispatch = useDispatch();
+    // The adaptive board has its own game menu in our stats bar, with the spectators, conceding and leaving
+    const boardHasMenu = !!useAdaptiveLayoutMode();
     const { user } = useSelector((state) => state.auth);
     const {
         connected: lobbySocketConnected,
@@ -209,12 +212,14 @@ const NavBar = () => {
                             responseTime={lobbyResponse}
                         />
                     )}
-                    <ContextMenu
-                        onPress={(showConfirmLeave) => {
-                            setIsMenuOpen(false);
-                            setShowConfirmLeave(showConfirmLeave);
-                        }}
-                    />
+                    {!boardHasMenu && (
+                        <ContextMenu
+                            onPress={(showConfirmLeave) => {
+                                setIsMenuOpen(false);
+                                setShowConfirmLeave(showConfirmLeave);
+                            }}
+                        />
+                    )}
                 </NavbarMenu>
 
                 <NavbarContent className='hidden lg:flex' justify='start'>
@@ -230,12 +235,14 @@ const NavBar = () => {
                     </NavbarBrand>
                 </NavbarContent>
                 <NavbarContent className='hidden lg:flex' justify='end'>
-                    <ContextMenu
-                        onPress={(showConfirmLeave) => {
-                            setIsMenuOpen(false);
-                            setShowConfirmLeave(showConfirmLeave);
-                        }}
-                    />
+                    {!boardHasMenu && (
+                        <ContextMenu
+                            onPress={(showConfirmLeave) => {
+                                setIsMenuOpen(false);
+                                setShowConfirmLeave(showConfirmLeave);
+                            }}
+                        />
+                    )}
                     {!currentGame?.started && numGames}
                     {currentGame?.started ? (
                         <ServerStatus

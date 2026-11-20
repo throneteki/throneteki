@@ -37,13 +37,26 @@ import {
 } from '../../../redux/reducers/game';
 
 const icon = (glyph) => <FontAwesomeIcon icon={glyph} className='w-4' />;
-// Room kept for the menu button itself, which is always shown
+// Room kept for the menu button, when anything is left for it to hold
 const menuButtonWidth = 32;
+// Which items keep their place in the bar first when not all of them fit
+const priority = [
+    'settings',
+    'leave',
+    'manual',
+    'concede',
+    'report',
+    'spectators',
+    'mute',
+    'shortcuts'
+];
 
 // The game's menu, standing in for the navbar that phone layouts hide: connection, spectators (a dot when their
-// number changes, until opened), settings, manual mode, reporting, shortcuts, conceding and leaving.
-// room (px): how many of the first items show as buttons beside it, as classic does (the desktop's joust bar). While
-// manual mode is on and only in the menu, a wrench beside it says so and turns it off.
+// number changes, until looked at), settings, manual mode, reporting, shortcuts, conceding and leaving.
+// room (px): the room in the bar for its items as buttons, with their names (the desktop's bar). As many as fit
+// are shown, in the bar's order: who is watching, then the game's tools, then the ways out. What does not fit is in
+// the menu, which is only shown when it holds something. With no room (phones) everything is in the menu, and while
+// manual mode is on a wrench beside it says so and turns it off.
 const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) => {
     const dispatch = useDispatch();
     const currentGame = useSelector((state) => state.lobby.currentGame);
@@ -70,9 +83,36 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
         dispatch(sendLeaveGameMessage());
     };
 
-    // In the order they are given room as buttons; the last section only ever lives in the menu
+    const spectatorNames =
+        spectators.length > 0 ? spectators.map((spectator) => spectator.name).join(', ') : 'None';
+
+    // In the bar's order. Spectators is only a button in the bar; in the menu it is part of the status.
     const items = [
-        { key: 'settings', label: 'Settings', glyph: faCogs, run: onSettingsClick, inline: true },
+        {
+            key: 'spectators',
+            label: `Spectators: ${spectators.length}`,
+            glyph: faUsers,
+            description: spectatorNames,
+            tone: newSpectators ? 'text-warning' : undefined,
+            run: () => setSpectatorsSeen(spectators.length),
+            barOnly: true
+        },
+        isPlaying && {
+            key: 'mute',
+            label: muted ? 'Un-mute spectators' : 'Mute spectators',
+            glyph: muted ? faEyeSlash : faEye,
+            description: muted ? 'Spectators cannot chat' : 'Spectators can chat',
+            run: () => dispatch(sendToggleMuteSpectatorsMessage()),
+            iconOnly: true
+        },
+        { key: 'settings', label: 'Settings', glyph: faCogs, run: onSettingsClick },
+        hasKeyboard && {
+            key: 'shortcuts',
+            label: 'Keyboard shortcuts',
+            short: 'Shortcuts',
+            glyph: faKeyboard,
+            run: onShortcutsClick
+        },
         isPlaying && {
             key: 'manual',
             label: manualMode ? 'Turn manual mode off' : 'Manual mode',
@@ -82,17 +122,7 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
             description: manualMode
                 ? 'On: the rules are not fully enforced'
                 : 'Off: ask your opponent to turn it on',
-            run: () => dispatch(sendToggleManualModeMessage()),
-            inline: true
-        },
-        isPlaying && {
-            key: 'mute',
-            label: muted ? 'Un-mute spectators' : 'Mute spectators',
-            glyph: muted ? faEyeSlash : faEye,
-            description: muted ? 'Spectators cannot chat' : 'Spectators can chat',
-            run: () => dispatch(sendToggleMuteSpectatorsMessage()),
-            inline: true,
-            iconOnly: true
+            run: () => dispatch(sendToggleManualModeMessage())
         },
         isPlaying && {
             key: 'report',
@@ -102,27 +132,26 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
             run: () => {
                 dispatch(sendReportProblemMessage());
                 setReporting(true);
-            },
-            inline: true
+            }
         },
-        hasKeyboard && {
-            key: 'shortcuts',
-            label: 'Keyboard shortcuts',
-            glyph: faKeyboard,
-            run: onShortcutsClick
-        }
-    ].filter(Boolean);
-    const leaving = [
         isPlaying && {
             key: 'concede',
             label: 'Concede',
             glyph: faFlag,
-            run: () => dispatch(sendConcedeMessage())
+            run: () => dispatch(sendConcedeMessage()),
+            leaving: true
         },
-        { key: 'leave', label: 'Leave game', glyph: faRightFromBracket, run: leave, danger: true }
+        {
+            key: 'leave',
+            label: 'Leave game',
+            glyph: faRightFromBracket,
+            run: leave,
+            danger: true,
+            leaving: true
+        }
     ].filter(Boolean);
 
-    // What the navbar shows of the game: the game server's connection, as its ping, and who is watching
+    // The game server's connection, as its ping, and who is watching
     const serverState = server.connected
         ? server.responseTime
             ? `${server.responseTime}ms`
@@ -147,52 +176,76 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
             tone: serverTone
         },
         {
-            key: 'spectators',
+            key: 'spectators-status',
             label: `Spectators: ${spectators.length}`,
             glyph: faUsers,
-            description:
-                spectators.length > 0
-                    ? spectators.map((spectator) => spectator.name).join(', ')
-                    : 'None',
+            description: spectatorNames,
             tone: newSpectators ? 'text-warning' : undefined
         }
     ];
 
     // The buttons are drawn once out of sight to find how wide each is, so as many as fit can be shown
     const measureRef = useRef(null);
-    const [widths, setWidths] = useState([]);
-    const inlineItems = items.filter((item) => item.inline);
-    const inlineKey = inlineItems.map((item) => item.key + item.label).join('|');
+    const [widths, setWidths] = useState({});
+    const itemsKey = items.map((item) => item.key + item.label).join('|');
     const measuring = room > 0;
     useLayoutEffect(() => {
         const row = measureRef.current;
         if (row) {
-            setWidths([...row.children].map((child) => child.offsetWidth));
+            setWidths(
+                Object.fromEntries(
+                    [...row.children].map((child) => [child.dataset.key, child.offsetWidth])
+                )
+            );
         }
-    }, [inlineKey, measuring]);
-    let shown = 0;
-    let used = menuButtonWidth;
-    while (shown < inlineItems.length && used + (widths[shown] ?? Infinity) <= room) {
-        used += widths[shown];
-        shown++;
+    }, [itemsKey, measuring]);
+    const widthOf = (item) => widths[item.key] ?? Infinity;
+    let inBar = new Set();
+    if (measuring) {
+        const total = items.reduce((sum, item) => sum + widthOf(item), 0);
+        if (total <= room) {
+            inBar = new Set(items.map((item) => item.key));
+        } else {
+            let used = menuButtonWidth;
+            for (const key of priority) {
+                const item = items.find((entry) => entry.key === key);
+                if (item && used + widthOf(item) <= room) {
+                    used += widthOf(item);
+                    inBar.add(key);
+                }
+            }
+        }
     }
-    const inline = inlineItems.slice(0, shown);
-    const inMenu = items.filter((item) => !inline.includes(item));
-    const run = (key) => [...items, ...leaving].find((item) => item.key === key)?.run?.();
+    const bar = items.filter((item) => inBar.has(item.key));
+    const inMenu = items.filter((item) => !inBar.has(item.key) && !item.barOnly);
+    const tools = inMenu.filter((item) => !item.leaving);
+    const ways = inMenu.filter((item) => item.leaving);
+    const showMenu = !measuring || inMenu.length > 0;
+    const run = (key) => items.find((item) => item.key === key)?.run?.();
 
-    const inlineButton = (item) => (
+    const barButton = (item) => (
         <Button
             key={item.key}
+            data-key={item.key}
             isIconOnly={item.iconOnly}
             size='sm'
             radius='none'
             variant='light'
             title={item.description ? `${item.label}: ${item.description}` : item.label}
             startContent={item.iconOnly ? undefined : <FontAwesomeIcon icon={item.glyph} />}
-            className={classNames('h-7 shrink-0 px-2', { 'text-danger': item.danger })}
+            className={classNames('relative h-7 shrink-0 overflow-visible px-2', item.tone, {
+                'text-danger': item.danger
+            })}
             onPress={item.run}
+            onMouseEnter={item.key === 'spectators' ? item.run : undefined}
         >
             {item.iconOnly ? <FontAwesomeIcon icon={item.glyph} /> : (item.short ?? item.label)}
+            {item.key === 'spectators' && newSpectators && (
+                <span
+                    data-spectators-changed=''
+                    className='absolute right-0.5 top-0.5 h-2 w-2 rounded-full bg-warning'
+                />
+            )}
         </Button>
     );
     const menuItem = (item) => (
@@ -215,11 +268,11 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
                     aria-hidden
                     className='pointer-events-none invisible absolute right-0 top-0 flex'
                 >
-                    {inlineItems.map(inlineButton)}
+                    {items.map(barButton)}
                 </div>
             )}
-            {inline.map(inlineButton)}
-            {manualMode && isPlaying && !inline.some((item) => item.key === 'manual') && (
+            {bar.map(barButton)}
+            {manualMode && isPlaying && !inBar.has('manual') && (
                 <Button
                     isIconOnly
                     size='sm'
@@ -231,54 +284,62 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
                     <FontAwesomeIcon icon={faWrench} />
                 </Button>
             )}
-            <Dropdown
-                placement='top-end'
-                onOpenChange={(open) => open && setSpectatorsSeen(spectators.length)}
-            >
-                <DropdownTrigger>
-                    <Button
-                        isIconOnly
-                        size='sm'
-                        variant='light'
-                        className='relative h-7 w-7 min-w-7 overflow-visible'
-                        title={
-                            newSpectators ? 'Game menu: the spectators have changed' : 'Game menu'
-                        }
-                    >
-                        <FontAwesomeIcon icon={faBars} />
-                        {newSpectators && (
-                            <span
-                                data-spectators-changed=''
-                                className='absolute right-0.5 top-0.5 h-2 w-2 rounded-full bg-warning'
-                            />
-                        )}
-                    </Button>
-                </DropdownTrigger>
-                <DropdownMenu aria-label='Game menu' onAction={run}>
-                    <DropdownSection showDivider>
-                        {status.map((item) => (
-                            <DropdownItem
-                                key={item.key}
-                                isReadOnly
-                                startContent={
-                                    <FontAwesomeIcon
-                                        icon={item.glyph}
-                                        className={classNames('w-4', item.tone)}
-                                    />
-                                }
-                                description={item.description}
-                                className={classNames('cursor-default', item.tone)}
-                            >
-                                {item.label}
-                            </DropdownItem>
-                        ))}
-                    </DropdownSection>
-                    {inMenu.length > 0 ? (
-                        <DropdownSection showDivider>{inMenu.map(menuItem)}</DropdownSection>
-                    ) : null}
-                    <DropdownSection>{leaving.map(menuItem)}</DropdownSection>
-                </DropdownMenu>
-            </Dropdown>
+            {showMenu && (
+                <Dropdown
+                    placement='top-end'
+                    onOpenChange={(open) => open && setSpectatorsSeen(spectators.length)}
+                >
+                    <DropdownTrigger>
+                        <Button
+                            isIconOnly
+                            size='sm'
+                            variant='light'
+                            className='relative h-7 w-7 min-w-7 overflow-visible'
+                            title={
+                                newSpectators
+                                    ? 'Game menu: the spectators have changed'
+                                    : 'Game menu'
+                            }
+                        >
+                            <FontAwesomeIcon icon={faBars} />
+                            {newSpectators && !inBar.has('spectators') && (
+                                <span
+                                    data-spectators-changed=''
+                                    className='absolute right-0.5 top-0.5 h-2 w-2 rounded-full bg-warning'
+                                />
+                            )}
+                        </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu aria-label='Game menu' onAction={run}>
+                        <DropdownSection showDivider>
+                            {status.map((item) => (
+                                <DropdownItem
+                                    key={item.key}
+                                    isReadOnly
+                                    startContent={
+                                        <FontAwesomeIcon
+                                            icon={item.glyph}
+                                            className={classNames('w-4', item.tone)}
+                                        />
+                                    }
+                                    description={item.description}
+                                    className={classNames('cursor-default', item.tone)}
+                                >
+                                    {item.label}
+                                </DropdownItem>
+                            ))}
+                        </DropdownSection>
+                        {tools.length > 0 ? (
+                            <DropdownSection showDivider={ways.length > 0}>
+                                {tools.map(menuItem)}
+                            </DropdownSection>
+                        ) : null}
+                        {ways.length > 0 ? (
+                            <DropdownSection>{ways.map(menuItem)}</DropdownSection>
+                        ) : null}
+                    </DropdownMenu>
+                </Dropdown>
+            )}
             <ConfirmDialog
                 isOpen={confirmingLeave}
                 message='Your game is not finished, and you will automatically concede when leaving. Are you sure you want to leave?'

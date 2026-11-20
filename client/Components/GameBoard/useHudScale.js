@@ -1,6 +1,6 @@
 import { useLayoutEffect } from 'react';
 import { computeAutoCardScale, settleAutoCardScale } from '../../cardScale';
-import { computeHudScales, computeScreenScale } from '../../hud';
+import { classicScales, setBoardMeasure } from './boardScales';
 import { holdFlip } from '../../flip';
 
 const rescaleHold = 400;
@@ -52,31 +52,25 @@ export const useHudScale = (hud, containerRef, ready = true) => {
         let cardFit = null;
         let frame = 0;
 
-        const apply = () => {
-            const scales = computeHudScales({
-                hud: setting,
-                cardFit: cardFit ?? 1,
-                screen: computeScreenScale({ width: window.innerWidth, height: window.innerHeight })
-            });
+        const update = () => {
+            const rem = parseFloat(getComputedStyle(root).fontSize) || 16;
+            const size = container
+                ? { width: container.clientWidth, height: container.clientHeight }
+                : null;
+            if (auto && size) {
+                cardFit = settleAutoCardScale(cardFit, computeAutoCardScale({ ...size, rem }));
+            }
+            const measure = {
+                container: size,
+                viewport: { width: window.innerWidth, height: window.innerHeight },
+                rem
+            };
+            setBoardMeasure({ ...measure, cardFit: auto ? cardFit : null });
+            const scales = classicScales(setting, { ...measure, cardFit: cardFit ?? 1 });
             applyScaleProperties({
                 '--card-scale': scales.cards,
                 ...interfaceScaleProperties(scales.interface)
             });
-        };
-
-        const update = () => {
-            if (auto && container) {
-                const rem = parseFloat(getComputedStyle(root).fontSize) || 16;
-                cardFit = settleAutoCardScale(
-                    cardFit,
-                    computeAutoCardScale({
-                        width: container.clientWidth,
-                        height: container.clientHeight,
-                        rem
-                    })
-                );
-            }
-            apply();
         };
 
         update();
@@ -93,6 +87,7 @@ export const useHudScale = (hud, containerRef, ready = true) => {
             observer?.disconnect();
             window.removeEventListener('resize', schedule);
             removeScaleProperties(Object.values(properties).flat());
+            setBoardMeasure(null);
         };
     }, [cards, interfaceSize, auto, containerRef, ready]);
 };

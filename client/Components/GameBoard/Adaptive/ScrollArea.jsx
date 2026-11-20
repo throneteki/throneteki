@@ -53,7 +53,7 @@ const MoreHint = ({ show, choose, end, axis }) => {
                         className={classNames(
                             'absolute',
                             kind === 'choose'
-                                ? 'ring-selectable bg-[rgb(var(--select-ring))]'
+                                ? 'ring-selectable bg-[rgb(var(--select-ring))] [--ring-scale:1]'
                                 : 'bg-amber-300 shadow-[0_0_6px_1px_rgba(252,211,77,0.7)]',
                             line
                         )}

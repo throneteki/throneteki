@@ -93,8 +93,8 @@ const useEqualPlayAreas = (boardRef, mode) => {
 // How wide the prompt is as a panel over the side of the play areas (on a desktop): like classic's, following the
 // interface size
 const floatingPromptWidth = 'calc(var(--ui-scale, 1) * clamp(12rem, 20vw, 16rem))';
-// On the right it keeps clear of the chat's tab, which reaches over the board's right edge
-const chatTabDepth = 'calc(var(--ui-scale, 1) * 1.75rem)';
+// The room the chat button takes beside the game menu in the desktop's bar, in pixels at the interface's size
+const chatButtonRoom = 32;
 // Phone landscape's column down one side: the stats at its top and bottom, the prompt and our tools between
 const columnWidth = 'clamp(13rem, 30vw, 20rem)';
 
@@ -192,7 +192,7 @@ const FitRow = ({ className, start = false, children }) => {
     );
 };
 
-// A player's avatar and stats in a bordered card, shrunk to fit (phone landscape and portrait).
+// A player's avatar and stats on a slim band, shrunk to fit (phone landscape and portrait).
 // active: tinted while they are waited on, at a melee table. start: left-aligned rather than centred (portrait).
 const StatsCard = ({
     player,
@@ -203,14 +203,7 @@ const StatsCard = ({
     className,
     ...props
 }) => (
-    <div
-        {...props}
-        className={classNames(
-            'pointer-events-auto rounded-md border border-default-200/40 shadow-[0_2px_8px_rgba(0,0,0,0.5)]',
-            active ? 'bg-sky-950/80' : 'bg-black/60',
-            className
-        )}
-    >
+    <div {...props} className={classNames('pointer-events-auto', className)}>
         <FitRow className='px-1' start={start}>
             <PlayerStatsBar
                 player={player}
@@ -219,7 +212,7 @@ const StatsCard = ({
                 compact
                 canChange={canChange}
                 showSeat={showSeat}
-                className='bg-transparent'
+                backdrop={active ? 'bg-sky-950/80' : 'bg-black/60'}
             />
         </FitRow>
     </div>
@@ -302,12 +295,11 @@ const AdaptiveGameBoardLayout = ({
             board.style.removeProperty('--board-hint-bottom');
         };
     }, [mode, melee, otherPlayers.length]);
-    const followEnabled = hud.followAction !== false;
     const followed = useAutoFollow({
         boardRef,
         target: followTarget(thisPlayer, otherPlayers),
         active: activePlayerOf(thisPlayer, otherPlayers),
-        enabled: melee && followEnabled,
+        enabled: melee,
         waiting: isDragging || zoomed
     });
     const manualMode = useSelector((state) => !!state.lobby.currentGame?.manualMode);
@@ -586,8 +578,8 @@ const AdaptiveGameBoardLayout = ({
         dispatch(
             sendButtonClickedMessage(button.promptId, button.command, button.method, button.arg)
         );
-    // On a phone the chat button replaces the chat's tab, which would cover the board
-    const chatButton = phoneLayout && chat && (
+    // The chat button among our tools, in place of the chat's tab
+    const chatButton = chat && (
         <Button
             isIconOnly
             size='sm'
@@ -606,7 +598,7 @@ const AdaptiveGameBoardLayout = ({
         </Button>
     );
     // At a melee table: whether the view follows the action (directed) or not (manual), and switches it
-    const followToggle = melee && followEnabled && (
+    const followToggle = melee && (
         <Button
             isIconOnly
             size='sm'
@@ -675,6 +667,7 @@ const AdaptiveGameBoardLayout = ({
         >
             <div
                 ref={dividerRef}
+                data-region='prompt-float'
                 className={classNames(
                     'absolute top-0 -translate-y-1/2',
                     promptSide === 'right' ? 'right-[var(--board-prompt-inset)]' : 'left-0'
@@ -898,8 +891,7 @@ const AdaptiveGameBoardLayout = ({
                         className='relative flex h-full w-full overflow-hidden'
                         style={{
                             '--board-prompt-width': floatingPromptWidth,
-                            '--board-prompt-inset':
-                                floatingPrompt && promptSide === 'right' ? chatTabDepth : '0px',
+                            '--board-prompt-inset': '0px',
                             '--board-cover-left': coverOf('left'),
                             '--board-cover-right': coverOf('right')
                         }}
@@ -954,6 +946,7 @@ const AdaptiveGameBoardLayout = ({
                             {portrait && !melee && (
                                 <div
                                     ref={topBarsRef}
+                                    data-sheet-edge='top'
                                     className='relative z-[305] flex shrink-0 items-center gap-1 px-1 pb-1 pt-[calc(var(--safe-top)+0.125rem)]'
                                 >
                                     {otherPlayers.map((player) => (
@@ -968,16 +961,14 @@ const AdaptiveGameBoardLayout = ({
                             )}
                             {floatingPrompt && !melee && (
                                 <div ref={topBarsRef} className='relative z-[305] shrink-0'>
-                                    {otherPlayers.map((player, index) => (
+                                    {otherPlayers.map((player) => (
                                         <PlayerStatsBar
                                             key={player.name ?? player.seatNo}
                                             player={player}
                                             compact={phoneLayout}
                                             edge='top'
                                             className='border-b'
-                                        >
-                                            {index === 0 ? chatButton : null}
-                                        </PlayerStatsBar>
+                                        ></PlayerStatsBar>
                                     ))}
                                 </div>
                             )}
@@ -1027,7 +1018,10 @@ const AdaptiveGameBoardLayout = ({
                                 </div>
                             </div>
                             {portrait && !melee && (
-                                <div className='relative z-[245] flex shrink-0 items-center gap-1 p-1'>
+                                <div
+                                    data-sheet-edge='bottom'
+                                    className='relative z-[306] flex shrink-0 items-center gap-1 p-1'
+                                >
                                     <StatsCard
                                         player={thisPlayer}
                                         start
@@ -1043,9 +1037,14 @@ const AdaptiveGameBoardLayout = ({
                                     canChange={canChangeStats}
                                     compact={phoneLayout}
                                     edge='bottom'
-                                    className='border-t'
+                                    className='border-t !z-[306]'
                                 >
-                                    {gameMenu}
+                                    {(room) => (
+                                        <>
+                                            {gameMenu(Math.max(0, room - chatButtonRoom))}
+                                            {chatButton}
+                                        </>
+                                    )}
                                 </PlayerStatsBar>
                             )}
                             {/* In portrait the prompt is at the very bottom, below our stats */}

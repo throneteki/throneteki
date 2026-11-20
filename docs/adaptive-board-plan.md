@@ -730,6 +730,134 @@ From the review on 2026-11-17 (seventh batch):
 - [x] **R185 Going between piles in a sheet eases (decided 2026-11-20)**: tapping another pile's chip fades the new
       pile's cards in, and the sheet's height eases to theirs (200ms) rather than jumping. The body only scrolls once
       settled, so no scroll bar flashes while it eases. Its width still changes at once (see the review below).
+- [x] **R186 Board settings in master's new profile (decided 2026-11-20)**: merging master's profile redesign (#3834).
+      The HUD settings live in the profile's Appearance section, above the background, in place of master's card
+      size (`settings.cardSize` stays read only through `normalizeHud`, for old accounts). `HudSettings` uses
+      master's `SettingsGroup` and `SettingSwitch`, and so does the in-game settings dialog (`GameConfiguration`),
+      sharing `ActionWindowSettings` with the profile's Gameplay section, so both read the same. Both show a card
+      preview and an interface preview (a stand-in player bar and prompt): in a game they inherit the board's live
+      scales; in the profile they are worked out for this screen and the chosen layout (the adaptive board's own
+      interface scale, and its reduced growth of large cards on phones), since nothing applies until saved. The
+      desktop dialog is a size wider (`2xl`) to fit the previews. On a phone the adaptive board's cards are fitted
+      to the room it has, so Large can show little or no change there, in the preview and on the board alike.
+- [x] **R187 Appearance no longer scrolls sideways on a phone (decided 2026-11-20)**: the previews' content set the
+      width of their grid column. Each size's column now has `min-w-0`, and a preview wider than its box is clipped
+      from its start (`safe center`).
+- [x] **R188 Each layout describes itself (decided 2026-11-20)**: the Layout choice has no description of its own.
+      Each tile has one instead: Classic for a desktop or laptop; Adaptive for any screen, a phone or tablet in
+      portrait or landscape, or a desktop. Adaptive carries an Experimental chip in place of "(experimental)".
+- [x] **R189 Sizes are a slider each, under one Auto switch (decided 2026-11-20)**: Small/Normal/Large/Custom beside
+      "Scale with screen" confused. Now one "Fit to my screen" choice (`hud.auto`, see R193) covers both sizes, and
+      Cards and Interface each have a percentage slider (cards 50–300%, interface 60–200%, with Reset).
+      Fitted, the slider makes the board's chosen size larger or smaller; not fitted, it is the size. Chosen over an
+      Auto switch per size, and over Fit/Fixed tiles per size. The stored values are unchanged in shape: a preset
+      name saved before still reads as its scale, and moving a slider saves a number. A slider changes the size
+      when it is let go, so a game is not refitted (and sent to the server) at each step of a drag.
+- [x] **R190 The previews ease between sizes (decided 2026-11-20)**: registered copies of the scales
+      (`--preview-card-scale`, `--preview-ui-scale`, in `index.css`) transition on the previews only, so the board
+      itself still never animates a rescale. Off under reduced motion.
+- [x] **R191 The interface preview is the real bar and prompt (decided 2026-11-20)**: our avatar and name, the
+      board's stat icons (power, gold, initiative, claim, reserve) through `StatDisplay`, and a phase-headed prompt
+      with Done, in place of the made-up "5 gold / 3 power" bar.
+- [x] **R192 Fixed sizes step between named sizes (decided 2026-11-20)**: HeroUI's Slider has no notches at chosen
+      points (only `showSteps`, a dot at every step), so with Fixed size the slider steps between evenly spaced
+      named sizes with those dots: cards X-Small 50%, Small 70%, Medium 100%, Large 140%, X-Large 200%, XX-Large
+      300%; interface X-Small 70%, Small 85%, Medium 100%, Large 120%, X-Large 150%. The chosen name shows under its
+      step; the percentage shows once, at the top beside Reset. A size saved off the steps sits at the nearest one,
+      unnamed, until moved. Fit to screen keeps the smooth slider, without steps; the slider fades in as it changes.
+- [x] **R193 Fixed size or Fit to screen is a choice of two (decided 2026-11-20)**: the "Fit to my screen" switch
+      (R189) is now two described tiles, Fixed size and Fit to screen (marked Experimental), still saved as
+      `hud.auto`.
+- [x] **R194 The interface preview follows the chosen board (decided 2026-11-20)**: Classic shows the classic
+      `PlayerStats` and prompt; Adaptive shows `PlayerStatsBar` and the prompt bar (phase roll, title and an
+      amber chip, `chipClass` shared from `PromptBar`).
+- [x] **R195 Settings wording (decided 2026-11-20)**: Classic is "designed for desktop and laptop screens", usable
+      on a phone but not laid out for one. Prompt position is "in a landscape view". Fit to screen: "the sliders
+      scale the fit".
+- [x] **R196 Settings that come and go ease in and out (decided 2026-11-20)**: `SettingReveal` opens, fades and
+      slides a setting shown only for some choices, and closes it as it goes (none under reduced motion): the
+      Current password group (Account) and the custom background's Replace/Remove buttons.
+- [x] **R197 Follow the action is no longer a setting (decided 2026-11-20)**: it is gameplay rather than a board
+      preference, so a melee table always starts following, and the view-mode button among our tools (R161) is the
+      way to stop and resume it. `followAction` is gone from `defaultHud`, `normalizeHud`, `sanitizeHud`, the
+      settings and their specs; a saved value is dropped.
+- [x] **R198 The interface preview stays under the profile's footer (decided 2026-11-20)**: the adaptive player
+      bar's own `z-[245]` (to lie over the board's cards) put it over Discard and Save; in the preview it is `z-0`.
+- [x] **R199 The previews size exactly as the board does (decided 2026-11-20)**: the profile's previews had used
+      only part of the board's sizing (no fit to the board's room), so the adaptive board's cards came out larger
+      than shown (1.25 against 1.00 at 1400×900). Both boards now size through `GameBoard/boardScales.js`
+      (`classicScales`, `adaptiveScales`), and record what they were measured at (`boardMeasure`). In a game the
+      previews are sized against that; in the profile against the room a board would have in this window (the
+      whole window where the adaptive board hides the navbar, below the navbar elsewhere), with nothing in play.
+      Checked at 1400×900, 1920×1080, 390×844 and 844×390 on both boards, empty and mid-game: profile preview,
+      in-game preview and board all equal. A row of cards too wide for the board can still make the board's cards
+      smaller than the profile shows, since the profile cannot know what will be in play.
+- [x] **R200 Game settings save as the profile's do (decided 2026-11-20)**: changes in the game's settings are
+      kept aside and applied together with Save changes (which closes the dialog), or dropped with Discard or by
+      closing, so the board does not move under the dialog. The footer (status, Discard, Save changes) and its
+      wording match the profile's. Titled "Game Settings", with "For this game only. To change them for every game,
+      use your profile." The previews still ease between sizes; the board itself changes size at once on Save, as
+      it never animates a rescale.
+- [x] **R201 Game settings have Gameplay and Appearance tabs (decided 2026-11-20)**: drawn as the profile's
+      section links (the active one filled, a dot on one with unsaved changes).
+- [x] **R202 Step names stay on one line (decided 2026-11-20)**: "XX-Large" wrapped under the slider on a phone.
+- [x] **R203 Our sheet covers our hand in portrait (decided 2026-11-20)**: it slid out from our board's bottom
+      edge, which in portrait is above the hand's row, so it opened above the hand. Our sheet now reaches down over
+      the hand's row (`handTrayBelow`).
+- [x] **R204 A sheet's cards keep their size as the board moves (decided 2026-11-20)**: they were refitted to the
+      visible part of the board on every scroll. They are now sized when the sheet opens and when the board or the
+      window changes size; moved, they go past the view's edge instead.
+- [x] **R205 Swiping a sheet closed (decided 2026-11-20)**: on a phone, a swipe towards the sheet's edge (down for
+      ours, up for the top ones) closes it from anywhere on it, not only the handle. On its cards the cards scroll
+      first: the swipe only closes the sheet when it starts with them scrolled as far as they go that way, and
+      stops being one if they scroll, go sideways or a card is picked up.
+- [x] **R209 A sheet's swipe holds the cards still, and goes the way it was last moving (decided 2026-11-20)**:
+      R205's swipe let the cards scroll in the same gesture once the finger turned back. A swipe is now the sheet's
+      from its first move towards the sheet's edge until the finger lifts, and the cards do not scroll in it (the
+      touches are listened to directly, so their scrolling can be held). Let go, the sheet closes if the finger was
+      last moving towards the edge (and it is pulled at least 24px), and springs back if it was last moving away,
+      however far it was pulled.
+- [x] **R210 Faction, agenda and plots have slot names (decided 2026-11-20)**: as an empty pile's slot shows its
+      name faintly (DISCARD, DEAD), the faction's and agenda's slots show FACTION and AGENDA (`slotLabel`, with no
+      label or inspect of their own), and the plots' shared zone shows one PLOTS in its centre.
+- [x] **R211 Card previews lie over sheets (decided 2026-11-20)**: the hover preview was at `z-10`, under the
+      sheets; it is now at `z-[450]`, as the fitted preview was.
+- [x] **R212 The stats bars lie over the sheets, which reach under them on a phone (decided 2026-11-20)**: sheets
+      are drawn in the board's own layers (no longer portalled over the page), at `z-[300]`, under the stats bars
+      (`z-[305]`/`z-[306]`). On a phone a sheet that runs to the edge of the view carries on under the stats bar at
+      that edge (`data-sheet-edge`), padded by as much, so it seems to come out from behind the bar while none of
+      its cards or scrolling is under it.
+- [x] **R213 Sheets keep clear of the prompt (decided 2026-11-20)**: the desktop's floating prompt
+      (`data-region="prompt-float"`) is taken out of a sheet's room as phone landscape's column already was, so a
+      sheet is never wider than the board beside the prompt.
+- [x] **R214 A card that can be clicked shows the pointer (decided 2026-11-20)**: a card with something to do
+      (selectable, selected or playable, such as hand cards in setup) shows the pointer even where it can also be
+      dragged; grab is for cards that can only be dragged. A placed setup card that a click would return to hand
+      is not flagged by the server, so it shows no pointer.
+- [x] **R215 Desktop's chat is a button in our bar (decided 2026-11-20)**: on the adaptive board's desktop layout
+      the chat's tab at the screen's edge is gone; the chat button (with its unread badge) is at the end of our stats
+      bar, after the game menu. The floating prompt no longer keeps clear of the tab.
+- [x] **R216 The game's menu fits in our bar (decided 2026-11-20)**: on the adaptive board the navbar no longer
+      offers Spectators, Concede and Leave Game. On the desktop's bar every item is a named button, in the bar's
+      order (spectators and mute, settings, shortcuts, manual mode, report, then concede and leave game); what does
+      not fit goes into the menu (kept by priority: settings, leave, manual, concede, report, spectators, mute,
+      shortcuts), and with everything in the bar the menu button is not shown. Phones keep everything in the menu.
+- [x] **R217 The stats stand a little proud of an edge bar (decided 2026-11-20)**: in a stats bar at the screen's
+      top or bottom the stat icons are drawn 15% larger, growing towards the board, so they reach a few pixels out
+      of the bar as the avatar does (about half as far), their edge at the screen's side unchanged.
+- [x] **R218 Phone stats cards are a slim band capped by the avatar (decided 2026-11-20)**: as on the desktop's
+      bars, a phone's stats stand a little proud of their background, but by the background getting slimmer, not
+      the icons larger: the card's box and border are gone, and a band 3px shorter than the icons at each edge
+      (`backdrop`) runs behind them from the avatar's centre, so the avatar caps its end.
+- [x] **R206 A chip's glow is not cut off (decided 2026-11-20)**: the chips' row is padded (and pulled back by as
+      much) so a breathing chip at either end, or along its top and bottom, has room for its glow.
+- [x] **R207 A pile with cards to choose breathes (decided 2026-11-20)**: on the board a pile whose cards can be
+      chosen, while they are not on show, breathes with `ring-selectable` as a card to choose does (its top card
+      does already when that is one of them). It counts for the edge hints (R156) like a card. A "Search the deck"
+      fixture shows it.
+- [x] **R208 Highlights scale with the cards (decided 2026-11-20)**: every `ring-*` (and the reveal's white flash)
+      is drawn in units of `--card-scale`, so it keeps its weight on large cards and small piles alike, never under
+      0.75px a unit. Rings around interface things (a sheet's chips, the edge hints' lines) use `--ring-scale: 1`.
 
 - [x] `client/hud.js`: add `board: 'classic'` to `defaultHud`, and accept `'classic' | 'adaptive'` in
       `normalizeHud`.
@@ -1285,7 +1413,7 @@ zoom, hold and move to drag.
     - [x] Pauses when the table is scrolled by hand (a wheel, a swipe or the keys).
     - [x] Resumes when the active prompt moves to a different player.
     - [x] Waits while a card is carried or zoomed. A sheet lies over the table, so scrolling behind it does no harm.
-- [x] Auto-follow control: the HUD setting `followAction` turns it off, and a view-mode button among our tools shows "directed" (following) or "manual" and switches between them (R161).
+- [x] Auto-follow control: a view-mode button among our tools shows "directed" (following) or "manual" and switches between them (R161). It was also a HUD setting, `followAction`, until R197.
 - [x] Spectator arrangement: the watched player sits at the bottom left, as we do, and the table follows the action.
 - [x] Fixtures: melee with 3, 4 and 6 players, with an active prompt on an opponent, and with our
       prompt targeting cards on two opponents' boards.

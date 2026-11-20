@@ -1,5 +1,6 @@
 import React from 'react';
 import { Image, Button } from '@heroui/react';
+import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { Constants } from '../../constants';
@@ -12,7 +13,8 @@ const StatDisplay = ({
     statValue,
     onMinusClick,
     onPlusClick,
-    compact = false
+    compact = false,
+    reach
 }) => {
     return (
         // Positioned itself, so the icon stays with its stat when the bar around it scrolls
@@ -45,7 +47,14 @@ const StatDisplay = ({
                     </Button>
                 </div>
             )}
-            <div className='absolute pointer-events-none'>
+            {/* reach: the icon stands a little proud of its bar towards the board ('up' or 'down'), as the avatar does,
+                its edge at the screen's side staying where it is */}
+            <div
+                className={classNames('absolute pointer-events-none', {
+                    'origin-bottom scale-[1.15]': reach === 'up',
+                    'origin-top scale-[1.15]': reach === 'down'
+                })}
+            >
                 <Image
                     className={compact ? 'h-6 w-6 z-0' : 'h-8 w-8 z-0'}
                     src={Constants.StatIconImagePaths[statCode]}

@@ -23,7 +23,7 @@ export function sanitizeHud(hud) {
         result.promptSide = hud.promptSide;
     }
 
-    for (const key of ['auto', 'animations', 'followAction']) {
+    for (const key of ['auto', 'animations']) {
         if (typeof hud[key] === 'boolean') {
             result[key] = hud[key];
         }

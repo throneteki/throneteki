@@ -4,7 +4,7 @@ const sizeKinds = {
 };
 
 const hudKinds = Object.keys(sizeKinds);
-export const hudSizeNames = ['small', 'normal', 'large'];
+const hudSizeNames = ['small', 'normal', 'large'];
 
 const boardLayouts = ['classic', 'adaptive'];
 const promptSides = ['left', 'right'];
@@ -17,8 +17,7 @@ export const defaultHud = {
     interface: 'normal',
     auto: true,
     animations: true,
-    board: 'classic',
-    followAction: true
+    board: 'classic'
 };
 
 const legacyCardSizes = {
@@ -37,8 +36,6 @@ const screenRange = { min: 0.8, max: 1.4 };
 const absoluteRange = { cards: { min: 0.3, max: 5 }, interface: { min: 0.5, max: 2.5 } };
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-
-export const hudSizeRange = (kind) => ({ min: sizeKinds[kind].min, max: sizeKinds[kind].max });
 
 export const isHudSize = (kind, value) => {
     if (typeof value !== 'string' && typeof value !== 'number') {
@@ -77,7 +74,7 @@ export const normalizeHud = (settings) => {
         if (interfaceSize) {
             result.interface = String(interfaceSize);
         }
-        for (const key of ['auto', 'animations', 'followAction']) {
+        for (const key of ['auto', 'animations']) {
             if (typeof hud[key] === 'boolean') {
                 result[key] = hud[key];
             }

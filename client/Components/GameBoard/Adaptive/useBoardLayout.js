@@ -1,19 +1,13 @@
 import { createContext, useContext, useLayoutEffect, useRef, useState } from 'react';
 import { settleAutoCardScale } from '../../../cardScale';
-import { computeHudScales, resolveHudSize } from '../../../hud';
 import { boardLayoutStore } from '../../../boardLayoutStore';
+import { adaptiveScales, setBoardMeasure } from '../boardScales';
 import {
     applyScaleProperties,
     interfaceScaleProperties,
     removeScaleProperties
 } from '../useHudScale';
-import {
-    classifyLayout,
-    adaptiveInterfaceScale,
-    computeAdaptiveScales,
-    stripExtraUnits,
-    widestRowUnits
-} from './adaptiveScale';
+import { classifyLayout, stripExtraUnits, widestRowUnits } from './adaptiveScale';
 
 const BoardLayoutContext = createContext('wide');
 export const BoardLayoutProvider = BoardLayoutContext.Provider;
@@ -80,32 +74,24 @@ export const useBoardLayout = ({ containerRef, hud, players, ready }) => {
             }
 
             const rem = parseFloat(getComputedStyle(root).fontSize) || 16;
-            const setting = hudRef.current;
-            const interfaceScale = computeHudScales({
-                hud: setting,
-                screen: adaptiveInterfaceScale(next, {
-                    width: window.innerWidth,
-                    height: window.innerHeight
-                })
-            }).interface;
-            const fitted = computeAdaptiveScales({
-                mode: next,
-                ...size,
+            const measure = {
+                container: size,
+                viewport: { width: window.innerWidth, height: window.innerHeight },
                 rem,
-                ...contentRef.current,
-                cardsSize: resolveHudSize('cards', setting.cards),
-                auto: setting.auto !== false,
-                interfaceScale
-            });
-            for (const key of Object.keys(fitted)) {
+                mode: next,
+                content: { ...contentRef.current }
+            };
+            setBoardMeasure(measure);
+            const fitted = adaptiveScales(hudRef.current, measure);
+            for (const key of ['cards', 'pile', 'hand']) {
                 settled[key] = settleAutoCardScale(settled[key] ?? null, fitted[key]);
             }
 
             applyScaleProperties({
-                '--card-scale': settled.card,
+                '--card-scale': settled.cards,
                 '--pile-scale': settled.pile,
                 '--hand-scale': settled.hand,
-                ...interfaceScaleProperties(interfaceScale)
+                ...interfaceScaleProperties(fitted.interface)
             });
             root.dataset.boardLayout = next;
             boardLayoutStore.set(next);
@@ -146,6 +132,7 @@ export const useBoardLayout = ({ containerRef, hud, players, ready }) => {
             document.removeEventListener('focusin', onFocusIn);
             document.removeEventListener('focusout', onFocusOut);
             removeScaleProperties(allProperties);
+            setBoardMeasure(null);
             delete root.dataset.boardLayout;
             modeRef.current = null;
             boardLayoutStore.set(null);

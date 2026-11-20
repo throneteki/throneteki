@@ -795,7 +795,11 @@ const turnFace = (el, { from, node, delay, duration }) => {
 
 const revealGlow = [
     { boxShadow: '0 0 0 0 rgba(255, 255, 255, 0)' },
-    { boxShadow: '0 0 16px 5px rgba(255, 255, 255, 0.75)', offset: 0.5 },
+    {
+        boxShadow:
+            '0 0 calc(16px * var(--card-scale, 1)) calc(5px * var(--card-scale, 1)) rgba(255, 255, 255, 0.75)',
+        offset: 0.5
+    },
     { boxShadow: '0 0 0 0 rgba(255, 255, 255, 0)' }
 ];
 const rise = [{ scale: 1 }, { scale: 1.08, offset: 0.5 }, { scale: 1 }];

@@ -2,9 +2,9 @@ import React, { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Button, Radio, RadioGroup } from '@heroui/react';
 import { toast } from 'react-toastify';
-import CardImage from '../Images/CardImage';
-import SettingsGroup from './SettingsGroup';
-import { CardSizeOptions } from '../../constants';
+import SettingsGroup, { tileClassNames } from './SettingsGroup';
+import HudSettings from './HudSettings';
+import SettingReveal from './SettingReveal';
 import { customBackgroundUrl } from '../../util';
 import { setUser } from '../../redux/reducers/auth';
 import {
@@ -195,7 +195,7 @@ const AppearanceSettings = ({ user, formProps }) => {
                         </button>
                     )}
                 </RadioGroup>
-                {user.customBackground && (
+                <SettingReveal show={!!user.customBackground}>
                     <div className='flex flex-wrap gap-2'>
                         <Button
                             size='sm'
@@ -217,7 +217,7 @@ const AppearanceSettings = ({ user, formProps }) => {
                             Remove image
                         </Button>
                     </div>
-                )}
+                </SettingReveal>
                 <input
                     ref={fileInput}
                     type='file'

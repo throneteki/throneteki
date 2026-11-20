@@ -21,11 +21,6 @@ describe('sanitizeHud', function () {
         });
     });
 
-    it('keeps follow the action only as a boolean', function () {
-        expect(sanitizeHud({ followAction: false })).toEqual({ followAction: false });
-        expect(sanitizeHud({ followAction: 'false', cards: 'small' })).toEqual({ cards: 'small' });
-    });
-
     it('drops keys it does not know', function () {
         expect(sanitizeHud({ cards: 'small', layout: 'grid', extra: true })).toEqual({
             cards: 'small'

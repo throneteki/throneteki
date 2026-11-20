@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import classNames from 'classnames';
 import { Avatar, Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,8 +17,8 @@ const chipFade = ({ start, end }) => {
     const mask = `linear-gradient(to right, ${start ? 'transparent' : 'black'} 0, black 1.25rem, black calc(100% - 1.25rem), ${end ? 'transparent' : 'black'} 100%)`;
     return { maskImage: mask, WebkitMaskImage: mask };
 };
-// Dragging the handle this far towards the sheet's edge closes it
-const swipeDistance = 50;
+// How far a sheet must be pulled towards its edge, still moving that way, to close when let go
+const swipeDistance = 24;
 // Card sizes, in rem at a scale of 1, as CardTiledList lays them out
 const unit = { w: 4, h: 5.6, gap: 0.375 };
 // The list's padding on each side
@@ -55,22 +54,54 @@ const boardOf = (sheet) =>
         ? document.querySelector(`[data-side][data-player="${CSS.escape(sheet.playerName)}"]`)
         : document.querySelector(`[data-side="${sheet.side}"]`);
 
-// What of the board can be seen: the board's view, less the prompt's column in phone landscape
+// Our sheet slides out from the bottom of everything that is ours: in portrait our hand's row lies below our board
+const handTrayBelow = (sheet, board) => {
+    const tray =
+        sheet.side === 'bottom' ? document.querySelector('[data-region="hand-tray"]') : null;
+    const rect = tray?.getBoundingClientRect();
+    return rect && rect.top >= board.bottom - 2 ? rect : null;
+};
+
+// Whether the sheet's cards are scrolled as far as they go towards the sheet's edge, so a swipe that way is the
+// sheet's, to close it, rather than theirs
+const scrolledToEdge = (body, fromTop) =>
+    fromTop ? body.scrollTop + body.clientHeight >= body.scrollHeight - 1 : body.scrollTop <= 0;
+
+// What of the board can be seen: the board's view, less the prompt where it lies beside the board (phone
+// landscape's column, the desktop's floating prompt), so a sheet is never drawn over it
 const viewRect = () => {
     const scroll = document.querySelector('[data-board-scroll]');
     const view = scroll
         ? scroll.getBoundingClientRect()
         : { left: 0, top: 0, right: window.innerWidth, bottom: window.innerHeight };
     const box = { left: view.left, right: view.right, top: view.top, bottom: view.bottom };
-    const column = document.querySelector('[data-region="prompt-column"]')?.getBoundingClientRect();
-    if (column && column.width > 0) {
-        if (column.left <= box.left + 1) {
-            box.left = Math.max(box.left, column.right);
+    for (const region of ['prompt-column', 'prompt-float']) {
+        const prompt = document.querySelector(`[data-region="${region}"]`)?.getBoundingClientRect();
+        if (!prompt || prompt.width === 0) {
+            continue;
+        }
+        if (prompt.left <= box.left + 1) {
+            box.left = Math.max(box.left, prompt.right);
         } else {
-            box.right = Math.min(box.right, column.left);
+            box.right = Math.min(box.right, prompt.left);
         }
     }
     return box;
+};
+
+// On a phone a sheet reaches on under the stats bar at its edge of the screen, so it seems to come out from behind
+// it: how far, when the sheet runs to that edge of the view and the bar lies against it
+const underStats = (fromTop, view, edge) => {
+    const stats = document
+        .querySelector(`[data-sheet-edge="${fromTop ? 'top' : 'bottom'}"]`)
+        ?.getBoundingClientRect();
+    if (!stats) {
+        return 0;
+    }
+    if (fromTop) {
+        return edge <= view.top + 2 && stats.bottom <= view.top + 2 ? edge - stats.top : 0;
+    }
+    return edge >= view.bottom - 2 && stats.top >= view.bottom - 2 ? stats.bottom - edge : 0;
 };
 
 // Whose piles these are: the avatar alone on a phone, with the name where there is room
@@ -122,86 +153,113 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
         });
     }, [sheetKey, strip, row, size]);
 
-    // Placed by style rather than state, so following the board as it scrolls never re-renders
-    const place = useCallback(() => {
-        const frame = frameRef.current;
-        const box = boxRef.current;
-        const boardElement = boardOf(sheet);
-        if (!frame || !box) {
-            return;
-        }
-        const view = viewRect();
-        const board = boardElement
-            ? boardElement.getBoundingClientRect()
-            : {
-                  ...view,
-                  top: fromTop ? view.top : (view.top + view.bottom) / 2,
-                  bottom: fromTop ? (view.top + view.bottom) / 2 : view.bottom
-              };
-        const top = Math.max(board.top, view.top);
-        const height = Math.max(0, Math.min(board.bottom, view.bottom) - top);
-        const boardWidth = board.right - board.left;
-        box.style.left = `${board.left}px`;
-        box.style.width = `${boardWidth}px`;
-        box.style.top = `${top}px`;
-        box.style.height = `${height}px`;
-        box.style.clipPath = `inset(0 ${Math.max(0, board.right - view.right)}px 0 ${Math.max(0, view.left - board.left)}px)`;
-        const room = {
-            width: Math.max(160, Math.min(boardWidth, view.right - view.left) - margin * 2),
-            height: Math.max(0, height - margin)
-        };
-        frame.style.maxWidth = `${room.width}px`;
-        frame.style.maxHeight = `${room.height}px`;
-        const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-        const next = sizeFor(room, row, rem);
-        setSize((current) =>
-            current &&
-            Math.abs(current.scale - next.scale) < 0.01 &&
-            current.columns === next.columns &&
-            current.plotColumns === next.plotColumns
-                ? current
-                : next
-        );
-        const width = frame.offsetWidth;
-        const seenLeft = Math.max(board.left, view.left);
-        const seenRight = Math.min(board.right, view.right);
-        const middle =
-            seenRight > seenLeft ? (seenLeft + seenRight) / 2 : (board.left + board.right) / 2;
-        const left =
-            boardWidth < width + margin * 2
-                ? (boardWidth - width) / 2
-                : Math.min(
-                      Math.max(middle - board.left - width / 2, margin),
-                      boardWidth - margin - width
-                  );
-        frame.style.left = `${left}px`;
-    }, [sheet, row, fromTop]);
+    // Placed by style rather than state, so following the board as it scrolls never re-renders. The cards are sized
+    // when the sheet opens and when the board or window changes size (resize), never as the board moves: moved,
+    // they keep their size and go past the view's edge.
+    const sized = useRef(false);
+    const place = useCallback(
+        (resize = false) => {
+            const frame = frameRef.current;
+            const box = boxRef.current;
+            const boardElement = boardOf(sheet);
+            if (!frame || !box) {
+                return;
+            }
+            const view = viewRect();
+            const boardRect = boardElement
+                ? boardElement.getBoundingClientRect()
+                : {
+                      ...view,
+                      top: fromTop ? view.top : (view.top + view.bottom) / 2,
+                      bottom: fromTop ? (view.top + view.bottom) / 2 : view.bottom
+                  };
+            const tray = boardElement ? handTrayBelow(sheet, boardRect) : null;
+            const board = {
+                left: boardRect.left,
+                right: boardRect.right,
+                top: boardRect.top,
+                bottom: tray ? tray.bottom : boardRect.bottom
+            };
+            const seenTop = Math.max(board.top, view.top);
+            const seenBottom = Math.min(board.bottom, view.bottom);
+            const under = phone ? underStats(fromTop, view, fromTop ? seenTop : seenBottom) : 0;
+            const top = fromTop ? seenTop - under : seenTop;
+            const height = Math.max(0, seenBottom - seenTop) + under;
+            frame.style[fromTop ? 'paddingTop' : 'paddingBottom'] = under ? `${under}px` : '';
+            const boardWidth = board.right - board.left;
+            box.style.left = `${board.left}px`;
+            box.style.width = `${boardWidth}px`;
+            box.style.top = `${top}px`;
+            box.style.height = `${height}px`;
+            box.style.clipPath = `inset(0 ${Math.max(0, board.right - view.right)}px 0 ${Math.max(0, view.left - board.left)}px)`;
+            const room = {
+                width: Math.max(160, Math.min(boardWidth, view.right - view.left) - margin * 2),
+                height: Math.max(0, height - under - margin)
+            };
+            frame.style.maxWidth = `${room.width}px`;
+            frame.style.maxHeight = `${room.height + under}px`;
+            if (resize || !sized.current) {
+                sized.current = true;
+                const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+                const next = sizeFor(room, row, rem);
+                setSize((current) =>
+                    current &&
+                    Math.abs(current.scale - next.scale) < 0.01 &&
+                    current.columns === next.columns &&
+                    current.plotColumns === next.plotColumns
+                        ? current
+                        : next
+                );
+            }
+            const width = frame.offsetWidth;
+            const seenLeft = Math.max(board.left, view.left);
+            const seenRight = Math.min(board.right, view.right);
+            const middle =
+                seenRight > seenLeft ? (seenLeft + seenRight) / 2 : (board.left + board.right) / 2;
+            const left =
+                boardWidth < width + margin * 2
+                    ? (boardWidth - width) / 2
+                    : Math.min(
+                          Math.max(middle - board.left - width / 2, margin),
+                          boardWidth - margin - width
+                      );
+            frame.style.left = `${left}px`;
+        },
+        [sheet, row, fromTop, phone]
+    );
 
     useLayoutEffect(() => {
         place();
     });
     useEffect(() => {
         let frame = null;
-        const soon = () => {
+        let resizing = false;
+        const soon = (resize) => {
+            resizing ||= resize;
             frame ??= requestAnimationFrame(() => {
                 frame = null;
-                place();
+                place(resizing);
+                resizing = false;
             });
         };
-        const observer = new ResizeObserver(soon);
+        const frameObserver = new ResizeObserver(() => soon(false));
         if (frameRef.current) {
-            observer.observe(frameRef.current);
+            frameObserver.observe(frameRef.current);
         }
+        const boardObserver = new ResizeObserver(() => soon(true));
         const board = boardOf(sheet);
         if (board) {
-            observer.observe(board);
+            boardObserver.observe(board);
         }
-        document.addEventListener('scroll', place, { capture: true, passive: true });
-        window.addEventListener('resize', soon);
+        const onScroll = () => place();
+        const onResize = () => soon(true);
+        document.addEventListener('scroll', onScroll, { capture: true, passive: true });
+        window.addEventListener('resize', onResize);
         return () => {
-            observer.disconnect();
-            document.removeEventListener('scroll', place, { capture: true });
-            window.removeEventListener('resize', soon);
+            frameObserver.disconnect();
+            boardObserver.disconnect();
+            document.removeEventListener('scroll', onScroll, { capture: true });
+            window.removeEventListener('resize', onResize);
             if (frame !== null) {
                 cancelAnimationFrame(frame);
             }
@@ -314,40 +372,104 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
         return () => observer.disconnect();
     }, [sheet.id, piles, readChipEdges]);
 
-    // On a phone, swiping the handle towards the sheet's edge closes it; the sheet follows the finger that way
-    const swipe = useRef(null);
+    // On a phone, swiping the sheet towards its edge closes it, and it follows the finger. Its cards scroll first: a
+    // swipe on them is only the sheet's when it starts with them scrolled as far as they go that way, and its first
+    // move is towards the edge (a first move the other way scrolls them). Once the sheet follows the finger, the
+    // cards do not scroll until the finger is lifted. Let go, it closes if the finger was last moving towards the
+    // edge, and springs back if it was last moving away. Listened to directly, so the cards' scrolling can be held.
     const [pull, setPull] = useState(0);
     const toEdge = (dy) => (fromTop ? -dy : dy);
-    const handleProps = {
-        onPointerDown: (event) => {
-            swipe.current = { y: event.clientY };
-            event.currentTarget.setPointerCapture?.(event.pointerId);
-        },
-        onPointerMove: (event) => {
-            if (swipe.current) {
-                setPull(event.clientY - swipe.current.y);
-            }
-        },
-        onPointerUp: (event) => {
-            const start = swipe.current;
-            swipe.current = null;
-            setPull(0);
-            if (start && toEdge(event.clientY - start.y) > swipeDistance) {
-                sheet.close();
-            }
-        },
-        onPointerCancel: () => {
-            swipe.current = null;
-            setPull(0);
+    const dragging = useRef(false);
+    dragging.current = !!dragSource;
+    const closeRef = useRef(sheet.close);
+    closeRef.current = sheet.close;
+    useEffect(() => {
+        const frame = frameRef.current;
+        if (!phone || !frame) {
+            return;
         }
-    };
+        const towards = (dy) => (fromTop ? -dy : dy);
+        let gesture = null;
+        const end = () => {
+            gesture = null;
+            setPull(0);
+        };
+        const onStart = (event) => {
+            const body = bodyRef.current;
+            const touch = event.touches[0];
+            const onCards = !!body?.contains(event.target);
+            gesture =
+                event.touches.length === 1 && (!onCards || scrolledToEdge(body, fromTop))
+                    ? {
+                          x: touch.clientX,
+                          y: touch.clientY,
+                          last: touch.clientY,
+                          dy: 0,
+                          held: false
+                      }
+                    : null;
+        };
+        const onMove = (event) => {
+            const touch = event.touches[0];
+            if (!gesture || !touch) {
+                return;
+            }
+            if (dragging.current) {
+                end();
+                return;
+            }
+            const dx = touch.clientX - gesture.x;
+            const dy = touch.clientY - gesture.y;
+            if (!gesture.held) {
+                if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
+                    gesture = null;
+                    return;
+                }
+                if (towards(dy) <= 0) {
+                    if (Math.abs(dy) > 4) {
+                        gesture = null;
+                    }
+                    return;
+                }
+                gesture.held = true;
+                gesture.closing = true;
+            }
+            if (event.cancelable) {
+                event.preventDefault();
+            }
+            const step = touch.clientY - gesture.last;
+            if (Math.abs(step) >= 2) {
+                gesture.closing = towards(step) > 0;
+                gesture.last = touch.clientY;
+            }
+            gesture.dy = dy;
+            setPull(dy);
+        };
+        const onEnd = () => {
+            const finished = gesture;
+            end();
+            if (finished?.held && finished.closing && towards(finished.dy) > swipeDistance) {
+                closeRef.current();
+            }
+        };
+        frame.addEventListener('touchstart', onStart, { passive: true });
+        frame.addEventListener('touchmove', onMove, { passive: false });
+        frame.addEventListener('touchend', onEnd);
+        frame.addEventListener('touchcancel', end);
+        return () => {
+            frame.removeEventListener('touchstart', onStart);
+            frame.removeEventListener('touchmove', onMove);
+            frame.removeEventListener('touchend', onEnd);
+            frame.removeEventListener('touchcancel', end);
+        };
+    }, [phone, fromTop]);
 
     const stopDrag = (event) => event.stopPropagation();
     const playerPiles = sheet.playerName ? pilesOf(piles, sheet.playerName) : [];
     const chips = playerPiles.length > 0 && (
         <div
             ref={chipsRef}
-            className='relative flex min-w-0 flex-1 gap-1 overflow-x-auto py-1 [scrollbar-width:none] lg:gap-1.5'
+            className='relative -mx-1.5 -my-1.5 flex min-w-0 flex-1 gap-1 overflow-x-auto px-3 py-2.5 [scrollbar-width:none] lg:gap-1.5'
             onScroll={readChipEdges}
             style={chipFade(chipEdges)}
         >
@@ -367,7 +489,7 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
                             current
                                 ? 'border-amber-400 bg-amber-400/20 text-amber-100'
                                 : choose
-                                  ? 'ring-selectable border-[rgb(var(--select-ring))] bg-[rgb(var(--select-ring)/0.15)] text-white'
+                                  ? 'ring-selectable border-[rgb(var(--select-ring))] bg-[rgb(var(--select-ring)/0.15)] text-white [--ring-scale:1]'
                                   : 'border-default-300/60 text-default-300'
                         )}
                         onClick={() => !current && pile.open()}
@@ -382,12 +504,13 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
     const shown = visible && open;
     const pulled = Math.max(toEdge(pull), 0) * (fromTop ? -1 : 1);
     const grabber = phone && (
-        <div className='hud-zoom shrink-0 cursor-grab touch-none select-none' {...handleProps}>
+        <div className='hud-zoom shrink-0 cursor-grab touch-none select-none'>
             <div className='mx-auto my-1 h-1 w-10 rounded-full bg-default-400' />
         </div>
     );
-    return createPortal(
-        <div ref={boxRef} className='pointer-events-none fixed z-[310] overflow-hidden'>
+    // Drawn in the board's own layers, not over the page, so the players' stats bars lie over it
+    return (
+        <div ref={boxRef} className='pointer-events-none fixed z-[300] overflow-hidden'>
             <div
                 ref={frameRef}
                 data-popup=''
@@ -417,7 +540,7 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
                 {grabber}
                 <div
                     className={classNames(
-                        'hud-zoom flex min-w-0 shrink-0 select-none items-center gap-1.5 px-2 lg:gap-2 lg:px-3',
+                        'hud-zoom flex min-w-0 shrink-0 touch-pan-x select-none items-center gap-1.5 px-2 lg:gap-2 lg:px-3',
                         fromTop ? 'pt-0.5 lg:pt-1' : 'pb-0.5 lg:pb-1'
                     )}
                     onPointerDown={stopDrag}
@@ -441,16 +564,18 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
                 </div>
                 <div
                     ref={bodyRef}
-                    className={classNames('min-h-0 shrink overflow-y-auto overflow-x-hidden', {
-                        hidden: strip
-                    })}
+                    className={classNames(
+                        'min-h-0 shrink overflow-y-auto overflow-x-hidden overscroll-contain',
+                        {
+                            hidden: strip
+                        }
+                    )}
                     style={size ? { '--card-scale': String(size.scale) } : undefined}
                 >
                     <div ref={bindContent} />
                 </div>
             </div>
-        </div>,
-        document.querySelector('[data-overlay-container="true"]') || document.body
+        </div>
     );
 };
 

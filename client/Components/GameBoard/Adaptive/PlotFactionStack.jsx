@@ -59,6 +59,7 @@ const PlotFactionStack = ({ player, isMe, side, onCardClick, pileProps, droppabl
                 <div className='relative z-20 shrink-0'>
                     <CardPile
                         className='faction'
+                        slotLabel='Faction'
                         source='faction'
                         cards={[]}
                         topCard={player.faction}
@@ -76,6 +77,7 @@ const PlotFactionStack = ({ player, isMe, side, onCardClick, pileProps, droppabl
                                 disablePopup={underAgenda.length === 0}
                                 showCards
                                 source='agenda'
+                                slotLabel='Agenda'
                                 title={underAgenda.length > 0 ? 'Agenda' : null}
                                 topCard={agenda}
                                 numColumns={5}

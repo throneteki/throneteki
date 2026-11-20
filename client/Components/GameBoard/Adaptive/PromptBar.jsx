@@ -180,7 +180,7 @@ const useSelection = (active) => {
 };
 
 // An option's style; a way out (cancel) is grey, as on the classic board
-const chipClass = (quiet) =>
+export const chipClass = (quiet) =>
     classNames(
         'min-w-0 gap-1 rounded-md border px-2 text-[11px] font-semibold uppercase tracking-wide shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-[background-color,border-color,color,box-shadow] duration-150 data-[pressed=true]:bg-amber-400/20 data-[disabled=true]:opacity-40',
         quiet
