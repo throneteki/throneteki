@@ -1,5 +1,5 @@
 import { createContext, useContext, useLayoutEffect, useRef, useState } from 'react';
-import { settleAutoCardScale } from '../../../cardScale';
+import { remSize, settleAutoCardScale } from '../../../cardScale';
 import { boardLayoutStore } from '../../../boardLayoutStore';
 import { adaptiveScales, setBoardMeasure } from '../boardScales';
 import {
@@ -73,7 +73,7 @@ export const useBoardLayout = ({ containerRef, hud, players, ready }) => {
                 Object.keys(settled).forEach((key) => delete settled[key]);
             }
 
-            const rem = parseFloat(getComputedStyle(root).fontSize) || 16;
+            const rem = remSize();
             const measure = {
                 container: size,
                 viewport: { width: window.innerWidth, height: window.innerHeight },

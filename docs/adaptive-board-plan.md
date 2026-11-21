@@ -1080,6 +1080,9 @@ From the review on 2026-11-20 (second batch):
       own module so the shared lookups can use it without importing the prompt bar). Every other button on the board was
       already amber, grey or neutral; CardPile's blue actions are only for the classic board's popups. The dev board
       seeds the card list from its scenario, so "Name a card" shows its lookup rather than "Loading cards…".
+- [x] **R255 The phone chat stops above the joust bar again (2026-11-22)**: since R251 put our tools in the portrait joust
+      bar, nothing was marked as our tools, so the open chat ran to the bottom of the screen over the bar and its Hide
+      chat button. The bar is marked as the tools (data-region), so the chat stops above it.
 - [x] **R234 Tokens are in the middle of the card again, and their changes stand out**: the +x / −x that floats off a
       counter is a larger bold pill, green or red, and stays a little longer (both boards).
 

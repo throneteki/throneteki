@@ -20,7 +20,7 @@ import LabelledGameArea from './LabelledGameArea';
 
 import { Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { cardBoxClass } from '../../cardScale';
+import { cardBoxClass, cardWidth } from '../../cardScale';
 import { registerPile } from '../../flip';
 
 const CardPile = ({
@@ -345,7 +345,7 @@ const CardPile = ({
     const rise = showDepth ? pileRise(retCardCount) : undefined;
     const areaStyle = useMemo(
         () => ({
-            ...(orientation === 'horizontal' && { height: 'calc(var(--card-scale, 1) * 4rem)' }),
+            ...(orientation === 'horizontal' && { height: cardWidth }),
             ...(rise && { '--pile-rise': rise }),
             ...style
         }),

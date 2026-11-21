@@ -65,9 +65,7 @@ const savedFilter = () => {
     }
 };
 
-// A tab joined to the chat panel, at the edge of the screen while the chat is closed and on the edge of the
-// panel while it is open, so the same tab opens and closes it. Beside the panel on a wide screen; on a phone the
-// chat drops down from the top and the tab hangs below it (laid out in index.css).
+// The tab that opens and closes the chat, joined to its panel (on a phone it hangs below it; see index.css)
 const ChatLip = ({ isOpen, unread, onToggle }) => (
     <button
         type='button'
@@ -101,9 +99,8 @@ const ChatLip = ({ isOpen, unread, onToggle }) => (
     </button>
 );
 
-// onUnreadChange: told how many chat messages (not game log) arrived while the chat was closed, for a chat
-// button elsewhere. newestFirst: the input above the messages and the newest at the top, for a phone, whose
-// keyboard then only ever covers the oldest
+// onUnreadChange: chat messages that arrived while closed. newestFirst (phones): input and newest at the top, so the
+// keyboard only covers the oldest.
 const GameChat = ({
     isOpen,
     onToggle,
@@ -155,9 +152,7 @@ const GameChat = ({
     const swipe = useSwipeToClose(isOpen, onToggle);
     const placeholder = muted ? 'Spectators cannot chat in this game' : 'Chat...';
 
-    // The drawer squishes the chat rather than letting it flow off screen, so DnD-kit never auto-scrolls off
-    // screen while dragging near the edge. The lip sits outside the drawer, so only the inside is clipped.
-    // On a phone the board behind the open chat is dimmed, and tapping it closes the chat
+    // The drawer squishes the chat rather than letting it flow off screen, so DnD-kit never auto-scrolls off screen
     return (
         <>
             <div

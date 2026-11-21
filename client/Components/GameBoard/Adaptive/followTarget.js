@@ -17,7 +17,7 @@ const hasSelectable = (player) => {
     return false;
 };
 
-const nameOf = (player) => player?.user?.username ?? player?.name;
+export const nameOf = (player) => player?.user?.username ?? player?.name;
 
 // Whose board a melee table should show: during our prompt, the first opponent round the table from us with a card
 // on their board we can choose, else our own board; otherwise the player whose prompt is active; else nobody, and

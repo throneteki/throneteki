@@ -3,6 +3,24 @@ const isPlainObject = (value) =>
 
 const hasUuid = (value) => isPlainObject(value) && typeof value.uuid === 'string';
 
+// Builds a copy only from the first entry that changed, so an unchanged state allocates nothing
+const reuseEntries = (previous, keys, reuse, emptyCopy, sameSize) => {
+    let result = sameSize ? null : emptyCopy();
+    keys.forEach((key, index) => {
+        const value = reuse(key);
+        if (!result && value !== previous[key]) {
+            result = emptyCopy();
+            keys.slice(0, index).forEach((earlier) => {
+                result[earlier] = previous[earlier];
+            });
+        }
+        if (result) {
+            result[key] = value;
+        }
+    });
+    return result ?? previous;
+};
+
 const reuseArray = (previous, next) => {
     const previousByUuid = new Map();
     previous.forEach((item) => {
@@ -10,28 +28,30 @@ const reuseArray = (previous, next) => {
             previousByUuid.set(item.uuid, item);
         }
     });
-
-    const result = next.map((item, index) =>
-        reuseUnchanged(hasUuid(item) ? previousByUuid.get(item.uuid) : previous[index], item)
+    return reuseEntries(
+        previous,
+        next.map((_, index) => index),
+        (index) => {
+            const item = next[index];
+            return reuseUnchanged(
+                hasUuid(item) ? previousByUuid.get(item.uuid) : previous[index],
+                item
+            );
+        },
+        () => [],
+        previous.length === next.length
     );
-
-    return result.length === previous.length && result.every((item, i) => item === previous[i])
-        ? previous
-        : result;
 };
 
 const reuseObject = (previous, next) => {
-    const nextKeys = Object.keys(next);
-    const result = {};
-    nextKeys.forEach((key) => {
-        result[key] = reuseUnchanged(previous[key], next[key]);
-    });
-
-    const previousKeys = Object.keys(previous);
-    return previousKeys.length === nextKeys.length &&
-        nextKeys.every((key) => result[key] === previous[key])
-        ? previous
-        : result;
+    const keys = Object.keys(next);
+    return reuseEntries(
+        previous,
+        keys,
+        (key) => reuseUnchanged(previous[key], next[key]),
+        () => ({}),
+        Object.keys(previous).length === keys.length
+    );
 };
 
 export const reuseUnchanged = (previous, next) => {

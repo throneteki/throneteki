@@ -14,10 +14,8 @@ import {
 } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-    faBan,
     faBars,
     faBug,
-    faCheckCircle,
     faChevronRight,
     faCogs,
     faEye,
@@ -25,22 +23,25 @@ import {
     faFlag,
     faKeyboard,
     faRightFromBracket,
-    faTimesCircle,
     faUsers,
     faWrench
 } from '@fortawesome/free-solid-svg-icons';
 import ConfirmDialog from '../../Site/ConfirmDialog';
+import { connectionIconOf, pingLevelOf, pingTextOf } from '../../Navigation/ServerStatus';
 import { SpectatorList, SpectatorSheet, spectatorPreview } from './SpectatorList';
 import ReportProblemModal from '../ReportProblemModal';
 import {
     sendCancelProblemReportMessage,
     sendConcedeMessage,
     sendDescribeProblemMessage,
+    mustConfirmLeave,
     sendLeaveGameMessage,
     sendReportProblemMessage,
     sendToggleManualModeMessage,
     sendToggleMuteSpectatorsMessage
 } from '../../../redux/reducers/game';
+
+const pingTones = { success: 'text-success', warning: 'text-warning', danger: 'text-danger' };
 
 const icon = (glyph) => <FontAwesomeIcon icon={glyph} className='w-4' />;
 // Room kept for the menu button, when anything is left for it to hold
@@ -63,12 +64,8 @@ const priority = [
     'shortcuts'
 ];
 
-// The game's menu, standing in for the navbar that phone layouts hide: connection, spectators (a dot when their
-// number changes, until looked at), settings, manual mode, reporting, shortcuts, conceding and leaving.
-// room (px): the room in the bar for its items as buttons (the desktop's bar). As many as fit
-// are shown, in the bar's order: who is watching, then the game's tools, then the ways out. What does not fit is in
-// the menu, which is only shown when it holds something. With no room (phones) everything is in the menu, and while
-// manual mode is on a wrench beside it says so and turns it off.
+// The game's menu, standing in for the navbar on phones. room (px): space in the desktop bar for items as buttons;
+// as many as fit are shown there, the rest in the menu. With no room, a wrench beside it shows manual mode is on.
 const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) => {
     const dispatch = useDispatch();
     const currentGame = useSelector((state) => state.lobby.currentGame);
@@ -88,8 +85,7 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
     );
 
     const leave = () => {
-        const everyone = Object.values({ ...currentGame.players, ...currentGame.spectators });
-        if (user && everyone.some((a) => a.name === user.username && !a.canSafelyLeave)) {
+        if (mustConfirmLeave(currentGame, user)) {
             setConfirmingLeave(true);
             return;
         }
@@ -98,8 +94,7 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
 
     const spectatorNames = spectatorPreview(spectators);
 
-    // In the bar's order, in groups: who is watching, the game's tools, then the ways out. In the bar only the ways
-    // out are named; the rest are icons. Spectators is only a button in the bar; in the menu it is part of the status.
+    // In the bar's order. Only the ways out are named in the bar; spectators is a bar button, in the menu a status row.
     const items = [
         {
             key: 'spectators',
@@ -171,28 +166,12 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
     ].filter(Boolean);
 
     // The game server's connection, as its ping, and who is watching
-    const serverState = server.connected
-        ? server.responseTime
-            ? `${server.responseTime}ms`
-            : 'Waiting'
-        : server.connecting
-          ? 'Connecting'
-          : 'Disconnected';
-    const serverTone = server.connected
-        ? server.responseTime
-            ? (server.responseTime < 150 && 'text-success') ||
-              (server.responseTime < 300 && 'text-warning') ||
-              'text-danger'
-            : undefined
-        : server.connecting
-          ? 'text-warning'
-          : 'text-danger';
     const status = [
         {
             key: 'server',
-            label: `Game server: ${serverState}`,
-            glyph: server.connected ? faCheckCircle : server.connecting ? faTimesCircle : faBan,
-            tone: serverTone
+            label: `Game server: ${pingTextOf(server)}`,
+            glyph: connectionIconOf(server),
+            tone: pingTones[pingLevelOf(server)]
         },
         {
             key: 'spectators-status',

@@ -98,6 +98,15 @@ const autoScrollOptions = { layoutShiftCompensation: false };
 const dropZoneLinger = 800;
 const boardSettle = 1500;
 
+// Plays the cards' moves when the drag store changes, without re-rendering the board
+const FlipOnDragChange = () => {
+    const dragVersion = useDragVersion();
+    useLayoutEffect(() => {
+        playPendingFlip();
+    }, [dragVersion]);
+    return null;
+};
+
 const GameBoard = () => {
     useRenderCount('GameBoard');
     const dispatch = useDispatch();
@@ -145,7 +154,6 @@ const GameBoard = () => {
     const draggedRef = useRef(null);
     const carriedRectRef = useRef(null);
     const dragGhost = useDragGhost();
-    const dragVersion = useDragVersion();
     const boardAreaRef = useRef(null);
     // The extra drop zones stay until a dropped card has landed, so nothing moves under its flight
     const showDropZones = useLinger(!!draggingDetail || !!dragGhost, dropZoneLinger);
@@ -340,18 +348,18 @@ const GameBoard = () => {
             }
 
             const target = overData?.source;
+            const choice = needsChoice(detail.source, target, detail.card.type);
             if (
                 !rect ||
                 !target ||
-                (target === detail.source &&
-                    !needsChoice(detail.source, target, detail.card.type)) ||
+                (target === detail.source && !choice) ||
                 !canDrop(detail.source, target, detail.card.type)
             ) {
                 dragStore.settle(origin);
                 return;
             }
 
-            if (needsChoice(detail.source, target, detail.card.type)) {
+            if (choice) {
                 dispatch(sendDragDropMessage(detail.card.uuid, detail.source, target));
                 dragStore.settle(origin);
                 return;
@@ -389,8 +397,8 @@ const GameBoard = () => {
         [dispatch]
     );
 
-    const { thisPlayer, otherPlayers, userPlayer } = useMemo(() => {
-        const players = Object.values(currentGame?.players);
+    const { players, thisPlayer, otherPlayers, userPlayer } = useMemo(() => {
+        const players = Object.values(currentGame?.players || {});
         const thisPlayer = defaultPlayerInfo(currentGame?.players[user?.username] || players[0]);
         const others = players.filter((player) => player.name !== thisPlayer.name);
         // Fill with fake players if there are no others
@@ -402,9 +410,10 @@ const GameBoard = () => {
                       (_, index) => defaultPlayerInfo({ seatNo: index + 2 })
                   );
 
-        const allPlayers = players.concat(currentGame?.spectators);
-        const userPlayer = allPlayers.find((p) => p.name === user?.username);
-        return { thisPlayer, otherPlayers, userPlayer };
+        const userPlayer = players
+            .concat(currentGame?.spectators)
+            .find((p) => p.name === user?.username);
+        return { players, thisPlayer, otherPlayers, userPlayer };
     }, [currentGame?.maxPlayers, currentGame?.players, currentGame?.spectators, user?.username]);
 
     const hud = useHud();
@@ -412,14 +421,10 @@ const GameBoard = () => {
     const adaptive = hud.board === 'adaptive';
     adaptiveRef.current = adaptive;
     useHudScale(hud, boardAreaRef, boardStarted && !adaptive);
-    const allPlayers = useMemo(
-        () => Object.values(currentGame?.players || {}),
-        [currentGame?.players]
-    );
     const layoutMode = useBoardLayout({
         containerRef: boardAreaRef,
         hud,
-        players: allPlayers,
+        players,
         ready: boardStarted && adaptive
     });
     useAdaptivePage(boardStarted && adaptive);
@@ -450,9 +455,6 @@ const GameBoard = () => {
         }
         playPendingFlip();
     }, [currentGame?.players]);
-    useLayoutEffect(() => {
-        playPendingFlip();
-    }, [dragVersion]);
     useLayoutEffect(() => {
         playShuffles(currentGame?.players);
     }, [currentGame?.players]);
@@ -530,6 +532,7 @@ const GameBoard = () => {
 
     return (
         <>
+            <FlipOnDragChange />
             <MotionConfig reducedMotion={motionEnabled ? 'user' : 'always'}>
                 <div className={boardClass}>
                     <div

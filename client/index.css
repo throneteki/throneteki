@@ -148,9 +148,8 @@ html.card-dragging * {
     animation: none;
 }
 
-/* The chat's tab and panel are one shape: the panel's edge opens where the tab joins it, and the tab's border
-   curves out into that edge. On a wide screen the chat slides in from the right with the tab on its left edge;
-   on a phone it drops down from the top, over most of the board, with the tab hanging below it. */
+/* The chat's tab and panel are one shape, the tab's border curving out into the panel's edge. Wide screens: the
+   chat slides in from the right, the tab on its left. Phones: it drops from the top, the tab hanging below. */
 .chat-drawer {
     --lip-length: max(44px, calc(var(--ui-scale, 1) * 4.5rem));
     --lip-depth: calc(var(--ui-scale, 1) * 1.75rem);
@@ -261,8 +260,7 @@ html.card-dragging * {
     );
 }
 
-/* The phone chat: it drops down from the top, over the board. Used on small screens, and on the adaptive
-   board whenever it is laid out for a phone */
+/* The phone chat: small screens, and the adaptive board laid out for a phone */
 @define-mixin chat-phone {
     /* The tab sits near the right edge, clear of the opponent's totals in the middle of their bar */
     .chat-drawer {
@@ -356,14 +354,12 @@ html[data-board-layout='narrow'],
 html[data-board-layout='short'] {
     @mixin chat-phone;
 
-    /* The chat button among our tools opens the chat instead of the tab, which would cover the board. Open, it fills
-       the screen down to the tools (--board-chat-bottom) or what the keyboard leaves. */
+    /* Opened by the tools' chat button, not the tab; fills down to the tools or what the keyboard leaves */
     .chat-lip,
     .chat-dim {
         display: none;
     }
-    /* It slides down from behind the bar rather than growing, so its height can follow the keyboard straight away:
-       clipped as it moves, so it never shows above where it opens */
+    /* Slides rather than grows, so its height can follow the keyboard at once */
     .chat-drawer,
     .chat-drawer.chat-open {
         top: var(--board-chat-top, 0px);
@@ -405,8 +401,7 @@ html.card-dragging.card-drop-refused * {
     cursor: no-drop !important;
 }
 
-/* The card itself: what is lifted, turned over and set down. Its shadow is part of it, so the shadow
-   turns with the card, and a deeper one only shows while the card is lifted */
+/* The card itself, with its shadow, which turns with it; a deeper shadow while lifted */
 .card-body {
     position: absolute;
     inset: 0;
@@ -446,9 +441,7 @@ html.card-dragging.card-drop-refused * {
     transition: none;
 }
 
-/* What is happening to a card is drawn as a ring around it. The few that need attention breathe. A ring is
-   drawn to the size of the cards it is around (--card-scale, which hands, piles and sheets set for their own cards),
-   or to --ring-scale where it is around something else, such as a chip that is sized with the interface. */
+/* Status rings around cards, sized by --card-scale (or --ring-scale around something else); urgent ones breathe */
 .ring-selected,
 .ring-selectable,
 .ring-participating,
@@ -514,8 +507,7 @@ html.card-dragging.card-drop-refused * {
     animation: none;
 }
 
-/* On the adaptive board a long press previews or picks up a card, so it never selects text or opens the
-   browser's own menu for a picture. The sheets and dialogs it opens are kept the same way. */
+/* A long press previews or picks up a card, so it never selects text or opens the browser's image menu */
 [data-layout],
 [data-sheet] {
     -webkit-user-select: none;
@@ -534,8 +526,7 @@ html.card-dragging.card-drop-refused * {
     background: transparent;
 }
 
-/* On the adaptive board a chosen card pops, growing above its neighbours and settling back, so it is easy to see
-   what was just picked; its ring keeps showing that it is chosen */
+/* A chosen card pops above its neighbours and settles back */
 [data-layout] [data-card-surface].ring-selected {
     scale: 1;
     animation: select-pop 320ms ease-out;
@@ -595,8 +586,7 @@ html.card-dragging.card-drop-refused * {
     }
 }
 
-/* The board's overlays: what comes in, stamps down as one opens, and the Continue button's fill as its time
-   runs out. The fill keeps going with motion off, as it shows when the overlay will continue. */
+/* Overlay animations. The Continue fill runs even with motion off, as it shows when the overlay continues. */
 .overlay-dim {
     animation: overlay-fade 300ms ease-out both;
 }
@@ -613,8 +603,8 @@ html.card-dragging.card-drop-refused * {
     transition: opacity 200ms;
     animation: none;
 }
-/* A choice put aside to look at the board: all but the button that brings it back fades away and lets the board be used.
-   Wrappers fade, as the parts' own entrance animations hold their opacity. */
+/* A choice put aside: all but its restore button fades and stops taking the pointer. Wrappers fade, as the parts'
+   entrance animations hold their own opacity. */
 .overlay-away {
     transition: opacity 250ms ease-out;
 }
@@ -661,8 +651,7 @@ html.card-dragging.card-drop-refused * {
 .overlay-root {
     animation: overlay-fade 250ms ease-out backwards;
 }
-/* The eliminated player's seal comes down hard, the cards jolt under it and go grey. Their resting state is the
-   seal down and the cards grey, so with motion off that is what shows. */
+/* The eliminated seal slams down and the cards go grey; with motion off, that resting state shows */
 .overlay-seal {
     animation: overlay-seal 560ms 750ms both;
 }
@@ -729,10 +718,7 @@ html.card-dragging.card-drop-refused * {
     animation: none;
 }
 
-/* The overlays' table. Cards are tossed onto it: from off its left or right edge, each player's from one side,
-   turning as they come, high above it (a wide soft shadow) until they land with a little give. What
-   is written about them comes after they land. Each card's start (--toss-x, --toss-y, --toss-r) is set as it is
-   drawn (BoardOverlays' useToss). With motion off everything is simply in place. */
+/* Cards tossed onto the overlays' table; each card's start (--toss-x/y/r) is set by BoardOverlays' useToss */
 .overlay-toss {
     animation: overlay-toss 620ms var(--toss-delay, 0ms) both;
 }

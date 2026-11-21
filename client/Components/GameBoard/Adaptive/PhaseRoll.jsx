@@ -1,6 +1,7 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { motionOff } from '../../../flip';
+import { remSize } from '../../../cardScale';
 
 export const phases = [
     { name: 'plot', label: 'Plot' },
@@ -82,7 +83,7 @@ const PhaseRoll = ({ phase, className }) => {
         return () => observer.disconnect();
     }, []);
 
-    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const rem = remSize();
     const gap = gapRem * rem;
     const shown = [];
     if (at && widths) {

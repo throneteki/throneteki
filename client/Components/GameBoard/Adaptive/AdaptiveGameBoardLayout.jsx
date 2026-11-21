@@ -49,8 +49,8 @@ const Part = ({ area, scale, className, style, children }) => (
     </div>
 );
 
-// Each side holds its strips and its play area. The sides are given the height of their strips to start from and
-// share what is left equally, so both play areas are the same height even when one side's strip wraps.
+// The sides start from their strips' heights and share the rest equally, so both play areas match even when one
+// strip wraps
 const useEqualPlayAreas = (boardRef, mode) => {
     const [chrome, setChrome] = useState({ top: 0, bottom: 0 });
     useLayoutEffect(() => {
@@ -86,30 +86,26 @@ const useEqualPlayAreas = (boardRef, mode) => {
     };
 };
 
-// The desktop's prompt is drawn a size up from the rest of the interface, its text being what is read most
+// The desktop's prompt is a size up from the rest of the interface, being what is read most
 const promptBoost = 1.15;
-// How wide the prompt is as a panel over the side of the play areas (on a desktop): like classic's, following the
-// interface size
 const floatingPromptWidth = `calc(var(--ui-scale, 1) * ${promptBoost} * clamp(12rem, 20vw, 16rem))`;
-// The room the chat button takes beside the game menu in the desktop's bar, in pixels at the interface's size
+// Pixels at the interface's size
 const chatButtonRoom = 36;
-// The tint of a melee board while its player is waited on. The dark bands across it (the strip, our hand) lay it again
-// over their own darkness, so they stay as much darker than the play area as when it is not tinted.
+// A melee board's tint while its player is waited on. Its dark bands (the strip, our hand) lay it again over their
+// own darkness, so they stay as much darker than the play area.
 const waitedOn = 'bg-sky-300/5';
 const waitedOnBand = 'bg-[linear-gradient(rgb(125_211_252/0.05),rgb(125_211_252/0.05))]';
 const fullscreenRoom = 28;
 // Phone landscape's column down one side: the stats at its top and bottom, the prompt and our tools between
 const columnWidth = 'clamp(13rem, 30vw, 20rem)';
 
-// Room at the start and end of a play area for what lies over the board's sides (the prompt), so its cards only go
-// under that once scrolled
+// Room at each end of a play area for the prompt lying over the board's side
 const Room = ({ width }) => <div aria-hidden className='shrink-0' style={{ width }} />;
 const coverBefore = 'var(--board-cover-left, 0px)';
 const coverAfter = 'var(--board-cover-right, 0px)';
 
-// Characters and locations take a row each, or share one in phone landscape (inline).
-// promptSide (phone landscape): the play area keeps the column's width spare on the far side, and its cards stick
-// beside the column as the board scrolls under it. Sticky rather than set on scroll, which lags a frame on phones.
+// Characters and locations take a row each, or share one in phone landscape (inline). promptSide (phone landscape):
+// cards stick beside the column as the board scrolls; sticky, as scroll handlers lag a frame on phones.
 const PlayArea = ({ inline, promptSide, children }) => {
     const cards = children(inline ? 'inline' : 'nowrap');
     return (
@@ -137,8 +133,7 @@ const PlayArea = ({ inline, promptSide, children }) => {
     );
 };
 
-// A row drawn smaller, as a whole, when it is wider than the room it has. It sets the interface's size for what is
-// inside it, which every part of a stats bar follows.
+// A row shrunk as a whole to fit, by lowering --ui-scale for its contents
 const FitRow = ({ className, start = false, children }) => {
     const outerRef = useRef(null);
     const innerRef = useRef(null);
@@ -221,11 +216,9 @@ const StatsCard = ({
     </div>
 );
 
-// A player's stats along the top or bottom of the board (not phones held sideways), the same at a joust or a melee
-// table. active: tinted while they are waited on, at a melee table.
-// stick: across a board that scrolls with the table, the band runs the board's width and the stats stick to the view's
-// left until the board's end takes them off, as the sideways phone's stats card does. At the bottom they keep clear of
-// our tools in the view's corner. Zoomed by the interface's scale, so lengths measured on screen are divided by it.
+// A player's stats along the top or bottom of the board (not phone landscape). active: waited on (melee).
+// stick: the band runs the board's width and the stats stick to the view's left; at the bottom they keep clear of our
+// tools. The bar is zoomed by --ui-scale, so screen lengths are divided by it.
 const EdgeStatsBar = ({ edge, active = false, stick = false, className, ...props }) => {
     const band = classNames(edge === 'top' ? 'border-b' : 'border-t', className);
     if (!stick) {
@@ -287,29 +280,16 @@ const AdaptiveGameBoardLayout = ({
     const dividerRef = useRef(null);
     const hud = useHud();
     const promptSide = promptSideOf(hud);
-    // In phone landscape the prompt and the players' stats share a column down one side of the screen. On a desktop
-    // the prompt is a panel over the side of the play areas. In portrait it sits below our hand.
     const short = mode === 'short';
     const floatingPrompt = mode === 'wide';
-    // Melee seats everyone round a table of two rows, each player's stats on their own board
     const melee = otherPlayers.length > 1;
     const columnRef = useRef(null);
-    // How much of each side of the play areas is covered by the prompt (the board runs on under it, showing through)
-    const coverOf = (side) => {
-        if (side !== promptSide) {
-            return '0px';
-        }
-        return floatingPrompt
-            ? 'calc(var(--board-prompt-width) + var(--board-prompt-inset, 0px))'
-            : '0px';
-    };
+    const coverOf = (side) =>
+        floatingPrompt && side === promptSide ? 'var(--board-prompt-width)' : '0px';
     const boardRef = useRef(null);
     const sideFlex = useEqualPlayAreas(boardRef, mode);
-    // At a melee table the view follows the action, unless turned off in the HUD settings. It waits while a card is
-    // carried or zoomed.
     const zoomed = useCardHover((current) => !!current.code);
-    // At a melee table the stats bars keep to the view's top and bottom, so the hints of more above and below show
-    // inside them rather than under them
+    // Melee: the scroll hints show inside the stats bars, not under them
     useLayoutEffect(() => {
         const board = boardRef.current;
         if (!board) {
@@ -347,8 +327,7 @@ const AdaptiveGameBoardLayout = ({
     const username = useSelector((state) => state.auth.user?.username);
     const isPlaying = !!thisPlayer && thisPlayer.user?.username === username;
     const canChangeStats = isPlaying && manualMode;
-    // Our piles that only show while they hold cards are offered empty too, in manual mode and while a card is
-    // carried, as places to put one
+    // Our piles that only show while they hold cards are offered empty while a card is carried, to put it in
     const offerEmpty = isDragging;
     const phoneLayout = mode !== 'wide';
     const portrait = mode === 'narrow';
@@ -356,7 +335,7 @@ const AdaptiveGameBoardLayout = ({
     // In portrait our hand has a row of its own below our board, scrolling with it; elsewhere it sits in our strip
     const handTrayShown = portrait && isPlaying;
 
-    // seat: where the board sits in its row of a melee table, 0 for the first; below: what goes under our board
+    // seat: index in its melee row; below: what goes under our board
     const renderSide = (player, side, { seat = 0, below = null } = {}) => {
         // A spectator watches the bottom player, but cannot act for them: no drops, and no hand of their own
         const isMe = isPlaying && player === thisPlayer;
@@ -383,8 +362,7 @@ const AdaptiveGameBoardLayout = ({
         const squishHand = !isMe && phoneLayout;
         const hand = withoutPendingAttachment(player.cardPiles.hand);
         const shadows = withoutPendingAttachment(player.cardPiles.shadows);
-        // An opponent's hand fans out over their half when tapped or chosen from: the top half, or at a melee table
-        // the bottom half for those seated along the bottom row
+        // An opponent's hand fans out over their half when tapped or chosen from
         const fanned = (panel) =>
             player !== thisPlayer ? (
                 <HandFan
@@ -409,8 +387,7 @@ const AdaptiveGameBoardLayout = ({
                     portrait
                         ? 'gap-1 py-2'
                         : short
-                          ? // A card raised in our hand needs room above it in the strip, which clips what spills out.
-                            // Every strip keeps that room on its play area's side, so the halves mirror each other.
+                          ? // Room for a raised hand card, which the strip clips; on every strip, so they mirror
                             classNames(
                                 'gap-2',
                                 side === 'top'
@@ -510,9 +487,8 @@ const AdaptiveGameBoardLayout = ({
             </PlayArea>
         );
 
-        // Phone landscape: the player's stats card, at the top (theirs) or bottom (ours) of the prompt's column. It sits
-        // in its board's strip while the column is clear of the board, then sticks to the screen's side until the
-        // board's end reaches it. It is in a layer over the whole board so it can stick across boards.
+        // Phone landscape: the stats card at the top (theirs) or bottom (ours) of the prompt's column, in a layer over
+        // the whole board so it can stick across boards
         const rail = short && (
             <div
                 className={classNames(
@@ -593,7 +569,6 @@ const AdaptiveGameBoardLayout = ({
         dispatch(
             sendButtonClickedMessage(button.promptId, button.command, button.method, button.arg)
         );
-    // The chat button among our tools, in place of the chat's tab
     // inBar: in the desktop's stats bar, as tall as the bar
     const chatButton = (inBar = false) =>
         chat && (
@@ -626,7 +601,6 @@ const AdaptiveGameBoardLayout = ({
                 )}
             </Button>
         );
-    // At a melee table: whether the view follows the action (directed) or not (manual), and switches it
     const followToggle = melee && (
         <Button
             size='sm'
@@ -649,7 +623,7 @@ const AdaptiveGameBoardLayout = ({
             {followed.paused ? 'Free' : 'Auto'}
         </Button>
     );
-    // Our game menu, given the room our stats leave (the desktop's joust bar) to show what fits as buttons
+    // room: what our stats leave in the desktop's joust bar, for menu items shown as buttons
     const gameMenu = (room) => (
         <GameMenu
             isPlaying={isPlaying}
@@ -659,7 +633,7 @@ const AdaptiveGameBoardLayout = ({
         />
     );
 
-    // Our tools, beside our own stats: the view's mode, the chat, full screen (phones) and the menu, outermost
+    // Phone landscape's tools, beside our stats
     const tools = (className) => (
         <ToolBox data-region='tools' className={className}>
             {followToggle}
@@ -668,8 +642,7 @@ const AdaptiveGameBoardLayout = ({
             {gameMenu(0)}
         </ToolBox>
     );
-    // At a melee table (not phones held sideways), our tools lie on the stats bars' band in the view's bottom corner,
-    // as the joust bar's do, the chat outermost. Stats passing under them fade into their box rather than being cut.
+    // Melee: our tools on the stats band in the view's bottom corner; stats passing under them fade, not cut
     const barTools = (className) => (
         <div
             data-region='tools'
@@ -685,10 +658,9 @@ const AdaptiveGameBoardLayout = ({
             {chatButton(true)}
         </div>
     );
-    const promptBar = (barMode, className, allOptions = false, stackOptions = false) => (
+    const promptBar = (barMode, className, stackOptions = false) => (
         <PromptBar
             className={className}
-            allOptions={allOptions}
             stackOptions={stackOptions}
             mode={barMode}
             phase={thisPlayer?.phase}
@@ -702,9 +674,8 @@ const AdaptiveGameBoardLayout = ({
         />
     );
 
-    // On a desktop the prompt is a panel lying over the side of both play areas, centred on the line between them, and
-    // keeping still as the board scrolls sideways under it. Elsewhere the line between the halves is the middle of the
-    // board's view.
+    // Desktop: the prompt is a panel over the side of both play areas, centred on the line between them and still as
+    // the board scrolls sideways. Elsewhere the line is the middle of the view.
     const divider = floatingPrompt ? (
         <div
             data-region='mid'
@@ -716,7 +687,7 @@ const AdaptiveGameBoardLayout = ({
                 data-region='prompt-float'
                 className={classNames(
                     'absolute top-0 -translate-y-1/2',
-                    promptSide === 'right' ? 'right-[var(--board-prompt-inset)]' : 'left-0'
+                    promptSide === 'right' ? 'right-0' : 'left-0'
                 )}
                 style={{
                     width: 'var(--board-prompt-width)',
@@ -730,7 +701,6 @@ const AdaptiveGameBoardLayout = ({
                         'border shadow-[0_6px_18px_rgba(0,0,0,0.6)]',
                         promptSide === 'right' ? 'rounded-md' : 'rounded-r-md border-l-0'
                     ),
-                    false,
                     true
                 )}
             </div>
@@ -745,8 +715,8 @@ const AdaptiveGameBoardLayout = ({
         />
     );
 
-    // Publishes where the divider, prompt, view, tools and column are, for what lies over the board (fanned hands,
-    // the prompt's options, the phone chat) to keep to
+    // Publishes overlay positions as CSS variables on :root, for what lies over the board (the docked prompt's panel,
+    // the phone chat, the prompt's column)
     const topBarsRef = useRef(null);
     useLayoutEffect(() => {
         const divider = dividerRef.current;
@@ -754,53 +724,42 @@ const AdaptiveGameBoardLayout = ({
             return;
         }
         const root = document.documentElement;
+        const written = {};
+        // Every position is read before any is written, and only changes are written, so it lays out once
         const place = () => {
-            const rect = divider.getBoundingClientRect();
-            root.style.setProperty('--board-divider-top', `${rect.top}px`);
-            root.style.setProperty('--board-divider-bottom', `${rect.bottom}px`);
-            const bar = document.querySelector('[data-prompt-bar]')?.getBoundingClientRect();
-            root.style.setProperty('--board-prompt-bottom', `${bar ? bar.bottom : rect.bottom}px`);
-            const view = boardRef.current
-                ?.querySelector('[data-board-scroll]')
-                ?.getBoundingClientRect();
-            root.style.setProperty(
-                '--board-view-bottom',
-                `${view ? view.bottom : window.innerHeight}px`
-            );
+            const rectOf = (selector) =>
+                boardRef.current?.querySelector(selector)?.getBoundingClientRect();
+            const height = window.innerHeight;
+            const onRight = promptSide === 'right';
             const bars = topBarsRef.current?.getBoundingClientRect();
             const column = columnRef.current?.getBoundingClientRect();
-            const onRight = promptSide === 'right';
-            const width = document.documentElement.clientWidth;
-            root.style.setProperty('--board-chat-top', `${bars ? bars.bottom : 0}px`);
-            // In portrait our tools are at the bottom, and the chat stops above them, the chat button in reach
-            const toolsRect = boardRef.current
-                ?.querySelector('[data-region="tools"]')
-                ?.getBoundingClientRect();
-            root.style.setProperty('--board-tools-width', `${toolsRect ? toolsRect.width : 0}px`);
-            root.style.setProperty(
-                '--board-chat-bottom',
-                `${mode === 'narrow' && toolsRect ? window.innerHeight - toolsRect.top + 4 : 0}px`
-            );
-            // The prompt and our tools keep between the stats at the top and bottom of the column
-            const topRail = boardRef.current
-                ?.querySelector('[data-rail-side="top"]')
-                ?.getBoundingClientRect();
-            const bottomRail = boardRef.current
-                ?.querySelector('[data-rail-side="bottom"]')
-                ?.getBoundingClientRect();
-            root.style.setProperty('--board-rail-top', `${topRail ? topRail.bottom : 0}px`);
-            root.style.setProperty(
-                '--board-rail-bottom',
-                `${bottomRail ? window.innerHeight - bottomRail.top : 0}px`
-            );
-            root.style.setProperty(
-                '--board-chat-left',
-                `${column && !onRight ? column.right : 0}px`
-            );
-            root.style.setProperty(
-                '--board-chat-right',
-                `${column && onRight ? width - column.left : 0}px`
-            );
+            const tools = rectOf('[data-region="tools"]');
+            const topRail = rectOf('[data-rail-side="top"]');
+            const bottomRail = rectOf('[data-rail-side="bottom"]');
+            const values = {
+                '--board-divider-bottom': divider.getBoundingClientRect().bottom,
+                '--board-chat-top': bars ? bars.bottom : 0,
+                '--board-tools-width': tools ? tools.width : 0,
+                // In portrait the chat stops above our tools, the chat button in reach
+                '--board-chat-bottom': mode === 'narrow' && tools ? height - tools.top + 4 : 0,
+                '--board-rail-top': topRail ? topRail.bottom : 0,
+                '--board-rail-bottom': bottomRail ? height - bottomRail.top : 0,
+                '--board-chat-left': column && !onRight ? column.right : 0,
+                '--board-chat-right': column && onRight ? root.clientWidth - column.left : 0
+            };
+            for (const [name, value] of Object.entries(values)) {
+                if (written[name] !== value) {
+                    written[name] = value;
+                    root.style.setProperty(name, `${value}px`);
+                }
+            }
+        };
+        let frame = 0;
+        const placeSoon = () => {
+            frame ||= requestAnimationFrame(() => {
+                frame = 0;
+                place();
+            });
         };
         place();
         const observer = new ResizeObserver(place);
@@ -816,26 +775,15 @@ const AdaptiveGameBoardLayout = ({
             ...(boardRef.current?.querySelectorAll('[data-region="stats-rail"]') ?? [])
         ].forEach((element) => element && observer.observe(element));
         window.addEventListener('resize', place);
-        // The desktop's prompt, and the stats in phone landscape, move with the board as it scrolls
+        // The stats in phone landscape move with the board as it scrolls
         const scroller = boardRef.current?.querySelector('[data-board-scroll] [data-clips]');
-        scroller?.addEventListener('scroll', place, { passive: true });
+        scroller?.addEventListener('scroll', placeSoon, { passive: true });
         return () => {
+            cancelAnimationFrame(frame);
             observer.disconnect();
             window.removeEventListener('resize', place);
-            scroller?.removeEventListener('scroll', place);
-            [
-                '--board-divider-top',
-                '--board-divider-bottom',
-                '--board-prompt-bottom',
-                '--board-view-bottom',
-                '--board-chat-top',
-                '--board-chat-bottom',
-                '--board-tools-width',
-                '--board-chat-left',
-                '--board-chat-right',
-                '--board-rail-top',
-                '--board-rail-bottom'
-            ].forEach((name) => root.style.removeProperty(name));
+            scroller?.removeEventListener('scroll', placeSoon);
+            Object.keys(written).forEach((name) => root.style.removeProperty(name));
         };
     }, [mode, promptSide]);
 
@@ -874,8 +822,8 @@ const AdaptiveGameBoardLayout = ({
         </div>
     );
 
-    // A melee table: two rows of boards, us at the bottom left. The room for the desktop's prompt is a column at each
-    // side of the table, which the end boards' stats and strips reach into; only their play areas keep clear of it.
+    // Melee: two rows of boards, us at the bottom left. The desktop prompt's room is a column at each side, which only
+    // the end boards' play areas keep clear of.
     const table = melee
         ? (() => {
               const rows = tableRows(thisPlayer, [thisPlayer, ...otherPlayers]);
@@ -943,7 +891,6 @@ const AdaptiveGameBoardLayout = ({
                         className='relative flex h-full w-full overflow-hidden'
                         style={{
                             '--board-prompt-width': floatingPromptWidth,
-                            '--board-prompt-inset': '0px',
                             '--board-cover-left': coverOf('left'),
                             '--board-cover-right': coverOf('right')
                         }}
@@ -959,8 +906,7 @@ const AdaptiveGameBoardLayout = ({
                                 )}
                                 style={{ width: columnWidth }}
                             >
-                                {/* The prompt, between the players' stats, centred until it grows too tall for
-                                    the room and scrolls (auto margins, which unlike centring leave its top in reach) */}
+                                {/* Auto margins, unlike centring, keep its top in reach once it scrolls */}
                                 <div
                                     data-region='prompt-scroll'
                                     className='flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-1 [scrollbar-width:none]'
@@ -972,13 +918,10 @@ const AdaptiveGameBoardLayout = ({
                                     >
                                         {promptBar(
                                             'panel',
-                                            'rounded-md border shadow-[0_6px_18px_rgba(0,0,0,0.6)]',
-                                            true
+                                            'rounded-md border shadow-[0_6px_18px_rgba(0,0,0,0.6)]'
                                         )}
                                     </div>
                                 </div>
-                                {/* Our tools, against the screen's edge just above our stats: the menu outermost,
-                                    then full screen, then the chat */}
                                 <div
                                     data-region='column-tools'
                                     className={classNames(
@@ -992,8 +935,6 @@ const AdaptiveGameBoardLayout = ({
                                 </div>
                             </div>
                         )}
-                        {/* The bars run to the screen's edges; what lies between them keeps clear of a notch or
-                            rounded corners at the sides */}
                         <div ref={boardRef} className='flex min-w-0 flex-1 flex-col'>
                             {!short && !melee && (
                                 <div
@@ -1020,7 +961,6 @@ const AdaptiveGameBoardLayout = ({
                                     'pb-[var(--safe-bottom)] pt-[var(--safe-top)]': short
                                 })}
                             >
-                                {/* The whole board, both sides, scrolls as one, starting at our side and the plots */}
                                 <div
                                     data-board-scroll=''
                                     className='relative flex min-h-0 min-w-0 flex-1'
@@ -1041,7 +981,6 @@ const AdaptiveGameBoardLayout = ({
                                                 {handTray}
                                             </>
                                         )}
-                                        {/* Cards in flight, scrolling with the board (flip.js) */}
                                         <div
                                             data-flight-layer=''
                                             aria-hidden
@@ -1049,8 +988,6 @@ const AdaptiveGameBoardLayout = ({
                                         />
                                     </ScrollArea>
                                     {midline}
-                                    {/* At a melee table our stats keep to our own board, so our tools are pinned to
-                                        the view's bottom corner beside them, staying when our board scrolls away */}
                                     {melee &&
                                         !short &&
                                         barTools('absolute bottom-0 right-0 z-[246]')}
@@ -1059,9 +996,11 @@ const AdaptiveGameBoardLayout = ({
                             {!short && !melee && (
                                 <div
                                     data-sheet-edge={portrait ? 'bottom' : undefined}
+                                    data-region='tools'
                                     className='relative z-[306] shrink-0'
                                 >
-                                    {/* In portrait the prompt lies below, clear of the screen's bottom edge */}
+                                    {/* Our tools are in this bar (data-region), so the phone chat stops above it. In portrait
+                                        the prompt lies below, clear of the screen's bottom edge. */}
                                     <EdgeStatsBar
                                         player={thisPlayer}
                                         canChange={canChangeStats}
@@ -1086,7 +1025,6 @@ const AdaptiveGameBoardLayout = ({
                                     </EdgeStatsBar>
                                 </div>
                             )}
-                            {/* In portrait the prompt is at the very bottom, below our stats */}
                             {portrait && promptBar('dock')}
                         </div>
                         <BoardOverlays

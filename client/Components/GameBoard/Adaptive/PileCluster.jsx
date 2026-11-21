@@ -6,8 +6,8 @@ import { withoutPendingAttachment } from '../pendingAttachment';
 import { sendShowDrawDeckMessage, sendShuffleDeckMessage } from '../../../redux/reducers/game';
 import Reveal from './Reveal';
 
-// A player's draw deck, discard and dead piles, and out of game while it holds cards. Our own out of game also
-// shows, empty, in manual mode and while a card is carried, as somewhere to put it. Shadows lie beside the hand.
+// A player's draw deck, discard and dead piles, and out of game while it holds cards (ours also while a card is
+// carried, to put it in). Shadows lie beside the hand.
 const PileCluster = ({ player, isMe, spectating, pileProps, droppable, offerEmpty = false }) => {
     const dispatch = useDispatch();
     const cardPiles = player.cardPiles;

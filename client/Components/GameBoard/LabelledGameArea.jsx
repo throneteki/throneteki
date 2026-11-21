@@ -5,9 +5,7 @@ import { raisedStyle } from './PileDepth';
 import { useAdaptiveBoard } from './adaptiveContext';
 import { Tooltip } from '@heroui/react';
 
-// How areas show their label: 'full' writes the name and count on the area (the classic board, and the adaptive
-// board on a large screen). 'inspect' (phone layouts) shows nothing on the area: the first tap on a stacked pile
-// shows its name and count above the tap instead, and the next tap anywhere, or a moment, puts it away.
+// How areas show their label: 'full' on the area; 'inspect' (phones) only on a first tap on a stacked pile
 export const AreaLabelContext = createContext('full');
 
 const inspectTime = 2500;
@@ -48,10 +46,38 @@ export const InspectLabel = ({ label, count, name, opens = false }) => (
     </div>
 );
 
-// inspectable: a stacked pile whose count cannot be seen by looking at it, which on phones shows its name and count
-// on a first tap. inspectSkip: a pile whose top card is to be used straight away is tapped through as usual.
-// opens: a second tap opens the pile. slotLabel: the name drawn faintly behind the area (adaptive board) where it
-// has no label, or a different one.
+// An area's outline. On the adaptive board it has the same corners as the cards in it, and its name lies faintly
+// behind it, where a card put there would go.
+export const AreaBackground = ({ name, upright = false, className }) => {
+    const adaptive = useAdaptiveBoard();
+    return (
+        <div
+            className={classNames(
+                'absolute h-full w-full',
+                adaptive
+                    ? 'flex items-center justify-center overflow-hidden rounded-[calc(var(--card-scale,1)*0.25rem)] border border-default-100/50 bg-black/45'
+                    : 'rounded-md border-2 border-default-100/55 bg-black/55',
+                className
+            )}
+        >
+            {adaptive && name && (
+                <span
+                    className={classNames(
+                        'select-none overflow-hidden whitespace-nowrap text-center text-[calc(var(--card-scale,1)*0.55rem)] font-semibold uppercase leading-none tracking-wider text-white/30',
+                        upright
+                            ? 'max-h-[90%] rotate-180 [writing-mode:vertical-rl]'
+                            : 'max-w-[90%]'
+                    )}
+                >
+                    {name}
+                </span>
+            )}
+        </div>
+    );
+};
+
+// inspectable: a stacked pile shown by a first tap on phones. inspectSkip: tapped through as usual (its top card is
+// to be used). opens: a second tap opens the pile. slotLabel: the faint name behind the area, if not its label.
 const LabelledGameArea = forwardRef(function LabelledGameArea(
     {
         label,
@@ -73,7 +99,6 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
     ref
 ) {
     const labelStyle = useContext(AreaLabelContext);
-    const adaptive = useAdaptiveBoard();
     const inspectMode = labelStyle === 'inspect';
     const key = useId();
     const current = useInspecting();
@@ -129,30 +154,8 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
     }, [label, labelClickable, position, inspectMode]);
 
     const areaClassName = classNames('relative shift-smooth', className);
-    // On the adaptive board an area's outline has the same corners as the cards in it, and its name lies faintly
-    // behind it, where a card put there would go
     const background = !disableBackground && (
-        <div
-            className={classNames(
-                'absolute w-full h-full',
-                adaptive
-                    ? 'flex items-center justify-center overflow-hidden rounded-[calc(var(--card-scale,1)*0.25rem)] border border-default-100/50 bg-black/45'
-                    : 'border-2 border-default-100/55 bg-black/55 rounded-md'
-            )}
-        >
-            {adaptive && (slotLabel || label) && (
-                <span
-                    className={classNames(
-                        'select-none overflow-hidden whitespace-nowrap text-center text-[calc(var(--card-scale,1)*0.55rem)] font-semibold uppercase leading-none tracking-wider text-white/30',
-                        upright
-                            ? 'max-h-[90%] rotate-180 [writing-mode:vertical-rl]'
-                            : 'max-w-[90%]'
-                    )}
-                >
-                    {slotLabel ?? nameOf(label)}
-                </span>
-            )}
-        </div>
+        <AreaBackground name={slotLabel ?? (label && nameOf(label))} upright={upright} />
     );
     const area = (
         <div

@@ -4,6 +4,7 @@ import CardImage from '../Images/CardImage';
 import { elevation } from '../../tableFeel';
 import { dragStore, useUnderTarget } from './dragStore';
 import { motionOff } from '../../flip';
+import { cardScaleOf, remSize } from '../../cardScale';
 
 const tuckTime = 160;
 
@@ -15,11 +16,7 @@ const stripOf = (stack) =>
     [...stack.children].find((child) => child.querySelector(':scope > .underneath'));
 
 // One card width at the board's card size, in pixels
-const cardUnit = () => {
-    const root = document.documentElement;
-    const scale = parseFloat(getComputedStyle(root).getPropertyValue('--card-scale')) || 1;
-    return scale * (parseFloat(getComputedStyle(root).fontSize) || 16);
-};
+const cardUnit = () => (cardScaleOf(document.documentElement) ?? 1) * remSize();
 
 // Where a card placed underneath this stack will lie. The cards underneath are drawn after the card and its
 // attachments, peeking out below the last of them, each a sixth of a card further right than the one before.
@@ -48,9 +45,7 @@ const underneathSpot = (stack, carriedUuid) => {
     };
 };
 
-// The card with its duplicates and attachments is drawn again above the carried card, so the carried card
-// shows tucked beneath it the way it will lie once dropped. The cards already underneath stay on the board,
-// below the carried card, as a new card lies on top of them.
+// The stack is drawn again above the carried card, so it shows tucked beneath as it will lie once dropped
 const coverWith = (stack) => {
     const rect = stack.getBoundingClientRect();
     const cover = stack.cloneNode(true);

@@ -107,4 +107,11 @@ export const {
     sendConcedeMessage
 } = gameSlice.actions;
 
+// Leaving a game we are still playing concedes it, so the player is asked first
+export const mustConfirmLeave = (game, user) =>
+    !!user &&
+    Object.values({ ...game.players, ...game.spectators }).some(
+        (player) => player.name === user.username && !player.canSafelyLeave
+    );
+
 export default gameSlice.reducer;

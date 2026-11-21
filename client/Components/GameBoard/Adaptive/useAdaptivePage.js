@@ -1,9 +1,8 @@
 import { useLayoutEffect } from 'react';
 import { isTextEntry } from './useBoardLayout';
 
-// While the adaptive board shows, it draws under a phone's notch and rounded corners (padding itself clear of
-// them), and the page cannot scroll, be pulled to refresh or bounce. Only for the board: every other page keeps the
-// browser's safe default.
+// While the adaptive board shows, it draws under a phone's notch (padding itself clear) and the page cannot scroll,
+// pull to refresh or bounce
 export const useAdaptivePage = (active) => {
     useLayoutEffect(() => {
         if (!active) {

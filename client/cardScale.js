@@ -50,6 +50,8 @@ export const cardScaleOf = (el) => {
     return Number.isFinite(value) && value > 0 ? value : undefined;
 };
 
+export const remSize = () => parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+
 export const cardWidth = 'calc(var(--card-scale, 1) * 4rem)';
 export const cardHeight = 'calc(var(--card-scale, 1) * 5.6rem)';
 

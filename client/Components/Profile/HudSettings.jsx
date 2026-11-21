@@ -13,7 +13,8 @@ import { useBrowserReducedMotion } from '../../motion';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
-import { overlaySettingsOf, overlayTimerLimits, resolveHudSize } from '../../hud';
+import { overlaySettingsOf, resolveHudSize } from '../../hud';
+import { overlayTimerLimits } from '../../../shared/hudSettings';
 import SettingReveal from './SettingReveal';
 import { interfaceScaleProperties } from '../GameBoard/useHudScale';
 import { boardMeasure, boardScales, estimateBoardMeasure } from '../GameBoard/boardScales';
@@ -229,8 +230,7 @@ const SizeSlider = ({ kind, label, description, value, fixed, onChange, wontFit,
     );
 };
 
-// Said at the top of a size's slider while the size being tried is what would leave the cards more than the board's
-// height, so the board scrolls
+// Shown on the slider whose size makes the cards' rows taller than the board
 const WontFit = ({ show }) => (
     <SettingReveal show={show}>
         <div
@@ -286,8 +286,7 @@ const experimentalChip = (
     </Chip>
 );
 
-// A choice still being tried out, tagged at the right end of its title's line (a tile's top right corner) so the
-// title keeps the line
+// Tagged at the right end of a tile's title line
 const Experimental = ({ children }) => (
     <span className='flex w-full items-start justify-between gap-2'>
         <span className='min-w-0'>{children}</span>

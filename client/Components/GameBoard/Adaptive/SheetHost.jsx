@@ -6,6 +6,7 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useDragSource } from '../dragStore';
 import { motionOff } from '../../../flip';
 import { pilesOf, sheetStore, slideTime, useSheetState } from './sheetStore';
+import { remSize } from '../../../cardScale';
 
 // Going from pile to pile: the body eases to the new pile's height as its cards fade in
 const resizeTime = 200;
@@ -30,8 +31,7 @@ const headerPx = 36;
 // The most cards a row holds, however wide the sheet: sideways cards (plots), and upright ones
 const maxAcross = { sideways: 5, upright: 10 };
 
-// The cards' scale and columns for a sheet's room: one row as tall as fits in phone landscape (row), else a readable
-// size with as many columns as fit
+// The cards' scale and columns for a sheet's room: one row in phone landscape (row), else as many columns as fit
 const sizeFor = ({ width, height }, row, rem) => {
     const free = width - paddingRem * 2 * rem;
     if (row) {
@@ -68,13 +68,11 @@ const handTrayBelow = (sheet, board) => {
     return rect && rect.top >= board.bottom - 2 ? rect : null;
 };
 
-// Whether the sheet's cards are scrolled as far as they go towards the sheet's edge, so a swipe that way is the
-// sheet's, to close it, rather than theirs
+// Whether the cards are scrolled fully towards the sheet's edge, so a swipe that way closes the sheet
 const scrolledToEdge = (body, fromTop) =>
     fromTop ? body.scrollTop + body.clientHeight >= body.scrollHeight - 1 : body.scrollTop <= 0;
 
-// What of the board can be seen: the board's view, less the prompt where it lies beside the board (phone
-// landscape's column, the desktop's floating prompt), so a sheet is never drawn over it
+// The board's visible view, less the prompt beside it, so a sheet is never drawn over the prompt
 const viewRect = () => {
     const scroll = document.querySelector('[data-board-scroll]');
     const view = scroll
@@ -95,8 +93,7 @@ const viewRect = () => {
     return box;
 };
 
-// On a phone a sheet reaches on under the stats bar at its edge of the screen, so it seems to come out from behind
-// it: how far, when the sheet runs to that edge of the view and the bar lies against it
+// Phone: how far a sheet reaches under the stats bar at its edge, so it seems to come out from behind it
 const underStats = (fromTop, view, edge) => {
     const stats = document
         .querySelector(`[data-sheet-edge="${fromTop ? 'top' : 'bottom'}"]`)
@@ -110,16 +107,14 @@ const underStats = (fromTop, view, edge) => {
     return edge >= view.bottom - 2 && stats.top >= view.bottom - 2 ? stats.bottom - edge : 0;
 };
 
-// On a desktop a sheet's handle can pull it off its edge into a panel that floats over the board. It holds to the edge
-// at first, giving a little (tugGive of the pull), and comes away once pulled detachAt px. Moved until its own edge
-// touches the board's edge it came from, where it would dock is outlined, and let go there it docks again. Where each
-// player's floating sheet was left is kept, so it opens there again.
+// Desktop: pulling the handle detachAt px (giving tugGive of the pull) floats the sheet; let go with its edge
+// against the board's, it docks again
 const detachAt = 64;
 const tugGive = 0.3;
 const popTime = 180;
 
-// Where each seat's sheet was left on a desktop, kept in the browser as the classic board keeps its panels: docked,
-// where its middle lies across the board (0 to 1); floating, its top left corner in the window
+// Where each seat's sheet was left (localStorage): docked, its middle across the board (0 to 1); floating, its top
+// left corner
 const placeKey = (seat) => `sheet-place-${seat}`;
 const readPlace = (seat) => {
     try {
@@ -185,14 +180,11 @@ const PlayerTag = ({ player }) => (
     </span>
 );
 
-// A player's sheet: slides out from their board's outer edge, sized to its cards up to the board's visible room, and
-// centred on the visible part of the board. It is clipped to the board's view as the table scrolls. Closes with its
-// button, its pile, or (phones) a swipe on the handle; shrinks to its header while a card from it is carried.
+// A player's sheet: slides from their board's outer edge, centred on its visible part. Closes with its button, its
+// pile or (phones) a swipe; shrinks to its header while a card from it is carried.
 const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
     const row = mode === 'short';
     const phone = mode !== 'wide';
-    // Where it was left, by seat (desktop): docked, where its middle lies across the board; floating, where its top
-    // left corner is, in the window
     const seat = sheet.seat ?? sheetKey;
     const [saved] = useState(() => (phone ? { dock: null, float: null } : readPlace(seat)));
     const dockRef = useRef(saved.dock);
@@ -230,9 +222,8 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
         });
     }, [sheetKey, strip, row, size]);
 
-    // Placed by style rather than state, so following the board as it scrolls never re-renders. The cards are sized
-    // when the sheet opens and when the board or window changes size (resize), never as the board moves: moved,
-    // they keep their size and go past the view's edge.
+    // Placed by style, not state, so following the board's scroll never re-renders; the cards are only resized on
+    // open and resize
     const sized = useRef(false);
     const place = useCallback(
         (resize = false) => {
@@ -242,7 +233,7 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
             if (!frame || !box) {
                 return;
             }
-            const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+            const rem = remSize();
             if (floatRef.current) {
                 // Floating, it may go anywhere over the game board, and is kept within it
                 const area = document.querySelector('[data-layout]')?.getBoundingClientRect() ?? {
@@ -638,11 +629,8 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
         return () => observer.disconnect();
     }, [sheet.id, piles, readChipEdges]);
 
-    // On a phone, swiping the sheet towards its edge closes it, and it follows the finger. Its cards scroll first: a
-    // swipe on them is only the sheet's when it starts with them scrolled as far as they go that way, and its first
-    // move is towards the edge (a first move the other way scrolls them). Once the sheet follows the finger, the
-    // cards do not scroll until the finger is lifted. Let go, it closes if the finger was last moving towards the
-    // edge, and springs back if it was last moving away. Listened to directly, so the cards' scrolling can be held.
+    // Phone: a swipe towards the edge closes the sheet, once its cards are scrolled fully that way. Listened to
+    // natively, so the cards' scrolling can be held while the sheet follows the finger.
     const [pull, setPull] = useState(0);
     const toEdge = (dy) => (fromTop ? -dy : dy);
     const dragging = useRef(false);

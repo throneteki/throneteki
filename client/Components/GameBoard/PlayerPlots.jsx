@@ -4,11 +4,13 @@ import CardPile from './CardPile';
 import Droppable from './Droppable';
 import classNames from 'classnames';
 import { useAdaptiveBoard } from './adaptiveContext';
+import { AreaBackground } from './LabelledGameArea';
+import { cardWidth } from '../../cardScale';
 
 // The two piles overlap, so the one behind shows a strip of its top or bottom edge
 const plotOverlap = 'calc(var(--card-scale, 1) * -2.6rem)';
 
-const plotHeight = 'calc(var(--card-scale, 1) * 4rem)';
+const plotHeight = cardWidth;
 const plotAreaHeight = 'calc(var(--card-scale, 1) * 5.4rem)';
 
 const PlayerPlots = ({
@@ -128,16 +130,7 @@ const PlayerPlots = ({
             className='relative flex flex-col self-start'
             style={{ height: plotAreaHeight }}
         >
-            {adaptive ? (
-                // As the adaptive board's other areas are drawn, with one name for both piles
-                <div className='absolute flex h-full w-full items-center justify-center overflow-hidden rounded-[calc(var(--card-scale,1)*0.25rem)] border border-default-100/50 bg-black/45'>
-                    <span className='max-w-[90%] select-none overflow-hidden whitespace-nowrap text-center text-[calc(var(--card-scale,1)*0.55rem)] font-semibold uppercase leading-none tracking-wider text-white/30'>
-                        Plots
-                    </span>
-                </div>
-            ) : (
-                <div className='inner-border absolute border-2 border-default-100/55 bg-black/55 w-full h-full rounded-md' />
-            )}
+            <AreaBackground name='Plots' className={adaptive ? undefined : 'inner-border'} />
             {renderPlotPiles()}
         </div>
     );

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motionOff } from '../../flip';
-import { cardHeight } from '../../cardScale';
+import { cardHeight, cardScaleOf, remSize } from '../../cardScale';
 import { pressedByTouch } from '../../lastPointer';
 
 import Card from './Card';
@@ -34,8 +34,8 @@ const useFittedCards = (areaRef, enabled) => {
             return;
         }
         const measure = () => {
-            const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-            const scale = parseFloat(getComputedStyle(area).getPropertyValue('--card-scale')) || 1;
+            const rem = remSize();
+            const scale = cardScaleOf(area) ?? 1;
             setFitted(Math.max(1, Math.floor((area.clientWidth / (4 * rem * scale)) * 100) / 100));
         };
         measure();

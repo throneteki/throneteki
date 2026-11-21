@@ -1,18 +1,18 @@
 import { useSyncExternalStore } from 'react';
 import { useHud } from './hudStore';
 
-const query = '(prefers-reduced-motion: reduce)';
+let media;
+const reducedMotion = () => (media ??= window.matchMedia('(prefers-reduced-motion: reduce)'));
 
 const subscribe = (listener) => {
-    const media = window.matchMedia(query);
-    media.addEventListener('change', listener);
-    return () => media.removeEventListener('change', listener);
+    reducedMotion().addEventListener('change', listener);
+    return () => reducedMotion().removeEventListener('change', listener);
 };
 
 export const useBrowserReducedMotion = () =>
     useSyncExternalStore(
         subscribe,
-        () => window.matchMedia(query).matches,
+        () => reducedMotion().matches,
         () => false
     );
 

@@ -2,8 +2,13 @@ import DiscardCard from '../GameActions/DiscardCard.js';
 import { OpenInformationLocations } from '../CardVisibility.js';
 import RevealPlots from '../gamesteps/revealplots.js';
 import GameActions from '../GameActions/index.js';
+import PlaceCardUnderneath from '../GameActions/PlaceCardUnderneath.js';
 
-const DrawDeckCardTypes = ['attachment', 'character', 'event', 'location'];
+import {
+    allowedTypesForPile,
+    drawDeckCardTypes,
+    isPlotPlacement
+} from '../../../shared/dropRules.js';
 
 class DropCommand {
     constructor(game, player, card, targetLocation, parentCard) {
@@ -63,9 +68,7 @@ class DropCommand {
     isPlotPlacement() {
         return (
             this.card.controller === this.player &&
-            this.card.getType() === 'plot' &&
-            this.targetLocation === 'revealed plots' &&
-            ['plot deck', 'revealed plots'].includes(this.originalLocation)
+            isPlotPlacement(this.originalLocation, this.targetLocation, this.card.getType())
         );
     }
 
@@ -113,15 +116,14 @@ class DropCommand {
     }
 
     canPlaceUnderneath() {
-        const parent = this.parentCard;
         return (
-            !!parent &&
-            parent !== this.card &&
-            parent.parent !== this.card &&
-            parent.location === 'play area' &&
+            this.parentCard?.location === 'play area' &&
             this.card.controller === this.player &&
-            DrawDeckCardTypes.includes(this.card.getType()) &&
-            !parent.underneath.includes(this.card)
+            drawDeckCardTypes.includes(this.card.getType()) &&
+            PlaceCardUnderneath.canChangeGameState({
+                card: this.card,
+                parentCard: this.parentCard
+            })
         );
     }
 
@@ -159,29 +161,7 @@ class DropCommand {
     }
 
     isValidDropCombination() {
-        const PlotCardTypes = ['plot'];
-        const AllowedTypesForPile = {
-            'active plot': PlotCardTypes,
-            'being played': ['event'],
-            'dead pile': ['character'],
-            'discard pile': DrawDeckCardTypes,
-            'draw deck': DrawDeckCardTypes,
-            hand: DrawDeckCardTypes,
-            'out of game': DrawDeckCardTypes.concat(PlotCardTypes),
-            'play area': ['attachment', 'character', 'location'],
-            'plot deck': PlotCardTypes,
-            'revealed plots': PlotCardTypes,
-            shadows: DrawDeckCardTypes,
-            agenda: DrawDeckCardTypes
-        };
-
-        let allowedTypes = AllowedTypesForPile[this.targetLocation];
-
-        if (!allowedTypes) {
-            return false;
-        }
-
-        return allowedTypes.includes(this.card.getType());
+        return !!allowedTypesForPile[this.targetLocation]?.includes(this.card.getType());
     }
 
     addGameMessage() {

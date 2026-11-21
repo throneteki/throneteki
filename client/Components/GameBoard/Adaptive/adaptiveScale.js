@@ -1,3 +1,4 @@
+import { rowTypeOf } from '../leftBehind';
 import { desktopInterfaceFit } from '../../../hud';
 
 const thresholds = { narrowAspect: 0.9, narrowWidth: 900, shortHeight: 560 };
@@ -31,20 +32,13 @@ export const classifyLayout = (size, previous) => {
 
 const kneeledWidth = 5.6 / 4;
 
-const rowOf = (card) => {
-    if (card.type === 'location') {
-        return 'location';
-    }
-    return ['character', 'attachment'].includes(card.type) ? 'character' : 'other';
-};
-
 // How wide the widest row in play is, in card widths: a kneeling card lies on its side and takes more room
 export const widestRowUnits = (players) => {
     let widest = 0;
     for (const player of players || []) {
         const rows = {};
         for (const card of player?.cardPiles?.cardsInPlay || []) {
-            const row = rowOf(card);
+            const row = rowTypeOf(card);
             rows[row] = (rows[row] || 0) + (card.kneeled ? kneeledWidth : 1);
         }
         widest = Math.max(widest, ...Object.values(rows));
@@ -77,19 +71,16 @@ const attachmentAllowance = 0.1;
 // Each play area's margin, top and bottom, for both players
 const playMarginRem = 2;
 
-// What each mode stacks vertically and lines up horizontally. Rows are counted in card heights, strips in card
-// widths at pile scale (at card scale where pilesAtCardSize), before the optional piles (stripExtraUnits). Chrome is the space taken by the prompt divider,
-// side columns and padding, in rem. Cards grow to fill the room, up to max, and shrink for a wide row only to
-// min before the row overlaps its cards instead.
+// Per mode: rows (card heights), strips (card widths at pile scale, before stripExtraUnits) and chrome (rem). Cards
+// grow to fill the room up to max, and shrink for a wide row only to min before the row overlaps instead.
 const layoutBudgets = {
     narrow: {
         pileRatio: 0.7,
         handRatio: 1.1,
         min: 0.85,
         max: 1.8,
-        // Every pile in the strips is drawn at one size: as large as lets our strip (which has neither hand in
-        // it, so is three cards narrower than the opponent's) fit, within pileMin and pileCap. Each strip is one row:
-        // the opponent's hand squeezes, and a strip still too wide scrolls sideways.
+        // Piles share one size, as large as lets our strip (three cards narrower than theirs) fit, within pileMin and
+        // pileCap; a strip still too wide scrolls sideways
         pileMin: 0.7,
         pileCap: 0.8,
         ourStripLess: 3,
@@ -97,10 +88,8 @@ const layoutBudgets = {
         stripUnits: 9.5,
         chrome: { width: 1, height: 9.75 }
     },
-    // The strips (each with its hand) are rows of their own that scroll sideways when too wide, so they cost height
-    // but never width. Each play area is one line, characters and locations side by side, which scrolls sideways.
-    // Hands and piles are drawn as large as the cards in play, and the rows stack with no gaps between them. The
-    // prompt and the stats are in a column at the side, about a third of the width.
+    // Strips and play areas are one row each, scrolling sideways, so they cost height but never width. The prompt and
+    // stats take a side column about a third of the width.
     short: {
         pileRatio: 1,
         handRatio: 1,
@@ -131,8 +120,7 @@ const absoluteMin = 0.3;
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 const toStep = (value) => Math.round(Math.floor(value / scaleStep + 1e-9) * scaleStep * 100) / 100;
 
-// Fitted, the play areas fill the screen's height and no more. The chosen card size is applied on top: smaller
-// leaves room spare, larger draws the cards bigger than the room and the areas scroll for the rest.
+// Fitted, the play areas fill the screen's height; the chosen card size applies on top (larger scrolls)
 const fitScales = (
     {
         mode,

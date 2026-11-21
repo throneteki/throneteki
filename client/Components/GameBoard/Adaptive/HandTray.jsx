@@ -4,9 +4,8 @@ import { withoutPendingAttachment } from '../pendingAttachment';
 import Reveal from './Reveal';
 import ShadowsZone from './ShadowsZone';
 
-// Our hand below our board in portrait, scrolling with it, from its start and no wider than the view: no more than
-// five cards wide before the cards overlap. Shadows sit beside it while there are cards in them, or empty when offered (manual mode, or
-// while a card is carried).
+// Our hand below our board in portrait, no wider than the view (five cards before they overlap). Shadows sit beside
+// it while they hold cards, or empty while a card is carried.
 const HandTray = ({ player, onCardClick, droppable, offerEmpty = false }) => {
     const shadows = withoutPendingAttachment(player.cardPiles.shadows);
     return (

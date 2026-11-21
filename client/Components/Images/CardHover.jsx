@@ -5,13 +5,14 @@ import { useCardHover } from './cardHoverStore';
 import classNames from 'classnames';
 import { createPortal } from 'react-dom';
 import { useAdaptiveLayoutMode } from '../../boardLayoutStore';
+import { remSize } from '../../cardScale';
 
 // On the adaptive board a card held on a touch screen is shown as large as half the screen allows, in the half away
 // from the finger, so the finger never covers it
 const fittedPlacement = ({ x, y }, orientation) => {
     const width = window.innerWidth;
     const height = window.innerHeight;
-    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const rem = remSize();
     const portrait = height >= width;
     const box = portrait
         ? { w: width * 0.92, h: height * 0.46 }

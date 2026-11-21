@@ -4,12 +4,11 @@ import { motion } from 'framer-motion';
 import classNames from 'classnames';
 import Card from '../Card';
 import { InspectLabel } from '../LabelledGameArea';
+import { remSize } from '../../../cardScale';
 
 const fanTime = 0.35;
 // How much of a card each card in the fan leaves showing of the one under it
 const spreadShare = 0.55;
-
-const remSize = () => parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
 
 // The player's own board (their strips and play area), as far as it can be seen: the fan's backdrop covers it, and
 // the fan keeps within it. Room is kept for the fan's label on the side away from the divider.
@@ -45,9 +44,8 @@ const boardArea = (side, playerName) => {
     };
 };
 
-// Where each card lies in the fan, and the card size that fits the whole fan into the area, centred as near the hand
-// (centreX) as it fits. The outer cards sit lower round the arc and lean out, as a hand held by the player at the
-// bottom; held by a player across the table (mirrored) the fan is turned to face them, its outer cards higher.
+// Each card's place in the fan and the card size that fits it in the area, centred near the hand (centreX).
+// mirrored: held by a player across the table, so turned to face them.
 const fanLayout = (count, area, centreX, mirrored) => {
     const rem = remSize();
     const step = count > 1 ? Math.min(8, 48 / (count - 1)) : 0;
@@ -107,9 +105,8 @@ const stripPlace = (strip, uuid, cardWidth, cardHeight) => {
     };
 };
 
-// The opponent's hand. Tapped, it fans out over their half of the board (side), which darkens, to count or look at;
-// a tap anywhere else puts it back. It fans out by itself when its cards are to be chosen from, and stays until the
-// choosing is done, or when cards in it are shown to us.
+// The opponent's hand: fans out over their half when tapped, when its cards are to be chosen from, or when cards in
+// it are shown to us
 const HandFan = ({ cards, side = 'top', playerName, onCardClick, children }) => {
     const below = side === 'bottom';
     const stripRef = useRef(null);

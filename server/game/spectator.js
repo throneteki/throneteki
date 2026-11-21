@@ -5,7 +5,6 @@ class Spectator {
         this.user = user;
         this.name = this.user.username;
         this.id = id;
-        this.cardSize = this.user.settings?.cardSize;
         this.promptDupes = user.settings?.promptDupes;
         this.hideInterrupts = user.settings?.hideInterrupts ?? true;
         this.hideReactions = user.settings?.hideReactions ?? true;
@@ -36,7 +35,6 @@ class Spectator {
         return {
             id: this.id,
             name: this.name,
-            cardSize: this.cardSize,
             hud: this.hud,
             promptDupes: this.promptDupes,
             hideInterrupts: this.hideInterrupts,

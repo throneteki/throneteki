@@ -36,39 +36,43 @@ const StatChanger = ({ placement, display }) => (
 // How wide the stats are, and how much of the bar is left beside them, as the bar or the stats change size
 const useRoomBeside = (barRef, statsRef, avatarRef, enabled) => {
     const [room, setRoom] = useState(0);
+    const measure = () => {
+        const bar = barRef.current;
+        const stats = statsRef.current;
+        if (!enabled || !bar || !stats) {
+            return;
+        }
+        const style = getComputedStyle(bar);
+        const padding = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+        // The stats' own width, not their box's, which stretches into whatever is spare
+        const content = [...stats.children].reduce(
+            (sum, child) => sum + child.offsetWidth,
+            avatarRef.current?.offsetWidth ?? 0
+        );
+        const next = Math.max(0, bar.clientWidth - padding - content);
+        setRoom((current) => (Math.abs(current - next) < 1 ? current : next));
+    };
+    const measureRef = useRef(measure);
+    measureRef.current = measure;
+    useLayoutEffect(measure);
     useLayoutEffect(() => {
         const bar = barRef.current;
         const stats = statsRef.current;
         if (!enabled || !bar || !stats) {
             return;
         }
-        const measure = () => {
-            const padding =
-                parseFloat(getComputedStyle(bar).paddingLeft) +
-                parseFloat(getComputedStyle(bar).paddingRight);
-            // The stats' own width, not their box's, which stretches into whatever is spare
-            const content = [...stats.children].reduce(
-                (sum, child) => sum + child.offsetWidth,
-                avatarRef.current?.offsetWidth ?? 0
-            );
-            const next = Math.max(0, bar.clientWidth - padding - content);
-            setRoom((current) => (Math.abs(current - next) < 1 ? current : next));
-        };
-        measure();
-        const observer = new ResizeObserver(measure);
+        const observer = new ResizeObserver(() => measureRef.current());
         observer.observe(bar);
         [...stats.children].forEach((child) => observer.observe(child));
         return () => observer.disconnect();
-    });
+    }, [enabled, barRef, statsRef]);
     return room;
 };
 
-// A player's avatar and stats, as a bar or (vertical) a stack. In manual mode our own stats get +/- as in classic.
-// children: kept at the bar's far end; as a function it is given the room the stats leave.
-// columns/mirrored: the stack's items per row, and drawn upside down for the player above the prompt.
-// showSeat: a seat-number badge on the avatar, at a melee table.
-// backdrop: a stack in one row draws its background as a band behind it (with these classes), slimmer than its
-// stats, so they stand a little proud of it above and below, starting under the avatar, which caps its end.
+// A player's avatar and stats, as a bar or (vertical) a stack; our own get +/- in manual mode.
+// children: at the bar's far end; as a function, given the room the stats leave.
+// columns/mirrored: the stack's items per row, upside down for the player above the prompt.
+// showSeat: a seat-number badge (melee). backdrop: classes for a band behind a one-row stack, slimmer than its stats.
 const PlayerStatsBar = ({
     player,
     vertical = false,
@@ -154,9 +158,8 @@ const PlayerStatsBar = ({
                             mirrored ? 'flex-col-reverse' : 'flex-col'
                         )
                       : classNames(
-                            // At the top or bottom of the screen the bar reaches the edge, its own background
-                            // filling any notch or gesture area, and its contents sit clear of it. It lies over the
-                            // cards (so the avatar reaching out of it is never hidden), under the divider and its panel.
+                            // Reaches the screen's edge, its contents clear of a notch or gesture area; above the
+                            // cards (so the avatar is never hidden), below the divider
                             'relative z-[245] box-content flex shrink-0 border-default-100 pl-[max(0.5rem,env(safe-area-inset-left))] pr-[max(0.5rem,env(safe-area-inset-right))]',
                             compact ? 'h-7' : 'h-8',
                             {

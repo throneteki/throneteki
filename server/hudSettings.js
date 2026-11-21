@@ -1,5 +1,5 @@
-const boardLayouts = ['classic', 'adaptive'];
-const promptSides = ['left', 'right'];
+import { boardLayouts, hudToggles, isOverlayTimer, promptSides } from '../shared/hudSettings.js';
+
 const sizePattern = /^(?:small|normal|large|\d{1,2}(?:\.\d{1,2})?)$/;
 
 // The board settings a player may save, in their profile or for one game
@@ -23,13 +23,13 @@ export function sanitizeHud(hud) {
         result.promptSide = hud.promptSide;
     }
 
-    for (const key of ['auto', 'animations', 'overlays']) {
+    for (const key of hudToggles) {
         if (typeof hud[key] === 'boolean') {
             result[key] = hud[key];
         }
     }
 
-    if (Number.isInteger(hud.overlayTimer) && hud.overlayTimer >= 1 && hud.overlayTimer <= 10) {
+    if (isOverlayTimer(hud.overlayTimer)) {
         result.overlayTimer = hud.overlayTimer;
     }
 

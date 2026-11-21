@@ -1,18 +1,19 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import classNames from 'classnames';
 import { Avatar } from '@heroui/react';
 import CardImage from '../../Images/CardImage';
 import { useHud } from '../../../hudStore';
 import { overlaySettingsOf } from '../../../hud';
-import { claimFlights } from '../../../flip';
+import { claimFlights, motionSettingOff } from '../../../flip';
 import { aroundTheTable } from '../seatOrder';
 import { useLayoutMode } from './useBoardLayout';
+import { remSize } from '../../../cardScale';
+import { nameOf } from './followTarget';
 
-// The board's overlays: what starts and ends the game (major: over a dark board, until a button is pressed, with a
-// way to look at the board) and what happens in it (minor: over a lighter one, continuing by themselves). They are
-// shown over the board's area, never the chat, and each only once in a game, so a refresh does not show it again.
-// A prompt that only asks us to choose a title or a player is shown the same way, for as long as it waits.
+// The board's overlays: the game's start and end (major: wait for a button) and what happens in it (minor: continue
+// on a timer). Each shows once per game (kept in sessionStorage, so a refresh does not repeat it). A prompt that only
+// asks us to choose a title or a player is shown the same way while it waits.
 
 const eliminatedReasons = {
     decked: 'Ran out of cards',
@@ -48,7 +49,6 @@ const markSeen = (gameId, key) => {
     }
 };
 
-const nameOf = (player) => player?.user?.username ?? player?.name;
 const boardOf = (player) =>
     document.querySelector(`[data-side][data-player="${CSS.escape(nameOf(player) ?? '')}"]`);
 const signature = (players, pick) =>
@@ -58,8 +58,7 @@ const signature = (players, pick) =>
 const powerOf = (player) => player.stats?.totalPower ?? 0;
 const ui = (rem) => `calc(var(--ui-scale, 1) * ${rem}rem)`;
 
-// A slight tilt of its own for each card, the same each time it is drawn, so cards side by side are not set out
-// in step
+// A stable tilt per card, so cards side by side are not in step
 const hashOf = (text) => {
     let hash = 0;
     for (const char of String(text)) {
@@ -70,9 +69,8 @@ const hashOf = (text) => {
 const tiltOf = (seed, base = 0, spread = 2.5) =>
     base + (((hashOf(seed) % 1000) / 999) * 2 - 1) * spread;
 
-// Players as the melee board seats them, us at the bottom left and the rest on round the table: along the bottom
-// row and back along the top. Two players share a row unless the screen is narrow. A narrow screen has two to a
-// row, so five or six go round three rows: along the bottom, up the right, back along the top and down the left.
+// Players as the melee board seats them, from us at the bottom left round the table. Narrow screens have two to a
+// row (three rows for five or six).
 const seatRows = (list, everyone, portrait) => {
     const order = aroundTheTable(everyone[0], everyone).filter((player) => list.includes(player));
     if (order.length < 2 || (order.length === 2 && !portrait)) {
@@ -85,8 +83,7 @@ const seatRows = (list, everyone, portrait) => {
     const bottom = Math.floor(order.length / 2);
     return [order.slice(bottom).reverse(), order.slice(0, bottom)];
 };
-// In their order, along the top row first: up to three in a row, more in two rows with the longer on top. A narrow
-// screen has two to a row.
+// Top row first: up to three in a row, more in two rows with the longer on top (two to a row when narrow)
 const orderedRows = (list, portrait = false) => {
     if (portrait && list.length > 2) {
         return Array.from({ length: Math.ceil(list.length / 2) }, (_, at) =>
@@ -101,8 +98,7 @@ const orderedRows = (list, portrait = false) => {
 };
 const columnsOf = (rows) => Math.max(1, ...rows.map((row) => row.length));
 
-// Rows, each centred, every place in them at most an equal share of the width, so long names shorten rather than
-// push the rows apart
+// Centred rows of equal-share places, so long names truncate rather than push the rows apart
 const Rows = ({ rows, gap = 1.5, keyOf, render }) => {
     const columns = columnsOf(rows);
     const starts = rows.map((_, at) => rows.slice(0, at).reduce((sum, row) => sum + row.length, 0));
@@ -163,11 +159,9 @@ const useOverlays = ({ gameId, players, phase, melee, gameOver, roundsEnded, ena
         .join('|');
     const last = useRef(null);
     const before = last.current;
-    // The plot phase's reveal, everyone still in revealing a new plot at once. A plot revealed on its own, such as a
-    // scheme of The Rains of Castamere or one revealed by a card, is not this overlay. It is seen as the board draws
-    // the new plots, before it moves them: the board leaves them to the overlay, which turns them over itself, and
-    // they are hidden on the board until it does. Someone leaving the table changes who is counted, not what was
-    // revealed. What was already the case when the board opened has been seen.
+    // The plot phase's reveal: every live player revealing a new plot at once (not a Rains scheme or a card's
+    // reveal). Seen as the board draws the new plots, so the board leaves them to the overlay. What was already the case
+    // when the board opened counts as seen.
     const revealed =
         enabled &&
         before &&
@@ -185,9 +179,12 @@ const useOverlays = ({ gameId, players, phase, melee, gameOver, roundsEnded, ena
         revealed && gameId && !queued.current.has(revealKey) && !readSeen(gameId).has(revealKey)
             ? revealed
             : [];
-    if (claiming.length > 0) {
-        claimFlights(claiming);
-    }
+    // Before the board plays its moves (GameBoard's layout effect runs after its children's)
+    useLayoutEffect(() => {
+        if (claiming.length > 0) {
+            claimFlights(claiming);
+        }
+    });
 
     useEffect(() => {
         // Until the game's players have arrived there is nothing to compare what changes against
@@ -264,14 +261,13 @@ const HideCards = ({ uuids }) =>
         </style>
     ) : null;
 
-// Overlays play unless motion is turned off. Not flip.js's motionOff(), which is also true while the board settles or
-// rescales: an overlay opening then would lose its tosses and flights, and start its timers early.
-const still = () => document.hidden || document.documentElement.dataset.motion === 'off';
+// Not flip.js's motionOff(), which is also true while the board settles or rescales: an overlay opening then would
+// lose its tosses and start its timers early
+const still = () => document.hidden || motionSettingOff();
 
 const cardShadow = 'rounded-[calc(var(--card-scale)*0.25rem)] shadow-[0_8px_22px_rgba(0,0,0,0.7)]';
 
-// A player's faction card with their agendas tucked behind it. Given when (toss, in ms), the faction card is tossed
-// onto the table, and each agenda just after it.
+// A player's faction card with their agendas tucked behind, tossed in at toss ms, the agendas just after
 const agendaGap = 110;
 const PlayerCards = ({ player, out = false, scale, toss, className }) => {
     const agendas = (player.agendas || []).filter((agenda) => agenda?.code);
@@ -379,8 +375,7 @@ const OverlayButton = ({ primary = false, onPress, children }) => (
     </button>
 );
 
-// Continue, filling as its time runs out, when it is pressed for you. Its time starts after delay (ms), once the
-// overlay has played out.
+// Continue, filling as its time runs out (starting after delay ms), when it is pressed for you
 const ContinueButton = ({ seconds, delay = 0, onContinue }) => {
     const wait = still() ? 0 : delay;
     useEffect(() => {
@@ -403,8 +398,7 @@ const ContinueButton = ({ seconds, delay = 0, onContinue }) => {
     );
 };
 
-// Cards that come out of a place on the board and go back to it when the overlay ends, straightening as they land.
-// The size is the card's own, not its tilted outline's.
+// Cards that come out of the board and go back when the overlay ends (sized as the card, not its tilted outline)
 const flyBetween = (element, target, reverse) => {
     const from = element.getBoundingClientRect();
     const to = target?.getBoundingClientRect();
@@ -472,7 +466,7 @@ const useCardScale = (rootRef, across, tall) => {
             return;
         }
         const measure = () => {
-            const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+            const rem = remSize();
             const fit = Math.min(
                 root.clientWidth / (across * rem * 1.15),
                 root.clientHeight / (tall * rem)
@@ -487,11 +481,9 @@ const useCardScale = (rootRef, across, tall) => {
     return scale;
 };
 
-// Cards tossed onto the overlay's table (overlay-toss), each from off its left or right edge. A player's cards (a
-// group) all come from one side, the nearer one, evenly: taken across the table (down it where they share a column),
-// the first half come from the left and the rest from the right, one in the middle of an odd count from the left if
-// it is in the upper half. Where a card starts is measured from its place, which its wrapper holds still while the card
-// moves.
+// Cards tossed onto the overlay's table (overlay-toss) from off its left or right edge. Each player's cards come from
+// the nearer side, split evenly (an odd middle one from the left if in the upper half). Start offsets are measured
+// from the wrapper, which holds still while the card moves.
 const tossTime = 620;
 const tossGap = 140;
 const landedAt = (delay) => delay + tossTime;
@@ -605,8 +597,7 @@ const groupWidth = (player) =>
     4 + 1.4 * (player.agendas?.filter((agenda) => agenda?.code).length ?? 0);
 const widestGroup = (players) => Math.max(4, ...players.map(groupWidth));
 
-// The players sit down: each one's cards tossed onto the table from their side of it, their name once they land,
-// and in a joust VS slammed down between them
+// The players sit down: their cards tossed in, then their names, and in a joust VS between them
 const Start = ({ players, me, portrait, onClose }) => {
     const rootRef = useRef(null);
     const melee = players.length > 2;
@@ -686,9 +677,8 @@ const Start = ({ players, me, portrait, onClose }) => {
     );
 };
 
-// The game's end: the result stamped down once the cards are on the table. In a joust the winner's cards are tossed
-// down, with light turning behind them. In a melee every player's are, from last place to first, the winner's last.
-// Rematch and Continue playing when the game offers them; otherwise the board.
+// The game's end: the winner's cards (in a melee everyone's, last place first), then the result. Rematch and Continue
+// playing when the game offers them.
 const Over = ({ players, me, portrait, winners, winReason, buttons, onButtonClick, onClose }) => {
     const rootRef = useRef(null);
     const melee = players.length > 2;
@@ -827,8 +817,7 @@ const Over = ({ players, me, portrait, winners, winReason, buttons, onButtonClic
     );
 };
 
-// Where everyone stands on power: most power first (level players in seat order), each with how far they are
-// towards winning. Their cards are tossed down in that order, then the power counts up and the bar fills.
+// Standings on power, most first (ties in seat order), each with their progress towards winning
 const winningPower = 15;
 const byPower = (players) =>
     aroundTheTable(players[0], players).sort((a, b) => powerOf(b) - powerOf(a));
@@ -988,9 +977,8 @@ const FaceUp = ({ code, orientation, delay }) => (
     </div>
 );
 
-// The game's overlays as it goes on. Plots come off the board face down and are turned over one by one; titles come
-// off the board and say whom they rival and support; at the end of a round everyone's cards are tossed down in power
-// order; an eliminated player's cards are tossed down and sealed. Continue's time starts once all that is done.
+// The overlays during the game: plots revealed, titles chosen, the end of a round, a player eliminated. Continue's
+// time starts once each has played out.
 const Minor = ({ overlay, players, me, portrait, seconds, released, onLanded }) => {
     const rootRef = useRef(null);
     const [leaving, setLeaving] = useState(false);
@@ -1187,8 +1175,7 @@ const Minor = ({ overlay, players, me, portrait, seconds, released, onLanded }) 
     );
 };
 
-// An overlay on the board: it fades in, and out once done. Cards it shows from the board are hidden there while it
-// shows them, so a card is never in two places, and shown again as its copy lands back on it.
+// An overlay on the board. Cards it shows are hidden on the board meanwhile, so a card is never in two places.
 const OverlayView = ({
     overlay,
     players,
@@ -1397,9 +1384,8 @@ const ChoiceBody = ({ choice, title, players, me, portrait, aside, onChoose, onA
     );
 };
 
-// The choice over the board until it is made. It can be put aside to look at the board, and brought back, its button
-// staying where it is to bring it back; while aside it is not there to the pointer. Answered, here or in the prompt,
-// it fades away (gone).
+// The choice over the board until made. It can be put aside (invisible to the pointer) and brought back with the same
+// button; answered here or in the prompt, it fades away (gone).
 const ChoiceView = ({ onButtonClick, gone, ...props }) => {
     const [aside, setAside] = useState(false);
     const [chosen, setChosen] = useState(false);
@@ -1473,9 +1459,12 @@ const BoardOverlays = ({
     const players = [thisPlayer, ...otherPlayers].filter((player) => player?.faction);
     const melee = otherPlayers.length > 1;
     // The rounds ended so far, as the game's log announces the end of each
-    const roundsEnded = (currentGame?.messages ?? []).filter(
-        (entry) => entry?.message?.alert?.type === 'endofround'
-    ).length;
+    const messages = currentGame?.messages;
+    const roundsEnded = useMemo(
+        () =>
+            (messages ?? []).filter((entry) => entry?.message?.alert?.type === 'endofround').length,
+        [messages]
+    );
     const { current, done, waiting } = useOverlays({
         gameId: currentGame?.id,
         players,

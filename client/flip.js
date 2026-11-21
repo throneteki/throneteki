@@ -17,9 +17,8 @@ export const flipConfig = {
 
 const plotDeckPrefix = 'plots:';
 
-// Where cards are measured from: the board's content, where the board scrolls as a whole (its flight layer, which
-// covers it), or else the screen. Measured from the board, a scroll (by hand, or the board keeping to its end as it
-// grows) moves no card, so only cards that really moved are animated. Measured once for each pass over the board.
+// Cards are measured from the board's flight layer when it scrolls as a whole, so a scroll moves no card; else the
+// screen. Measured once per pass.
 let originNow = null;
 const boardOrigin = () => {
     if (!originNow) {
@@ -62,20 +61,19 @@ const slotOf = (el) => el.querySelector('[data-flip-slot]') || (surfaceOf(el) &&
 const overlaysOf = (el) => [
     ...(slotOf(el)?.querySelectorAll(':scope > [data-card-overlay]') ?? [])
 ];
-// The body is the card itself: its face (the image, or what is drawn when that fails), its shadow and
-// anything printed on it. It is what turns over, so nothing of the card is left lying flat.
+// The body is what turns over: the face, its shadow and anything printed on it
 const bodyOf = (el) => surfaceOf(el)?.querySelector(':scope > [data-card-body]');
 const imageOf = (body) => body?.querySelector(':scope > [data-card-face] > img');
 
-// Cards listed in an open popup are left to the board, which moves them to and from their pile or the card
-// they lie under. The one exception is a card just dropped into a popup: it lands in the popup, where it was put.
+// Cards in an open popup are left to the board, except one just dropped into it, which lands there
 let landInPopup = null;
 
 export const setLandInPopup = (uuid) => {
     landInPopup = uuid;
 };
 
-const measureCards = (root = document) => {
+// clone: copy each card's body; only the "before" pass needs it (a card that is gone flies as its copy)
+const measureCards = (root = document, clone = true) => {
     const cards = new Map();
     root.querySelectorAll('[data-flip]').forEach((el) => {
         const inPopup = !!el.closest('[data-popup]');
@@ -97,7 +95,7 @@ const measureCards = (root = document) => {
             parent: el.parentElement?.closest('[data-flip]')?.dataset.flip,
             source: el.dataset.flipSource,
             face: imageOf(bodyOf(el))?.getAttribute('src'),
-            faceNode: bodyOf(el)?.cloneNode(true),
+            faceNode: clone ? bodyOf(el)?.cloneNode(true) : undefined,
             under: el.dataset.flipUnder !== undefined,
             underOf: el.dataset.flipUnder || undefined,
             rot: Number(el.dataset.flipRot) || 0,
@@ -118,12 +116,10 @@ const measureDecks = (root = document) => {
 
 const centre = (rect) => ({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
 
-// What a card shows in flight: each end is described by its place, angle and face, and the card turns over when the
-// faces differ and rotates when the angles do. Kneeling, standing and going facedown into a deck all follow.
+// Each end of a flight has a place, angle and face: differing faces turn the card over, differing angles rotate it
 export const changeBetween = (from, to, back = cardImageSrc('cardback')) => {
     const turnsOver = !!from.face && !!to.face && from.face !== to.face;
-    // A facedown plot is drawn as an upright card back laid on its side, and a plot is drawn as it is.
-    // Both lie sideways on the table, so going from one to the other is not a turn.
+    // A facedown plot is an upright back laid sideways, so a plot turning facedown does not rotate
     const bothSideways = isWide(from.slot) && isWide(to.slot);
     return {
         travel: from.source !== to.source,
@@ -161,8 +157,7 @@ const alone = (was, now) =>
 
 const planMove = (uuid, was, arrived, change, config) => {
     const now = alone(was, arrived);
-    // A card that stays in the same element kneels and stands by itself, so only a card that has changed
-    // element is turned to its new angle here
+    // A card in the same element kneels and stands by itself; only one that changed element is turned here
     const turned = was.el !== now.el && change.rotate !== 0;
     const places = {
         old: { left: was.left, top: was.top },
@@ -206,8 +201,7 @@ const liesSideways = (rect, rot) => {
     return upright ? rect.width > rect.height : rect.height > rect.width;
 };
 
-// How a card rests in a pile it is not drawn in: facedown in a hidden pile, and turned to the way the
-// pile lies. A pile that does not say how it lies leaves the card at the angle it had.
+// How a card rests in a pile it is not drawn in: facedown in a hidden pile, at the pile's angle if it has one
 const restingIn = (pile, was, back) => {
     const hidden = pile.hidden ?? pile.source === 'draw deck';
     const knowsAngle = pile.sideways !== undefined && pile.width !== undefined && !!was.slot;
@@ -247,8 +241,7 @@ export const planFlip = ({
         if (was) {
             const change = changeBetween(was, now, back);
             const move = planMove(uuid, was, now, change, config);
-            // A card put under a card that was already on top of the pile stays under it all the way, as does a
-            // card placed underneath a card on the board
+            // A card put under a pile's top card, or underneath a card on the board, stays under it all the way
             const under =
                 (!!now.underOf && before.get(now.underOf)?.source === now.source) ||
                 (now.source === 'underneath' && !now.inPopup);
@@ -261,8 +254,8 @@ export const planFlip = ({
         }
 
         const origin = now.from && decks.get(now.from);
-        // A card newly shown under a pile's top card only came from the deck if the top card did too: otherwise it
-        // was already in the pile, and is uncovered by the top card leaving
+        // A card newly shown under a pile's top card came from the deck only if the top card did; otherwise the
+        // top card leaving uncovered it
         const uncovered = now.under && (!now.underOf || before.has(now.underOf));
         if ((!origin && (now.under || findPile(uuid))) || (origin && uncovered)) {
             continue;
@@ -484,8 +477,7 @@ let ignored = null;
 let dropOrigin = null;
 const piles = new Map();
 
-// Cards a board overlay is about to show and put in place itself (the plots it reveals): the board leaves their next
-// move to the overlay
+// Cards a board overlay moves itself (the plots it reveals); the board leaves their next move alone
 const claimed = new Set();
 export const claimFlights = (uuids) => {
     uuids.forEach((uuid) => claimed.add(uuid));
@@ -505,8 +497,7 @@ export const registerPile = (id, entry) => {
     return () => piles.delete(id);
 };
 
-// A pile with a card fixed on top of it (the revealed plot) keeps that card above anything that moves
-// in or out of the pile
+// A pile's fixed top card (the revealed plot) stays above anything moving in or out of the pile
 const isCovered = (source) =>
     [...piles.values()].some(
         (entry) => entry.source === source && entry.covered && entry.el.isConnected
@@ -539,10 +530,10 @@ export const holdFlip = (milliseconds) => {
     holdUntil = Math.max(holdUntil, performance.now() + milliseconds);
 };
 
+export const motionSettingOff = () => document.documentElement.dataset.motion === 'off';
+
 export const motionOff = () =>
-    document.hidden ||
-    performance.now() < holdUntil ||
-    document.documentElement.dataset.motion === 'off';
+    document.hidden || performance.now() < holdUntil || motionSettingOff();
 
 let drawHoldUntil = 0;
 
@@ -584,9 +575,8 @@ const bodyAround = (face) => {
     return body;
 };
 
-// Cards in flight go in one of two layers: above the board, or below the cards on it (for a card passing under a
-// pile's top card, inside data-flip-layers so z-index orders it against the piles). The adaptive board's scrolling
-// content has its own upper layer (data-flight-layer), so flights scroll with the board.
+// Two flight layers: above the board, or under piles' top cards (inside data-flip-layers). The adaptive board's
+// scrolling content has its own upper layer (data-flight-layer), so flights scroll with it.
 const hosts = {};
 const areaHosts = new WeakMap();
 const getHost = (behind, area) => {
@@ -615,8 +605,7 @@ const getHost = (behind, area) => {
     return hosts[name];
 };
 
-// A card taken off the board to fly keeps the size it had there (rect.scale), not the size of the page around it.
-// It is placed in its layer where it was (measured from the board, as every card is).
+// A flying card keeps its size on the board (rect.scale), placed in its layer where it was
 const detach = (el, rect, behind = false, area = null) => {
     const host = getHost(behind, area);
     const origin = host.getBoundingClientRect();
@@ -628,8 +617,7 @@ const detach = (el, rect, behind = false, area = null) => {
     host.appendChild(el);
 };
 
-// Whatever an animation put on the page goes once the animation is over, finished or cancelled: a later update
-// cancels flights still going, and anything left behind would stay over the board for good
+// Removed when the animation finishes or is cancelled (a later update cancels running flights)
 const whenOver = (animation, done) => animation.finished.then(done, done);
 
 // Only animations that end: a card also runs its own endless ones (a loading spinner, a pulsing ring)
@@ -669,8 +657,7 @@ const animateCard = (el, frames, options) => {
     }
 };
 
-// A card is turned over across its shorter side, the way it is done by hand: an upright card turns
-// sideways, and a card that is wider than tall (a plot) turns top over bottom
+// A card turns over across its shorter side, as by hand: a plot turns top over bottom
 export const turnAxis = ({ width, height }) => (width > height ? 'X' : 'Y');
 
 // A card turns over like a real one: the old face turns edge-on, then the new face turns up
@@ -708,8 +695,7 @@ const fadeOverlays = (el, { delay, duration }) =>
         )
     );
 
-// A copy of a card showing this face as the board shows it right now, so it includes what is drawn when
-// its image fails
+// A copy of a card on the board showing this face (including what is drawn when its image fails)
 const shownBody = (src) =>
     [...document.querySelectorAll('[data-card-body]')]
         .find((body) => imageOf(body)?.getAttribute('src') === src)
@@ -744,8 +730,7 @@ const isPortrait = (src) => {
         : undefined;
 };
 
-// The card as it looks at the other end of its move, made to fit the card it is put on: a face that is
-// drawn the other way round from the card it replaces is laid on its side, so it is never stretched
+// The card's face at the other end of its move, laid on its side if drawn the other way round, so never stretched
 const bodyFor = (src, like) => {
     const body = shownBody(src) || builtBody(src, like);
     const width = like.clientWidth;
@@ -799,8 +784,7 @@ const turnFace = (el, { from, node, delay, duration }) => {
         return;
     }
 
-    // A card back is always made to fit the card it is on: the copy kept from before may be an upright
-    // back, which does not fit a plot
+    // A back is always made to fit: the copy from before may be an upright back, which does not fit a plot
     const isBack = from === cardImageSrc('cardback');
     const outgoing = (!isBack && node) || (from && bodyFor(from, incoming)) || node;
     if (!outgoing) {
@@ -825,8 +809,7 @@ const rise = [{ scale: 1 }, { scale: 1.08, offset: 0.5 }, { scale: 1 }];
 const highlightFade = 220;
 const glowLength = 520;
 
-// A highlight is drawn flat around the card, which gives the game away while the card is in the air or
-// turning over. It stays off until the card has landed, then fades in. A reveal flashes first.
+// A highlight would show the card is flat while it flies or turns, so it waits until it lands, then fades in
 const landHighlight = (el, { delay, duration, reveal = false }) => {
     const surface = surfaceOf(el);
     if (!surface) {
@@ -903,8 +886,8 @@ const slapKeyframes = (item) => {
     return [...lead, { ...end, offset: slapShare }, { ...end, offset: 1 }];
 };
 
-// A carried card has no element left on the board, so one is built from its face. A card back lying sideways keeps
-// its face rotated inside, so the face can be swapped for a sideways one without stretching.
+// A carried card has no element left, so one is built from its face (a sideways back keeps its face rotated inside,
+// so a sideways face can replace it without stretching)
 const buildGhost = ({ uuid, faceNode, rot }, rect) => {
     const surface = document.createElement('div');
     surface.dataset.cardSurface = '';
@@ -1045,8 +1028,8 @@ export const keyframesFor = (item) => {
 const restingLevel = 200;
 const landingPoint = 0.7;
 
-// A card in flight is lifted above the board, then drops to the level it rests at as it nears its place,
-// so it passes behind the cards that are above that place (the cards to its right in a hand)
+// In flight a card is lifted above the board, dropping to its resting level near its place, so it passes behind
+// cards above that place (those to its right in a hand)
 export const landingFrames = (item, point = landingPoint) =>
     item.type === 'move' && item.travel && !item.nested && !item.under
         ? [
@@ -1056,9 +1039,8 @@ export const landingFrames = (item, point = landingPoint) =>
           ]
         : null;
 
-// Cards still in flight are left to finish, so a later update never cuts a flight short.
-// A card landing inside a clipping area (data-clips) would be cut off on its way in, so a copy flies above it instead
-// and the card shows once it lands. The copy loses its flip markers, so it is never measured as a card.
+// Running flights are never cut short. A card landing inside a clipping area (data-clips) flies as an unmarked
+// copy above it, and shows once it lands.
 const flyAbove = (el) => {
     if (!el.closest('[data-clips]')) {
         return { target: el, settle: () => {} };
@@ -1092,8 +1074,7 @@ const flyAbove = (el) => {
 const settledFlight = (el) =>
     Promise.allSettled(endingAnimations(el).map((animation) => animation.finished));
 
-// Cards in the air: when each is done with (a card flying as a copy, once the copy is gone), when it lands, the copy
-// flying above for it (if any), and where it is headed
+// Cards in the air: when each is done with, when it lands, its copy (if any) and where it is headed
 const flights = new Map();
 const staleAfter = 3000;
 
@@ -1109,9 +1090,8 @@ const inFlight = () => {
     return new Set(flights.keys());
 };
 
-// A card in the air whose place moves before it lands (a hand closing up as the next card is drawn) is steered to its
-// new place for the rest of its flight, rather than landing where its place was and jumping
-// A copy already landed (still showing its landing glow) slides over in this long
+// A card in the air whose place moves (a hand closing up) is steered to the new place rather than jumping.
+// A copy that has already landed slides over in steerTime.
 const steerTime = 200;
 
 const steerFlights = (flying, after) => {
@@ -1161,7 +1141,7 @@ export const playPendingFlip = (root = document) => {
             .forEach((animation) => animation.cancel());
     });
 
-    const after = measureCards(root);
+    const after = measureCards(root, false);
     if (landInPopup && after.has(landInPopup)) {
         landInPopup = null;
     }

@@ -30,10 +30,6 @@ class GameCommands {
         return this.game.cardClicked(playerName, cardId);
     }
 
-    cardSizeChange(playerName, value) {
-        return this.game.cardSizeChange(playerName, value);
-    }
-
     hudChange(playerName, hud) {
         return this.game.hudChange(playerName, hud);
     }

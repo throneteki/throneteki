@@ -786,10 +786,7 @@ class Game extends EventEmitter {
         const parentCard = parentId && this.allCards.find((card) => card.uuid === parentId);
         let command = new DropCommand(this, player, card, target, parentCard);
         if (command.execute()) {
-            this.manualActions.record(player, 'drop', {
-                cards: [card],
-                args: [command.originalLocation, target]
-            });
+            command.record(command.originalLocation, target);
         }
     }
 
@@ -1126,15 +1123,6 @@ class Game extends EventEmitter {
         } else if (responseType === 'reactions') {
             player.hideReactions = toggle;
         }
-    }
-
-    cardSizeChange(playerName, value) {
-        var player = this.getPlayersAndSpectators()[playerName];
-        if (!player) {
-            return;
-        }
-
-        player.cardSize = value;
     }
 
     // Board size settings changed during a game last for that game, so they survive a refresh

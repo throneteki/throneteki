@@ -1,6 +1,10 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { sendConcedeMessage, sendLeaveGameMessage } from '../../redux/reducers/game';
+import {
+    mustConfirmLeave,
+    sendConcedeMessage,
+    sendLeaveGameMessage
+} from '../../redux/reducers/game';
 import { Link, NavbarMenuItem, Tooltip } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWarning } from '@fortawesome/free-solid-svg-icons';
@@ -14,8 +18,7 @@ const ContextMenu = ({ onPress = () => true }) => {
     const [showSpectatorWarning, setShowSpectatorWarning] = useState(false);
 
     const onLeaveClick = useCallback(() => {
-        const all = Object.values({ ...currentGame.players, ...currentGame.spectators });
-        if (user && all.some((a) => a.name === user.username && !a.canSafelyLeave)) {
+        if (mustConfirmLeave(currentGame, user)) {
             onPress(true);
 
             return;

@@ -1,3 +1,5 @@
+import { boardLayouts, hudToggles, isOverlayTimer, promptSides } from '../shared/hudSettings';
+
 const sizeKinds = {
     cards: { presets: { small: 0.7, normal: 1, large: 1.4 }, min: 0.5, max: 5 },
     interface: { presets: { small: 0.85, normal: 1, large: 1.2 }, min: 0.6, max: 2 }
@@ -6,15 +8,8 @@ const sizeKinds = {
 const hudKinds = Object.keys(sizeKinds);
 const hudSizeNames = ['small', 'normal', 'large'];
 
-const boardLayouts = ['classic', 'adaptive'];
-const promptSides = ['left', 'right'];
-
-// The board's overlays (the start, plots revealed, game over and the like) show unless turned off. Those that close by
-// themselves do so after overlayTimer seconds. Both are left out of the settings until changed.
-export const overlayTimerLimits = { min: 1, max: 10 };
-export const defaultOverlayTimer = 3;
-export const isOverlayTimer = (value) =>
-    Number.isInteger(value) && value >= overlayTimerLimits.min && value <= overlayTimerLimits.max;
+// Overlays show unless turned off; both settings are left out until changed
+const defaultOverlayTimer = 3;
 export const overlaySettingsOf = (hud) => ({
     enabled: hud?.overlays !== false,
     seconds: isOverlayTimer(hud?.overlayTimer) ? hud.overlayTimer : defaultOverlayTimer
@@ -92,7 +87,7 @@ export const normalizeHud = (settings) => {
         if (interfaceSize) {
             result.interface = String(interfaceSize);
         }
-        for (const key of ['auto', 'animations', 'overlays']) {
+        for (const key of hudToggles) {
             if (typeof hud[key] === 'boolean') {
                 result[key] = hud[key];
             }

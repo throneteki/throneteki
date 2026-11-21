@@ -1,4 +1,4 @@
-import { computeAutoCardScale } from '../../cardScale';
+import { computeAutoCardScale, remSize } from '../../cardScale';
 import { computeHudScales, computeScreenScale, resolveHudSize } from '../../hud';
 import { hidesNavbar } from '../../boardLayoutStore';
 import {
@@ -8,10 +8,8 @@ import {
     computeAdaptiveScales
 } from './Adaptive/adaptiveScale';
 
-// The scales a board draws at, from its settings and what it was measured at: the board area (container), the
-// window (viewport), the root font size (rem) and, on the adaptive board, its layout mode and what is in play
-// (content). The boards and the settings' previews all size through here, so a preview matches its board.
-// cardFit: the classic board's fit when it has already settled on one.
+// The scales a board draws at, from its settings and measure. Boards and the settings' previews all size through
+// here, so a preview matches its board. cardFit: the classic board's settled fit.
 export const classicScales = (hud, { container, viewport, rem = 16, cardFit }) =>
     computeHudScales({
         hud,
@@ -19,10 +17,9 @@ export const classicScales = (hud, { container, viewport, rem = 16, cardFit }) =
         screen: computeScreenScale(viewport)
     });
 
-// The cards are fitted as though the interface were its normal size, so the two sizes are chosen apart: a larger
-// interface leaves the cards less room than they were fitted to, and the board scrolls for the rest. fits says
-// whether the cards' rows fit the board's height as drawn, without scrolling, and overflow which size is to blame
-// when they do not: the cards, when they would not fit even beside a normal interface, otherwise the interface.
+// Cards are fitted as though the interface were normal, so the two sizes are independent (a larger interface
+// scrolls). fits: whether the rows fit without scrolling. overflow: which size is to blame (the cards if they would
+// not fit beside a normal interface, else the interface).
 export const adaptiveScales = (hud, { container, viewport, rem = 16, mode, content }) => {
     const layout = mode ?? classifyLayout(container);
     const screen = adaptiveInterfaceScale(layout, viewport);
@@ -67,7 +64,7 @@ const navbarHeight = 48;
 // Away from a game, the board's room is estimated from the window: the whole of it where the adaptive board hides
 // the navbar (a phone), below the navbar elsewhere, with nothing yet in play
 export const estimateBoardMeasure = (hud, viewport) => {
-    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const rem = remSize();
     const fullScreen = hud.board === 'adaptive' && hidesNavbar(classifyLayout(viewport));
     const container = fullScreen
         ? viewport

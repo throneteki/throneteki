@@ -1,5 +1,5 @@
 import { useLayoutEffect } from 'react';
-import { computeAutoCardScale, settleAutoCardScale } from '../../cardScale';
+import { computeAutoCardScale, remSize, settleAutoCardScale } from '../../cardScale';
 import { classicScales, setBoardMeasure } from './boardScales';
 import { holdFlip } from '../../flip';
 
@@ -46,14 +46,13 @@ export const useHudScale = (hud, containerRef, ready = true) => {
             return;
         }
 
-        const root = document.documentElement;
         const container = containerRef.current;
         const setting = { cards, interface: interfaceSize, auto };
         let cardFit = null;
         let frame = 0;
 
         const update = () => {
-            const rem = parseFloat(getComputedStyle(root).fontSize) || 16;
+            const rem = remSize();
             const size = container
                 ? { width: container.clientWidth, height: container.clientHeight }
                 : null;
