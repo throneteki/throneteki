@@ -1,7 +1,7 @@
 import { createNextState } from '@reduxjs/toolkit';
 
 import GameServer from '../../server/gamenode/gameserver.js';
-import { patchGameState, snapshotGameState } from '../../shared/gameStateDiff.js';
+import { diffGameState, patchGameState, snapshotGameState } from '../../shared/gameStateDiff.js';
 
 describe('game state diffs', function () {
     beforeEach(function () {
@@ -10,7 +10,11 @@ describe('game state diffs', function () {
             player2: { hand: ['Winterfell Steward'], inPlay: ['Eddard Stark (Core)'] }
         });
 
-        this.server = { sentStates: new WeakMap() };
+        this.server = {
+            sentStates: new WeakMap(),
+            findGameForUser: () => this.game,
+            sendGameState: GameServer.prototype.sendGameState
+        };
         this.clients = {};
 
         this.connect = (wrapper) => {
@@ -121,6 +125,34 @@ describe('game state diffs', function () {
 
         expect(this.clients[this.player1.player.name].messages).toEqual(['gamestate', 'gamestate']);
         this.expectClientsInSync();
+    });
+
+    it('diffs an array that gains a null next to an object', function () {
+        const previous = { items: [{ uuid: 'a', value: 1 }] };
+        const next = { items: [null, { uuid: 'a', value: 2 }] };
+
+        const patched = patchGameState(snapshotGameState(previous), diffGameState(previous, next));
+
+        expect(patched).toEqual(next);
+    });
+
+    it('sends the whole state to a client that asks to resync', function () {
+        GameServer.prototype.onResync.call(this.server, {
+            user: { username: this.player1.player.name }
+        });
+
+        expect(this.clients[this.player1.player.name].messages).toEqual(['gamestate', 'gamestate']);
+        expect(this.clients[this.player2.player.name].messages).toEqual(['gamestate']);
+        this.expectClientsInSync();
+    });
+
+    it('forgets the state sent to a player who no longer has a socket', function () {
+        this.player1.player.socket = undefined;
+        this.sendState();
+
+        const sentStates = this.server.sentStates.get(this.game);
+        expect(sentStates.has(this.player1.player.name)).toBe(false);
+        expect(sentStates.has(this.player2.player.name)).toBe(true);
     });
 
     it('keeps the parts of the client state that did not change', function () {

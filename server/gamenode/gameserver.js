@@ -250,7 +250,15 @@ class GameServer {
             this.sentStates.set(game, sentStates);
         }
 
-        for (const player of Object.values(game.getPlayersAndSpectators())) {
+        const players = game.getPlayersAndSpectators();
+        for (const name of sentStates.keys()) {
+            const player = players[name];
+            if (!player || player.left || game.isDisconnected(player) || !player.socket) {
+                sentStates.delete(name);
+            }
+        }
+
+        for (const player of Object.values(players)) {
             if (player.left || game.isDisconnected(player) || !player.socket) {
                 continue;
             }
@@ -261,8 +269,6 @@ class GameServer {
             const messages = game.gameChat.messages;
             const sent = sentStates.get(player.name);
 
-            // The log only grows, so it is sent a message at a time rather than diffed. A new socket has no state to
-            // patch, and a replaced log cannot be appended to, so both are sent the whole state
             if (
                 sent?.socket === player.socket &&
                 sent.messages === messages &&
@@ -466,6 +472,7 @@ class GameServer {
         this.sendGameState(game);
 
         socket.registerEvent('game', this.onGameMessage.bind(this));
+        socket.registerEvent('resync', this.onResync.bind(this));
         socket.on('disconnect', this.onSocketDisconnected.bind(this));
     }
 
@@ -530,6 +537,16 @@ class GameServer {
 
             this.gameSocket.send('GAMECLOSED', { game: game.id });
         }
+    }
+
+    onResync(socket) {
+        const game = this.findGameForUser(socket.user.username);
+        if (!game) {
+            return;
+        }
+
+        this.sentStates.get(game)?.delete(socket.user.username);
+        this.sendGameState(game);
     }
 
     onGameMessage(socket, command, ...args) {

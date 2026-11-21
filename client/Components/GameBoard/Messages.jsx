@@ -151,7 +151,6 @@ const Message = memo(function Message({ message }) {
     return <div className={className}>{formatMessageText(message.message)}</div>;
 });
 
-// The log only grows and unchanged messages keep their identity, so only new messages render
 const Messages = ({ messages }) => {
     return (
         <>

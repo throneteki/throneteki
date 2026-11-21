@@ -41,6 +41,7 @@ const GameEvent = Object.freeze({
 const GameMessage = Object.freeze({
     GameState: 'gamestate',
     GameStateDiff: 'gamestatediff',
+    Resync: 'resync',
     ToggleKeywordSetting: 'toggleKeywordSetting',
     ToggleDupes: 'toggleDupes',
     TogglePromptedActionWindow: 'togglePromptedActionWindow',
@@ -66,6 +67,15 @@ const GameMessage = Object.freeze({
 const gameMiddleware = (store) => {
     let socket;
     let gameState;
+    let resyncing = false;
+
+    const requestResync = () => {
+        gameState = undefined;
+        if (!resyncing) {
+            resyncing = true;
+            socket.emit(GameMessage.Resync);
+        }
+    };
 
     const receiveState = (state) => {
         gameState = state;
@@ -88,6 +98,7 @@ const gameMiddleware = (store) => {
             }
 
             gameState = undefined;
+            resyncing = false;
 
             socket = io(`${action.payload.url}`, {
                 path: `/${action.payload.name}/socket.io`,
@@ -106,6 +117,7 @@ const gameMiddleware = (store) => {
 
             socket.on(GameEvent.Disconnected, () => {
                 gameState = undefined;
+                resyncing = false;
                 dispatch(gameDisconnected());
             });
 
@@ -118,20 +130,32 @@ const gameMiddleware = (store) => {
             });
 
             socket.on(GameMessage.ClearGameState, () => {
+                gameState = undefined;
                 dispatch(receiveClearGameState());
             });
 
-            socket.on(GameMessage.GameState, receiveState);
+            socket.on(GameMessage.GameState, (state) => {
+                resyncing = false;
+                receiveState(state);
+            });
 
-            // Patching inside immer keeps the parts of the state that did not change, so their components skip rendering
             socket.on(GameMessage.GameStateDiff, (delta) => {
-                if (gameState) {
-                    receiveState(
-                        createNextState(gameState, (draft) => {
-                            patchGameState(draft, delta);
-                        })
-                    );
+                if (!gameState) {
+                    requestResync();
+                    return;
                 }
+
+                let patched;
+                try {
+                    patched = createNextState(gameState, (draft) => {
+                        patchGameState(draft, delta);
+                    });
+                } catch {
+                    requestResync();
+                    return;
+                }
+
+                receiveState(patched);
             });
 
             setInterval(() => {
