@@ -1364,6 +1364,8 @@ class Player extends Spectator {
             isPlaying: this.isPlaying(),
             left: this.left,
             eliminated: !!this.eliminated,
+            eliminatedReason: this.eliminatedReason,
+            standing: this.standing,
             disconnected: this.game.isDisconnected(this),
             longDisconnected: this.game.isLongDisconnected(this),
             canSafelyLeave: this.game.canSafelyLeave(this),

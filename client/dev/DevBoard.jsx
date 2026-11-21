@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import classNames from 'classnames';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import auth, { setUser } from '../redux/reducers/auth.js';
@@ -11,7 +12,15 @@ import { apiSlice } from '../redux/middleware/api';
 import flipMiddleware from '../redux/middleware/flip.js';
 import GameBoard from '../Components/GameBoard/GameBoard';
 import { hudStore } from '../hudStore';
-import { boardFixtures, fixtureSteps, fixtureUsername, spectatorName } from './boardFixtures';
+import {
+    boardFixtures,
+    fixtureSteps,
+    fixtureUsername,
+    overlayExamples,
+    spectatorName,
+    withLongNames,
+    withoutOverlay
+} from './boardFixtures';
 
 // A store of its own, with no game server behind it: messages the board sends go nowhere. It notes where cards
 // were before each new state (flipMiddleware), as the real store does, so cards fly between zones.
@@ -24,14 +33,19 @@ const createFixtureStore = () =>
                 .concat(apiSlice.middleware)
     });
 
-// With manual mode on, cards can be dragged. Spectating, the page watches the game as someone not playing it.
-const buildFixture = (fixture, { manual, spectate, players }) => {
-    const state = { ...boardFixtures[fixture].build({ players }), manualMode: manual };
-    if (spectate) {
-        state.spectators = [
-            { id: spectatorName, name: spectatorName, user: { username: spectatorName } }
-        ];
-    }
+// With manual mode on, cards can be dragged. Spectating, the page watches the game as someone not playing it. A
+// crowd is many people watching, to see how the spectators' count and list hold up.
+const crowdSize = 60;
+const watcher = (name) => ({ id: name, name, user: { username: name } });
+const buildFixture = (fixture, { manual, spectate, players, long, crowd }) => {
+    const built = boardFixtures[fixture].build({ players });
+    const state = { ...(long ? withLongNames(built) : built), manualMode: manual };
+    state.spectators = [
+        ...(spectate ? [watcher(spectatorName)] : []),
+        ...(crowd
+            ? Array.from({ length: crowdSize }, (_, index) => watcher(`Spectator${index + 1}`))
+            : [])
+    ];
     return state;
 };
 
@@ -47,18 +61,137 @@ const loadFixture = (store, state, board, spectate, promptSide) => {
         })
     );
     store.dispatch(receiveGameState(state, viewerOf(spectate)));
+    // With no server to ask, the card lookups (naming a card or a trait) search the scenario's own cards
+    store.dispatch(apiSlice.util.upsertQueryData('getCards', undefined, cardsOf(state)));
 };
 
-const setQuery = (fixture, board) => {
+const cardsOf = (state) => {
+    const found = {};
+    const visit = (value) => {
+        if (Array.isArray(value)) {
+            value.forEach(visit);
+        } else if (value && typeof value === 'object') {
+            if (value.code && value.name) {
+                found[value.code] = {
+                    code: value.code,
+                    name: value.name,
+                    traits: value.traits ?? []
+                };
+            }
+            Object.values(value).forEach(visit);
+        }
+    };
+    visit(state.players);
+    return found;
+};
+
+const setQuery = (values) => {
     const url = new URL(window.location.href);
-    url.searchParams.set('fixture', fixture);
-    url.searchParams.set('board', board);
+    for (const [key, value] of Object.entries(values)) {
+        if (value === undefined || value === false) {
+            url.searchParams.delete(key);
+        } else {
+            url.searchParams.set(key, value === true ? '1' : value);
+        }
+    }
     window.history.replaceState(window.history.state, '', url);
 };
 
+const modeOf = (fixture) => boardFixtures[fixture]?.mode ?? 'joust';
+const firstFixture = { joust: 'mid', melee: 'melee' };
+// Scenarios and overlays are for one kind of game; steps are for both unless they say otherwise
+const forMode = (entries, mode) =>
+    Object.entries(entries).filter(([, entry]) =>
+        (entry.modes ?? [entry.mode ?? mode]).includes(mode)
+    );
+
+// Resolves once the board has drawn its cards and stopped moving: every image loaded and no animation that will end
+// still running, or after a few seconds whatever the case
+const boardSettled = (signal) =>
+    new Promise((resolve) => {
+        const started = Date.now();
+        let calm = 0;
+        const busy = () =>
+            [...document.images].some((image) => !image.complete) ||
+            document
+                .getAnimations()
+                .some(
+                    (animation) =>
+                        animation.playState === 'running' &&
+                        animation.effect?.getComputedTiming().iterations !== Infinity
+                );
+        const check = () => {
+            if (signal.aborted) {
+                return;
+            }
+            calm = busy() ? 0 : calm + 1;
+            if (calm >= 3 || Date.now() - started > 8000) {
+                setTimeout(resolve, 200);
+                return;
+            }
+            setTimeout(check, 100);
+        };
+        document.fonts.ready.then(() => setTimeout(check, 300));
+    });
+
+// Where the panel sits and whether it is open, kept between visits
+const layoutKey = 'dev-board-panel';
+const readLayout = () => {
+    try {
+        return { side: 'left', open: true, ...JSON.parse(localStorage.getItem(layoutKey)) };
+    } catch {
+        return { side: 'left', open: true };
+    }
+};
+
+const Section = ({ title, children }) => (
+    <div className='flex flex-col gap-1'>
+        <div className='text-[10px] font-semibold uppercase tracking-wider text-default-400'>
+            {title}
+        </div>
+        {children}
+    </div>
+);
+
+const Segmented = ({ label, value, options, onChange }) => (
+    <div role='radiogroup' aria-label={label} className='flex rounded-md bg-white/10 p-0.5'>
+        {options.map(([option, text]) => (
+            <button
+                key={option}
+                type='button'
+                role='radio'
+                aria-checked={value === option}
+                className={classNames(
+                    'flex-1 rounded px-2 py-0.5',
+                    value === option ? 'bg-amber-500 font-semibold text-black' : 'hover:bg-white/10'
+                )}
+                onClick={() => onChange(option)}
+            >
+                {text}
+            </button>
+        ))}
+    </div>
+);
+
+const Toggle = ({ label, checked, onChange }) => (
+    <label className='flex cursor-pointer items-center gap-1.5'>
+        <input
+            type='checkbox'
+            checked={checked}
+            onChange={(event) => onChange(event.target.checked)}
+        />
+        {label}
+    </label>
+);
+
+const selectClass = 'w-full min-w-0 rounded-md border border-white/15 bg-black px-1 py-1';
+const buttonClass =
+    'rounded-md bg-white/10 px-2 py-1 text-left hover:bg-white/20 disabled:opacity-40';
+
 // Development only: the real game board with a canned state, at /dev/board?fixture=crowded&board=adaptive
-// (&manual=1, &spectate=1, &prompt=right, &players=3..6 for melee fixtures, &panel=0 to hide this panel). The steps
-// change the game as a server would, to see cards move.
+// (&manual=1, &spectate=1, &prompt=right, &players=3..6 for melee scenarios, &long=1, &crowd=1, &panel=0 to hide the panel). The
+// steps change the game as a server would, to see cards move. An overlay is played on its scenario once the board has
+// loaded it, so what is seen at its start is the overlay, not the board still loading.
 const DevBoard = ({
     fixture: initialFixture,
     board: initialBoard,
@@ -66,86 +199,269 @@ const DevBoard = ({
     manual: manualParam,
     spectate: spectateParam,
     prompt,
-    players
+    players: playersParam,
+    long: longParam,
+    crowd: crowdParam
 }) => {
     const promptSide = prompt === 'right' ? 'right' : 'left';
-    const options = { manual: manualParam === '1', spectate: spectateParam === '1', players };
     const [fixture, setFixture] = useState(boardFixtures[initialFixture] ? initialFixture : 'mid');
     const [board, setBoard] = useState(initialBoard === 'classic' ? 'classic' : 'adaptive');
+    const [players, setPlayers] = useState(
+        String(Math.min(6, Math.max(3, Number(playersParam) || 4)))
+    );
+    const [long, setLong] = useState(longParam === '1');
+    const [crowd, setCrowd] = useState(crowdParam === '1');
+    const [manual, setManual] = useState(manualParam === '1');
+    const [spectate, setSpectate] = useState(spectateParam === '1');
+    const mode = modeOf(fixture);
     const current = useRef(null);
     const [store] = useState(() => {
         const created = createFixtureStore();
-        current.current = buildFixture(fixture, options);
-        loadFixture(created, current.current, board, options.spectate, promptSide);
+        current.current = buildFixture(fixture, { manual, spectate, players, long, crowd });
+        loadFixture(created, current.current, board, spectate, promptSide);
         return created;
     });
-    const [open, setOpen] = useState(true);
+    const [layout, setLayout] = useState(readLayout);
+    const changeLayout = (change) =>
+        setLayout((was) => {
+            const next = { ...was, ...change };
+            try {
+                localStorage.setItem(layoutKey, JSON.stringify(next));
+            } catch {
+                // The panel is then where it was for this visit only
+            }
+            return next;
+        });
+    // An overlay to play: the board is opened afresh on its scenario, having seen none, and once it has loaded the
+    // overlay is brought about
+    const [overlay, setOverlay] = useState(null);
+    const [status, setStatus] = useState(null);
+    const [boardKey, setBoardKey] = useState(0);
+    const opened = useRef(false);
 
+    const changeFixture = (next) => {
+        setOverlay(null);
+        setFixture(next);
+    };
+    const showOverlay = (key) => {
+        const example = overlayExamples[key];
+        if (!example) {
+            return;
+        }
+        try {
+            sessionStorage.removeItem('board-overlays:fixture');
+        } catch {
+            // Without it, an overlay already seen in this tab is not shown again
+        }
+        setFixture(example.fixture);
+        setOverlay({ key, run: Date.now() });
+    };
     const reset = () => {
-        current.current = buildFixture(fixture, options);
-        store.dispatch(receiveGameState(current.current, viewerOf(options.spectate)));
+        setOverlay(null);
+        current.current = buildFixture(fixture, { manual, spectate, players, long, crowd });
+        store.dispatch(receiveGameState(current.current, viewerOf(spectate)));
     };
     const step = (name) => {
         current.current = fixtureSteps[name].apply(structuredClone(current.current));
-        store.dispatch(receiveGameState(current.current, viewerOf(options.spectate)));
+        store.dispatch(receiveGameState(current.current, viewerOf(spectate)));
     };
 
     useEffect(() => {
         hudStore.reset();
-        const spectate = spectateParam === '1';
-        current.current = buildFixture(fixture, {
-            manual: manualParam === '1',
-            spectate,
-            players
-        });
+        const example = overlay && overlayExamples[overlay.key];
+        const built = buildFixture(fixture, { manual, spectate, players, long, crowd });
+        const steps = example?.steps ?? [];
+        current.current = example && steps.length === 0 ? withoutOverlay(built) : built;
         loadFixture(store, current.current, board, spectate, promptSide);
-        setQuery(fixture, board);
-    }, [store, fixture, board, manualParam, spectateParam, promptSide, players]);
+        setQuery({
+            fixture,
+            board,
+            players: modeOf(fixture) === 'melee' ? players : undefined,
+            long,
+            crowd,
+            manual,
+            spectate
+        });
+        // Opened afresh on each scenario, so the board does not take the change of scenario for one in the game
+        if (opened.current) {
+            setBoardKey((key) => key + 1);
+        }
+        opened.current = true;
+        if (!example) {
+            setStatus(null);
+            return;
+        }
+        setStatus(`Loading ${example.label}…`);
+        const controller = new AbortController();
+        boardSettled(controller.signal).then(() => {
+            if (controller.signal.aborted) {
+                return;
+            }
+            current.current =
+                steps.length === 0
+                    ? built
+                    : steps.reduce(
+                          (state, name) => fixtureSteps[name].apply(structuredClone(state)),
+                          current.current
+                      );
+            store.dispatch(receiveGameState(current.current, viewerOf(spectate)));
+            setStatus(`Showing ${example.label}`);
+        });
+        return () => controller.abort();
+    }, [store, fixture, board, manual, spectate, promptSide, players, long, crowd, overlay]);
 
+    const fixtures = forMode(boardFixtures, mode);
+    const overlays = forMode(overlayExamples, mode);
+    const steps = forMode(fixtureSteps, mode);
     return (
         <Provider store={store}>
-            <div className='h-full'>
+            <div key={boardKey} className='h-full'>
                 <GameBoard />
             </div>
             {panel !== '0' && (
-                <div className='fixed left-1 bottom-1 z-[500] text-xs bg-black/85 border border-default-200 rounded-md p-1 flex flex-col gap-1'>
-                    <button type='button' className='text-left' onClick={() => setOpen(!open)}>
-                        {open ? '▾ Fixture' : '▸'}
-                    </button>
-                    {open && (
+                <div
+                    data-dev-panel
+                    className={classNames(
+                        'fixed bottom-1 z-[500]',
+                        layout.side === 'right' ? 'right-1' : 'left-1',
+                        ' flex max-h-[calc(100%-0.5rem)] w-56 flex-col gap-2.5 overflow-y-auto rounded-lg border border-white/15 bg-black/90 p-2 text-xs text-white shadow-xl'
+                    )}
+                >
+                    <div className='flex items-center gap-1 font-semibold'>
+                        <button
+                            type='button'
+                            className='flex-1 text-left'
+                            onClick={() => changeLayout({ open: !layout.open })}
+                        >
+                            <span className='text-default-400'>{layout.open ? '▾' : '▸'}</span> Dev
+                            board
+                        </button>
+                        <button
+                            type='button'
+                            className='rounded px-1 text-default-400 hover:bg-white/10'
+                            title='Move the panel to the other side'
+                            onClick={() =>
+                                changeLayout({ side: layout.side === 'right' ? 'left' : 'right' })
+                            }
+                        >
+                            {layout.side === 'right' ? '⇤' : '⇥'}
+                        </button>
+                    </div>
+                    {layout.open && (
                         <>
-                            <select
-                                className='bg-black'
-                                value={fixture}
-                                onChange={(event) => setFixture(event.target.value)}
-                            >
-                                {Object.entries(boardFixtures).map(([key, { label }]) => (
-                                    <option key={key} value={key}>
-                                        {label}
-                                    </option>
-                                ))}
-                            </select>
-                            <select
-                                className='bg-black'
-                                value={board}
-                                onChange={(event) => setBoard(event.target.value)}
-                            >
-                                <option value='adaptive'>Adaptive</option>
-                                <option value='classic'>Classic</option>
-                            </select>
-                            {Object.entries(fixtureSteps).map(([name, { label }]) => (
-                                <button
-                                    key={name}
-                                    type='button'
-                                    data-step={name}
-                                    onClick={() => step(name)}
+                            <Section title='Game'>
+                                <Segmented
+                                    label='Game'
+                                    value={mode}
+                                    options={[
+                                        ['joust', 'Joust'],
+                                        ['melee', 'Melee']
+                                    ]}
+                                    onChange={(next) =>
+                                        next !== mode && changeFixture(firstFixture[next])
+                                    }
+                                />
+                                {mode === 'melee' && (
+                                    <Segmented
+                                        label='Players'
+                                        value={players}
+                                        options={['3', '4', '5', '6'].map((count) => [
+                                            count,
+                                            `${count}p`
+                                        ])}
+                                        onChange={setPlayers}
+                                    />
+                                )}
+                            </Section>
+                            <Section title='Scenario'>
+                                <select
+                                    className={selectClass}
+                                    aria-label='Scenario'
+                                    value={fixture}
+                                    onChange={(event) => changeFixture(event.target.value)}
                                 >
-                                    {label}
-                                </button>
-                            ))}
-                            <button type='button' onClick={reset}>
-                                Reset
-                            </button>
+                                    {fixtures.map(([key, { label }]) => (
+                                        <option key={key} value={key}>
+                                            {label}
+                                        </option>
+                                    ))}
+                                </select>
+                            </Section>
+                            <Section title='Overlay'>
+                                <div className='flex gap-1'>
+                                    <select
+                                        className={selectClass}
+                                        aria-label='Show an overlay'
+                                        value={overlay?.key ?? ''}
+                                        onChange={(event) => showOverlay(event.target.value)}
+                                    >
+                                        <option value=''>Show an overlay…</option>
+                                        {overlays.map(([key, { label }]) => (
+                                            <option key={key} value={key}>
+                                                {label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <button
+                                        type='button'
+                                        className={buttonClass}
+                                        aria-label='Show the overlay again'
+                                        title='Show again'
+                                        disabled={!overlay}
+                                        onClick={() => showOverlay(overlay.key)}
+                                    >
+                                        ↻
+                                    </button>
+                                </div>
+                                {status && (
+                                    <div data-dev-status className='text-amber-300'>
+                                        {status}
+                                    </div>
+                                )}
+                            </Section>
+                            <Section title='Steps'>
+                                <div className='grid grid-cols-2 gap-1'>
+                                    {steps.map(([name, { label }]) => (
+                                        <button
+                                            key={name}
+                                            type='button'
+                                            className={buttonClass}
+                                            data-step={name}
+                                            onClick={() => step(name)}
+                                        >
+                                            {label}
+                                        </button>
+                                    ))}
+                                    <button
+                                        type='button'
+                                        className={classNames(buttonClass, 'text-amber-200')}
+                                        onClick={reset}
+                                    >
+                                        Reset
+                                    </button>
+                                </div>
+                            </Section>
+                            <Section title='View'>
+                                <Segmented
+                                    label='Board'
+                                    value={board}
+                                    options={[
+                                        ['adaptive', 'Adaptive'],
+                                        ['classic', 'Classic']
+                                    ]}
+                                    onChange={setBoard}
+                                />
+                                <div className='flex flex-wrap gap-x-3 gap-y-1'>
+                                    <Toggle label='Long names' checked={long} onChange={setLong} />
+                                    <Toggle label='Manual' checked={manual} onChange={setManual} />
+                                    <Toggle
+                                        label='Spectate'
+                                        checked={spectate}
+                                        onChange={setSpectate}
+                                    />
+                                    <Toggle label='Crowd' checked={crowd} onChange={setCrowd} />
+                                </div>
+                            </Section>
                         </>
                     )}
                 </div>

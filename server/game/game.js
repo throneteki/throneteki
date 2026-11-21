@@ -1833,7 +1833,9 @@ class Game extends EventEmitter {
                 spectators: this.getSpectators().map((spectator) => spectator.getState()),
                 started: this.started,
                 gameOver: this.isGameOver,
-                winner: this.results?.winner?.name,
+                // results.winner is one name, or a list of names when several won
+                winners: this.results ? [].concat(this.results.winner ?? []) : undefined,
+                winReason: this.results?.winReason,
                 gameFormat: this.gameFormat,
                 gameVariant: this.gameVariant,
                 maxPlayers: this.maxPlayers,

@@ -209,6 +209,16 @@ const game = (players, extra = {}) => ({
     ...extra
 });
 
+// Whom each title rivals and supports, by name, as the server sends them
+const titleRelations = {
+    '01206': { rivals: ['Master of Laws', 'Master of Coin'], supports: ['Hand of the King'] },
+    '01207': { rivals: ['Master of Laws', 'Hand of the King'], supports: ['Master of Whispers'] },
+    '01208': { rivals: ['Master of Coin', 'Master of Ships'], supports: ['Master of Laws'] },
+    '01209': { rivals: ['Hand of the King', 'Master of Whispers'], supports: ['Master of Ships'] },
+    '01210': { rivals: ['Master of Whispers', 'Master of Ships'], supports: ['Master of Coin'] },
+    '01211': { rivals: [], supports: [] }
+};
+
 const plotCodes = ['01001', '01003', '01004', '01006', '01007', '01009', '01010'];
 
 const empty = () => {
@@ -500,6 +510,96 @@ const searchingDeck = () => {
     return state;
 };
 
+// Setup beginning, for the game's opening overlay: the opponent has two agendas, as with The Free Folk
+const gameStarting = () => {
+    const state = empty();
+    for (const each of Object.values(state.players)) {
+        each.phase = 'setup';
+        each.activePlot = undefined;
+    }
+    const rival = state.players[opponentName];
+    rival.agendas = [
+        ...rival.agendas,
+        { ...rival.agendas[0], uuid: 'second-agenda', code: '01027' }
+    ];
+    return state;
+};
+
+const gameOverButtons = [
+    { arg: 'continue', text: 'Continue Playing', promptId: 'over' },
+    { arg: 'rematch', text: 'Rematch', promptId: 'over' }
+];
+
+// We reached 15 power
+const gameWon = () => {
+    const state = midGame();
+    const me = state.players[fixtureUsername];
+    me.stats = { ...me.stats, totalPower: 15 };
+    me.standing = 1;
+    state.players[opponentName].standing = 2;
+    Object.assign(
+        me,
+        promptState({
+            isActivePrompt: true,
+            promptTitle: 'Game Won',
+            menuTitle: 'You has won the game!',
+            buttons: gameOverButtons
+        })
+    );
+    return { ...state, gameOver: true, winners: [fixtureUsername], winReason: 'power' };
+};
+
+// A melee table as setup begins, before any titles
+const meleeStarting = (options) => {
+    const state = meleeGame({ ...options, titles: false });
+    for (const each of Object.values(state.players)) {
+        each.phase = 'setup';
+        each.activePlot = undefined;
+    }
+    return state;
+};
+
+// Our opponent reached 15 power
+const gameLost = () => {
+    const state = gameWon();
+    state.players[fixtureUsername].stats.totalPower = 11;
+    state.players[fixtureUsername].standing = 2;
+    state.players[opponentName].stats = { ...state.players[opponentName].stats, totalPower: 15 };
+    state.players[opponentName].standing = 1;
+    state.players[fixtureUsername].menuTitle = `${opponentName} has won the game!`;
+    return { ...state, winners: [opponentName] };
+};
+
+// The game ended with nobody winning
+const gameDrawn = () => {
+    const state = gameWon();
+    for (const each of Object.values(state.players)) {
+        each.standing = undefined;
+    }
+    return { ...state, winners: [], winReason: 'draw' };
+};
+
+// A melee won on power: two tied for second, one put out by an empty deck
+const meleeWon = (options) => {
+    const state = meleeGame(options);
+    const winner = meleeName(state, 2);
+    const out = meleeName(state, 4);
+    for (const each of Object.values(state.players)) {
+        each.standing = each.name === winner ? 1 : each.name === out ? 4 : 2;
+        each.stats = { ...each.stats, totalPower: each.name === winner ? 15 : 11 };
+    }
+    Object.assign(state.players[out], { eliminated: true, eliminatedReason: 'decked' });
+    Object.assign(
+        state.players[fixtureUsername],
+        promptState({
+            isActivePrompt: true,
+            menuTitle: `${winner} has won the game!`,
+            buttons: gameOverButtons
+        })
+    );
+    return { ...state, gameOver: true, winners: [winner], winReason: 'power' };
+};
+
 const waiting = () => {
     const state = midGame();
     Object.assign(
@@ -751,7 +851,7 @@ const meleeGame = ({ players = 4, titles = true } = {}) => {
             faction: faction(seat.faction, { power: index % 3 }),
             agenda: card(index === 0 ? '01027' : '01198'),
             activePlot: card(plotCodes[index % plotCodes.length]),
-            title: titles ? card(seat.title) : undefined,
+            title: titles ? card(seat.title, titleRelations[seat.title]) : undefined,
             firstPlayer: index === 1,
             numDrawCards: 20 + index,
             stats: seat.stats,
@@ -860,6 +960,26 @@ const meleeTitleSelection = (options) => {
     return state;
 };
 
+const choosingFirstPlayer = (state) => {
+    for (const each of Object.values(state.players)) {
+        each.phase = 'plot';
+    }
+    const names = Object.values(state.players)
+        .sort((one, two) => one.seatNo - two.seatNo)
+        .map((each) => each.name);
+    Object.assign(
+        state.players[fixtureUsername],
+        promptState({
+            isActivePrompt: true,
+            menuTitle: 'Select first player',
+            buttons: names.map((name) => ({ text: name, arg: name, promptId: 'first' }))
+        })
+    );
+    return state;
+};
+const firstPlayer = () => choosingFirstPlayer(midGame());
+const meleeFirstPlayer = (options) => choosingFirstPlayer(meleeGame(options));
+
 // A prompt whose text runs over several lines on a phone
 const longPrompt = (options) => {
     const state = choosingFromDiscard(options);
@@ -868,25 +988,35 @@ const longPrompt = (options) => {
     return state;
 };
 
+// Each scenario is for a joust (two players) or a melee (three to six), the dev board offering those of the kind chosen
+// Each scenario is for a joust (two players) or a melee (three to six), the dev board offering those of the kind chosen
 export const boardFixtures = {
-    empty: { label: 'Empty board', build: empty },
-    mid: { label: 'Mid-game', build: midGame },
-    crowded: { label: 'Crowded', build: crowded },
-    plots: { label: 'Plot selection', build: plotSelection },
-    rains: { label: 'Plot selection (Rains)', build: rainsPlotSelection },
-    discard: { label: 'Choose from discard', build: choosingFromDiscard },
-    search: { label: 'Search the deck', build: searchingDeck },
-    longPrompt: { label: 'Long prompt text', build: longPrompt },
-    waiting: { label: 'Waiting on opponent', build: waiting },
-    select: { label: 'Choose on the board', build: choosingOnBoard },
-    lookup: { label: 'Name a card', build: namingCard },
-    reaction: { label: 'Reaction window', build: reactionWindow },
-    responder: { label: 'Any reactions? (countdown)', build: possibleResponder },
-    choices: { label: 'Many choices', build: manyChoices },
-    melee: { label: 'Melee: mid-game table', build: meleeTable },
-    meleeActing: { label: 'Melee: an opponent acting', build: meleeOpponentActing },
-    meleeChoose: { label: 'Melee: choosing on two boards', build: meleeChoosing },
-    meleeTitles: { label: 'Melee: title selection', build: meleeTitleSelection }
+    empty: { mode: 'joust', label: 'Empty board', build: empty },
+    mid: { mode: 'joust', label: 'Mid-game', build: midGame },
+    crowded: { mode: 'joust', label: 'Crowded', build: crowded },
+    plots: { mode: 'joust', label: 'Plot selection', build: plotSelection },
+    rains: { mode: 'joust', label: 'Plot selection (Rains)', build: rainsPlotSelection },
+    discard: { mode: 'joust', label: 'Choose from discard', build: choosingFromDiscard },
+    search: { mode: 'joust', label: 'Search the deck', build: searchingDeck },
+    select: { mode: 'joust', label: 'Choose on the board', build: choosingOnBoard },
+    lookup: { mode: 'joust', label: 'Name a card', build: namingCard },
+    reaction: { mode: 'joust', label: 'Reaction window', build: reactionWindow },
+    responder: { mode: 'joust', label: 'Any reactions? (countdown)', build: possibleResponder },
+    choices: { mode: 'joust', label: 'Many choices', build: manyChoices },
+    longPrompt: { mode: 'joust', label: 'Long prompt text', build: longPrompt },
+    waiting: { mode: 'joust', label: 'Waiting on opponent', build: waiting },
+    firstPlayer: { mode: 'joust', label: 'Choose the first player', build: firstPlayer },
+    starting: { mode: 'joust', label: 'Game starting (setup)', build: gameStarting },
+    won: { mode: 'joust', label: 'Game won', build: gameWon },
+    lost: { mode: 'joust', label: 'Game lost', build: gameLost },
+    drawn: { mode: 'joust', label: 'Game ended, no winner', build: gameDrawn },
+    melee: { mode: 'melee', label: 'Mid-game', build: meleeTable },
+    meleeActing: { mode: 'melee', label: 'An opponent acting', build: meleeOpponentActing },
+    meleeChoose: { mode: 'melee', label: 'Choosing on two boards', build: meleeChoosing },
+    meleeTitles: { mode: 'melee', label: 'Title selection', build: meleeTitleSelection },
+    meleeFirstPlayer: { mode: 'melee', label: 'Choose the first player', build: meleeFirstPlayer },
+    meleeStarting: { mode: 'melee', label: 'Game starting (setup)', build: meleeStarting },
+    meleeWon: { mode: 'melee', label: 'Game won', build: meleeWon }
 };
 
 // Changes to a fixture in the shape a server sends them, keeping each card's uuid, so the board animates the card
@@ -900,7 +1030,115 @@ const nextAround = (players, from) => {
     return ordered[(at + 1) % ordered.length];
 };
 
+let revealed = 0;
+const fixtureCard = (code, uuid) => ({
+    uuid,
+    code,
+    name: cardData[code]?.name,
+    type: cardData[code]?.type,
+    facedown: false,
+    power: 0,
+    tokens: {},
+    attachments: [],
+    childCards: [],
+    dupes: [],
+    kneeled: false
+});
+const opponentOf = (state) =>
+    Object.values(state.players).find((each) => each.name !== fixtureUsername)?.name;
+const playing = (state) => Object.values(state.players).filter((each) => !each.eliminated);
+
 export const fixtureSteps = {
+    endRound: {
+        label: 'End the round',
+        apply: (state) => {
+            const round =
+                1 +
+                state.messages.filter((entry) => entry.message?.alert?.type === 'endofround')
+                    .length;
+            playing(state).forEach((each, index) => {
+                each.stats = {
+                    ...each.stats,
+                    totalPower: (each.stats?.totalPower ?? 0) + (index % 3)
+                };
+            });
+            state.messages = [
+                ...state.messages,
+                {
+                    date: new Date().toISOString(),
+                    message: { alert: { type: 'endofround', message: ['End of round ', round] } }
+                }
+            ];
+            return state;
+        }
+    },
+    plots: {
+        label: 'Reveal new plots',
+        apply: (state) => {
+            playing(state).forEach((each, index) => {
+                each.phase = 'plot';
+                if (each.activePlot) {
+                    each.cardPiles.plotDiscard = [...each.cardPiles.plotDiscard, each.activePlot];
+                }
+                revealed++;
+                each.activePlot = fixtureCard(
+                    plotCodes[(revealed + index) % plotCodes.length],
+                    `revealed-${revealed}`
+                );
+            });
+            return state;
+        }
+    },
+    scheme: {
+        label: 'Reveal one plot (a scheme)',
+        apply: (state) => {
+            const me = state.players[fixtureUsername];
+            if (me.activePlot) {
+                me.cardPiles.plotDiscard = [...me.cardPiles.plotDiscard, me.activePlot];
+            }
+            revealed++;
+            me.activePlot = fixtureCard(
+                plotCodes[revealed % plotCodes.length],
+                `scheme-${revealed}`
+            );
+            return state;
+        }
+    },
+    titles: {
+        label: 'Choose new titles',
+        modes: ['melee'],
+        apply: (state) => {
+            const players = playing(state);
+            const titles = players.map((each) => each.title).filter(Boolean);
+            revealed++;
+            players.forEach((each, index) => {
+                const title = titles[(index + 1) % titles.length];
+                each.title = title && { ...title, uuid: `${title.code}-${revealed}` };
+            });
+            return state;
+        }
+    },
+    eliminate: {
+        label: 'Eliminate a player',
+        modes: ['melee'],
+        apply: (state) => {
+            const out = playing(state).find((each) => each.name !== fixtureUsername);
+            if (out && playing(state).length > 2) {
+                Object.assign(out, { eliminated: true, eliminatedReason: 'decked' });
+            }
+            return state;
+        }
+    },
+    answer: {
+        label: 'Answer the prompt',
+        apply: (state) => {
+            const me = state.players[fixtureUsername];
+            if (me) {
+                Object.assign(me, promptState({ menuTitle: 'Waiting for opponent' }));
+            }
+            return state;
+        }
+    },
     pass: {
         label: 'Pass the action on',
         apply: (state) => {
@@ -1038,9 +1276,9 @@ export const fixtureSteps = {
         label: 'Log a line',
         apply: (state) => {
             const lines = [
-                [{ name: opponentName, argType: 'nonAvatarPlayer' }, ' draws 2 cards'],
+                [{ name: opponentOf(state), argType: 'nonAvatarPlayer' }, ' draws 2 cards'],
                 [
-                    { name: opponentName, argType: 'nonAvatarPlayer' },
+                    { name: opponentOf(state), argType: 'nonAvatarPlayer' },
                     ' uses ',
                     { code: '01088', label: 'Tyrion Lannister', argType: 'card' },
                     ' to gain 2 gold'
@@ -1051,7 +1289,7 @@ export const fixtureSteps = {
                     ' kneels their faction card'
                 ],
                 [
-                    { name: opponentName, argType: 'nonAvatarPlayer' },
+                    { name: opponentOf(state), argType: 'nonAvatarPlayer' },
                     ' uses ',
                     { code: '01088', label: 'Tyrion Lannister', argType: 'card' },
                     ' to choose and discard 1 card at random from the hand of ',
@@ -1074,7 +1312,7 @@ export const fixtureSteps = {
                 ...state.messages,
                 {
                     date: new Date().toISOString(),
-                    message: [{ name: opponentName, argType: 'player' }, ' good luck!']
+                    message: [{ name: opponentOf(state), argType: 'player' }, ' good luck!']
                 }
             ];
             return state;
@@ -1083,7 +1321,7 @@ export const fixtureSteps = {
     pick: {
         label: 'Choose from their hand',
         apply: (state) => {
-            const them = state.players[opponentName];
+            const them = state.players[opponentOf(state)];
             const choosing = !them.cardPiles.hand.some((card) => card.selectable);
             them.cardPiles.hand = them.cardPiles.hand.map((card, index) => {
                 const code = drawPool[index % drawPool.length];
@@ -1123,3 +1361,62 @@ export const fixtureSteps = {
 };
 
 export const spectatorName = 'Watcher';
+
+// The board's overlays, each from its scenario and either the steps that bring it about or, for one the scenario
+// itself shows (the start, the end, a choice), that scenario with the overlay held back until the board has loaded
+export const overlayExamples = {
+    start: { mode: 'joust', label: 'Game start', fixture: 'starting' },
+    plots: { mode: 'joust', label: 'Plots revealed', fixture: 'mid', steps: ['plots'] },
+    scheme: {
+        mode: 'joust',
+        label: 'One plot alone (no overlay)',
+        fixture: 'mid',
+        steps: ['scheme']
+    },
+    round: { mode: 'joust', label: 'End of round', fixture: 'mid', steps: ['endRound'] },
+    chooseFirst: { mode: 'joust', label: 'Choice: first player', fixture: 'firstPlayer' },
+    won: { mode: 'joust', label: 'Game over: won', fixture: 'won' },
+    lost: { mode: 'joust', label: 'Game over: lost', fixture: 'lost' },
+    drawn: { mode: 'joust', label: 'Game over: no winner', fixture: 'drawn' },
+    meleeStart: { mode: 'melee', label: 'Game start', fixture: 'meleeStarting' },
+    meleePlots: { mode: 'melee', label: 'Plots revealed', fixture: 'melee', steps: ['plots'] },
+    titles: { mode: 'melee', label: 'Titles chosen', fixture: 'melee', steps: ['titles'] },
+    meleeRound: { mode: 'melee', label: 'End of round', fixture: 'melee', steps: ['endRound'] },
+    out: { mode: 'melee', label: 'Player eliminated', fixture: 'melee', steps: ['eliminate'] },
+    chooseTitle: { mode: 'melee', label: 'Choice: a title', fixture: 'meleeTitles' },
+    meleeChooseFirst: { mode: 'melee', label: 'Choice: first player', fixture: 'meleeFirstPlayer' },
+    meleeWon: { mode: 'melee', label: 'Game over', fixture: 'meleeWon' }
+};
+
+// A scenario as the board first sees it when it is to show its own overlay afterwards: not yet starting, over or
+// asking anything
+export const withoutOverlay = (state) => {
+    const calm = structuredClone(state);
+    for (const each of Object.values(calm.players)) {
+        if (each.phase === 'setup') {
+            each.phase = 'marshal';
+        }
+        Object.assign(each, promptState({ menuTitle: 'Waiting…' }));
+    }
+    return { ...calm, gameOver: false, winners: [] };
+};
+
+// Everyone but us renamed to as long as a name can be (15 characters), in names and in everything that mentions them
+const longNames = [
+    'WWWhiteWalkerWW',
+    'Kingslayer_1999',
+    'Melisandre-Asha',
+    'MOQORRO_MCBRIDE',
+    'Blackfyre_Mummy',
+    'Ser_ArthurDayne'
+];
+export const withLongNames = (state) => {
+    const others = Object.values(state.players)
+        .map((each) => each.name)
+        .filter((name) => name !== fixtureUsername);
+    let text = JSON.stringify(state);
+    others.forEach((name, index) => {
+        text = text.replace(new RegExp(`\\b${name}\\b`, 'g'), longNames[index % longNames.length]);
+    });
+    return JSON.parse(text);
+};

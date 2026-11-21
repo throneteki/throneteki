@@ -849,6 +849,110 @@ From the review on 2026-11-17 (seventh batch):
       bars, a phone's stats stand a little proud of their background, but by the background getting slimmer, not
       the icons larger: the card's box and border are gone, and a band 3px shorter than the icons at each edge
       (`backdrop`) runs behind them from the avatar's centre, so the avatar caps its end.
+- [x] **R219 Board overlays, first version (decided 2026-11-20)**: overlays for the game's key events on the adaptive
+      board (`BoardOverlays`), over the board's area only: the chat is never covered (the phone chat now sits above
+      them, `z-index: 360`). Major overlays, game start (each player's faction card, every agenda, avatar and name,
+      with VS in a joust) and game over (the winner, or a melee's standings with reasons for those eliminated, and
+      Rematch, Continue playing and View board, which hides it behind a chip that brings it back), dim the board
+      and wait for a button. Minor overlays, plots revealed, titles chosen (melee) and a player eliminated (melee,
+      game going on), animate over a lighter dim without blocking play, and have a Continue button whose fill shows
+      it being pressed for you after the timer; revealed plots and titles fly back to their places on the board.
+      Each overlay shows once a game (session storage), so a refresh does not repeat it. Settings: "Show board
+      overlays" (`hud.overlays`, on unless turned off) and "Close overlays after" (`hud.overlayTimer`, whole
+      seconds 1–10, 3 unless changed), shown for the adaptive board. Engine: the state now sends `winners`,
+      `winReason`, and each player's `standing` and `eliminatedReason` (the old `winner` field was always empty).
+      Dev fixtures: Game starting, Game won, Melee: game won; steps: Reveal new plots, Melee: choose new titles,
+      Melee: eliminate a player. Not yet: dominance, the time limit's tiebreak ladder (the engine keeps no record
+      of it), focus prompts.
+- [x] **R220 End of round overlay (decided 2026-11-20)**: a minor overlay when the log announces the end of a round
+      ("End of round N", the `endofround` alert): the players still in, most power first as the log lists them,
+      level players sharing a place, each with their faction card and agendas, name, total power and a bar towards 15. A list in portrait, a row elsewhere. Dev step: End the round.
+- [x] **R221 Overlays: the plot phase's reveal only, one copy of each card, fading (decided 2026-11-20)**: plots
+      revealed only shows in the plot phase when every player still in reveals a new plot at once, not for a plot
+      revealed on its own (a scheme, Rains of Castamere, a card revealing a plot). A card an overlay shows from the
+      board (a plot, a title) is hidden on the board while the overlay shows it, comes out of and lands back exactly
+      on it (measured: no offset), and the board's own shows again as the copy lands, so a card is never in two
+      places. Titles on the adaptive board are flip cards now, so they can be found, and move as other cards do.
+      Every overlay, dim included, fades in and out. Overlays compare against the game once its players have arrived,
+      so loading a game does not show one. Dev board: "Show an overlay…" plays each overlay from a fresh board (with
+      its fixture and steps), including a plot revealed alone, which shows none.
+- [x] **R222 Overlays: seating, long names, titles' relations, the elimination seal, choices (decided 2026-11-20)**:
+      players in an overlay sit as the melee board seats them, us at the bottom left and the rest round the table
+      (two rows: 2+2 for four, 3 on top and 2 below for five; a joust side by side; on a phone two to a row, five or
+      six going round three rows). Lists in an order (game over by place, end of round by power) fill the top row
+      first. The end of round has no place numbers, just the order. Names are sized for the longest username (15
+      characters) and shorten to fit their place rather than push the rows apart. Titles chosen shows under each
+      title whom it rivals (red) and supports (green) among the players still in, "You" for us; the server now
+      sends each title's `rivals` and `supports` (`TitleCard.getSummary`, spec `TitleRelationsState.spec.js`).
+      A player eliminated is stamped ELIMINATED: a seal that comes down hard, the cards jolting under it and going
+      grey. Each faction card, agenda, plot and title has a slight tilt of its own, the same each time it is
+      drawn, and the cards straighten as they fly back to the board. Choices: a prompt that only asks us to choose
+      a title, or a player (first player, initiative and other `ChoosePlayerPrompt`s), is shown over the board while
+      it waits, the titles as cards and the players seated as above with their power; it can be put aside behind a
+      chip to look at the board, has the prompt's Cancel when it has one, and fades as a choice is pressed. Dev
+      board: "Long names" renames everyone but us to 15-character names; "Show an overlay…" adds the title choice and
+      the first player's choice (joust and melee).
+- [x] **R223 Overlays play out on a table (decided 2026-11-21)**: every overlay is cards landing on a pretend table.
+      Cards are tossed onto it from off its edge on their player's side, turning as they come, high above it (a
+      wide soft shadow) until they land with a little give; a faction card first, its agendas just after. What is
+      written about them (names, power, places, buttons) fades in once they land. Game start: everyone's cards
+      tossed down, then their names, and in a joust VS slammed down between them; only Begin (View board did the
+      same). Plots revealed: the plots come off the board face down and are turned face up one by one. Titles
+      chosen: the rival and support lines pop in after each title lands. End of round: cards tossed down in power
+      order, then the power counts up and its bar fills. Eliminated: the cards are tossed down, the seal slams onto
+      them, the table jolts and flashes red, and the cards go grey. Game over: the cards are tossed down (in a melee
+      from last place to first, the winner's last), light turns slowly behind the winner, and the result is stamped
+      once they are down; Rematch and Continue playing when the game offers them, and View board, which closes it
+      (Close and the "Show the result" chip did the same). Choices: titles are dealt from the bottom of the table,
+      players' cards tossed from their seats. A minor overlay's Continue timer starts once it has played out. A
+      board rescale no longer stills an overlay playing over it (`[data-rescaling]` skips `.overlay-root`), which had
+      made a choice opened as the board settled appear without its animation.
+- [x] **R224 The plot reveal is the overlay's (decided 2026-11-21)**: with overlays on, the board no longer turns the
+      new plots over in their piles before the overlay: the overlay sees the reveal as the board draws it and claims
+      the plots (`claimFlights` in `flip.js`), so the board leaves their move to it and they are hidden on the board
+      from the first frame. Each comes out of its player's plot deck face down, is turned over on the table, and
+      lands on the board. Plots waiting behind another overlay stay hidden until theirs plays. The card back lies on
+      its side as a plot does (it had been an upright back stretched sideways). With overlays off, or a reveal already
+      seen, the board turns them over as before.
+- [x] **R225 Eliminated reads clearly, and a cleaner dev board (decided 2026-11-21)**: the eliminated overlay's line
+      (how they went out, how many remain) sits on a dark pill, in white and red, rather than grey on the board. The
+      dev board's panel picks Joust or Melee (and 3 to 6 players), and offers only that kind's scenarios, overlays and
+      steps (titles and eliminating are melee's). Scenario, overlay (with play again), steps in a grid, then the view
+      (board, long names, manual, spectate); it can move to either side, and remembers where and whether it is open.
+      An overlay is played once its scenario has loaded: the board opens afresh on the scenario (for an overlay the
+      scenario shows itself, without its start, end or question), waits until its images are in and its cards have
+      stopped moving, then the overlay is brought about. Changing scenario opens the board afresh too, so a switch is
+      not taken for a change in the game (joust to melee had played "Titles chosen"). A card that fades into an area
+      while others travel had no position for the shift check (`flip.js`), which crashed the board on such a switch.
+- [x] **R226 A choice put aside stays where it is (decided 2026-11-21)**: View board fades the choice away (its dim,
+      heading, cards and Cancel) and takes it from the pointer, leaving its button where it was, now saying what is
+      asked (the prompt's title, as "Select first player") to bring it back. It stays open while aside, so coming
+      back fades it in without playing it again (it was taken down and a chip put at the top). Answered, from the
+      choice or from the prompt, aside or not, it fades away rather than vanishing (`useShownChoice` keeps it for the
+      fade). The dev board has an "Answer the prompt" step, clearing our prompt as the server would.
+- [x] **R227 Cards are tossed in from the sides, evenly (decided 2026-11-21)**: every card an overlay tosses onto its
+      table comes from off its left or right edge, a player's cards all from one side. Taken across the table (down
+      it where they share a column), the first half come from the left and the rest from the right; one in the
+      middle of an odd count comes from the left if it is in the upper half. So a 2×2 melee's left column comes from
+      the left, a joust stacked on a phone has the top player from the left and the bottom from the right, and the
+      title choice follows the same rule (it was dealt from the bottom). They had often all risen from below:
+      overlays used `motionOff()`, which is also true while the board settles or rescales, so an overlay opening then
+      lost its tosses (and its flights, and started its timers early). Overlays now follow only the motion setting.
+- [x] **R228 "Board overlays", and experimental (decided 2026-11-21)**: what were "moments" are board overlays
+      everywhere: the settings ("Show board overlays", "Close overlays after"), the code (`BoardOverlays.jsx`,
+      `useOverlays`, `OverlayView`, `overlay-*` classes and keyframes, `data-board-overlay`, the `board-overlays:`
+      session key) and the dev board ("Show an overlay…", `overlayExamples`). "Moments" read like replay
+      highlights. "Animate the game board", "Show board overlays" and "Close overlays after" have a section of their
+      own, "Board effects", tagged Experimental as a whole (they were in Game board). Experimental tags sit at the
+      right end of their title's line (a tile's top right corner, a section's heading), so they never squeeze the
+      title, which on a phone they had.
+- [x] **R229 Cards and interface size apart (decided 2026-11-21)**: fitted, the adaptive board sized its cards to
+      the room the prompt and stats left at the interface's size, so a larger interface drew smaller cards. The
+      cards are now fitted as though the interface were normal (`adaptiveScales`), and the board scrolls for what a
+      larger interface takes. `adaptiveScales` also says whether the cards' rows fit the board's height as drawn
+      (`fits`, from `cardRoom`), and which size is to blame (`overflow`): the cards when they would not fit even beside
+      a normal interface, otherwise the interface. Only the slider to blame shows its notice at its top (R246), for the size being tried. On a phone held upright the fit fills the height, so any interface
+      above normal says so; on a desktop the cards stop at their cap with room to spare.
 - [x] **R206 A chip's glow is not cut off (decided 2026-11-20)**: the chips' row is padded (and pulled back by as
       much) so a breathing chip at either end, or along its top and bottom, has room for its glow.
 - [x] **R207 A pile with cards to choose breathes (decided 2026-11-20)**: on the board a pile whose cards can be
@@ -931,6 +1035,51 @@ From the review on 2026-11-20 (second batch):
       place moves while in the air is steered to the new place for the rest of its flight (or over 200ms once landed).
       Sampled each frame while drawing 7 (desktop and portrait, the "Draw 7" fixture step): no card jumps after it
       lands.
+- [x] **R246 The size notice says it is the height**: the board can always scroll sideways for a long row, so the
+      notice is about the rows: "Card rows may not fit the height of the screen, so the board would scroll up
+      and down. Lower this size to avoid it."
+- [x] **R247 The melee view toggle says its mode**: the four-way arrows (manual) did not say what they did. The
+      toggle is now a small pill with the camera and a word: "Auto" (sky) while it follows the action, "Free"
+      (amber) while you move the view yourself.
+- [x] **R248 (superseded by R251) The melee tools no longer cover the stats in the bottom-right corner (2026-11-21)**: a bottom board's
+      stats bar left room for our tools at its end, but a board running on past the view had that end off-screen, so
+      the tools pinned to the view's corner covered its name, power and gold. Each seat bar (not in portrait, R250) now keeps to the part of
+      its board in view (--seat-view-width, set as the board scrolls or resizes), and the room for the tools no longer
+      shrinks (its stats scroll inside the bar instead). Lengths on the bar are divided by --ui-scale, as it is zoomed.
+      Only with a sliver of a board in view (under ~120px) does its avatar still sit under the tools.
+- [x] **R249 A melee table's stats bars are the joust's (2026-11-21)**: one EdgeStatsBar draws the stats along the top
+      or bottom of the board at either table (not on phones). Melee's were padded taller with the avatar centred; now
+      they are the joust's slim band, the avatar standing proud of it towards the board, and still stick to their
+      board's edge and are tinted while waited on. Our tools at a melee table (not portrait) lie on the band in the
+      view's corner as the joust bar's do (Auto / Free, the menu, the chat outermost) rather than in a box.
+- [x] **R250 Portrait melee stats slide off the screen, under fading tools (2026-11-21)**: R248 made each seat's
+      stats keep to the part of its board in view, but in portrait they are a card fitted to its width, so it shrank as
+      its board scrolled away. Portrait keeps the full width again, so the card slides off whole. The tools pinned to the
+      corner lie over a card passing under them on a near-black box whose left side fades out (no border), so a stat
+      half under it fades rather than being cut.
+- [x] **R251 One stats bar for every layout but the sideways phone, sticking by CSS alone (2026-11-21)**: phones
+      held upright now have the desktop's bars (EdgeStatsBar) at both tables, running to the screen's edges; the
+      sideways phone keeps its stats cards over the cards. At a melee table the band runs its board's width and the stats
+      in it are only as wide as they are, sticking to the view's left (position: sticky) until their board's end takes
+      them off, as the sideways phone's cards do. This replaces R248's widths set on every scroll, which lagged behind
+      the scrolling and left the bar a little off screen. Our tools lie on the band in the corner in every melee layout
+      (but sideways), on a black box whose left side fades out hard over 20px (R250's softer, see-through fade is gone),
+      so stats passing under it fade into it; along the bottom the stats keep clear of the tools (max width).
+- [x] **R252 Many spectators, on any screen (2026-11-21)**: the game menu's "Spectators: N" row (phones, and desktop
+      melee, where the bar has no spectators button) named everyone on one truncated line, with no way to see the rest.
+      It now says "Ann, Bob and 38 more" with a chevron, and opens a sheet (rising from the bottom on a phone, centred on
+      a larger screen) listing everyone, scrolling inside it, with a search from 10 spectators and a Mute / Un-mute for
+      players. The desktop bar's popover uses the same list (and search). Its names had been squashed to nothing once
+      the list was long enough to scroll (truncate let them shrink). The dev board's Crowd toggle (&crowd=1) adds 60.
+- [x] **R253 The waited-on tint reaches the strip and our hand (2026-11-21)**: a melee board is tinted sky while its
+      player is waited on, but the strip (plots, agenda, hand, piles) and our hand tray lay 40% black over it, which all
+      but hid it there. They now lay the same tint again over their darkness (a background image above their colour),
+      so they stay as much darker than the play area as when the board is not tinted.
+- [x] **R254 No blue buttons on the adaptive board (2026-11-21)**: the card, trait and value lookups (shared with the
+      classic board) had a blue Done; on the adaptive board it is now the prompt's amber option (chipClass, moved to its
+      own module so the shared lookups can use it without importing the prompt bar). Every other button on the board was
+      already amber, grey or neutral; CardPile's blue actions are only for the classic board's popups. The dev board
+      seeds the card list from its scenario, so "Name a card" shows its lookup rather than "Loading cards…".
 - [x] **R234 Tokens are in the middle of the card again, and their changes stand out**: the +x / −x that floats off a
       counter is a larger bold pill, green or red, and stays a little longer (both boards).
 

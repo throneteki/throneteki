@@ -93,9 +93,10 @@ body {
     }
 }
 
-[data-rescaling] *,
-[data-rescaling] *::before,
-[data-rescaling] *::after,
+/* A rescale stills the board, not an overlay playing over it */
+[data-rescaling] *:not(.overlay-root, .overlay-root *),
+[data-rescaling] *:not(.overlay-root, .overlay-root *)::before,
+[data-rescaling] *:not(.overlay-root, .overlay-root *)::after,
 [data-motion='off'] *,
 [data-motion='off'] *::before,
 [data-motion='off'] *::after {
@@ -270,7 +271,8 @@ html.card-dragging * {
         left: 0;
         right: 0;
         top: 0;
-        z-index: 300;
+        /* Over the board's overlays, which never cover the chat */
+        z-index: 360;
         width: auto;
         height: 0;
     }
@@ -590,5 +592,298 @@ html.card-dragging.card-drop-refused * {
     .preview-cards,
     .preview-interface {
         transition: none;
+    }
+}
+
+/* The board's overlays: what comes in, stamps down as one opens, and the Continue button's fill as its time
+   runs out. The fill keeps going with motion off, as it shows when the overlay will continue. */
+.overlay-dim {
+    animation: overlay-fade 300ms ease-out both;
+}
+.overlay-stamp {
+    animation: overlay-stamp 520ms cubic-bezier(0.3, 1.8, 0.5, 1) 450ms both;
+}
+.overlay-text {
+    animation: overlay-fade 350ms ease-out 350ms both;
+}
+.overlay-leaving .overlay-text,
+.overlay-leaving .overlay-after,
+.overlay-leaving .overlay-pop {
+    opacity: 0;
+    transition: opacity 200ms;
+    animation: none;
+}
+/* A choice put aside to look at the board: all but the button that brings it back fades away and lets the board be used.
+   Wrappers fade, as the parts' own entrance animations hold their opacity. */
+.overlay-away {
+    transition: opacity 250ms ease-out;
+}
+.overlay-aside .overlay-away {
+    opacity: 0;
+}
+.overlay-aside .overlay-away,
+.overlay-aside .overlay-away *,
+.overlay-gone,
+.overlay-gone * {
+    pointer-events: none !important;
+}
+[data-motion='off'] .overlay-dim,
+[data-motion='off'] .overlay-stamp,
+[data-motion='off'] .overlay-text {
+    animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    .overlay-dim,
+    .overlay-stamp,
+    .overlay-text {
+        animation: none;
+    }
+}
+@keyframes overlay-timer {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}
+@keyframes overlay-stamp {
+    from {
+        opacity: 0;
+        scale: 2.4;
+    }
+}
+@keyframes overlay-fade {
+    from {
+        opacity: 0;
+    }
+}
+.overlay-root {
+    animation: overlay-fade 250ms ease-out backwards;
+}
+/* The eliminated player's seal comes down hard, the cards jolt under it and go grey. Their resting state is the
+   seal down and the cards grey, so with motion off that is what shows. */
+.overlay-seal {
+    animation: overlay-seal 560ms 750ms both;
+}
+.overlay-thud {
+    animation: overlay-thud 300ms ease-out 1120ms both;
+}
+.overlay-ashen {
+    filter: grayscale(1) brightness(0.7);
+    animation: overlay-ashen 600ms ease-out 1120ms both;
+}
+@keyframes overlay-seal {
+    0% {
+        opacity: 0;
+        scale: 3.2;
+        animation-timing-function: cubic-bezier(0.55, 0, 0.9, 0.4);
+    }
+    66% {
+        opacity: 1;
+        scale: 0.9;
+        animation-timing-function: ease-out;
+    }
+    100% {
+        opacity: 1;
+        scale: 1;
+    }
+}
+@keyframes overlay-thud {
+    0% {
+        translate: 0 0;
+    }
+    30% {
+        translate: 0 0.35rem;
+        scale: 0.97;
+    }
+    65% {
+        translate: 0 -0.1rem;
+    }
+    100% {
+        translate: 0 0;
+    }
+}
+@keyframes overlay-ashen {
+    from {
+        filter: none;
+    }
+}
+[data-motion='off'] .overlay-seal,
+[data-motion='off'] .overlay-thud,
+[data-motion='off'] .overlay-ashen {
+    animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    .overlay-seal,
+    .overlay-thud,
+    .overlay-ashen {
+        animation: none;
+    }
+}
+/* Once an overlay's cards have landed, the board shows its own again in their place */
+.overlay-landed [data-fly] {
+    visibility: hidden;
+}
+[data-motion='off'] .overlay-root {
+    animation: none;
+}
+
+/* The overlays' table. Cards are tossed onto it: from off its left or right edge, each player's from one side,
+   turning as they come, high above it (a wide soft shadow) until they land with a little give. What
+   is written about them comes after they land. Each card's start (--toss-x, --toss-y, --toss-r) is set as it is
+   drawn (BoardOverlays' useToss). With motion off everything is simply in place. */
+.overlay-toss {
+    animation: overlay-toss 620ms var(--toss-delay, 0ms) both;
+}
+@keyframes overlay-toss {
+    0% {
+        opacity: 0;
+        translate: var(--toss-x, 0) var(--toss-y, 40vh);
+        rotate: var(--toss-r, 0deg);
+        scale: 1.3;
+        filter: drop-shadow(0 2.5rem 1.25rem rgba(0, 0, 0, 0.5));
+        animation-timing-function: cubic-bezier(0.2, 0.65, 0.35, 1);
+    }
+    10% {
+        opacity: 1;
+    }
+    76% {
+        translate: 0 0;
+        rotate: 0deg;
+        scale: 0.95;
+        filter: drop-shadow(0 0.2rem 0.3rem rgba(0, 0, 0, 0.7));
+        animation-timing-function: ease-out;
+    }
+    100% {
+        opacity: 1;
+        translate: 0 0;
+        rotate: 0deg;
+        scale: 1;
+        filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
+    }
+}
+.overlay-after {
+    animation: overlay-after 420ms ease-out var(--after-delay, 600ms) both;
+}
+@keyframes overlay-after {
+    from {
+        opacity: 0;
+        translate: 0 0.5rem;
+    }
+}
+.overlay-pop {
+    animation: overlay-pop 380ms cubic-bezier(0.3, 1.8, 0.5, 1) var(--after-delay, 600ms) both;
+}
+@keyframes overlay-pop {
+    from {
+        opacity: 0;
+        scale: 0.4;
+    }
+}
+/* A card turned face up where it lies */
+.overlay-flip {
+    transform-style: preserve-3d;
+    animation: overlay-flip 560ms cubic-bezier(0.3, 1.35, 0.5, 1) var(--flip-delay, 500ms) both;
+}
+.overlay-flip-face {
+    backface-visibility: hidden;
+}
+.overlay-flip-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    transform: rotateY(180deg);
+}
+@keyframes overlay-flip {
+    0% {
+        transform: perspective(60rem) rotateY(180deg);
+    }
+    45% {
+        transform: perspective(60rem) rotateY(90deg) scale(1.08);
+    }
+    100% {
+        transform: perspective(60rem) rotateY(0deg);
+    }
+}
+/* A bar filling to its value */
+.overlay-grow {
+    transform-origin: left;
+    animation: overlay-timer 800ms cubic-bezier(0.2, 0.8, 0.3, 1) var(--after-delay, 600ms) both;
+}
+/* The table jolting, and a flash of red, as the elimination's seal comes down */
+.overlay-quake {
+    animation: overlay-quake 380ms ease-out 1120ms both;
+}
+@keyframes overlay-quake {
+    0%,
+    100% {
+        translate: 0 0;
+    }
+    15% {
+        translate: -0.4rem 0.3rem;
+    }
+    35% {
+        translate: 0.35rem -0.2rem;
+    }
+    55% {
+        translate: -0.2rem 0.15rem;
+    }
+    75% {
+        translate: 0.1rem 0;
+    }
+}
+.overlay-flash {
+    opacity: 0;
+    animation: overlay-flash 700ms ease-out 1120ms both;
+}
+@keyframes overlay-flash {
+    0% {
+        opacity: 0;
+    }
+    12% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+/* Light turning slowly behind the winner */
+.overlay-rays {
+    background: repeating-conic-gradient(
+        from 0deg,
+        rgba(242, 184, 75, 0.22) 0deg 8deg,
+        transparent 8deg 24deg
+    );
+    mask-image: radial-gradient(circle, #000 15%, transparent 68%);
+    animation:
+        overlay-fade 900ms ease-out var(--after-delay, 700ms) both,
+        overlay-spin 24s linear infinite;
+}
+@keyframes overlay-spin {
+    to {
+        rotate: 360deg;
+    }
+}
+[data-motion='off'] .overlay-toss,
+[data-motion='off'] .overlay-after,
+[data-motion='off'] .overlay-pop,
+[data-motion='off'] .overlay-flip,
+[data-motion='off'] .overlay-grow,
+[data-motion='off'] .overlay-quake,
+[data-motion='off'] .overlay-flash,
+[data-motion='off'] .overlay-rays {
+    animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    .overlay-toss,
+    .overlay-after,
+    .overlay-pop,
+    .overlay-flip,
+    .overlay-grow,
+    .overlay-quake,
+    .overlay-flash,
+    .overlay-rays {
+        animation: none;
     }
 }

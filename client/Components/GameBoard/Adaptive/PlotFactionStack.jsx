@@ -104,6 +104,7 @@ const PlotFactionStack = ({ player, isMe, side, onCardClick, pileProps, droppabl
                         <Card
                             card={player.title}
                             source='title'
+                            flip
                             onClick={onCardClick}
                             orientation='vertical'
                         />

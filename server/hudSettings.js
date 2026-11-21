@@ -23,10 +23,14 @@ export function sanitizeHud(hud) {
         result.promptSide = hud.promptSide;
     }
 
-    for (const key of ['auto', 'animations']) {
+    for (const key of ['auto', 'animations', 'overlays']) {
         if (typeof hud[key] === 'boolean') {
             result[key] = hud[key];
         }
+    }
+
+    if (Number.isInteger(hud.overlayTimer) && hud.overlayTimer >= 1 && hud.overlayTimer <= 10) {
+        result.overlayTimer = hud.overlayTimer;
     }
 
     return Object.keys(result).length > 0 ? result : undefined;

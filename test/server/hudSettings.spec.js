@@ -32,4 +32,13 @@ describe('sanitizeHud', function () {
         expect(sanitizeHud({ promptSide: 'left' })).toEqual({ promptSide: 'left' });
         expect(sanitizeHud({ promptSide: 'middle' })).toBeUndefined();
     });
+
+    it('keeps the overlays switch and a timer of whole seconds from 1 to 10', function () {
+        expect(sanitizeHud({ overlays: false, overlayTimer: 5 })).toEqual({
+            overlays: false,
+            overlayTimer: 5
+        });
+        expect(sanitizeHud({ overlays: 'no', overlayTimer: 12 })).toBeUndefined();
+        expect(sanitizeHud({ overlayTimer: 1.5, cards: 'small' })).toEqual({ cards: 'small' });
+    });
 });

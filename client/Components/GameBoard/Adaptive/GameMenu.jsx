@@ -18,6 +18,7 @@ import {
     faBars,
     faBug,
     faCheckCircle,
+    faChevronRight,
     faCogs,
     faEye,
     faEyeSlash,
@@ -29,6 +30,7 @@ import {
     faWrench
 } from '@fortawesome/free-solid-svg-icons';
 import ConfirmDialog from '../../Site/ConfirmDialog';
+import { SpectatorList, SpectatorSheet, spectatorPreview } from './SpectatorList';
 import ReportProblemModal from '../ReportProblemModal';
 import {
     sendCancelProblemReportMessage,
@@ -49,25 +51,6 @@ const GroupGap = () => (
     <span aria-hidden className='mx-1 my-2 w-px shrink-0 self-stretch bg-default-200/40' />
 );
 
-const SpectatorList = ({ spectators }) => (
-    <div className='flex min-w-[10rem] flex-col gap-1 text-small'>
-        <div className='flex items-center gap-2 font-semibold'>
-            <FontAwesomeIcon icon={faUsers} className='w-4' />
-            {`Spectators (${spectators.length})`}
-        </div>
-        {spectators.length > 0 ? (
-            <ul className='flex max-h-60 flex-col gap-0.5 overflow-y-auto'>
-                {spectators.map((spectator) => (
-                    <li key={spectator.id ?? spectator.name} className='truncate text-default-600'>
-                        {spectator.name}
-                    </li>
-                ))}
-            </ul>
-        ) : (
-            <span className='text-default-500'>No one is watching</span>
-        )}
-    </div>
-);
 // Which items keep their place in the bar first when not all of them fit
 const priority = [
     'settings',
@@ -92,6 +75,7 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
     const user = useSelector((state) => state.auth.user);
     const [confirmingLeave, setConfirmingLeave] = useState(false);
     const [reporting, setReporting] = useState(false);
+    const [watching, setWatching] = useState(false);
     const manualMode = !!currentGame?.manualMode;
     const muted = !!currentGame?.muteSpectators;
     const server = useSelector((state) => state.game);
@@ -112,8 +96,7 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
         dispatch(sendLeaveGameMessage());
     };
 
-    const spectatorNames =
-        spectators.length > 0 ? spectators.map((spectator) => spectator.name).join(', ') : 'None';
+    const spectatorNames = spectatorPreview(spectators);
 
     // In the bar's order, in groups: who is watching, the game's tools, then the ways out. In the bar only the ways
     // out are named; the rest are icons. Spectators is only a button in the bar; in the menu it is part of the status.
@@ -216,7 +199,8 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
             label: `Spectators: ${spectators.length}`,
             glyph: faUsers,
             description: spectatorNames,
-            tone: newSpectators ? 'text-warning' : undefined
+            tone: newSpectators ? 'text-warning' : undefined,
+            opens: true
         }
     ];
 
@@ -413,12 +397,25 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
                             )}
                         </Button>
                     </DropdownTrigger>
-                    <DropdownMenu aria-label='Game menu' onAction={run}>
+                    <DropdownMenu
+                        aria-label='Game menu'
+                        onAction={(key) =>
+                            key === 'spectators-status' ? setWatching(true) : run(key)
+                        }
+                    >
                         <DropdownSection showDivider>
                             {status.map((item) => (
                                 <DropdownItem
                                     key={item.key}
-                                    isReadOnly
+                                    isReadOnly={!item.opens}
+                                    endContent={
+                                        item.opens ? (
+                                            <FontAwesomeIcon
+                                                icon={faChevronRight}
+                                                className='text-tiny text-default-400'
+                                            />
+                                        ) : undefined
+                                    }
                                     startContent={
                                         <FontAwesomeIcon
                                             icon={item.glyph}
@@ -426,7 +423,10 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
                                         />
                                     }
                                     description={item.description}
-                                    className={classNames('cursor-default', item.tone)}
+                                    className={classNames(
+                                        { 'cursor-default': !item.opens },
+                                        item.tone
+                                    )}
                                 >
                                     {item.label}
                                 </DropdownItem>
@@ -443,6 +443,15 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
                     </DropdownMenu>
                 </Dropdown>
             )}
+            <SpectatorSheet
+                isOpen={watching}
+                onOpenChange={setWatching}
+                spectators={spectators}
+                muted={muted}
+                onToggleMute={
+                    isPlaying ? () => dispatch(sendToggleMuteSpectatorsMessage()) : undefined
+                }
+            />
             <ConfirmDialog
                 isOpen={confirmingLeave}
                 message='Your game is not finished, and you will automatically concede when leaving. Are you sure you want to leave?'

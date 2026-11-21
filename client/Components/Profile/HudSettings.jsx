@@ -6,12 +6,15 @@ import CardImage from '../Images/CardImage';
 import PlayerStats from '../GameBoard/Classic/PlayerStats';
 import PlayerStatsBar from '../GameBoard/Adaptive/PlayerStatsBar';
 import PhaseRoll from '../GameBoard/Adaptive/PhaseRoll';
-import { chipClass } from '../GameBoard/Adaptive/PromptBar';
+import { chipClass } from '../GameBoard/Adaptive/chipClass';
 import SettingsGroup, { tileClassNames } from './SettingsGroup';
 import SettingSwitch from './SettingSwitch';
 import { useBrowserReducedMotion } from '../../motion';
 import { motion } from 'framer-motion';
-import { resolveHudSize } from '../../hud';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { overlaySettingsOf, overlayTimerLimits, resolveHudSize } from '../../hud';
+import SettingReveal from './SettingReveal';
 import { interfaceScaleProperties } from '../GameBoard/useHudScale';
 import { boardMeasure, boardScales, estimateBoardMeasure } from '../GameBoard/boardScales';
 
@@ -154,7 +157,7 @@ const stepMarks = (sizes, scale) =>
 
 // The slider moves freely while dragged, and the size is only changed once it is let go, so a game is not refitted
 // (and sent to the server) at every step. Fixed, it steps between named sizes; fitted, it scales the fit smoothly.
-const SizeSlider = ({ kind, label, description, value, fixed, onChange, preview }) => {
+const SizeSlider = ({ kind, label, description, value, fixed, onChange, wontFit, preview }) => {
     const { min, max } = sliderRanges[kind];
     const sizes = fixedSizes[kind];
     const saved = resolveHudSize(kind, value);
@@ -187,6 +190,7 @@ const SizeSlider = ({ kind, label, description, value, fixed, onChange, preview 
 
     return (
         <div className='flex min-w-0 flex-col gap-2'>
+            <WontFit show={wontFit(shown)} />
             <div className='flex items-start justify-between gap-2'>
                 <div className='flex flex-col gap-0.5'>
                     <span className='text-medium'>{label}</span>
@@ -225,10 +229,77 @@ const SizeSlider = ({ kind, label, description, value, fixed, onChange, preview 
     );
 };
 
+// Said at the top of a size's slider while the size being tried is what would leave the cards more than the board's
+// height, so the board scrolls
+const WontFit = ({ show }) => (
+    <SettingReveal show={show}>
+        <div
+            role='status'
+            className='flex items-center gap-2 rounded-medium border border-warning-400/40 bg-warning-400/10 px-3 py-1.5 text-small text-warning-300'
+        >
+            <FontAwesomeIcon icon={faExclamationTriangle} className='shrink-0' />
+            <span>
+                Card rows may not fit the height of the screen, so the board would scroll up and
+                down. Lower this size to avoid it.
+            </span>
+        </div>
+    </SettingReveal>
+);
+
+// How long the overlays that close by themselves stay, in whole seconds; changed when the slider is let go
+const OverlayTimer = ({ seconds, onChange }) => {
+    const [draft, setDraft] = useState(null);
+    const shown = draft ?? seconds;
+    const secondsOf = (next) => (Array.isArray(next) ? next[0] : next);
+    return (
+        <div className='flex flex-col gap-2 border-t border-default-100 px-3 py-2.5'>
+            <div className='flex items-start justify-between gap-2'>
+                <div className='flex flex-col gap-0.5'>
+                    <span className='text-medium'>Close overlays after</span>
+                    <span className='text-small text-default-500'>
+                        Overlays during the game close by themselves after this long.
+                    </span>
+                </div>
+                <span className='shrink-0 text-small tabular-nums'>{shown}s</span>
+            </div>
+            <Slider
+                aria-label='Seconds before an overlay closes'
+                size='sm'
+                step={1}
+                minValue={overlayTimerLimits.min}
+                maxValue={overlayTimerLimits.max}
+                value={shown}
+                hideValue
+                onChange={(next) => setDraft(secondsOf(next))}
+                onChangeEnd={(next) => {
+                    setDraft(null);
+                    onChange(secondsOf(next));
+                }}
+            />
+        </div>
+    );
+};
+
+const experimentalChip = (
+    <Chip size='sm' color='warning' variant='flat' className='shrink-0'>
+        Experimental
+    </Chip>
+);
+
+// A choice still being tried out, tagged at the right end of its title's line (a tile's top right corner) so the
+// title keeps the line
+const Experimental = ({ children }) => (
+    <span className='flex w-full items-start justify-between gap-2'>
+        <span className='min-w-0'>{children}</span>
+        {experimentalChip}
+    </span>
+);
+
 // The board's own settings, shared by the profile and the game (inGame), where the previews are sized against the
 // board in play
 const HudSettings = ({ value, onChange, inGame = false }) => {
     const update = (changes) => onChange && onChange({ ...value, ...changes });
+    const overlays = overlaySettingsOf(value);
     const reducedMotion = useBrowserReducedMotion();
     const screen = useScreen();
     const scalesFor = (kind, scale) =>
@@ -256,12 +327,7 @@ const HudSettings = ({ value, onChange, inGame = false }) => {
                             description='Rearranges itself to suit any screen: a phone or tablet in portrait or landscape, or a desktop.'
                             classNames={describedTileClassNames}
                         >
-                            <span className='flex items-center gap-2'>
-                                Adaptive
-                                <Chip size='sm' color='warning' variant='flat'>
-                                    Experimental
-                                </Chip>
-                            </span>
+                            <Experimental>Adaptive</Experimental>
                         </Radio>
                     </RadioGroup>
                 </Choice>
@@ -283,6 +349,12 @@ const HudSettings = ({ value, onChange, inGame = false }) => {
                         </Radio>
                     </RadioGroup>
                 </Choice>
+            </SettingsGroup>
+            <SettingsGroup
+                title='Board effects'
+                description='Touches that make the game feel more alive. They change only how it looks: turning them off takes nothing away from how you play.'
+                badge={experimentalChip}
+            >
                 <SettingSwitch
                     label='Animate the game board'
                     description={
@@ -293,6 +365,20 @@ const HudSettings = ({ value, onChange, inGame = false }) => {
                     isSelected={value.animations !== false}
                     onValueChange={(animations) => update({ animations })}
                 />
+                <SettingReveal show={value.board === 'adaptive'}>
+                    <SettingSwitch
+                        label='Show board overlays'
+                        description='Key moments and selections during the game play out over the board.'
+                        isSelected={overlays.enabled}
+                        onValueChange={(enabled) => update({ overlays: enabled })}
+                    />
+                    <SettingReveal show={overlays.enabled}>
+                        <OverlayTimer
+                            seconds={overlays.seconds}
+                            onChange={(overlayTimer) => update({ overlayTimer })}
+                        />
+                    </SettingReveal>
+                </SettingReveal>
             </SettingsGroup>
             <SettingsGroup
                 title='Sizes'
@@ -317,12 +403,7 @@ const HudSettings = ({ value, onChange, inGame = false }) => {
                             description='Sized to your screen; the sliders scale the fit.'
                             classNames={describedTileClassNames}
                         >
-                            <span className='flex items-center gap-2'>
-                                Fit to screen
-                                <Chip size='sm' color='warning' variant='flat'>
-                                    Experimental
-                                </Chip>
-                            </span>
+                            <Experimental>Fit to screen</Experimental>
                         </Radio>
                     </RadioGroup>
                 </Choice>
@@ -334,6 +415,7 @@ const HudSettings = ({ value, onChange, inGame = false }) => {
                         value={value.cards}
                         fixed={!value.auto}
                         onChange={(cards) => update({ cards })}
+                        wontFit={(scale) => scalesFor('cards', scale).overflow === 'cards'}
                         preview={(scale) => (
                             <PreviewBox
                                 kind='cards'
@@ -350,6 +432,7 @@ const HudSettings = ({ value, onChange, inGame = false }) => {
                         value={value.interface}
                         fixed={!value.auto}
                         onChange={(size) => update({ interface: size })}
+                        wontFit={(scale) => scalesFor('interface', scale).overflow === 'interface'}
                         preview={(scale) => (
                             <PreviewBox
                                 kind='interface'

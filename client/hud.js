@@ -9,6 +9,17 @@ const hudSizeNames = ['small', 'normal', 'large'];
 const boardLayouts = ['classic', 'adaptive'];
 const promptSides = ['left', 'right'];
 
+// The board's overlays (the start, plots revealed, game over and the like) show unless turned off. Those that close by
+// themselves do so after overlayTimer seconds. Both are left out of the settings until changed.
+export const overlayTimerLimits = { min: 1, max: 10 };
+export const defaultOverlayTimer = 3;
+export const isOverlayTimer = (value) =>
+    Number.isInteger(value) && value >= overlayTimerLimits.min && value <= overlayTimerLimits.max;
+export const overlaySettingsOf = (hud) => ({
+    enabled: hud?.overlays !== false,
+    seconds: isOverlayTimer(hud?.overlayTimer) ? hud.overlayTimer : defaultOverlayTimer
+});
+
 // The prompt sits on the left unless the player chose the right
 export const promptSideOf = (hud) => (hud?.promptSide === 'right' ? 'right' : 'left');
 
@@ -81,10 +92,13 @@ export const normalizeHud = (settings) => {
         if (interfaceSize) {
             result.interface = String(interfaceSize);
         }
-        for (const key of ['auto', 'animations']) {
+        for (const key of ['auto', 'animations', 'overlays']) {
             if (typeof hud[key] === 'boolean') {
                 result[key] = hud[key];
             }
+        }
+        if (isOverlayTimer(hud.overlayTimer)) {
+            result.overlayTimer = hud.overlayTimer;
         }
         if (boardLayouts.includes(hud.board)) {
             result.board = hud.board;

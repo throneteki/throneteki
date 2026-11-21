@@ -7,10 +7,14 @@ export const tileClassNames = {
     labelWrapper: 'ms-0 min-w-0 flex-1'
 };
 
-const SettingsGroup = ({ title, description, className, children }) => (
+// A badge, such as Experimental, sits at the right end of the title's line
+const SettingsGroup = ({ title, description, badge, className, children }) => (
     <section className='flex flex-col gap-2'>
         <div>
-            <h2 className='text-medium font-bold'>{title}</h2>
+            <div className='flex items-start justify-between gap-2'>
+                <h2 className='min-w-0 text-medium font-bold'>{title}</h2>
+                {badge}
+            </div>
             {description && <p className='text-small text-default-500'>{description}</p>}
         </div>
         <div

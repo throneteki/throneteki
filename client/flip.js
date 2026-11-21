@@ -268,7 +268,14 @@ export const planFlip = ({
             continue;
         }
         if (!origin) {
-            plan.push({ type: 'fade', uuid, el: now.el, travel: true, toSource: now.source });
+            plan.push({
+                type: 'fade',
+                uuid,
+                el: now.el,
+                travel: true,
+                now: { left: now.left, top: now.top },
+                toSource: now.source
+            });
             continue;
         }
 
@@ -476,6 +483,13 @@ let pending = null;
 let ignored = null;
 let dropOrigin = null;
 const piles = new Map();
+
+// Cards a board overlay is about to show and put in place itself (the plots it reveals): the board leaves their next
+// move to the overlay
+const claimed = new Set();
+export const claimFlights = (uuids) => {
+    uuids.forEach((uuid) => claimed.add(uuid));
+};
 
 export const setFlipIgnored = (uuid) => {
     ignored = uuid;
@@ -1131,6 +1145,8 @@ const steerFlights = (flying, after) => {
 export const playPendingFlip = (root = document) => {
     const before = pending;
     pending = null;
+    const taken = [...claimed];
+    claimed.clear();
     if (!before || motionOff()) {
         return;
     }
@@ -1150,7 +1166,7 @@ export const playPendingFlip = (root = document) => {
         landInPopup = null;
     }
     steerFlights(flying, after);
-    for (const uuid of [ignored, ...flying]) {
+    for (const uuid of [ignored, ...flying, ...taken]) {
         before.delete(uuid);
         after.delete(uuid);
     }

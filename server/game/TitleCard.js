@@ -41,7 +41,9 @@ class TitleCard extends BaseCard {
     getSummary(activePlayer) {
         return {
             ...super.getSummary(activePlayer),
-            isContributing: this.isContributing
+            isContributing: this.isContributing,
+            rivals: this.rivalNames,
+            supports: this.supporterNames
         };
     }
 }

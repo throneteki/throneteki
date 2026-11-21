@@ -208,7 +208,8 @@ const fitScales = (
     return {
         card: scale,
         pile: toStep(Math.max(pile, absoluteMin)),
-        hand: toStep(Math.max(scale * budget.handRatio, absoluteMin))
+        hand: toStep(Math.max(scale * budget.handRatio, absoluteMin)),
+        room: heightFit
     };
 };
 
@@ -250,6 +251,10 @@ export const effectiveCardsSize = (cardsSize = 1, { width, height } = {}) => {
     const growth = phoneGrowth + (1 - phoneGrowth) * along;
     return 1 + (cardsSize - 1) * growth;
 };
+
+// The largest card scale whose rows fit the board's height without scrolling, with the prompt and stats drawn at
+// interfaceScale
+export const cardRoom = (options) => fitScales({ ...options, cardsSize: 1 }).room;
 
 // auto: fit the cards to the board, then apply the chosen size; off, the chosen size is the size, as on the
 // classic board

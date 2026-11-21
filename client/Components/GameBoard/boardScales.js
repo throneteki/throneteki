@@ -3,6 +3,7 @@ import { computeHudScales, computeScreenScale, resolveHudSize } from '../../hud'
 import { hidesNavbar } from '../../boardLayoutStore';
 import {
     adaptiveInterfaceScale,
+    cardRoom,
     classifyLayout,
     computeAdaptiveScales
 } from './Adaptive/adaptiveScale';
@@ -18,23 +19,37 @@ export const classicScales = (hud, { container, viewport, rem = 16, cardFit }) =
         screen: computeScreenScale(viewport)
     });
 
+// The cards are fitted as though the interface were its normal size, so the two sizes are chosen apart: a larger
+// interface leaves the cards less room than they were fitted to, and the board scrolls for the rest. fits says
+// whether the cards' rows fit the board's height as drawn, without scrolling, and overflow which size is to blame
+// when they do not: the cards, when they would not fit even beside a normal interface, otherwise the interface.
 export const adaptiveScales = (hud, { container, viewport, rem = 16, mode, content }) => {
     const layout = mode ?? classifyLayout(container);
-    const interfaceScale = computeHudScales({
-        hud,
-        screen: adaptiveInterfaceScale(layout, viewport)
-    }).interface;
-    const fitted = computeAdaptiveScales({
+    const screen = adaptiveInterfaceScale(layout, viewport);
+    const interfaceAt = (size) =>
+        computeHudScales({ hud: { ...hud, interface: size }, screen }).interface;
+    const interfaceScale = interfaceAt(hud.interface);
+    const options = {
         mode: layout,
         ...container,
         rem,
         widestRow: content?.widestRow ?? 0,
         stripExtra: content?.stripExtra ?? 0,
         cardsSize: resolveHudSize('cards', hud.cards),
-        auto: hud.auto !== false,
-        interfaceScale
-    });
-    return { cards: fitted.card, pile: fitted.pile, hand: fitted.hand, interface: interfaceScale };
+        auto: hud.auto !== false
+    };
+    const normalInterface = interfaceAt('normal');
+    const fitted = computeAdaptiveScales({ ...options, interfaceScale: normalInterface });
+    const fits = fitted.card <= cardRoom({ ...options, interfaceScale });
+    const cardsTooLarge = fitted.card > cardRoom({ ...options, interfaceScale: normalInterface });
+    return {
+        cards: fitted.card,
+        pile: fitted.pile,
+        hand: fitted.hand,
+        interface: interfaceScale,
+        fits,
+        overflow: fits ? null : cardsTooLarge ? 'cards' : 'interface'
+    };
 };
 
 export const boardScales = (hud, measure) =>
