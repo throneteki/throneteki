@@ -1,4 +1,5 @@
 import { io } from 'socket.io-client';
+import { createNextState } from '@reduxjs/toolkit';
 
 import {
     gameConnected,
@@ -28,6 +29,7 @@ import {
     startGameConnecting
 } from '../reducers/game';
 import { receiveClearGameState, receiveGameState } from '../reducers/lobby';
+import { patchGameState } from '../../../shared/gameStateDiff';
 
 const GameEvent = Object.freeze({
     Connected: 'connect',
@@ -38,6 +40,8 @@ const GameEvent = Object.freeze({
 
 const GameMessage = Object.freeze({
     GameState: 'gamestate',
+    GameStateDiff: 'gamestatediff',
+    Resync: 'resync',
     ToggleKeywordSetting: 'toggleKeywordSetting',
     ToggleDupes: 'toggleDupes',
     TogglePromptedActionWindow: 'togglePromptedActionWindow',
@@ -62,6 +66,26 @@ const GameMessage = Object.freeze({
 
 const gameMiddleware = (store) => {
     let socket;
+    let gameState;
+    let resyncing = false;
+
+    const requestResync = () => {
+        gameState = undefined;
+        if (!resyncing) {
+            resyncing = true;
+            socket.emit(GameMessage.Resync);
+        }
+    };
+
+    const receiveState = (state) => {
+        gameState = state;
+        store.dispatch(
+            receiveGameState(
+                state,
+                store.getState().auth.user ? store.getState().auth.user.username : undefined
+            )
+        );
+    };
 
     return (next) => (action) => {
         const isConnectionEstablished = socket && store.getState().game.connected;
@@ -72,6 +96,9 @@ const gameMiddleware = (store) => {
                 socket.disconnect();
                 socket = null;
             }
+
+            gameState = undefined;
+            resyncing = false;
 
             socket = io(`${action.payload.url}`, {
                 path: `/${action.payload.name}/socket.io`,
@@ -89,6 +116,8 @@ const gameMiddleware = (store) => {
             });
 
             socket.on(GameEvent.Disconnected, () => {
+                gameState = undefined;
+                resyncing = false;
                 dispatch(gameDisconnected());
             });
 
@@ -101,16 +130,32 @@ const gameMiddleware = (store) => {
             });
 
             socket.on(GameMessage.ClearGameState, () => {
+                gameState = undefined;
                 dispatch(receiveClearGameState());
             });
 
-            socket.on(GameMessage.GameState, (game) => {
-                dispatch(
-                    receiveGameState(
-                        game,
-                        store.getState().auth.user ? store.getState().auth.user.username : undefined
-                    )
-                );
+            socket.on(GameMessage.GameState, (state) => {
+                resyncing = false;
+                receiveState(state);
+            });
+
+            socket.on(GameMessage.GameStateDiff, (delta) => {
+                if (!gameState) {
+                    requestResync();
+                    return;
+                }
+
+                let patched;
+                try {
+                    patched = createNextState(gameState, (draft) => {
+                        patchGameState(draft, delta);
+                    });
+                } catch {
+                    requestResync();
+                    return;
+                }
+
+                receiveState(patched);
             });
 
             setInterval(() => {
