@@ -57,6 +57,11 @@ class GameChat {
         });
     }
 
+    // Clients only show the formatted message; the structured one stays in the log for problem reports
+    getMessagesForClient(start = 0) {
+        return this.messages.slice(start).map(({ date, message }) => ({ date, message }));
+    }
+
     getStructuredMessage(message, args) {
         let argList = args.map((arg) => {
             if (arg instanceof Spectator) {
