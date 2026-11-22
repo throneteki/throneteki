@@ -18,7 +18,17 @@ const TagTypes = {
     AbuseBlock: 'AbuseBlock',
     ProblemReport: 'ProblemReport',
     DraftCube: 'DraftCube',
-    Banner: 'Banner'
+    Banner: 'Banner',
+    ThronesDbStatus: 'ThronesDbStatus',
+    ThronesDbDecks: 'ThronesDbDecks'
+};
+
+const refreshThronesDbStatusOnError = async (_arg, { dispatch, queryFulfilled }) => {
+    try {
+        await queryFulfilled;
+    } catch {
+        dispatch(apiSlice.util.invalidateTags([TagTypes.ThronesDbStatus]));
+    }
 };
 
 const baseQuery = fetchBaseQuery({
@@ -587,6 +597,44 @@ export const apiSlice = createApi({
                 body: { code }
             })
         }),
+        getThronesDbStatus: builder.query({
+            query: () => '/thronesdb/status',
+            providesTags: [TagTypes.ThronesDbStatus]
+        }),
+        getThronesDbAuthorizeUrl: builder.mutation({
+            query: (state) => ({ url: '/thronesdb/authorize-url', params: { state } })
+        }),
+        linkThronesDb: builder.mutation({
+            query: (code) => ({
+                url: '/thronesdb/link',
+                method: 'POST',
+                body: { code }
+            }),
+            invalidatesTags: [TagTypes.ThronesDbStatus, TagTypes.ThronesDbDecks]
+        }),
+        unlinkThronesDb: builder.mutation({
+            query: () => ({ url: '/thronesdb/unlink', method: 'POST' }),
+            invalidatesTags: [TagTypes.ThronesDbStatus, TagTypes.ThronesDbDecks]
+        }),
+        getThronesDbDecks: builder.query({
+            query: () => '/thronesdb/decks',
+            providesTags: [TagTypes.ThronesDbDecks],
+            onQueryStarted: refreshThronesDbStatusOnError
+        }),
+        importThronesDbDecks: builder.mutation({
+            query: (deckIds) => ({
+                url: '/thronesdb/decks',
+                method: 'POST',
+                body: { deckIds }
+            }),
+            invalidatesTags: [TagTypes.ThronesDbDecks, TagTypes.Deck],
+            onQueryStarted: refreshThronesDbStatusOnError
+        }),
+        syncThronesDbDecks: builder.mutation({
+            query: () => ({ url: '/thronesdb/sync', method: 'POST' }),
+            invalidatesTags: [TagTypes.ThronesDbDecks, TagTypes.Deck],
+            onQueryStarted: refreshThronesDbStatusOnError
+        }),
         getMonthlyStats: builder.query({
             query: (month) => ({ url: '/stats/monthly', params: { month } }),
             keepUnusedDataFor: 300
@@ -633,6 +681,13 @@ export const {
     useUploadBackgroundMutation,
     useRemoveBackgroundMutation,
     useUnlinkPatreonMutation,
+    useGetThronesDbStatusQuery,
+    useGetThronesDbAuthorizeUrlMutation,
+    useLinkThronesDbMutation,
+    useUnlinkThronesDbMutation,
+    useGetThronesDbDecksQuery,
+    useImportThronesDbDecksMutation,
+    useSyncThronesDbDecksMutation,
     useGetUserSessionsQuery,
     useRemoveSessionMutation,
     useGetBlockListQuery,
