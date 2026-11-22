@@ -61,6 +61,10 @@ An event window ([eventwindow.js](../server/game/gamesteps/eventwindow.js),
 4. When Revealed abilities;
 5. forced reactions, then reactions.
 
+If a card leaves play some other way while an event that affects it is still in its interrupt
+windows (killed as a cost while The Stranger is killing it, say), nothing more can interrupt that
+event for that card, and its handler does nothing.
+
 An interrupt that says "would" declares `would: true`; the engine does not read card text for it.
 [wouldInterrupts.spec.js](../test/server/tools/wouldInterrupts.spec.js) checks each declaration
 against the card text.
@@ -170,7 +174,13 @@ Text without a trigger has its own constructs:
   facedown and during setup, and cannot be cancelled.
 - **Terminal conditions** are burn and state checks. A save that could not remedy the condition
   is refused up front (FAQ 3.1): a burn kill can't be saved by a duplicate or Bodyguard. Risen from
-  the Sea is offered when its +1 STR would take the character above 0.
+  the Sea is offered when its +1 STR would take the character above 0, and Blood Magic Ritual when
+  the blank would (`getStrengthIfTextBoxBlank`, which leaves out the same effects a blank turns
+  off; it does not foresee other cards' effects that depend on the character's text).
+- **Burn** is enforced by `StateChecks.checkBurn` when a burning character's STR changes or a
+  challenge ends. A character is removed once each time it reaches 0 STR: it is not removed again
+  until it has been above 0 STR or lost the burn, so a save that remedied the condition stops
+  later removals tied to it (FAQ 3.1), and a character that cannot be killed stays at 0 STR.
 
 ## Challenges
 
@@ -202,7 +212,8 @@ Text without a trigger has its own constructs:
   returns it to hand, and placing a card only checks it fits the setup gold and the Limited count
   of what is already placed. The gold stat shows the player what will be left, and shows
   opponents 0. Done is refused while the cards cost more than the setup gold or an attachment has no eligible card of that player's to attach to (Rules Reference: Setup), unless
-  manual mode is on.
+  manual mode is on. Setup cards keep their printed values while facedown, so restrictions
+  such as printed STR are checked against them.
 - Only setup placements enter play facedown. Outside setup, a facedown card in play has no title,
   traits or faction of its own, only what the effect that placed it grants (Rules Reference:
   Facedown Cards); uniqueness checks for the card being played use its printed title. A facedown
@@ -240,7 +251,11 @@ cancel such as The Hand's Judgment.
   card, choosing attackers) leaves the opponent's prompt as it was, so it doesn't reveal which card
   or challenge is being considered
   ([menuprompt.js](../server/game/gamesteps/menuprompt.js) `beforeInitiation`, and the attacker
-  prompt in [challengeflow.js](../server/game/gamesteps/challenge/challengeflow.js)).
+  prompt in [challengeflow.js](../server/game/gamesteps/challenge/challengeflow.js)). While a
+  player confirms a card action that chooses targets, the cards it could choose are highlighted for
+  that player only, limited to cards they can see, so they know what it can affect before paying
+  its costs (`previewCards`, filled by `Game.getTargetPreview`). Actions whose choices depend on an
+  earlier choice, such as an opponent, show no preview.
 - "Don't ask again this phase" is offered whenever a window involves a card the player could hold
   in a hidden zone. Until the next phase they get no fake waits but are still asked whenever they
   hold a response, so their opponents can tell when they do. Players accept that in exchange for
@@ -257,12 +272,14 @@ cancel such as The Hand's Judgment.
   active player marshals on their turn; players who stop at the marshaling window are offered an
   action in player order, and the window closes only after every player passes in a row (Appendix
   I, 3.2).
-- **Before each challenge** is an action window
-  ([ChallengeActionWindow.js](../server/game/gamesteps/challenge/ChallengeActionWindow.js)), and it
-  is over before the challenge is chosen. Every other player who stops at the window has their turn
-  first, in player order. The active player's turn comes last and is choosing a challenge type, or
-  Done, which closes the window; they can take actions while choosing, and each action gives the
-  others who stop at the window another turn before they choose.
+- **Before each challenge** (Appendix I, between 4.1 and 4.2): when any player stops at the window,
+  it is an ordinary action window. The first player has the first opportunity, turns go round in
+  player order, and it closes when every player passes in a row. The active player then chooses a
+  challenge type or Done
+  ([ChallengeChoicePrompt.js](../server/game/gamesteps/challenge/ChallengeChoicePrompt.js)) and
+  cannot take actions while choosing. When nobody stops at the window, it is skipped and the active
+  player can take actions while choosing instead; the other players gave up their opportunity by
+  not stopping at it.
 - The "action outside a window" and "action during another player's turn" warnings can only appear
   in manual mode.
 
@@ -284,11 +301,31 @@ and argument snapshot beside the rendered text.
 
 ## Problem reports and scenarios
 
-`/cancel-prompt` and "report a problem" save a JSON snapshot (cards, zones, phase, log, challenge,
-pipeline) in PostgreSQL for 30 days. The scenario runner rebuilds the board, the phase, the
-challenges already made that phase, and a challenge in progress from the action window after
-attackers or defenders were declared, from a report ID or a spec
+A problem report is for working out what went wrong. Report Problem snapshots the game as soon as
+it is clicked, and the game node holds that snapshot until the player describes the problem; the
+report is only saved with a description, and cancelling discards it. `/cancel-prompt` saves one
+without a description before clearing the prompt. Reports are kept in PostgreSQL for 30 days. The snapshot
+([ProblemReport.js](../server/game/ProblemReport.js)) holds:
+
+- the description, reporter, how it was made and the game node's version;
+- the round, phase, open action window, whose challenge turn it is and who has finished, and the
+  challenge in progress;
+- each player's open prompt (titles, buttons, selectable cards) and the settings that change what
+  they are offered (action window stops, hidden interrupts and reactions, paused response waits);
+- any ability still resolving (its player, source, ability, triggering event and targets), and the
+  recent ability log;
+- every card's zone and state (kneeling, blank, participating, STR, icons, traits, keywords,
+  tokens);
+- every effect in the effect engine, persistent and lasting (its type such as `immuneTo`, source,
+  duration, whether it is active or conditional, and the cards or players it applies to), and the
+  delayed effects still waiting to trigger;
+- the last 300 game log messages, chat included, and the pipeline.
+
+Admin > Problem Reports (the Problem Report Manager permission) lists reports with their
+descriptions; clicking one shows its details and offers the JSON. The scenario runner can also
+rebuild a report's board for a closer look, from a report ID, a downloaded report file or a spec
 (`SCENARIO=<spec>#<test>`, see [testing-cards.md](testing-cards.md#playing-a-test-in-the-real-client)).
+It cannot restore open prompts.
 
 ## Decisions
 
@@ -335,7 +372,15 @@ Rules readings and design choices that stand until changed:
 - There is no prompt for the infinite-loop shortcut (naming a number of repetitions).
 - Logs are translation-ready but there are no locale catalogs or translating renderer.
 - A problem report cannot restore an arbitrary open prompt.
+- A save that remedies burn by giving the character power (Jory Cassel with a Winter plot, on a
+  character whose STR counts its power) is not offered: the engine cannot preview STR with extra
+  power without side effects.
 - Open ruling: whether The White Shadows' effects apply to Craster.
+- A single `target` is filtered by the ability's `gameAction` (`buildTargets` in
+  [baseability.js](../server/game/baseability.js)), and that check can read hidden zones. When
+  the action only affects cards in a hand or deck, whether the ability is offered reveals what is
+  there. Cards avoid it by making the action depend on public state, such as revealing the hand
+  first (Nighttime Marauders).
 
 ## Pitfalls
 
@@ -345,8 +390,7 @@ Rules readings and design choices that stand until changed:
 - `context.opponent` is not a getter. A target snapshot is skipped when any choosing player is
   missing.
 - `ActionWindow.skipCondition` skips everyone when nobody stops at the window;
-  `MarshalingActionWindow` and `ChallengeActionWindow` override it per player, so the active player
-  always has their turn.
+  `MarshalingActionWindow` overrides it per player, so the active player always has their turn.
 - Timing is checked before `cannotTrigger`, `cost` and `noEffect`, so a spec asserting one of those
   reasons must wait until it is that player's turn.
 - Pile-order prompts keep `canCancel`: Done with nothing selected uses the default order.

@@ -12,10 +12,14 @@
  * test at that point and keeps the game as it is.
  */
 
+import fs from 'fs';
 import path from 'path';
 import { pathToFileURL } from 'url';
 import ServiceFactory from '../../services/ServiceFactory.js';
 import { addSetupTest, attachFlow } from '../../../test/helpers/integrationhelper.js';
+import { passOptionalResponses } from '../../../test/helpers/setupTest.js';
+// After the test helpers, which load the engine first; loaded alone, GameActions has a cycle.
+import GameActions from '../../game/GameActions/index.js';
 
 const ScenarioBreak = Symbol('scenarioBreak');
 
@@ -146,7 +150,7 @@ function suiteChain(test) {
 }
 
 /**
- * @param {string} scenario `path/to/Card.spec.js#test name`
+ * @param {string} scenario `path/to/Card.spec.js#test name`, `report:<id>` or `file:<report.json>`
  * @param {object} options
  * @param {object[]} options.users the users who will play player1 and player2
  * @param {object} [options.router] the game node, as the game's router
@@ -161,7 +165,7 @@ function cardLabel(card) {
 
 function problemReportSetup(report) {
     if (
-        report.schemaVersion !== 1 ||
+        ![1, 2].includes(report.schemaVersion) ||
         !Array.isArray(report.players) ||
         !Array.isArray(report.cards)
     ) {
@@ -177,7 +181,8 @@ function problemReportSetup(report) {
         : 'challenge';
     const setup = {
         phase,
-        firstPlayer: playerKeyByName.get(report.game?.firstPlayer) || 'player1'
+        firstPlayer: playerKeyByName.get(report.game?.firstPlayer) || 'player1',
+        passResponses: true
     };
 
     for (const [index, player] of report.players.entries()) {
@@ -215,10 +220,7 @@ function problemReportSetup(report) {
 
         setup[key] = {
             faction: player.faction || 'stark',
-            plot: cardsById.has(player.activePlot)
-                ? cardLabel(cardsById.get(player.activePlot))
-                : undefined,
-            plotDeck: names(player.plotDeck),
+            plotDeck: names([player.activePlot, ...(player.plotDeck || [])]),
             usedPlots: names(player.usedPlots),
             agenda: names(player.agendas).map((card) => ({ card })),
             inPlay,
@@ -244,13 +246,120 @@ function requireUsers(users, count) {
     }
 }
 
-async function runProblemReport(reportId, options) {
+async function loadStoredReport(reportId, options) {
     const report = await (
         options.problemReportService || ServiceFactory.problemReportService()
     ).getById(reportId);
     if (!report) {
         throw new Error(`Problem report "${reportId}" was not found or has expired`);
     }
+    return report;
+}
+
+function loadReportFile(filePath) {
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+}
+
+// The game reaches the reported phase with the filler plot revealed, so the reported plots' When
+// Revealed abilities, which already resolved in the reported game, don't resolve again. The
+// reported plot then replaces it with the lasting effects a reveal would give it.
+function placeReportedPlots(context, report) {
+    const { game } = context;
+    const cardsById = new Map(report.cards.map((card) => [card.id, card]));
+    const players = report.players.map((_, index) => context[`player${index + 1}`]);
+    const promptsBefore = players.map((player) => player.currentPrompt().menuTitle);
+
+    report.players.forEach((reportPlayer, index) => {
+        const player = context[`player${index + 1}Object`];
+        const reported = cardsById.get(reportPlayer.activePlot);
+        const plot =
+            reported &&
+            player.plotDeck.find(
+                (card) =>
+                    card.name === reported.name &&
+                    (!reported.packCode || card.cardData.packCode === reported.packCode)
+            );
+        if (!plot) {
+            return;
+        }
+
+        const filler = player.activePlot;
+        if (filler) {
+            game.resolveGameAction(GameActions.removeFromGame({ card: filler, allowSave: false }));
+        }
+        game.resolveGameAction(
+            GameActions.placeCard({ card: plot, player, location: 'active plot' })
+        );
+        game.continue();
+
+        if (filler) {
+            removeHarnessCard(game, player, filler);
+        }
+        game.addSimultaneousEffects(
+            plot.getPersistentEffects().map((properties) => ({ source: plot, properties }))
+        );
+    });
+
+    game.continue();
+    settlePlotPlacement(players, promptsBefore);
+}
+
+// Moving the plots raises events, so cards in the report may respond. Optional responses are
+// passed and forced ordering takes the first option; any other prompt means the rebuild can't
+// match the report, so it stops with an error rather than resuming in the wrong state.
+function settlePlotPlacement(players, promptsBefore) {
+    for (let step = 0; step < MaxSettleSteps; step++) {
+        passOptionalResponses(Object.fromEntries(players.map((player, index) => [index, player])));
+
+        const ordering = players.find((player) =>
+            ForcedOrderTitle.test(player.currentPrompt().menuTitle || '')
+        );
+        if (!ordering) {
+            break;
+        }
+
+        ordering.clickPrompt(ordering.currentPrompt().buttons[0].text);
+    }
+
+    const changed = players.find(
+        (player, index) => player.currentPrompt().menuTitle !== promptsBefore[index]
+    );
+    if (changed) {
+        throw new Error(
+            `Placing the reported plots left ${changed.name} with an unexpected prompt: ` +
+                `"${changed.currentPrompt().menuTitle}"`
+        );
+    }
+}
+
+const ForcedOrderTitle = /^Choose .+ order/;
+const MaxSettleSteps = 20;
+
+// The filler plot is a stand-in setupTest reveals to reach the phase; it was never in the reported
+// game, so once it has left play through the engine it is dropped rather than left out of game.
+function removeHarnessCard(game, player, card) {
+    player.outOfGamePile = player.outOfGamePile.filter((other) => other !== card);
+    game.allCards = game.allCards.filter((other) => other !== card);
+}
+
+// The rebuild's own log (filler plots, the scenario accounts' setup) never happened in the reported
+// game, so the game shows the reported log instead.
+function restoreReportedLog(game, report) {
+    const messages = Array.isArray(report.messages) ? report.messages : [];
+
+    game.gameChat.messages = messages.map((message) => ({
+        ...message,
+        date: new Date(message.date)
+    }));
+    game.logEntries = [];
+    game.addAlert(
+        'info',
+        'Above are the last {0} messages of the reported game, which was rebuilt here from the report',
+        messages.length
+    );
+}
+
+function runProblemReport(report, scenario, options) {
     const numOfPlayers = report.players.length;
     requireUsers(options.users, numOfPlayers);
     const flowOptions = {
@@ -269,7 +378,9 @@ async function runProblemReport(reportId, options) {
     const context = {};
     addSetupTest(context, flowOptions);
     context.setupTest(problemReportSetup(report));
-    context.game.scenario = `report:${reportId}`;
+    placeReportedPlots(context, report);
+    restoreReportedLog(context.game, report);
+    context.game.scenario = scenario;
     context.game.round = report.game.round || context.game.round;
     restoreChallenges(context, report);
     return { game: context.game, name: `Problem report ${report.id}`, stoppedAtBreak: true };
@@ -344,7 +455,11 @@ function mapCardsInPlay(report, players) {
 export async function runScenario(scenario, options) {
     const logger = options.logger || console;
     if (scenario.startsWith('report:')) {
-        return runProblemReport(scenario.slice('report:'.length), options);
+        const report = await loadStoredReport(scenario.slice('report:'.length), options);
+        return runProblemReport(report, scenario, options);
+    }
+    if (scenario.startsWith('file:')) {
+        return runProblemReport(loadReportFile(scenario.slice('file:'.length)), scenario, options);
     }
     requireUsers(options.users, 2);
     const [specPath, fragment] = scenario.split('#');

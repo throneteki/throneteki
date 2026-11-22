@@ -225,4 +225,37 @@ describe('setup', function () {
             expect(this.player1).toHavePrompt('Select a plot');
         });
     });
+
+    describe('when an attachment restriction checks printed values', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'setup',
+                player1: {
+                    hand: [
+                        "Water Dancer's Sword",
+                        'Rickon Stark (WotN)',
+                        'Ser Jaime Lannister (Core)'
+                    ]
+                }
+            });
+        });
+
+        it("uses the facedown setup cards' printed values", function () {
+            this.player1.clickCard(this.waterDancersSword);
+            this.player1.clickCard(this.serJaimeLannister);
+
+            expect(this.player1).not.toHavePromptButton('Done');
+
+            this.player1.clickCard(this.serJaimeLannister);
+            this.player1.clickCard(this.rickonStark);
+            this.completeSetup();
+            this.player1.clickCard(this.waterDancersSword);
+            this.player1.clickCard(this.rickonStark);
+            this.player1.clickPrompt('Done');
+
+            expect(this.rickonStark.attachments).toContain(this.waterDancersSword);
+            expect(this.player1).toHavePrompt('Select a plot');
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 });

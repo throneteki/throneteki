@@ -17,6 +17,7 @@ import DeckService from './DeckService.js';
 import GameService from './GameService.js';
 import NewsService from './NewsService.js';
 import ProblemReportService from './ProblemReportService.js';
+import BannerService from './BannerService.js';
 
 let services = {};
 
@@ -133,6 +134,13 @@ const factory = {
         }
 
         return services.problemReportService;
+    },
+    bannerService: () => {
+        if (!services.bannerService) {
+            services.bannerService = new BannerService();
+        }
+
+        return services.bannerService;
     },
     newsService: () => {
         if (!services.newsService) {

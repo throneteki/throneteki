@@ -95,6 +95,22 @@ describe('stopping response waits for the rest of the phase', function () {
             expect(this.player2).toHavePromptButton(PauseButton);
         });
 
+        it('does not log a message when they use it', function () {
+            const addMessage = vi.spyOn(this.game, 'addMessage');
+
+            this.player2.clickPrompt(PauseButton);
+
+            expect(addMessage).not.toHaveBeenCalledWith(
+                expect.stringContaining('response waits'),
+                expect.anything()
+            );
+            expect(addMessage).not.toHaveBeenCalledWith(
+                expect.anything(),
+                this.player2.player
+            );
+            expect(this.player1).isReadyToTakeAction();
+        });
+
         describe('and they use it', function () {
             beforeEach(function () {
                 this.player2.clickPrompt(PauseButton);

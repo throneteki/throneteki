@@ -22,7 +22,7 @@ import MenuPrompt from './gamesteps/menuprompt.js';
 import IconPrompt from './gamesteps/iconprompt.js';
 import SelectCardPrompt from './gamesteps/selectcardprompt.js';
 import EventWindow from './gamesteps/eventwindow.js';
-import AbilityResolver from './gamesteps/abilityresolver.js';
+import AbilityResolver, { SnapshotTypes } from './gamesteps/abilityresolver.js';
 import ForcedTriggeredAbilityWindow from './gamesteps/ForcedTriggeredAbilityWindow.js';
 import TriggeredAbilityWindow from './gamesteps/TriggeredAbilityWindow.js';
 import InterruptWindow from './gamesteps/InterruptWindow.js';
@@ -54,7 +54,7 @@ import DisconnectHandler from './GameHandlers/DisconnectHandler.js';
 import { Flags, Requirements } from './Constants/index.js';
 import { EventValidator } from './EventValidator.js';
 import PossibleResponders from './PossibleResponders.js';
-import { randomUUID } from 'crypto';
+import { buildProblemReport } from './ProblemReport.js';
 
 const MinResponseDelay = 3000;
 const MaxResponseDelay = 5000;
@@ -142,7 +142,7 @@ class Game extends EventEmitter {
         this.prizedKeywordListener = new PrizedKeywordListener(this);
         this.muteSpectators = details.muteSpectators;
 
-        this.allowMultipleWinners = options.allowMultipleWinners || false;
+        this.allowMultipleWinners = !!details.allowMultipleWinners;
         this.gameOverHandler = new GameOverHandler(this);
         this.disconnectHandler = new DisconnectHandler(this, 30);
 
@@ -593,9 +593,9 @@ class Game extends EventEmitter {
     addSimultaneousEffects(effectProperties) {
         let effects = effectProperties.reduce((array, effect) => {
             let flattenedProperties = Effect.flattenProperties(effect.properties);
-            let effects = flattenedProperties.map(
-                (props) => new Effect(this, effect.source, props)
-            );
+            let effects = flattenedProperties
+                .map((props) => new Effect(this, effect.source, props))
+                .filter((effect) => !effect.invalid);
             return array.concat(effects);
         }, []);
         this.effectEngine.addSimultaneous(effects);
@@ -681,9 +681,35 @@ class Game extends EventEmitter {
                 buttons: [...buttons, { text: 'Cancel', method: 'cancel', cancel: true }]
             },
             source: card,
-            beforeInitiation: true
+            beforeInitiation: true,
+            previewCards:
+                usable.length === 1 ? this.getTargetPreview(player, usable[0].action) : undefined
         });
         return true;
+    }
+
+    getTargetPreview(player, action) {
+        const context = action.createContext(player);
+        if (SnapshotTypes.includes(context.source.getType())) {
+            context.cardStateWhenInitiated = context.source.createSnapshot();
+        }
+
+        const cards = new Set();
+        try {
+            for (const target of action.targets || []) {
+                const byPlayer = target.legalCards?.(context);
+                for (const card of byPlayer?.get(player) || []) {
+                    if (this.isCardVisible(card, player)) {
+                        cards.add(card);
+                    }
+                }
+            }
+        } catch (error) {
+            this.reportError(error);
+            return [];
+        }
+
+        return [...cards];
     }
 
     canToggleKneel(player, card) {
@@ -1708,83 +1734,8 @@ class Game extends EventEmitter {
         }
     }
 
-    getProblemReport(reporter) {
-        const players = this.getAllPlayers();
-        const cards = this.allCards.map((card) => ({
-            id: card.uuid,
-            code: card.cardData.code,
-            name: card.name,
-            packCode: card.cardData.packCode,
-            owner: card.owner?.name,
-            controller: card.controller?.name,
-            location: card.location,
-            parent: card.parent?.uuid,
-            facedown: !!card.facedown,
-            kneeled: !!card.kneeled,
-            power: card.power,
-            gold: card.gold,
-            tokens: { ...card.tokens }
-        }));
-        const playerStates = players.map((player, index) => ({
-            name: player.name,
-            seat: index + 1,
-            faction: player.faction.code,
-            gold: player.gold,
-            power: player.faction.getPower(),
-            standing: player.standing,
-            eliminated: player.eliminated,
-            activePlot: player.activePlot?.uuid,
-            plotDeck: player.plotDeck.map((card) => card.uuid),
-            usedPlots: player.plotDiscard.map((card) => card.uuid),
-            cardsInPlay: player.cardsInPlay.map((card) => card.uuid),
-            hand: player.hand.map((card) => card.uuid),
-            drawDeck: player.drawDeck.map((card) => card.uuid),
-            discardPile: player.discardPile.map((card) => card.uuid),
-            deadPile: player.deadPile.map((card) => card.uuid),
-            shadows: player.shadows.map((card) => card.uuid),
-            outOfGame: player.outOfGamePile.map((card) => card.uuid),
-            agendas: (player.agendas || []).map((card) => card.uuid)
-        }));
-
-        return {
-            schemaVersion: 1,
-            id: randomUUID(),
-            createdAt: new Date().toISOString(),
-            game: {
-                id: this.id,
-                name: this.name,
-                format: this.gameFormat,
-                variant: this.gameVariant,
-                manualMode: this.manualMode.enabled,
-                round: this.round,
-                phase: this.currentPhase,
-                firstPlayer: this.getPlayersInFirstPlayerOrder()[0]?.name,
-                currentChallenge: this.currentChallenge && {
-                    ...this.getChallengeSummary(this.currentChallenge),
-                    stage: this.getChallengeStage(this.currentChallenge),
-                    currentType: this.currentChallenge.challengeType,
-                    declaredAttackers: this.currentChallenge.declaredAttackers.map(
-                        (card) => card.uuid
-                    ),
-                    attackers: this.currentChallenge.attackers?.map((card) => card.uuid),
-                    declaredDefenders: this.currentChallenge.declaredDefenders.map(
-                        (card) => card.uuid
-                    ),
-                    defenders: this.currentChallenge.defenders?.map((card) => card.uuid)
-                },
-                earlierChallenges:
-                    this.currentPhase === 'challenge'
-                        ? this.getEarlierChallenges().map((challenge) =>
-                              this.getChallengeSummary(challenge)
-                          )
-                        : []
-            },
-            reporter,
-            players: playerStates,
-            cards,
-            messages: this.gameChat.messages.slice(-100),
-            pipeline: this.pipeline.getDebugInfo()
-        };
+    getProblemReport(reporter, source = 'report', description = '') {
+        return buildProblemReport(this, { reporter, source, description });
     }
 
     getChallengeSummary(challenge) {
@@ -1952,7 +1903,16 @@ class Game extends EventEmitter {
                 name: this.restrictedList.name,
                 cardSet: this.restrictedList.cardSet
             },
-            useChessClocks: this.useChessClocks
+            useChessClocks: this.useChessClocks,
+            ...(options.fullData && {
+                event: this.event,
+                instance: this.instance,
+                useGameTimeLimit: this.useGameTimeLimit,
+                gameTimeLimit: this.gameTimeLimit,
+                chessClockTimeLimit: this.chessClockTimeLimit,
+                chessClockDelay: this.chessClockDelay,
+                allowMultipleWinners: this.allowMultipleWinners
+            })
         };
     }
 

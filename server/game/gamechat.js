@@ -57,6 +57,10 @@ class GameChat {
         });
     }
 
+    getMessagesForClient(start = 0) {
+        return this.messages.slice(start).map(({ date, message }) => ({ date, message }));
+    }
+
     getStructuredMessage(message, args) {
         let argList = args.map((arg) => {
             if (arg instanceof Spectator) {

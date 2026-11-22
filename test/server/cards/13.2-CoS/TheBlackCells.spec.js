@@ -6,13 +6,14 @@ describe('The Black Cells', function () {
             player1: { actionWindows: { challengeBegin: true }, shadows: ['The Black Cells'] },
             player2: { inPlay: ['Ser Jaime Lannister (Core)', 'Burned Men'] }
         });
+        this.player2.clickPrompt('Pass');
         this.player1.clickCard(this.theBlackCells);
         this.player1.triggerAbility(this.theBlackCells);
     });
 
     it('stops a character that must kneel to attack being declared', function () {
         this.player1.clickCard(this.burnedMen);
-        this.player1.clickPrompt('Pass');
+        this.passChallengeBeginWindow();
         this.player2.clickPrompt('Military');
 
         expect(this.player2).not.toBeAbleToSelect(this.burnedMen);
@@ -22,7 +23,7 @@ describe('The Black Cells', function () {
 
     it('still allows a character that does not kneel to attack to be declared', function () {
         this.player1.clickCard(this.serJaimeLannister);
-        this.player1.clickPrompt('Pass');
+        this.passChallengeBeginWindow();
         this.player2.clickPrompt('Military');
 
         expect(this.player2).toBeAbleToSelect(this.serJaimeLannister);
@@ -35,7 +36,7 @@ describe('The Black Cells', function () {
         this.skipActionWindow();
 
         expect(this.serJaimeLannister.kneeled).toBe(false);
-        this.player1.clickPrompt('Pass');
+        this.passChallengeBeginWindow();
         expect(this.player2).isReadyToTakeAction();
     });
 });

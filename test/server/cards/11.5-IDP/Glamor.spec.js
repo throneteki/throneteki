@@ -12,8 +12,8 @@ describe('Glamor', function () {
             player2: { inPlay: ['Ser Jaime Lannister (Core)'] }
         });
         expect(this.eddardStark.getStrength()).toBe(7);
+        this.passChallengeBeginWindow();
         this.player1.clickPrompt('Done');
-        this.player1.clickPrompt('Pass');
         this.unopposedChallenge(this.player2, 'Military', this.serJaimeLannister);
         this.player1.clickCard(this.tumblestoneKnight);
         this.player1.clickCard(this.glamor);
@@ -23,7 +23,7 @@ describe('Glamor', function () {
     it('gives the attached character +2 STR, and kills it to put a character killed this phase into play from your dead pile', function () {
         expect(this.eddardStark.location).toBe('dead pile');
         expect(this.tumblestoneKnight.location).toBe('play area');
-        this.player1.clickPrompt('Pass');
+        this.passChallengeBeginWindow();
         expect(this.player2).isReadyToTakeAction();
     });
 });

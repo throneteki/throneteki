@@ -38,6 +38,7 @@ npm run db:schema:dump          # regenerate server/db/schema.sql from the compo
 | `EventService`     | `events`                                                                   |
 | `DraftCubeService` | `draft_cubes`                                                              |
 | `GameService`      | `games`, `game_players`                                                    |
+| `BannerService`    | `banners`                                                                  |
 | `MessageService`   | `messages`, `motd`                                                         |
 | `NewsService`      | `news`                                                                     |
 

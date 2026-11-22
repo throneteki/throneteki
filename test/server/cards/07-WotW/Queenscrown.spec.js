@@ -48,3 +48,23 @@ describe('Queenscrown', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('Queenscrown messages', function () {
+    it('names the opponent whose deck the other cards go to the bottom of', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { inPlay: ['Queenscrown'] },
+            player2: {
+                drawDeck: ['Fickle Bannerman', 'The Iron Throne (Core)', 'Consolidation of Power']
+            }
+        });
+        this.player1.clickMenu(this.queenscrown, "Reveal top 3 cards of opponent's deck");
+        this.player1.clickPrompt('Done');
+        this.player1.clickPrompt('Done');
+
+        expect(this.game.getPlainTextLog()).toContain(
+            "Then player1 places the other cards on the bottom of player2's deck, in any order"
+        );
+        expect(this.player1).isReadyToTakeAction();
+    });
+});

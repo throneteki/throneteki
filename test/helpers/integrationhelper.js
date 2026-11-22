@@ -18,7 +18,8 @@ const ProxiedGameFlowWrapperMethods = [
     'selectPlotOrder',
     'completeSetup',
     'skipActionWindow',
-    'unopposedChallenge'
+    'unopposedChallenge',
+    'passChallengeBeginWindow'
 ];
 
 export function attachFlow(context, options) {

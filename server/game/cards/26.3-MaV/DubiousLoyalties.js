@@ -10,7 +10,6 @@ class DubiousLoyalties extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ loyal: false, owner: 'current' });
         this.whileAttached({
-            match: this.parent,
             effect: [
                 ability.effects.addKeyword('Stealth'),
                 ability.effects.addKeyword('Renown'),

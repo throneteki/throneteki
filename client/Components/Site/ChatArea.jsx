@@ -15,7 +15,8 @@ const ChatArea = forwardRef(function ChatArea(
         placeholder,
         maxInputLength,
         unreadMessagesLabel = 'Click to view unread messages...',
-        onUnreadMessagesChange = () => {}
+        onUnreadMessagesChange = () => {},
+        inputRef
     },
     ref
 ) {
@@ -76,6 +77,11 @@ const ChatArea = forwardRef(function ChatArea(
 
     // Triggers send message
     const onKeyDown = (event) => {
+        if (event.key === 'Escape') {
+            event.currentTarget.blur();
+            return;
+        }
+
         if (event.key === 'Enter') {
             event.preventDefault();
             if (message !== '') {
@@ -110,6 +116,7 @@ const ChatArea = forwardRef(function ChatArea(
                         inputWrapper: 'rounded-none',
                         ...(typeof classNamesProp?.input === 'object' && classNamesProp?.input)
                     }}
+                    ref={inputRef}
                     onKeyDown={onKeyDown}
                     onValueChange={setMessage}
                     maxLength={maxInputLength}

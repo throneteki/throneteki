@@ -300,7 +300,7 @@ const Card = ({
         if (card.selected) {
             return 'shadow-[0_0_0_3px] shadow-sky-400';
         }
-        if (card.selectable || card.canPlay) {
+        if (card.selectable) {
             return 'shadow-[0_0_3px_3px] shadow-green-400';
         }
         if (card.inChallenge) {

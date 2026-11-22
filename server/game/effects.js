@@ -717,16 +717,23 @@ const Effects = {
                     let originalLocation = context.removeFromGame[card.uuid];
                     if (originalLocation === 'play area') {
                         card.owner.putIntoPlay(card, 'play', { isEffectExpiration: true });
+                        context.game.addMessage(
+                            '{0} is put into play because of {1}',
+                            card,
+                            context.source
+                        );
                     } else {
                         context.game.resolveGameAction(
                             GameActions.placeCard({ card, location: originalLocation })
                         );
+                        context.game.addMessage(
+                            "{0} is returned to {1}'s {2} because of {3}",
+                            card,
+                            card.owner,
+                            originalLocation,
+                            context.source
+                        );
                     }
-                    context.game.addMessage(
-                        '{0} is put into play because of {1}',
-                        card,
-                        context.source
-                    );
                     delete context.removeFromGame[card.uuid];
                 }
             }
@@ -802,25 +809,30 @@ const Effects = {
         return this.cannotPutIntoPlay(restriction);
     },
     cannotMarshal: function (condition) {
-        let restriction = (card, playingType, context) =>
-            playingType === 'marshal' && condition(card, context);
+        let restriction = (card, playingType, context, player) =>
+            playingType === 'marshal' && condition(card, context, player);
         return this.cannotPutIntoPlay(restriction);
     },
     cannotBringOutOfShadows: function (condition) {
-        let restriction = (card, playingType, context) =>
-            playingType === 'outOfShadows' && condition(card, context);
+        let restriction = (card, playingType, context, player) =>
+            playingType === 'outOfShadows' && condition(card, context, player);
         return this.cannotPutIntoPlay(restriction);
     },
     cannotPlay: function (condition) {
-        let restriction = (card, playingType, context) =>
-            card.getType() === 'event' && playingType === 'play' && condition(card, context);
+        let restriction = (card, playingType, context, player) =>
+            card.getType() === 'event' &&
+            playingType === 'play' &&
+            condition(card, context, player);
         return this.cannotPutIntoPlay(restriction);
     },
+    // The restriction is told which player it restricts, because a card being put into play from
+    // another player's pile is still controlled by its owner until it enters play.
     cannotPutIntoPlay: function (restriction) {
         return {
             targetType: 'player',
             apply: function (player, context) {
-                const bound = (card, playingType) => restriction(card, playingType, context);
+                const bound = (card, playingType) =>
+                    restriction(card, playingType, context, player);
                 context.playCardRestrictions = context.playCardRestrictions || {};
                 context.playCardRestrictions[player.name] = bound;
                 player.playCardRestrictions.push(bound);
@@ -1703,5 +1715,25 @@ const Effects = {
         };
     }
 };
+
+const effectTypes = new WeakMap();
+
+for (const [type, factory] of Object.entries(Effects)) {
+    if (typeof factory !== 'function') {
+        continue;
+    }
+
+    Effects[type] = function (...args) {
+        const effect = factory.apply(this, args);
+        if (effect && typeof effect === 'object') {
+            effectTypes.set(effect, type);
+        }
+        return effect;
+    };
+}
+
+export function getEffectType(effect) {
+    return effectTypes.get(effect);
+}
 
 export default Effects;

@@ -57,19 +57,16 @@ describe('Umber Loyalist', function () {
             expect(this.houseMaester.location).toBe('hand');
             expect(this.umberLoyalist.location).toBe('dead pile');
             expect(this.game.getPlainTextLog()).toContain(
-                'player1 is forced by Umber Loyalist to choose and discard 2 cards from their hand'
+                'player1 is forced by Umber Loyalist to discard Hedge Knight and Tumblestone Knight from their hand'
             );
             expect(this.player2).isReadyToTakeAction();
         });
 
-        it('discards as many as it can when you have fewer than 2 cards', function () {
+        it('does not trigger when you have fewer than 2 cards', function () {
             killLoyalist(this, ['Hedge Knight']);
 
-            expect(this.player1).toHavePrompt('Select 2 cards to discard');
-            this.player1.clickCard(this.hedgeKnight);
-            this.player1.clickPrompt('Done');
-
-            expect(this.hedgeKnight.location).toBe('discard pile');
+            expect(this.player1).not.toHavePrompt('Select 2 cards to discard');
+            expect(this.hedgeKnight.location).toBe('hand');
             expect(this.umberLoyalist.location).toBe('dead pile');
             expect(this.player2).isReadyToTakeAction();
         });
@@ -97,7 +94,7 @@ describe('Umber Loyalist discard message', function () {
 
     it('names the hand the cards were discarded from', function () {
         expect(this.game.getPlainTextLog()).toContain(
-            "player1 discards Hedge Knight from player1's hand and discards Tumblestone Knight from player1's hand"
+            'player1 is forced by Umber Loyalist to discard Hedge Knight and Tumblestone Knight from their hand'
         );
     });
 });

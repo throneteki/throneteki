@@ -10,7 +10,8 @@ class Meereen extends DrawCard {
         this.action({
             title: 'Place hand facedown and draw 3',
             cost: ability.costs.kneelSelf(),
-            message: '{player} kneels {source} to place their hand facedown under {source}',
+            message:
+                '{player} kneels {source} to place their hand facedown under {source} and draw 3 cards',
             gameAction: GameActions.simultaneously([
                 GameActions.simultaneously((context) =>
                     context.player.hand.map((card) =>
@@ -41,14 +42,12 @@ class Meereen extends DrawCard {
                         message:
                             '{player} discards their hand and returns their cards from under {source}'
                     };
-                })
-            ]).then({
-                message: 'Then {player} draws 3 cards',
-                gameAction: GameActions.drawCards((context) => ({
+                }),
+                GameActions.drawCards((context) => ({
                     player: context.player,
                     amount: 3
                 }))
-            })
+            ])
         });
     }
 }

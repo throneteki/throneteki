@@ -114,3 +114,25 @@ describe('Meereen (R)', function () {
         });
     });
 });
+
+describe('Meereen (R) with 1 card in hand', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                inPlay: ['Meereen (R)'],
+                hand: ['Hedge Knight']
+            }
+        });
+        this.player1.clickMenu(this.meereen, 'Place hand facedown and draw 3');
+        this.player1.clickCard(this.hedgeKnight);
+    });
+
+    it('still draws 3 cards after discarding the last card as the cost', function () {
+        expect(this.hedgeKnight.location).toBe('discard pile');
+        expect(this.meereen.underneath).toHaveLength(0);
+        expect(this.player1Object.hand.length).toBe(3);
+        expect(this.meereen.kneeled).toBe(true);
+        expect(this.player1).isReadyToTakeAction();
+    });
+});

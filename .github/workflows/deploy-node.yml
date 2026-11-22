@@ -6,6 +6,10 @@ on:
                 type: environment
                 description: Select the environment
                 default: Production
+            image_tag:
+                type: string
+                description: Image tag to deploy, e.g. sha-<commit> (leave empty for the environment's)
+                default: ''
     workflow_call:
         inputs:
             environment:
@@ -35,6 +39,8 @@ jobs:
                   ref: ${{ inputs.ref }}
 
             - name: Deploy Game Nodes
+              env:
+                  IMAGE_TAG: ${{ inputs.image_tag }}
               run: |
                   ENV=$(echo "${{ inputs.environment }}" | tr '[:upper:]' '[:lower:]')
 
@@ -88,8 +94,12 @@ jobs:
                       HELM_IMAGE_FLAGS+=" --set-string image.tag=$TAG"
                     fi
                   fi
-                  if [ -n "${{ inputs.image_tag }}" ]; then
-                    HELM_IMAGE_FLAGS+=" --set-string image.tag=${{ inputs.image_tag }}"
+                  if [ -n "$IMAGE_TAG" ]; then
+                    if ! [[ "$IMAGE_TAG" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]]; then
+                      echo "::error::Invalid image tag '$IMAGE_TAG'"
+                      exit 1
+                    fi
+                    HELM_IMAGE_FLAGS+=" --set-string image.tag=$IMAGE_TAG"
                   fi
 
                   cat > /tmp/node-secrets.yaml <<EOF

@@ -10,6 +10,7 @@ import CardMatcher from './CardMatcher.js';
 import CardReaction from './cardreaction.js';
 import CustomPlayAction from './PlayActions/CustomPlayAction.js';
 import EventRegistrar from './eventregistrar.js';
+import { reportInvalidMatch } from './effect.js';
 import GameActions from './GameActions/index.js';
 import KeywordsProperty from './PropertyTypes/KeywordsProperty.js';
 import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
@@ -318,6 +319,11 @@ class BaseCard {
      * characters).
      */
     whileAttached(properties) {
+        if (Object.hasOwn(properties, 'match') && typeof properties.match !== 'function') {
+            reportInvalidMatch(this.game, this, properties.match);
+            return;
+        }
+
         this.persistentEffect({
             condition: (context) =>
                 !!context.source.parent && (!properties.condition || properties.condition(context)),

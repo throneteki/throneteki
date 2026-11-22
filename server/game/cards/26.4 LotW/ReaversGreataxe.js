@@ -20,7 +20,6 @@ class ReaversGreataxe extends DrawCard {
                 context.source.hasMoreAttachmentsThanDefender(
                     context.game.currentChallenge.defendingPlayer
                 ),
-            match: this.parent,
             effect: ability.effects.doesNotKneelAsAttacker()
         });
     }

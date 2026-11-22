@@ -29,6 +29,52 @@ describe('BaseCard', function () {
         });
     });
 
+    describe('whileAttached()', function () {
+        beforeEach(function () {
+            this.effect = { apply: vi.fn(), unapply: vi.fn() };
+        });
+
+        it('adds a persistent effect when match is a function', function () {
+            this.card.whileAttached({ match: () => true, effect: this.effect });
+
+            expect(this.card.abilities.persistentEffects.length).toBe(1);
+        });
+
+        it('adds a persistent effect when match is not passed', function () {
+            this.card.whileAttached({ effect: this.effect });
+
+            expect(this.card.abilities.persistentEffects.length).toBe(1);
+        });
+
+        it('throws when match is passed but is not a function', function () {
+            expect(() =>
+                this.card.whileAttached({ match: undefined, effect: this.effect })
+            ).toThrow('Effect from test 1 has an invalid match: undefined');
+        });
+
+        describe('in production', function () {
+            beforeEach(function () {
+                vi.stubEnv('NODE_ENV', 'production');
+                this.game.reportError = vi.fn();
+            });
+
+            afterEach(function () {
+                vi.unstubAllEnvs();
+            });
+
+            it('reports the error and adds no effect when match is not a function', function () {
+                this.card.whileAttached({ match: { trait: 'Knight' }, effect: this.effect });
+
+                expect(this.game.reportError).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        message: 'Effect from test 1 has an invalid match: {"trait":"Knight"}'
+                    })
+                );
+                expect(this.card.abilities.persistentEffects).toEqual([]);
+            });
+        });
+    });
+
     describe('.parseKeywords', function () {
         it('parses keywords with a parenthesized value', function () {
             const keywords = BaseCard.parseKeywords('Ambush (1). Bestow (2). Shadow (3).');

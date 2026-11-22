@@ -6,6 +6,7 @@ import CardStat from './cardStat.js';
 import { Flags } from './Constants/index.js';
 import GameActions from './GameActions/index.js';
 import Event from './event.js';
+import Effect from './effect.js';
 
 const Icons = ['military', 'intrigue', 'power'];
 
@@ -170,7 +171,7 @@ class DrawCard extends BaseCard {
     }
 
     hasPrintedCost() {
-        return !this.facedown && this.cardData.cost !== '-';
+        return this.showsPrintedValues() && this.cardData.cost !== '-';
     }
 
     getPrintedCost() {
@@ -288,7 +289,13 @@ class DrawCard extends BaseCard {
     }
 
     hasPrintedStrength() {
-        return !this.facedown && this.getType() === 'character';
+        return this.showsPrintedValues() && this.getType() === 'character';
+    }
+
+    showsPrintedValues() {
+        return (
+            !this.facedown || (this.location === 'play area' && this.game.currentPhase === 'setup')
+        );
     }
 
     getStrength() {
@@ -296,13 +303,19 @@ class DrawCard extends BaseCard {
     }
 
     getBoostedStrength(boostValue) {
-        let baseStrength = this.getPrintedStrength();
+        return this.computeStrength(() => false, boostValue);
+    }
 
+    getStrengthIfTextBoxBlank() {
+        return this.computeStrength((effect) => Effect.isFromTextBoxOf(effect, this));
+    }
+
+    computeStrength(isExcluded, boostValue = 0) {
         if (this.game.currentPhase === 'setup') {
-            return baseStrength;
+            return this.getPrintedStrength();
         }
 
-        return this.strength.calculate(boostValue);
+        return this.strength.calculateExcluding(isExcluded, boostValue);
     }
 
     getDominanceStrength() {
@@ -614,20 +627,13 @@ class DrawCard extends BaseCard {
     }
 
     checkBurnEffects() {
-        if (this.getStrength() > 0) {
-            return;
-        }
+        this.game.stateChecks.checkBurn(this);
+    }
 
-        if (this.isBurning) {
-            this.game.resolveGameAction(
-                GameActions.kill({ card: this, allowSave: false, isBurn: true })
-            );
-        } else if (this.isShadowBurning) {
-            this.game.addMessage('{0} is 0 STR and placed in shadows', this);
-            this.game.resolveGameAction(
-                GameActions.putIntoShadows({ allowSave: false, card: this })
-            );
-        }
+    createBurnAction() {
+        return this.isBurning
+            ? GameActions.kill({ card: this, allowSave: false, isBurn: true })
+            : GameActions.putIntoShadows({ card: this, allowSave: false });
     }
 
     getSummary(activePlayer) {

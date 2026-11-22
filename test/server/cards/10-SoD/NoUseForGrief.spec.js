@@ -15,6 +15,7 @@ describe('No Use For Grief', function () {
             this.unopposedChallenge(this.player2, 'Military', this.castleGuard);
             this.player1.clickCard(this.houseDayneKnight);
             this.bastardDaughter = this.player1.findCardByName('Bastard Daughter', 'draw deck');
+            this.player2.clickPrompt('Pass');
             this.player1.clickCard(this.noUseForGrief);
         });
 

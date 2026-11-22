@@ -126,3 +126,26 @@ export const cardSizes = {
     '3xl': [16, 22.4], // * 4
     '4xl': [20, 28] // * 5
 };
+
+export const CardSizeOptions = [
+    { name: 'small', label: 'Small' },
+    { name: 'normal', label: 'Normal' },
+    { name: 'large', label: 'Large' },
+    { name: 'x-large', label: 'Extra-Large' }
+];
+
+export const ActionWindows = [
+    { name: 'plot', label: 'Plots revealed', default: false },
+    { name: 'draw', label: 'Draw phase', default: false },
+    { name: 'marshal', label: 'Marshaling phase', default: false },
+    { name: 'challengeBegin', label: 'Before challenge', default: false },
+    { name: 'attackersDeclared', label: 'Attackers declared', default: true },
+    { name: 'defendersDeclared', label: 'Defenders declared', default: true },
+    { name: 'dominance', label: 'Dominance phase', default: false },
+    { name: 'standing', label: 'Standing phase', default: false },
+    { name: 'taxation', label: 'Taxation phase', default: false }
+];
+
+export const defaultActionWindows = Object.fromEntries(
+    ActionWindows.map((window) => [window.name, window.default])
+);

@@ -13,6 +13,11 @@ spec:
         metadata:
             labels:
                 app: throneteki-static
+            annotations:
+                #prettier-ignore
+                checksum/nginx-config: {{ include (print $.Template.BasePath "/static-nginx-config.yaml") . | sha256sum }}
+                #prettier-ignore
+                checksum/down-page: {{ include (print $.Template.BasePath "/static-down-page.yaml") . | sha256sum }}
         spec:
             containers:
                 - name: nginx
@@ -29,6 +34,10 @@ spec:
                       - name: avatars
                         mountPath: /usr/share/nginx/html/img/avatar
                         readOnly: true
+                      - name: down-page
+                        mountPath: /usr/share/nginx/html/down.html
+                        subPath: down.html
+                        readOnly: true
             volumes:
                 - name: nginx-config
                   configMap:
@@ -39,6 +48,9 @@ spec:
                 - name: avatars
                   persistentVolumeClaim:
                       claimName: throneteki-avatars
+                - name: down-page
+                  configMap:
+                      name: throneteki-static-down-page
 ---
 apiVersion: v1
 kind: Service

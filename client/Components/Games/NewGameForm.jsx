@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getIn, useFormikContext } from 'formik';
 import { Button, Input, Switch } from '@heroui/react';
 
@@ -12,8 +12,10 @@ import VariantSelect from './VariantSelect';
 import LegalitySelect from './LegalitySelect';
 import EventSelect from './EventSelect';
 import { GameNameMaxLength } from './NewGame';
+import { useGetEventsQuery } from '../../redux/middleware/api';
+import { toast } from 'react-toastify';
 
-const NewGameForm = ({ quickJoin, onClosed = () => true }) => {
+const NewGameForm = ({ quickJoin, defaultEventId, onClosed = () => true }) => {
     const {
         values,
         errors,
@@ -82,6 +84,27 @@ const NewGameForm = ({ quickJoin, onClosed = () => true }) => {
         },
         [setFieldValue, userCachedOptions, values]
     );
+
+    const { data: events, isError: eventsFailed } = useGetEventsQuery();
+    const appliedDefaultEvent = useRef(false);
+
+    useEffect(() => {
+        if (!defaultEventId || (!events && !eventsFailed) || appliedDefaultEvent.current) {
+            return;
+        }
+
+        appliedDefaultEvent.current = true;
+        const event = events?.find((e) => e._id === defaultEventId);
+        if (event) {
+            handleEventChange(event);
+        } else {
+            toast.warning(
+                eventsFailed
+                    ? 'The events could not be loaded, so this game is not part of the event'
+                    : 'That event is no longer available, so this game is not part of it'
+            );
+        }
+    }, [defaultEventId, events, eventsFailed, handleEventChange]);
 
     const getValidationProps = useCallback(
         (fieldName) => {

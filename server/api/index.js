@@ -1,4 +1,6 @@
 import { init as AccountInit } from './account.js';
+import { init as BackgroundsInit } from './backgrounds.js';
+import { init as BannersInit } from './banners.js';
 import { init as EventsInit } from './events.js';
 import { init as DecksInit } from './decks.js';
 import { init as DraftCubesInit } from './draftCubes.js';
@@ -11,9 +13,12 @@ import { init as AbuseBlocksInit } from './abuseBlocks.js';
 import { init as StatsInit } from './stats.js';
 import { init as UnsubscribeInit } from './unsubscribe.js';
 import { init as ThronesDbInit } from './thronesdb.js';
+import { init as ProblemReportsInit } from './problemReports.js';
 
 export const init = async function (server, options) {
     AccountInit(server, options);
+    BackgroundsInit(server, options);
+    BannersInit(server, options);
     await DecksInit(server, options);
     ThronesDbInit(server, options);
     DraftCubesInit(server, options);
@@ -25,5 +30,6 @@ export const init = async function (server, options) {
     AbuseBlocksInit(server, options);
     StatsInit(server, options);
     UnsubscribeInit(server, options);
+    ProblemReportsInit(server, options);
     await EventsInit(server, options);
 };

@@ -76,6 +76,26 @@ describe('AbilityMessage', function () {
                     'TARGET_OWNER_OBJ'
                 );
             });
+
+            it('uses a custom arg in place of an optional arg with the same name', function () {
+                let message = AbilityMessage.create({
+                    format: "{player} uses {source} to look at {opponent}'s hand and {chosenPlayer}'s deck",
+                    args: {
+                        opponent: () => 'CUSTOM_OPPONENT_OBJ',
+                        chosenPlayer: () => 'CUSTOM_CHOSEN_PLAYER_OBJ'
+                    }
+                });
+                message.output(this.outputterSpy, this.context);
+
+                expect(this.outputterSpy.addMessage).toHaveBeenCalledWith(
+                    "{0} uses {1} to look at {3}'s hand and {4}'s deck",
+                    'PLAYER_OBJ',
+                    'SOURCE_OBJ',
+                    'TARGET_OBJ',
+                    'CUSTOM_OPPONENT_OBJ',
+                    'CUSTOM_CHOSEN_PLAYER_OBJ'
+                );
+            });
         });
     });
 

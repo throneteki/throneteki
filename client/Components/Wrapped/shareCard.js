@@ -1,4 +1,5 @@
 import { toBlob } from 'html-to-image';
+import { downloadBlob } from '../../util';
 
 // Instagram/TikTok story size
 const ShareWidth = 1080;
@@ -28,12 +29,7 @@ export const shareImage = async (blob, fileName, title) => {
         }
     }
 
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = fileName;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    downloadBlob(blob, fileName);
 
     return 'downloaded';
 };

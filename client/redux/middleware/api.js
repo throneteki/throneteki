@@ -16,7 +16,9 @@ const TagTypes = {
     User: 'User',
     BanList: 'BanList',
     AbuseBlock: 'AbuseBlock',
+    ProblemReport: 'ProblemReport',
     DraftCube: 'DraftCube',
+    Banner: 'Banner',
     ThronesDbStatus: 'ThronesDbStatus',
     ThronesDbDecks: 'ThronesDbDecks'
 };
@@ -100,7 +102,11 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
         };
     }
 
-    if (api.endpoint === 'getDecks' || api.endpoint === 'getAllNews') {
+    if (
+        api.endpoint === 'getDecks' ||
+        api.endpoint === 'getAllNews' ||
+        api.endpoint === 'getProblemReports'
+    ) {
         return result;
     }
 
@@ -280,6 +286,20 @@ export const apiSlice = createApi({
                 method: 'POST'
             })
         }),
+        uploadBackground: builder.mutation({
+            query: ({ username, image }) => ({
+                url: `/account/${username}/background`,
+                method: 'PUT',
+                body: image,
+                headers: { 'content-type': image.type }
+            })
+        }),
+        removeBackground: builder.mutation({
+            query: (username) => ({
+                url: `/account/${username}/background`,
+                method: 'DELETE'
+            })
+        }),
         unlinkPatreon: builder.mutation({
             query: () => ({
                 url: '/account/unlinkPatreon',
@@ -405,6 +425,45 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: [TagTypes.News]
         }),
+        getBanners: builder.query({
+            query: () => '/banners',
+            providesTags: [TagTypes.Banner]
+        }),
+        getAllBanners: builder.query({
+            query: () => '/banners/all',
+            providesTags: [TagTypes.Banner]
+        }),
+        // Saving a banner can take two requests, so the editor refreshes the banners itself with
+        // bannersChanged once both have finished
+        addBanner: builder.mutation({
+            query: (banner) => ({
+                url: '/banners',
+                method: 'POST',
+                body: banner
+            })
+        }),
+        saveBanner: builder.mutation({
+            query: ({ id, banner }) => ({
+                url: `/banners/${id}`,
+                method: 'PUT',
+                body: banner
+            })
+        }),
+        deleteBanner: builder.mutation({
+            query: (id) => ({
+                url: `/banners/${id}`,
+                method: 'DELETE'
+            }),
+            invalidatesTags: [TagTypes.Banner]
+        }),
+        uploadBannerImage: builder.mutation({
+            query: ({ id, image }) => ({
+                url: `/banners/${id}/image`,
+                method: 'PUT',
+                body: image,
+                headers: { 'content-type': image.type }
+            })
+        }),
         getBanList: builder.query({
             query: () => '/banlist',
             providesTags: (result = { data: [] }) => [
@@ -426,6 +485,30 @@ export const apiSlice = createApi({
                 method: 'DELETE'
             }),
             invalidatesTags: [TagTypes.BanList]
+        }),
+        getProblemReports: builder.query({
+            query: (loadOptions) => ({
+                url: '/problem-reports',
+                params: {
+                    pageSize: loadOptions.pageSize,
+                    pageNumber: loadOptions.pageIndex,
+                    sorting: loadOptions.sorting,
+                    filters: loadOptions.columnFilters
+                }
+            }),
+            providesTags: [TagTypes.ProblemReport]
+        }),
+        getProblemReport: builder.query({
+            query: (id) => `/problem-reports/${id}`,
+            keepUnusedDataFor: 0
+        }),
+        deleteProblemReports: builder.mutation({
+            query: (ids) => ({
+                url: '/problem-reports',
+                method: 'DELETE',
+                body: { ids }
+            }),
+            invalidatesTags: [TagTypes.ProblemReport]
         }),
         getAbuseBlocks: builder.query({
             query: () => '/abuse-blocks',
@@ -575,6 +658,8 @@ export const apiSlice = createApi({
     })
 });
 
+export const bannersChanged = () => apiSlice.util.invalidateTags([TagTypes.Banner]);
+
 export const {
     useGetNewsQuery,
     useGetAllNewsQuery,
@@ -593,6 +678,8 @@ export const {
     useToggleDeckFavouriteMutation,
     useSaveProfileMutation,
     useUpdateAvatarMutation,
+    useUploadBackgroundMutation,
+    useRemoveBackgroundMutation,
     useUnlinkPatreonMutation,
     useGetThronesDbStatusQuery,
     useGetThronesDbAuthorizeUrlMutation,
@@ -616,9 +703,18 @@ export const {
     useAddNewsMutation,
     useDeleteNewsMutation,
     useSaveNewsMutation,
+    useGetBannersQuery,
+    useGetAllBannersQuery,
+    useAddBannerMutation,
+    useSaveBannerMutation,
+    useDeleteBannerMutation,
+    useUploadBannerImageMutation,
     useGetBanListQuery,
     useAddBanListEntryMutation,
     useRemoveBanListEntryMutation,
+    useGetProblemReportsQuery,
+    useGetProblemReportQuery,
+    useDeleteProblemReportsMutation,
     useGetAbuseBlocksQuery,
     useAddAbuseBlockMutation,
     useRemoveAbuseBlockMutation,

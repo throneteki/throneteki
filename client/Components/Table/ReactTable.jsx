@@ -181,7 +181,7 @@ function ReactTable({
     }, [defaultColumnFilters, table]);
 
     useEffect(() => {
-        if (rowSelection === 'all' || rowSelection.size > 0) {
+        if (rowSelection.size > 0) {
             onRowSelectionChange && onRowSelectionChange(table.getSelectedRowModel().flatRows);
         } else {
             onRowSelectionChange && onRowSelectionChange([]);
@@ -240,7 +240,13 @@ function ReactTable({
                 showSelectionCheckboxes
                 selectionMode={disableSelection ? 'none' : 'multiple'}
                 selectedKeys={rowSelection}
-                onSelectionChange={setRowSelection}
+                onSelectionChange={(keys) =>
+                    setRowSelection(
+                        keys === 'all'
+                            ? new Set(table.getPrePaginationRowModel().rows.map((row) => row.id))
+                            : keys
+                    )
+                }
                 onRowAction={(key) => onRowClick && onRowClick(table.getRowModel().rows[key])}
                 topContent={topContent}
                 bottomContent={tableFooter}

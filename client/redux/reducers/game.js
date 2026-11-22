@@ -66,6 +66,11 @@ const gameSlice = createSlice({
         sendToggleMuteSpectatorsMessage: () => {},
         sendToggleManualModeMessage: () => {},
         sendReportProblemMessage: () => {},
+        sendDescribeProblemMessage: create.preparedReducer(
+            (description) => ({ payload: { description } }),
+            () => {}
+        ),
+        sendCancelProblemReportMessage: () => {},
         sendChangeStatMessage: create.preparedReducer(
             (type, amount) => ({ payload: { type, amount } }),
             () => {}
@@ -96,6 +101,8 @@ export const {
     sendToggleMuteSpectatorsMessage,
     sendToggleManualModeMessage,
     sendReportProblemMessage,
+    sendDescribeProblemMessage,
+    sendCancelProblemReportMessage,
     sendChangeStatMessage,
     sendLeaveGameMessage,
     sendConcedeMessage

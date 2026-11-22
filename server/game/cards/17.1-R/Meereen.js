@@ -11,7 +11,7 @@ class Meereen extends DrawCard {
             title: 'Place hand facedown and draw 3',
             cost: [ability.costs.kneelSelf(), ability.costs.discardFromHand()],
             message:
-                '{player} kneels {source} and discards 1 card from their hand to place their hand facedown under {source}',
+                '{player} kneels {source} and discards 1 card from their hand to place their hand facedown under {source} and draw 3 cards',
             gameAction: GameActions.simultaneously([
                 GameActions.simultaneously((context) =>
                     context.player.hand.map((card) =>
@@ -42,14 +42,12 @@ class Meereen extends DrawCard {
                         message:
                             '{player} discards their hand and returns their cards from under {source}'
                     };
-                })
-            ]).then({
-                message: 'Then {player} draws 3 cards',
-                gameAction: GameActions.drawCards((context) => ({
+                }),
+                GameActions.drawCards((context) => ({
                     player: context.player,
                     amount: 3
                 }))
-            })
+            ])
         });
     }
 }

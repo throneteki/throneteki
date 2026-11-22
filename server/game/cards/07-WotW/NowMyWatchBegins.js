@@ -10,7 +10,7 @@ class NowMyWatchBegins extends DrawCard {
             when: {
                 onCardPlaced: (event, context) =>
                     event.card.location === 'discard pile' &&
-                    event.player !== context.source.controller &&
+                    event.card.owner !== context.player &&
                     event.card.getType() === 'character' &&
                     event.card.getPrintedCost() <= 5 &&
                     context.source.controller.canPutIntoPlay(event.card)

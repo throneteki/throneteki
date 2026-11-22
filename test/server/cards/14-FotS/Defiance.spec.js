@@ -32,8 +32,9 @@ describe('Defiance after a character joins a challenge without being declared', 
             },
             player2: { inPlay: ['Castle Guard'] }
         });
+        this.passChallengeBeginWindow();
         this.player1.clickPrompt('Done');
-        this.player1.clickPrompt('Pass');
+        this.passChallengeBeginWindow();
         this.player2.clickPrompt('Power');
         this.player2.clickCard(this.castleGuard);
         this.player2.clickPrompt('Done');
@@ -56,7 +57,7 @@ describe('Defiance after a character joins a challenge without being declared', 
 
         expect(this.serDavosSeaworth.kneeled).toBe(false);
         expect(this.bastardInHiding.kneeled).toBe(true);
-        this.player1.clickPrompt('Pass');
+        this.passChallengeBeginWindow();
         expect(this.player2).isReadyToTakeAction();
     });
 });

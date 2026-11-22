@@ -163,4 +163,29 @@ describe('CardStat', function () {
             expect(this.testStat.multiplier).toBe(1);
         });
     });
+
+    describe('calculateExcluding()', function () {
+        const isEffect1 = function (effect) {
+            return effect === this.testEffect1;
+        };
+
+        it('leaves out the excluded modifiers and multipliers', function () {
+            this.testStat.addModifier(this.testEffect1, -2);
+            this.testStat.addModifier(this.testEffect2, 1);
+            this.testStat.addMultiplier(this.testEffect1, 0);
+            expect(this.testStat.calculateExcluding(isEffect1.bind(this))).toBe(4);
+            expect(this.testStat.calculate()).toBe(0);
+        });
+
+        it('leaves out an excluded set value and uses the next most recent one', function () {
+            this.testStat.addSetValue(this.testEffect2, 5);
+            this.testStat.addSetValue(this.testEffect1, 1);
+            expect(this.testStat.calculateExcluding(isEffect1.bind(this))).toBe(5);
+        });
+
+        it('does not go below 0', function () {
+            this.testStat.addModifier(this.testEffect2, -5);
+            expect(this.testStat.calculateExcluding(isEffect1.bind(this))).toBe(0);
+        });
+    });
 });

@@ -6,12 +6,13 @@ describe('The Fowler Twins', function () {
             player1: { actionWindows: { challengeBegin: true }, inPlay: ['The Fowler Twins'] },
             player2: { inPlay: ['Hedge Knight', 'Tumblestone Knight'] }
         });
+        this.player2.clickPrompt('Pass');
         this.player1.clickCard(this.theFowlerTwins);
         this.player1.clickCard(this.hedgeKnight);
     });
 
     it('makes the chosen character be declared in the next challenge if able', function () {
-        this.player1.clickPrompt('Pass');
+        this.passChallengeBeginWindow();
         this.player2.clickPrompt('Military');
         this.player2.clickCard(this.tumblestoneKnight);
         this.player2.clickPrompt('Done');

@@ -26,7 +26,7 @@ class Incinerate extends DrawCard {
                     effect: ability.effects.modifyStrength(
                         -2 *
                             (preThenContext.chosenCards || []).filter(
-                                (card) => card.location === 'discard pile'
+                                (card) => card.location !== 'hand'
                             ).length
                     )
                 }))

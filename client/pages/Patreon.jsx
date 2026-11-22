@@ -27,7 +27,7 @@ const Patreon = ({ code }) => {
         code,
         stateKey: PatreonStateKey,
         link,
-        redirectTo: '/profile',
+        redirectTo: '/profile/integrations',
         successMessage: 'Your account was linked successfully',
         notStartedMessage:
             'This Patreon link request was not started from your profile. Please try again.'

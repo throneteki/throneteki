@@ -137,6 +137,8 @@ this.persistentEffect({
 });
 ```
 
+`match` can also be an array of cards or players. Leaving `match` out matches every eligible target. Passing it as `undefined` or `null` (for example `match: context.target` when there is no target), or as a card selector object such as `{ type: 'character' }`, is a mistake: it throws outside production, and in production the error is reported and the effect is not added. `whileAttached` already matches the parent, so its `match` can only be a function that narrows that further.
+
 #### Conditional effects
 
 Some effects have a 'when', 'while' or 'if' clause within their text. These cards can be implemented by passing a `condition` function into the persistent effect declaration. The effect will only be applied when the function returns `true`. If the function returns `false` later on, the effect will be automatically unapplied from the cards it matched.
@@ -271,6 +273,14 @@ this.persistentEffect({
 The predicate receives `(opponent, context)`, where `context.source` is the card providing the
 effect. Each affected player has an independent allowance, and removing and reapplying the same
 effect preserves whether that allowance has been used.
+
+`cannotPutIntoPlay(restriction)` calls `restriction(card, playingType, context, player)`, and
+`cannotMarshal`, `cannotBringOutOfShadows` and `cannotPlay` call their condition with
+`(card, context, player)`. `player` is the player being restricted. Use it rather than
+`card.controller`: a card being put into play from another player's pile is still controlled by
+its owner until it enters play. To count cards that entered play, use
+`CardEntersPlayTracker.controllerOnEntry(event)` for the player each card entered play under, since
+a card that has left play is controlled by its owner again.
 
 ### Lasting effects
 
@@ -648,7 +658,9 @@ this.action({
 ```
 
 `{player}`, `{source}`, and `{target}` come from the context. Additional arguments use
-`message: { format, args }`, with each argument a context function. Prefer `{gameAction}` to
+`message: { format, args }`, with each argument a context function. `{opponent}`,
+`{chosenPlayer}` and `{searchTarget}` also come from the context, and an argument with the same
+name replaces any of these, for example in a `then` where the context has no opponent. Prefer `{gameAction}` to
 wording that could claim a prevented effect happened. Prompting actions such as `search`,
 `choose`, `ifCondition`, `may`, `nameCard`, and `nameTrait` log their own messages. A cancelled
 ability only gets the plain uses/plays line.
@@ -1127,7 +1139,9 @@ Cost reducer match predicates receive `(card, context)`, where `context.source` 
 providing the reducer. Use that context when matching the current controller's faction.
 
 An action that reduces a cost sets `clickToActivate: true`, so clicking the card uses it without
-the confirmation prompt other actions get. Clicking it again after use refunds costs that can be
+the confirmation prompt other actions get. That confirmation highlights the cards the action's
+`target` could choose, so choices made with `target` are previewed and choices made later with
+`GameActions.chooseCards` are not. Clicking it again after use refunds costs that can be
 refunded (kneeling the card itself) and ends the lasting effects it created, so the card needs no
 check of its own. Set `undoable: false` when the action does more than that, such as discarding
 cards (Queen of Meereen). Specs use these actions with `clickCard`, not `clickMenu`.

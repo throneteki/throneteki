@@ -271,7 +271,7 @@ function sanitizeSettings(settings) {
         result.promptDupes = !!settings.promptDupes;
     }
 
-    for (const key of ['hideInterrupts', 'hideReactions']) {
+    for (const key of ['hideInterrupts', 'hideReactions', 'keyboardShortcuts']) {
         if (Object.hasOwn(settings, key)) {
             result[key] = !!settings[key];
         }
@@ -280,14 +280,6 @@ function sanitizeSettings(settings) {
     let background = pickString(settings.background, /^[A-Za-z0-9_-]{1,32}$/);
     if (background) {
         result.background = background;
-    }
-
-    let customBackgroundUrl = pickString(
-        settings.customBackgroundUrl,
-        /^[A-Za-z0-9_-]{1,64}\.(png|jpe?g|gif|webp)$/i
-    );
-    if (customBackgroundUrl) {
-        result.customBackgroundUrl = customBackgroundUrl;
     }
 
     let cardSize = pickString(settings.cardSize, /^[a-z-]{1,16}$/);

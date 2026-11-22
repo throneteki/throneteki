@@ -160,7 +160,6 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
 
     passAndPauseForPhase(player) {
         player.responsesPausedForPhase = true;
-        this.game.addMessage('{0} stops response waits for the rest of the phase', player);
         this.pass();
     }
 

@@ -6,6 +6,7 @@ import logger from '../log.js';
 import User from '../models/User.js';
 import { idColumn } from '../db/ids.js';
 import { toCidr, toInet } from '../db/network.js';
+import { DefaultBackground } from '../../shared/backgrounds.js';
 
 export const Permissions = [
     'isAdmin',
@@ -19,7 +20,9 @@ export const Permissions = [
     'canModerateChat',
     'canManageMotd',
     'canManageEvents',
-    'canManageBanlist'
+    'canManageBanlist',
+    'canManageProblemReports',
+    'canManageBanners'
 ];
 
 const DuplicateConstraints = { users_username_key: 'username', users_email_key: 'email' };
@@ -96,7 +99,8 @@ function selectUserData({ columns = '', join = '' } = {}) {
                 '_id', t.token_id, 'token', t.token, 'exp', t.expires_at, 'ip', host(t.ip), 'lastUsed', t.last_used_at
             ) ORDER BY t.id)
             FROM refresh_tokens t WHERE t.user_id = u.id
-        ), '[]') AS tokens
+        ), '[]') AS tokens,
+        (SELECT bg.token FROM user_backgrounds bg WHERE bg.user_id = u.id) AS custom_background
     FROM users u ${join}`;
 }
 
@@ -158,6 +162,9 @@ export function rowToUserData(row) {
         row.permissions.map((permission) => [permission, true])
     );
     userData.blockList = row.block_list;
+    if (row.custom_background) {
+        userData.customBackground = row.custom_background;
+    }
     userData.tokens = row.tokens.map((token) => ({
         ...token,
         exp: new Date(token.exp),
@@ -377,6 +384,44 @@ class UserService extends EventEmitter {
 
                 throw new Error('Error setting user details');
             });
+    }
+
+    async setCustomBackground(username, { contentType, image }) {
+        const token = crypto.randomBytes(16).toString('hex');
+
+        await this.db.query(
+            'INSERT INTO user_backgrounds (user_id, token, content_type, image) ' +
+                'SELECT id, $2, $3, $4 FROM users WHERE lower(username) = lower($1) ' +
+                'ON CONFLICT (user_id) DO UPDATE SET token = EXCLUDED.token, ' +
+                'content_type = EXCLUDED.content_type, image = EXCLUDED.image, updated_at = now()',
+            [username, token, contentType, image]
+        );
+
+        return token;
+    }
+
+    async removeCustomBackground(username) {
+        await this.db.transaction(async (tx) => {
+            await tx.query(
+                'DELETE FROM user_backgrounds WHERE user_id = ' +
+                    '(SELECT id FROM users WHERE lower(username) = lower($1))',
+                [username]
+            );
+            await tx.query(
+                "UPDATE users SET settings = jsonb_set(settings, '{background}', to_jsonb($2::text)) " +
+                    "WHERE lower(username) = lower($1) AND settings->>'background' = 'custom'",
+                [username, DefaultBackground]
+            );
+        });
+    }
+
+    async getCustomBackground(token) {
+        const rows = await this.db.query(
+            'SELECT content_type, image FROM user_backgrounds WHERE token = $1',
+            [token]
+        );
+
+        return rows[0] && { contentType: rows[0].content_type, image: rows[0].image };
     }
 
     setResetToken(user, tokenHash, tokenExpiration) {

@@ -92,11 +92,13 @@ class AbilityMessage {
             getValue
         }));
 
-        return standardArgs
+        const builtInArgs = standardArgs
             .concat(optionalArgs)
             .concat(targetSelectionArgs)
             .concat(costArgs)
-            .concat(customArgs);
+            .filter((arg) => !(arg.name in customArgsHash));
+
+        return builtInArgs.concat(customArgs);
     }
 
     getOptionalArgs(format) {

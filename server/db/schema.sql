@@ -108,6 +108,40 @@ ALTER TABLE public.banlist ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 );
 
 --
+-- Name: banners; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.banners (
+    id bigint NOT NULL,
+    title text NOT NULL,
+    link_url text,
+    event_id bigint,
+    event_date date,
+    show_from timestamp with time zone NOT NULL,
+    show_until timestamp with time zone NOT NULL,
+    image_token text,
+    image_content_type text,
+    image bytea,
+    created_by text,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT banners_image_check CHECK ((((image IS NULL) AND (image_token IS NULL) AND (image_content_type IS NULL)) OR ((image IS NOT NULL) AND (image_token IS NOT NULL) AND (image_content_type IS NOT NULL)))),
+    CONSTRAINT banners_window_check CHECK ((show_until > show_from))
+);
+
+--
+-- Name: banners_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+ALTER TABLE public.banners ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.banners_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
 -- Name: cards; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -383,7 +417,14 @@ CREATE TABLE public.problem_reports (
     id uuid NOT NULL,
     report jsonb NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
-    expires_at timestamp with time zone DEFAULT (now() + '30 days'::interval) NOT NULL
+    expires_at timestamp with time zone DEFAULT (now() + '30 days'::interval) NOT NULL,
+    reporter text,
+    source text,
+    game_name text,
+    round integer,
+    phase text,
+    players text[] DEFAULT '{}'::text[] NOT NULL,
+    description text
 );
 
 --
@@ -420,6 +461,18 @@ ALTER TABLE public.refresh_tokens ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTI
 );
 
 --
+-- Name: user_backgrounds; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_backgrounds (
+    user_id bigint NOT NULL,
+    token text NOT NULL,
+    content_type text NOT NULL,
+    image bytea NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+--
 -- Name: user_blocks; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -448,7 +501,7 @@ CREATE TABLE public.user_monthly_stats (
 CREATE TABLE public.user_permissions (
     user_id bigint NOT NULL,
     permission text NOT NULL,
-    CONSTRAINT user_permissions_permission_check CHECK ((permission = ANY (ARRAY['isAdmin'::text, 'isContributor'::text, 'isSupporter'::text, 'canEditNews'::text, 'canManageUsers'::text, 'canManagePermissions'::text, 'canManageGames'::text, 'canManageNodes'::text, 'canModerateChat'::text, 'canManageMotd'::text, 'canManageEvents'::text, 'canManageBanlist'::text])))
+    CONSTRAINT user_permissions_permission_check CHECK ((permission = ANY (ARRAY['isAdmin'::text, 'isContributor'::text, 'isSupporter'::text, 'canEditNews'::text, 'canManageUsers'::text, 'canManagePermissions'::text, 'canManageGames'::text, 'canManageNodes'::text, 'canModerateChat'::text, 'canManageMotd'::text, 'canManageEvents'::text, 'canManageBanlist'::text, 'canManageProblemReports'::text, 'canManageBanners'::text])))
 );
 
 --
@@ -576,6 +629,20 @@ ALTER TABLE ONLY public.banlist
 
 ALTER TABLE ONLY public.banlist
     ADD CONSTRAINT banlist_pkey PRIMARY KEY (id);
+
+--
+-- Name: banners banners_image_token_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.banners
+    ADD CONSTRAINT banners_image_token_key UNIQUE (image_token);
+
+--
+-- Name: banners banners_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.banners
+    ADD CONSTRAINT banners_pkey PRIMARY KEY (id);
 
 --
 -- Name: cards cards_pkey; Type: CONSTRAINT; Schema: public; Owner: -
@@ -739,6 +806,20 @@ ALTER TABLE ONLY public.refresh_tokens
     ADD CONSTRAINT refresh_tokens_token_id_key UNIQUE (token_id);
 
 --
+-- Name: user_backgrounds user_backgrounds_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_backgrounds
+    ADD CONSTRAINT user_backgrounds_pkey PRIMARY KEY (user_id);
+
+--
+-- Name: user_backgrounds user_backgrounds_token_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_backgrounds
+    ADD CONSTRAINT user_backgrounds_token_key UNIQUE (token);
+
+--
 -- Name: user_blocks user_blocks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -805,6 +886,12 @@ CREATE INDEX abuse_events_user_id_idx ON public.abuse_events USING btree (user_i
 CREATE INDEX abuse_events_username_idx ON public.abuse_events USING btree (username);
 
 --
+-- Name: banners_show_until_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX banners_show_until_idx ON public.banners USING btree (show_until);
+
+--
 -- Name: decks_event_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -857,6 +944,12 @@ CREATE INDEX messages_posted_at_idx ON public.messages USING btree (posted_at DE
 --
 
 CREATE INDEX news_published_at_idx ON public.news USING btree (published_at DESC);
+
+--
+-- Name: problem_reports_created_at_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX problem_reports_created_at_idx ON public.problem_reports USING btree (created_at DESC);
 
 --
 -- Name: problem_reports_expires_at_idx; Type: INDEX; Schema: public; Owner: -
@@ -951,6 +1044,13 @@ ALTER TABLE ONLY public.abuse_events
     ADD CONSTRAINT abuse_events_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE SET NULL;
 
 --
+-- Name: banners banners_event_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.banners
+    ADD CONSTRAINT banners_event_id_fkey FOREIGN KEY (event_id) REFERENCES public.events(id) ON DELETE SET NULL;
+
+--
 -- Name: deck_cards deck_cards_deck_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1005,6 +1105,13 @@ ALTER TABLE ONLY public.messages
 
 ALTER TABLE ONLY public.refresh_tokens
     ADD CONSTRAINT refresh_tokens_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+--
+-- Name: user_backgrounds user_backgrounds_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_backgrounds
+    ADD CONSTRAINT user_backgrounds_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 --
 -- Name: user_blocks user_blocks_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -

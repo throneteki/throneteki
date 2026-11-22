@@ -141,6 +141,7 @@ export const init = async function (server) {
                 return res.status(400).send({ success: false, message: 'Invalid deck ids' });
             }
 
+            const decks = [];
             for (const deckId of deckIds) {
                 const deck = await deckService.getById(deckId);
 
@@ -152,7 +153,17 @@ export const init = async function (server) {
                     return res.status(401).send({ message: 'Unauthorized' });
                 }
 
-                await deckService.delete(deckId);
+                if (deck.locked) {
+                    return res
+                        .status(400)
+                        .send({ success: false, message: 'Locked decks cannot be deleted' });
+                }
+
+                decks.push(deck);
+            }
+
+            for (const deck of decks) {
+                await deckService.delete(deck._id);
             }
             res.send({ success: true });
         })
@@ -172,6 +183,12 @@ export const init = async function (server) {
 
             if (deck.username !== req.user.username) {
                 return res.status(401).send({ message: 'Unauthorized' });
+            }
+
+            if (deck.locked) {
+                return res
+                    .status(400)
+                    .send({ success: false, message: 'Locked decks cannot be deleted' });
             }
 
             await deckService.delete(id);

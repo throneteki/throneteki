@@ -9,6 +9,7 @@ class NorthernPatriarch extends DrawCard {
     // per round.)
     setupCardAbilities(ability) {
         this.persistentEffect({
+            match: this,
             effect: ability.effects.immuneTo(
                 (card, abilityContext, context) =>
                     card.controller !== context.source.controller &&

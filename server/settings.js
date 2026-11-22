@@ -20,7 +20,8 @@ const defaultSettings = {
     cardSize: 'normal',
     promptDupes: false,
     hideInterrupts: true,
-    hideReactions: true
+    hideReactions: true,
+    keyboardShortcuts: true
 };
 
 function getUserWithDefaultsSet(user) {

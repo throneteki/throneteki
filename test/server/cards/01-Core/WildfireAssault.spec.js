@@ -32,4 +32,11 @@ describe('Wildfire Assault', function () {
         expect(this.gardenCaretaker.location).toBe('play area');
         expect(this.lannisportMerchant.location).toBe('dead pile');
     });
+
+    it('names the killed characters in the game log', function () {
+        expect(this.game.getPlainTextLog()).toContain(
+            'player1 uses Wildfire Assault and kills Steward at the Wall and kills Lannisport Merchant'
+        );
+        expect(this.player1).isReadyToTakeAction();
+    });
 });

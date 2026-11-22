@@ -18,6 +18,9 @@ import UiPrompt from './uiprompt.js';
  *                      do nothing until they answer, so a second click doesn't open
  *                      another prompt, and opponents keep the prompt they had, so they
  *                      can't tell which card is being considered.
+ * previewCards       - cards to show as selectable to the prompted player while the menu is
+ *                      open, such as the legal targets of the action they are choosing whether
+ *                      to use.
  */
 class MenuPrompt extends UiPrompt {
     constructor(game, player, context, properties) {
@@ -45,6 +48,10 @@ class MenuPrompt extends UiPrompt {
     }
 
     activePrompt() {
+        if (this.properties.previewCards) {
+            this.player.setSelectableCards(this.properties.previewCards);
+        }
+
         let promptTitle =
             this.properties.promptTitle ||
             (this.properties.source ? this.properties.source.name : undefined);
@@ -90,6 +97,12 @@ class MenuPrompt extends UiPrompt {
                     button.method === method && (!button.mapCard || button.card.uuid === arg)
             )
         );
+    }
+
+    onCompleted() {
+        if (this.properties.previewCards) {
+            this.player.clearSelectableCards();
+        }
     }
 
     getPlayer() {

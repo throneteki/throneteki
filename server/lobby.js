@@ -1155,26 +1155,19 @@ class Lobby {
                 continue;
             }
 
-            let syncGame = new PendingGame(new User(owner.user), game.instance, {
-                allowSpectators: game.allowSpectators,
-                name: game.name,
-                event: game.event
-            });
+            let syncGame = new PendingGame(new User(owner.user), game.instance, game);
             syncGame.id = game.id;
             syncGame.node = this.router.workers[nodeName];
             syncGame.createdAt = game.startedAt;
             syncGame.started = game.started;
-            syncGame.gameType = game.gameType;
-            syncGame.gameFormat = game.gameFormat;
-            syncGame.gameVariant = game.gameVariant;
             syncGame.password = game.password;
-            syncGame.restrictedList = game.restrictedList;
 
             for (let player of Object.values(game.players)) {
                 syncGame.players[player.name] = {
                     id: player.id,
                     name: player.name,
                     owner: game.owner === player.name,
+                    seatNo: player.seatNo,
                     faction: { cardData: { code: player.faction } },
                     agendas: player.agendas?.map((code) => ({ cardData: { code } })),
                     user: new User(player.user)

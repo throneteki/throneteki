@@ -1,5 +1,6 @@
 import { partition } from '../Array.js';
 import EventRegistrar from './eventregistrar.js';
+import Effect from './effect.js';
 import TakeControl from './GameActions/TakeControl.js';
 import SimultaneousEvents from './SimultaneousEvents.js';
 import EventWindow from './gamesteps/eventwindow.js';
@@ -349,8 +350,8 @@ class EffectEngine {
         return this.withEffectChanges(() => {
             let { card, isBlank } = event;
             let targets = this.getTargets();
-            let matchingEffects = this.effects.filter(
-                (effect) => effect.duration === 'persistent' && effect.source === card
+            let matchingEffects = this.effects.filter((effect) =>
+                Effect.isFromTextBoxOf(effect, card)
             );
             for (let effect of matchingEffects) {
                 effect.setActive(!isBlank, targets);

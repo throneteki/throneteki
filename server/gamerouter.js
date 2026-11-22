@@ -271,26 +271,25 @@ class GameRouter extends EventEmitter {
                     break;
                 }
 
-                this.problemReportService
-                    .create(message.arg.report)
-                    .then(() =>
-                        this.sendCommand(identity, 'PROBLEMREPORTSAVED', {
-                            gameId: message.arg.gameId,
-                            reportId: message.arg.report.id
-                        })
-                    )
-                    .catch((error) => {
-                        logger.error('Unable to save problem report %s', error);
-                        this.sendCommand(identity, 'PROBLEMREPORTFAILED', {
-                            gameId: message.arg.gameId
-                        });
-                    });
+                this.saveProblemReport(identity, message.arg);
                 break;
         }
 
         if (worker) {
             worker.lastMessage = Date.now();
         }
+    }
+
+    saveProblemReport(identity, { gameId, report }) {
+        this.problemReportService
+            .create(report)
+            .then(() => {
+                this.sendCommand(identity, 'PROBLEMREPORTSAVED', { gameId, reportId: report.id });
+            })
+            .catch((error) => {
+                logger.error('Unable to save problem report %s', error);
+                this.sendCommand(identity, 'PROBLEMREPORTFAILED', { gameId });
+            });
     }
 
     // Internal methods

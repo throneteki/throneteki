@@ -18,10 +18,6 @@ class WildfireAssault extends PlotCard {
                     card.controller === context.choosingPlayer &&
                     card.getType() === 'character'
             },
-            message: {
-                format: '{player} uses {source} to kill {characters}',
-                args: { characters: (context) => notChosen(context) }
-            },
             gameAction: GameActions.simultaneously((context) =>
                 notChosen(context).map((card) => GameActions.kill({ card, allowSave: false }))
             )

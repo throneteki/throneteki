@@ -12,6 +12,7 @@ class ReturnToTheFields extends PlotCard {
                 type: 'select',
                 mode: 'upTo',
                 numCards: 3,
+                optional: true,
                 cardCondition: (card, context) =>
                     card.getType() === 'character' &&
                     card.location === 'play area' &&

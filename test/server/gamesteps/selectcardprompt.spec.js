@@ -690,4 +690,27 @@ describe('the SelectCardPrompt', function () {
             });
         });
     });
+
+    describe('the done button', function () {
+        it('is marked as the done button', function () {
+            this.properties.numCards = 1;
+            this.prompt = new SelectCardPrompt(this.game, this.player, this.properties);
+
+            expect(this.prompt.getDoneButton()).toEqual(
+                expect.objectContaining({ arg: 'done', done: true })
+            );
+        });
+
+        it('is not marked as the done button when it cancels', function () {
+            this.properties.numCards = 1;
+            this.properties.cancelsWhenEmpty = true;
+            this.prompt = new SelectCardPrompt(this.game, this.player, this.properties);
+            this.prompt.selectedCards = [];
+
+            const button = this.prompt.getDoneButton();
+
+            expect(button.cancel).toBe(true);
+            expect(button.done).toBeUndefined();
+        });
+    });
 });

@@ -74,7 +74,8 @@ const About = () => {
                 </p>
                 <p className='mt-1'>
                     Don&apos;t want to be distracted by beautiful art during your games? In-game
-                    backgrounds can be disabled from your <Link href='/profile'>Profile</Link>.
+                    backgrounds can be disabled from your{' '}
+                    <Link href='/profile/appearance'>Profile</Link>.
                 </p>
                 <p className='mt-1'>
                     Card hand icon is by Henry Ryder from{' '}

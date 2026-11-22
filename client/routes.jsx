@@ -14,6 +14,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import UserAdmin from './pages/UserAdmin';
 import Profile from './pages/Profile';
+import { isProfileSection } from './Components/Profile/ProfileSections';
 import NewsAdmin from './pages/NewsAdmin';
 import AddDeck from './Components/Decks/AddDeck';
 import EditDeck from './Components/Decks/EditDeck';
@@ -22,6 +23,8 @@ import GameBoard from './Components/GameBoard/GameBoard';
 import BlockList from './pages/BlockList';
 import NodesAdmin from './pages/NodesAdmin';
 import MotdAdmin from './pages/MotdAdmin';
+import BannersAdmin from './pages/BannersAdmin';
+import ProblemReportsAdmin from './pages/ProblemReportsAdmin';
 import Privacy from './pages/Privacy';
 import Patreon from './pages/Patreon';
 import ThronesDb from './pages/ThronesDb';
@@ -70,7 +73,13 @@ const routes = [
             return <GameLobby key='gamelobby' gameId={context.params.gameId} />;
         }
     },
-    { path: '/profile', action: () => <Profile key='profile' /> },
+    {
+        path: '/profile/:section?',
+        action: (context) =>
+            (!context.params.section || isProfileSection(context.params.section)) && (
+                <Profile key='profile' section={context.params.section} />
+            )
+    },
     { path: '/register', action: () => <Register key='register' /> },
     {
         path: '/reset-password',
@@ -96,11 +105,21 @@ const routes = [
     },
     { path: '/users', action: () => <UserAdmin key='useradmin' />, permission: 'canManageUsers' },
     { path: '/nodes', action: () => <NodesAdmin key='nodesadmin' />, permission: 'canManageNodes' },
+    {
+        path: '/admin/problem-reports',
+        action: () => <ProblemReportsAdmin key='problemreports' />,
+        permission: 'canManageProblemReports'
+    },
     { path: '/privacy', action: () => <Privacy key='privacy' /> },
     {
         path: '/admin/motd',
         action: () => <MotdAdmin key='motdadmin' />,
         permission: 'canManageMotd'
+    },
+    {
+        path: '/admin/banners',
+        action: () => <BannersAdmin key='bannersadmin' />,
+        permission: 'canManageBanners'
     },
     { path: '/patreon', action: (context) => <Patreon code={context.params.code} /> },
     { path: '/thronesdb', action: () => <ThronesDb key='thronesdb' /> },

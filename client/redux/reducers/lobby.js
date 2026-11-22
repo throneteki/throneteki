@@ -11,6 +11,7 @@ const initialState = {
     passwordError: undefined,
     currentGame: undefined,
     newGame: false,
+    eventGameRequest: undefined,
     lobbyError: false,
     notice: undefined,
     motd: undefined
@@ -43,6 +44,12 @@ const lobbySlice = createSlice({
         },
         cancelNewGame(state) {
             state.newGame = false;
+        },
+        requestEventGame(state, action) {
+            state.eventGameRequest = action.payload;
+        },
+        clearEventGameRequest(state) {
+            state.eventGameRequest = undefined;
         },
         clearChatStatus(state) {
             state.lobbyError = false;
@@ -255,6 +262,8 @@ export const {
     startNewGame,
     gameSocketClosed,
     cancelNewGame,
+    requestEventGame,
+    clearEventGameRequest,
     clearChatStatus,
     sendNewGameMessage,
     sendSelectDeckMessage,
