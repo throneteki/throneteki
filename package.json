@@ -79,6 +79,7 @@
         "html-to-image": "^1.11.13",
         "jest": "^29.7.0",
         "jimp": "^1.6.1",
+        "jsondiffpatch": "0.7.7",
         "jsonwebtoken": "^9.0.2",
         "lodash.range": "^3.2.0",
         "lodash.sample": "^4.2.1",

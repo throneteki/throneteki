@@ -16,6 +16,7 @@ import ConfigService from '../services/ConfigService.js';
 import TextHelper from '../game/TextHelper.js';
 import HealthServer from './healthserver.js';
 import { checkSecrets } from '../configCheck.js';
+import { appendDelta, diffGameState, snapshotGameState } from '../../shared/gameStateDiff.js';
 
 if (config.sentryDsn) {
     Sentry.init({
@@ -31,6 +32,7 @@ class GameServer {
         checkSecrets(this.configService, ['secret']);
         this.games = {};
         this.pendingProblemReports = new WeakMap();
+        this.sentStates = new WeakMap();
 
         this.protocol = 'https';
 
@@ -242,13 +244,60 @@ class GameServer {
     }
 
     sendGameState(game) {
-        _.each(game.getPlayersAndSpectators(), (player) => {
+        let sentStates = this.sentStates.get(game);
+        if (!sentStates) {
+            sentStates = new Map();
+            this.sentStates.set(game, sentStates);
+        }
+
+        const players = game.getPlayersAndSpectators();
+        for (const name of sentStates.keys()) {
+            const player = players[name];
+            if (!player || player.left || game.isDisconnected(player) || !player.socket) {
+                sentStates.delete(name);
+            }
+        }
+
+        for (const player of Object.values(players)) {
             if (player.left || game.isDisconnected(player) || !player.socket) {
-                return;
+                continue;
             }
 
-            player.socket.send('gamestate', game.getState(player.name));
-        });
+            const board = game.getState(player.name);
+            delete board.messages;
+            const state = snapshotGameState(board);
+            const messages = game.gameChat.messages;
+            const sent = sentStates.get(player.name);
+
+            if (
+                sent?.socket === player.socket &&
+                sent.messages === messages &&
+                messages.length >= sent.messageCount
+            ) {
+                const delta = diffGameState(sent.state, state) ?? {};
+                if (messages.length > sent.messageCount) {
+                    delta.messages = appendDelta(
+                        sent.messageCount,
+                        snapshotGameState(game.gameChat.getMessagesForClient(sent.messageCount))
+                    );
+                }
+                if (Object.keys(delta).length > 0) {
+                    player.socket.send('gamestatediff', delta);
+                }
+            } else {
+                player.socket.send('gamestate', {
+                    ...state,
+                    messages: snapshotGameState(game.gameChat.getMessagesForClient())
+                });
+            }
+
+            sentStates.set(player.name, {
+                socket: player.socket,
+                state,
+                messages,
+                messageCount: messages.length
+            });
+        }
     }
 
     handshake(socket, next) {
@@ -423,6 +472,7 @@ class GameServer {
         this.sendGameState(game);
 
         socket.registerEvent('game', this.onGameMessage.bind(this));
+        socket.registerEvent('resync', this.onResync.bind(this));
         socket.on('disconnect', this.onSocketDisconnected.bind(this));
     }
 
@@ -487,6 +537,16 @@ class GameServer {
 
             this.gameSocket.send('GAMECLOSED', { game: game.id });
         }
+    }
+
+    onResync(socket) {
+        const game = this.findGameForUser(socket.user.username);
+        if (!game) {
+            return;
+        }
+
+        this.sentStates.get(game)?.delete(socket.user.username);
+        this.sendGameState(game);
     }
 
     onGameMessage(socket, command, ...args) {
