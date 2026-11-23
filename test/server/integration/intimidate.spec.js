@@ -82,11 +82,7 @@ describe('intimidate', function () {
                 this.player1.clickCard('Grey Wind', 'play area');
                 this.player1.clickPrompt('Done');
 
-                this.skipActionWindow();
-
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player2);
 
                 this.player1.clickPrompt('Apply Claim');
 

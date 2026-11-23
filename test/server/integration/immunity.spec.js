@@ -35,15 +35,7 @@ describe('immunity', function () {
             });
 
             it('should not allow actions to be applied to it', function () {
-                this.player2.clickPrompt('Military');
-                this.player2.clickCard(this.character);
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
-
-                this.player1.clickPrompt('Done');
-
-                this.skipActionWindow();
+                this.unopposedChallenge(this.player2, 'Military', this.character);
 
                 this.player2.clickCard('Put to the Torch', 'hand');
                 this.player2.clickCard(this.chamber);

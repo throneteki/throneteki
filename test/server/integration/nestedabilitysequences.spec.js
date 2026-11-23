@@ -157,11 +157,7 @@ describe('nested ability sequences', function () {
                 this.player1.clickCard('The Blackfish', 'play area');
                 this.player1.clickPrompt('Done');
 
-                this.skipActionWindow();
-
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player2);
 
                 // Activate Blackfish to draw a card.
                 this.player1.triggerAbility('The Blackfish');

@@ -39,9 +39,7 @@ describe('Deepwood Motte', function () {
             this.player1.clickCard(this.bryndensOutriders);
             this.player1.clickPrompt('Done');
             this.player1.clickCard(this.greyCliffs);
-            this.skipActionWindow();
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
+            this.declareNoDefenders(this.player2);
         });
 
         it('can be triggered', function () {
@@ -96,9 +94,7 @@ describe('Deepwood Motte', function () {
             this.player2.clickCard(this.mothersMen);
             this.player2.clickPrompt('Done');
             this.player2.clickCard(this.theRiverroad);
-            this.skipActionWindow();
-            this.player1.clickPrompt('Done');
-            this.skipActionWindow();
+            this.declareNoDefenders(this.player1);
         });
 
         it('cannot be triggered', function () {

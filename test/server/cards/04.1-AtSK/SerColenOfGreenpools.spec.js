@@ -15,9 +15,7 @@ describe('Ser Colen of Greenpools', function () {
     it('gets +3 STR during [power] challenges', function () {
         expect(this.serColenOfGreenpools.getStrength()).toBe(4);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

@@ -15,9 +15,7 @@ describe('Cersei Lannister (Core)', function () {
     it('raises the claim on your revealed plot by 1 while she is attacking in an [intrigue] challenge', function () {
         expect(this.player1Object.getClaim()).toBe(2);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

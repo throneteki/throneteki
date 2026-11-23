@@ -8,12 +8,7 @@ describe('Ser Dontos Hollard', function () {
             player2: { inPlay: ['Burned Men'] }
         });
         this.player1.clickPrompt('Done');
-        this.player2.clickPrompt('Military');
-        this.player2.clickCard(this.burnedMen);
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player2, 'Military', this.burnedMen);
         this.player1.clickCard(this.margaeryTyrell);
         this.player1.triggerAbility(this.serDontosHollard);
     });

@@ -77,7 +77,7 @@ describe('effects', function () {
                     this.player2.clickPrompt('Pass');
                     this.player1.clickPrompt('Pass');
 
-                    this.player2.clickPrompt('Done');
+                    this.player2.clickPrompt("Don't defend");
                     this.skipActionWindow();
 
                     // Trigger Rains to reveal a new plot
@@ -240,7 +240,7 @@ describe('effects', function () {
 
                     this.player1.clickPrompt('Pass');
                     this.player2.clickPrompt('Pass');
-                    this.player1.clickPrompt('Done');
+                    this.player1.clickPrompt("Don't defend");
 
                     this.skipActionWindow();
 
@@ -301,7 +301,7 @@ describe('effects', function () {
                 expect(this.jhogo.getStrength()).toBe(3);
 
                 // Declare no defenders
-                this.player2.clickPrompt('Done');
+                this.player2.clickPrompt("Don't defend");
 
                 this.skipActionWindow();
                 this.player1.clickPrompt('Apply Claim');
@@ -369,11 +369,7 @@ describe('effects', function () {
                 this.player2.clickCard('Tyene Sand (TS)');
                 this.player2.clickPrompt('Done');
 
-                this.skipActionWindow();
-
-                this.player1.clickPrompt('Done');
-
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player1);
 
                 this.player2.triggerAbility('Tyene Sand');
                 this.player2.clickCard(this.character);

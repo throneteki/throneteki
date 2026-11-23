@@ -15,9 +15,7 @@ describe('Willas Tyrell (FUtG)', function () {
     it('contributes his STR during a challenge in which a character you control attacks alone', function () {
         expect(this.game.currentChallenge.attackerStrength).toBe(4);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

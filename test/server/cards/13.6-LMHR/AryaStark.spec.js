@@ -40,9 +40,7 @@ describe('Arya Stark (LMHR)', function () {
             this.player1.clickCard(this.aryaStark);
             this.player1.clickPrompt('Done');
             this.player1.clickCard(this.bastardInHiding);
-            this.skipActionWindow();
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
+            this.declareNoDefenders(this.player2);
             this.player2.clickCard(this.burnedMen);
             const handSize = this.player1Object.hand.length;
             this.player1.triggerAbility('Arya Stark');

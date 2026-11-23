@@ -16,9 +16,7 @@ describe('Owen the Oaf', function () {
     it('stops each participating character with more than 1 challenge icon contributing while he participates', function () {
         expect(this.game.currentChallenge.attackerStrength).toBe(4);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

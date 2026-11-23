@@ -93,14 +93,11 @@ describe('The House With the Red Door', function () {
                 }
             });
 
-            this.player2.clickPrompt('Military');
-            this.player2.clickCard(this.hedgeKnight);
-            this.player2.clickCard(this.tumblestoneKnight);
-            this.player2.clickCard(this.bastardInHiding);
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
-            this.player1.clickPrompt('Done');
-            this.skipActionWindow();
+            this.unopposedChallenge(this.player2, 'Military', [
+                this.hedgeKnight,
+                this.tumblestoneKnight,
+                this.bastardInHiding
+            ]);
             this.player2.triggerAbility(this.putToTheTorch);
         });
 

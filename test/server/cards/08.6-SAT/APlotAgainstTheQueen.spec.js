@@ -10,12 +10,7 @@ describe('A Plot Against The Queen', function () {
             player2: { inPlay: [{ card: 'Khal Drogo (Core)', power: 1 }] }
         });
         this.player1.clickPrompt('Done');
-        this.player2.clickPrompt('Power');
-        this.player2.clickCard(this.khalDrogo);
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player2, 'Power', this.khalDrogo);
         this.player1.triggerAbility(this.aPlotAgainstTheQueen);
         this.player1.clickCard(this.tumblestoneKnight);
         this.player1.clickCard(this.khalDrogo);

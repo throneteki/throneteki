@@ -15,9 +15,7 @@ describe("Cersei's Attendant", function () {
     it('gains insight while participating in a challenge against an opponent with no cards in hand', function () {
         expect(this.cerseisAttendant.hasKeyword('Insight')).toBe(true);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

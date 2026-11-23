@@ -89,11 +89,7 @@ describe('playing events', function () {
                 this.player1.clickCard('Melisandre', 'play area');
                 this.player1.clickPrompt('Done');
 
-                this.skipActionWindow();
-
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player2);
 
                 this.player2.triggerAbility("The Prince's Plan");
             });

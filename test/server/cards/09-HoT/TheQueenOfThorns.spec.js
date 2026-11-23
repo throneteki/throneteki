@@ -23,9 +23,7 @@ describe('The Queen of Thorns (HoT)', function () {
 
         expect(this.tithe.location).toBe('hand');
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

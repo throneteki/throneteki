@@ -6,12 +6,7 @@ describe('Royal Entourage', function () {
             player2: { inPlay: ['Littlefinger (Core)'] }
         });
         this.player1.clickPrompt('Done');
-        this.player2.clickPrompt('Intrigue');
-        this.player2.clickCard(this.littlefinger);
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player2, 'Intrigue', this.littlefinger);
     });
 
     it('kneels itself after you lose an intrigue challenge', function () {

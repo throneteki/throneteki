@@ -712,5 +712,20 @@ describe('the SelectCardPrompt', function () {
             expect(button.cancel).toBe(true);
             expect(button.done).toBeUndefined();
         });
+
+        it('uses the empty selection button properties only while nothing is selected', function () {
+            this.properties.numCards = 0;
+            this.properties.emptyDoneButton = () => ({ text: 'Skip', endsTurn: true });
+            this.prompt = new SelectCardPrompt(this.game, this.player, this.properties);
+
+            expect(this.prompt.getDoneButton()).toEqual(
+                expect.objectContaining({ text: 'Skip', endsTurn: true, arg: 'done', done: true })
+            );
+
+            this.prompt.selectedCards = [this.card];
+
+            expect(this.prompt.getDoneButton().text).toBe('Done');
+            expect(this.prompt.getDoneButton().endsTurn).toBeUndefined();
+        });
     });
 });

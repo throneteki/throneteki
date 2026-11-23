@@ -18,7 +18,7 @@ describe('The Haunted Forest', function () {
             this.player2.clickCard(this.stewardAtTheWall);
             this.player2.clickPrompt('Done');
             this.skipActionWindow();
-            this.player1.clickPrompt('Done');
+            this.player1.clickPrompt("Don't defend");
         });
 
         it('contributes 1 STR to your side while you defend', function () {
@@ -37,12 +37,7 @@ describe('The Haunted Forest', function () {
 
     describe('when the challenge is lost', function () {
         beforeEach(function () {
-            this.player2.clickPrompt('Intrigue');
-            this.player2.clickCard(this.maesterAemon);
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
-            this.player1.clickPrompt('Done');
-            this.skipActionWindow();
+            this.unopposedChallenge(this.player2, 'Intrigue', this.maesterAemon);
             this.player2.clickPrompt('player1 - The Haunted Forest');
         });
 

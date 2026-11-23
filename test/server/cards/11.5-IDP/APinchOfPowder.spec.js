@@ -40,12 +40,7 @@ describe('A Pinch of Powder', function () {
             });
             this.player1.clickCard(this.aPinchOfPowder);
             this.player1.clickCard(this.hedgeKnight);
-            this.player1.clickPrompt('Power');
-            this.player1.clickCard(this.rangingParty);
-            this.player1.clickPrompt('Done');
-            this.skipActionWindow();
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
+            this.unopposedChallenge(this.player1, 'Power', this.rangingParty);
             this.player1.triggerAbility(this.aPinchOfPowder);
         });
 

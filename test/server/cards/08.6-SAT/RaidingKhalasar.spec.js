@@ -16,9 +16,7 @@ describe('Raiding Khalasar', function () {
     it('raises the claim on your revealed plot by 1 while it attacks with a Bloodrider character', function () {
         expect(this.player1Object.getClaim()).toBe(2);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

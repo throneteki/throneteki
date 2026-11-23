@@ -15,9 +15,7 @@ describe('Strangler', function () {
     it("sets the attached character's STR to 1 while it participates", function () {
         expect(this.khalDrogo.getStrength()).toBe(1);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

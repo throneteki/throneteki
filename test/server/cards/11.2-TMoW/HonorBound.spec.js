@@ -19,9 +19,7 @@ describe('Honor-Bound', function () {
 
         this.player1.clickCard(this.houseMaester);
         this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         this.player1.clickPrompt('Military');
         this.player1.clickCard(this.khalDrogo);
@@ -29,9 +27,7 @@ describe('Honor-Bound', function () {
 
         expect(this.khalDrogo.getStrength()).toBe(7);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

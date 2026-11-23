@@ -31,9 +31,7 @@ describe('Wolves of the North', function () {
                 'player1 uses Wolves of the North to give Ranging Party -2 STR until the end of the phase'
             );
 
-            this.skipActionWindow();
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
+            this.declareNoDefenders(this.player2);
             this.player2.clickCard(this.bastardInHiding);
 
             expect(this.rangingParty.getStrength()).toBe(3);

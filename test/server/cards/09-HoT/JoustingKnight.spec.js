@@ -16,9 +16,7 @@ describe('Jousting Knight', function () {
     it('does not contribute its STR unless attacking or defending alone', function () {
         expect(this.game.currentChallenge.attackerStrength).toBe(2);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

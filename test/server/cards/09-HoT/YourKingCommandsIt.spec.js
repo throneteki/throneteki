@@ -8,13 +8,7 @@ describe('Your King Commands It', function () {
             }
         });
 
-        this.player1.clickPrompt('Power');
-        this.player1.clickCard(this.khalDrogo);
-        this.player1.clickCard(this.robbStark);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Power', [this.khalDrogo, this.robbStark]);
     });
 
     it('stops each non-King, non-Queen character gaining power', function () {

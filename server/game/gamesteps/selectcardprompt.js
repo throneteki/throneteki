@@ -44,6 +44,9 @@ import CardSelector from '../CardSelector.js';
  *                      cancel.
  * cancelsWhenEmpty   - when true, Done with nothing selected cancels rather than
  *                      choosing nothing, so the button reads Cancel then.
+ * emptyDoneButton    - properties that replace the done button's while nothing is
+ *                      selected, such as a different text, or a function that
+ *                      returns them.
  * source             - what is at the origin of the user prompt, usually a card;
  *                      used to provide a default waitingPromptTitle, if missing
  * gameAction         - a string representing the game action to be checked on
@@ -169,12 +172,15 @@ class SelectCardPrompt extends UiPrompt {
                 this.numPlayers,
                 this.context
             );
-            return {
+            const button = {
                 text: this.properties.doneButtonText || 'Done',
                 arg: 'done',
                 done: true,
                 disabled: !hasEnough && (this.selectedCards.length > 0 || !this.canCancel())
             };
+            return this.selectedCards.length === 0
+                ? { ...button, ...this.getEmptyDoneButton() }
+                : button;
         }
 
         return {
@@ -183,6 +189,11 @@ class SelectCardPrompt extends UiPrompt {
             cancel: true,
             disabled: !this.canCancel()
         };
+    }
+
+    getEmptyDoneButton() {
+        const emptyDoneButton = this.properties.emptyDoneButton;
+        return typeof emptyDoneButton === 'function' ? emptyDoneButton() : emptyDoneButton;
     }
 
     waitingPrompt() {

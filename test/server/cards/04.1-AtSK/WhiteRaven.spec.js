@@ -9,12 +9,7 @@ describe('White Raven', function () {
 
     it('is sacrificed after you lose a power challenge', function () {
         this.player1.clickPrompt('Done');
-        this.player2.clickPrompt('Power');
-        this.player2.clickCard(this.castleGuard);
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player2, 'Power', this.castleGuard);
         expect(this.whiteRaven.location).toBe('discard pile');
         expect(this.player2).isReadyToTakeAction();
     });

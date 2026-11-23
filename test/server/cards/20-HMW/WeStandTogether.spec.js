@@ -20,13 +20,7 @@ describe('We Stand Together', function () {
         });
         this.unopposedChallenge(this.player1, 'Military', this.hedgeKnight);
         this.unopposedChallenge(this.player1, 'Power', this.robbStark);
-        this.player1.clickPrompt('Intrigue');
-        this.player1.clickCard(this.blackWalder);
-        this.player1.clickCard(this.gennaFrey);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Intrigue', [this.blackWalder, this.gennaFrey]);
         this.player1.triggerAbility('We Stand Together');
         this.player1.clickCard(this.blackWalder);
         expect(this.blackWalder.kneeled).toBe(false);

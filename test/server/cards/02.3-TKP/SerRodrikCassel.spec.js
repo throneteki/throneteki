@@ -15,9 +15,7 @@ describe('Ser Rodrik Cassel', function () {
     it('gives each unique [stark] character you control insight while he attacks in a [military] challenge', function () {
         expect(this.robbStark.hasKeyword('Insight')).toBe(true);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

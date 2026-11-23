@@ -7,13 +7,10 @@ describe('Castamere', function () {
             },
             player2: { inPlay: ['Tumblestone Knight'] }
         });
-        this.player1.clickPrompt('Intrigue');
-        this.player1.clickCard(this.cerseiLannister);
-        this.player1.clickCard(this.serJaimeLannister);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Intrigue', [
+            this.cerseiLannister,
+            this.serJaimeLannister
+        ]);
         this.player1.triggerAbility(this.castamere);
     });
 

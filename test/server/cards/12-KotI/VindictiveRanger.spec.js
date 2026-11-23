@@ -6,12 +6,7 @@ describe('Vindictive Ranger', function () {
             player2: { inPlay: ['Ser Jaime Lannister (Core)'] }
         });
         this.player1.clickPrompt('Done');
-        this.player2.clickPrompt('Intrigue');
-        this.player2.clickCard(this.serJaimeLannister);
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player2, 'Intrigue', this.serJaimeLannister);
         this.player1.triggerAbility(this.vindictiveRanger);
         this.player1.clickPrompt('Power');
     });

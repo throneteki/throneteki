@@ -6,12 +6,7 @@ describe('Tower of the Hand (WotN)', function () {
                 player1: { inPlay: ['Tower of the Hand (WotN)', 'Cersei Lannister (LoCR)'] },
                 player2: { inPlay: ['Hedge Knight'] }
             });
-            this.player1.clickPrompt('Intrigue');
-            this.player1.clickCard(this.cerseiLannister);
-            this.player1.clickPrompt('Done');
-            this.skipActionWindow();
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
+            this.unopposedChallenge(this.player1, 'Intrigue', this.cerseiLannister);
             this.player1.triggerAbility(this.towerOfTheHand);
             this.player1.clickCard(this.cerseiLannister);
             this.player1.clickCard(this.hedgeKnight);

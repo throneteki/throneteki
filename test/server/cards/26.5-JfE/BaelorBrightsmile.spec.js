@@ -12,7 +12,7 @@ describe('Baelor Brightsmile', function () {
         if (defenders.length > 0) {
             this.player2.clickCard(this.castleGuard);
         }
-        this.player2.clickPrompt('Done');
+        this.player2.clickPrompt(defenders.length > 0 ? 'Done' : "Don't defend");
         this.skipActionWindow();
     }
 

@@ -17,9 +17,7 @@ describe('Nightfort Builder', function () {
     it('reveals the top card of your deck after it is knelt, and draws a [thenightswatch] location or attachment', function () {
         expect(this.longclaw.location).toBe('hand');
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

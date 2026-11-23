@@ -6,12 +6,7 @@ describe('Like Warm Rain', function () {
             player2: { inPlay: ['Littlefinger (Core)'] }
         });
         this.player1.clickPrompt('Done');
-        this.player2.clickPrompt('Intrigue');
-        this.player2.clickCard(this.littlefinger);
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player2, 'Intrigue', this.littlefinger);
         this.player1.triggerAbility(this.likeWarmRain);
         this.player1.clickCard(this.summer);
         this.player1.clickCard(this.littlefinger);

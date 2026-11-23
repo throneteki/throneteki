@@ -18,7 +18,7 @@ describe('You Murdered Her Children (LoCR)', function () {
     function finishChallenges(context) {
         context.player2.clickPrompt('Pass');
         context.player1.clickPrompt('Pass');
-        context.player2.clickPrompt('Done');
+        context.player2.clickPrompt("Don't defend");
         context.skipActionWindow();
         context.player1.clickPrompt('Pass');
         context.completeChallengesPhase();

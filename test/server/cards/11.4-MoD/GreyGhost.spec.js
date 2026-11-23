@@ -90,7 +90,7 @@ describe('Grey Ghost choosing characters', function () {
             expect(this.player2).not.toBeAbleToSelect(this.castleGuard);
             expect(this.player2).not.toBeAbleToSelect(this.tumblestoneKnight);
 
-            this.player2.clickPrompt('Done');
+            this.player2.clickPrompt("Don't defend");
             this.skipActionWindow();
             this.player2.clickCard(this.castleGuard);
 

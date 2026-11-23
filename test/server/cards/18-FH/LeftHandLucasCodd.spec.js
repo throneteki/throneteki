@@ -13,7 +13,7 @@ describe('Left-Hand Lucas Codd', function () {
     it('places 1 gold from the treasury on a card after no defenders are declared', function () {
         this.player1.clickCard(this.hedgeKnight);
         this.skipActionWindow();
-        this.player2.clickPrompt('Done');
+        this.player2.clickPrompt("Don't defend");
 
         expect(this.player1).toAllowAbilityTrigger(this.leftHandLucasCodd);
         this.player1.triggerAbility(this.leftHandLucasCodd);

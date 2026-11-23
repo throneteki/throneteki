@@ -15,9 +15,7 @@ describe('The Defiance of Duskendale (AHaH)', function () {
         this.player1.clickCard(this.kingsLandingMob);
         this.player1.clickPrompt('Done');
         this.player1.clickCard(this.heartTreeGrove);
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
     });
 
     it('discards a location after it is knelt by assault', function () {

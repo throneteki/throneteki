@@ -60,7 +60,7 @@ describe('Randyll Tarly (Core)', function () {
             this.player2.clickCard(this.randyllTarly);
             this.player1.clickPrompt('Pass');
             this.player2.clickPrompt('Pass');
-            this.player2.clickPrompt('Done');
+            this.player2.clickPrompt("Don't defend");
             this.skipActionWindow();
         });
 

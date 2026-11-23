@@ -31,9 +31,7 @@ describe('The Black Cells', function () {
 
         this.player2.clickCard(this.serJaimeLannister);
         this.player2.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player1);
 
         expect(this.serJaimeLannister.kneeled).toBe(false);
         this.passChallengeBeginWindow();

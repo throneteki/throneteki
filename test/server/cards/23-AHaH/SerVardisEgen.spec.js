@@ -12,7 +12,7 @@ describe('Ser Vardis Egen', function () {
         context.player2.clickPrompt('Done');
         context.skipActionWindow();
         if (defend) context.player1.clickCard(context.serVardisEgen);
-        context.player1.clickPrompt('Done');
+        context.player1.clickPrompt(defend ? 'Done' : "Don't defend");
         context.skipActionWindow();
         return attacker;
     }

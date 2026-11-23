@@ -14,9 +14,7 @@ describe('Chivalry of the South', function () {
         this.player1.clickPrompt('Pass');
         this.player2.clickMenu(this.warScorpion, 'Remove attacker from challenge');
         this.player2.clickCard(this.tumblestoneKnight);
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
         this.player1.triggerAbility(this.chivalryOfTheSouth);
 
         expect(this.player1Object.faction.power).toBe(2);
@@ -24,9 +22,7 @@ describe('Chivalry of the South', function () {
     });
 
     it('does not trigger when a challenge ends with participating characters', function () {
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
         this.player2.clickCard(this.scorpionKnight);
 
         expect(this.player1).not.toAllowAbilityTrigger(this.chivalryOfTheSouth);

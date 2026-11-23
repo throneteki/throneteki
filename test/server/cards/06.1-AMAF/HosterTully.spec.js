@@ -17,9 +17,7 @@ describe('Hoster Tully', function () {
         expect(this.tumblestoneKnight.hasKeyword('Renown')).toBe(true);
         expect(this.hosterTully.hasKeyword('Renown')).toBe(false);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

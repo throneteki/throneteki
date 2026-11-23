@@ -4,13 +4,7 @@ describe('Eddard Stark (WotN)', function () {
             phase: 'challenge',
             player1: { inPlay: ['Eddard Stark (WotN)', 'Tumblestone Knight'] }
         });
-        this.player1.clickPrompt('Power');
-        this.player1.clickCard(this.eddardStark);
-        this.player1.clickCard(this.tumblestoneKnight);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Power', [this.eddardStark, this.tumblestoneKnight]);
         this.player1.triggerAbility(this.eddardStark);
         this.player1.clickCard(this.tumblestoneKnight);
     });

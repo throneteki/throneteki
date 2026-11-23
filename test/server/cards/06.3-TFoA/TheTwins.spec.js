@@ -17,9 +17,7 @@ describe('The Twins', function () {
     it('raises the claim on your revealed plot by 1 during your third challenge if you control an attacking House Frey character', function () {
         expect(this.player1Object.getClaim()).toBe(2);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

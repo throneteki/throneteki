@@ -10,7 +10,7 @@ describe('Recruit from the Dungeons', function () {
         context.player2.clickCard(context.player2.findCardByName(attacker, 'play area'));
         context.player2.clickPrompt('Done');
         context.skipActionWindow();
-        context.player1.clickPrompt('Done');
+        context.player1.clickPrompt("Don't defend");
     }
 
     it('joins as a defender without a matching icon and returns to shadows after losing', function () {

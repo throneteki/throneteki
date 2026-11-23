@@ -30,9 +30,7 @@ describe('forced reaction order', function () {
             this.player1.clickPrompt('Power');
             this.player1.clickCard('The Hound', 'play area');
             this.player1.clickPrompt('Done');
-            this.skipActionWindow();
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
+            this.declareNoDefenders(this.player2);
         });
 
         it('should prompt the first player', function () {

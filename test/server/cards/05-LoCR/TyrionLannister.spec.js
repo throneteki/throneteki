@@ -65,13 +65,7 @@ describe('Tyrion Lannister (LoCR)', function () {
     });
 
     it('can react only once to a single win even with another attacking Clansman', function () {
-        this.player1.clickPrompt('Military');
-        this.player1.clickCard(this.burnedMen);
-        this.player1.clickCard(this.moonBrothers);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Military', [this.burnedMen, this.moonBrothers]);
         this.player1.triggerAbility('Tyrion Lannister');
         expect(this.player1).toBeAbleToSelect(this.burnedMen);
         expect(this.player1).toBeAbleToSelect(this.moonBrothers);

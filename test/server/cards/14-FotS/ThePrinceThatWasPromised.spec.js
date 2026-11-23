@@ -3,9 +3,7 @@ describe('The Prince that was Promised', function () {
         context.player1.clickPrompt('Power');
         context.player1.clickCard(attacker);
         context.player1.clickPrompt('Done');
-        context.skipActionWindow();
-        context.player2.clickPrompt('Done');
-        context.skipActionWindow();
+        context.declareNoDefenders(context.player2);
     }
 
     it('names only a unique character, allows that character renown, and stands it while drawing a card at exactly five STR', function () {
@@ -53,12 +51,7 @@ describe('The Prince that was Promised', function () {
         expect(this.randyllTarly.power).toBe(0);
         expect(this.player1).not.toAllowAbilityTrigger(this.thePrinceThatWasPromised);
         this.player1.clickPrompt('Done');
-        this.player2.clickPrompt('Power');
-        this.player2.clickCard(this.balonGreyjoy);
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player2, 'Power', this.balonGreyjoy);
         expect(this.balonGreyjoy.power).toBe(1);
         expect(this.randyllTarly.power).toBe(0);
         expect(this.player2).isReadyToTakeAction();

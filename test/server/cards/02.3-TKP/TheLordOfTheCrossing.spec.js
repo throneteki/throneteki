@@ -29,9 +29,7 @@ describe('The Lord of the Crossing', function () {
             });
 
             it('ends with the challenge', function () {
-                this.skipActionWindow();
-                this.player2.clickPrompt('Done');
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player2);
                 this.player2.clickCard(this.winterfellSteward);
 
                 expect(this.tumblestoneKnight.getStrength()).toBe(2);
@@ -73,9 +71,7 @@ describe('The Lord of the Crossing', function () {
                 it('gains 1 power for your faction if you win', function () {
                     const powerBefore = this.player1Object.faction.power;
 
-                    this.skipActionWindow();
-                    this.player2.clickPrompt('Done');
-                    this.skipActionWindow();
+                    this.declareNoDefenders(this.player2);
 
                     expect(this.player1Object.faction.power).toBe(powerBefore + 2);
                     expect(this.game.getPlainTextLog()).toContain(

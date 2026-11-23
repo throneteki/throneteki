@@ -19,9 +19,7 @@ describe("The Viper's Spear", function () {
         expect(this.obaraSand.getStrength()).toBe(6);
         expect(this.obaraSand.kneeled).toBe(false);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
         this.player2.clickCard(this.tumblestoneKnight);
 
         expect(this.player1).isReadyToTakeAction();

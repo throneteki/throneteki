@@ -5,13 +5,7 @@ describe('Grenn', function () {
             player1: { inPlay: ['Grenn', 'Old Forest Hunter'] },
             player2: { power: 2 }
         });
-        this.player1.clickPrompt('Military');
-        this.player1.clickCard(this.grenn);
-        this.player1.clickCard(this.oldForestHunter);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Military', [this.grenn, this.oldForestHunter]);
         this.player1.triggerAbility(this.grenn);
         this.player1.clickCard(this.oldForestHunter);
     });

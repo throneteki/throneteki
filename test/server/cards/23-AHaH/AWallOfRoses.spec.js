@@ -19,9 +19,7 @@ describe('A Wall of Roses', function () {
         expect(this.cerseiLannister.kneeled).toBe(false);
         expect(this.cerseiLannister.isAttacking()).toBe(false);
 
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player1);
         expect(this.player2).isReadyToTakeAction();
     });
 });

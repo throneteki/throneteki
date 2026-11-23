@@ -37,13 +37,10 @@ describe('Tokar', function () {
                 }
             });
 
-            this.player1.clickPrompt('Power');
-            this.player1.clickCard(this.targaryenLoyalist);
-            this.player1.clickCard(this.khalDrogo);
-            this.player1.clickPrompt('Done');
-            this.skipActionWindow();
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
+            this.unopposedChallenge(this.player1, 'Power', [
+                this.targaryenLoyalist,
+                this.khalDrogo
+            ]);
         });
 
         it('stops each character without attachments gaining power', function () {
