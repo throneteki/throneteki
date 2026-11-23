@@ -1109,8 +1109,9 @@ From the review on 2026-11-20 (second batch):
       board still draws the fixed size, hidden from the settings.
 - [ ] **R261 Appearance lives in the profile only**: the in-game settings keep gameplay options (prompting, keywords
       and the like) and drop the appearance ones, on both boards (decided 2026-11-23).
-- [ ] **R262 Overlays name players by name and avatar**, as the rest of the site does, not by deck. The start and the
-      end of the game keep their cards.
+- [x] **R262 Overlays name players by name and avatar**, as the rest of the site does, not by deck. The start and the
+      end of the game keep their cards. Done: the end of a round lists each player by avatar and name with their power;
+      an eliminated player is a large avatar under the seal. Plots and titles already named players this way.
 - [x] **R263 Phone prompt buttons are never covered**: with many choices the stats bar covered the top row, and a tap
       there opened the game menu. Done: our tools row sits at z-306, above the docked prompt (z-260); while its options
       are spilled out the dock rises to z-320, as it does with the more panel open, so every option is on top.

@@ -319,18 +319,20 @@ const PlayerCards = ({ player, out = false, scale, toss, className }) => {
     );
 };
 
-// An avatar and a name, which shortens to fit the room it has
-const Name = ({ player, size = 1.1, you = false, className, style }) => (
+// An avatar and a name, which shortens to fit the room it has; avatar false where a larger one is shown already
+const Name = ({ player, size = 1.1, you = false, avatar = true, className, style }) => (
     <div
         className={classNames('flex min-w-0 max-w-full items-center', className)}
         style={{ gap: ui(0.5), ...style }}
         title={nameOf(player)}
     >
-        <PlayerAvatar
-            name={nameOf(player)}
-            className='shrink-0 shadow-[0_4px_10px_rgba(0,0,0,0.6)]'
-            style={{ width: ui(size * 1.75), height: ui(size * 1.75) }}
-        />
+        {avatar && (
+            <PlayerAvatar
+                name={nameOf(player)}
+                className='shrink-0 shadow-[0_4px_10px_rgba(0,0,0,0.6)]'
+                style={{ width: ui(size * 1.75), height: ui(size * 1.75) }}
+            />
+        )}
         <span
             className={classNames(
                 'min-w-0 truncate font-[Cinzel,serif] font-extrabold tracking-wide [text-shadow:0_2px_8px_#000]',
@@ -821,28 +823,27 @@ const byPower = (players) =>
     aroundTheTable(players[0], players).sort((a, b) => powerOf(b) - powerOf(a));
 const standingToss = (index) => 150 + index * tossGap;
 
-const Standing = ({ player, me, scale, portrait, index }) => {
-    const landed = groupLanded(player, standingToss(index));
+// Each player in turn, by avatar and name, their power counting up once they are in
+const standingShown = (index) => standingToss(index) + 420;
+const Standing = ({ player, me, portrait, index }) => {
+    const landed = standingShown(index);
     return (
         <div
             className={classNames(
-                'flex min-w-0 max-w-full items-center',
-                portrait ? 'w-full gap-3' : 'flex-col gap-4'
+                'overlay-after flex min-w-0 max-w-full',
+                portrait
+                    ? 'w-full items-center justify-between gap-3'
+                    : 'flex-col items-center gap-2'
             )}
+            style={after(standingToss(index))}
         >
-            <PlayerCards
-                player={player}
-                scale={portrait ? Math.min(scale, 0.55) : scale}
-                toss={standingToss(index)}
-            />
+            <Name player={player} size={portrait ? 1.1 : 1.3} you={player === me} />
             <div
                 className={classNames(
-                    'overlay-after flex min-w-0 flex-col gap-1',
-                    portrait ? 'flex-1' : 'max-w-full items-center'
+                    'flex min-w-0 shrink-0 flex-col gap-1',
+                    portrait ? 'items-end' : 'items-center'
                 )}
-                style={after(landed)}
             >
-                <Name player={player} you={player === me} />
                 <div className={classNames('flex items-baseline gap-2 leading-none', zoom)}>
                     <span className='font-[Cinzel,serif] text-3xl font-extrabold tabular-nums text-amber-300'>
                         <CountUp value={powerOf(player)} delay={landed} />
@@ -872,18 +873,11 @@ const Standing = ({ player, me, scale, portrait, index }) => {
     );
 };
 
-const Standings = ({ ranked, me, scale, portrait }) =>
+const Standings = ({ ranked, me, portrait }) =>
     portrait ? (
         <div className='flex w-full max-w-md flex-col items-stretch gap-3'>
             {ranked.map((player, index) => (
-                <Standing
-                    key={nameOf(player)}
-                    player={player}
-                    me={me}
-                    scale={scale}
-                    portrait
-                    index={index}
-                />
+                <Standing key={nameOf(player)} player={player} me={me} portrait index={index} />
             ))}
         </div>
     ) : (
@@ -891,9 +885,7 @@ const Standings = ({ ranked, me, scale, portrait }) =>
             rows={orderedRows(ranked)}
             gap={2.5}
             keyOf={nameOf}
-            render={(player, index) => (
-                <Standing player={player} me={me} scale={scale} index={index} />
-            )}
+            render={(player, index) => <Standing player={player} me={me} index={index} />}
         />
     );
 
@@ -1011,10 +1003,7 @@ const Minor = ({ overlay, players, me, portrait, seconds, released, onLanded }) 
     const intro = {
         plots: flipOf(live.length - 1) + flipTime,
         titles: titleLanded(live.length - 1) + 400,
-        round: Math.max(
-            0,
-            ...ranked.map((player, index) => groupLanded(player, standingToss(index)))
-        ),
+        round: standingShown(ranked.length - 1),
         out: 1500
     }[overlay.minor];
 
@@ -1113,18 +1102,18 @@ const Minor = ({ overlay, players, me, portrait, seconds, released, onLanded }) 
                     )}
                 />
             )}
-            {overlay.minor === 'round' && (
-                <Standings ranked={ranked} me={me} scale={scale} portrait={portrait} />
-            )}
+            {overlay.minor === 'round' && <Standings ranked={ranked} me={me} portrait={portrait} />}
             {out && (
                 <div className='overlay-quake flex min-w-0 max-w-full flex-col items-center gap-6'>
                     <div className='relative'>
                         <div className='overlay-thud'>
-                            <PlayerCards
-                                player={out}
-                                scale={scale}
-                                toss={120}
-                                className='overlay-ashen'
+                            <PlayerAvatar
+                                name={nameOf(out)}
+                                className='overlay-ashen shadow-[0_8px_22px_rgba(0,0,0,0.7)]'
+                                style={{
+                                    width: 'calc(var(--card-scale) * 5rem)',
+                                    height: 'calc(var(--card-scale) * 5rem)'
+                                }}
                             />
                         </div>
                         <div
@@ -1147,6 +1136,7 @@ const Minor = ({ overlay, players, me, portrait, seconds, released, onLanded }) 
                     <Name
                         player={out}
                         you={out === me}
+                        avatar={false}
                         className='overlay-after'
                         style={after(1200)}
                     />
