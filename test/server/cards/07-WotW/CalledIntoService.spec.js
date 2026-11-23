@@ -27,4 +27,23 @@ describe('Called Into Service', function () {
         expect(this.player1Object.gold).toBe(4);
         expect(this.player1).isReadyToTakeAction();
     });
+
+    it('still gains 2 gold when Sweetrobin removes a revealed non-character card', function () {
+        this.setupTest({
+            phase: 'plot',
+            player1: {
+                plotDeck: ['Called Into Service'],
+                inPlay: ['Sweetrobin'],
+                drawDeck: ['Superior Claim']
+            }
+        });
+        this.player1.selectPlot('Called Into Service');
+        this.player2.selectPlot('Filler Plot');
+        this.selectFirstPlayer(this.player1);
+        this.player1.triggerAbility(this.sweetrobin);
+
+        expect(this.superiorClaim.location).toBe('out of game');
+        expect(this.player1Object.gold).toBe(4);
+        expect(this.player1).isReadyToTakeAction();
+    });
 });

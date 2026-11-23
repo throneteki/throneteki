@@ -13,7 +13,7 @@ class OldTattersalt extends DrawCard {
             title: 'Return to shadows',
             cost: ability.costs.kneel((card) => card.name === 'Blackbird'),
             message: '{player} kneels {costs.kneel} to return {source} to shadows',
-            gameAction: GameActions.putIntoShadows({ card: this })
+            gameAction: GameActions.putIntoShadows((context) => ({ card: context.source }))
         });
 
         this.reaction({

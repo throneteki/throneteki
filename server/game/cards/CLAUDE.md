@@ -11,6 +11,8 @@ against the rules, which is what lets a game run with manual mode off
   from memory.
 - Check the [Rules Reference](https://thronesdb.com/rulesreference) for every keyword and timing
   word in the text ("choose", "then", "cancel", "if able", "up to", "instead", "each").
+- Read the Rules FAQ on the card's ThronesDB page, and on the page of any card it interacts with,
+  before deciding how an unclear case should resolve. Spec the cases the FAQ covers.
 - Write or update the spec first (see [test/CLAUDE.md](../../../test/CLAUDE.md)). A card is not
   verified until that spec passes under the rules in the engine reference, and the implementation has
   no `handler` and no `card-rules` violations.

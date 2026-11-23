@@ -25,15 +25,15 @@ class MaesterHarmune extends DrawCard {
                 message: '{player} {gameAction}',
                 gameAction: GameActions.ifCondition({
                     condition: (context) => context.event.cards[0].getType() === 'character',
-                    thenAction: GameActions.simultaneously([
-                        GameActions.discardCard((context) => ({
-                            card: context.parentContext.revealed[0]
-                        })),
-                        GameActions.drawCards((context) => ({
+                    thenAction: GameActions.simultaneously((context) => [
+                        ...context.parentContext.revealed.map((card) =>
+                            GameActions.discardCard({ card })
+                        ),
+                        GameActions.drawCards({
                             player: context.player,
                             amount: 1,
                             source: context.source
-                        }))
+                        })
                     ])
                 })
             })

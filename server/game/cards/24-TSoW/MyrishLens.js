@@ -19,20 +19,18 @@ class MyrishLens extends DrawCard {
                     context.source.parent.isParticipating()
             },
             cost: ability.costs.kneelSelf(),
-            message: {
-                format: "{player} kneels {source} to choose and reveal a card in {loser}'s shadows area",
-                args: { loser: (context) => context.event.challenge.loser }
-            },
+            message: '{player} kneels {source} to choose and reveal a card in shadows',
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: (card, context) =>
-                    card.location === 'shadows' && card.controller === context.event.challenge.loser
+                cardCondition: (card) => card.location === 'shadows'
             },
             gameAction: GameActions.revealCards((context) => ({
                 cards: [context.target],
                 player: context.player
             })).then({
-                condition: (context) => context.parentContext.revealed[0].getType() === 'event',
+                condition: (context) =>
+                    context.parentContext.revealed.length > 0 &&
+                    context.parentContext.revealed[0].getType() === 'event',
                 message: {
                     format: 'Then, {player} discards {card} from shadows',
                     args: { card: (context) => context.parentContext.revealed[0] }

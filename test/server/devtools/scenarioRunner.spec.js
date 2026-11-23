@@ -5,6 +5,10 @@ import { runScenario } from '../../../server/devtools/scenario/runner.js';
 
 const specPath = path.join(import.meta.dirname, '../cards/01-Core/Confiscation.spec.js');
 const breakPath = path.join(import.meta.dirname, 'fixtures/scenarioBreak.js');
+const redDoorPath = path.join(
+    import.meta.dirname,
+    '../cards/08.2-JtO/TheHouseWithTheRedDoor.spec.js'
+);
 const users = [{ username: 'alice' }, { username: 'bob' }];
 const silentLogger = { warn: () => true };
 
@@ -97,6 +101,26 @@ describe('scenario runner', function () {
         } finally {
             fs.rmSync(dir, { recursive: true, force: true });
         }
+    });
+
+    it('loads a problem report with an agenda that prompts before the mulligan', async function () {
+        const { game: source } = await runScenario(`${redDoorPath}#cannot be chosen`, {
+            users,
+            logger: silentLogger
+        });
+        const report = source.getProblemReport('alice');
+        const problemReportService = { getById: vi.fn().mockResolvedValue(report) };
+        const { game, error } = await runScenario(`report:${report.id}`, {
+            users,
+            logger: silentLogger,
+            problemReportService
+        });
+
+        expect(error).toBeUndefined();
+        expect(game.currentPhase).toBe('challenge');
+        const crag = game.allCards.find((card) => card.name === 'The Crag');
+        expect(crag.location).toBe('play area');
+        expect(game.allCards.filter((card) => card.name === 'The Crag')).toHaveLength(1);
     });
 
     it('records how a problem report was made', async function () {

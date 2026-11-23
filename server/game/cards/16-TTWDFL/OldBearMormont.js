@@ -30,7 +30,7 @@ class OldBearMormont extends DrawCard {
                     event.card.controller === context.source.controller
             },
             message: '{player} uses {source} to stand {source}',
-            gameAction: GameActions.standCard({ card: this })
+            gameAction: GameActions.standCard((context) => ({ card: context.source }))
         });
     }
 }

@@ -95,9 +95,19 @@ can hide bugs. If a test looks wrong against the card text or the Rules Referenc
 ask before changing it.
 
 The exception is an assertion that contradicts text you can quote from the card, the Rules
-Reference or a ThronesDB FAQ entry. Correct only that assertion, quote the text in the commit message, and point the change
-out to the user. A reading of the rules, a ruling you can't cite, or engine behaviour that would be
-easier to test is not enough.
+Reference or a ThronesDB FAQ entry. Correct only that assertion, quote the text in the commit
+message, and point the change out to the user. A reading of the rules, a ruling you can't cite, or
+engine behaviour that would be easier to test is not enough.
+
+Before using the exception:
+
+- Check the card's ThronesDB FAQ. An existing, passing spec is more often right than a fresh
+  reading of the text, so the FAQ has to back the change, or the text has to have only one
+  reasonable reading.
+- If your reading would leave part of the card's text doing nothing (a card gaining an icon or
+  keyword it already has, say), the reading is almost certainly wrong.
+- If it's still unclear, ask the user about the reading as its own question, before fixing
+  anything. Don't present a reading as a confirmed bug and then ask whether to fix it.
 
 ## Engine changes
 

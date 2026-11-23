@@ -17,7 +17,7 @@ class TywinsWhisperer extends DrawCard {
             message:
                 '{player} uses {source} to put {source} into play from their hand, and have it gain a power icon and stealth until the end of the phase',
             gameAction: GameActions.simultaneously([
-                GameActions.putIntoPlay({ card: this }),
+                GameActions.putIntoPlay((context) => ({ card: context.source })),
                 GameActions.lastingEffect((context) => ({
                     duration: 'untilEndOfPhase',
                     match: context.source,

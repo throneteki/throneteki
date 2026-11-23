@@ -21,7 +21,7 @@ class TheGreenFork extends DrawCard {
             },
             location: 'discard pile',
             message: '{player} uses {source} to put {source} into play from their discard pile',
-            gameAction: GameActions.putIntoPlay({ card: this })
+            gameAction: GameActions.putIntoPlay((context) => ({ card: context.source }))
         });
     }
 }

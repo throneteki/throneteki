@@ -8,12 +8,28 @@ describe('Septa Mordane', function () {
             });
         });
 
-        it('gains +2 STR and renown herself, rather than Sansa Stark', function () {
-            expect(this.septaMordane.getStrength()).toBe(5);
-            expect(this.septaMordane.hasKeyword('Renown')).toBe(true);
+        it('gives Sansa Stark +2 STR and renown, and Arya Stark an [intrigue] icon', function () {
+            expect(this.sansaStark.getStrength()).toBe(6);
+            expect(this.sansaStark.hasKeyword('Renown')).toBe(true);
+            expect(this.aryaStark.hasIcon('intrigue')).toBe(true);
+            expect(this.septaMordane.getStrength()).toBe(3);
+            expect(this.septaMordane.hasKeyword('Renown')).toBe(false);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
+
+    describe('while an opponent controls Sansa Stark', function () {
+        beforeEach(function () {
+            this.setupTest({
+                player1: { inPlay: ['Septa Mordane'] },
+                player2: { inPlay: ['Sansa Stark (WotN)'] }
+            });
+        });
+
+        it('does not affect her', function () {
             expect(this.sansaStark.getStrength()).toBe(4);
             expect(this.sansaStark.hasKeyword('Renown')).toBe(false);
-            expect(this.aryaStark.hasIcon('intrigue')).toBe(false);
+            expect(this.septaMordane.getStrength()).toBe(3);
             expect(this.player1).isReadyToTakeAction();
         });
     });
@@ -34,7 +50,7 @@ describe('Septa Mordane', function () {
         });
     });
 
-    describe("when an opponent's plot would choose her", function () {
+    describe("when an opponent's plot would choose a character", function () {
         function setup(context, player1InPlay) {
             context.setupTest({
                 phase: 'plot',
@@ -53,17 +69,17 @@ describe('Septa Mordane', function () {
             context.selectFirstPlayer(context.player1);
         }
 
-        it('is immune while you control Arya Stark', function () {
+        it('makes Arya Stark immune', function () {
             setup(this, ['Septa Mordane', 'Arya Stark (Core)']);
 
-            expect(this.player1).not.toBeAbleToSelect(this.septaMordane);
-            expect(this.player1).toBeAbleToSelect(this.aryaStark);
+            expect(this.player1).toBeAbleToSelect(this.septaMordane);
+            expect(this.player1).not.toBeAbleToSelect(this.aryaStark);
 
-            this.player1.clickCard(this.aryaStark);
+            this.player1.clickCard(this.septaMordane);
             this.player2.clickCard(this.houseDayneKnight);
 
-            expect(this.aryaStark.location).toBe('discard pile');
-            expect(this.septaMordane.location).toBe('play area');
+            expect(this.septaMordane.location).toBe('discard pile');
+            expect(this.aryaStark.location).toBe('play area');
             expect(this.player1).isReadyToTakeAction();
         });
 

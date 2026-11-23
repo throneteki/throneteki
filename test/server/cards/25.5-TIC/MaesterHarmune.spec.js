@@ -15,3 +15,22 @@ describe('Maester Harmune', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('Maester Harmune when Sweetrobin removes the revealed character', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { inPlay: ['Maester Harmune', 'Clydas (DotE)', 'Sweetrobin'] },
+            player2: { plot: 'Sneak Attack', gold: 2, drawDeck: ['Tumblestone Knight'] }
+        });
+        this.player1.clickCard(this.clydas);
+        this.player1.triggerAbility(this.maesterHarmune);
+        this.player1.triggerAbility(this.sweetrobin);
+    });
+
+    it('still draws 1 card', function () {
+        expect(this.tumblestoneKnight.location).toBe('out of game');
+        expect(this.player1Object.hand).toHaveLength(1);
+        expect(this.player1).isReadyToTakeAction();
+    });
+});
