@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
 import GameConfiguration from './GameConfiguration';
+import { touchCloseButton } from './touchCloseButton';
 
 // On a phone the settings are a screen of their own, sliding up from the bottom
 const slideUp = {
@@ -88,9 +89,10 @@ const GameConfigurationModal = ({
                     ? {
                           base: 'bg-black/95 pt-[var(--safe-top)] pb-[var(--safe-bottom)]',
                           header: 'border-b border-default-200 px-4 py-3',
-                          body: 'px-3 py-3'
+                          body: 'px-3 py-3',
+                          closeButton: touchCloseButton
                       }
-                    : { header: 'border-b border-default-200' }
+                    : { header: 'border-b border-default-200', closeButton: touchCloseButton }
             }
         >
             <ModalContent>

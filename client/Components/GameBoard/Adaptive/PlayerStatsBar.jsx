@@ -123,6 +123,34 @@ const PlayerStatsBar = ({
     // In a bar at the screen's edge the stats stand a little proud of it towards the board, as the avatar does
     const reach = vertical ? undefined : { bottom: 'up', top: 'down' }[edge];
     const end = typeof children === 'function' ? children(vertical ? 0 : room) : children;
+    const onEdge = !vertical && !!reach;
+    const edgeLine = edge === 'bottom' ? 'top-0 -translate-y-1/2' : 'bottom-0 translate-y-1/2';
+    const avatarWidth = compact ? '2rem' : '2.25rem';
+    const seatBadge = (place) =>
+        showSeat &&
+        player.seatNo !== undefined && (
+            <span
+                title={`Seat ${player.seatNo}`}
+                className={classNames(
+                    'absolute z-10 rounded-full border border-zinc-400 bg-zinc-800 px-1 text-[10px] font-bold leading-tight text-zinc-100',
+                    place
+                )}
+            >
+                {player.seatNo}
+            </span>
+        );
+    const firstBadge = (place, style) =>
+        player.firstPlayer && (
+            <span
+                className={classNames(
+                    'absolute z-10 rounded-full bg-warning px-1 text-[10px] font-bold leading-tight text-black',
+                    place
+                )}
+                style={style}
+            >
+                1st
+            </span>
+        );
     const changerPlacement = vertical
         ? edge === 'right'
             ? 'left'
@@ -227,20 +255,14 @@ const PlayerStatsBar = ({
                             { 'ring-2 ring-warning': player.firstPlayer }
                         )}
                     />
-                    {showSeat && player.seatNo !== undefined && (
-                        <span
-                            title={`Seat ${player.seatNo}`}
-                            className='absolute -left-1.5 -top-0.5 rounded-full border border-zinc-400 bg-zinc-800 px-1 text-[10px] font-bold leading-tight text-zinc-100'
-                        >
-                            {player.seatNo}
-                        </span>
-                    )}
-                    {player.firstPlayer && (
-                        <span className='absolute -bottom-0.5 -right-1.5 rounded-full bg-warning px-1 text-[10px] font-bold leading-tight text-black'>
-                            1st
-                        </span>
-                    )}
+                    {!onEdge && seatBadge('-left-1.5 -top-0.5')}
+                    {!onEdge && firstBadge('-bottom-0.5 -right-1.5')}
                 </span>
+                {/* In a bar at the screen's edge, on the bar's edge towards the board: the seat at the avatar's left,
+                    first player at its right */}
+                {onEdge && seatBadge(classNames('left-0 -translate-x-1/3', edgeLine))}
+                {onEdge &&
+                    firstBadge(classNames('-translate-x-2/3', edgeLine), { left: avatarWidth })}
             </div>
             <div
                 ref={statsRef}

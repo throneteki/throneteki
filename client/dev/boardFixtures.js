@@ -665,6 +665,29 @@ const namingCard = () => {
     return state;
 };
 
+// Choosing X for an event, as Gifts for the Widow asks: a list of values and no buttons
+const choosingX = () => {
+    const state = midGame();
+    Object.assign(
+        state.players[fixtureUsername],
+        promptState({
+            isActivePrompt: true,
+            promptTitle: 'Gifts for the Widow',
+            menuTitle: 'Select value of X',
+            controls: [
+                {
+                    type: 'select-from-values',
+                    command: 'menuButton',
+                    method: 'resolveCost',
+                    promptId: 'p1',
+                    selectableValues: ['6', '5', '4', '3', '2', '1', '0']
+                }
+            ]
+        })
+    );
+    return state;
+};
+
 // A reaction window with something to trigger: the cards that can react are chosen on the board, and only cards
 // that cannot be shown there (in a draw deck, discard or dead pile) become buttons, as the server sends them
 const reactionWindow = () => {
@@ -1000,6 +1023,7 @@ export const boardFixtures = {
     search: { mode: 'joust', label: 'Search the deck', build: searchingDeck },
     select: { mode: 'joust', label: 'Choose on the board', build: choosingOnBoard },
     lookup: { mode: 'joust', label: 'Name a card', build: namingCard },
+    xValue: { mode: 'joust', label: 'Choose X', build: choosingX },
     reaction: { mode: 'joust', label: 'Reaction window', build: reactionWindow },
     responder: { mode: 'joust', label: 'Any reactions? (countdown)', build: possibleResponder },
     choices: { mode: 'joust', label: 'Many choices', build: manyChoices },

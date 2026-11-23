@@ -1162,6 +1162,24 @@ From the review on 2026-11-20 (second batch):
       elsewhere it comes from what is drawn (a sideways image is a plot, a faction code a faction card, the overlays
       name theirs), not the card list, which every image would otherwise wait on. The plain skeleton stays when the
       type is not known.
+- [ ] **R272 The likely button stands out (dropped, 2026-11-23)**: a phase's Pass and Done drawn filled in. Tried with
+      a `primary` flag on the server's phase buttons, and taken out: too many changes for what it gives.
+- [x] **R273 A tap outside a phone's sheet closes it**: a quick tap anywhere but a sheet closes the open sheets (each
+      seat's, in melee), and still does what it does there. Not a drag, a scroll or a hold to zoom, and not a pile or a
+      card's underneath badge (`data-sheet-opener`), which open and close their own.
+- [x] **R274 The avatar's badges sit on the bar's edge**: in a bar at the screen's edge, first player at the avatar's
+      right and the seat number (melee) at its left, centred on the bar's edge towards the board (its top for the
+      bottom bar, its bottom for the top bar). Elsewhere they stay on the avatar.
+- [x] **R275 Game modals' close buttons fit a finger**: on a touch screen the X of the settings, keyboard shortcuts,
+      spectators and report-a-problem modals is about 48px (`touchCloseButton`); with a mouse it is as before. The
+      full-screen shortcuts modal keeps clear of the phone's notch, as the settings do.
+- [x] **R276 A phone prompt asks for a value in the bar**: a prompt that needs a value (choose X, name a card or
+      trait) opened its input in a panel over the docked bar, which hid the question (seen with Gifts for the Widow).
+      Docked, the input now sits on the bar's options line, one line high and sized to what it holds (a value: its
+      longest, so a digit or two; a trait 8rem; a card name 12rem): the list (with what to choose as its
+      placeholder) and its Done, which is off until a value is picked, beside the prompt's other options (Cancel). Its
+      list opens upwards over the board. The panel is now only for a prompt's targets (Details). Beside the board the
+      input shows in the prompt, as before. The dev board's "Choose X" scenario shows it.
 - [x] **R234 Tokens are in the middle of the card again, and their changes stand out**: the +x / −x that floats off a
       counter is a larger bold pill, green or red, and stays a little longer (both boards).
 

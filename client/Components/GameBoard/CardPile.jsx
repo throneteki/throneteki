@@ -429,6 +429,7 @@ const CardPile = ({
             disableBackground={disableBackground}
             labelClickable={!disablePopup && topCardHasAction}
             data-flip-deck={flipDeck}
+            data-sheet-opener=''
         >
             {retTopCard ? (
                 <div className='relative'>

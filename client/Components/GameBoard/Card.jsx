@@ -260,6 +260,7 @@ const CardView = ({
             <button
                 type='button'
                 data-card-overlay=''
+                data-sheet-opener=''
                 title='Cards underneath'
                 className='pointer-events-auto tap-target absolute bottom-1 right-1 z-[230] card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[var(--badge-size)] h-[var(--badge-size)] px-1 text-white bg-black/80 font-bold text-center rounded-md border-1'
                 onClick={(event) => {

@@ -9,6 +9,7 @@ import {
     Textarea
 } from '@heroui/react';
 import { MaxDescriptionLength } from '../../../shared/problemReportLimits';
+import { touchCloseButton } from './touchCloseButton';
 
 const ReportProblemModal = ({ isOpen, onCancel, onSend }) => {
     const [description, setDescription] = useState('');
@@ -28,7 +29,13 @@ const ReportProblemModal = ({ isOpen, onCancel, onSend }) => {
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={close} isDismissable={false} size='md'>
+        <Modal
+            isOpen={isOpen}
+            onClose={close}
+            isDismissable={false}
+            size='md'
+            classNames={{ closeButton: touchCloseButton }}
+        >
             <ModalContent>
                 <ModalHeader>Report a problem</ModalHeader>
                 <ModalBody>

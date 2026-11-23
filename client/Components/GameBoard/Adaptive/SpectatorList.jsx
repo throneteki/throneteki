@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash, faSearch, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { touchCloseButton } from '../touchCloseButton';
 
 // From this many spectators the list can be searched
 export const searchFrom = 10;
@@ -89,7 +90,7 @@ export const SpectatorSheet = ({ isOpen, onOpenChange, spectators, muted, onTogg
         placement='auto'
         scrollBehavior='inside'
         size='sm'
-        classNames={{ base: 'max-h-[75dvh] sm:max-h-[70vh]' }}
+        classNames={{ base: 'max-h-[75dvh] sm:max-h-[70vh]', closeButton: touchCloseButton }}
     >
         <ModalContent>
             <ModalHeader className='flex items-center gap-2 pr-12'>

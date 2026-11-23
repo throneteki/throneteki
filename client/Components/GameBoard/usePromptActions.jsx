@@ -158,7 +158,8 @@ export const PromptControls = ({
     cards,
     pausedPromptId,
     onLookupValueSelected,
-    slimDelay = false
+    slimDelay = false,
+    compact = false
 }) => {
     if (!controls) {
         return null;
@@ -192,6 +193,7 @@ export const PromptControls = ({
                             key={control.promptId}
                             cards={cards}
                             onValueSelected={lookup}
+                            compact={compact}
                         />
                     );
                 case 'trait-name':
@@ -200,6 +202,7 @@ export const PromptControls = ({
                             key={control.promptId}
                             cards={cards}
                             onValueSelected={lookup}
+                            compact={compact}
                         />
                     );
                 case 'response-delay':
@@ -217,6 +220,7 @@ export const PromptControls = ({
                             key={control.promptId}
                             selectableValues={control.selectableValues}
                             onValueSelected={lookup}
+                            compact={compact}
                         />
                     );
             }

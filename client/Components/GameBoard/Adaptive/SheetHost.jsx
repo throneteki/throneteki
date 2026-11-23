@@ -11,6 +11,9 @@ import { remSize } from '../../../cardScale';
 
 // Going from pile to pile: the body eases to the new pile's height as its cards fade in
 const resizeTime = 200;
+// A tap outside the sheets, which closes them: moved less than this (pixels), let go within this (ms)
+const tapSlop = 10;
+const tapTime = 500;
 
 const chipFade = ({ start, end }) => {
     if (!start && !end) {
@@ -912,6 +915,45 @@ const SheetHost = ({ mode }) => {
         const pending = timers.current;
         return () => Object.values(pending).forEach(clearTimeout);
     }, []);
+
+    // Phones: a tap anywhere but a sheet closes the open sheets, and still does what it does there. Not a drag, a
+    // scroll or a hold to zoom, and not a pile (or a card's underneath badge), which opens and closes its own.
+    const anyOpen = Object.keys(sheets).length > 0;
+    const sheetsRef = useRef(sheets);
+    sheetsRef.current = sheets;
+    useEffect(() => {
+        if (mode === 'wide' || !anyOpen) {
+            return;
+        }
+        let tap = null;
+        const down = (event) => {
+            tap = event.target.closest?.('[data-sheet], [data-sheet-opener]')
+                ? null
+                : { id: event.pointerId, x: event.clientX, y: event.clientY, at: event.timeStamp };
+        };
+        const up = (event) => {
+            const start = tap;
+            tap = null;
+            if (
+                start?.id === event.pointerId &&
+                Math.hypot(event.clientX - start.x, event.clientY - start.y) < tapSlop &&
+                event.timeStamp - start.at < tapTime
+            ) {
+                Object.values(sheetsRef.current).forEach((sheet) => sheet.close?.());
+            }
+        };
+        const cancel = () => {
+            tap = null;
+        };
+        document.addEventListener('pointerdown', down, true);
+        document.addEventListener('pointerup', up, true);
+        document.addEventListener('pointercancel', cancel, true);
+        return () => {
+            document.removeEventListener('pointerdown', down, true);
+            document.removeEventListener('pointerup', up, true);
+            document.removeEventListener('pointercancel', cancel, true);
+        };
+    }, [mode, anyOpen]);
 
     // A sheet just closed is still drawn before the effect above marks it as leaving, so it slides away rather than
     // being drawn afresh, already gone

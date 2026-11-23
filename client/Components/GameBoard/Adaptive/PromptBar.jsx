@@ -220,12 +220,14 @@ const Chip = ({ button, onPress, fullWidth = false, shortcut }) => {
 };
 
 // The buttons as chips; stacked: one full-width chip per line. shortcuts: each says the key that presses it, as
-// classic's prompt does, whether or not it can be pressed just now, so the numbers never shift
-const ChipRows = ({ buttons, stacked = false, shortcuts = false, onPress }) => (
+// classic's prompt does, whether or not it can be pressed just now, so the numbers never shift. fill: they take the
+// line's room, rather than sitting beside something that does
+const ChipRows = ({ buttons, stacked = false, shortcuts = false, fill = true, onPress }) => (
     <div
         data-prompt-chips=''
         className={classNames(
-            'flex min-w-0 flex-1 gap-1',
+            'flex min-w-0 gap-1',
+            fill ? 'flex-1' : 'shrink-0',
             stacked ? 'max-h-[60dvh] flex-col overflow-y-auto' : 'flex-wrap justify-center'
         )}
     >
@@ -241,13 +243,16 @@ const ChipRows = ({ buttons, stacked = false, shortcuts = false, onPress }) => (
     </div>
 );
 
-// Every option of the prompt, in a panel along the bottom of the screen (the question stays in the bar)
-const MorePanel = ({ buttons, onPress, onClose, children }) => (
+// Every option of the prompt, in a panel along the bottom of the screen. It covers the bar, so the question
+// (heading) is asked again at its top.
+const MorePanel = ({ heading, buttons, onPress, onClose, children }) => (
     <div
         className='fixed inset-x-0 bottom-0 z-[320] flex flex-col rounded-t-lg border-t border-default-200 bg-black/90 pb-[var(--safe-bottom)]'
         style={{ maxHeight: 'calc(100% - var(--board-divider-bottom, 30%))' }}
     >
-        <div className='flex justify-end px-1 pt-1'>
+        <div className='grid grid-cols-[2rem_1fr_2rem] items-center gap-1 px-1 pt-1'>
+            <span />
+            <div className='min-w-0 text-center leading-snug'>{heading}</div>
             <Button isIconOnly size='sm' variant='light' title='Close' onPress={onClose}>
                 <FontAwesomeIcon icon={faXmark} />
             </Button>
@@ -403,12 +408,19 @@ const PromptBar = ({
     const selection = useSelection(selecting);
     const panelControls = (controls || []).filter((control) => !isInlineControl(control));
     const needsInput = panelControls.some((control) => inputControls.includes(control.type));
-    const [moreOpen, setMoreOpen] = useState(needsInput);
+    // Docked, a lookup (a value or a name to choose) is asked for in the bar, on the options' line; anything else the
+    // prompt shows (its targets) opens over the bar from Details
+    const dock = mode === 'dock';
+    const inputsInBar = dock && needsInput;
+    const detailControls = inputsInBar
+        ? panelControls.filter((control) => !inputControls.includes(control.type))
+        : panelControls;
+    const [moreOpen, setMoreOpen] = useState(false);
     const promptKey = `${serverPromptText}|${buttons.map((button) => button.promptId).join(',')}`;
 
     useEffect(() => {
-        setMoreOpen(needsInput);
-    }, [promptKey, needsInput]);
+        setMoreOpen(false);
+    }, [promptKey]);
     const barRef = useRef(null);
     // Docked: whether the options past their first line are drawn back. Reset for each new prompt.
     const [retracted, setRetracted] = useState(false);
@@ -416,7 +428,6 @@ const PromptBar = ({
         setRetracted(false);
     }, [promptKey]);
 
-    const dock = mode === 'dock';
     const [room, setRoom] = useState(null);
     const chipsClipRef = useRef(null);
     const chipsLayerRef = useRef(null);
@@ -586,18 +597,36 @@ const PromptBar = ({
     const chips = hasChips && (
         <div
             className={classNames('mt-1 flex min-w-0 flex-1 justify-center gap-1', {
-                'max-h-[40dvh] overflow-y-auto': dock
+                'max-h-[40dvh] overflow-y-auto': dock && !inputsInBar,
+                'flex-col': inputsInBar && stackOptions
             })}
         >
+            {inputsInBar && (
+                <div
+                    data-prompt-controls=''
+                    className={classNames('flex min-w-0', controlsPending.className)}
+                    style={controlsPending.style}
+                >
+                    <PromptControls
+                        controls={panelControls}
+                        only={(control) => inputControls.includes(control.type)}
+                        cards={cards}
+                        pausedPromptId={pausedPromptId}
+                        onLookupValueSelected={handleLookupValueSelected}
+                        compact
+                    />
+                </div>
+            )}
             {buttons.length > 0 && (
                 <ChipRows
                     buttons={buttons}
                     stacked={stackOptions}
                     shortcuts={shortcuts && shortcutsEnabled}
+                    fill={!inputsInBar || stackOptions}
                     onPress={press}
                 />
             )}
-            {panelControls.length > 0 && !moreOpen && !inlineControls && (
+            {detailControls.length > 0 && !moreOpen && !inlineControls && (
                 <Button
                     type='button'
                     size='sm'
@@ -605,7 +634,7 @@ const PromptBar = ({
                     className={classNames(chipClass(false), 'h-7 shrink-0')}
                     onPress={() => setMoreOpen(true)}
                 >
-                    {needsInput ? 'Choose…' : 'Details'}
+                    Details
                 </Button>
             )}
         </div>
@@ -714,9 +743,19 @@ const PromptBar = ({
                 </div>
             )}
             {moreOpen && dock && (
-                <MorePanel buttons={buttons} onPress={press} onClose={() => setMoreOpen(false)}>
+                <MorePanel
+                    heading={
+                        <>
+                            {title}
+                            <div className='text-sm font-semibold'>{promptText}</div>
+                        </>
+                    }
+                    buttons={buttons}
+                    onPress={press}
+                    onClose={() => setMoreOpen(false)}
+                >
                     <PromptControls
-                        controls={panelControls}
+                        controls={detailControls}
                         cards={cards}
                         pausedPromptId={pausedPromptId}
                         onLookupValueSelected={(...args) => {
