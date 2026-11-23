@@ -100,18 +100,32 @@ const fullscreenRoom = 28;
 // Phone landscape's column down one side: the stats at its top and bottom, the prompt and our tools between
 const columnWidth = 'clamp(13rem, 30vw, 20rem)';
 
-// Room at each end of a play area for the prompt lying over the board's side
-const Room = ({ width }) => <div aria-hidden className='shrink-0' style={{ width }} />;
+// Room at each end of a play area for the prompt lying over the board's side. With the prompt in it (desktop), the
+// room sticks to its side of the view and the prompt sits at its foot, where classic's prompt is, rising over the
+// opponent's room when it is taller, so it never makes the play area taller
+const Room = ({ width, at, children }) =>
+    children ? (
+        <div
+            className={classNames('sticky z-[250] shrink-0', at === 'right' ? 'right-0' : 'left-0')}
+            style={{ width }}
+        >
+            <div className='absolute inset-x-0 bottom-1'>{children}</div>
+        </div>
+    ) : (
+        <div aria-hidden className='shrink-0' style={{ width }} />
+    );
 const coverBefore = 'var(--board-cover-left, 0px)';
 const coverAfter = 'var(--board-cover-right, 0px)';
 
 // Characters and locations take a row each, or share one in phone landscape (inline). promptSide (phone landscape):
 // cards stick beside the column as the board scrolls; sticky, as scroll handlers lag a frame on phones.
-const PlayArea = ({ inline, promptSide, children }) => {
+const PlayArea = ({ inline, promptSide, prompt, promptAt, children }) => {
     const cards = children(inline ? 'inline' : 'nowrap');
     return (
         <Part area='play' className='flex flex-1 !min-h-[auto]'>
-            <Room width={coverBefore} />
+            <Room width={coverBefore} at='left'>
+                {promptAt === 'left' && prompt}
+            </Room>
             {promptSide ? (
                 <div
                     className={classNames('flex min-w-0 flex-1', {
@@ -129,7 +143,9 @@ const PlayArea = ({ inline, promptSide, children }) => {
             ) : (
                 cards
             )}
-            <Room width={coverAfter} />
+            <Room width={coverAfter} at='right'>
+                {promptAt === 'right' && prompt}
+            </Room>
         </Part>
     );
 };
@@ -346,7 +362,7 @@ const AdaptiveGameBoardLayout = ({
     const handTrayShown = portrait && isPlaying;
 
     // seat: index in its melee row; below: what goes under our board
-    const renderSide = (player, side, { seat = 0, below = null } = {}) => {
+    const renderSide = (player, side, { seat = 0, below = null, prompt = false } = {}) => {
         // A spectator watches the bottom player, but cannot act for them: no drops, and no hand of their own
         const isMe = isPlaying && player === thisPlayer;
         const pileProps = {
@@ -482,7 +498,12 @@ const AdaptiveGameBoardLayout = ({
         );
 
         const play = (
-            <PlayArea inline={short} promptSide={short ? promptSide : null}>
+            <PlayArea
+                inline={short}
+                promptSide={short ? promptSide : null}
+                prompt={prompt ? floatingPanel : null}
+                promptAt={promptSide}
+            >
                 {(overflow) => (
                     <PlayerBoard
                         isDroppable={isMe}
@@ -685,41 +706,39 @@ const AdaptiveGameBoardLayout = ({
             onButtonClick={onButtonClick}
             timer={<GameTimer player={thisPlayer} isMe={!!thisPlayer} side='bottom' />}
             showLog={!chat.open}
+            shortcuts={floatingPrompt}
         />
     );
 
-    // Desktop: the prompt is a panel over the side of both play areas, centred on the line between them and still as
-    // the board scrolls sideways. Elsewhere the line is the middle of the view.
+    // The line between the play areas, as the layout measures it. Elsewhere the line is the middle of the view.
     const divider = floatingPrompt ? (
         <div
+            ref={dividerRef}
             data-region='mid'
-            className='sticky left-0 z-[250] h-0 shrink-0'
-            style={{ width: 'var(--scroll-view-width, 100%)' }}
-        >
-            <div
-                ref={dividerRef}
-                data-region='prompt-float'
-                className={classNames(
-                    'absolute top-0 -translate-y-1/2',
-                    promptSide === 'right' ? 'right-0' : 'left-0'
-                )}
-                style={{
-                    width: 'var(--board-prompt-width)',
-                    // --text-scale carries the interface's scale too (interfaceScaleProperties)
-                    '--ui-scale': `calc(var(--text-scale, 1) * ${promptBoost})`
-                }}
-            >
-                {promptBar(
-                    'panel',
-                    classNames(
-                        'border shadow-[0_6px_18px_rgba(0,0,0,0.6)]',
-                        promptSide === 'right' ? 'rounded-md' : 'rounded-r-md border-l-0'
-                    ),
-                    true
-                )}
-            </div>
-        </div>
+            aria-hidden
+            className='pointer-events-none sticky left-0 h-0 shrink-0'
+        />
     ) : null;
+    // Desktop: the prompt is where classic's is, at the foot of the bottom row's play area on its side (Room)
+    const floatingPanel = floatingPrompt && (
+        <div
+            data-region='prompt-float'
+            style={{
+                width: 'var(--board-prompt-width)',
+                // --text-scale carries the interface's scale too (interfaceScaleProperties)
+                '--ui-scale': `calc(var(--text-scale, 1) * ${promptBoost})`
+            }}
+        >
+            {promptBar(
+                'panel',
+                classNames(
+                    'border shadow-[0_6px_18px_rgba(0,0,0,0.6)]',
+                    promptSide === 'right' ? 'rounded-l-md border-r-0' : 'rounded-r-md border-l-0'
+                ),
+                true
+            )}
+        </div>
+    );
     const midline = !floatingPrompt && (
         <div
             ref={dividerRef}
@@ -812,7 +831,7 @@ const AdaptiveGameBoardLayout = ({
     ));
     const ours = (
         <div className='flex flex-1' style={sideFlex.bottom}>
-            {renderSide(thisPlayer, 'bottom')}
+            {renderSide(thisPlayer, 'bottom', { prompt: true })}
         </div>
     );
     const handTray = handTrayShown && (
@@ -859,7 +878,10 @@ const AdaptiveGameBoardLayout = ({
                   >
                       {renderSide(player, side, {
                           seat: index,
-                          below: player === thisPlayer ? handTray : null
+                          below: player === thisPlayer ? handTray : null,
+                          prompt:
+                              side === 'bottom' &&
+                              index === (promptSide === 'right' ? columns - 1 : 0)
                       })}
                   </div>
               );

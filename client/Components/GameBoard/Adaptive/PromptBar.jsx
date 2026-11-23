@@ -13,6 +13,7 @@ import {
 import ThronesIcon from '../ThronesIcon';
 import CardHoverable from '../../Images/CardHoverable';
 import { PromptControls, usePromptActions } from '../usePromptActions';
+import { getButtonShortcutLabel } from '../keyboardShortcuts';
 import PhaseRoll from './PhaseRoll';
 import { chipClass } from './chipClass';
 import { motionOff, motionSettingOff } from '../../../flip';
@@ -179,7 +180,7 @@ const useSelection = (active) => {
     }, [active, players]);
 };
 
-const Chip = ({ button, onPress, fullWidth = false }) => {
+const Chip = ({ button, onPress, fullWidth = false, shortcut }) => {
     const pending = pendingLook(usePending(pendingKeys.button(button)));
     const chip = (
         <Button
@@ -205,13 +206,19 @@ const Chip = ({ button, onPress, fullWidth = false }) => {
                 />
             )}
             <span className='truncate'>{button.text}</span>
+            {shortcut && (
+                <kbd className='shrink-0 font-sans text-[10px] font-normal opacity-60'>
+                    {shortcut}
+                </kbd>
+            )}
         </Button>
     );
     return button.card ? <CardHoverable code={button.card.code}>{chip}</CardHoverable> : chip;
 };
 
-// The buttons as chips; stacked: one full-width chip per line
-const ChipRows = ({ buttons, stacked = false, onPress }) => (
+// The buttons as chips; stacked: one full-width chip per line. shortcuts: each says the key that presses it, as
+// classic's prompt does
+const ChipRows = ({ buttons, stacked = false, shortcuts = false, onPress }) => (
     <div
         data-prompt-chips=''
         className={classNames(
@@ -220,7 +227,13 @@ const ChipRows = ({ buttons, stacked = false, onPress }) => (
         )}
     >
         {buttons.map((button, index) => (
-            <Chip key={index} button={button} onPress={onPress} fullWidth={stacked} />
+            <Chip
+                key={index}
+                button={button}
+                onPress={onPress}
+                fullWidth={stacked}
+                shortcut={shortcuts && !button.disabled && getButtonShortcutLabel(buttons, index)}
+            />
         ))}
     </div>
 );
@@ -355,7 +368,8 @@ const PromptBar = ({
     onButtonClick,
     timer,
     stackOptions = false,
-    showLog = true
+    showLog = true,
+    shortcuts = false
 }) => {
     const promptButtons = useMemo(() => allButtons || [], [allButtons]);
     const {
@@ -365,6 +379,7 @@ const PromptBar = ({
         promptText,
         endsTurn,
         endTurnReady,
+        shortcutsEnabled,
         handleButtonClick,
         handleLookupValueSelected
     } = usePromptActions({
@@ -572,7 +587,12 @@ const PromptBar = ({
             })}
         >
             {buttons.length > 0 && (
-                <ChipRows buttons={buttons} stacked={stackOptions} onPress={press} />
+                <ChipRows
+                    buttons={buttons}
+                    stacked={stackOptions}
+                    shortcuts={shortcuts && shortcutsEnabled}
+                    onPress={press}
+                />
             )}
             {panelControls.length > 0 && !moreOpen && !inlineControls && (
                 <Button

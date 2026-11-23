@@ -1118,7 +1118,11 @@ From the review on 2026-11-20 (second batch):
 - [x] **R264 No choice overlays, for now**: they duplicate the prompt. They came from melee title selection on phones,
       where the card art matters and buttons hide it; a better phone solution is for later. Done: the title and player choice
       overlays are removed from BoardOverlays; those choices are made in the prompt.
-- [ ] **R265 The desktop prompt is classic's**: back in classic's position, with its shortcut numbers.
+- [x] **R265 The desktop prompt is classic's**: back in classic's position, with its shortcut numbers. Done: on
+      desktop the prompt sits at the foot of our play area on its side, above our strip, in the room the play areas keep
+      clear for it, still as the board scrolls; taller, it rises over the opponent's room rather than stretching the
+      board. In melee it is the bottom row's end seat. Each option shows its key (1-9, W, D) while keyboard shortcuts
+      are on.
 - [ ] **R266 Desktop piles are separate**: each opens on its own, several at once, as on classic, in the new visual
       style. Phones keep their current drawers (sheets). Part of this batch (decided 2026-11-23).
 - [x] **R267 Avatars match the site's**. Done: PlayerAvatar draws them as the site does (HeroUI Avatar, the site's
