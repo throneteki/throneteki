@@ -712,7 +712,11 @@ const PromptBar = ({
     return (
         <div
             data-prompt-dock=''
-            className={classNames('relative shrink-0', moreOpen ? 'z-[320]' : 'z-[260]')}
+            className={classNames(
+                'relative shrink-0',
+                // Spilled out, its options rise over our tools (z-306), so none is hidden under them
+                moreOpen || (spill.over && !drawnBack) ? 'z-[320]' : 'z-[260]'
+            )}
             style={room === null ? undefined : { height: room }}
         >
             <div className={room === null ? 'relative' : 'absolute inset-x-0 bottom-0'}>{bar}</div>

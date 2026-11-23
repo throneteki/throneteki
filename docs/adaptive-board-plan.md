@@ -1106,16 +1106,17 @@ From the review on 2026-11-20 (second batch):
       the old size divided by the fit for the screen and board saved from, so the cards look the same. Until then the
       board still draws the fixed size, hidden from the settings.
 - [ ] **R261 Appearance lives in the profile only**: the in-game settings keep gameplay options (prompting, keywords
-      and the like) and drop the appearance ones.
+      and the like) and drop the appearance ones, on both boards (decided 2026-11-23).
 - [ ] **R262 Overlays name players by name and avatar**, as the rest of the site does, not by deck. The start and the
       end of the game keep their cards.
-- [ ] **R263 Phone prompt buttons are never covered**: with many choices the stats bar covered the top row, and a tap
-      there opened the game menu.
+- [x] **R263 Phone prompt buttons are never covered**: with many choices the stats bar covered the top row, and a tap
+      there opened the game menu. Done: our tools row sits at z-306, above the docked prompt (z-260); while its options
+      are spilled out the dock rises to z-320, as it does with the more panel open, so every option is on top.
 - [ ] **R264 No choice overlays, for now**: they duplicate the prompt. They came from melee title selection on phones,
       where the card art matters and buttons hide it; a better phone solution is for later.
 - [ ] **R265 The desktop prompt is classic's**: back in classic's position, with its shortcut numbers.
 - [ ] **R266 Desktop piles are separate**: each opens on its own, several at once, as on classic, in the new visual
-      style. Phones keep their current drawers (sheets).
+      style. Phones keep their current drawers (sheets). Part of this batch (decided 2026-11-23).
 - [ ] **R267 Avatars match the site's**.
 - [ ] **R268 Performance belongs elsewhere**: master's state diffs (#3838, applied inside immer) keep unchanged state's
       identity, so `reuseUnchanged` goes. The image cache (`imageCache.js`, `useImagePreload`) goes too: images are
@@ -1135,6 +1136,10 @@ From the review on 2026-11-20 (second batch):
       beside the board its own row grows in above the prompt; in the phone's docked bar it cross-fades with the
       title line so the bar keeps its height. At 15s a Reload button widens in beside it. The timings are in pendingTiming. The dev
       board's Lag (&lag=, up to 20s) pretends the server takes that long.
+- [ ] **R271 A skeleton for each card type**: while a card's image loads, its placeholder follows that type's
+      template (character, location, attachment, event, plot, agenda, faction, title), drawn from the real card
+      layouts. The board's cards carry their type; elsewhere it comes from the card list, and the plain skeleton
+      stays when the type is not known.
 - [x] **R234 Tokens are in the middle of the card again, and their changes stand out**: the +x / −x that floats off a
       counter is a larger bold pill, green or red, and stays a little longer (both boards).
 
