@@ -1,4 +1,4 @@
-import { cardImageSrc } from './imageCache';
+import { cardImageSrc } from './cardImageSrc';
 import { cardScaleOf } from './cardScale';
 import { liftFrames, slapConfig, slapFrames, slapsInto } from './tableFeel';
 

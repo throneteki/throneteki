@@ -47,7 +47,6 @@ import { useLinger } from './useLinger';
 import DropZoneTracker from './DropZoneTracker';
 import { canDrop, canPlaceUnder, needsChoice } from './dropTargets';
 import { cardInPlayAt, createUnderHold } from './underHold';
-import { useImagePreload } from './useImagePreload';
 
 const placeholderPlayer = {
     activePlot: null,
@@ -468,7 +467,6 @@ const GameBoard = () => {
         document.documentElement.dataset.motion = motionEnabled ? 'on' : 'off';
         return () => delete document.documentElement.dataset.motion;
     }, [motionEnabled]);
-    useImagePreload(currentGame?.players);
 
     if (!currentGame || !currentGame.started) {
         return <LoadingSpinner label={'Waiting for server...'} />;

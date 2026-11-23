@@ -1119,9 +1119,11 @@ From the review on 2026-11-20 (second batch):
 - [ ] **R266 Desktop piles are separate**: each opens on its own, several at once, as on classic, in the new visual
       style. Phones keep their current drawers (sheets). Part of this batch (decided 2026-11-23).
 - [ ] **R267 Avatars match the site's**.
-- [ ] **R268 Performance belongs elsewhere**: master's state diffs (#3838, applied inside immer) keep unchanged state's
+- [x] **R268 Performance belongs elsewhere**: master's state diffs (#3838, applied inside immer) keep unchanged state's
       identity, so `reuseUnchanged` goes. The image cache (`imageCache.js`, `useImagePreload`) goes too: images are
-      served by the infrastructure, not this code.
+      served by the infrastructure, not this code. Done: reuseUnchanged went with master's diffs; imageCache.js, useImagePreload and
+      their spec are removed. cardImageSrc has its own module (cardImageSrc.js), and CardFace keeps its image's state
+      itself, showing an image the browser already has at once.
 - [ ] **R269 PlaceCardUnderneath (paused)**: the direct `removeCardFromPile`/`addChildCard` calls in its handler, and
       in the drop command's agenda drop, are master's code. This branch only added two checks and the `LeavePlay`
       wrapping for a card from play, used by manual drag and drop alone. Revisit once the reviewer says which rule.
