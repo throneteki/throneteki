@@ -95,7 +95,13 @@ class DropCommand {
 
         if (this.originalLocation === 'plot deck') {
             handlers.move = () => {
-                this.player.moveCard(this.card, this.targetLocation);
+                this.game.resolveGameAction(
+                    GameActions.placeCard({
+                        card: this.card,
+                        player: this.player,
+                        location: this.targetLocation
+                    })
+                );
                 this.addGameMessage();
                 this.record(this.originalLocation, this.targetLocation);
                 return true;

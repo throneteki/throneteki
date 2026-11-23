@@ -6,6 +6,7 @@ describe('DropCommand with plots', function () {
             addAlert: vi.fn(),
             promptWithMenu: vi.fn(),
             queueStep: vi.fn(),
+            resolveGameAction: vi.fn(),
             manualActions: { record: vi.fn() }
         };
         this.playerSpy = { moveCard: vi.fn() };
@@ -35,7 +36,8 @@ describe('DropCommand with plots', function () {
         it('moves it to the used plots when asked to', function () {
             this.handlers.move();
 
-            expect(this.playerSpy.moveCard).toHaveBeenCalledWith(this.cardSpy, 'revealed plots');
+            expect(this.gameSpy.resolveGameAction).toHaveBeenCalledTimes(1);
+            expect(this.playerSpy.moveCard).not.toHaveBeenCalled();
             expect(this.gameSpy.manualActions.record).toHaveBeenCalledTimes(1);
         });
 
@@ -75,5 +77,42 @@ describe('DropCommand with plots', function () {
             expect(this.gameSpy.promptWithMenu).not.toHaveBeenCalled();
             expect(this.playerSpy.moveCard).toHaveBeenCalledWith(this.cardSpy, 'out of game');
         });
+    });
+});
+
+describe('dropping a plot from the plot deck on the used pile in a game', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            gameOptions: { manualMode: true },
+            player1: {
+                faction: 'martell',
+                plotDeck: ['A Song of Summer', 'A Noble Cause'],
+                inPlay: [{ card: 'House Dayne Knight', attachments: ['Sand Steed'] }]
+            }
+        });
+
+        this.summer = this.player1.findCardByName('A Song of Summer', 'plot deck');
+        this.game.drop(this.player1.name, this.summer.uuid, 'plot deck', 'revealed plots');
+        this.game.continue();
+    });
+
+    it('moves it only once the player chooses to', function () {
+        expect(this.player1).toHavePrompt('Place this plot');
+        expect(this.summer.location).toBe('plot deck');
+
+        this.player1.clickPrompt('Move to used plots');
+
+        expect(this.summer.location).toBe('revealed plots');
+    });
+
+    it('lets reactions to a plot entering the used pile respond', function () {
+        this.player1.clickPrompt('Move to used plots');
+
+        expect(this.player1).toAllowAbilityTrigger('Sand Steed');
+        this.player1.triggerAbility('Sand Steed');
+
+        expect(this.houseDayneKnight.power).toBe(1);
+        expect(this.player1).isReadyToTakeAction();
     });
 });
