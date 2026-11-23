@@ -1307,7 +1307,7 @@ export const fixtureSteps = {
                     { code: '01088', label: 'Tyrion Lannister', argType: 'card' },
                     ' to gain 2 gold'
                 ],
-                [{ alert: { type: 'warning', message: ['Military challenge won by 3 STR'] } }],
+                { alert: { type: 'warning', message: ['Military challenge won by 3 STR'] } },
                 [
                     { name: fixtureUsername, argType: 'nonAvatarPlayer' },
                     ' kneels their faction card'

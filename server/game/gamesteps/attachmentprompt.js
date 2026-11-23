@@ -19,7 +19,7 @@ class AttachmentPrompt extends UiPrompt {
         pending.add(this.attachmentCard);
         this.game.promptForSelect(this.player, {
             activePromptTitle: 'Select target for attachment',
-            cancelsWhenEmpty: true,
+            cancelsWhenEmpty: !this.event,
             canCancel: !this.event,
             cardCondition: (card) =>
                 this.player.canAttach(this.attachmentCard, card) &&

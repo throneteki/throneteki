@@ -794,7 +794,7 @@ const Over = ({ players, me, portrait, winners, winReason, buttons, onButtonClic
                 )
             )}
             <div
-                className='overlay-after hud-zoom max-w-full text-sm uppercase tracking-widest text-default-400'
+                className='overlay-after hud-zoom max-w-full text-sm font-semibold uppercase tracking-widest text-default-200 [text-shadow:0_1px_6px_#000]'
                 style={after(allLanded + 300)}
             >
                 {[winReasons[winReason], !melee && powerLine].filter(Boolean).join(' · ')}
@@ -852,7 +852,9 @@ const Standing = ({ player, me, portrait, index }) => {
                     <span className='font-[Cinzel,serif] text-3xl font-extrabold tabular-nums text-amber-300'>
                         <CountUp value={powerOf(player)} delay={landed} />
                     </span>
-                    <span className='text-xs uppercase tracking-wider text-default-400'>power</span>
+                    <span className='text-xs font-semibold uppercase tracking-wider text-default-300 [text-shadow:0_1px_4px_#000]'>
+                        power
+                    </span>
                 </div>
                 <div
                     className={classNames(
@@ -1205,11 +1207,17 @@ const OverlayView = ({
             <HideCards uuids={held} />
             {
                 <>
+                    {/* The board softened and darkened behind it, most in the middle where the overlay's text is,
+                        so its detail does not show through the text */}
                     <div
                         className={classNames(
-                            'overlay-dim absolute inset-0',
-                            major ? 'pointer-events-auto bg-black/75' : 'bg-black/55'
+                            'overlay-dim absolute inset-0 backdrop-blur-[3px]',
+                            major ? 'pointer-events-auto bg-black/80' : 'bg-black/65'
                         )}
+                        style={{
+                            backgroundImage:
+                                'radial-gradient(ellipse 65% 55% at 50% 50%, rgba(0,0,0,0.6), transparent 80%)'
+                        }}
                     />
                     <div className='absolute inset-0'>
                         {overlay.major === 'start' && (

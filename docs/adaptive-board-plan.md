@@ -1180,6 +1180,14 @@ From the review on 2026-11-20 (second batch):
       placeholder) and its Done, which is off until a value is picked, beside the prompt's other options (Cancel). Its
       list opens upwards over the board. The panel is now only for a prompt's targets (Details). Beside the board the
       input shows in the prompt, as before. The dev board's "Choose X" scenario shows it.
+- [x] **R277 Overlays are easy to read**: their text stood over the board's card art with only a light dim. The board
+      behind an overlay is now blurred a little and darkened more (in-game overlays 65%, the start and end 80%), most
+      of all in the middle where the text is, and the small labels (power, how the game was won) are brighter with a
+      shadow.
+- [x] **R278 Overlays fade out**: as an overlay finished, its heading, names, numbers and buttons vanished in one frame and
+      only its dim faded: their fade out was a transition, which had nothing to start from once their entrance
+      animation was taken off. It is an animation now (overlay-out, 250ms), then the cards fly back to the board and
+      the dim fades.
 - [x] **R234 Tokens are in the middle of the card again, and their changes stand out**: the +x / −x that floats off a
       counter is a larger bold pill, green or red, and stays a little longer (both boards).
 

@@ -48,18 +48,9 @@ describe('an attachment waiting for its target', function () {
             expect(summary.code).toBe(this.attachment.cardData.code);
         });
 
-        it('offers to cancel rather than to finish choosing', function () {
-            expect(this.player1).toHavePromptButton('Cancel');
-            expect(this.player1).not.toHavePromptButton('Done');
-        });
-
-        it('stays in hand, unmarked, when cancelled', function () {
-            this.player1.clickPrompt('Cancel');
-
-            expect(this.attachment.location).toBe('hand');
-            expect(this.game.pendingAttachments.size).toBe(0);
-            expect(this.summaryFor(this.player1.player).beingAttached).toBeFalsy();
-            expect(this.player1).isReadyToTakeAction();
+        it('cannot be cancelled once paid for', function () {
+            expect(this.player1).toHaveDisabledPromptButton('Done');
+            expect(this.player1).not.toHavePromptButton('Cancel');
         });
 
         it('is not marked once it is attached', function () {

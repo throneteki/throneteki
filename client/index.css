@@ -596,12 +596,18 @@ html.card-dragging.card-drop-refused * {
 .overlay-text {
     animation: overlay-fade 350ms ease-out 350ms both;
 }
+/* An animation, not a transition: the entrance animation it replaces held their opacity, so a transition would have
+   nothing to start from and they would vanish at once */
 .overlay-leaving .overlay-text,
 .overlay-leaving .overlay-after,
 .overlay-leaving .overlay-pop {
     opacity: 0;
-    transition: opacity 200ms;
-    animation: none;
+    animation: overlay-out 250ms ease-in;
+}
+@keyframes overlay-out {
+    from {
+        opacity: 1;
+    }
 }
 /* A choice put aside: all but its restore button fades and stops taking the pointer. Wrappers fade, as the parts'
    entrance animations hold their own opacity. */
