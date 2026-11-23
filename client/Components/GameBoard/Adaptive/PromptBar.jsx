@@ -17,17 +17,9 @@ import PhaseRoll from './PhaseRoll';
 import { chipClass } from './chipClass';
 import { motionOff, motionSettingOff } from '../../../flip';
 import Messages from '../Messages';
-import { logMinimum, useLogFeed } from './useLogFeed';
+import { logTiming, useLogFeed } from './useLogFeed';
 import { pendingKeys, pendingLook, usePending } from '../pendingActions';
 import PendingChip, { PendingRow, usePendingStage } from './PendingChip';
-
-const fadeTime = 0.3;
-// A line too long for its row scrolls along at this speed, after a pause to start reading it
-const scrollSpeed = 45;
-const scrollPause = 700;
-// Hurried, it pauses less, and takes at least this long to scroll
-const hurriedPause = 250;
-const hurriedScroll = 400;
 
 // A log line, on one line: when it does not fit, it scrolls along once to its end, and asks to be shown for as long
 // as that takes. While other lines wait (hurry) it scrolls faster, to be done close to the least time a line shows.
@@ -50,10 +42,13 @@ const LogText = ({ entry, hurry, onHold }) => {
             return;
         }
         const hurried = hurryRef.current;
-        const pause = hurried ? hurriedPause : scrollPause;
-        const relaxed = (over / scrollSpeed) * 1000;
+        const pause = hurried ? logTiming.queuedScrollPause : logTiming.scrollPause;
+        const relaxed = (over / logTiming.scrollSpeed) * 1000;
         const duration = hurried
-            ? Math.min(relaxed, Math.max(hurriedScroll, logMinimum - pause * 2))
+            ? Math.min(
+                  relaxed,
+                  Math.max(logTiming.queuedScrollLeast, logTiming.queuedShow - pause * 2)
+              )
             : relaxed;
         onHold(id, pause + duration + pause);
         const animation = text.animate(
@@ -76,12 +71,15 @@ const LogText = ({ entry, hurry, onHold }) => {
         current.hurried = true;
         const elapsed = performance.now() - current.start;
         const left = current.pause + current.duration - elapsed;
-        const want = Math.max(hurriedScroll / 2, logMinimum - hurriedPause - elapsed);
+        const want = Math.max(
+            logTiming.queuedScrollLeast / 2,
+            logTiming.queuedShow - logTiming.queuedScrollPause - elapsed
+        );
         if (left <= 0 || want >= left) {
             return;
         }
         current.animation.updatePlaybackRate(left / want);
-        onHold(id, elapsed + want + hurriedPause);
+        onHold(id, elapsed + want + logTiming.queuedScrollPause);
     }, [hurry, id, onHold]);
 
     return (
@@ -111,7 +109,7 @@ const PhaseOrLog = ({ phase, feed, className }) => (
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: fadeTime, ease: 'easeInOut' }}
+                    transition={{ duration: logTiming.fade / 1000, ease: 'easeInOut' }}
                     className='absolute inset-0 flex items-center gap-1'
                 >
                     <button
@@ -356,7 +354,8 @@ const PromptBar = ({
     selecting,
     onButtonClick,
     timer,
-    stackOptions = false
+    stackOptions = false,
+    showLog = true
 }) => {
     const promptButtons = useMemo(() => allButtons || [], [allButtons]);
     const {
@@ -501,7 +500,7 @@ const PromptBar = ({
     );
     const waiting = buttons.length === 0 && panelControls.length === 0 && !selection;
     const messages = useSelector((state) => state.lobby.currentGame?.messages);
-    const feed = useLogFeed(messages);
+    const feed = useLogFeed(messages, { enabled: showLog });
     // A lookup's answer is sent for its whole prompt
     const controlsPending = pendingLook(
         usePending(panelControls[0] ? pendingKeys.prompt(panelControls[0].promptId) : null)

@@ -1,8 +1,23 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react';
 import { isChatMessage } from '../chatMessages';
 
-export const logMinimum = 1500;
-const logMaximum = 4000;
+// How the game log's lines are shown on the phase wheel, in milliseconds (scrollSpeed in pixels a second)
+export const logTiming = {
+    // A line with others queued behind it shows this long, then gives way to the next
+    queuedShow: 1500,
+    // A line with nothing behind it shows this long
+    aloneShow: 4000,
+    // A long line, held while it scrolls, stays this much longer once done when nothing is behind it
+    aloneAfterScroll: 1000,
+    // A line too long for its row scrolls at this speed, pausing this long before it starts and after it ends
+    scrollSpeed: 45,
+    scrollPause: 700,
+    // With others queued behind it, it pauses this long instead, and takes at least this long to scroll
+    queuedScrollPause: 250,
+    queuedScrollLeast: 400,
+    // Each line fades in and out over this long
+    fade: 300
+};
 
 const initial = { current: null, queue: [] };
 
@@ -29,7 +44,7 @@ const reducer = (state, action) => {
 };
 
 // The game log's new lines, one at a time, for the divider to show in place of the phase track. Each stays at least
-// logMinimum; it gives way to the next as soon as that has passed, or stays up to logMaximum when nothing follows.
+// queuedShow; it gives way to the next as soon as that has passed, or stays aloneShow when nothing follows.
 // A line that needs longer to be read (one that scrolls) asks to be held for that long. Lines from before the board
 // opened are not shown, nor are chat messages.
 export const useLogFeed = (messages, { enabled = true } = {}) => {
@@ -66,7 +81,9 @@ export const useLogFeed = (messages, { enabled = true } = {}) => {
         }
         const hold = current.hold ?? 0;
         const stay =
-            queue.length > 0 ? Math.max(logMinimum, hold) : Math.max(logMaximum, hold + 1000);
+            queue.length > 0
+                ? Math.max(logTiming.queuedShow, hold)
+                : Math.max(logTiming.aloneShow, hold + logTiming.aloneAfterScroll);
         const wait = current.shownAt + stay - Date.now();
         const timer = setTimeout(
             () => dispatch({ type: 'next', now: Date.now(), id: nextId.current++ }),

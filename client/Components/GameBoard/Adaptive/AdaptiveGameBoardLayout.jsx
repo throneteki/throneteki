@@ -684,6 +684,7 @@ const AdaptiveGameBoardLayout = ({
             selecting={!!userPlayer?.selectCard}
             onButtonClick={onButtonClick}
             timer={<GameTimer player={thisPlayer} isMe={!!thisPlayer} side='bottom' />}
+            showLog={!chat.open}
         />
     );
 

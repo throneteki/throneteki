@@ -1096,10 +1096,11 @@ From the review on 2026-11-20 (second batch):
       (`--visual-height`).
 - [ ] **R258 Keep the phase wheel**: it replaces the phase label (adding, not taking away) and shows the phase order
       to newer players. Names cut off at its edges are intended: it is a wheel that turns through the phases.
-- [ ] **R259 The game log on the phase wheel shows while the chat is closed**, in any layout, and hides while it is
+- [x] **R259 The game log on the phase wheel shows while the chat is closed**, in any layout, and hides while it is
       open. Its pace stays as it is, but its timings are gathered as named constants in one place, easy to tune: how
       long a line shows on its own and with others queued behind it, the longest a line stays, how fast a long line
-      scrolls with and without a queue, the pauses at its ends, and the fade.
+      scrolls with and without a queue, the pauses at its ends, and the fade. Done: logTiming in useLogFeed.js;
+      the prompt bar turns the feed off (showLog) while the chat is open, so lines from then are not shown later.
 - [ ] **R260 Fewer options**: the prompt side (classic's side), the overlay timer and the fixed-size mode go. Cards
       always fit the screen and the sliders scale the fit; card and interface sizes and animations stay. A fixed
       size (the legacy `cardSize`, or `auto: false`) is converted when settings are next saved: the slider becomes
