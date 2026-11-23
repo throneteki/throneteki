@@ -28,4 +28,44 @@ describe('Haldon Halfmaester', function () {
         expect(this.hedgeKnight.tokens[Tokens.gold]).toBe(1);
         expect(this.aegonTargaryen.location).toBe('play area');
     });
+
+    it('still places 1 gold when Sweetrobin removes the revealed card', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                plot: 'Sneak Attack',
+                inPlay: ['Haldon Halfmaester', 'Hedge Knight', 'Sweetrobin', 'The Roseroad'],
+                drawDeck: ['Castle Guard']
+            }
+        });
+        this.unopposedChallenge(this.player1, 'Power', this.haldonHalfmaester);
+        this.player1.triggerAbility('Haldon Halfmaester');
+        this.player1.triggerAbility(this.sweetrobin);
+
+        expect(this.castleGuard.location).toBe('out of game');
+        expect(this.player1).toBeAbleToSelect(this.hedgeKnight);
+        expect(this.player1).not.toBeAbleToSelect(this.theRoseroad);
+        this.player1.clickCard(this.hedgeKnight);
+        expect(this.hedgeKnight.tokens[Tokens.gold]).toBe(1);
+        expect(this.player1).isReadyToTakeAction();
+    });
+
+    it('does not put Aegon Targaryen into play when Sweetrobin removes him', function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                plot: 'Sneak Attack',
+                inPlay: ['Haldon Halfmaester', 'Hedge Knight', 'Sweetrobin'],
+                drawDeck: ['Aegon Targaryen (TSC)']
+            }
+        });
+        this.unopposedChallenge(this.player1, 'Power', this.haldonHalfmaester);
+        this.player1.triggerAbility('Haldon Halfmaester');
+        this.player1.triggerAbility(this.sweetrobin);
+        this.player1.clickCard(this.hedgeKnight);
+
+        expect(this.aegonTargaryen.location).toBe('out of game');
+        expect(this.hedgeKnight.tokens[Tokens.gold]).toBe(1);
+        expect(this.player1).isReadyToTakeAction();
+    });
 });

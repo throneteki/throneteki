@@ -32,7 +32,9 @@ class MyrishLens extends DrawCard {
                 cards: [context.target],
                 player: context.player
             })).then({
-                condition: (context) => context.parentContext.revealed[0].getType() === 'event',
+                condition: (context) =>
+                    context.parentContext.revealed.length > 0 &&
+                    context.parentContext.revealed[0].getType() === 'event',
                 message: {
                     format: 'Then, {player} discards {card} from shadows',
                     args: { card: (context) => context.parentContext.revealed[0] }
