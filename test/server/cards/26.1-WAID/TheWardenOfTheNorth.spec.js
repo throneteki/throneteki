@@ -18,9 +18,7 @@ describe('The Warden of the North', function () {
         expect(this.robbStark.hasKeyword('Renown')).toBe(true);
         expect(this.player1Object.canPlay(this.nightmares)).toBe(false);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

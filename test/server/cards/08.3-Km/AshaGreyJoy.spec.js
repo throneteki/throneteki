@@ -8,12 +8,7 @@ describe('Asha Greyjoy (Km)', function () {
             }
         });
 
-        this.player1.clickPrompt('Power');
-        this.player1.clickCard(this.ashaGreyjoy);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Power', this.ashaGreyjoy);
         this.player1.triggerAbility(this.ashaGreyjoy);
     });
 

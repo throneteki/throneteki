@@ -25,7 +25,7 @@ describe('Haunted Forest Scout', function () {
 
         expect(this.player2).not.toBeAbleToSelect(theirs);
 
-        this.player2.clickPrompt('Done');
+        this.player2.clickPrompt("Don't defend");
         this.skipActionWindow();
         this.player2.clickCard(this.tumblestoneKnight);
 

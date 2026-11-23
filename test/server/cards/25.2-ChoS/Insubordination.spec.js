@@ -21,9 +21,7 @@ describe('Insubordination (ChoS)', function () {
     it('kneels to kill the attached character after it attacks you alone', function () {
         expect(this.serJaimeLannister.location).toBe('dead pile');
 
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player1);
         expect(this.player2).isReadyToTakeAction();
     });
 });

@@ -19,9 +19,7 @@ describe('Mace Tyrell (SAT)', function () {
         expect(this.tumblestoneKnight.location).toBe('hand');
         expect(this.sweetCersei.location).toBe('draw deck');
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
         expect(this.player1).isReadyToTakeAction();
     });
 });

@@ -36,6 +36,7 @@ class ChooseParticipantsPrompt extends BaseStep {
             waitingPromptTitle: this.properties.waitingPromptTitle,
             cardCondition: (card) => this.canParticipate(card),
             mustSelect: forcedParticipants,
+            emptyDoneButton: () => this.getEmptyDoneButton(),
             onSelect: (player, participants) => this.chooseParticipants(participants),
             onCancel: () => {
                 if (!this.chooseParticipants([])) {
@@ -43,6 +44,14 @@ class ChooseParticipantsPrompt extends BaseStep {
                 }
             }
         });
+    }
+
+    getEmptyDoneButton() {
+        if (!this.properties.emptyDoneButton || !this.hasMetParticipantMinimum([])) {
+            return undefined;
+        }
+
+        return this.properties.emptyDoneButton;
     }
 
     canParticipate(card) {

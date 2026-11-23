@@ -21,9 +21,7 @@ describe('Hodor', function () {
 
         this.player1.clickCard(this.tumblestoneKnight);
         this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

@@ -42,9 +42,7 @@ describe('Horn Hill', function () {
         });
 
         it('stops raising it once the challenge ends', function () {
-            this.skipActionWindow();
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
+            this.declareNoDefenders(this.player2);
 
             expect(this.player1Object.getClaim()).toBe(1);
             expect(this.player1).isReadyToTakeAction();
@@ -52,9 +50,7 @@ describe('Horn Hill', function () {
 
         describe('then in their second challenge', function () {
             beforeEach(function () {
-                this.skipActionWindow();
-                this.player2.clickPrompt('Done');
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player2);
 
                 this.player1.clickPrompt('Military');
                 this.player1.clickCard(this.tumblestoneKnight);

@@ -78,12 +78,7 @@ describe('Theodan the True', function () {
     describe('when you lose a challenge in which it is participating', function () {
         beforeEach(function () {
             this.player1.clickPrompt('Done');
-            this.player2.clickPrompt('Intrigue');
-            this.player2.clickCard(this.silentSisters);
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
-            this.player1.clickPrompt('Done');
-            this.skipActionWindow();
+            this.unopposedChallenge(this.player2, 'Intrigue', this.silentSisters);
         });
 
         it('cannot be triggered', function () {

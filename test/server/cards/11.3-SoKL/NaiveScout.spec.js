@@ -20,7 +20,7 @@ describe('Naive Scout', function () {
     it('cannot be declared as a defender while there is a card in shadows', function () {
         expect(this.player2).not.toBeAbleToSelect(this.naiveScout);
 
-        this.player2.clickPrompt('Done');
+        this.player2.clickPrompt("Don't defend");
         this.skipActionWindow();
 
         expect(this.player1).isReadyToTakeAction();

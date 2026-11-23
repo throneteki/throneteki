@@ -7,13 +7,10 @@ describe('Wedding at the Wall', function () {
                 hand: ['Wedding at the Wall']
             }
         });
-        this.player1.clickPrompt('Power');
-        this.player1.clickCard(this.northernRefugee);
-        this.player1.clickCard(this.acolyteOfTheShadow);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Power', [
+            this.northernRefugee,
+            this.acolyteOfTheShadow
+        ]);
         this.player1.triggerAbility('Wedding at the Wall');
         this.player1.clickCard(this.northernRefugee);
         this.player1.clickCard(this.acolyteOfTheShadow);

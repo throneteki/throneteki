@@ -16,9 +16,7 @@ describe('Kingsmoot Claimant', function () {
         expect(this.kingsmootClaimant.hasTrait('King')).toBe(true);
         expect(this.kingsmootClaimant.hasKeyword('Renown')).toBe(true);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

@@ -31,11 +31,7 @@ describe('Master of Whispers', function () {
                 this.player1.clickCard('Sansa Stark', 'play area');
                 this.player1.clickPrompt('Done');
 
-                this.skipActionWindow();
-
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player2);
 
                 this.player1.clickPrompt('Apply Claim');
             });
@@ -94,11 +90,7 @@ describe('Master of Whispers', function () {
                 this.player1.clickCard('Ser Jaime Lannister', 'play area');
                 this.player1.clickPrompt('Done');
 
-                this.skipActionWindow();
-
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player2);
 
                 // Apply claim against both opponents
                 this.player1.clickPrompt('Apply Claim');
@@ -158,11 +150,7 @@ describe('Master of Whispers', function () {
                 this.player1.clickCard('Ser Jaime Lannister', 'play area');
                 this.player1.clickPrompt('Done');
 
-                this.skipActionWindow();
-
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player2);
 
                 // Apply claim against both opponents
                 this.player1.clickPrompt('Apply Claim');

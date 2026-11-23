@@ -16,13 +16,7 @@ describe('Genna Frey', function () {
         });
         this.unopposedChallenge(this.player1, 'Military', this.hedgeKnight);
         this.unopposedChallenge(this.player1, 'Power', this.robbStark);
-        this.player1.clickPrompt('Intrigue');
-        this.player1.clickCard(this.gennaFrey);
-        this.player1.clickCard(this.blackWalder);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Intrigue', [this.gennaFrey, this.blackWalder]);
         this.player1.triggerAbility('Genna Frey');
         this.player2.clickPrompt('Done');
     });

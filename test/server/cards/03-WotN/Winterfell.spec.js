@@ -66,9 +66,7 @@ describe('Winterfell (WotN)', function () {
             });
 
             it('lets players trigger card abilities again after the challenge', function () {
-                this.skipActionWindow();
-                this.player2.clickPrompt('Done');
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player2);
 
                 expect(this.game.currentChallenge).toBeFalsy();
                 expect(this.player2Object.canTrigger(this.oldGate.abilities.actions[0])).toBe(true);

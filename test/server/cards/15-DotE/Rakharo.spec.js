@@ -6,13 +6,7 @@ describe('Rakharo', function () {
                 player1: { inPlay: ['Rakharo (DotE)', 'Braided Warrior'] },
                 player2: { hand: ['Hot Pie (FFH)'] }
             });
-            this.player1.clickPrompt('Military');
-            this.player1.clickCard(this.rakharo);
-            this.player1.clickCard(this.braidedWarrior);
-            this.player1.clickPrompt('Done');
-            this.skipActionWindow();
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
+            this.unopposedChallenge(this.player1, 'Military', [this.rakharo, this.braidedWarrior]);
             this.player1.triggerAbility(this.rakharo);
         });
 

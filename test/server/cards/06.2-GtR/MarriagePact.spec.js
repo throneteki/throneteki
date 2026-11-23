@@ -19,9 +19,7 @@ describe('Marriage Pact', function () {
 
         this.player2.clickCard(this.hedgeKnight);
         this.player2.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player1);
         this.player1.clickCard(this.tumblestoneKnight);
 
         expect(this.player2).isReadyToTakeAction();
@@ -36,7 +34,7 @@ describe('Marriage Pact', function () {
         expect(this.player2).not.toBeAbleToSelect(this.castleGuard);
         expect(this.player2).toBeAbleToSelect(this.winterfellSteward);
 
-        this.player2.clickPrompt('Done');
+        this.player2.clickPrompt("Don't defend");
         this.skipActionWindow();
 
         expect(this.player1).isReadyToTakeAction();
@@ -82,7 +80,7 @@ describe('Marriage Pact on your own character', function () {
 
         expect(this.game.currentChallenge.isAttacking(this.tumblestoneKnight)).toBe(true);
 
-        this.player2.clickPrompt('Done');
+        this.player2.clickPrompt("Don't defend");
         this.skipActionWindow();
 
         expect(this.player1).isReadyToTakeAction();

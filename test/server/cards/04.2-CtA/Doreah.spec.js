@@ -15,9 +15,7 @@ describe('Doreah', function () {
     it('gains insight during a challenge in which you control a participating Lord or Lady', function () {
         expect(this.doreah.hasKeyword('Insight')).toBe(true);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

@@ -16,9 +16,7 @@ describe('Horn Hill Vanguard', function () {
     it('gets +1 STR for each standing [tyrell] character you control while it attacks', function () {
         expect(this.hornHillVanguard.getStrength()).toBe(5);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

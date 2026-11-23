@@ -18,9 +18,7 @@ describe('Red Ronnet', function () {
     it('raises the claim on your revealed plot by 1 while he attacks a player with a card in shadows', function () {
         expect(this.player1Object.getClaim()).toBe(2);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

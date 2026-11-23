@@ -24,9 +24,7 @@ describe('Master of Whispers', function () {
             this.player1.clickCard(this.houseMaester);
             this.player1.clickPrompt('Done');
             expect(this.game.currentChallenge.attackerStrength).toBe(3);
-            this.skipActionWindow();
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
+            this.declareNoDefenders(this.player2);
             expect(this.player1).toHavePromptButton('player2');
             expect(this.player1).toHavePromptButton('player3');
             expect(this.player1).not.toHavePromptButton('player1');
@@ -66,9 +64,7 @@ describe('Master of Whispers', function () {
         this.player1.clickCard(this.houseMaester);
         this.player1.clickPrompt('Done');
         expect(this.game.currentChallenge.attackerStrength).toBe(2);
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
         expect(this.player2Object.discardPile).toHaveLength(0);
         expect(this.player3Object.discardPile).toHaveLength(0);
         expect(this.player1).isReadyToTakeAction();

@@ -19,6 +19,7 @@ const ProxiedGameFlowWrapperMethods = [
     'completeSetup',
     'skipActionWindow',
     'unopposedChallenge',
+    'declareNoDefenders',
     'passChallengeBeginWindow'
 ];
 

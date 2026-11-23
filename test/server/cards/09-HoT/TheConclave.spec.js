@@ -26,12 +26,7 @@ describe('The Conclave', function () {
             expect(card.location).toBe('underneath');
             expect(card.facedown).toBe(true);
         }
-        this.player1.clickPrompt('Power');
-        this.player1.clickCard(this.houseMaester);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Power', this.houseMaester);
         expect(this.player1).toAllowAbilityTrigger(this.theConclave);
         this.player1.triggerAbility(this.theConclave);
         for (const card of this.underneath) {
@@ -53,12 +48,7 @@ describe('The Conclave', function () {
     });
 
     it('does not trigger after winning without a participating Maester', function () {
-        this.player1.clickPrompt('Military');
-        this.player1.clickCard(this.castleGuard);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Military', this.castleGuard);
         this.player2.clickCard(this.rangingParty);
         expect(this.player1).not.toAllowAbilityTrigger(this.theConclave);
         expect(this.player1Object.drawDeck[0]).toBe(this.hedgeKnight);

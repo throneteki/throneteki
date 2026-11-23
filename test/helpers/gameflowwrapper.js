@@ -213,18 +213,22 @@ class GameFlowWrapper {
         }
     }
 
-    unopposedChallenge(player, type, participant) {
+    unopposedChallenge(player, type, participants) {
         var opponent = this.allPlayers.find((p) => p !== player);
 
         this.passChallengeBeginWindow();
         player.clickPrompt(type);
-        player.clickCard(participant, 'play area');
+        for (const participant of [participants].flat()) {
+            player.clickCard(participant, 'play area');
+        }
         player.clickPrompt('Done');
 
+        this.declareNoDefenders(opponent);
+    }
+
+    declareNoDefenders(defender) {
         this.skipActionWindow();
-
-        opponent.clickPrompt('Done');
-
+        defender.clickPrompt("Don't defend");
         this.skipActionWindow();
     }
 }

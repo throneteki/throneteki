@@ -75,12 +75,7 @@ describe('Fear Cuts Deeper Than Swords, against keywords', function () {
 
     it('cancels intimidate choosing a [stark] character you control', function () {
         setup(this, 'Grey Wind (Core)');
-        this.player2.clickPrompt('Military');
-        this.player2.clickCard(this.greyWind);
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player2, 'Military', this.greyWind);
         this.player1.clickCard(this.houseMaester);
         this.player2.clickCard(this.tumblestoneKnight);
         this.player1.triggerAbility(this.fearCutsDeeperThanSwords);

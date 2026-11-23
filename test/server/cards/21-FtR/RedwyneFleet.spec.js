@@ -25,9 +25,7 @@ describe('The Redwyne Fleet', function () {
 
         expect(this.player1Object.gold).toBe(gold + 1);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

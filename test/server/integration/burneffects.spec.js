@@ -80,11 +80,7 @@ describe('burn effects', function () {
                 this.player2.clickCard(this.dragon);
                 this.player2.clickCard(this.character);
 
-                this.skipActionWindow();
-
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player2);
 
                 // Skip claim
                 this.player1.clickPrompt('Continue');
@@ -385,7 +381,7 @@ describe('burn effects', function () {
 
                 this.player1.clickPrompt('pass');
                 this.player2.clickPrompt('pass');
-                this.player2.clickPrompt('done');
+                this.player2.clickPrompt("Don't defend");
                 this.player1.clickPrompt('pass');
                 this.player2.clickPrompt('pass');
                 this.player1.triggerAbility(this.ice);
@@ -409,7 +405,7 @@ describe('burn effects', function () {
 
                 this.player1.clickPrompt('pass');
                 this.player2.clickPrompt('pass');
-                this.player2.clickPrompt('done');
+                this.player2.clickPrompt("Don't defend");
                 this.player1.clickPrompt('pass');
                 this.player2.clickPrompt('pass');
                 this.player1.clickPrompt('Apply Claim');
@@ -549,7 +545,7 @@ describe('burn effects', function () {
                 this.player1.clickPrompt('Pass');
                 this.player2.clickPrompt('Pass');
 
-                this.player2.clickPrompt('Done');
+                this.player2.clickPrompt("Don't defend");
 
                 this.player1.clickPrompt('Pass');
                 this.player2.clickPrompt('Pass');

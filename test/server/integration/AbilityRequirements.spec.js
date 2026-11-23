@@ -26,15 +26,7 @@ describe('ability requirements', function () {
 
                 this.completeMarshalPhase();
 
-                this.player1.clickPrompt('Power');
-                this.player1.clickCard(this.character);
-                this.player1.clickPrompt('Done');
-
-                this.skipActionWindow();
-
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
+                this.unopposedChallenge(this.player1, 'Power', this.character);
 
                 // Return the character to hand
                 this.player2.triggerAbility('Ghaston Grey');
@@ -90,11 +82,7 @@ describe('ability requirements', function () {
                 this.player1.clickCard('Cersei Lannister', 'play area');
                 this.player1.clickPrompt('Done');
 
-                this.skipActionWindow();
-
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player2);
 
                 this.player1.triggerAbility('Without His Beard');
                 this.player1.clickPrompt('3');

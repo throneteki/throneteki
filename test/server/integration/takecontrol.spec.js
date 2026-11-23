@@ -160,15 +160,7 @@ describe('take control', function () {
 
                 this.completeMarshalPhase();
 
-                this.player1.clickPrompt('Power');
-                this.player1.clickCard(this.euron);
-                this.player1.clickPrompt('Done');
-
-                this.skipActionWindow();
-
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
+                this.unopposedChallenge(this.player1, 'Power', this.euron);
 
                 this.player1.clickPrompt('Apply Claim');
 
@@ -244,15 +236,7 @@ describe('take control', function () {
                     this.player2.clickPrompt('Done');
 
                     // Challenges
-                    this.player1.clickPrompt('Power');
-                    this.player1.clickCard(this.euron);
-                    this.player1.clickPrompt('Done');
-
-                    this.skipActionWindow();
-
-                    this.player2.clickPrompt('Done');
-
-                    this.skipActionWindow();
+                    this.unopposedChallenge(this.player1, 'Power', this.euron);
 
                     this.player1.clickPrompt('Apply Claim');
 
@@ -365,15 +349,7 @@ describe('take control', function () {
                 this.player2.clickCard('Hedge Knight', 'hand');
                 this.player2.clickPrompt('Done');
 
-                this.player1.clickPrompt('Power');
-                this.player1.clickCard(this.euron);
-                this.player1.clickPrompt('Done');
-
-                this.skipActionWindow();
-
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
+                this.unopposedChallenge(this.player1, 'Power', this.euron);
 
                 this.player1.clickPrompt('Apply Claim');
 
@@ -391,11 +367,7 @@ describe('take control', function () {
                 this.player2.clickCard('Hedge Knight', 'play area');
                 this.player2.clickPrompt('Done');
 
-                this.skipActionWindow();
-
-                this.player1.clickPrompt('Done');
-
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player1);
 
                 this.player2.clickPrompt('Apply Claim');
 
@@ -413,11 +385,7 @@ describe('take control', function () {
                 this.player1.clickCard('Hedge Knight', 'play area');
                 this.player1.clickPrompt('Done');
 
-                this.skipActionWindow();
-
-                this.player2.clickPrompt('Done');
-
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player2);
 
                 this.player1.clickPrompt('Apply Claim');
 

@@ -15,9 +15,7 @@ describe('Lyn Corbray (FotS)', function () {
     it('stands after an opponent initiates a power challenge against you', function () {
         expect(this.lynCorbray.kneeled).toBe(false);
 
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player1);
         expect(this.player2).isReadyToTakeAction();
     });
 });

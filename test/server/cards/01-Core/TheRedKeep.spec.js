@@ -17,9 +17,7 @@ describe('The Red Keep (Core)', function () {
         it('contributes 2 STR', function () {
             expect(this.game.currentChallenge.attackerStrength).toBe(4);
 
-            this.skipActionWindow();
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
+            this.declareNoDefenders(this.player2);
 
             expect(this.player1).isReadyToTakeAction();
         });

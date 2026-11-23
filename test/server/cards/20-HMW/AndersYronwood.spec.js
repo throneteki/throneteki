@@ -8,12 +8,7 @@ describe('Anders Yronwood (HMW)', function () {
         });
 
         this.player1.clickPrompt('Done');
-        this.player2.clickPrompt('Power');
-        this.player2.clickCard(this.andersYronwood);
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player2, 'Power', this.andersYronwood);
     });
 
     it('stops each House Yronwood character kneeling when attacking in your first challenge while you are not the first player', function () {

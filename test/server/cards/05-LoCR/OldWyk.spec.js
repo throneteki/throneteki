@@ -26,9 +26,7 @@ describe('Old Wyk', function () {
 
     it('returns that character to your hand if you win by 5 or more STR', function () {
         setup(this);
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
         expect(this.drownedMen.location).toBe('hand');
     });
 

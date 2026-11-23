@@ -15,9 +15,7 @@ describe('The Vale of Arryn (AHaH)', function () {
         this.player1.clickCard(this.serJaimeLannister);
         this.player1.clickPrompt('Done');
         this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
         this.player1.triggerAbility(this.theValeOfArryn);
     });
 

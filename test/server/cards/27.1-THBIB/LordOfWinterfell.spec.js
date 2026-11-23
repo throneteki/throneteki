@@ -15,13 +15,10 @@ describe('Lord of Winterfell', function () {
     it('gives the attached character insight while a Winter plot is revealed, and kneels to give it 1 power after you win a challenge with a participating loyal character', function () {
         expect(this.eddardStark.hasKeyword('insight')).toBe(true);
 
-        this.player1.clickPrompt('Power');
-        this.player1.clickCard(this.eddardStark);
-        this.player1.clickCard(this.grandMaesterPycelle);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Power', [
+            this.eddardStark,
+            this.grandMaesterPycelle
+        ]);
         this.player1.triggerAbility(this.lordOfWinterfell);
 
         expect(this.eddardStark.power).toBe(2);

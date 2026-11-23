@@ -16,9 +16,7 @@ describe('Septa Unella (WK)', function () {
     it('treats each other non-The Seven character with power as blank while she participates', function () {
         expect(this.khalDrogo.hasKeyword('Renown')).toBe(false);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

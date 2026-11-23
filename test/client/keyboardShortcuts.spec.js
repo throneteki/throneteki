@@ -151,6 +151,15 @@ describe('keyboard shortcuts', function () {
             expect(getPromptButtonIndex(keyEvent('d'), [{ text: 'Pass' }])).toBe(-1);
         });
 
+        it("maps only D to Don't defend, so Space meant for Pass can't decline to defend", function () {
+            const defenders = [{ text: "Don't defend", arg: 'done', done: true, endsTurn: true }];
+
+            expect(getPromptButtonIndex(keyEvent('d'), defenders)).toBe(0);
+            expect(getPromptButtonIndex(keyEvent(' '), defenders)).toBe(-1);
+            expect(getPromptButtonIndex(keyEvent('1'), defenders)).toBe(-1);
+            expect(getButtonShortcutLabel(defenders, 0)).toBe('D');
+        });
+
         it('never maps Space to a Cancel button', function () {
             const buttons = [{ text: 'Cancel', arg: 'done', cancel: true }];
 

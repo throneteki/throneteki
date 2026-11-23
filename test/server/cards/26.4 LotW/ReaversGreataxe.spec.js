@@ -16,9 +16,7 @@ describe("Reaver's Greataxe", function () {
         expect(this.saltyNavigator.hasTrait('Raider')).toBe(true);
         expect(this.saltyNavigator.kneeled).toBe(false);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

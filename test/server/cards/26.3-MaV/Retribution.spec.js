@@ -7,12 +7,7 @@ describe('Retribution', function () {
                 player1: { inPlay: ['Tumblestone Knight'], hand: ['Retribution'] },
                 player2: { inPlay: ['Castle Guard', 'Hedge Knight'] }
             });
-            this.player2.clickPrompt('Military');
-            this.player2.clickCard(this.castleGuard);
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
-            this.player1.clickPrompt('Done');
-            this.skipActionWindow();
+            this.unopposedChallenge(this.player2, 'Military', this.castleGuard);
             this.player1.clickCard(this.tumblestoneKnight);
             this.player1.triggerAbility(this.retribution);
         });

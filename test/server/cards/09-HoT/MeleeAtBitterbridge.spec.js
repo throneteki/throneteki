@@ -17,7 +17,7 @@ describe('Melee at Bitterbridge', function () {
         this.player1.clickPrompt('Done');
         this.player2.clickPrompt('Pass');
         this.player1.clickPrompt('Pass');
-        this.player2.clickPrompt('Done');
+        this.player2.clickPrompt("Don't defend");
         this.skipActionWindow();
         expect(this.serJonFossoway.power).toBe(1);
     });

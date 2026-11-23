@@ -6,12 +6,7 @@ describe('Yronwood', function () {
             player2: { inPlay: ['Theon Greyjoy (Core)'] }
         });
         this.player1.clickPrompt('Done');
-        this.player2.clickPrompt('Military');
-        this.player2.clickCard(this.theonGreyjoy);
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player2, 'Military', this.theonGreyjoy);
         this.player2.triggerAbility(this.theonGreyjoy);
         this.player1.triggerAbility(this.yronwood);
     });

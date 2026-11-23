@@ -18,9 +18,7 @@ describe('Ser Gilbert Farring (TSoW)', function () {
         expect(this.serGilbertFarring.getStrength()).toBe(5);
         expect(this.serGilbertFarring.hasKeyword('Renown')).toBe(true);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

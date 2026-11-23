@@ -24,9 +24,7 @@ describe('This Must Be Answered Fiercely!', function () {
 
         expect(this.courtesanOfTheRose.location).toBe('play area');
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

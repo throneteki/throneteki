@@ -19,7 +19,7 @@ describe('Bless Him With Salt', function () {
         expect(this.drownedMen.getStrength()).toBe(this.drownedMen.getPrintedStrength() + 3);
         this.player2.clickPrompt('Pass');
         this.player1.clickPrompt('Pass');
-        this.player2.clickPrompt('Done');
+        this.player2.clickPrompt("Don't defend");
         this.skipActionWindow();
         expect(this.hedgeKnight.location).toBe('hand');
     });

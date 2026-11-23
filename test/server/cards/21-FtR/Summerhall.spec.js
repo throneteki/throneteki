@@ -18,9 +18,7 @@ describe('Summerhall (FtR)', function () {
         expect(this.player1Object.canPutIntoPlay(this.bastardInHiding)).toBe(false);
         expect(this.player1Object.canRevealPlot?.() ?? true).toBeTruthy();
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

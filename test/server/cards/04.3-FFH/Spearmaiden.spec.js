@@ -11,9 +11,7 @@ describe('Spearmaiden', function () {
         this.player1.clickPrompt('Done');
         this.player1.triggerAbility('Spearmaiden');
         this.player1.clickCard(this.hedgeKnight);
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
     });
 
     it('forces the chosen character to be chosen for claim after winning by 5 or more STR', function () {

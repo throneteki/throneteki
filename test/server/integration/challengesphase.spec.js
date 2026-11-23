@@ -68,7 +68,7 @@ describe('challenges phase', function () {
                 // Skip attackers declared window
                 this.skipActionWindow();
 
-                this.player2.clickPrompt('Done');
+                this.player2.clickPrompt("Don't defend");
 
                 // Skip defenders declared window
                 this.skipActionWindow();
@@ -205,7 +205,7 @@ describe('challenges phase', function () {
                 this.skipActionWindow();
 
                 // No defenders
-                this.player2.clickPrompt('Done');
+                this.player2.clickPrompt("Don't defend");
 
                 this.skipActionWindow();
             });
@@ -295,9 +295,7 @@ describe('challenges phase', function () {
                 this.player1.clickPrompt('Power');
                 this.player1.clickCard('Winterfell Steward', 'play area');
                 this.player1.clickPrompt('Done');
-                this.skipActionWindow();
-                this.player2.clickPrompt('Done');
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player2);
                 this.player1.clickPrompt('Apply Claim');
             });
 

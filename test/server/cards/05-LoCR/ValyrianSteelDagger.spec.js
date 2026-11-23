@@ -16,9 +16,7 @@ describe('Valyrian Steel Dagger', function () {
         expect(this.houseMaester.getStrength()).toBe(4);
         expect(this.houseMaester.hasKeyword('Stealth')).toBe(true);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

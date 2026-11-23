@@ -12,7 +12,7 @@ describe('Though All Men Do Despise Us (HMW)', function () {
         this.player1.clickCard(this.orkmontReaver);
         this.player1.clickPrompt('Done');
         this.skipActionWindow();
-        this.player2.clickPrompt('Done');
+        this.player2.clickPrompt("Don't defend");
         this.player1.triggerAbility(this.thoughAllMenDoDespiseUs);
     });
 
