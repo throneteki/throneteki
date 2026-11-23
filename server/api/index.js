@@ -12,6 +12,7 @@ import { init as BanlistInit } from './banlist.js';
 import { init as AbuseBlocksInit } from './abuseBlocks.js';
 import { init as StatsInit } from './stats.js';
 import { init as UnsubscribeInit } from './unsubscribe.js';
+import { init as ThronesDbInit } from './thronesdb.js';
 import { init as ProblemReportsInit } from './problemReports.js';
 
 export const init = async function (server, options) {
@@ -19,6 +20,7 @@ export const init = async function (server, options) {
     BackgroundsInit(server, options);
     BannersInit(server, options);
     await DecksInit(server, options);
+    ThronesDbInit(server, options);
     DraftCubesInit(server, options);
     CardsInit(server, options);
     NewsInit(server, options);

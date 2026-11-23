@@ -4,7 +4,7 @@ import { Avatar, Button, Chip, Link } from '@heroui/react';
 import { toast } from 'react-toastify';
 import { useUnlinkPatreonMutation, useUpdateAvatarMutation } from '../../redux/middleware/api';
 import { avatarUpdated, setUser } from '../../redux/reducers/auth';
-import { PatreonStateKey } from '../../util';
+import { getOAuthState, PatreonStateKey } from '../../util';
 import PatreonImage from '../../assets/img/Patreon_Mark_Coral.jpg';
 import SettingsGroup from './SettingsGroup';
 import SettingSwitch from './SettingSwitch';
@@ -15,17 +15,8 @@ const getPatreonLinkUrl = () => {
         return undefined;
     }
 
-    // Ties the OAuth callback to this browser session so a link started elsewhere is rejected
-    let state;
-    try {
-        state = window.sessionStorage.getItem(PatreonStateKey);
-        if (!state) {
-            state = Array.from(window.crypto.getRandomValues(new Uint8Array(16)), (byte) =>
-                byte.toString(16).padStart(2, '0')
-            ).join('');
-            window.sessionStorage.setItem(PatreonStateKey, state);
-        }
-    } catch {
+    const state = getOAuthState(PatreonStateKey);
+    if (!state) {
         return undefined;
     }
 
