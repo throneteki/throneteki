@@ -163,6 +163,27 @@ function cardLabel(card) {
     return card.packCode ? `${card.name} (${card.packCode})` : card.name;
 }
 
+// The reported board replaces whatever an agenda such as The House With the Red Door does before
+// the mulligan, so its prompts are skipped rather than answered.
+function skipSetupAgendaPrompts(players) {
+    for (let clicks = 0; clicks < 20; clicks++) {
+        const player = players.find(
+            (player) =>
+                !player.hasPrompt('Keep Starting Hand?') &&
+                player.currentPrompt().buttons.some((button) => !button.disabled)
+        );
+        if (!player) {
+            return;
+        }
+
+        const buttons = player.currentPrompt().buttons.filter((button) => !button.disabled);
+        const button =
+            buttons.find((button) => ['Done', 'Pass', 'Cancel'].includes(button.text)) ||
+            buttons[0];
+        player.clickPrompt(button.text);
+    }
+}
+
 function problemReportSetup(report) {
     if (
         ![1, 2].includes(report.schemaVersion) ||
@@ -179,10 +200,14 @@ function problemReportSetup(report) {
     const phase = ['plot', 'marshal', 'challenge'].includes(report.game?.phase)
         ? report.game.phase
         : 'challenge';
+    const playerKeys = [...playerKeyByName.values()];
     const setup = {
         phase,
         firstPlayer: playerKeyByName.get(report.game?.firstPlayer) || 'player1',
-        passResponses: true
+        passResponses: true,
+        beforeMulligan() {
+            skipSetupAgendaPrompts(playerKeys.map((key) => this[key]));
+        }
     };
 
     for (const [index, player] of report.players.entries()) {
