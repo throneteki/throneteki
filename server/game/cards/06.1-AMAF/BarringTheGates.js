@@ -7,9 +7,7 @@ class BarringTheGates extends PlotCard {
         this.persistentEffect({
             targetController: 'any',
             effect: ability.effects.cannotPutIntoPlay(
-                (card, playingType) =>
-                    card.getType() === 'character' &&
-                    !['marshal', 'marshalDuplicate'].includes(playingType)
+                (card, playingType) => card.getType() === 'character' && playingType !== 'marshal'
             )
         });
     }

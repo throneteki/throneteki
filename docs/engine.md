@@ -365,10 +365,10 @@ Rules readings and design choices that stand until changed:
   FAQ entry).
 - Marshaling a duplicate uses up a reducer for the next card you marshal (Hizdahr zo Loraq, Queen
   of Meereen), but not one for the next character or other restricted card (rules team ruling).
-- Marshal restrictions on printed characteristics (cardtype, faction, keywords) don't stop
-  duplicates; restrictions on a title or copy (Varys, The Iron Throne, Tris Botley, Harren the
-  Black) do. The current FAQ (1.2, and the Kingswood Ambush entry) replaces the older Marching
-  Orders, City Blockade and Strained Reserves rulings that said otherwise.
+- No restriction on marshaling or putting cards into play stops marshaling a duplicate, including
+  ones that name a card or its copies (Varys, The Iron Throne, Tris Botley, Harren the Black). The
+  current FAQ (1.2, and the Kingswood Ambush entry) replaces the older card rulings that said
+  otherwise (Marching Orders, City Blockade, Strained Reserves, Tris Botley, Varys, Harren).
 - Ask before implementing a rules reading that is not already decided.
 
 ## Open work

@@ -26,6 +26,7 @@ describe('Tris Botley when the opponent has a copy of the removed card to duplic
                 discard: ['Arya Stark (Core)']
             }
         });
+        this.aryaInPlay = this.player2.findCardByName('Arya Stark', 'play area');
         this.aryaInDiscard = this.player2.findCardByName('Arya Stark', 'discard pile');
         this.aryaInHand = this.player2.findCardByName('Arya Stark', 'hand');
         this.player1.clickMenu(this.trisBotley, 'Remove card from game');
@@ -33,12 +34,13 @@ describe('Tris Botley when the opponent has a copy of the removed card to duplic
         this.player1.clickPrompt('Done');
     });
 
-    it('stops them marshaling it as a duplicate', function () {
+    it('does not stop them marshaling it as a duplicate', function () {
         expect(this.aryaInDiscard.location).toBe('out of game');
 
         this.player2.clickCard(this.aryaInHand);
 
-        expect(this.aryaInHand.location).toBe('hand');
+        expect(this.aryaInHand.location).toBe('duplicate');
+        expect(this.aryaInPlay.dupes).toContain(this.aryaInHand);
         expect(this.player2).isReadyToTakeAction();
     });
 });

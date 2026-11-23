@@ -17,9 +17,8 @@ class StrainedReserves extends PlotCard {
                 ability.effects.cannotMarshal((card, context, player) =>
                     isRestricted(card, player)
                 ),
-                ability.effects.cannotPutIntoPlay(
-                    (card, playingType, context, player) =>
-                        playingType !== 'marshalDuplicate' && isRestricted(card, player)
+                ability.effects.cannotPutIntoPlay((card, playingType, context, player) =>
+                    isRestricted(card, player)
                 )
             ]
         });

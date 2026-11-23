@@ -628,7 +628,13 @@ class Player extends Spectator {
             return false;
         }
 
-        if (!options.isEffectExpiration && !this.canPlay(card, playingType)) {
+        // Marshaling a duplicate is not subject to restrictions on marshaling or putting cards into
+        // play (ThronesDB FAQ 1.2).
+        if (
+            playingType !== 'marshalDuplicate' &&
+            !options.isEffectExpiration &&
+            !this.canPlay(card, playingType)
+        ) {
             return false;
         }
 
