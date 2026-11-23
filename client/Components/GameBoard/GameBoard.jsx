@@ -587,7 +587,6 @@ const GameBoard = () => {
                         muted={!thisPlayer && currentGame.muteSpectators}
                         inputRef={chatInputRef}
                         onUnreadChange={setChatUnread}
-                        newestFirst={phoneLayout}
                     />
                 </div>
             </MotionConfig>

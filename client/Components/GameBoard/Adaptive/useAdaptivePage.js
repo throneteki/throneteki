@@ -31,8 +31,8 @@ export const useAdaptivePage = (active) => {
         if (phantomTop) {
             html.style.setProperty('--safe-top', '0px');
         }
-        // How much of the screen the phone's keyboard leaves, for the chat to fill while it is typed into. Not every
-        // browser says (Firefox in full screen does not), so the chat keeps its input at the top as well.
+        // How much of the screen the phone's keyboard leaves, for the chat to fill while it is typed into, so its input
+        // and newest messages stay above the keyboard
         const visual = window.visualViewport;
         const fit = () => html.style.setProperty('--visual-height', `${visual.height}px`);
         visual?.addEventListener('resize', fit);

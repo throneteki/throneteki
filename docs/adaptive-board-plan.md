@@ -1091,9 +1091,10 @@ From the review on 2026-11-20 (second batch):
       chat button. The bar is marked as the tools (data-region), so the chat stops above it.
 - [ ] **R256 Review (2026-11-22): desktop keeps classic mechanics.** A review of the overhaul found desktop had drifted
       from classic. R257–R270 are the decisions from it; each applies the rule at the top of this file.
-- [ ] **R257 One chat order everywhere**: drop the phone's newest-first order (`newestFirst`). Fix the keyboard
+- [x] **R257 One chat order everywhere**: drop the phone's newest-first order (`newestFirst`). Fix the keyboard
       covering the newest messages instead: normal order, input at the bottom, the chat shrinking above the keyboard
-      (`--visual-height`).
+      (`--visual-height`). Done: ChatArea is master's again; the phone chat ends where the keyboard begins. Firefox in
+      full screen does not report the keyboard, so there it can cover the input.
 - [ ] **R258 Keep the phase wheel**: it replaces the phase label (adding, not taking away) and shows the phase order
       to newer players. Names cut off at its edges are intended: it is a wheel that turns through the phases.
 - [x] **R259 The game log on the phase wheel shows while the chat is closed**, in any layout, and hides while it is

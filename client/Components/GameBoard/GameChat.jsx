@@ -99,8 +99,7 @@ const ChatLip = ({ isOpen, unread, onToggle }) => (
     </button>
 );
 
-// onUnreadChange: chat messages that arrived while closed. newestFirst (phones): input and newest at the top, so the
-// keyboard only covers the oldest.
+// onUnreadChange: chat messages that arrived while closed
 const GameChat = ({
     isOpen,
     onToggle,
@@ -109,8 +108,7 @@ const GameChat = ({
     muted,
     className,
     inputRef,
-    onUnreadChange,
-    newestFirst = false
+    onUnreadChange
 }) => {
     const messagePanel = useRef(null);
     const [filter, setFilter] = useState(savedFilter);
@@ -124,10 +122,10 @@ const GameChat = ({
     };
 
     const chatCount = useMemo(() => messages.filter(isChatMessage).length, [messages]);
-    const shown = useMemo(() => {
-        const kept = filter === 'chat' ? messages.filter(isChatMessage) : messages;
-        return newestFirst ? [...kept].reverse() : kept;
-    }, [messages, filter, newestFirst]);
+    const shown = useMemo(
+        () => (filter === 'chat' ? messages.filter(isChatMessage) : messages),
+        [messages, filter]
+    );
     // Every chat message is seen while the chat is open
     const [seen, setSeen] = useState(0);
     useEffect(() => {
@@ -197,7 +195,6 @@ const GameChat = ({
                             }}
                             isOpen={isOpen}
                             messageCount={shown.length}
-                            newestFirst={newestFirst}
                             onSendMessage={onSendChat}
                             isInputDisabled={muted}
                             placeholder={placeholder}
