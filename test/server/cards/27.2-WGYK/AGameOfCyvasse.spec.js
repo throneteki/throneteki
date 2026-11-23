@@ -52,9 +52,7 @@ describe('A Game of Cyvasse', function () {
         describe('when you win it', function () {
             beforeEach(function () {
                 this.player1.clickPrompt('Done');
-                this.skipActionWindow();
-                this.player2.clickPrompt('Done');
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player2);
             });
 
             it('lets you initiate an additional intrigue challenge', function () {

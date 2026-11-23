@@ -36,7 +36,7 @@ class NoSongSoSweet extends DrawCard {
             ignoreEventCosts: true,
             cost: ability.costs.payGold(1),
             message: '{player} uses {source} to return {source} to their hand',
-            gameAction: GameActions.returnCardToHand({ card: this })
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.source }))
         });
     }
 }

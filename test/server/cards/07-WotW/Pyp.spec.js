@@ -4,13 +4,7 @@ describe('Pyp', function () {
             phase: 'challenge',
             player1: { faction: 'thenightswatch', inPlay: ['Pyp', 'Ghost (Core)'] }
         });
-        this.player1.clickPrompt('Military');
-        this.player1.clickCard(this.pyp);
-        this.player1.clickCard(this.ghost);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Military', [this.pyp, this.ghost]);
         this.player1.triggerAbility(this.pyp);
     });
 

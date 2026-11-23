@@ -30,4 +30,26 @@ describe('Alla Tyrell', function () {
             expect(this.player1).isReadyToTakeAction();
         });
     });
+
+    describe('when Sweetrobin removes her first', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    plot: 'Sneak Attack',
+                    inPlay: ['Oldtown (JtO)', 'Sweetrobin'],
+                    drawDeck: ['Alla Tyrell (BtB)']
+                }
+            });
+
+            this.player1.clickMenu(this.oldtown, 'Reveal top card of deck');
+            this.player1.clickPrompt('Character');
+            this.player1.triggerAbility(this.sweetrobin);
+        });
+
+        it('cannot put her into play', function () {
+            expect(this.allaTyrell.location).toBe('out of game');
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 });

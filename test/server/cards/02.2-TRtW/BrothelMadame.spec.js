@@ -49,12 +49,7 @@ describe('Brothel Madame', function () {
         this.completeMarshalPhase();
         this.player1.triggerAbility('Brothel Madame');
         this.player2.clickPrompt('No');
-        this.player1.clickPrompt('Intrigue');
-        this.player1.clickCard(this.brothelMadame);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Intrigue', this.brothelMadame);
         this.player1.triggerAbility('Paid Off');
         this.player2.clickPrompt('Yes');
         this.player1.clickPrompt('Done');

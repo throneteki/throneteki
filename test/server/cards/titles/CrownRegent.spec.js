@@ -38,17 +38,13 @@ describe('Crown Regent', function () {
         expect(this.game.currentChallenge.initiatedAgainstPlayer).toBe(this.player1Object);
         expect(this.game.currentChallenge.declaredAttackers).toEqual([this.rangingParty]);
         expect(this.game.currentChallenge.challengeType).toBe('military');
-        this.skipActionWindow();
-        this.player3.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player3);
         this.player3.clickCard(this.winterfellSteward);
         expect(this.winterfellSteward.location).toBe('dead pile');
         expect(this.desertScavenger.location).toBe('play area');
         initiate(this, 'Intrigue', this.houseMaester);
         expect(this.player1).not.toAllowAbilityTrigger('Crown Regent');
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player1);
         expect(this.player2).isReadyToTakeAction();
     });
 
@@ -58,9 +54,7 @@ describe('Crown Regent', function () {
         initiate(this, 'Military', this.rangingParty);
         this.player1.clickPrompt('Pass');
         expect(this.game.currentChallenge.defendingPlayer).toBe(this.player1Object);
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player1);
         this.player1.clickCard(this.desertScavenger);
         expect(this.desertScavenger.location).toBe('dead pile');
         expect(this.winterfellSteward.location).toBe('play area');
@@ -91,9 +85,7 @@ describe('Crown Regent', function () {
         expect(this.winterfellSteward.bypassedByStealth).toBe(true);
         expect(this.desertScavenger.bypassedByStealth).toBe(false);
         expect(this.game.currentChallenge.declaredAttackers).toEqual([this.maesterWendamyr]);
-        this.skipActionWindow();
-        this.player3.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player3);
         expect(this.player2).isReadyToTakeAction();
     });
 });

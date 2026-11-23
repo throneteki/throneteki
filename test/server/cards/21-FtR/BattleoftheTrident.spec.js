@@ -13,12 +13,7 @@ describe('Battle of the Trident', function () {
     });
 
     it('reveals a Siege plot after power claim and removes a chosen used plot', function () {
-        this.player1.clickPrompt('Power');
-        this.player1.clickCard(this.rangingParty);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Power', this.rangingParty);
         expect(this.player1).toAllowAbilityTrigger(this.battleOfTheTrident);
         this.player1.triggerAbility(this.battleOfTheTrident);
         expect(this.player1).toBeAbleToSelect(this.fortifiedPosition);
@@ -38,12 +33,7 @@ describe('Battle of the Trident', function () {
     });
 
     it('reveals a War plot after military claim has killed the defender', function () {
-        this.player1.clickPrompt('Military');
-        this.player1.clickCard(this.rangingParty);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Military', this.rangingParty);
         this.player2.clickCard(this.castleGuard);
         expect(this.castleGuard.location).toBe('dead pile');
         this.player1.triggerAbility(this.battleOfTheTrident);
@@ -57,12 +47,7 @@ describe('Battle of the Trident', function () {
     });
 
     it('does not trigger when the attacking characters are neither Army nor Commander', function () {
-        this.player1.clickPrompt('Power');
-        this.player1.clickCard(this.houseMaester);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Power', this.houseMaester);
         expect(this.player1).not.toAllowAbilityTrigger(this.battleOfTheTrident);
         expect(this.player1Object.faction.kneeled).toBe(false);
         expect(this.fortifiedPosition.location).toBe('plot deck');
@@ -71,12 +56,7 @@ describe('Battle of the Trident', function () {
     });
 
     it('reveals an Edict plot for an attacking Commander in an intrigue challenge', function () {
-        this.player1.clickPrompt('Intrigue');
-        this.player1.clickCard(this.theTitansBastard);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Intrigue', this.theTitansBastard);
         this.player1.triggerAbility(this.battleOfTheTrident);
         expect(this.player1).toBeAbleToSelect(this.supportingTheFaith);
         expect(this.player1).not.toBeAbleToSelect(this.fortifiedPosition);
@@ -89,12 +69,7 @@ describe('Battle of the Trident', function () {
     });
 
     it('returns the removed plot to the used pile as soon as only one plot remains unrevealed', function () {
-        this.player1.clickPrompt('Power');
-        this.player1.clickCard(this.rangingParty);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Power', this.rangingParty);
         this.player1.triggerAbility(this.battleOfTheTrident);
         this.player1.clickCard(this.fortifiedPosition);
         this.player1.clickCard(this.sneakAttack);

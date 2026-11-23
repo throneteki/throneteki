@@ -218,4 +218,64 @@ describe('Message', function () {
             });
         });
     });
+
+    describe('#toStructured', function () {
+        beforeEach(function () {
+            this.card = new DrawCard({}, { code: '12345', name: 'Ser Pounce', type: 'character' });
+            this.player = new Spectator('1234', { username: 'Arya' });
+        });
+
+        it('keeps positional arguments', function () {
+            const message = new Message({
+                format: '{0} plays {1}',
+                args: [this.player, this.card]
+            });
+            expect(message.toStructured()).toEqual({
+                format: '{0} plays {1}',
+                args: [
+                    { argType: 'nonAvatarPlayer', name: 'Arya' },
+                    { argType: 'card', code: '12345', label: 'Ser Pounce', type: 'character' }
+                ]
+            });
+        });
+
+        it('keeps named arguments', function () {
+            const message = new Message({
+                format: '{player} returns {card} from {location} to hand',
+                args: { player: this.player, card: this.card, location: 'dead pile' }
+            });
+            expect(message.toStructured()).toEqual({
+                format: '{player} returns {card} from {location} to hand',
+                args: {
+                    player: { argType: 'nonAvatarPlayer', name: 'Arya' },
+                    card: {
+                        argType: 'card',
+                        code: '12345',
+                        label: 'Ser Pounce',
+                        type: 'character'
+                    },
+                    location: 'dead pile'
+                }
+            });
+        });
+
+        it('keeps named arguments of nested messages', function () {
+            const nested = new Message({ format: 'uses {source}', args: { source: this.card } });
+            const message = new Message({
+                format: '{0} {1}',
+                args: [this.player, nested]
+            });
+            expect(message.toStructured().args[1]).toEqual({
+                format: 'uses {source}',
+                args: {
+                    source: {
+                        argType: 'card',
+                        code: '12345',
+                        label: 'Ser Pounce',
+                        type: 'character'
+                    }
+                }
+            });
+        });
+    });
 });

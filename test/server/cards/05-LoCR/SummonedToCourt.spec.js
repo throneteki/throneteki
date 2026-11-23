@@ -120,4 +120,27 @@ describe('Summoned to Court with empty hands', function () {
             }
         );
     }
+
+    it('lets no one put a character into play when Sweetrobin removes the only lowest-cost one', function () {
+        this.setupTest({
+            phase: 'plot',
+            player1: {
+                plotDeck: ['Summoned to Court'],
+                inPlay: ['Sweetrobin'],
+                hand: ['Balon Greyjoy (Core)']
+            },
+            player2: { plotDeck: ['Sneak Attack'], hand: ['Aeron Damphair (Core)'] }
+        });
+        this.player1.selectPlot('Summoned to Court');
+        this.player2.selectPlot('Sneak Attack');
+        this.selectFirstPlayer(this.player2);
+        this.player2.clickCard(this.aeronDamphair);
+        this.player1.clickCard(this.balonGreyjoy);
+        this.player1.triggerAbility(this.sweetrobin);
+
+        expect(this.aeronDamphair.location).toBe('out of game');
+        expect(this.player1).not.toHavePrompt('Put Balon Greyjoy into play?');
+        expect(this.balonGreyjoy.location).toBe('hand');
+        expect(this.player2).isReadyToTakeAction();
+    });
 });

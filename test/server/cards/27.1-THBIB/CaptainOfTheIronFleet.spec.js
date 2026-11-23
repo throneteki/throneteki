@@ -19,7 +19,7 @@ describe('Captain of the Iron Fleet (THBIB)', function () {
         this.player2.clickCard(this.burnedMen);
         this.player2.clickPrompt('Done');
         this.skipActionWindow();
-        this.player1.clickPrompt('Done');
+        this.player1.clickPrompt("Don't defend");
         this.player1.clickCard(this.captainOfTheIronFleet);
         this.player1.clickCard(this.ironFleetScout);
     });

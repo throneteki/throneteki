@@ -15,7 +15,7 @@ class MyrcellaBaratheon extends DrawCard {
             },
             max: ability.limit.perPhase(1),
             message: '{player} returns {source} to their hand',
-            gameAction: GameActions.returnCardToHand({ card: this }).then({
+            gameAction: GameActions.returnCardToHand((context) => ({ card: context.source })).then({
                 message: {
                     format: 'Then, {player} may initiate an additional intrigue challenge this phase against {opponent}',
                     args: { opponent: (context) => context.parentContext.event.challenge.loser }

@@ -15,9 +15,7 @@ describe('Walder Frey', function () {
     it('makes each other House Frey character you control count as attacking while he attacks', function () {
         expect(this.blackWalder.isAttacking()).toBe(true);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

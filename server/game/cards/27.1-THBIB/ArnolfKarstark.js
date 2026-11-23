@@ -12,7 +12,7 @@ class ArnolfKarstark extends DrawCard {
             },
             limit: ability.limit.perRound(1),
             message: '{player} uses {source} to stand {source}',
-            gameAction: GameActions.standCard({ card: this })
+            gameAction: GameActions.standCard((context) => ({ card: context.source }))
         });
     }
 }

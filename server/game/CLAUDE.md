@@ -51,7 +51,8 @@ rules are in [cards/CLAUDE.md](cards/CLAUDE.md).
 
 Ask before going ahead when:
 
-- the card text or the Rules Reference allows more than one reading;
+- the card text or the Rules Reference allows more than one reading, and the ThronesDB pages of
+  the cards involved don't settle it (check them first; see "Rules" in the root CLAUDE.md);
 - the behaviour you need conflicts with how similar cards work;
 - a fix could go in either the card or the engine;
 - several unrelated tests fail, which suggests a wider problem;

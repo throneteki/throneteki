@@ -14,9 +14,7 @@ describe("King's Landing Mob (TSoW)", function () {
         this.player1.clickCard(this.kingsLandingMob);
         this.player1.clickPrompt('Done');
         this.player1.clickCard(this.heartTreeGrove);
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
     });
 
     it('kills itself to discard a location knelt by assault', function () {

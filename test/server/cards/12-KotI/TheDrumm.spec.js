@@ -20,7 +20,7 @@ describe('The Drumm', function () {
         expect(this.player2).not.toBeAbleToSelect(this.houseMaester);
         expect(this.player2).toBeAbleToSelect(this.bastardInHiding);
 
-        this.player2.clickPrompt('Done');
+        this.player2.clickPrompt("Don't defend");
         this.skipActionWindow();
 
         expect(this.player1).isReadyToTakeAction();

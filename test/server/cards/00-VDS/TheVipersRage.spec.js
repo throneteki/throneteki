@@ -6,12 +6,7 @@ describe("The Viper's Rage", function () {
             player2: { inPlay: ['Khal Drogo (Core)'] }
         });
         this.player1.clickPrompt('Done');
-        this.player2.clickPrompt('Military');
-        this.player2.clickCard(this.khalDrogo);
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player2, 'Military', this.khalDrogo);
         this.player1.triggerAbility(this.theVipersRage);
     });
 

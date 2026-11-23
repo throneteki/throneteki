@@ -53,4 +53,40 @@ describe('choose game action', function () {
         this.player1.clickPrompt('Gain 1 gold');
         expect(this.player1Object.gold).toBe(4);
     });
+
+    it('is not allowed when no choice could change the game state', function () {
+        const choose = (opponentHand) =>
+            GameActions.choose({
+                choices: {
+                    'Discard 1': {
+                        gameAction: GameActions.discardAtRandom({ player: opponentHand, amount: 1 })
+                    },
+                    'Discard 2': {
+                        gameAction: GameActions.discardAtRandom({ player: opponentHand, amount: 2 })
+                    }
+                }
+            });
+
+        expect(this.player2Object.hand).toHaveLength(0);
+        expect(choose(this.player2Object).allow(this.context)).toBe(false);
+        expect(choose(this.player1Object).allow(this.context)).toBe(false);
+    });
+
+    it('is allowed when a choice could change the game state', function () {
+        const choose = GameActions.choose({
+            choices: {
+                'Discard 1': {
+                    gameAction: GameActions.discardAtRandom({
+                        player: this.player2Object,
+                        amount: 1
+                    })
+                },
+                'Gain 1 gold': {
+                    gameAction: GameActions.gainGold({ player: this.player1Object, amount: 1 })
+                }
+            }
+        });
+
+        expect(choose.allow(this.context)).toBe(true);
+    });
 });

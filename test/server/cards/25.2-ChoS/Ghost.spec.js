@@ -65,12 +65,7 @@ describe('Ghost (ChoS)', function () {
     describe('when a character you control would be killed', function () {
         beforeEach(function () {
             this.player1.clickPrompt('Done');
-            this.player2.clickPrompt('Military');
-            this.player2.clickCard(this.bastardInHiding);
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
-            this.player1.clickPrompt('Done');
-            this.skipActionWindow();
+            this.unopposedChallenge(this.player2, 'Military', this.bastardInHiding);
         });
 
         it('sacrifices Ghost to save Jon Snow', function () {

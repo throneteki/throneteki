@@ -44,7 +44,17 @@ class Message {
     }
 
     toStructured() {
-        return { format: this.format, args: this.snapshot(this.args) };
+        return { format: this.format, args: this.snapshotArgs(this.args) };
+    }
+
+    snapshotArgs(args) {
+        if (Array.isArray(args)) {
+            return this.snapshot(args);
+        }
+
+        return Object.fromEntries(
+            Object.entries(args || {}).map(([key, value]) => [key, this.snapshot(value, 1)])
+        );
     }
 
     snapshot(value, depth = 0) {

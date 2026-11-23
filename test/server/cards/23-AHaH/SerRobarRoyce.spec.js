@@ -15,9 +15,7 @@ describe('Ser Robar Royce (AHaH)', function () {
 
         this.player1.clickCard(this.tumblestoneKnight);
         this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1Object.getInitiative()).toBeLessThan(1);
         expect(this.player1).isReadyToTakeAction();

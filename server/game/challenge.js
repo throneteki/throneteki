@@ -40,7 +40,7 @@ class Challenge {
     singlePlayerDefender() {
         const dummyPlayer = new Player(
             '',
-            Settings.getUserWithDefaultsSet({ name: 'Dummy Player' }),
+            Settings.getUserWithDefaultsSet({ username: 'Dummy Player' }),
             false,
             this.game
         );

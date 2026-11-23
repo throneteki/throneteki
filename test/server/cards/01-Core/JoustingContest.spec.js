@@ -17,9 +17,7 @@ describe('Jousting Contest (Core)', function () {
 
         expect(this.game.currentChallenge.attackers).toEqual([this.tumblestoneKnight]);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

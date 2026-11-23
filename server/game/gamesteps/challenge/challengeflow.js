@@ -164,6 +164,9 @@ class ChallengeFlow extends BaseStep {
             limitsProperty: 'defenderLimits',
             activePromptTitle: 'Select defenders',
             waitingPromptTitle: 'Waiting for opponent to defend',
+            // Not defending can't be undone, so the button gets the client's longer press
+            // delay and its own shortcut key, like ending your marshaling.
+            emptyDoneButton: { text: "Don't defend", endsTurn: true },
             messages: {
                 autoDeclareSingular: '{0} is automatically declared as a defender',
                 autoDeclarePlural: '{0} are automatically declared as defenders',

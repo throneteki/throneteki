@@ -20,10 +20,9 @@ class HaldonHalfmaester extends DrawCard {
             gameAction: GameActions.revealTopCards((context) => ({
                 player: context.player
             })).then({
-                condition: (context) => context.parentContext.revealed.length > 0,
                 gameAction: GameActions.simultaneously([
                     GameActions.ifCondition({
-                        condition: (context) => revealedCard(context).getType() === 'event',
+                        condition: (context) => revealedCard(context)?.getType() === 'event',
                         thenAction: {
                             message: 'Then {player} draws the revealed event',
                             gameAction: GameActions.drawSpecific((context) => ({
@@ -33,7 +32,7 @@ class HaldonHalfmaester extends DrawCard {
                         }
                     }),
                     GameActions.ifCondition({
-                        condition: (context) => revealedCard(context).name === 'Aegon Targaryen',
+                        condition: (context) => revealedCard(context)?.name === 'Aegon Targaryen',
                         thenAction: {
                             message: 'Then {player} puts Aegon Targaryen into play',
                             gameAction: GameActions.putIntoPlay((context) => ({
@@ -44,7 +43,7 @@ class HaldonHalfmaester extends DrawCard {
                     GameActions.ifCondition({
                         condition: (context) =>
                             ['character', 'location', 'attachment'].includes(
-                                revealedCard(context).getType()
+                                context.event.cards[0].getType()
                             ),
                         thenAction: {
                             message: 'Then {player} places 1 gold on a card with the same cardtype',
@@ -52,7 +51,7 @@ class HaldonHalfmaester extends DrawCard {
                                 title: 'Select card to gain 1 gold',
                                 cardCondition: (card, context) =>
                                     card.location === 'play area' &&
-                                    card.getType() === revealedCard(context).getType(),
+                                    card.getType() === context.event.cards[0].getType(),
                                 gameAction: (card) =>
                                     GameActions.placeToken({ card, token: Tokens.gold, amount: 1 })
                             })

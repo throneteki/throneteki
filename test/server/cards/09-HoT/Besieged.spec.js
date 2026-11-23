@@ -51,7 +51,7 @@ describe('Besieged, when no character can defend', function () {
     });
 
     it('lets the defending player declare no defenders', function () {
-        this.player2.clickPrompt('Done');
+        this.player2.clickPrompt("Don't defend");
 
         expect(this.game.currentChallenge.defenders).toEqual([]);
         expect(this.player1).isReadyToTakeAction();

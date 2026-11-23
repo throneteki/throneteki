@@ -16,9 +16,7 @@ describe('Bowen Marsh (WotW)', function () {
         expect(this.bowenMarsh.hasKeyword('Insight')).toBe(true);
         expect(this.player1Object.getReserve()).toBe(7);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

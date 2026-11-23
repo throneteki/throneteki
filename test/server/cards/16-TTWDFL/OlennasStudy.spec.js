@@ -20,9 +20,7 @@ describe("Olenna's Study", function () {
 
         this.player1.clickCard(this.grandMaesterPycelle);
         this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         this.unopposedChallenge(this.player1, 'Intrigue', this.sansaStark);
 

@@ -31,13 +31,10 @@ describe('pillage', function () {
 
         describe('when more than one pillage occurs', function () {
             beforeEach(function () {
-                this.player1.clickPrompt('Power');
-                this.player1.clickCard(this.wildlingHorde1);
-                this.player1.clickCard(this.wildlingHorde2);
-                this.player1.clickPrompt('Done');
-                this.skipActionWindow();
-                this.player2.clickPrompt('Done');
-                this.skipActionWindow();
+                this.unopposedChallenge(this.player1, 'Power', [
+                    this.wildlingHorde1,
+                    this.wildlingHorde2
+                ]);
 
                 this.player1.clickPrompt('Apply Claim');
 

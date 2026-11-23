@@ -42,7 +42,7 @@ class MarshalDuplicateAction extends BaseAbility {
             return Requirements.location;
         }
 
-        if (!player.allowMarshal) {
+        if (!player.allowMarshal || !player.canPutIntoPlay(source, 'marshalDuplicate')) {
             return Requirements.restriction;
         }
 
@@ -70,7 +70,7 @@ class MarshalDuplicateAction extends BaseAbility {
                 params.originalLocation,
                 params.originalParent
             );
-            context.player.putIntoPlay(context.source, 'marshal');
+            context.player.putIntoPlay(context.source, 'marshalDuplicate');
         });
     }
 

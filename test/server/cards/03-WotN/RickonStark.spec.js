@@ -42,12 +42,7 @@ describe('Rickon Stark', function () {
                 player1: { inPlay: ['Rickon Stark'] },
                 player2: { agenda: 'Sea of Blood (KotI)', inPlay: ['Balon Greyjoy (Core)'] }
             });
-            this.player2.clickPrompt('Military');
-            this.player2.clickCard(this.balonGreyjoy);
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
-            this.player1.clickPrompt('Done');
-            this.skipActionWindow();
+            this.unopposedChallenge(this.player2, 'Military', this.balonGreyjoy);
             this.player2.triggerAbility(this.seaOfBlood);
         });
 
@@ -69,12 +64,7 @@ describe('Rickon Stark', function () {
                 player1: { inPlay: ['Rickon Stark'] },
                 player2: { inPlay: ["Euron Crow's Eye (KotI)"] }
             });
-            this.player2.clickPrompt('Power');
-            this.player2.clickCard(this.euronCrowsEye);
-            this.player2.clickPrompt('Done');
-            this.skipActionWindow();
-            this.player1.clickPrompt('Done');
-            this.skipActionWindow();
+            this.unopposedChallenge(this.player2, 'Power', this.euronCrowsEye);
             this.player2.clickCard(this.rickonStark);
         });
 
@@ -108,12 +98,7 @@ describe('Rickon Stark against a card with search in only one of its abilities',
     });
 
     it('can cancel the ability with the word search', function () {
-        this.player2.clickPrompt('Military');
-        this.player2.clickCard(this.balonGreyjoy);
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player2, 'Military', this.balonGreyjoy);
         this.player2.triggerAbility(this.seaOfBlood);
 
         expect(this.player1).toAllowAbilityTrigger(this.rickonStark);

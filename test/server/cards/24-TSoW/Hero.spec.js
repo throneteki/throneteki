@@ -5,13 +5,7 @@ describe('Hero', function () {
             player1: { inPlay: ['Hero', 'Free Brothers (ATT)'] },
             player2: { hand: ['Tumblestone Knight'] }
         });
-        this.player1.clickPrompt('Military');
-        this.player1.clickCard(this.hero);
-        this.player1.clickCard(this.freeBrothers);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Military', [this.hero, this.freeBrothers]);
         this.player1.triggerAbility(this.hero);
     });
 

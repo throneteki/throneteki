@@ -42,7 +42,7 @@ describe('Master of Ships', function () {
                 expect(this.player2Object.activePlot.getClaim()).toBe(1);
                 expect(this.player3Object.activePlot.getClaim()).toBe(1);
                 this.skipActionWindow();
-                this[opponent].clickPrompt('Done');
+                this[opponent].clickPrompt("Don't defend");
                 this.skipActionWindow();
                 if (type === 'Military') {
                     if (opponent === 'player2') {

@@ -42,7 +42,7 @@ describe('Defiance after a character joins a challenge without being declared', 
         this.player1.clickCard(this.bastardInHiding);
         this.player2.clickPrompt('Pass');
         this.player1.clickPrompt('Pass');
-        this.player1.clickPrompt('Done');
+        this.player1.clickPrompt("Don't defend");
         this.skipActionWindow();
     });
 

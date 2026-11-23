@@ -23,7 +23,7 @@ class Greyscale extends DrawCard {
             })).then({
                 gameAction: GameActions.ifCondition({
                     condition: (context) => {
-                        const revealed = context.parentContext.revealed[0];
+                        const revealed = context.event.cards[0];
                         const parent = context.source.parent;
                         return (
                             revealed.hasPrintedCost() &&

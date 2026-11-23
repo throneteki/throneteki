@@ -9,13 +9,7 @@ describe('No Godless Man', function () {
             },
             player2: { hand: ['Castle Guard'] }
         });
-        this.player1.clickPrompt('Power');
-        this.player1.clickCard(this.raidingKhalasar);
-        this.player1.clickCard(this.drownedMen);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Power', [this.raidingKhalasar, this.drownedMen]);
         this.player1.triggerAbility('No Godless Man');
     });
 

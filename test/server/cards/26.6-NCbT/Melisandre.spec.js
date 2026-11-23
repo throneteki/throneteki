@@ -19,7 +19,7 @@ describe('Melisandre (NCbT)', function () {
 
         this.player2.clickPrompt('Pass');
         this.player1.clickPrompt('Pass');
-        this.player2.clickPrompt('Done');
+        this.player2.clickPrompt("Don't defend");
         this.skipActionWindow();
         expect(this.player1).isReadyToTakeAction();
     });

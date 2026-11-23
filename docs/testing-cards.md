@@ -231,7 +231,12 @@ this.skipActionWindow();
 ```
 
 `this.unopposedChallenge(this.player1, 'Military', this.eddardStark)` does all of that for an
-undefended challenge.
+undefended challenge. Pass an array for more than one attacker. When the test checks something
+between declaring attackers and defenders, `this.declareNoDefenders(this.player2)` does the rest:
+it passes the action window, declines to defend and passes the next one.
+
+Use these helpers rather than clicking through the defenders prompt by hand, so a change to that
+prompt doesn't mean changing every challenge spec.
 
 ## Assertions
 

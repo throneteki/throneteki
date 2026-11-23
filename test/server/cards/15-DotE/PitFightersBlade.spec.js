@@ -15,9 +15,7 @@ describe("Pit Fighter's Blade", function () {
     it('gives the attached character renown during [military] challenges', function () {
         expect(this.tumblestoneKnight.hasKeyword('Renown')).toBe(true);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

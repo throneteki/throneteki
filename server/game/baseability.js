@@ -148,7 +148,7 @@ class BaseAbility {
             return new SimultaneousActions(this.targetGameActions);
         }
 
-        if (properties.gameAction) {
+        if (properties.gameAction || properties.choices) {
             // Choices are made after the ability is checked, so whether the game action can change
             // the game state depends on what is chosen. A single target, or the chosen player, is
             // filtered by the action instead; several targets are only filtered by their own
@@ -160,7 +160,9 @@ class BaseAbility {
                 properties.choosePlayer ||
                 this.cost.some((cost) => cost instanceof SelectCardCost)
             );
+        }
 
+        if (properties.gameAction) {
             return properties.gameAction;
         }
 

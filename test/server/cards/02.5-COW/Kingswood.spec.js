@@ -13,9 +13,7 @@ describe('Kingswood', function () {
 
     it('gives attacking characters -1 STR in power challenges you defend, and is sacrificed after you lose a power challenge', function () {
         expect(this.castleGuard.getStrength()).toBe(2);
-        this.skipActionWindow();
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player1);
         expect(this.kingswood.location).toBe('discard pile');
         expect(this.player2).isReadyToTakeAction();
     });

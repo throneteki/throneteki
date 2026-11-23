@@ -4,13 +4,7 @@ describe('Frey Bastard', function () {
             phase: 'challenge',
             player1: { inPlay: [{ card: 'Frey Bastard', gold: 1 }, 'Black Walder'] }
         });
-        this.player1.clickPrompt('Intrigue');
-        this.player1.clickCard(this.freyBastard);
-        this.player1.clickCard(this.blackWalder);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Intrigue', [this.freyBastard, this.blackWalder]);
         this.player1.triggerAbility(this.freyBastard);
     });
 

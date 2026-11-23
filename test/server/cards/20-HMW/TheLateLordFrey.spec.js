@@ -20,9 +20,7 @@ describe('The Late Lord Frey', function () {
 
         expect(this.blackWalder.location).toBe('play area');
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
         expect(this.player1).isReadyToTakeAction();
     });
 });

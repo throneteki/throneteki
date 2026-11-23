@@ -18,9 +18,7 @@ describe('Desperate Attack', function () {
     it("raises the claim on the attacking player's plot by 1 while you are the defending player", function () {
         expect(this.player1Object.getClaim()).toBe(2);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

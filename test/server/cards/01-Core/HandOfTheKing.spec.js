@@ -31,9 +31,7 @@ describe('Hand of the King', function () {
                 this.player1.clickPrompt('player2');
                 this.player1.clickCard('Bastard in Hiding');
                 this.player1.clickPrompt('Done');
-                this.skipActionWindow();
-                this.player2.clickPrompt('Done');
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player2);
                 this.player1.clickPrompt('Apply Claim');
 
                 // Additional power challenge
@@ -79,9 +77,7 @@ describe('Hand of the King', function () {
                 this.player1.clickPrompt('player2');
                 this.player1.clickCard('Bastard in Hiding');
                 this.player1.clickPrompt('Done');
-                this.skipActionWindow();
-                this.player2.clickPrompt('Done');
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player2);
                 this.player1.clickPrompt('Apply Claim');
 
                 // Additional power challenge
@@ -97,9 +93,7 @@ describe('Hand of the King', function () {
                 this.player1.clickPrompt('player2');
                 this.player1.clickCard('Shireen Baratheon (Core)');
                 this.player1.clickPrompt('Done');
-                this.skipActionWindow();
-                this.player2.clickPrompt('Done');
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player2);
                 this.player1.clickPrompt('Apply Claim');
 
                 // Power challenge #3
@@ -113,9 +107,7 @@ describe('Hand of the King', function () {
                 this.player1.clickPrompt('player3');
                 this.player1.clickCard('Shireen Baratheon (Core)');
                 this.player1.clickPrompt('Done');
-                this.skipActionWindow();
-                this.player3.clickPrompt('Done');
-                this.skipActionWindow();
+                this.declareNoDefenders(this.player3);
                 this.player1.clickPrompt('Apply Claim');
 
                 // Power challenge #3

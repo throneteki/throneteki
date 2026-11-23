@@ -20,7 +20,7 @@ describe('Harrenhal (FFH)', function () {
 
         this.player2.clickPrompt('Pass');
         this.player1.clickPrompt('Pass');
-        this.player2.clickPrompt('Done');
+        this.player2.clickPrompt("Don't defend");
         this.skipActionWindow();
         this.completeChallengesPhase();
 

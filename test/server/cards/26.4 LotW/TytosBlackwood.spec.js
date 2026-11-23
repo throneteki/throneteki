@@ -16,9 +16,7 @@ describe('Tytos Blackwood (LotW)', function () {
     it('treats each other character without power as blank while he participates', function () {
         expect(this.khalDrogo.hasKeyword('Renown')).toBe(false);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

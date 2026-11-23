@@ -18,9 +18,7 @@ describe('Black Walder', function () {
         expect(this.blackWalder.hasKeyword('Renown')).toBe(true);
         expect(this.blackWalder.getStrength()).toBe(5);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

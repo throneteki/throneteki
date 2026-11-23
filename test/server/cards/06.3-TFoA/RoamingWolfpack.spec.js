@@ -15,9 +15,7 @@ describe('Roaming Wolfpack', function () {
     it('gives each attacking Direwolf character +2 STR while it is attacking', function () {
         expect(this.roamingWolfpack.getStrength()).toBe(8);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

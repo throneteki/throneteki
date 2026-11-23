@@ -15,7 +15,7 @@ describe('Wex Pyke', function () {
         expect(this.player2).not.toBeAbleToSelect(this.burnedMen);
         expect(this.player2).toBeAbleToSelect(this.khalDrogo);
 
-        this.player2.clickPrompt('Done');
+        this.player2.clickPrompt("Don't defend");
         expect(this.player1).isReadyToTakeAction();
     });
 });

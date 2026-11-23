@@ -9,9 +9,7 @@ describe('Orkmont Elite', function () {
         this.player1.clickCard(this.orkmontElite);
         this.player1.clickPrompt('Done');
         this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
         this.player1.triggerAbility(this.orkmontElite);
     });
 

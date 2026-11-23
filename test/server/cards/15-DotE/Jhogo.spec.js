@@ -5,13 +5,7 @@ describe('Jhogo (DotE)', function () {
             player1: { inPlay: ['Jhogo (DotE)', 'Khal Drogo (Core)'] },
             player2: { power: 1 }
         });
-        this.player1.clickPrompt('Military');
-        this.player1.clickCard(this.jhogo);
-        this.player1.clickCard(this.khalDrogo);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Military', [this.jhogo, this.khalDrogo]);
         this.player1.triggerAbility(this.jhogo);
     });
 

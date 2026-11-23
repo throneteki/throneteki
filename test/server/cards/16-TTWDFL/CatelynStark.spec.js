@@ -19,7 +19,7 @@ describe('Catelyn Stark (TTWDFL)', function () {
         expect(this.catelynStark.isDefending()).toBe(true);
         this.player2.clickPrompt('Pass');
         this.player1.clickPrompt('Pass');
-        this.player1.clickPrompt('Done');
+        this.player1.clickPrompt("Don't defend");
         this.skipActionWindow();
         this.completeChallengesPhase();
         expect(this.catelynStark.location).toBe('hand');

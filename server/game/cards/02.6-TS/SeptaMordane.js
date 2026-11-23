@@ -7,14 +7,12 @@ class SeptaMordane extends DrawCard {
     // - Arya Stark, she gains an [intrigue] icon and "immune to opponents' plot effects."
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: (context) => controlsCharacterNamed(context, 'Sansa Stark'),
-            match: this,
+            match: (card) => isCharacterNamed(card, 'Sansa Stark'),
             effect: [ability.effects.modifyStrength(2), ability.effects.addKeyword('Renown')]
         });
 
         this.persistentEffect({
-            condition: (context) => controlsCharacterNamed(context, 'Arya Stark'),
-            match: this,
+            match: (card) => isCharacterNamed(card, 'Arya Stark'),
             effect: [
                 ability.effects.addIcon('intrigue'),
                 ability.effects.immuneTo(
@@ -26,10 +24,8 @@ class SeptaMordane extends DrawCard {
     }
 }
 
-function controlsCharacterNamed(context, name) {
-    return context.source.controller.anyCardsInPlay(
-        (card) => card.name === name && card.getType() === 'character'
-    );
+function isCharacterNamed(card, name) {
+    return card.name === name && card.getType() === 'character';
 }
 
 SeptaMordane.code = '02101';

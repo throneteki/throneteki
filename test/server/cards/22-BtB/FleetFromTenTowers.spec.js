@@ -20,9 +20,7 @@ describe('Fleet from Ten Towers (BtB)', function () {
         expect(this.fleetFromTenTowers.getStrength()).toBe(6);
         expect(this.fleetFromTenTowers.hasKeyword('Renown')).toBe(true);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

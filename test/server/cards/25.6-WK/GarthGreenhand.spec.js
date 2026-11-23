@@ -19,9 +19,7 @@ describe('Garth Greenhand (WK)', function () {
         expect(this.theKnightOfFlowers.getStrength()).toBe(6);
         expect(this.player1Object.getIncome()).toBe(6);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

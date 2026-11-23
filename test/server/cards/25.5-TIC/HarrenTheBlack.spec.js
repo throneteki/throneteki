@@ -31,4 +31,29 @@ describe('Harren the Black', function () {
         expect(this.winterfellSteward.location).toBe('discard pile');
         expect(this.hedgeKnight.location).toBe('discard pile');
     });
+
+    it('does not stop an opponent marshaling a copy of a location in their discard pile as a duplicate', function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: {
+                faction: 'greyjoy',
+                inPlay: [{ card: 'Pyke (BtB)', attachments: ['Harren the Black'] }]
+            },
+            player2: {
+                faction: 'baratheon',
+                inPlay: ['The Red Keep (Core)'],
+                hand: ['The Red Keep (Core)'],
+                discard: ['The Red Keep (Core)']
+            }
+        });
+        const redKeepInPlay = this.player2.findCardByName('The Red Keep', 'play area');
+        const redKeepInHand = this.player2.findCardByName('The Red Keep', 'hand');
+        this.player1.clickPrompt('Done');
+
+        this.player2.clickCard(redKeepInHand);
+
+        expect(redKeepInHand.location).toBe('duplicate');
+        expect(redKeepInPlay.dupes).toContain(redKeepInHand);
+        expect(this.player2).isReadyToTakeAction();
+    });
 });

@@ -18,7 +18,7 @@ describe('Dolorous Edd', function () {
         expect(context.winterfellSteward.isDefending()).toBe(false);
         context.player2.clickPrompt('Pass');
         context.player1.clickPrompt('Pass');
-        context.player1.clickPrompt('Done');
+        context.player1.clickPrompt("Don't defend");
         context.skipActionWindow();
     }
 

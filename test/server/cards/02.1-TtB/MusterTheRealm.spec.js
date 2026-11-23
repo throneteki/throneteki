@@ -16,9 +16,7 @@ describe('Muster the Realm', function () {
     it('raises its claim by 1 while you control an attacking Army character', function () {
         expect(this.player1Object.getClaim()).toBe(2);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

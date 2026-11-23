@@ -23,18 +23,14 @@ describe('Hand of the King', function () {
         this.player1.clickPrompt('Done');
         expect(this.game.currentChallenge.attackerStrength).toBe(3);
         expect(this.bastardInHiding.getStrength()).toBe(2);
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
         this.player1.clickPrompt('Power');
         expect(this.player1).toHaveDisabledPromptButton('player2');
         expect(this.player1).toHavePromptButton('player3');
         this.player1.clickPrompt('player3');
         this.player1.clickCard(this.shireenBaratheon);
         this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player3.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player3);
         expect(this.player1).toHaveDisabledPromptButton('Power');
         expect(this.houseMaester.kneeled).toBe(false);
         expect(this.player1).isReadyToTakeAction();
@@ -61,9 +57,7 @@ describe('Hand of the King', function () {
         this.player1.clickCard(this.bastardInHiding);
         this.player1.clickPrompt('Done');
         expect(this.game.currentChallenge.attackerStrength).toBe(2);
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
         this.player2.clickCard(this.tumblestoneKnight);
         expect(this.tumblestoneKnight.location).toBe('dead pile');
         expect(this.player1).isReadyToTakeAction();
@@ -92,9 +86,7 @@ describe('Hand of the King after a redirected power challenge', function () {
         this.player1.clickPrompt('Done');
         this.player2.triggerAbility('Crown Regent');
         this.player1.clickPrompt('player3');
-        this.skipActionWindow();
-        this.player3.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player3);
         this.player1.clickPrompt('Power');
 
         expect(this.player1).toHaveDisabledPromptButton('player2');

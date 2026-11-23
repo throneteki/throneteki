@@ -21,7 +21,7 @@ describe('Battle of Oxcross', function () {
         expect(this.player2).not.toBeAbleToSelect(this.serJaimeLannister);
         expect(this.player2).toBeAbleToSelect(this.houseDayneKnight);
 
-        this.player2.clickPrompt('Done');
+        this.player2.clickPrompt("Don't defend");
         this.skipActionWindow();
         this.player2.clickCard(this.houseDayneKnight);
 

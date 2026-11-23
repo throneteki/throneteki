@@ -26,7 +26,7 @@ class CerseiLannister extends DrawCard {
             },
             limit: ability.limit.perRound(3),
             message: '{player} uses {source} to have {source} gain 1 power',
-            gameAction: GameActions.gainPower({ card: this, amount: 1 })
+            gameAction: GameActions.gainPower((context) => ({ card: context.source, amount: 1 }))
         });
     }
 }

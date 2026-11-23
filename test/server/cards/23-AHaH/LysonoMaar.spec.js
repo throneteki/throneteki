@@ -16,7 +16,7 @@ describe('Lysono Maar (AHaH)', function () {
     it('has defenders declared before attackers in the first challenge you initiate each phase', function () {
         expect(this.player2).toBeAbleToSelect(this.houseMaester);
 
-        this.player2.clickPrompt('Done');
+        this.player2.clickPrompt("Don't defend");
         this.player1.clickCard(this.lysonoMaar);
         this.player1.clickPrompt('Done');
         this.skipActionWindow();

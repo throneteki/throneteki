@@ -11,9 +11,7 @@ describe('Windblown (FtR)', function () {
         this.player1.clickCard(this.windblown);
         this.player1.clickPrompt('Done');
         this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
         this.player1.triggerAbility(this.windblown);
         this.player1.clickCard(this.unsullied);
     });
@@ -38,9 +36,7 @@ describe('Windblown (FtR) when it is the only Army or Mercenary to stand', funct
         this.player1.clickCard(this.windblown);
         this.player1.clickPrompt('Done');
         this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
     });
 
     // Rules FAQ: "Even if Windblown is the only kneeling Army or Mercenary character in play, you

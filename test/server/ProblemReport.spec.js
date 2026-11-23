@@ -141,8 +141,8 @@ describe('problem report effects', function () {
                 sourceController: 'player1',
                 duration: 'persistent',
                 active: true,
-                conditional: true,
-                targets: [{ card: this.septaMordane.uuid, name: 'Septa Mordane' }]
+                conditional: false,
+                targets: [{ card: this.sansaStark.uuid, name: 'Sansa Stark' }]
             })
         );
         expect(this.player2).isReadyToTakeAction();

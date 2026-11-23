@@ -20,3 +20,21 @@ describe('Without His Beard', function () {
         expect(this.player1).isReadyToTakeAction();
     });
 });
+
+describe('Without His Beard when the losing opponent has no cards in hand', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: { inPlay: ['Lordsport Shipwright'], hand: ['Without His Beard'] },
+            player2: { drawDeck: ['Hot Pie (FFH)', 'Burned Men'] }
+        });
+        this.unopposedChallenge(this.player1, 'Intrigue', this.lordsportShipwright);
+    });
+
+    it('cannot be played', function () {
+        expect(this.player1).not.toAllowAbilityTrigger(this.withoutHisBeard);
+        expect(this.withoutHisBeard.location).toBe('hand');
+        expect(this.player2Object.hand).toHaveLength(0);
+        expect(this.player1).isReadyToTakeAction();
+    });
+});

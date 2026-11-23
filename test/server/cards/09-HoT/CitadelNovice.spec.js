@@ -17,9 +17,7 @@ describe('Citadel Novice', function () {
     it('reveals the top card of your deck after it is knelt, and draws it if it is an attachment or Maester', function () {
         expect(this.littleBird.location).toBe('hand');
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

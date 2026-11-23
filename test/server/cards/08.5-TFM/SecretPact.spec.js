@@ -49,9 +49,7 @@ describe('Secret Pact', function () {
 
             this.player2.clickCard(this.bastardInHiding);
             this.player2.clickPrompt('Done');
-            this.skipActionWindow();
-            this.player1.clickPrompt('Done');
-            this.skipActionWindow();
+            this.declareNoDefenders(this.player1);
 
             expect(this.player2).isReadyToTakeAction();
         });

@@ -16,9 +16,7 @@ describe('Samwell Tarly (WotW)', function () {
     it('treats each other participating non-Steward character as blank while he participates', function () {
         expect(this.grandMaesterPycelle.hasKeyword('Insight')).toBe(false);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

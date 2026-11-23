@@ -2,7 +2,10 @@ export const shortcutList = [
     { keys: ['1', '9'], description: 'Press the prompt button with that number' },
     { keys: ['W'], description: 'Wait: pause the response timer' },
     { keys: ['Space'], description: 'Pass or Done' },
-    { keys: ['D'], description: 'Done marshaling: end your marshaling for the round' },
+    {
+        keys: ['D'],
+        description: "Done marshaling, or Don't defend: buttons you can't take back"
+    },
     { keys: ['Enter'], description: 'Open and type in the game chat' },
     { keys: ['Esc'], description: 'Leave the chat box' },
     { keys: ['?'], description: 'Show the keyboard shortcuts' }
@@ -43,8 +46,8 @@ export const isShortcutEvent = (event, doc = globalThis.document) => {
 
 const isWaitButton = (button) => !!button.pausesTimer;
 
-// Ending your turn in a phase has its own key, so a run of Space or 1 presses meant for Pass
-// can't end it by accident.
+// Buttons that can't be taken back, such as ending your marshaling or not defending, have their
+// own key, so a run of Space or 1 presses meant for Pass can't press them by accident.
 const isEndTurnButton = (button) => !!button.endsTurn;
 
 const isPassOrDoneButton = (button) =>

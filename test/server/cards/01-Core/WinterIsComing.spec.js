@@ -37,7 +37,7 @@ describe('Winter Is Coming', function () {
 
             this.player2.clickPrompt('Pass');
             this.player1.clickPrompt('Pass');
-            this.player2.clickPrompt('Done');
+            this.player2.clickPrompt("Don't defend");
             this.skipActionWindow();
 
             expect(this.player2).toHavePrompt('Select 2 characters to fulfill military claim');

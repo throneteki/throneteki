@@ -15,9 +15,7 @@ describe('Blood of Valyria', function () {
     it('gives the attached character insight during [power] challenges', function () {
         expect(this.khalDrogo.hasKeyword('Insight')).toBe(true);
 
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.declareNoDefenders(this.player2);
 
         expect(this.player1).isReadyToTakeAction();
     });

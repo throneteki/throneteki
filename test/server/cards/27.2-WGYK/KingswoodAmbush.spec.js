@@ -63,4 +63,29 @@ describe('Kingswood Ambush', function () {
             expect(this.player2).isReadyToTakeAction();
         });
     });
+
+    describe('when you marshal a duplicate of a character', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    plot: 'Kingswood Ambush',
+                    inPlay: ['Arya Stark (Core)'],
+                    hand: ['Arya Stark (Core)', 'Hedge Knight']
+                }
+            });
+            this.aryaInPlay = this.player1.findCardByName('Arya Stark', 'play area');
+            this.aryaInHand = this.player1.findCardByName('Arya Stark', 'hand');
+        });
+
+        it('does not stop it', function () {
+            this.player1.clickCard(this.aryaInHand);
+
+            expect(this.aryaInHand.location).toBe('duplicate');
+            expect(this.aryaInPlay.dupes).toContain(this.aryaInHand);
+            this.player1.clickCard(this.hedgeKnight);
+            expect(this.hedgeKnight.location).toBe('hand');
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 });

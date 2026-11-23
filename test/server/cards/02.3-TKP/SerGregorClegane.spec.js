@@ -43,12 +43,7 @@ describe("Ser Gregor Clegane (TKP) with Nagga's Ribs", function () {
             }
         });
         this.player2.clickPrompt('Done');
-        this.player1.clickPrompt('Military');
-        this.player1.clickCard(this.serGregorClegane);
-        this.player1.clickPrompt('Done');
-        this.skipActionWindow();
-        this.player2.clickPrompt('Done');
-        this.skipActionWindow();
+        this.unopposedChallenge(this.player1, 'Military', this.serGregorClegane);
         this.player2.clickCard(this.castleGuard);
 
         expect(this.player2).toAllowAbilityTrigger("Nagga's Ribs");

@@ -17,9 +17,7 @@ describe('Put to the Sword', function () {
             context.player1.clickCard(attacker);
         }
         context.player1.clickPrompt('Done');
-        context.skipActionWindow();
-        context.player2.clickPrompt('Done');
-        context.skipActionWindow();
+        context.declareNoDefenders(context.player2);
     }
 
     describe('after you win a [military] challenge by 5 or more STR as the attacking player', function () {

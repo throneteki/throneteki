@@ -10,7 +10,7 @@ class LadyInWaiting extends DrawCard {
             title: 'Marshal as dupe',
             condition: (context) =>
                 context.game.currentPhase === 'marshal' &&
-                context.player.canPutIntoPlay(context.source, 'marshal') &&
+                context.player.canPutIntoPlay(context.source, 'marshalDuplicate') &&
                 context.player.isCardInPlayableLocation(context.source, 'marshal') &&
                 context.player.allowMarshal,
             cannotBeCanceled: true,
