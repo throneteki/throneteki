@@ -15,7 +15,7 @@ class SerRobarRoyce extends DrawCard {
             },
             limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to gain a power on {source}',
-            gameAction: GameActions.gainPower({ card: this, amount: 1 })
+            gameAction: GameActions.gainPower((context) => ({ card: context.source, amount: 1 }))
         });
 
         this.forcedReaction({
@@ -23,7 +23,7 @@ class SerRobarRoyce extends DrawCard {
                 onPlotsRevealed: (event) => event.plots.some((plot) => plot.hasTrait('Winter'))
             },
             message: '{player} is firced by {source} to kneel {source}',
-            gameAction: GameActions.kneelCard({ card: this })
+            gameAction: GameActions.kneelCard((context) => ({ card: context.source }))
         });
     }
 }

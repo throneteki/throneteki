@@ -14,7 +14,7 @@ class DickonTarly extends DrawCard {
             },
             limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to stand {source}',
-            gameAction: GameActions.standCard({ card: this })
+            gameAction: GameActions.standCard((context) => ({ card: context.source }))
         });
     }
 }

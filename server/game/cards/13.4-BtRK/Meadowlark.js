@@ -14,10 +14,10 @@ class Meadowlark extends DrawCard {
                     event.plot.controller === context.source.controller
             },
             message: '{player} uses {source} to place 1 journey token on {source}',
-            gameAction: GameActions.placeToken({
-                card: this,
+            gameAction: GameActions.placeToken((context) => ({
+                card: context.source,
                 token: Tokens.journey
-            })
+            }))
         });
 
         this.action({

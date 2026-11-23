@@ -66,6 +66,12 @@ export const Rules = {
         message:
             'Use context.source, context.player or context.game instead of this, so the ability follows the card when control changes'
     },
+    'this-in-game-action': {
+        selector:
+            "CallExpression[callee.object.name='GameActions'] > ObjectExpression > Property > ThisExpression",
+        message:
+            'Pass a function to the game action and use context.source instead of this, e.g. GameActions.standCard((context) => ({ card: context.source }))'
+    },
     'prompt-for-select': {
         selector: "CallExpression[callee.property.name='promptForSelect']",
         message: 'Use a target instead of prompting inside a handler'

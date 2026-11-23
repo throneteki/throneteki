@@ -15,7 +15,7 @@ class AegonTargaryen extends DrawCard {
             },
             limit: ability.limit.perPhase(2),
             message: '{player} uses {source} to stand {source}',
-            gameAction: GameActions.standCard({ card: this })
+            gameAction: GameActions.standCard((context) => ({ card: context.source }))
         });
     }
 }

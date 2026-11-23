@@ -17,9 +17,9 @@ class MelisandresFavor extends DrawCard {
                 onPhaseEnded: (event) => event.phase === 'dominance'
             },
             message: '{player} is forced to sacrifice {source}',
-            gameAction: GameActions.sacrificeCard({
-                card: this
-            }),
+            gameAction: GameActions.sacrificeCard((context) => ({
+                card: context.source
+            })),
             cannotBeCanceled: true
         });
     }
