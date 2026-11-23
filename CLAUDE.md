@@ -40,6 +40,14 @@ Online implementation of A Game of Thrones: The Card Game (Second Edition).
   engine, or raise it, rather than writing a card around the bug.
 - Look up a card with `npm run card -- <code or name>` rather than relying on its name or memory.
   ThronesDB card pages (`https://thronesdb.com/card/<code>`) have rulings and FAQ entries.
+- Settle rules questions yourself before asking. When card text could be read more than one way,
+  or two cards interact, read the ThronesDB page of every card involved (FAQ entries often cover
+  the exact interaction, and some point to another card's page for the shared rulings), then the
+  Rules Reference entries for the timing words and keywords in the text. Ask only when those
+  sources don't settle it, and say what you checked. When you act on a ruling, quote it in the
+  commit message.
+- To read a ThronesDB page, download it with `curl` and strip the HTML, then read the "Rules FAQ"
+  section word for word. Summarising fetch tools paraphrase rulings and have got them wrong.
 
 ## Engine principles
 
