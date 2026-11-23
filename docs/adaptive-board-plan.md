@@ -1113,8 +1113,9 @@ From the review on 2026-11-20 (second batch):
 - [x] **R263 Phone prompt buttons are never covered**: with many choices the stats bar covered the top row, and a tap
       there opened the game menu. Done: our tools row sits at z-306, above the docked prompt (z-260); while its options
       are spilled out the dock rises to z-320, as it does with the more panel open, so every option is on top.
-- [ ] **R264 No choice overlays, for now**: they duplicate the prompt. They came from melee title selection on phones,
-      where the card art matters and buttons hide it; a better phone solution is for later.
+- [x] **R264 No choice overlays, for now**: they duplicate the prompt. They came from melee title selection on phones,
+      where the card art matters and buttons hide it; a better phone solution is for later. Done: the title and player choice
+      overlays are removed from BoardOverlays; those choices are made in the prompt.
 - [ ] **R265 The desktop prompt is classic's**: back in classic's position, with its shortcut numbers.
 - [ ] **R266 Desktop piles are separate**: each opens on its own, several at once, as on classic, in the new visual
       style. Phones keep their current drawers (sheets). Part of this batch (decided 2026-11-23).

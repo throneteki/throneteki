@@ -1046,7 +1046,6 @@ const AdaptiveGameBoardLayout = ({
                             otherPlayers={otherPlayers}
                             isPlaying={isPlaying}
                             buttons={userPlayer?.buttons}
-                            promptTitle={userPlayer?.menuTitle}
                             onButtonClick={onButtonClick}
                         />
                     </div>
