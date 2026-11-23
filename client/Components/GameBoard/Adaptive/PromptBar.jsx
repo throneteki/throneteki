@@ -189,7 +189,9 @@ const Chip = ({ button, onPress, fullWidth = false, shortcut }) => {
             variant='bordered'
             className={classNames(
                 chipClass(button.cancel),
+                'relative',
                 fullWidth ? 'h-9 w-full' : 'h-7',
+                shortcut && 'pl-6',
                 pending.className
             )}
             style={pending.style}
@@ -205,19 +207,20 @@ const Chip = ({ button, onPress, fullWidth = false, shortcut }) => {
                     className='!flex !h-[1.15rem] !w-[1.15rem] shrink-0 items-center justify-center rounded-full text-[0.75rem] !leading-none'
                 />
             )}
-            <span className='truncate'>{button.text}</span>
+            {/* At the left as classic's are, apart from the label so it stays put however the label shortens */}
             {shortcut && (
-                <kbd className='shrink-0 font-sans text-[10px] font-normal opacity-60'>
+                <kbd className='pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 font-sans text-[10px] font-normal opacity-60'>
                     {shortcut}
                 </kbd>
             )}
+            <span className='truncate'>{button.text}</span>
         </Button>
     );
     return button.card ? <CardHoverable code={button.card.code}>{chip}</CardHoverable> : chip;
 };
 
 // The buttons as chips; stacked: one full-width chip per line. shortcuts: each says the key that presses it, as
-// classic's prompt does
+// classic's prompt does, whether or not it can be pressed just now, so the numbers never shift
 const ChipRows = ({ buttons, stacked = false, shortcuts = false, onPress }) => (
     <div
         data-prompt-chips=''
@@ -232,7 +235,7 @@ const ChipRows = ({ buttons, stacked = false, shortcuts = false, onPress }) => (
                 button={button}
                 onPress={onPress}
                 fullWidth={stacked}
-                shortcut={shortcuts && !button.disabled && getButtonShortcutLabel(buttons, index)}
+                shortcut={shortcuts && getButtonShortcutLabel(buttons, index)}
             />
         ))}
     </div>
