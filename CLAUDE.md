@@ -74,7 +74,9 @@ Games run with manual mode off when every card is verified, so the engine has to
   asked. If a test looks wrong against the card text or the Rules Reference, explain why and ask
   first. The exception is an assertion that contradicts text you can quote from the card, the Rules
   Reference or a ThronesDB FAQ entry: correct only that assertion, quote the text in the commit
-  message, and point the change out to the user.
+  message, and point the change out to the user. Check the card's FAQ first; if the text could be
+  read another way, ask about the reading on its own before fixing anything (see
+  [test/CLAUDE.md](test/CLAUDE.md)).
 
 ## Existing code
 
