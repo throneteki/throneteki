@@ -53,4 +53,30 @@ describe('Lady-in-Waiting', function () {
             });
         });
     });
+
+    describe('when you cannot marshal characters', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    faction: 'tyrell',
+                    plot: 'Kingswood Ambush',
+                    hand: ['Lady-in-Waiting'],
+                    inPlay: ['Margaery Tyrell (Core)'],
+                    gold: 4
+                }
+            });
+            this.player1.clickCard(this.ladyInWaiting);
+        });
+
+        it('can still marshal it as a duplicate', function () {
+            expect(this.player1).toBeAbleToSelect(this.margaeryTyrell);
+            this.player1.clickCard(this.margaeryTyrell);
+
+            expect(this.ladyInWaiting.location).toBe('duplicate');
+            expect(this.margaeryTyrell.dupes).toContain(this.ladyInWaiting);
+            expect(this.player1Object.gold).toBe(4);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 });

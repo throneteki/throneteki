@@ -24,4 +24,21 @@ describe('Varys (TTS)', function () {
         this.player1.triggerAbility('Varys');
         expect(this.varys.tokens[Tokens.gold]).toBe(1);
     });
+
+    it('stops the named card being marshaled as a duplicate', function () {
+        this.setupTest({
+            phase: 'marshal',
+            player1: { inPlay: [{ card: 'Varys (TTS)', tokens: { [Tokens.gold]: 1 } }] },
+            player2: { inPlay: ['Arya Stark (Core)'], hand: ['Arya Stark (Core)'] }
+        });
+        const aryaInHand = this.player2.findCardByName('Arya Stark', 'hand');
+        this.player1.clickMenu(this.varys, 'Name a card');
+        this.player1.nameCard('Arya Stark');
+        this.player1.clickPrompt('Done');
+
+        this.player2.clickCard(aryaInHand);
+
+        expect(aryaInHand.location).toBe('hand');
+        expect(this.player2).isReadyToTakeAction();
+    });
 });

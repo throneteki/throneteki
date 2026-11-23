@@ -282,6 +282,14 @@ its owner until it enters play. To count cards that entered play, use
 `CardEntersPlayTracker.controllerOnEntry(event)` for the player each card entered play under, since
 a card that has left play is controlled by its owner again.
 
+Marshaling a duplicate uses the playing type `marshalDuplicate`, not `marshal`: it is not
+marshaling a card with the duplicate's printed characteristics (ThronesDB FAQ 1.2). So
+`cannotMarshal` does not stop duplicates unless the restriction is on the card's title, such as a
+named card or a copy of a card; pass `{ duplicates: true }` for those
+(`cannotMarshal(condition, { duplicates: true })`, Tris Botley). A `cannotPutIntoPlay` restriction
+applies to every playing type, so one based on printed characteristics that can apply in the
+marshaling phase skips `marshalDuplicate` itself (Strained Reserves).
+
 ### Lasting effects
 
 Lasting effects are declared through `GameActions.lastingEffect`. The property factory receives

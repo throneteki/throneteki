@@ -121,4 +121,45 @@ describe("Strained Reserves with a card from an opponent's discard pile", functi
 
         expect(this.player2).isReadyToTakeAction();
     });
+
+    describe('when a player marshals a duplicate', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    plot: 'Strained Reserves (MaV)',
+                    gold: 10,
+                    inPlay: ['Arya Stark (Core)'],
+                    hand: [
+                        'Arya Stark (Core)',
+                        'Arya Stark (Core)',
+                        'Tumblestone Knight',
+                        'Hedge Knight',
+                        'Winterfell Steward'
+                    ]
+                }
+            });
+            this.aryaInPlay = this.player1.findCardByName('Arya Stark', 'play area');
+            [this.firstDupe, this.secondDupe] = this.player1.filterCardsByName(
+                'Arya Stark',
+                'hand'
+            );
+        });
+
+        it('neither counts it towards the limit nor stops it once the limit is reached', function () {
+            this.player1.clickCard(this.firstDupe);
+            this.player1.clickCard(this.tumblestoneKnight);
+            this.player1.clickCard(this.hedgeKnight);
+            this.player1.clickCard(this.winterfellSteward);
+            this.player1.clickCard(this.secondDupe);
+
+            expect(this.firstDupe.location).toBe('duplicate');
+            expect(this.tumblestoneKnight.location).toBe('play area');
+            expect(this.hedgeKnight.location).toBe('play area');
+            expect(this.winterfellSteward.location).toBe('hand');
+            expect(this.secondDupe.location).toBe('duplicate');
+            expect(this.aryaInPlay.dupes).toHaveLength(2);
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 });

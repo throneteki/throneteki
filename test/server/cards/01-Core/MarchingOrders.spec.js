@@ -41,4 +41,31 @@ describe('Marching Orders', function () {
         expect(this.theKingsroad.location).toBe('play area');
         expect(this.player2).isReadyToTakeAction();
     });
+
+    describe('when you marshal a duplicate of a location', function () {
+        beforeEach(function () {
+            this.setupTest({
+                phase: 'marshal',
+                player1: {
+                    faction: 'baratheon',
+                    plot: 'Marching Orders',
+                    inPlay: ['The Red Keep (Core)'],
+                    hand: ['The Red Keep (Core)', 'The Roseroad']
+                }
+            });
+            this.redKeepInPlay = this.player1.findCardByName('The Red Keep', 'play area');
+            this.redKeepInHand = this.player1.findCardByName('The Red Keep', 'hand');
+        });
+
+        it('does not stop it', function () {
+            this.player1.clickCard(this.redKeepInHand);
+
+            expect(this.redKeepInHand.location).toBe('duplicate');
+            expect(this.redKeepInPlay.dupes).toContain(this.redKeepInHand);
+
+            this.player1.clickCard(this.theRoseroad);
+            expect(this.theRoseroad.location).toBe('hand');
+            expect(this.player1).isReadyToTakeAction();
+        });
+    });
 });

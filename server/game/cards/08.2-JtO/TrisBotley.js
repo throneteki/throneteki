@@ -29,7 +29,9 @@ class TrisBotley extends DrawCard {
                     },
                     targetController: context.target.owner,
                     effect: [
-                        ability.effects.cannotMarshal((card) => card.isCopyOf(context.target)),
+                        ability.effects.cannotMarshal((card) => card.isCopyOf(context.target), {
+                            duplicates: true
+                        }),
                         ability.effects.cannotPlay((card) => card.isCopyOf(context.target))
                     ]
                 }))

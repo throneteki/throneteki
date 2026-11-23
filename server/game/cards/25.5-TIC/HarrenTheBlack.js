@@ -18,7 +18,8 @@ class HarrenTheBlack extends DrawCard {
             targetController: 'opponent',
             effect: ability.effects.cannotMarshal(
                 (card, context, player) =>
-                    card.getType() === 'location' && hasCopyInDiscard(card, player)
+                    card.getType() === 'location' && hasCopyInDiscard(card, player),
+                { duplicates: true }
             )
         });
         this.forcedReaction({

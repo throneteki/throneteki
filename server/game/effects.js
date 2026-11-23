@@ -808,9 +808,12 @@ const Effects = {
         let restriction = (card) => card.name === name;
         return this.cannotPutIntoPlay(restriction);
     },
-    cannotMarshal: function (condition) {
+    // Marshaling a duplicate is not marshaling a card with its printed characteristics, so only a
+    // restriction on the card's title (a named card or a copy of one) also stops duplicates.
+    cannotMarshal: function (condition, { duplicates = false } = {}) {
+        const playingTypes = duplicates ? ['marshal', 'marshalDuplicate'] : ['marshal'];
         let restriction = (card, playingType, context, player) =>
-            playingType === 'marshal' && condition(card, context, player);
+            playingTypes.includes(playingType) && condition(card, context, player);
         return this.cannotPutIntoPlay(restriction);
     },
     cannotBringOutOfShadows: function (condition) {
