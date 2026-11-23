@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import classNames from 'classnames';
-import { Avatar } from '@heroui/react';
+import PlayerAvatar from './PlayerAvatar';
 import CardImage from '../../Images/CardImage';
 import { useHud } from '../../../hudStore';
 import { overlaySettingsOf } from '../../../hud';
@@ -326,11 +326,9 @@ const Name = ({ player, size = 1.1, you = false, className, style }) => (
         style={{ gap: ui(0.5), ...style }}
         title={nameOf(player)}
     >
-        <Avatar
-            src={nameOf(player) ? `/img/avatar/${nameOf(player)}.png` : undefined}
-            showFallback
+        <PlayerAvatar
             name={nameOf(player)}
-            className='shrink-0 text-tiny shadow-[0_4px_10px_rgba(0,0,0,0.6)] ring-2 ring-white/20'
+            className='shrink-0 shadow-[0_4px_10px_rgba(0,0,0,0.6)]'
             style={{ width: ui(size * 1.75), height: ui(size * 1.75) }}
         />
         <span

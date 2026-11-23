@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
-import { Avatar, Button } from '@heroui/react';
+import { Button } from '@heroui/react';
+import PlayerAvatar from './PlayerAvatar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useDragSource } from '../dragStore';
@@ -168,12 +169,7 @@ const DockHint = ({ spot, fromTop }) => (
 // Whose piles these are: the avatar alone on a phone, with the name where there is room
 const PlayerTag = ({ player }) => (
     <span className='flex min-w-0 shrink-0 items-center gap-1.5' title={player}>
-        <Avatar
-            src={player ? `/img/avatar/${player}.png` : undefined}
-            showFallback
-            name={player}
-            className='h-5 w-5 text-tiny lg:h-6 lg:w-6'
-        />
+        <PlayerAvatar name={player} className='h-5 w-5 lg:h-6 lg:w-6' />
         <span className='hidden max-w-[10rem] truncate text-sm font-semibold lg:inline'>
             {player}
         </span>

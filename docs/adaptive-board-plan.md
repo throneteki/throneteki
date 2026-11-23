@@ -1120,7 +1120,10 @@ From the review on 2026-11-20 (second batch):
 - [ ] **R265 The desktop prompt is classic's**: back in classic's position, with its shortcut numbers.
 - [ ] **R266 Desktop piles are separate**: each opens on its own, several at once, as on classic, in the new visual
       style. Phones keep their current drawers (sheets). Part of this batch (decided 2026-11-23).
-- [ ] **R267 Avatars match the site's**.
+- [x] **R267 Avatars match the site's**. Done: PlayerAvatar draws them as the site does (HeroUI Avatar, the site's
+      fallback rather than initials, no decorative ring), for the stats bars, the overlays and the sheets' player tags.
+      The first player's ring stays, as it says something. Classic's, the chat's and the chess clock's were already the
+      site's.
 - [x] **R268 Performance belongs elsewhere**: master's state diffs (#3838, applied inside immer) keep unchanged state's
       identity, so `reuseUnchanged` goes. The image cache (`imageCache.js`, `useImagePreload`) goes too: images are
       served by the infrastructure, not this code. Done: reuseUnchanged went with master's diffs; imageCache.js, useImagePreload and

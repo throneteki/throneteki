@@ -1,7 +1,8 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
-import { Avatar, Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
+import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
+import PlayerAvatar from './PlayerAvatar';
 import StatContainer from '../StatContainer';
 import { pendingKeys, pendingLook, usePending } from '../pendingActions';
 import StatDisplay from '../StatDisplay';
@@ -218,17 +219,11 @@ const PlayerStatsBar = ({
                               })
                     )}
                 >
-                    <Avatar
-                        src={username ? `/img/avatar/${username}.png` : undefined}
-                        showFallback
+                    <PlayerAvatar
                         name={username}
                         className={classNames(
                             'shadow-[0_2px_6px_rgba(0,0,0,0.6)]',
-                            vertical
-                                ? 'h-6 w-6 text-tiny'
-                                : compact
-                                  ? 'h-8 w-8 text-tiny'
-                                  : 'h-9 w-9',
+                            vertical ? 'h-6 w-6' : compact ? 'h-8 w-8' : 'h-9 w-9',
                             { 'ring-2 ring-warning': player.firstPlayer }
                         )}
                     />
