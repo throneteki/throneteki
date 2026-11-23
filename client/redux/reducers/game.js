@@ -47,11 +47,7 @@ const gameSlice = createSlice({
             (option, value) => ({ payload: { option, value } }),
             () => {}
         ),
-        // quiet: the server says the click does nothing, so the board does not wait for it
-        sendCardClickedMessage: create.preparedReducer(
-            (uuid, quiet = false) => ({ payload: uuid, meta: { quiet } }),
-            () => {}
-        ),
+        sendCardClickedMessage: () => {},
         sendButtonClickedMessage: create.preparedReducer(
             (promptId, command, method, arg) => ({ payload: { promptId, command, method, arg } }),
             () => {}

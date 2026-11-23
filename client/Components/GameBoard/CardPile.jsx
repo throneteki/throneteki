@@ -22,26 +22,18 @@ import { Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { cardBoxClass, cardWidth } from '../../cardScale';
 import { registerPile } from '../../flip';
-import { pendingLook, pendingStore, usePending } from './pendingActions';
 
-// A pile's action in a sheet, as a pill like the sheet's chips; it pulses while waiting on the game server
-const PileAction = ({ menuItem, onPress }) => {
-    const pending = pendingLook(usePending(menuItem.pendingKey));
-    return (
-        <button
-            type='button'
-            className={classNames(
-                'flex h-7 items-center gap-1.5 rounded-full border border-amber-400/60 bg-amber-400/10 px-3 text-xs font-semibold uppercase tracking-wide text-amber-100 transition-colors hover:border-amber-300 hover:bg-amber-400/25 hover:text-white',
-                pending.className
-            )}
-            style={pending.style}
-            onClick={() => !pendingStore.has(menuItem.pendingKey) && onPress(menuItem)}
-        >
-            <FontAwesomeIcon icon={menuItem.icon} className='text-[11px]' />
-            {menuItem.text}
-        </button>
-    );
-};
+// A pile's action in a sheet, as a pill like the sheet's chips
+const PileAction = ({ menuItem, onPress }) => (
+    <button
+        type='button'
+        className='flex h-7 items-center gap-1.5 rounded-full border border-amber-400/60 bg-amber-400/10 px-3 text-xs font-semibold uppercase tracking-wide text-amber-100 transition-colors hover:border-amber-300 hover:bg-amber-400/25 hover:text-white'
+        onClick={() => onPress(menuItem)}
+    >
+        <FontAwesomeIcon icon={menuItem.icon} className='text-[11px]' />
+        {menuItem.text}
+    </button>
+);
 
 const CardPile = ({
     cards,

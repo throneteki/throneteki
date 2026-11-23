@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import { Button } from '@heroui/react';
@@ -35,7 +35,6 @@ import { activePlayerOf, followTarget } from './followTarget';
 import useAutoFollow from './useAutoFollow';
 import { useCardHover } from '../../Images/cardHoverStore';
 import { boardRescaleEvent } from '../useHudScale';
-import { pendingKeys, pendingStore } from '../pendingActions';
 
 // A part drawn at another of the board's scales: every card size inside follows --card-scale
 const Part = ({ area, scale, className, style, children }) => (
@@ -268,22 +267,13 @@ const AdaptiveGameBoardLayout = ({
     thisPlayer,
     otherPlayers,
     userPlayer,
-    onCardClick: sendCardClick,
+    onCardClick,
     onSettingsClick,
     onShortcutsClick,
     chat,
     isDragging
 }) => {
     const dispatch = useDispatch();
-    // An action still waiting on the game server is not sent again (a second tap while it lags)
-    const onCardClick = useCallback(
-        (card) => {
-            if (!pendingStore.has(pendingKeys.card(card.uuid))) {
-                sendCardClick(card);
-            }
-        },
-        [sendCardClick]
-    );
     const mode = useLayoutMode();
     const dividerRef = useRef(null);
     const short = mode === 'short';
@@ -564,13 +554,10 @@ const AdaptiveGameBoardLayout = ({
         );
     };
 
-    const onButtonClick = (button) => {
-        if (!pendingStore.has(pendingKeys.button(button))) {
-            dispatch(
-                sendButtonClickedMessage(button.promptId, button.command, button.method, button.arg)
-            );
-        }
-    };
+    const onButtonClick = (button) =>
+        dispatch(
+            sendButtonClickedMessage(button.promptId, button.command, button.method, button.arg)
+        );
     // inBar: in the desktop's stats bar, as tall as the bar
     const chatButton = (inBar = false) =>
         chat && (

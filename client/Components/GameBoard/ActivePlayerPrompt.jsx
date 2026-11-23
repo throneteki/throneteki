@@ -7,6 +7,7 @@ import LoadingSpinner from '../Site/LoadingSpinner';
 import CardHoverable from '../Images/CardHoverable';
 import { getButtonShortcutLabel } from './keyboardShortcuts';
 import { PromptControls, usePromptActions } from './usePromptActions';
+import PendingMark, { pendingButtonClass } from './PendingMark';
 
 const ActivePlayerPrompt = ({
     className,
@@ -41,7 +42,10 @@ const ActivePlayerPrompt = ({
                 <Button
                     type='button'
                     color={button.cancel ? 'default' : 'primary'}
-                    className='text-wrap text-xs h-8 md:h-full md:min-h-10 md:text-small'
+                    className={classNames(
+                        'text-wrap text-xs h-8 md:h-full md:min-h-10 md:text-small',
+                        button.pending && pendingButtonClass
+                    )}
                     onPress={(event) => handleButtonClick(event, button)}
                     isDisabled={button.disabled || (button.endsTurn && !endTurnReady)}
                     disableRipple
@@ -51,6 +55,7 @@ const ActivePlayerPrompt = ({
                         <ThronesIcon icon={button.icon} withBackground noSize={false} />
                     )}
                     <span>{button.text}</span>
+                    {button.pending && <PendingMark />}
                     {shortcutLabel && (
                         <Kbd className='hidden md:inline-flex absolute left-1 top-1/2 -translate-y-1/2 text-tiny bg-transparent shadow-none opacity-60'>
                             {shortcutLabel}

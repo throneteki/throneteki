@@ -48,7 +48,8 @@ class SelectPlotPrompt extends AllPlayerPrompt {
         return {
             menuTitle: 'Select a plot',
             buttons: [{ arg: 'plotselected', text: 'Done' }],
-            selectCard: true
+            selectCard: true,
+            selectToggle: { replace: true }
         };
     }
 

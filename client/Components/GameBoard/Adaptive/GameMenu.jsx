@@ -27,7 +27,6 @@ import {
     faWrench
 } from '@fortawesome/free-solid-svg-icons';
 import ConfirmDialog from '../../Site/ConfirmDialog';
-import { pendingKeys, pendingLook, usePending } from '../pendingActions';
 import { connectionIconOf, pingLevelOf, pingTextOf } from '../../Navigation/ServerStatus';
 import { SpectatorList, SpectatorSheet, spectatorPreview } from './SpectatorList';
 import ReportProblemModal from '../ReportProblemModal';
@@ -228,14 +227,7 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
     const run = (key) => items.find((item) => item.key === key)?.run?.();
 
     // A button in the bar, as tall as the bar: the ways out are named, the rest are icons (spectators with their count)
-    // The menu's game actions pulse in the bar while waiting on the game server
-    const pending = {
-        manual: usePending(pendingKeys.menu('manual')),
-        mute: usePending(pendingKeys.menu('mute')),
-        concede: usePending(pendingKeys.menu('concede'))
-    };
     const barButton = (item, measure = false) => {
-        const look = pendingLook(!measure && pending[item.key]);
         const button = (
             <Button
                 key={item.key}
@@ -254,10 +246,8 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
                     'relative h-full shrink-0 overflow-visible',
                     item.named ? 'min-w-0 gap-1.5 px-2.5 text-small' : 'min-w-9 gap-1 px-2',
                     item.tone,
-                    { 'text-danger': item.danger },
-                    look.className
+                    { 'text-danger': item.danger }
                 )}
-                style={look.style}
                 onPress={item.key === 'spectators' ? undefined : item.run}
             >
                 {item.named ? (

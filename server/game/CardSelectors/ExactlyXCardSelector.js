@@ -31,6 +31,10 @@ class ExactlyXCardSelector extends BaseCardSelector {
     hasReachedLimit(selectedCards) {
         return selectedCards.length >= this.numCards;
     }
+
+    selectionToggle() {
+        return { limit: this.numCards };
+    }
 }
 
 export default ExactlyXCardSelector;

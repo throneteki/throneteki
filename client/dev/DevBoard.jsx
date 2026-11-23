@@ -9,8 +9,8 @@ import cards from '../redux/reducers/cards';
 import navigation from '../redux/reducers/navigation.js';
 import admin from '../redux/reducers/admin';
 import { apiSlice } from '../redux/middleware/api';
-import { pendingKeysOf } from '../redux/middleware/game';
-import { pendingStore } from '../Components/GameBoard/pendingActions';
+import { serverWait } from '../Components/GameBoard/serverWait';
+import { applyPredictions, predictionFor, predictions } from '../Components/GameBoard/predictions';
 import flipMiddleware from '../redux/middleware/flip.js';
 import GameBoard from '../Components/GameBoard/GameBoard';
 import {
@@ -25,12 +25,34 @@ import {
 
 // A store of its own, with no game server behind it: messages the board sends go nowhere. It notes where cards
 // were before each new state (flipMiddleware), as the real store does, so cards fly between zones.
-// A pretend game server's delay (&lag=ms): each action the board sends waits this long for its answer
+// A pretend game server's round trip (&lag=ms): each message the board sends is handled after this long. Until then
+// the board shows what the real client predicts, and once handled the pretend server does what was predicted.
 let devLag = 0;
-const lagMiddleware = () => (next) => (action) => {
-    const keys = devLag > 0 && pendingKeysOf(action);
-    if (keys) {
-        setTimeout(pendingStore.add(keys), devLag);
+let devTruth;
+const lagMiddleware = (store) => (next) => (action) => {
+    if (receiveGameState.match(action)) {
+        const { game, username } = action.payload;
+        devTruth = game;
+        return next(
+            receiveGameState(applyPredictions(game, predictions.list(), username), username)
+        );
+    }
+    if (action.type.startsWith('game/send')) {
+        const user = store.getState().auth.user;
+        const prediction = predictionFor(action, store.getState().lobby.currentGame, user);
+        const seq = serverWait.sent();
+        predictions.add(seq, prediction);
+        if (prediction) {
+            store.dispatch(receiveGameState(devTruth, user?.username));
+        }
+        setTimeout(() => {
+            serverWait.handled(seq);
+            predictions.handled(seq);
+            if (prediction && devTruth) {
+                devTruth = applyPredictions(devTruth, [prediction], user?.username, true);
+                store.dispatch(receiveGameState(devTruth, user?.username));
+            }
+        }, devLag);
     }
     return next(action);
 };
@@ -40,8 +62,8 @@ const createFixtureStore = () =>
         reducer: { admin, api: apiSlice.reducer, auth, cards, navigation, lobby, game },
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware({ serializableCheck: false, immutableCheck: false })
-                .concat(flipMiddleware)
                 .concat(lagMiddleware)
+                .concat(flipMiddleware)
                 .concat(apiSlice.middleware)
     });
 
@@ -201,7 +223,7 @@ const buttonClass =
     'rounded-md bg-white/10 px-2 py-1 text-left hover:bg-white/20 disabled:opacity-40';
 
 // Development only: the real game board with a canned state, at /dev/board?fixture=crowded&board=adaptive
-// (&manual=1, &spectate=1, &players=3..6 for melee scenarios, &long=1, &crowd=1, &lag=1000|4000|10000|20000, &panel=0 to hide the panel). The
+// (&manual=1, &spectate=1, &players=3..6 for melee scenarios, &long=1, &crowd=1, &lag=300|600|1000|3000, &panel=0 to hide the panel). The
 // steps change the game as a server would, to see cards move. An overlay is played on its scenario once the board has
 // loaded it, so what is seen at its start is the overlay, not the board still loading.
 const DevBoard = ({
@@ -223,10 +245,12 @@ const DevBoard = ({
     const [long, setLong] = useState(longParam === '1');
     const [crowd, setCrowd] = useState(crowdParam === '1');
     const [lag, setLag] = useState(
-        ['1000', '4000', '10000', '20000'].includes(lagParam) ? lagParam : '0'
+        ['300', '600', '1000', '3000'].includes(lagParam) ? lagParam : '0'
     );
     useEffect(() => {
         devLag = Number(lag);
+        serverWait.reset();
+        predictions.reset();
         setQuery({ lag: lag === '0' ? undefined : lag });
     }, [lag]);
     const [manual, setManual] = useState(manualParam === '1');
@@ -473,10 +497,10 @@ const DevBoard = ({
                                     value={lag}
                                     options={[
                                         ['0', 'No lag'],
+                                        ['300', '0.3s'],
+                                        ['600', '0.6s'],
                                         ['1000', '1s'],
-                                        ['4000', '4s'],
-                                        ['10000', '10s'],
-                                        ['20000', '20s']
+                                        ['3000', '3s']
                                     ]}
                                     onChange={setLag}
                                 />

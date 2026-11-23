@@ -12,6 +12,7 @@ describe('game state diffs', function () {
 
         this.server = {
             sentStates: new WeakMap(),
+            handledMessages: new WeakMap(),
             findGameForUser: () => this.game,
             sendGameState: GameServer.prototype.sendGameState
         };
@@ -46,6 +47,7 @@ describe('game state diffs', function () {
                 expect(this.clients[name].state).toEqual(
                     snapshotGameState({
                         ...this.game.getState(name),
+                        handledMessages: 0,
                         messages: this.game.gameChat.getMessagesForClient()
                     })
                 );

@@ -27,11 +27,11 @@ import ErrorMessage from '../Site/ErrorMessage';
 import JoustGameBoardLayout from './Classic/JoustGameBoardLayout';
 import MeleeGameBoardLayout from './Classic/MeleeGameBoardLayout';
 import AdaptiveGameBoardLayout from './Adaptive/AdaptiveGameBoardLayout';
+import WaitingForServer from './WaitingForServer';
 import { BoardLayoutProvider, useBoardLayout } from './Adaptive/useBoardLayout';
 import { useAdaptivePage } from './Adaptive/useAdaptivePage';
 import { hidesNavbar } from '../../boardLayoutStore';
 import { ManualModeContext } from './ManualModeContext';
-import { clickDoesSomething } from './pendingActions';
 import { useRenderCount } from '../../perf';
 import { useHudScale } from './useHudScale';
 import { useHud } from '../../hudStore';
@@ -382,14 +382,9 @@ const GameBoard = () => {
 
     const onCardClick = useCallback(
         (card) => {
-            dispatch(
-                sendCardClickedMessage(
-                    card.uuid,
-                    !clickDoesSomething(card, !!currentGame?.manualMode)
-                )
-            );
+            dispatch(sendCardClickedMessage(card.uuid));
         },
-        [dispatch, currentGame?.manualMode]
+        [dispatch]
     );
 
     const { players, thisPlayer, otherPlayers, userPlayer } = useMemo(() => {
@@ -578,6 +573,7 @@ const GameBoard = () => {
                         inputRef={chatInputRef}
                         onUnreadChange={setChatUnread}
                     />
+                    <WaitingForServer />
                 </div>
             </MotionConfig>
             {dragGhost &&

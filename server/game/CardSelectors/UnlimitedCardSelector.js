@@ -4,6 +4,10 @@ class UnlimitedCardSelector extends BaseCardSelector {
     hasReachedLimit() {
         return false;
     }
+
+    selectionToggle() {
+        return {};
+    }
 }
 
 export default UnlimitedCardSelector;

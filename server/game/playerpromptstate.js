@@ -1,8 +1,10 @@
 class PlayerPromptState {
     constructor() {
         this.isActivePrompt = false;
+        this.promptId = undefined;
         this.selectCard = false;
         this.selectOrder = false;
+        this.selectToggle = undefined;
         this.menuTitle = '';
         this.promptTitle = '';
         this.buttons = [];
@@ -33,8 +35,10 @@ class PlayerPromptState {
     }
 
     setPrompt(prompt) {
+        this.promptId = prompt.promptId;
         this.selectCard = prompt.selectCard || false;
         this.selectOrder = prompt.selectOrder || false;
+        this.selectToggle = prompt.selectToggle;
         this.menuTitle = prompt.menuTitle || '';
         this.promptTitle = prompt.promptTitle;
         this.buttons = (prompt.buttons || []).map((button) => {
@@ -54,7 +58,9 @@ class PlayerPromptState {
     }
 
     cancelPrompt() {
+        this.promptId = undefined;
         this.selectCard = false;
+        this.selectToggle = undefined;
         this.menuTitle = '';
         this.buttons = [];
         this.controls = [];
@@ -82,8 +88,10 @@ class PlayerPromptState {
     getState() {
         return {
             isActivePrompt: this.isActivePrompt,
+            promptId: this.promptId,
             selectCard: this.selectCard,
             selectOrder: this.selectOrder,
+            selectToggle: this.selectToggle,
             menuTitle: this.menuTitle,
             promptTitle: this.promptTitle,
             buttons: this.buttons.map((button) => this.getButtonState(button)),
