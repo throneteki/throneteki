@@ -1102,11 +1102,14 @@ From the review on 2026-11-20 (second batch):
       long a line shows on its own and with others queued behind it, the longest a line stays, how fast a long line
       scrolls with and without a queue, the pauses at its ends, and the fade. Done: logTiming in useLogFeed.js;
       the prompt bar turns the feed off (showLog) while the chat is open, so lines from then are not shown later.
-- [ ] **R260 Fewer options**: the prompt side (classic's side), the overlay timer and the fixed-size mode go. Cards
+- [x] **R260 Fewer options**: the prompt side (classic's side), the overlay timer and the fixed-size mode go. Cards
       always fit the screen and the sliders scale the fit; card and interface sizes and animations stay. A fixed
       size (the legacy `cardSize`, or `auto: false`) is converted when settings are next saved: the slider becomes
       the old size divided by the fit for the screen and board saved from, so the cards look the same. Until then the
-      board still draws the fixed size, hidden from the settings.
+      board still draws the fixed size, hidden from the settings. Done: the prompt is on the left on both boards (classic as on
+      master); overlays close after 3s; the sizes are sliders over the fit. The profile shows a fixed size as the
+      fitted sizes that draw the same (fitSizedHud), so the next save stores them. The server no longer keeps
+      promptSide or overlayTimer.
 - [ ] **R261 Appearance lives in the profile only**: the in-game settings keep gameplay options (prompting, keywords
       and the like) and drop the appearance ones, on both boards (decided 2026-11-23).
 - [x] **R262 Overlays name players by name and avatar**, as the rest of the site does, not by deck. The start and the

@@ -5,7 +5,6 @@ import {
     isHudSize,
     normalizeHud,
     resolveHudSize,
-    promptSideOf,
     overlaySettingsOf
 } from '../../client/hud.js';
 
@@ -128,21 +127,6 @@ describe('computeHudScales', function () {
     });
 });
 
-describe('prompt side', function () {
-    it('keeps a valid saved side and ignores an invalid one', function () {
-        expect(normalizeHud({ hud: { promptSide: 'right' } }).promptSide).toBe('right');
-        expect(normalizeHud({ hud: { promptSide: 'left' } }).promptSide).toBe('left');
-        expect(normalizeHud({ hud: { promptSide: 'up' } }).promptSide).toBeUndefined();
-    });
-
-    it('puts the prompt on the left unless the right was chosen', function () {
-        expect(promptSideOf({})).toBe('left');
-        expect(promptSideOf(undefined)).toBe('left');
-        expect(promptSideOf({ promptSide: 'right' })).toBe('right');
-        expect(promptSideOf({ promptSide: 'up' })).toBe('left');
-    });
-});
-
 describe('overlays', function () {
     it('are on, closing after 3 seconds, until changed', function () {
         expect(overlaySettingsOf({})).toEqual({ enabled: true, seconds: 3 });
@@ -150,17 +134,9 @@ describe('overlays', function () {
         expect(normalizeHud({ hud: {} }).overlays).toBeUndefined();
     });
 
-    it('keeps them turned off and a timer of whole seconds from 1 to 10', function () {
-        const hud = normalizeHud({ hud: { overlays: false, overlayTimer: 6 } });
+    it('keeps them turned off', function () {
+        const hud = normalizeHud({ hud: { overlays: false } });
         expect(hud.overlays).toBe(false);
-        expect(hud.overlayTimer).toBe(6);
-        expect(overlaySettingsOf(hud)).toEqual({ enabled: false, seconds: 6 });
-    });
-
-    it('ignores a timer that is not whole seconds from 1 to 10', function () {
-        for (const overlayTimer of [0, 11, 2.5, '3']) {
-            expect(normalizeHud({ hud: { overlayTimer } }).overlayTimer).toBeUndefined();
-            expect(overlaySettingsOf({ overlayTimer }).seconds).toBe(3);
-        }
+        expect(overlaySettingsOf(hud)).toEqual({ enabled: false, seconds: 3 });
     });
 });

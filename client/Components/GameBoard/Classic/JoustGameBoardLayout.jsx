@@ -8,8 +8,6 @@ import { useDispatch } from 'react-redux';
 import PlayerStats from './PlayerStats';
 import classNames from 'classnames';
 import SideBoardPanel from './SideBoardPanel';
-import { useHud } from '../../../hudStore';
-import { promptSideOf } from '../../../hud';
 
 const JoustGameBoardLayout = ({
     thisPlayer,
@@ -20,7 +18,6 @@ const JoustGameBoardLayout = ({
     isDragging
 }) => {
     const dispatch = useDispatch();
-    const promptRight = promptSideOf(useHud()) === 'right';
 
     const renderPlayerBoard = useCallback(
         (player, side) => {
@@ -71,12 +68,7 @@ const JoustGameBoardLayout = ({
                         mustShowPlotSelection={player.mustShowPlotSelection}
                         showHiddenPiles={isMe && isDragging}
                     />
-                    <div
-                        className={classNames(
-                            'h-full relative flex flex-grow',
-                            promptRight ? 'flex-row' : 'flex-row-reverse'
-                        )}
-                    >
+                    <div className='h-full relative flex flex-row-reverse flex-grow'>
                         <PlayerBoard
                             isDroppable={isMe}
                             cardsInPlay={player.cardPiles.cardsInPlay}
@@ -95,7 +87,7 @@ const JoustGameBoardLayout = ({
                 </div>
             );
         },
-        [thisPlayer, userPlayer, onSettingsClick, onCardClick, isDragging, dispatch, promptRight]
+        [thisPlayer, userPlayer, onSettingsClick, onCardClick, isDragging, dispatch]
     );
     return (
         <div className='min-h-full min-w-max grid grid-cols-1 grid-rows-[repeat(2,1fr)]'>

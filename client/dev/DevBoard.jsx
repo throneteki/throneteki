@@ -65,12 +65,12 @@ const buildFixture = (fixture, { manual, spectate, players, long, crowd }) => {
 const viewerOf = (spectate) => (spectate ? spectatorName : fixtureUsername);
 
 // The board expects a game before it first draws, as it has in a real game
-const loadFixture = (store, state, board, spectate, promptSide) => {
+const loadFixture = (store, state, board, spectate) => {
     store.dispatch(
         setUser({
             username: viewerOf(spectate),
             permissions: {},
-            settings: { hud: { board, promptSide } }
+            settings: { hud: { board } }
         })
     );
     store.dispatch(receiveGameState(state, viewerOf(spectate)));
@@ -202,7 +202,7 @@ const buttonClass =
     'rounded-md bg-white/10 px-2 py-1 text-left hover:bg-white/20 disabled:opacity-40';
 
 // Development only: the real game board with a canned state, at /dev/board?fixture=crowded&board=adaptive
-// (&manual=1, &spectate=1, &prompt=right, &players=3..6 for melee scenarios, &long=1, &crowd=1, &lag=1000|4000|10000|20000, &panel=0 to hide the panel). The
+// (&manual=1, &spectate=1, &players=3..6 for melee scenarios, &long=1, &crowd=1, &lag=1000|4000|10000|20000, &panel=0 to hide the panel). The
 // steps change the game as a server would, to see cards move. An overlay is played on its scenario once the board has
 // loaded it, so what is seen at its start is the overlay, not the board still loading.
 const DevBoard = ({
@@ -211,13 +211,11 @@ const DevBoard = ({
     panel,
     manual: manualParam,
     spectate: spectateParam,
-    prompt,
     players: playersParam,
     long: longParam,
     crowd: crowdParam,
     lag: lagParam
 }) => {
-    const promptSide = prompt === 'right' ? 'right' : 'left';
     const [fixture, setFixture] = useState(boardFixtures[initialFixture] ? initialFixture : 'mid');
     const [board, setBoard] = useState(initialBoard === 'classic' ? 'classic' : 'adaptive');
     const [players, setPlayers] = useState(
@@ -239,7 +237,7 @@ const DevBoard = ({
     const [store] = useState(() => {
         const created = createFixtureStore();
         current.current = buildFixture(fixture, { manual, spectate, players, long, crowd });
-        loadFixture(created, current.current, board, spectate, promptSide);
+        loadFixture(created, current.current, board, spectate);
         return created;
     });
     const [layout, setLayout] = useState(readLayout);
@@ -293,7 +291,7 @@ const DevBoard = ({
         const built = buildFixture(fixture, { manual, spectate, players, long, crowd });
         const steps = example?.steps ?? [];
         current.current = example && steps.length === 0 ? withoutOverlay(built) : built;
-        loadFixture(store, current.current, board, spectate, promptSide);
+        loadFixture(store, current.current, board, spectate);
         setQuery({
             fixture,
             board,
@@ -329,7 +327,7 @@ const DevBoard = ({
             setStatus(`Showing ${example.label}`);
         });
         return () => controller.abort();
-    }, [store, fixture, board, manual, spectate, promptSide, players, long, crowd, overlay]);
+    }, [store, fixture, board, manual, spectate, players, long, crowd, overlay]);
 
     const fixtures = forMode(boardFixtures, mode);
     const overlays = forMode(overlayExamples, mode);

@@ -30,8 +30,6 @@ import PromptBar from './PromptBar';
 import SheetHost from './SheetHost';
 import BoardOverlays from './BoardOverlays';
 import FullscreenToggle from './FullscreenToggle';
-import { useHud } from '../../../hudStore';
-import { promptSideOf } from '../../../hud';
 import { tableRows } from '../seatOrder';
 import { activePlayerOf, followTarget } from './followTarget';
 import useAutoFollow from './useAutoFollow';
@@ -97,45 +95,32 @@ const chatButtonRoom = 36;
 const waitedOn = 'bg-sky-300/5';
 const waitedOnBand = 'bg-[linear-gradient(rgb(125_211_252/0.05),rgb(125_211_252/0.05))]';
 const fullscreenRoom = 28;
-// Phone landscape's column down one side: the stats at its top and bottom, the prompt and our tools between
+// Phone landscape's column down the left: the stats at its top and bottom, the prompt and our tools between
 const columnWidth = 'clamp(13rem, 30vw, 20rem)';
 
-// Room at each end of a play area for the prompt lying over the board's side. With the prompt in it (desktop), the
-// room sticks to its side of the view and the prompt sits at its foot, where classic's prompt is, rising over the
+// Room at the start of a play area for the prompt lying over the board's left side. With the prompt in it (desktop),
+// the room sticks to the left of the view and the prompt sits at its foot, where classic's prompt is, rising over the
 // opponent's room when it is taller, so it never makes the play area taller
-const Room = ({ width, at, children }) =>
+const Room = ({ width, children }) =>
     children ? (
-        <div
-            className={classNames('sticky z-[250] shrink-0', at === 'right' ? 'right-0' : 'left-0')}
-            style={{ width }}
-        >
+        <div className='sticky left-0 z-[250] shrink-0' style={{ width }}>
             <div className='absolute inset-x-0 bottom-1'>{children}</div>
         </div>
     ) : (
         <div aria-hidden className='shrink-0' style={{ width }} />
     );
 const coverBefore = 'var(--board-cover-left, 0px)';
-const coverAfter = 'var(--board-cover-right, 0px)';
 
-// Characters and locations take a row each, or share one in phone landscape (inline). promptSide (phone landscape):
+// Characters and locations take a row each, or share one in phone landscape (inline). column (phone landscape):
 // cards stick beside the column as the board scrolls; sticky, as scroll handlers lag a frame on phones.
-const PlayArea = ({ inline, promptSide, prompt, promptAt, children }) => {
+const PlayArea = ({ inline, column, prompt, children }) => {
     const cards = children(inline ? 'inline' : 'nowrap');
     return (
         <Part area='play' className='flex flex-1 !min-h-[auto]'>
-            <Room width={coverBefore} at='left'>
-                {promptAt === 'left' && prompt}
-            </Room>
-            {promptSide ? (
-                <div
-                    className={classNames('flex min-w-0 flex-1', {
-                        'flex-row-reverse': promptSide === 'right'
-                    })}
-                >
-                    <div
-                        className='sticky flex min-w-0 flex-1'
-                        style={{ [promptSide]: columnWidth }}
-                    >
+            <Room width={coverBefore}>{prompt}</Room>
+            {column ? (
+                <div className='flex min-w-0 flex-1'>
+                    <div className='sticky flex min-w-0 flex-1' style={{ left: columnWidth }}>
                         {cards}
                     </div>
                     <Room width={columnWidth} />
@@ -143,9 +128,6 @@ const PlayArea = ({ inline, promptSide, prompt, promptAt, children }) => {
             ) : (
                 cards
             )}
-            <Room width={coverAfter} at='right'>
-                {promptAt === 'right' && prompt}
-            </Room>
         </Part>
     );
 };
@@ -304,14 +286,12 @@ const AdaptiveGameBoardLayout = ({
     );
     const mode = useLayoutMode();
     const dividerRef = useRef(null);
-    const hud = useHud();
-    const promptSide = promptSideOf(hud);
     const short = mode === 'short';
     const floatingPrompt = mode === 'wide';
     const melee = otherPlayers.length > 1;
     const columnRef = useRef(null);
-    const coverOf = (side) =>
-        floatingPrompt && side === promptSide ? 'var(--board-prompt-width)' : '0px';
+    // The room at the board's left that the desktop prompt lies over
+    const cover = floatingPrompt ? 'var(--board-prompt-width)' : '0px';
     const boardRef = useRef(null);
     const sideFlex = useEqualPlayAreas(boardRef, mode);
     const zoomed = useCardHover((current) => !!current.code);
@@ -425,11 +405,7 @@ const AdaptiveGameBoardLayout = ({
                         ? 'border-b border-default-200/40'
                         : 'border-t border-default-200/40'
                 )}
-                style={
-                    short
-                        ? { [promptSide === 'right' ? 'paddingRight' : 'paddingLeft']: columnWidth }
-                        : undefined
-                }
+                style={short ? { paddingLeft: columnWidth } : undefined}
             >
                 <Part area='id' scale={pileScale} className='shrink !min-w-min'>
                     <PlotFactionStack
@@ -498,12 +474,7 @@ const AdaptiveGameBoardLayout = ({
         );
 
         const play = (
-            <PlayArea
-                inline={short}
-                promptSide={short ? promptSide : null}
-                prompt={prompt ? floatingPanel : null}
-                promptAt={promptSide}
-            >
+            <PlayArea inline={short} column={short} prompt={prompt ? floatingPanel : null}>
                 {(overflow) => (
                     <PlayerBoard
                         isDroppable={isMe}
@@ -523,8 +494,7 @@ const AdaptiveGameBoardLayout = ({
         const rail = short && (
             <div
                 className={classNames(
-                    'pointer-events-none absolute inset-0 z-[300] flex flex-col',
-                    promptSide === 'right' ? 'items-end' : 'items-start',
+                    'pointer-events-none absolute inset-0 z-[300] flex flex-col items-start',
                     side === 'top' ? 'justify-start' : 'justify-end'
                 )}
             >
@@ -537,8 +507,7 @@ const AdaptiveGameBoardLayout = ({
                     active={melee && player.isActivePrompt}
                     style={{ width: `calc(${columnWidth} - 0.5rem)` }}
                     className={classNames(
-                        'sticky my-1',
-                        promptSide === 'right' ? 'right-1' : 'left-1',
+                        'sticky left-1 my-1',
                         side === 'top' ? 'top-1' : 'bottom-1'
                     )}
                 />
@@ -574,7 +543,7 @@ const AdaptiveGameBoardLayout = ({
                     [waitedOn]: melee && player.isActivePrompt
                 })}
             >
-                {promptSide === 'left' && rail}
+                {rail}
                 <div className='flex min-w-0 flex-1 flex-col'>
                     {side === 'top' ? (
                         <>
@@ -591,7 +560,6 @@ const AdaptiveGameBoardLayout = ({
                         </>
                     )}
                 </div>
-                {promptSide === 'right' && rail}
             </div>
         );
     };
@@ -731,10 +699,7 @@ const AdaptiveGameBoardLayout = ({
         >
             {promptBar(
                 'panel',
-                classNames(
-                    'border shadow-[0_6px_18px_rgba(0,0,0,0.6)]',
-                    promptSide === 'right' ? 'rounded-l-md border-r-0' : 'rounded-r-md border-l-0'
-                ),
+                'rounded-r-md border border-l-0 shadow-[0_6px_18px_rgba(0,0,0,0.6)]',
                 true
             )}
         </div>
@@ -763,7 +728,6 @@ const AdaptiveGameBoardLayout = ({
             const rectOf = (selector) =>
                 boardRef.current?.querySelector(selector)?.getBoundingClientRect();
             const height = window.innerHeight;
-            const onRight = promptSide === 'right';
             const bars = topBarsRef.current?.getBoundingClientRect();
             const column = columnRef.current?.getBoundingClientRect();
             const tools = rectOf('[data-region="tools"]');
@@ -777,8 +741,7 @@ const AdaptiveGameBoardLayout = ({
                 '--board-chat-bottom': mode === 'narrow' && tools ? height - tools.top + 4 : 0,
                 '--board-rail-top': topRail ? topRail.bottom : 0,
                 '--board-rail-bottom': bottomRail ? height - bottomRail.top : 0,
-                '--board-chat-left': column && !onRight ? column.right : 0,
-                '--board-chat-right': column && onRight ? root.clientWidth - column.left : 0
+                '--board-chat-left': column ? column.right : 0
             };
             for (const [name, value] of Object.entries(values)) {
                 if (written[name] !== value) {
@@ -818,7 +781,7 @@ const AdaptiveGameBoardLayout = ({
             scroller?.removeEventListener('scroll', placeSoon);
             Object.keys(written).forEach((name) => root.style.removeProperty(name));
         };
-    }, [mode, promptSide]);
+    }, [mode]);
 
     const opponents = otherPlayers.map((player) => (
         <div
@@ -872,16 +835,13 @@ const AdaptiveGameBoardLayout = ({
                       style={{
                           gridColumn: `${index === 0 ? 1 : index + 2} / ${index === columns - 1 ? columns + 3 : index + 3}`,
                           gridRow: side === 'top' ? 1 : floatingPrompt ? 3 : 2,
-                          '--board-cover-left': index === 0 ? coverOf('left') : '0px',
-                          '--board-cover-right': index === columns - 1 ? coverOf('right') : '0px'
+                          '--board-cover-left': index === 0 ? cover : '0px'
                       }}
                   >
                       {renderSide(player, side, {
                           seat: index,
                           below: player === thisPlayer ? handTray : null,
-                          prompt:
-                              side === 'bottom' &&
-                              index === (promptSide === 'right' ? columns - 1 : 0)
+                          prompt: side === 'bottom' && index === 0
                       })}
                   </div>
               );
@@ -890,12 +850,11 @@ const AdaptiveGameBoardLayout = ({
                       data-melee-table=''
                       className='relative grid min-h-full flex-1'
                       style={{
-                          gridTemplateColumns: `${coverOf('left')} repeat(${columns}, auto) ${coverOf('right')}`,
+                          gridTemplateColumns: `${cover} repeat(${columns}, auto) 0px`,
                           // auto, not fr: equal rows would stretch the top row to ours, opening gaps in the
                           // opponents' play areas. The prompt's row takes no height.
                           gridTemplateRows: floatingPrompt ? 'auto 0px auto' : 'auto auto',
-                          '--board-cover-left': '0px',
-                          '--board-cover-right': '0px'
+                          '--board-cover-left': '0px'
                       }}
                   >
                       {['left', 'right'].map((end) => (
@@ -927,8 +886,7 @@ const AdaptiveGameBoardLayout = ({
                         className='relative flex h-full w-full overflow-hidden'
                         style={{
                             '--board-prompt-width': floatingPromptWidth,
-                            '--board-cover-left': coverOf('left'),
-                            '--board-cover-right': coverOf('right')
+                            '--board-cover-left': cover
                         }}
                     >
                         {short && (
@@ -936,9 +894,7 @@ const AdaptiveGameBoardLayout = ({
                                 data-region='prompt-column'
                                 className={classNames(
                                     'pointer-events-none absolute z-[305] flex flex-col pb-[calc(var(--board-rail-bottom,0px)+0.25rem)] pt-[calc(var(--board-rail-top,0px)+0.25rem)]',
-                                    promptSide === 'right'
-                                        ? 'bottom-0 right-0 top-0 pr-[env(safe-area-inset-right)]'
-                                        : 'bottom-0 left-0 top-0 pl-[env(safe-area-inset-left)]'
+                                    'bottom-0 left-0 top-0 pl-[env(safe-area-inset-left)]'
                                 )}
                                 style={{ width: columnWidth }}
                             >
@@ -960,14 +916,9 @@ const AdaptiveGameBoardLayout = ({
                                 </div>
                                 <div
                                     data-region='column-tools'
-                                    className={classNames(
-                                        'flex shrink-0 px-1',
-                                        promptSide === 'right' ? 'justify-end' : 'justify-start'
-                                    )}
+                                    className='flex shrink-0 justify-start px-1'
                                 >
-                                    {tools(
-                                        classNames({ 'flex-row-reverse': promptSide !== 'right' })
-                                    )}
+                                    {tools('flex-row-reverse')}
                                 </div>
                             </div>
                         )}
@@ -990,10 +941,8 @@ const AdaptiveGameBoardLayout = ({
                             )}
                             <div
                                 className={classNames('flex min-h-0 flex-1 flex-col', {
-                                    'pl-[env(safe-area-inset-left)]':
-                                        !short || promptSide === 'right',
-                                    'pr-[env(safe-area-inset-right)]':
-                                        !short || promptSide === 'left',
+                                    'pl-[env(safe-area-inset-left)]': !short,
+                                    'pr-[env(safe-area-inset-right)]': true,
                                     'pb-[var(--safe-bottom)] pt-[var(--safe-top)]': short
                                 })}
                             >

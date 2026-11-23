@@ -11,6 +11,7 @@ import { avatarUpdated, setAuthTokens, setUser } from '../redux/reducers/auth';
 import { defaultActionWindows } from '../constants';
 import { DefaultBackground } from '../../shared/backgrounds';
 import { normalizeHud } from '../hud';
+import { estimateBoardMeasure, fitSizedHud } from '../Components/GameBoard/boardScales';
 import { hudStore } from '../hudStore';
 import Page from './Page';
 import { keyboardShortcutsEnabled } from '../Components/GameBoard/keyboardShortcuts';
@@ -30,6 +31,15 @@ const sectionComponents = {
     integrations: IntegrationSettings,
     gameplay: GameplaySettings,
     appearance: AppearanceSettings
+};
+
+// A fixed size is shown, and saved, as the fitted sizes that look the same on this screen
+const fittedHud = (settings) => {
+    const hud = normalizeHud(settings);
+    return fitSizedHud(
+        hud,
+        estimateBoardMeasure(hud, { width: window.innerWidth, height: window.innerHeight })
+    );
 };
 
 const changedFields = (values, initialValues) =>
@@ -99,7 +109,7 @@ const Profile = ({ section }) => {
         hideInterrupts: settings.hideInterrupts ?? true,
         hideReactions: settings.hideReactions ?? true,
         keyboardShortcuts: keyboardShortcutsEnabled(settings),
-        hud: normalizeHud(settings),
+        hud: fittedHud(settings),
         background:
             !settings.background || (settings.background === 'custom' && !user.customBackground)
                 ? DefaultBackground

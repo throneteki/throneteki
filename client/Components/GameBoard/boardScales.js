@@ -52,6 +52,25 @@ export const adaptiveScales = (hud, { container, viewport, rem = 16, mode, conte
 export const boardScales = (hud, measure) =>
     hud.board === 'adaptive' ? adaptiveScales(hud, measure) : classicScales(hud, measure);
 
+// The settings' sliders' ranges
+export const sliderRanges = { cards: { min: 0.5, max: 3 }, interface: { min: 0.6, max: 2 } };
+
+// A fixed size (auto off, the sizing every board fits now replaced) as fitted sizes that draw the same on this board
+// and screen: each size divided by the fit it would otherwise be scaled by
+export const fitSizedHud = (hud, measure) => {
+    if (hud.auto !== false) {
+        return hud;
+    }
+    const fixed = boardScales(hud, measure);
+    const fit = boardScales({ ...hud, auto: true, cards: '1', interface: '1' }, measure);
+    const sizeOf = (kind) => {
+        const { min, max } = sliderRanges[kind];
+        const size = Math.min(max, Math.max(min, fixed[kind] / fit[kind]));
+        return String(Math.round(size * 100) / 100);
+    };
+    return { ...hud, auto: true, cards: sizeOf('cards'), interface: sizeOf('interface') };
+};
+
 // What the board in play was last measured at, for previewing other settings against it
 let lastMeasure = null;
 export const setBoardMeasure = (measure) => {

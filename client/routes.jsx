@@ -51,7 +51,6 @@ const devRoutes = DevBoard
                           panel={context.params.panel}
                           manual={context.params.manual}
                           spectate={context.params.spectate}
-                          prompt={context.params.prompt}
                           long={context.params.long}
                           crowd={context.params.crowd}
                           lag={context.params.lag}

@@ -1,4 +1,4 @@
-import { boardLayouts, hudToggles, isOverlayTimer, promptSides } from '../shared/hudSettings.js';
+import { boardLayouts, hudToggles } from '../shared/hudSettings.js';
 
 const sizePattern = /^(?:small|normal|large|\d{1,2}(?:\.\d{1,2})?)$/;
 
@@ -19,18 +19,10 @@ export function sanitizeHud(hud) {
         result.board = hud.board;
     }
 
-    if (promptSides.includes(hud.promptSide)) {
-        result.promptSide = hud.promptSide;
-    }
-
     for (const key of hudToggles) {
         if (typeof hud[key] === 'boolean') {
             result[key] = hud[key];
         }
-    }
-
-    if (isOverlayTimer(hud.overlayTimer)) {
-        result.overlayTimer = hud.overlayTimer;
     }
 
     return Object.keys(result).length > 0 ? result : undefined;

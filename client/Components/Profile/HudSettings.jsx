@@ -10,22 +10,17 @@ import { chipClass } from '../GameBoard/Adaptive/chipClass';
 import SettingsGroup, { tileClassNames } from './SettingsGroup';
 import SettingSwitch from './SettingSwitch';
 import { useBrowserReducedMotion } from '../../motion';
-import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { overlaySettingsOf, resolveHudSize } from '../../hud';
-import { overlayTimerLimits } from '../../../shared/hudSettings';
 import SettingReveal from './SettingReveal';
 import { interfaceScaleProperties } from '../GameBoard/useHudScale';
-import { boardMeasure, boardScales, estimateBoardMeasure } from '../GameBoard/boardScales';
-
-const sliderRanges = { cards: { min: 0.5, max: 3 }, interface: { min: 0.6, max: 2 } };
-
-const fixedSizes = {
-    cards: [0.5, 0.7, 1, 1.4, 2, 3],
-    interface: [0.7, 0.85, 1, 1.2, 1.5]
-};
-const fixedSizeNames = ['X-Small', 'Small', 'Medium', 'Large', 'X-Large', 'XX-Large'];
+import {
+    boardMeasure,
+    boardScales,
+    estimateBoardMeasure,
+    sliderRanges
+} from '../GameBoard/boardScales';
 
 const previewCards = ['01144', '01089', '01160', 'cardback'];
 
@@ -142,25 +137,10 @@ const InterfacePreview = ({ board }) => {
     );
 };
 
-const nearestIndex = (sizes, scale) =>
-    sizes.reduce(
-        (best, size, index) =>
-            Math.abs(size - scale) < Math.abs(sizes[best] - scale) ? index : best,
-        0
-    );
-
-// A size saved off the named steps (from before they were named) sits at the nearest step, unnamed, until moved
-const stepMarks = (sizes, scale) =>
-    sizes.map((size, index) => ({
-        value: index,
-        label: Math.abs(size - scale) < 0.001 ? fixedSizeNames[index] : ''
-    }));
-
-// The slider moves freely while dragged, and the size is only changed once it is let go, so a game is not refitted
-// (and sent to the server) at every step. Fixed, it steps between named sizes; fitted, it scales the fit smoothly.
-const SizeSlider = ({ kind, label, description, value, fixed, onChange, wontFit, preview }) => {
+// The slider scales the fit to the screen. It moves freely while dragged, and the size is only changed once it is let
+// go, so a game is not refitted (and sent to the server) at every step.
+const SizeSlider = ({ kind, label, description, value, onChange, wontFit, preview }) => {
     const { min, max } = sliderRanges[kind];
-    const sizes = fixedSizes[kind];
     const saved = resolveHudSize(kind, value);
     const [draft, setDraft] = useState(null);
     const shown = draft ?? saved;
@@ -169,25 +149,6 @@ const SizeSlider = ({ kind, label, description, value, fixed, onChange, wontFit,
         setDraft(null);
         onChange(String(Math.round(scale * 100) / 100));
     };
-    const sliderProps = fixed
-        ? {
-              step: 1,
-              minValue: 0,
-              maxValue: sizes.length - 1,
-              showSteps: true,
-              value: nearestIndex(sizes, shown),
-              marks: stepMarks(sizes, shown),
-              onChange: (next) => setDraft(sizes[scaleOf(next)]),
-              onChangeEnd: (next) => commit(sizes[scaleOf(next)])
-          }
-        : {
-              step: 0.05,
-              minValue: min,
-              maxValue: max,
-              value: Math.min(max, Math.max(min, shown)),
-              onChange: (next) => setDraft(scaleOf(next)),
-              onChangeEnd: (next) => commit(scaleOf(next))
-          };
 
     return (
         <div className='flex min-w-0 flex-col gap-2'>
@@ -209,22 +170,17 @@ const SizeSlider = ({ kind, label, description, value, fixed, onChange, wontFit,
                     </Button>
                 </div>
             </div>
-            <motion.div
-                key={fixed ? 'fixed' : 'fit'}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.25 }}
-            >
-                <Slider
-                    aria-label={`${label} size`}
-                    size='sm'
-                    hideValue
-                    classNames={{
-                        mark: '!opacity-100 pointer-events-none whitespace-nowrap text-tiny'
-                    }}
-                    {...sliderProps}
-                />
-            </motion.div>
+            <Slider
+                aria-label={`${label} size`}
+                size='sm'
+                hideValue
+                step={0.05}
+                minValue={min}
+                maxValue={max}
+                value={Math.min(max, Math.max(min, shown))}
+                onChange={(next) => setDraft(scaleOf(next))}
+                onChangeEnd={(next) => commit(scaleOf(next))}
+            />
             {preview(shown)}
         </div>
     );
@@ -245,40 +201,6 @@ const WontFit = ({ show }) => (
         </div>
     </SettingReveal>
 );
-
-// How long the overlays that close by themselves stay, in whole seconds; changed when the slider is let go
-const OverlayTimer = ({ seconds, onChange }) => {
-    const [draft, setDraft] = useState(null);
-    const shown = draft ?? seconds;
-    const secondsOf = (next) => (Array.isArray(next) ? next[0] : next);
-    return (
-        <div className='flex flex-col gap-2 border-t border-default-100 px-3 py-2.5'>
-            <div className='flex items-start justify-between gap-2'>
-                <div className='flex flex-col gap-0.5'>
-                    <span className='text-medium'>Close overlays after</span>
-                    <span className='text-small text-default-500'>
-                        Overlays during the game close by themselves after this long.
-                    </span>
-                </div>
-                <span className='shrink-0 text-small tabular-nums'>{shown}s</span>
-            </div>
-            <Slider
-                aria-label='Seconds before an overlay closes'
-                size='sm'
-                step={1}
-                minValue={overlayTimerLimits.min}
-                maxValue={overlayTimerLimits.max}
-                value={shown}
-                hideValue
-                onChange={(next) => setDraft(secondsOf(next))}
-                onChangeEnd={(next) => {
-                    setDraft(null);
-                    onChange(secondsOf(next));
-                }}
-            />
-        </div>
-    );
-};
 
 const experimentalChip = (
     <Chip size='sm' color='warning' variant='flat' className='shrink-0'>
@@ -330,24 +252,6 @@ const HudSettings = ({ value, onChange, inGame = false }) => {
                         </Radio>
                     </RadioGroup>
                 </Choice>
-                <Choice
-                    label='Prompt position'
-                    description='Which side of the board the prompt and its buttons sit on in a landscape view.'
-                >
-                    <RadioGroup
-                        aria-label='Prompt position'
-                        value={value.promptSide || 'left'}
-                        onValueChange={(promptSide) => update({ promptSide })}
-                        classNames={{ wrapper: 'grid grid-cols-2 gap-2' }}
-                    >
-                        <Radio value='left' classNames={tileClassNames}>
-                            Left
-                        </Radio>
-                        <Radio value='right' classNames={tileClassNames}>
-                            Right
-                        </Radio>
-                    </RadioGroup>
-                </Choice>
             </SettingsGroup>
             <SettingsGroup
                 title='Board effects'
@@ -371,48 +275,18 @@ const HudSettings = ({ value, onChange, inGame = false }) => {
                         isSelected={overlays.enabled}
                         onValueChange={(enabled) => update({ overlays: enabled })}
                     />
-                    <SettingReveal show={overlays.enabled}>
-                        <OverlayTimer
-                            seconds={overlays.seconds}
-                            onChange={(overlayTimer) => update({ overlayTimer })}
-                        />
-                    </SettingReveal>
                 </SettingReveal>
             </SettingsGroup>
             <SettingsGroup
                 title='Sizes'
-                description='The previews show how the board will look on this screen once saved.'
+                description='The board is sized to fit your screen; these scale that fit. The previews show how the board will look on this screen once saved.'
             >
-                <Choice label='Sizing'>
-                    <RadioGroup
-                        aria-label='Sizing'
-                        value={value.auto ? 'fit' : 'fixed'}
-                        onValueChange={(sizing) => update({ auto: sizing === 'fit' })}
-                        classNames={{ wrapper: 'grid gap-2 sm:grid-cols-2' }}
-                    >
-                        <Radio
-                            value='fixed'
-                            description='The sliders set the sizes, whatever the screen.'
-                            classNames={describedTileClassNames}
-                        >
-                            Fixed size
-                        </Radio>
-                        <Radio
-                            value='fit'
-                            description='Sized to your screen; the sliders scale the fit.'
-                            classNames={describedTileClassNames}
-                        >
-                            <Experimental>Fit to screen</Experimental>
-                        </Radio>
-                    </RadioGroup>
-                </Choice>
                 <div className='grid gap-4 p-3'>
                     <SizeSlider
                         kind='cards'
                         label='Cards'
                         description='Card images, piles and counters.'
                         value={value.cards}
-                        fixed={!value.auto}
                         onChange={(cards) => update({ cards })}
                         wontFit={(scale) => scalesFor('cards', scale).overflow === 'cards'}
                         preview={(scale) => (
@@ -429,7 +303,6 @@ const HudSettings = ({ value, onChange, inGame = false }) => {
                         label='Interface'
                         description='Player bar, prompt, chat, popups and all text.'
                         value={value.interface}
-                        fixed={!value.auto}
                         onChange={(size) => update({ interface: size })}
                         wontFit={(scale) => scalesFor('interface', scale).overflow === 'interface'}
                         preview={(scale) => (

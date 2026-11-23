@@ -1,4 +1,4 @@
-import { boardLayouts, hudToggles, isOverlayTimer, promptSides } from '../shared/hudSettings';
+import { boardLayouts, hudToggles } from '../shared/hudSettings';
 
 const sizeKinds = {
     cards: { presets: { small: 0.7, normal: 1, large: 1.4 }, min: 0.5, max: 5 },
@@ -8,15 +8,12 @@ const sizeKinds = {
 const hudKinds = Object.keys(sizeKinds);
 const hudSizeNames = ['small', 'normal', 'large'];
 
-// Overlays show unless turned off; both settings are left out until changed
-const defaultOverlayTimer = 3;
+// Overlays show unless turned off (left out until changed); those that close by themselves stay this long
+const overlaySeconds = 3;
 export const overlaySettingsOf = (hud) => ({
     enabled: hud?.overlays !== false,
-    seconds: isOverlayTimer(hud?.overlayTimer) ? hud.overlayTimer : defaultOverlayTimer
+    seconds: overlaySeconds
 });
-
-// The prompt sits on the left unless the player chose the right
-export const promptSideOf = (hud) => (hud?.promptSide === 'right' ? 'right' : 'left');
 
 export const defaultHud = {
     cards: 'normal',
@@ -92,14 +89,8 @@ export const normalizeHud = (settings) => {
                 result[key] = hud[key];
             }
         }
-        if (isOverlayTimer(hud.overlayTimer)) {
-            result.overlayTimer = hud.overlayTimer;
-        }
         if (boardLayouts.includes(hud.board)) {
             result.board = hud.board;
-        }
-        if (promptSides.includes(hud.promptSide)) {
-            result.promptSide = hud.promptSide;
         }
         return result;
     }
