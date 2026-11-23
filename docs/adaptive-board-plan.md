@@ -1,8 +1,13 @@
 # Adaptive game board: plan
 
-An experimental game board that works without scrolling on phones in portrait and landscape and scales
-up to desktop. It sits beside the current ("classic") board, and a player chooses between them in the
-HUD settings.
+A game board built desktop first, with phones as a strong consideration: about 98% of players are on desktop,
+so the board is designed for desktop and built with phones in mind, rather than fitted to phones and scaled up.
+It sits beside the current ("classic") board, and a player chooses between them in their profile. Classic is not
+going away; whether the adaptive board becomes the default later is undecided.
+
+**Desktop keeps classic's mechanics** unless there is an extremely good, stated reason a change is better (decided
+2026-11-22). Ideas that suit phones (combined pile sheets, the docked prompt, extra controls) stay on phone
+layouts and must not leak into desktop. Pick a sensible default over adding an option.
 
 - Branch: `feat/adaptive-board`, branched from `feat/gameboard-overhaul`.
 - Status: phases 0–6 built; the open items need a real phone or a real game (see "Review (2026-11-20)").
@@ -11,13 +16,13 @@ HUD settings.
 
 ## Goals
 
-1. The page never scrolls. Only a crowded play-area row may scroll, sideways and on its own, as a last
+1. On desktop the board plays as classic does: the same prompt, piles, chat and controls, in the same places.
+2. On phones the page never scrolls. Only a crowded play-area row may scroll, sideways and on its own, as a last
    resort.
-2. Popups and modals suit a phone: sheets anchored to the screen edge, not floating windows.
-3. The player prompt is designed for a phone first and scales up to desktop.
+3. On phones, popups and modals suit the screen: sheets anchored to its edge, not floating windows.
 4. The board layout adapts to the screen's size and orientation, and every area stays where players
    expect to find it.
-5. The player bars are reworked for each size and orientation.
+5. The player bars suit each size and orientation.
 
 Out of scope for now: changing how taps work on touch screens (decided 2026-11-16: keep "tap clicks,
 hold still to zoom, hold and move to drag").
@@ -56,6 +61,7 @@ hold still to zoom, hold and move to drag").
 | 2026-11-17 | R11: the divider is the scoreboard. Each player's avatar with large power and gold (with their icons) sit at its ends: the opponent's on the left, ours on the right. Initiative, claim and reserve are small badges on each active plot.                                                                                                                        |
 | 2026-11-17 | R5: the prompt title has its own small, dim line above the instruction text.                                                                                                                                                                                                                                                                                     |
 | 2026-11-17 | R13: on phone layouts the chat tab is replaced by a chat button on the divider, with the unread count, and the chat still drops down smoothly.                                                                                                                                                                                                                   |
+| 2026-11-22 | Desktop first, built with phones in mind. Desktop keeps classic mechanics unless there is an extremely good reason (see the top of this file and R256–R269). Classic stays; adaptive as the default is undecided.                                                                                                                                                |
 
 ## Rules that hold in every layout
 
@@ -1083,6 +1089,52 @@ From the review on 2026-11-20 (second batch):
 - [x] **R255 The phone chat stops above the joust bar again (2026-11-22)**: since R251 put our tools in the portrait joust
       bar, nothing was marked as our tools, so the open chat ran to the bottom of the screen over the bar and its Hide
       chat button. The bar is marked as the tools (data-region), so the chat stops above it.
+- [ ] **R256 Review (2026-11-22): desktop keeps classic mechanics.** A review of the overhaul found desktop had drifted
+      from classic. R257–R270 are the decisions from it; each applies the rule at the top of this file.
+- [ ] **R257 One chat order everywhere**: drop the phone's newest-first order (`newestFirst`). Fix the keyboard
+      covering the newest messages instead: normal order, input at the bottom, the chat shrinking above the keyboard
+      (`--visual-height`).
+- [ ] **R258 Keep the phase wheel**: it replaces the phase label (adding, not taking away) and shows the phase order
+      to newer players. Names cut off at its edges are intended: it is a wheel that turns through the phases.
+- [ ] **R259 The game log on the phase wheel shows while the chat is closed**, in any layout, and hides while it is
+      open. Its pace stays as it is, but its timings are gathered as named constants in one place, easy to tune: how
+      long a line shows on its own and with others queued behind it, the longest a line stays, how fast a long line
+      scrolls with and without a queue, the pauses at its ends, and the fade.
+- [ ] **R260 Fewer options**: the prompt side (classic's side), the overlay timer and the fixed-size mode go. Cards
+      always fit the screen and the sliders scale the fit; card and interface sizes and animations stay. A fixed
+      size (the legacy `cardSize`, or `auto: false`) is converted when settings are next saved: the slider becomes
+      the old size divided by the fit for the screen and board saved from, so the cards look the same. Until then the
+      board still draws the fixed size, hidden from the settings.
+- [ ] **R261 Appearance lives in the profile only**: the in-game settings keep gameplay options (prompting, keywords
+      and the like) and drop the appearance ones.
+- [ ] **R262 Overlays name players by name and avatar**, as the rest of the site does, not by deck. The start and the
+      end of the game keep their cards.
+- [ ] **R263 Phone prompt buttons are never covered**: with many choices the stats bar covered the top row, and a tap
+      there opened the game menu.
+- [ ] **R264 No choice overlays, for now**: they duplicate the prompt. They came from melee title selection on phones,
+      where the card art matters and buttons hide it; a better phone solution is for later.
+- [ ] **R265 The desktop prompt is classic's**: back in classic's position, with its shortcut numbers.
+- [ ] **R266 Desktop piles are separate**: each opens on its own, several at once, as on classic, in the new visual
+      style. Phones keep their current drawers (sheets).
+- [ ] **R267 Avatars match the site's**.
+- [ ] **R268 Performance belongs elsewhere**: master's state diffs (#3838, applied inside immer) keep unchanged state's
+      identity, so `reuseUnchanged` goes. The image cache (`imageCache.js`, `useImagePreload`) goes too: images are
+      served by the infrastructure, not this code.
+- [ ] **R269 PlaceCardUnderneath (paused)**: the direct `removeCardFromPile`/`addChildCard` calls in its handler, and
+      in the drop command's agenda drop, are master's code. This branch only added two checks and the `LeavePlay`
+      wrapping for a card from play, used by manual drag and drop alone. Revisit once the reviewer says which rule.
+- [x] **R270 Every action shows it is being processed (adaptive board, 2026-11-23)**: an action the board sends is
+      marked pending (pendingActions.js) until the game server answers a ping sent right after it: the server handles a
+      socket's messages in order, sending any new state first, so the answer means the action is done even when it
+      changed nothing (no server change). What it acted on pulses darker from 150ms, so a quick answer shows
+      nothing: the card, the prompt's button (or its lookup), a pile's action, a stat's +/-, the bar's menu buttons.
+      A card only pulses when the server says a click does something (it can be chosen, or it is the player's and
+      can be used or played; any card in manual mode), and a click that does nothing is sent quietly, not waited on
+      at all. A repeat of a pending action is not sent. A hand card used on a phone stays raised until answered. No
+      popup: steady lag shows only the pulse. After 8s "Waiting for server…" with a spinner shows in the prompt bar:
+      beside the board its own row grows in above the prompt; in the phone's docked bar it cross-fades with the
+      title line so the bar keeps its height. At 15s a Reload button widens in beside it. The timings are in pendingTiming. The dev
+      board's Lag (&lag=, up to 20s) pretends the server takes that long.
 - [x] **R234 Tokens are in the middle of the card again, and their changes stand out**: the +x / −x that floats off a
       counter is a larger bold pill, green or red, and stays a little longer (both boards).
 

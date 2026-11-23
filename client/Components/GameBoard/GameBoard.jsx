@@ -32,6 +32,7 @@ import { BoardLayoutProvider, useBoardLayout } from './Adaptive/useBoardLayout';
 import { useAdaptivePage } from './Adaptive/useAdaptivePage';
 import { hidesNavbar } from '../../boardLayoutStore';
 import { ManualModeContext } from './ManualModeContext';
+import { clickDoesSomething } from './pendingActions';
 import { useRenderCount } from '../../perf';
 import { useHudScale } from './useHudScale';
 import { hudStore, useHud } from '../../hudStore';
@@ -392,9 +393,14 @@ const GameBoard = () => {
 
     const onCardClick = useCallback(
         (card) => {
-            dispatch(sendCardClickedMessage(card.uuid));
+            dispatch(
+                sendCardClickedMessage(
+                    card.uuid,
+                    !clickDoesSomething(card, !!currentGame?.manualMode)
+                )
+            );
         },
-        [dispatch]
+        [dispatch, currentGame?.manualMode]
     );
 
     const { players, thisPlayer, otherPlayers, userPlayer } = useMemo(() => {

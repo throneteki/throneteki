@@ -31,6 +31,8 @@ import { holdToDrag } from './HoldTouchSensor';
 import { restingAngle } from '../../tableFeel';
 import { motionOff, pulseCard } from '../../flip';
 import { useRenderCount } from '../../perf';
+import { useAdaptiveBoard } from './adaptiveContext';
+import { clickDoesSomething, pendingKeys, pendingLook, usePending } from './pendingActions';
 
 const noDrag = {};
 
@@ -56,6 +58,11 @@ const CardView = ({
     const { attributes, listeners, setNodeRef, isDragging } = drag;
     const isCarried = useIsCarried(card?.uuid);
     const isUnderTarget = useIsUnderTarget(wrapped && source === 'play area' ? card?.uuid : null);
+    // A click the server will ignore, such as on an opponent's card, does not pulse
+    const adaptive = useAdaptiveBoard();
+    const manualMode = useContext(ManualModeContext);
+    const pulses = adaptive && clickDoesSomething(card, manualMode);
+    const pending = pendingLook(usePending(pulses ? pendingKeys.card(card.uuid) : null));
     const [showUnderneath, setShowUnderneath] = useState(false);
     const cardRef = useRef(null);
 
@@ -472,7 +479,11 @@ const CardView = ({
                     onClick={handleClick}
                     style={{ zIndex: cardStackIndex--, rotate: resting }}
                 >
-                    <div data-card-body='' className='card-body'>
+                    <div
+                        data-card-body=''
+                        className={classNames('card-body', pending.className)}
+                        style={pending.style}
+                    >
                         <CardFace
                             code={imageCode}
                             orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}

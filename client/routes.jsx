@@ -54,6 +54,7 @@ const devRoutes = DevBoard
                           prompt={context.params.prompt}
                           long={context.params.long}
                           crowd={context.params.crowd}
+                          lag={context.params.lag}
                           players={context.params.players}
                       />
                   </React.Suspense>

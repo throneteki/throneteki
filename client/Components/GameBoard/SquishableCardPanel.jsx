@@ -1,4 +1,11 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, {
+    useCallback,
+    useContext,
+    useEffect,
+    useLayoutEffect,
+    useRef,
+    useState
+} from 'react';
 import { createPortal } from 'react-dom';
 import { motionOff } from '../../flip';
 import { cardHeight, cardScaleOf, remSize } from '../../cardScale';
@@ -12,6 +19,9 @@ import { useMotionEnabled } from '../../motion';
 import { useStagedArrivals } from './useStagedArrivals';
 import { useHiddenDragUuid, useIncomingSlot } from './dragStore';
 import { boardRescaleEvent } from './useHudScale';
+import { useAdaptiveBoard } from './adaptiveContext';
+import { clickDoesSomething, pendingKeys, usePending } from './pendingActions';
+import { ManualModeContext } from './ManualModeContext';
 
 const raiseTime = 150;
 
@@ -116,16 +126,35 @@ const SquishableCardPanel = ({
         return () => clearTimeout(timer);
     }, [loweringUuid]);
 
+    // On the adaptive board a raised card that is used stays up until the game answers, so it is not seen to drop
+    // back as though nothing happened
+    const adaptive = useAdaptiveBoard();
+    const manualMode = useContext(ManualModeContext);
+    const [awaiting, setAwaiting] = useState(null);
+    const awaitingPending = usePending(awaiting ? pendingKeys.card(awaiting) : null);
+    useEffect(() => {
+        if (awaiting && !awaitingPending) {
+            setAwaiting(null);
+            setLift((current) =>
+                current.raised === awaiting ? { raised: null, lowering: awaiting } : current
+            );
+        }
+    }, [awaiting, awaitingPending]);
+
     const onSquishedCardClick = useCallback(
         (card) => {
             if (pressedByTouch() && card.uuid !== raisedUuid) {
                 raise(card.uuid);
                 return;
             }
-            raise(null);
+            if (adaptive && card.uuid === raisedUuid && clickDoesSomething(card, manualMode)) {
+                setAwaiting(card.uuid);
+            } else {
+                raise(null);
+            }
             onCardClick?.(card);
         },
-        [raisedUuid, raise, onCardClick]
+        [adaptive, manualMode, raisedUuid, raise, onCardClick]
     );
 
     useEffect(() => {

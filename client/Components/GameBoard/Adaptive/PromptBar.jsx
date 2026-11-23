@@ -18,6 +18,8 @@ import { chipClass } from './chipClass';
 import { motionOff, motionSettingOff } from '../../../flip';
 import Messages from '../Messages';
 import { logMinimum, useLogFeed } from './useLogFeed';
+import { pendingKeys, pendingLook, usePending } from '../pendingActions';
+import PendingChip, { PendingRow, usePendingStage } from './PendingChip';
 
 const fadeTime = 0.3;
 // A line too long for its row scrolls along at this speed, after a pause to start reading it
@@ -180,12 +182,18 @@ const useSelection = (active) => {
 };
 
 const Chip = ({ button, onPress, fullWidth = false }) => {
+    const pending = pendingLook(usePending(pendingKeys.button(button)));
     const chip = (
         <Button
             type='button'
             size='sm'
             variant='bordered'
-            className={classNames(chipClass(button.cancel), fullWidth ? 'h-9 w-full' : 'h-7')}
+            className={classNames(
+                chipClass(button.cancel),
+                fullWidth ? 'h-9 w-full' : 'h-7',
+                pending.className
+            )}
+            style={pending.style}
             onPress={(event) => onPress(event, button)}
             isDisabled={button.disabled}
             disableRipple
@@ -317,6 +325,13 @@ const OneLine = ({ lines, children }) => {
 };
 
 // The round's phases, giving way to new log lines; beside: shown on each side of it (the dock's chevrons)
+const titleFade = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+    transition: { duration: 0.25 }
+};
+
 const PhaseTrack = ({ phase, feed, beside }) => (
     <div className='flex items-center gap-2 px-2 pt-1'>
         <div className='min-w-0 flex-1' />
@@ -487,11 +502,26 @@ const PromptBar = ({
     const waiting = buttons.length === 0 && panelControls.length === 0 && !selection;
     const messages = useSelector((state) => state.lobby.currentGame?.messages);
     const feed = useLogFeed(messages);
+    // A lookup's answer is sent for its whole prompt
+    const controlsPending = pendingLook(
+        usePending(panelControls[0] ? pendingKeys.prompt(panelControls[0].promptId) : null)
+    );
     const press = (event, button) => {
         setMoreOpen(false);
         handleButtonClick(event, button);
     };
 
+    const pendingStage = usePendingStage();
+    const title = promptTitle && !waiting && (
+        <div
+            className={classNames(
+                'text-[11px] uppercase leading-tight tracking-wider',
+                endsTurn ? 'font-bold text-primary' : 'font-normal text-default-500'
+            )}
+        >
+            {promptTitle}
+        </div>
+    );
     const text = (
         <div
             className={classNames(
@@ -503,15 +533,23 @@ const PromptBar = ({
                 }
             )}
         >
-            {promptTitle && !waiting && (
-                <div
-                    className={classNames(
-                        'text-[11px] uppercase leading-tight tracking-wider',
-                        endsTurn ? 'font-bold text-primary' : 'font-normal text-default-500'
+            {dock ? (
+                // The docked bar keeps its height, so a long wait takes the title's line for a while
+                <AnimatePresence mode='wait' initial={false}>
+                    {pendingStage !== 'none' ? (
+                        <motion.div key='pending' {...titleFade}>
+                            <PendingChip stage={pendingStage} small />
+                        </motion.div>
+                    ) : (
+                        title && (
+                            <motion.div key='title' {...titleFade}>
+                                {title}
+                            </motion.div>
+                        )
                     )}
-                >
-                    {promptTitle}
-                </div>
+                </AnimatePresence>
+            ) : (
+                title
             )}
             {/* Docked, the prompt keeps its height whatever it says: longer text scrolls through one line */}
             <OneLine lines={dock}>
@@ -552,7 +590,11 @@ const PromptBar = ({
     );
 
     const controlsInline = inlineControls && (
-        <div data-prompt-controls='' className='flex flex-col'>
+        <div
+            data-prompt-controls=''
+            className={classNames('flex flex-col', controlsPending.className)}
+            style={controlsPending.style}
+        >
             <PromptControls
                 controls={panelControls}
                 cards={cards}
@@ -567,6 +609,7 @@ const PromptBar = ({
             <PhaseTrack phase={phase} feed={feed} beside={chevrons} />
             <Rule />
             <div className='flex flex-col px-2 pb-1 pt-1'>
+                {!dock && <PendingRow stage={pendingStage} />}
                 <div className='grid min-w-0 grid-cols-[1fr_auto_1fr] items-center gap-2'>
                     <span />
                     {text}

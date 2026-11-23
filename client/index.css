@@ -873,3 +873,26 @@ html.card-dragging.card-drop-refused * {
         animation: none;
     }
 }
+
+/* An element whose action is waiting on the game server pulses darker, from --pending-after (pendingActions.js). With
+   motion off it darkens instead, still only once that time has passed, so a quick answer shows nothing. Darkening
+   rather than fading keeps a card from showing what is behind it. */
+@keyframes board-pending {
+    50% {
+        filter: brightness(0.45);
+    }
+}
+
+@keyframes board-pending-still {
+    to {
+        filter: brightness(0.6);
+    }
+}
+
+.board-pending {
+    animation: board-pending 1.1s ease-in-out var(--pending-after, 150ms) infinite;
+}
+
+[data-motion='off'] .board-pending {
+    animation: board-pending-still 1ms linear var(--pending-after, 150ms) forwards !important;
+}

@@ -29,6 +29,7 @@ import {
     startGameConnecting
 } from '../reducers/game';
 import { receiveClearGameState, receiveGameState } from '../reducers/lobby';
+import { pendingKeys, pendingStore } from '../../Components/GameBoard/pendingActions';
 import { patchGameState } from '../../../shared/gameStateDiff';
 
 const GameEvent = Object.freeze({
@@ -63,6 +64,38 @@ const GameMessage = Object.freeze({
     ClearGameState: 'cleargamestate',
     Ping: 'ping'
 });
+
+// What a game action acts on, so its element can show it is waiting for the game server
+export const pendingKeysOf = (action) => {
+    if (sendCardClickedMessage.match(action)) {
+        return action.meta?.quiet ? null : [pendingKeys.card(action.payload)];
+    }
+    if (sendDragDropMessage.match(action)) {
+        return [pendingKeys.card(action.payload.uuid)];
+    }
+    if (sendButtonClickedMessage.match(action)) {
+        return [pendingKeys.button(action.payload), pendingKeys.prompt(action.payload.promptId)];
+    }
+    if (sendChangeStatMessage.match(action)) {
+        return [pendingKeys.stat(action.payload.type, action.payload.amount)];
+    }
+    if (sendShowDrawDeckMessage.match(action)) {
+        return [pendingKeys.deck('show')];
+    }
+    if (sendShuffleDeckMessage.match(action)) {
+        return [pendingKeys.deck('shuffle')];
+    }
+    if (sendToggleManualModeMessage.match(action)) {
+        return [pendingKeys.menu('manual')];
+    }
+    if (sendToggleMuteSpectatorsMessage.match(action)) {
+        return [pendingKeys.menu('mute')];
+    }
+    if (sendConcedeMessage.match(action)) {
+        return [pendingKeys.menu('concede')];
+    }
+    return null;
+};
 
 const gameMiddleware = (store) => {
     let socket;
@@ -131,6 +164,7 @@ const gameMiddleware = (store) => {
 
             socket.on(GameMessage.ClearGameState, () => {
                 gameState = undefined;
+                pendingStore.clear();
                 dispatch(receiveClearGameState());
             });
 
@@ -242,6 +276,13 @@ const gameMiddleware = (store) => {
             dispatch(gameDisconnected());
         } else if (sendConcedeMessage.match(action)) {
             socket.emit('game', GameMessage.Concede);
+        }
+
+        // The server handles a socket's messages in order, sending any new state before it answers the ping, so the
+        // answer means the action is done, whether or not it changed anything
+        const keys = pendingKeysOf(action);
+        if (keys) {
+            socket.emit(GameMessage.Ping, pendingStore.add(keys));
         }
 
         next(action);

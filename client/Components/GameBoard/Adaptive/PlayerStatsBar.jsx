@@ -3,10 +3,27 @@ import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import { Avatar, Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
 import StatContainer from '../StatContainer';
+import { pendingKeys, pendingLook, usePending } from '../pendingActions';
 import StatDisplay from '../StatDisplay';
 import { sendChangeStatMessage } from '../../../redux/reducers/game';
 
 // What the bar shows, in classic's order. Power is changed as 'power', the rest by their own name.
+// A stat whose +/- is waiting on the game server pulses
+const PendingStat = ({ change, style, children, ...props }) => {
+    const raising = usePending(pendingKeys.stat(change, 1));
+    const lowering = usePending(pendingKeys.stat(change, -1));
+    const pending = pendingLook(raising || lowering);
+    return (
+        <StatContainer
+            {...props}
+            style={{ ...style, ...pending.style }}
+            className={classNames(props.className, pending.className)}
+        >
+            {children}
+        </StatContainer>
+    );
+};
+
 const stats = [
     { code: 'totalPower', change: 'power', name: 'Power' },
     { code: 'gold', change: 'gold', name: 'Gold' },
@@ -257,8 +274,9 @@ const PlayerStatsBar = ({
                     </span>
                 )}
                 {stats.map((stat, index) => (
-                    <StatContainer
+                    <PendingStat
                         key={stat.code}
+                        change={stat.change}
                         style={placeOf(index + 1)}
                         title={stat.name}
                         className={statClass}
@@ -272,7 +290,7 @@ const PlayerStatsBar = ({
                         ) : (
                             statDisplay(stat, canChange, compact)
                         )}
-                    </StatContainer>
+                    </PendingStat>
                 ))}
             </div>
             {end && (
