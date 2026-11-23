@@ -18,7 +18,7 @@ const endTurnDelay = 500;
 
 // What every prompt does with its buttons and controls, however it is drawn
 export const usePromptActions = ({ buttons, controls, promptText, onButtonClick }) => {
-    const { data: cards, isLoading } = useGetCardsQuery();
+    const { data: cards, isLoading } = useGetCardsQuery({});
     const [pausedPromptId, setPausedPromptId] = useState();
     const shortcutsEnabled = useSelector((state) =>
         keyboardShortcutsEnabled(state.auth.user?.settings)
