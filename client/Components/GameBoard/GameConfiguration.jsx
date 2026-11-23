@@ -1,20 +1,11 @@
 import React from 'react';
 import ActionWindowSettings from '../Profile/ActionWindowSettings';
-import HudSettings from '../Profile/HudSettings';
 import SettingsGroup from '../Profile/SettingsGroup';
 import SettingSwitch from '../Profile/SettingSwitch';
 
-// This game's settings, laid out as the profile's are, a section at a time. values: the settings as changed so far;
-// onChange is given the ones that change.
-const GameConfiguration = ({ section, isSpectating, values, onChange }) => {
-    if (section === 'appearance') {
-        return (
-            <div className='flex flex-col gap-6'>
-                <HudSettings value={values.hud} onChange={(hud) => onChange({ hud })} inGame />
-            </div>
-        );
-    }
-
+// This game's gameplay settings, laid out as the profile's are. values: the settings as changed so far; onChange is
+// given the ones that change.
+const GameConfiguration = ({ isSpectating, values, onChange }) => {
     const setKeyword = (name) => (value) =>
         onChange({ keywordSettings: { ...values.keywordSettings, [name]: value } });
 

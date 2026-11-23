@@ -35,7 +35,6 @@ class Spectator {
         return {
             id: this.id,
             name: this.name,
-            hud: this.hud,
             promptDupes: this.promptDupes,
             hideInterrupts: this.hideInterrupts,
             hideReactions: this.hideReactions,

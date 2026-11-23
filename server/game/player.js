@@ -1353,7 +1353,6 @@ class Player extends Spectator {
         return {
             id: this.id,
             name: this.name,
-            hud: this.hud,
             promptDupes: this.promptDupes,
             promptedActionWindows: this.promptedActionWindows,
             hideInterrupts: this.hideInterrupts,

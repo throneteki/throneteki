@@ -11,45 +11,10 @@ const slideUp = {
     }
 };
 
-const sections = [
-    { key: 'gameplay', label: 'Gameplay' },
-    { key: 'appearance', label: 'Appearance' }
-];
-
-const sectionOf = (key) => (key === 'hud' ? 'appearance' : 'gameplay');
-
 const changed = (a, b) => JSON.stringify(a ?? null) !== JSON.stringify(b ?? null);
 
-const SectionTabs = ({ active, dirty, onSelect }) => (
-    <div role='tablist' aria-label='Settings sections' className='grid grid-cols-2 gap-1'>
-        {sections.map((section) => (
-            <button
-                key={section.key}
-                type='button'
-                role='tab'
-                aria-selected={section.key === active}
-                onClick={() => onSelect(section.key)}
-                className={classNames(
-                    'flex items-center justify-center gap-2 whitespace-nowrap rounded-medium px-3 py-2 text-small transition-colors',
-                    section.key === active
-                        ? 'bg-primary font-bold text-primary-foreground'
-                        : 'text-default-600 hover:bg-default-100 hover:text-foreground'
-                )}
-            >
-                {section.label}
-                {dirty.includes(section.key) && (
-                    <span
-                        title='Unsaved changes'
-                        className='h-2 w-2 shrink-0 rounded-full bg-warning'
-                    />
-                )}
-            </button>
-        ))}
-    </div>
-);
-
-// This game's settings, kept aside as they are changed and applied together on Save, as the profile's are, so the
-// board does not change under the dialog while it is open. Closing without saving drops the changes.
+// This game's gameplay settings, kept aside as they are changed and applied together on Save, as the profile's are.
+// Closing without saving drops the changes. How the board looks is set in the profile.
 const GameConfigurationModal = ({
     isOpen,
     isSpectating,
@@ -59,12 +24,10 @@ const GameConfigurationModal = ({
     onPromptDupesToggle,
     onPromptedActionWindowToggle,
     onHideResponsesToggle,
-    onHudChange,
     promptDupes,
     promptedActionWindows,
     hideInterrupts,
     hideReactions,
-    hud,
     fullScreen = false
 }) => {
     const saved = useMemo(
@@ -73,13 +36,11 @@ const GameConfigurationModal = ({
             keywordSettings: keywordSettings || {},
             promptDupes: !!promptDupes,
             hideInterrupts: hideInterrupts !== false,
-            hideReactions: hideReactions !== false,
-            hud
+            hideReactions: hideReactions !== false
         }),
-        [promptedActionWindows, keywordSettings, promptDupes, hideInterrupts, hideReactions, hud]
+        [promptedActionWindows, keywordSettings, promptDupes, hideInterrupts, hideReactions]
     );
     const [draft, setDraft] = useState(saved);
-    const [section, setSection] = useState('gameplay');
 
     useEffect(() => {
         if (isOpen) {
@@ -90,7 +51,7 @@ const GameConfigurationModal = ({
     }, [isOpen]);
 
     const changedKeys = Object.keys(saved).filter((key) => changed(draft[key], saved[key]));
-    const dirty = [...new Set(changedKeys.map(sectionOf))];
+    const dirty = changedKeys.length > 0;
 
     const save = () => {
         const changedIn = (key) =>
@@ -111,9 +72,6 @@ const GameConfigurationModal = ({
         }
         if (changedKeys.includes('hideReactions')) {
             onHideResponsesToggle?.('reactions', draft.hideReactions);
-        }
-        if (changedKeys.includes('hud')) {
-            onHudChange?.(draft.hud);
         }
         onClose();
     };
@@ -143,11 +101,9 @@ const GameConfigurationModal = ({
                             For this game only. To change them for every game, use your profile.
                         </p>
                     </div>
-                    <SectionTabs active={section} dirty={dirty} onSelect={setSection} />
                 </ModalHeader>
                 <ModalBody>
                     <GameConfiguration
-                        section={section}
                         isSpectating={isSpectating}
                         values={draft}
                         onChange={(changes) => setDraft((current) => ({ ...current, ...changes }))}
@@ -157,19 +113,15 @@ const GameConfigurationModal = ({
                     <span
                         className={classNames(
                             'w-full text-small sm:mr-auto sm:w-auto',
-                            dirty.length > 0 ? 'text-warning' : 'text-default-500'
+                            dirty ? 'text-warning' : 'text-default-500'
                         )}
                     >
-                        {dirty.length > 0 ? 'You have unsaved changes' : 'No unsaved changes'}
+                        {dirty ? 'You have unsaved changes' : 'No unsaved changes'}
                     </span>
-                    <Button
-                        variant='flat'
-                        isDisabled={dirty.length === 0}
-                        onPress={() => setDraft(saved)}
-                    >
+                    <Button variant='flat' isDisabled={!dirty} onPress={() => setDraft(saved)}>
                         Discard
                     </Button>
-                    <Button color='success' isDisabled={dirty.length === 0} onPress={save}>
+                    <Button color='success' isDisabled={!dirty} onPress={save}>
                         Save changes
                     </Button>
                 </ModalFooter>

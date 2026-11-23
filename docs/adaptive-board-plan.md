@@ -1110,8 +1110,10 @@ From the review on 2026-11-20 (second batch):
       master); overlays close after 3s; the sizes are sliders over the fit. The profile shows a fixed size as the
       fitted sizes that draw the same (fitSizedHud), so the next save stores them. The server no longer keeps
       promptSide or overlayTimer.
-- [ ] **R261 Appearance lives in the profile only**: the in-game settings keep gameplay options (prompting, keywords
-      and the like) and drop the appearance ones, on both boards (decided 2026-11-23).
+- [x] **R261 Appearance lives in the profile only**: the in-game settings keep gameplay options (prompting, keywords
+      and the like) and drop the appearance ones, on both boards (decided 2026-11-23). Done: the game's settings are its
+      gameplay ones alone, with no tabs. The per-game board settings went with them: the hudChange message and command,
+      the hud in the game state, hudStore's override and the board measure the in-game previews used.
 - [x] **R262 Overlays name players by name and avatar**, as the rest of the site does, not by deck. The start and the
       end of the game keep their cards. Done: the end of a round lists each player by avatar and name with their power;
       an eliminated player is a large avatar under the seal. Plots and titles already named players this way.

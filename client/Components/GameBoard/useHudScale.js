@@ -1,6 +1,6 @@
 import { useLayoutEffect } from 'react';
 import { computeAutoCardScale, remSize, settleAutoCardScale } from '../../cardScale';
-import { classicScales, setBoardMeasure } from './boardScales';
+import { classicScales } from './boardScales';
 import { holdFlip } from '../../flip';
 
 const rescaleHold = 400;
@@ -64,7 +64,6 @@ export const useHudScale = (hud, containerRef, ready = true) => {
                 viewport: { width: window.innerWidth, height: window.innerHeight },
                 rem
             };
-            setBoardMeasure({ ...measure, cardFit: auto ? cardFit : null });
             const scales = classicScales(setting, { ...measure, cardFit: cardFit ?? 1 });
             applyScaleProperties({
                 '--card-scale': scales.cards,
@@ -86,7 +85,6 @@ export const useHudScale = (hud, containerRef, ready = true) => {
             observer?.disconnect();
             window.removeEventListener('resize', schedule);
             removeScaleProperties(Object.values(properties).flat());
-            setBoardMeasure(null);
         };
     }, [cards, interfaceSize, auto, containerRef, ready]);
 };

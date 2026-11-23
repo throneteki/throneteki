@@ -15,12 +15,7 @@ import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { overlaySettingsOf, resolveHudSize } from '../../hud';
 import SettingReveal from './SettingReveal';
 import { interfaceScaleProperties } from '../GameBoard/useHudScale';
-import {
-    boardMeasure,
-    boardScales,
-    estimateBoardMeasure,
-    sliderRanges
-} from '../GameBoard/boardScales';
+import { boardScales, estimateBoardMeasure, sliderRanges } from '../GameBoard/boardScales';
 
 const previewCards = ['01144', '01089', '01160', 'cardback'];
 
@@ -45,10 +40,9 @@ const useScreen = () => {
     return screen;
 };
 
-// The scales the board would draw at, worked out as the board works them out: in a game against the board as it
-// was last measured, otherwise against the room a board would have in this window, with nothing in play
-const previewScales = (hud, screen, inGame) =>
-    boardScales(hud, (inGame && boardMeasure()) || estimateBoardMeasure(hud, screen));
+// The scales the board would draw at, worked out as the board works them out, against the room a board would have
+// in this window with nothing in play
+const previewScales = (hud, screen) => boardScales(hud, estimateBoardMeasure(hud, screen));
 
 const Choice = ({ label, description, children }) => (
     <div className='flex flex-col gap-2 px-3 py-2.5'>
@@ -216,15 +210,13 @@ const Experimental = ({ children }) => (
     </span>
 );
 
-// The board's own settings, shared by the profile and the game (inGame), where the previews are sized against the
-// board in play
-const HudSettings = ({ value, onChange, inGame = false }) => {
+// The board's own settings, in the profile
+const HudSettings = ({ value, onChange }) => {
     const update = (changes) => onChange && onChange({ ...value, ...changes });
     const overlays = overlaySettingsOf(value);
     const reducedMotion = useBrowserReducedMotion();
     const screen = useScreen();
-    const scalesFor = (kind, scale) =>
-        previewScales({ ...value, [kind]: String(scale) }, screen, inGame);
+    const scalesFor = (kind, scale) => previewScales({ ...value, [kind]: String(scale) }, screen);
 
     return (
         <>

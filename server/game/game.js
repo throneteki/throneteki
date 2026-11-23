@@ -1,5 +1,4 @@
 import DelayedEffect from './DelayedEffect.js';
-import { sanitizeHud } from '../hudSettings.js';
 import EventEmitter from 'events';
 import AttachmentValidityCheck from './AttachmentValidityCheck.js';
 import StateChecks from './StateChecks.js';
@@ -1123,16 +1122,6 @@ class Game extends EventEmitter {
         } else if (responseType === 'reactions') {
             player.hideReactions = toggle;
         }
-    }
-
-    // Board size settings changed during a game last for that game, so they survive a refresh
-    hudChange(playerName, hud) {
-        const player = this.getPlayersAndSpectators()[playerName];
-        if (!player) {
-            return;
-        }
-
-        player.hud = sanitizeHud(hud);
     }
 
     toggleKeywordSetting(playerName, settingName, toggle) {

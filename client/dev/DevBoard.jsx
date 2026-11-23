@@ -13,7 +13,6 @@ import { pendingKeysOf } from '../redux/middleware/game';
 import { pendingStore } from '../Components/GameBoard/pendingActions';
 import flipMiddleware from '../redux/middleware/flip.js';
 import GameBoard from '../Components/GameBoard/GameBoard';
-import { hudStore } from '../hudStore';
 import {
     boardFixtures,
     fixtureSteps,
@@ -286,7 +285,6 @@ const DevBoard = ({
     };
 
     useEffect(() => {
-        hudStore.reset();
         const example = overlay && overlayExamples[overlay.key];
         const built = buildFixture(fixture, { manual, spectate, players, long, crowd });
         const steps = example?.steps ?? [];

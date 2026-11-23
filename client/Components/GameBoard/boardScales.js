@@ -71,13 +71,6 @@ export const fitSizedHud = (hud, measure) => {
     return { ...hud, auto: true, cards: sizeOf('cards'), interface: sizeOf('interface') };
 };
 
-// What the board in play was last measured at, for previewing other settings against it
-let lastMeasure = null;
-export const setBoardMeasure = (measure) => {
-    lastMeasure = measure;
-};
-export const boardMeasure = () => lastMeasure;
-
 const navbarHeight = 48;
 
 // Away from a game, the board's room is estimated from the window: the whole of it where the adaptive board hides

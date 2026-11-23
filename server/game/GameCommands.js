@@ -30,10 +30,6 @@ class GameCommands {
         return this.game.cardClicked(playerName, cardId);
     }
 
-    hudChange(playerName, hud) {
-        return this.game.hudChange(playerName, hud);
-    }
-
     changeStat(playerName, stat, value) {
         return this.game.changeStat(playerName, stat, value);
     }

@@ -1,7 +1,7 @@
 import { createContext, useContext, useLayoutEffect, useRef, useState } from 'react';
 import { remSize, settleAutoCardScale } from '../../../cardScale';
 import { boardLayoutStore } from '../../../boardLayoutStore';
-import { adaptiveScales, setBoardMeasure } from '../boardScales';
+import { adaptiveScales } from '../boardScales';
 import {
     applyScaleProperties,
     interfaceScaleProperties,
@@ -81,7 +81,6 @@ export const useBoardLayout = ({ containerRef, hud, players, ready }) => {
                 mode: next,
                 content: { ...contentRef.current }
             };
-            setBoardMeasure(measure);
             const fitted = adaptiveScales(hudRef.current, measure);
             for (const key of ['cards', 'pile', 'hand']) {
                 settled[key] = settleAutoCardScale(settled[key] ?? null, fitted[key]);
@@ -132,7 +131,6 @@ export const useBoardLayout = ({ containerRef, hud, players, ready }) => {
             document.removeEventListener('focusin', onFocusIn);
             document.removeEventListener('focusout', onFocusOut);
             removeScaleProperties(allProperties);
-            setBoardMeasure(null);
             delete root.dataset.boardLayout;
             modeRef.current = null;
             boardLayoutStore.set(null);

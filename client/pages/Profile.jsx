@@ -12,7 +12,6 @@ import { defaultActionWindows } from '../constants';
 import { DefaultBackground } from '../../shared/backgrounds';
 import { normalizeHud } from '../hud';
 import { estimateBoardMeasure, fitSizedHud } from '../Components/GameBoard/boardScales';
-import { hudStore } from '../hudStore';
 import Page from './Page';
 import { keyboardShortcutsEnabled } from '../Components/GameBoard/keyboardShortcuts';
 import ProfileNav from '../Components/Profile/ProfileNav';
@@ -161,7 +160,6 @@ const Profile = ({ section }) => {
                             }
                         }).unwrap();
                         toast.success('Profile saved successfully');
-                        hudStore.reset();
 
                         dispatch(setUser(ret.data?.user ?? ret.user));
                         if (avatarMayChange) {

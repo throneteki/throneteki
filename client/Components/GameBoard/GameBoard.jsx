@@ -12,7 +12,6 @@ import {
     sendCardClickedMessage,
     sendDragDropMessage,
     sendGameChatMessage,
-    sendHudChangeMessage,
     sendToggleDupesMessage,
     sendToggleKeywordSettingMessage,
     sendTogglePromptedActionWindowMessage,
@@ -35,7 +34,7 @@ import { ManualModeContext } from './ManualModeContext';
 import { clickDoesSomething } from './pendingActions';
 import { useRenderCount } from '../../perf';
 import { useHudScale } from './useHudScale';
-import { hudStore, useHud } from '../../hudStore';
+import { useHud } from '../../hudStore';
 import { MotionConfig } from 'framer-motion';
 import { useMotionEnabled } from '../../motion';
 import { holdFlip, playPendingFlip, setLandInPopup } from '../../flip';
@@ -171,15 +170,6 @@ const GameBoard = () => {
     const onChatToggle = useCallback(() => setShowGameChat((show) => !show), []);
     const onSendChat = useCallback((message) => dispatch(sendGameChatMessage(message)), [dispatch]);
     const onModalClose = useCallback(() => setShowModal(false), []);
-    // Shown straight away, and kept by the server for this game so a refresh does not lose it
-    const onHudChange = useCallback(
-        (next) => {
-            hudStore.set(next);
-            dispatch(sendHudChangeMessage(next));
-        },
-        [dispatch]
-    );
-    useEffect(() => () => hudStore.reset(), []);
 
     // Cards on the adaptive board are not all drawn at the board's card size
     const adaptiveRef = useRef(false);
@@ -621,12 +611,10 @@ const GameBoard = () => {
                 onHideResponsesToggle={(option, value) =>
                     dispatch(sendToggleHideResponsesMessage(option, value))
                 }
-                onHudChange={onHudChange}
                 promptDupes={userPlayer.promptDupes}
                 promptedActionWindows={userPlayer.promptedActionWindows}
                 hideInterrupts={userPlayer.hideInterrupts}
                 hideReactions={userPlayer.hideReactions}
-                hud={hud}
                 fullScreen={phoneLayout}
             />
             <KeyboardShortcutsModal
