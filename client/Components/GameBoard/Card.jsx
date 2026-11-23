@@ -486,6 +486,7 @@ const CardView = ({
                     >
                         <CardFace
                             code={imageCode}
+                            type={card.type}
                             orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}
                         />
                         {isFaceup && getAlertStatus()}

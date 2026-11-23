@@ -294,7 +294,11 @@ const PlayerCards = ({ player, out = false, scale, toss, className }) => {
                 {tossed(
                     `${name}:faction`,
                     toss,
-                    <CardImage code={player.faction?.code || 'cardback'} className={cardShadow} />
+                    <CardImage
+                        code={player.faction?.code || 'cardback'}
+                        type='faction'
+                        className={cardShadow}
+                    />
                 )}
             </div>
             {agendas.map((agenda, index) => (
@@ -311,7 +315,7 @@ const PlayerCards = ({ player, out = false, scale, toss, className }) => {
                     {tossed(
                         `${name}:${agenda.code}:${index}`,
                         toss + agendaGap * (index + 1),
-                        <CardImage code={agenda.code} className={cardShadow} />
+                        <CardImage code={agenda.code} type='agenda' className={cardShadow} />
                     )}
                 </div>
             ))}
@@ -1083,7 +1087,11 @@ const Minor = ({ overlay, players, me, portrait, seconds, released, onLanded }) 
                                 to={onBoard(player.title, titleSlot(player))}
                                 tilt={tiltOf(`${nameOf(player)}:${player.title?.code}`, 0, 3)}
                             >
-                                <CardImage code={player.title?.code} className={cardShadow} />
+                                <CardImage
+                                    code={player.title?.code}
+                                    type='title'
+                                    className={cardShadow}
+                                />
                             </Flier>
                             <Name
                                 player={player}

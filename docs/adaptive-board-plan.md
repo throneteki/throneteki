@@ -1156,10 +1156,12 @@ From the review on 2026-11-20 (second batch):
       beside the board its own row grows in above the prompt; in the phone's docked bar it cross-fades with the
       title line so the bar keeps its height. At 15s a Reload button widens in beside it. The timings are in pendingTiming. The dev
       board's Lag (&lag=, up to 20s) pretends the server takes that long.
-- [ ] **R271 A skeleton for each card type**: while a card's image loads, its placeholder follows that type's
-      template (character, location, attachment, event, plot, agenda, faction, title), drawn from the real card
-      layouts. The board's cards carry their type; elsewhere it comes from the card list, and the plain skeleton
-      stays when the type is not known.
+- [x] **R271 A skeleton for each card type**: while a card's image loads, its placeholder follows that type's
+      template (character, location, attachment, event, plot, agenda, faction, title, and the card back), drawn from
+      the real card layouts (CardSkeleton.jsx, boxes in percent of the card). The board's cards carry their type;
+      elsewhere it comes from what is drawn (a sideways image is a plot, a faction code a faction card, the overlays
+      name theirs), not the card list, which every image would otherwise wait on. The plain skeleton stays when the
+      type is not known.
 - [x] **R234 Tokens are in the middle of the card again, and their changes stand out**: the +x / −x that floats off a
       counter is a larger bold pill, green or red, and stays a little longer (both boards).
 

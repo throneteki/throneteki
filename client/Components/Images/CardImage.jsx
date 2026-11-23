@@ -4,7 +4,16 @@ import CardFace from './CardFace';
 import { cardBoxClass, resolveImageScale } from '../../cardScale';
 
 const CardImage = forwardRef(function CardImage(
-    { code, orientation = 'vertical', className, size, disableSkeleton = false, onLoad, onError },
+    {
+        code,
+        type,
+        orientation = 'vertical',
+        className,
+        size,
+        disableSkeleton = false,
+        onLoad,
+        onError
+    },
     ref
 ) {
     const scale = size === undefined ? null : resolveImageScale(size);
@@ -18,6 +27,7 @@ const CardImage = forwardRef(function CardImage(
         >
             <CardFace
                 code={code}
+                type={type}
                 orientation={orientation === 'horizontal' ? 'horizontal' : 'vertical'}
                 disableSkeleton={disableSkeleton}
                 onLoad={onLoad}
