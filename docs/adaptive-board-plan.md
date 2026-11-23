@@ -1128,8 +1128,10 @@ From the review on 2026-11-20 (second batch):
       clear for it, still as the board scrolls; taller, it rises over the opponent's room rather than stretching the
       board. In melee it is the bottom row's end seat. Each option shows its key (1-9, W, D) while keyboard shortcuts
       are on.
-- [ ] **R266 Desktop piles are separate**: each opens on its own, several at once, as on classic, in the new visual
-      style. Phones keep their current drawers (sheets). Part of this batch (decided 2026-11-23).
+- [x] **R266 Desktop piles are separate**: each opens on its own, several at once, as on classic, in the new visual
+      style. Phones keep their current drawers (sheets). Part of this batch (decided 2026-11-23). Done: on desktop
+      (wide) each pile opens classic's movable panel ('board-panel'), several at once, in the board's look: a dark
+      body with an amber edge, the owner's avatar and the pile's name in its header, and the pile's actions as pills.
 - [x] **R267 Avatars match the site's**. Done: PlayerAvatar draws them as the site does (HeroUI Avatar, the site's
       fallback rather than initials, no decorative ring), for the stats bars, the overlays and the sheets' player tags.
       The first player's ring stays, as it says something. Classic's, the chat's and the chess clock's were already the

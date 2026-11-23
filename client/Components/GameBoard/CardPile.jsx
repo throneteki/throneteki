@@ -110,7 +110,8 @@ const CardPile = ({
     const topCardHasAction = !!(topCard?.selectable || topCard?.canPlay);
 
     // Where piles open in sheets, every pile that can be opened is listed in them, to go to from any other
-    const usesSheets = useContext(PopupHostContext) === 'sheet';
+    const popupHost = useContext(PopupHostContext);
+    const usesSheets = popupHost === 'sheet';
     const openRef = useRef(null);
     const hasSelectable = !!cards?.some((card) => card.selectable);
     useEffect(() => {
@@ -271,42 +272,44 @@ const CardPile = ({
         }
 
         const popupClass = classNames(
-            'flex flex-col box-content border-1 border-default-200 bg-black/75 rounded-b-md overflow-hidden'
+            'flex flex-col box-content overflow-hidden',
+            popupHost === 'panel' && 'border-1 border-default-200 bg-black/75 rounded-b-md'
         );
 
-        // In a sheet the pile's actions are pills, as the sheet's own chips are
-        const retPopupMenu = usesSheets
-            ? popupMenu?.length > 0 && (
-                  <div
-                      data-pile-actions=''
-                      className='hud-zoom flex flex-wrap justify-center gap-2 px-3 pb-1 pt-2'
-                  >
-                      {popupMenu.map((menuItem, index) => (
-                          <PileAction
-                              key={index}
-                              menuItem={menuItem}
-                              onPress={onPopupMenuItemClick}
-                          />
-                      ))}
-                  </div>
-              )
-            : popupMenu && (
-                  <div className='flex gap-1.5 p-2'>
-                      {popupMenu.map((menuItem, index) => {
-                          return (
-                              <Button
-                                  color='primary'
-                                  className='flex-1'
+        // On the adaptive board the pile's actions are pills, as the sheet's own chips are
+        const retPopupMenu =
+            popupHost !== 'panel'
+                ? popupMenu?.length > 0 && (
+                      <div
+                          data-pile-actions=''
+                          className='hud-zoom flex flex-wrap justify-center gap-2 px-3 pb-1 pt-2'
+                      >
+                          {popupMenu.map((menuItem, index) => (
+                              <PileAction
                                   key={index}
-                                  onPress={() => onPopupMenuItemClick(menuItem)}
-                                  startContent={<FontAwesomeIcon icon={menuItem.icon} />}
-                              >
-                                  {menuItem.text}
-                              </Button>
-                          );
-                      })}
-                  </div>
-              );
+                                  menuItem={menuItem}
+                                  onPress={onPopupMenuItemClick}
+                              />
+                          ))}
+                      </div>
+                  )
+                : popupMenu && (
+                      <div className='flex gap-1.5 p-2'>
+                          {popupMenu.map((menuItem, index) => {
+                              return (
+                                  <Button
+                                      color='primary'
+                                      className='flex-1'
+                                      key={index}
+                                      onPress={() => onPopupMenuItemClick(menuItem)}
+                                      startContent={<FontAwesomeIcon icon={menuItem.icon} />}
+                                  >
+                                      {menuItem.text}
+                                  </Button>
+                              );
+                          })}
+                      </div>
+                  );
 
         return (
             <PopupContainer
@@ -353,7 +356,7 @@ const CardPile = ({
         onPopupMenuItemClick,
         updatePopupVisibility,
         owner,
-        usesSheets
+        popupHost
     ]);
 
     // A sideways card is laid out as an upright one, so the area is held to the height of a sideways card

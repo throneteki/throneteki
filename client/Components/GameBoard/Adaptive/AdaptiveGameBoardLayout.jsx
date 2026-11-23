@@ -879,7 +879,8 @@ const AdaptiveGameBoardLayout = ({
 
     return (
         <AdaptiveBoardContext.Provider value={true}>
-            <PopupHostContext.Provider value='sheet'>
+            {/* A desktop opens each pile in a panel of its own, as classic does; phones in a sheet */}
+            <PopupHostContext.Provider value={phoneLayout ? 'sheet' : 'board-panel'}>
                 <AreaLabelContext.Provider value={phoneLayout ? 'inspect' : 'full'}>
                     <div
                         data-layout={mode}
