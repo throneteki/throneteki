@@ -469,6 +469,7 @@ const CardView = ({
                     {...hoverHandlers}
                     ref={surfaceRef}
                     data-card-surface=''
+                    data-pressed={card.pressed ? '' : undefined}
                     className={cardClassName}
                     onClick={handleClick}
                     style={{ zIndex: cardStackIndex--, rotate: resting }}

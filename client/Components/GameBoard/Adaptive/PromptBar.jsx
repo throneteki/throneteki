@@ -17,6 +17,8 @@ import { getButtonShortcutLabel } from '../keyboardShortcuts';
 import PhaseRoll from './PhaseRoll';
 import { chipClass } from './chipClass';
 import PendingMark, { pendingButtonClass } from '../PendingMark';
+import WaitingChip, { WaitingRow } from '../WaitingChip';
+import { useWaitingForServer } from '../serverWait';
 import { motionOff, motionSettingOff } from '../../../flip';
 import Messages from '../Messages';
 import { logTiming, useLogFeed } from './useLogFeed';
@@ -341,6 +343,13 @@ const OneLine = ({ lines, children }) => {
     );
 };
 
+const titleFade = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+    transition: { duration: 0.25 }
+};
+
 // The round's phases, giving way to new log lines; beside: shown on each side of it (the dock's chevrons)
 const PhaseTrack = ({ phase, feed, beside }) => (
     <div className='flex items-center gap-2 px-2 pt-1'>
@@ -526,6 +535,7 @@ const PromptBar = ({
         handleButtonClick(event, button);
     };
 
+    const waitingForServer = useWaitingForServer();
     const title = promptTitle && !waiting && (
         <div
             className={classNames(
@@ -547,7 +557,24 @@ const PromptBar = ({
                 }
             )}
         >
-            {title}
+            {dock ? (
+                // The docked bar keeps its height, so a long wait takes the title's line for a while
+                <AnimatePresence mode='wait' initial={false}>
+                    {waitingForServer ? (
+                        <motion.div key='waiting' {...titleFade}>
+                            <WaitingChip />
+                        </motion.div>
+                    ) : (
+                        title && (
+                            <motion.div key='title' {...titleFade}>
+                                {title}
+                            </motion.div>
+                        )
+                    )}
+                </AnimatePresence>
+            ) : (
+                title
+            )}
             {/* Docked, the prompt keeps its height whatever it says: longer text scrolls through one line */}
             <OneLine lines={dock}>
                 {promptText}
@@ -621,6 +648,7 @@ const PromptBar = ({
             <PhaseTrack phase={phase} feed={feed} beside={chevrons} />
             <Rule />
             <div className='flex flex-col px-2 pb-1 pt-1'>
+                {!dock && <WaitingRow waiting={waitingForServer} />}
                 <div className='grid min-w-0 grid-cols-[1fr_auto_1fr] items-center gap-2'>
                     <span />
                     {text}

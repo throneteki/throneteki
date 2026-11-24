@@ -27,7 +27,6 @@ import ErrorMessage from '../Site/ErrorMessage';
 import JoustGameBoardLayout from './Classic/JoustGameBoardLayout';
 import MeleeGameBoardLayout from './Classic/MeleeGameBoardLayout';
 import AdaptiveGameBoardLayout from './Adaptive/AdaptiveGameBoardLayout';
-import WaitingForServer from './WaitingForServer';
 import { BoardLayoutProvider, useBoardLayout } from './Adaptive/useBoardLayout';
 import { useAdaptivePage } from './Adaptive/useAdaptivePage';
 import { hidesNavbar } from '../../boardLayoutStore';
@@ -573,7 +572,6 @@ const GameBoard = () => {
                         inputRef={chatInputRef}
                         onUnreadChange={setChatUnread}
                     />
-                    <WaitingForServer />
                 </div>
             </MotionConfig>
             {dragGhost &&

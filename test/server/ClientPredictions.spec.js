@@ -3,6 +3,7 @@ import GameServer from '../../server/gamenode/gameserver.js';
 import auth, { setUser } from '../../client/redux/reducers/auth.js';
 import lobby from '../../client/redux/reducers/lobby.js';
 import game, {
+    reconnectGameNow,
     sendCardClickedMessage,
     startGameConnecting
 } from '../../client/redux/reducers/game.js';
@@ -10,20 +11,39 @@ import gameMiddleware from '../../client/redux/middleware/game.js';
 import { predictions } from '../../client/Components/GameBoard/predictions.js';
 
 // The client's socket, wired straight to a game server in the same process
-const network = { handlers: {}, toServer: () => {}, delay: 0 };
+const network = {
+    handlers: {},
+    managerHandlers: {},
+    calls: [],
+    retryDelay: 0,
+    toServer: () => {},
+    delay: 0
+};
 const deliver = (callback) =>
     network.delay > 0 ? setTimeout(callback, network.delay) : callback();
 
 vi.mock('socket.io-client', () => ({
-    io: () => ({
-        on: (event, callback) => {
-            network.handlers[event] = callback;
-        },
-        io: { on() {} },
-        volatile: { emit() {} },
-        emit: (event, ...args) => deliver(() => network.toServer(event, ...args)),
-        disconnect() {}
-    })
+    io: () =>
+        (network.socket = {
+            on: (event, callback) => {
+                network.handlers[event] = callback;
+            },
+            io: {
+                on: (event, callback) => {
+                    network.managerHandlers[event] = callback;
+                },
+                backoff: { duration: () => network.retryDelay }
+            },
+            connected: false,
+            volatile: { emit() {} },
+            emit: (event, ...args) => deliver(() => network.toServer(event, ...args)),
+            disconnect() {
+                network.calls.push('disconnect');
+            },
+            connect() {
+                network.calls.push('connect');
+            }
+        })
 }));
 
 // The first player's client, with its store and socket middleware, joined to the game the test set up
@@ -123,6 +143,35 @@ describe('the client predicting a choice against the game server', function () {
             vi.advanceTimersByTime(100);
 
             expect(this.sent).toEqual([['cardClicked', this.tyrionLannister.uuid, promptId]]);
+            expect(this.player1).toHavePrompt('Select 2 characters to fulfill military claim');
+        });
+
+        it('shows the card clicked as pressed until the server has answered the click', function () {
+            this.connect(100);
+
+            this.click(this.tyrionLannister);
+            expect(this.shownCard(this.tyrionLannister).pressed).toBe(true);
+            expect(this.shownCard(this.winterfellSteward).pressed).toBeUndefined();
+
+            vi.advanceTimersByTime(200);
+            expect(this.shownCard(this.tyrionLannister).pressed).toBeUndefined();
+            expect(this.shownCard(this.tyrionLannister).selected).toBe(true);
+            expect(this.player1).toHavePrompt('Select 2 characters to fulfill military claim');
+        });
+
+        it('shows a card that cannot be chosen as pressed too, until the server has answered', function () {
+            this.connect(100);
+            const theirs = () =>
+                Object.values(this.store.getState().lobby.currentGame.players)
+                    .flatMap((player) => Object.values(player.cardPiles).flat())
+                    .find((shown) => shown.uuid === this.hedgeKnight.uuid);
+
+            this.click(this.hedgeKnight);
+            expect(theirs().pressed).toBe(true);
+            expect(theirs().selected).toBeFalsy();
+
+            vi.advanceTimersByTime(200);
+            expect(theirs().pressed).toBeUndefined();
             expect(this.player1).toHavePrompt('Select 2 characters to fulfill military claim');
         });
 
@@ -228,6 +277,90 @@ describe('the client predicting a choice against the game server', function () {
             expect(this.player1).toHavePrompt(
                 'Select 2 cards to discard down to reserve (top first)'
             );
+        });
+    });
+});
+
+describe('the client losing its connection to the game server', function () {
+    beforeEach(function () {
+        vi.useFakeTimers();
+        this.setupTest({ phase: 'marshal' });
+        joinAsPlayer1(this);
+        this.connect(0);
+        network.calls = [];
+        this.lost = () => this.store.getState().game.lost;
+    });
+
+    afterEach(function () {
+        vi.useRealTimers();
+    });
+
+    it('says the connection was lost when it drops during a game', function () {
+        network.handlers.disconnect('transport close');
+
+        expect(this.lost()).toEqual({
+            reason: 'transport close',
+            at: expect.any(Number),
+            attempts: 0,
+            trying: false
+        });
+        expect(this.store.getState().game.connected).toBe(false);
+    });
+
+    it('follows each attempt to reconnect, and clears once connected again', function () {
+        network.handlers.disconnect('ping timeout');
+
+        network.managerHandlers.reconnect_attempt(1);
+        expect(this.lost()).toMatchObject({ attempts: 1, trying: true });
+
+        network.managerHandlers.error(new Error('xhr poll error'));
+        expect(this.lost()).toMatchObject({ attempts: 1, trying: false, error: 'xhr poll error' });
+
+        network.managerHandlers.reconnect_attempt(2);
+        expect(this.lost()).toMatchObject({ attempts: 2, trying: true });
+
+        network.handlers.connect();
+        expect(this.lost()).toBeUndefined();
+        expect(this.store.getState().game.connected).toBe(true);
+    });
+
+    it('counts down to the retry the socket schedules after each failure', function () {
+        vi.setSystemTime(new Date('2026-11-24T12:00:00Z'));
+        network.handlers.disconnect('transport close');
+
+        network.retryDelay = 1200;
+        network.socket.io.backoff.duration();
+        expect(this.lost().retryAt).toBe(Date.now() + 1200);
+
+        network.managerHandlers.reconnect_attempt(1);
+        expect(this.lost().retryAt).toBeUndefined();
+
+        network.managerHandlers.error(new Error('xhr poll error'));
+        network.retryDelay = 2600;
+        expect(network.socket.io.backoff.duration()).toBe(2600);
+        expect(this.lost()).toMatchObject({
+            attempts: 1,
+            trying: false,
+            retryAt: Date.now() + 2600
+        });
+    });
+
+    it('does not say the connection was lost when the client closed it', function () {
+        network.handlers.disconnect('io client disconnect');
+
+        expect(this.lost()).toBeUndefined();
+    });
+
+    it('tries again at once when asked to, dropping the retry it had waiting', function () {
+        network.handlers.disconnect('io server disconnect');
+
+        this.store.dispatch(reconnectGameNow());
+
+        expect(network.calls).toEqual(['disconnect', 'connect']);
+        expect(this.lost()).toMatchObject({
+            reason: 'io server disconnect',
+            attempts: 1,
+            trying: true
         });
     });
 });

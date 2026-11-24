@@ -18,8 +18,9 @@ let pending = [];
 
 export const predictions = {
     add(seq, prediction) {
-        if (prediction) {
-            pending = [...pending, { ...prediction, seq }];
+        const added = [prediction].flat().filter(Boolean);
+        if (added.length > 0) {
+            pending = [...pending, ...added.map((one) => ({ ...one, seq }))];
         }
     },
     handled(count) {
@@ -78,6 +79,14 @@ const selectionPrediction = (state, me, uuid) => {
         return;
     }
     return { kind: 'select', uuid };
+};
+
+// A card clicked shows as pressed until the server has handled the click, whatever the click turns out to do
+export const pressFor = (action, state, user) => {
+    const me = user?.username && state?.players?.[user.username];
+    return me && sendCardClickedMessage.match(action) && findCard(state, action.payload)
+        ? { kind: 'press', uuid: action.payload }
+        : undefined;
 };
 
 const settingPath = (action) => {
@@ -180,6 +189,13 @@ const applyOne = (draft, prediction, username, base, settled) => {
                     renumber(draft, card);
                 } else if (!card.selected) {
                     delete card.order;
+                }
+            }
+            break;
+        case 'press':
+            if (!settled) {
+                for (const path of cardPaths(base, withUuid(prediction.uuid))) {
+                    at(draft, path).pressed = true;
                 }
             }
             break;

@@ -409,6 +409,9 @@ html.card-dragging.card-drop-refused * {
     box-shadow:
         0 1px 1px rgba(0, 0, 0, 0.45),
         0 2px 5px rgba(0, 0, 0, 0.35);
+    transition:
+        filter 120ms,
+        box-shadow 120ms;
 }
 
 .card-body::after {
@@ -421,10 +424,23 @@ html.card-dragging.card-drop-refused * {
     pointer-events: none;
 }
 
+/* On the adaptive board, a card clicked stays pressed in until the game server has answered the click */
+:is([data-layout], [data-sheet]) [data-card-surface][data-pressed] {
+    translate: 0 max(1px, calc(2px * var(--card-scale, 1)));
+}
+:is([data-layout], [data-sheet]) [data-card-surface][data-pressed] > .card-body {
+    filter: brightness(0.8);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.6);
+}
+[data-motion='off'] :is([data-layout], [data-sheet]) [data-card-surface][data-pressed] {
+    translate: none;
+}
+
 /* A card turning to kneel or stand overshoots a little and settles, like it was flicked */
 .card-turn {
     transition:
         transform 380ms cubic-bezier(0.34, 1.56, 0.64, 1),
+        translate 80ms,
         box-shadow 150ms,
         scale 150ms,
         filter 150ms;

@@ -10,6 +10,7 @@ import { aroundTheTable } from '../seatOrder';
 import { useLayoutMode } from './useBoardLayout';
 import { remSize } from '../../../cardScale';
 import { nameOf } from './followTarget';
+import { Heading, OverlayBackdrop, OverlayButton, zoom } from './OverlayParts';
 
 // The board's overlays: the game's start and end (major: wait for a button) and what happens in it (minor: continue
 // on a timer). Each shows once per game (kept in sessionStorage, so a refresh does not repeat it). A prompt that only
@@ -347,36 +348,6 @@ const Name = ({ player, size = 1.1, you = false, avatar = true, className, style
             {nameOf(player)}
         </span>
     </div>
-);
-
-const zoom = '[zoom:var(--ui-scale,1)]';
-
-const Heading = ({ children, className, style }) => (
-    <div
-        style={style}
-        className={classNames(
-            'text-center font-[Cinzel,serif] font-extrabold uppercase tracking-[0.3em] text-amber-300 [text-shadow:0_2px_10px_#000]',
-            zoom,
-            className
-        )}
-    >
-        {children}
-    </div>
-);
-
-const OverlayButton = ({ primary = false, onPress, children }) => (
-    <button
-        type='button'
-        onClick={onPress}
-        className={classNames(
-            'pointer-events-auto rounded-md border px-4 py-1.5 text-sm font-semibold uppercase tracking-wide',
-            primary
-                ? 'border-amber-400 bg-amber-400 text-black hover:bg-amber-300'
-                : 'border-amber-400/70 bg-black/70 text-amber-100 hover:bg-amber-400/15'
-        )}
-    >
-        {children}
-    </button>
 );
 
 // Continue, filling as its time runs out (starting after delay ms), when it is pressed for you
@@ -1207,18 +1178,7 @@ const OverlayView = ({
             <HideCards uuids={held} />
             {
                 <>
-                    {/* The board softened and darkened behind it, most in the middle where the overlay's text is,
-                        so its detail does not show through the text */}
-                    <div
-                        className={classNames(
-                            'overlay-dim absolute inset-0 backdrop-blur-[3px]',
-                            major ? 'pointer-events-auto bg-black/80' : 'bg-black/65'
-                        )}
-                        style={{
-                            backgroundImage:
-                                'radial-gradient(ellipse 65% 55% at 50% 50%, rgba(0,0,0,0.6), transparent 80%)'
-                        }}
-                    />
+                    <OverlayBackdrop major={major} />
                     <div className='absolute inset-0'>
                         {overlay.major === 'start' && (
                             <Start players={players} me={me} portrait={portrait} onClose={close} />

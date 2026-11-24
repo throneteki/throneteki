@@ -29,6 +29,7 @@ import ScrollArea from './ScrollArea';
 import PromptBar from './PromptBar';
 import SheetHost from './SheetHost';
 import BoardOverlays from './BoardOverlays';
+import ConnectionLost from './ConnectionLost';
 import FullscreenToggle from './FullscreenToggle';
 import { tableRows } from '../seatOrder';
 import { activePlayerOf, followTarget } from './followTarget';
@@ -1009,6 +1010,7 @@ const AdaptiveGameBoardLayout = ({
                         />
                     </div>
                     <SheetHost mode={mode} />
+                    <ConnectionLost />
                 </AreaLabelContext.Provider>
             </PopupHostContext.Provider>
         </AdaptiveBoardContext.Provider>

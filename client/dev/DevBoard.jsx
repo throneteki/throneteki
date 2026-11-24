@@ -4,13 +4,25 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import auth, { setUser } from '../redux/reducers/auth.js';
 import lobby, { receiveGameState } from '../redux/reducers/lobby';
-import game from '../redux/reducers/game.js';
+import game, {
+    gameConnected,
+    gameConnectionFailed,
+    gameConnectionLost,
+    gameReconnecting,
+    gameRetryScheduled,
+    reconnectGameNow
+} from '../redux/reducers/game.js';
 import cards from '../redux/reducers/cards';
 import navigation from '../redux/reducers/navigation.js';
 import admin from '../redux/reducers/admin';
 import { apiSlice } from '../redux/middleware/api';
 import { serverWait } from '../Components/GameBoard/serverWait';
-import { applyPredictions, predictionFor, predictions } from '../Components/GameBoard/predictions';
+import {
+    applyPredictions,
+    predictionFor,
+    predictions,
+    pressFor
+} from '../Components/GameBoard/predictions';
 import flipMiddleware from '../redux/middleware/flip.js';
 import GameBoard from '../Components/GameBoard/GameBoard';
 import {
@@ -29,7 +41,33 @@ import {
 // the board shows what the real client predicts, and once handled the pretend server does what was predicted.
 let devLag = 0;
 let devTruth;
+// A pretend dropped connection: it retries with a doubling delay and fails, until asked to reconnect, which works
+let devRetry;
+const loseConnection = (store) => {
+    clearTimeout(devRetry);
+    store.dispatch(gameConnectionLost('transport close'));
+    let delay = 1000;
+    const retry = () => {
+        store.dispatch(gameRetryScheduled(Date.now() + delay));
+        devRetry = setTimeout(attempt, delay);
+        delay = Math.min(delay * 2, 10000);
+    };
+    const attempt = () => {
+        store.dispatch(gameReconnecting());
+        devRetry = setTimeout(() => {
+            store.dispatch(gameConnectionFailed('xhr poll error'));
+            retry();
+        }, 1000);
+    };
+    retry();
+};
 const lagMiddleware = (store) => (next) => (action) => {
+    if (reconnectGameNow.match(action) && store.getState().game.lost) {
+        clearTimeout(devRetry);
+        store.dispatch(gameReconnecting());
+        devRetry = setTimeout(() => store.dispatch(gameConnected()), 1200);
+        return next(action);
+    }
     if (receiveGameState.match(action)) {
         const { game, username } = action.payload;
         devTruth = game;
@@ -39,17 +77,21 @@ const lagMiddleware = (store) => (next) => (action) => {
     }
     if (action.type.startsWith('game/send')) {
         const user = store.getState().auth.user;
-        const prediction = predictionFor(action, store.getState().lobby.currentGame, user);
+        const shown = store.getState().lobby.currentGame;
+        const prediction = predictionFor(action, shown, user);
         const seq = serverWait.sent();
-        predictions.add(seq, prediction);
-        if (prediction) {
+        predictions.add(seq, [prediction, pressFor(action, shown, user)]);
+        const shows = predictions.list().some((one) => one.seq === seq);
+        if (shows) {
             store.dispatch(receiveGameState(devTruth, user?.username));
         }
         setTimeout(() => {
             serverWait.handled(seq);
             predictions.handled(seq);
-            if (prediction && devTruth) {
-                devTruth = applyPredictions(devTruth, [prediction], user?.username, true);
+            if (shows && devTruth) {
+                if (prediction) {
+                    devTruth = applyPredictions(devTruth, [prediction], user?.username, true);
+                }
                 store.dispatch(receiveGameState(devTruth, user?.username));
             }
         }, devLag);
@@ -514,6 +556,14 @@ const DevBoard = ({
                                     />
                                     <Toggle label='Crowd' checked={crowd} onChange={setCrowd} />
                                 </div>
+                                <button
+                                    type='button'
+                                    className={buttonClass}
+                                    data-lose-connection=''
+                                    onClick={() => loseConnection(store)}
+                                >
+                                    Lose connection
+                                </button>
                             </Section>
                         </>
                     )}

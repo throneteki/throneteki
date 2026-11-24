@@ -1,7 +1,8 @@
 import {
     applyPredictions,
     predictionFor,
-    predictions
+    predictions,
+    pressFor
 } from '../../client/Components/GameBoard/predictions.js';
 import {
     sendButtonClickedMessage,
@@ -248,6 +249,61 @@ describe('predictions', function () {
 
         expect(next.messages[0].pending).toBeUndefined();
         expect(next.players.me.buttons.some((button) => button.pending)).toBe(false);
+    });
+
+    it('presses any card the player clicks, whatever the click does', function () {
+        const state = gameState();
+        const presses = ['chosen', 'idle', 'theirs'].map((uuid) =>
+            pressFor(sendCardClickedMessage(uuid), state, user)
+        );
+        const next = applyPredictions(
+            state,
+            presses.map((press) => ({ ...press, seq: 1 })),
+            'me'
+        );
+
+        expect(presses).toEqual([
+            { kind: 'press', uuid: 'chosen' },
+            { kind: 'press', uuid: 'idle' },
+            { kind: 'press', uuid: 'theirs' }
+        ]);
+        expect(
+            ['chosen', 'idle', 'theirs', 'ordered'].map((uuid) => !!card(next, uuid).pressed)
+        ).toEqual([true, true, true, false]);
+        expect(card(next, 'chosen').selected).toBe(false);
+    });
+
+    it('presses nothing for someone not playing, or a card not on the board', function () {
+        expect(pressFor(sendCardClickedMessage('chosen'), gameState(), spectator)).toBeUndefined();
+        expect(pressFor(sendCardClickedMessage('missing'), gameState(), user)).toBeUndefined();
+        expect(pressFor(pressDone(), gameState(), user)).toBeUndefined();
+    });
+
+    it('leaves no card pressed once settled', function () {
+        const next = applyPredictions(
+            gameState(),
+            [{ kind: 'press', uuid: 'chosen', seq: 1 }],
+            'me',
+            true
+        );
+
+        expect(card(next, 'chosen').pressed).toBeUndefined();
+    });
+
+    it('keeps every prediction made for one message, and drops them together', function () {
+        predictions.add(1, [
+            { kind: 'select', uuid: 'chosen' },
+            undefined,
+            { kind: 'press', uuid: 'chosen' }
+        ]);
+
+        expect(predictions.list()).toEqual([
+            { kind: 'select', uuid: 'chosen', seq: 1 },
+            { kind: 'press', uuid: 'chosen', seq: 1 }
+        ]);
+
+        predictions.handled(1);
+        expect(predictions.list()).toEqual([]);
     });
 
     it('drops predictions once their message is handled', function () {

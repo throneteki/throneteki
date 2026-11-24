@@ -4,8 +4,11 @@ import { createNextState } from '@reduxjs/toolkit';
 import {
     gameConnected,
     gameConnectionFailed,
+    gameConnectionLost,
     gameDisconnected,
     gameReconnecting,
+    gameRetryScheduled,
+    reconnectGameNow,
     receiveResponseTime,
     sendButtonClickedMessage,
     sendCardClickedMessage,
@@ -33,13 +36,15 @@ import { serverWait } from '../../Components/GameBoard/serverWait';
 import {
     applyPredictions,
     predictionFor,
-    predictions
+    predictions,
+    pressFor
 } from '../../Components/GameBoard/predictions';
 
 const GameEvent = Object.freeze({
     Connected: 'connect',
     Disconnected: 'disconnect',
-    Reconnecting: 'reconnect',
+    ConnectError: 'connect_error',
+    ReconnectAttempt: 'reconnect_attempt',
     Error: 'error'
 });
 
@@ -101,7 +106,7 @@ const gameMiddleware = (store) => {
 
     const emitGame = (...args) => {
         const seq = serverWait.sent();
-        if (prediction && gameState) {
+        if ([prediction].flat().some(Boolean) && gameState) {
             predictions.add(seq, prediction);
             publish();
         }
@@ -172,23 +177,41 @@ const gameMiddleware = (store) => {
                 }
             });
 
+            // socket.io picks each retry's delay from its backoff without saying what it is, so it is caught here
+            // to count down to the next try
+            const backoff = socket.io.backoff;
+            const delayOf = backoff.duration.bind(backoff);
+            backoff.duration = () => {
+                const delay = delayOf();
+                dispatch(gameRetryScheduled(Date.now() + delay));
+                return delay;
+            };
+
             socket.on(GameEvent.Connected, () => {
                 dispatch(gameConnected());
             });
 
-            socket.on(GameEvent.Disconnected, () => {
+            socket.on(GameEvent.Disconnected, (reason) => {
                 gameState = undefined;
                 resyncing = false;
                 resetPredictions();
-                dispatch(gameDisconnected());
+                dispatch(
+                    reason === 'io client disconnect' || !store.getState().lobby.currentGame
+                        ? gameDisconnected()
+                        : gameConnectionLost(reason)
+                );
             });
 
-            socket.on(GameEvent.Reconnecting, () => {
+            socket.on(GameEvent.ConnectError, (error) => {
+                dispatch(gameConnectionFailed(error?.message));
+            });
+
+            socket.io.on(GameEvent.ReconnectAttempt, () => {
                 dispatch(gameReconnecting());
             });
 
-            socket.io.on(GameEvent.Error, () => {
-                dispatch(gameConnectionFailed());
+            socket.io.on(GameEvent.Error, (error) => {
+                dispatch(gameConnectionFailed(error?.message));
             });
 
             socket.on(
@@ -244,6 +267,18 @@ const gameMiddleware = (store) => {
             }, 5000);
         }
 
+        // Disconnecting first drops any retry the socket has waiting, so this one goes now and the backoff
+        // starts again from it if it fails
+        if (reconnectGameNow.match(action)) {
+            next(action);
+            if (socket && !socket.connected) {
+                socket.disconnect();
+                dispatch(gameReconnecting());
+                socket.connect();
+            }
+            return;
+        }
+
         if (!isConnectionEstablished || !socket) {
             next(action);
 
@@ -277,6 +312,10 @@ const gameMiddleware = (store) => {
             ) {
                 return;
             }
+            prediction = [
+                prediction,
+                pressFor(action, store.getState().lobby.currentGame, store.getState().auth.user)
+            ];
             const seq = emitGame(GameMessage.CardClicked, action.payload, promptId());
             lastClick = { uuid: action.payload, seq };
         } else if (sendButtonClickedMessage.match(action)) {
