@@ -1,5 +1,9 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { createPortal } from 'react-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { sendLeaveGameMessage } from '../../../redux/reducers/game';
 import classNames from 'classnames';
 import PlayerAvatar from './PlayerAvatar';
 import CardImage from '../../Images/CardImage';
@@ -12,8 +16,11 @@ import { remSize } from '../../../cardScale';
 import { nameOf } from './followTarget';
 
 // The board's overlays: the game's start and end (major: wait for a button) and what happens in it (minor: continue
-// on a timer). Each shows once per game (kept in sessionStorage, so a refresh does not repeat it). A prompt that only
-// asks us to choose a title or a player is shown the same way while it waits.
+// on a timer). Each shows once per game (kept in sessionStorage, so a refresh does not repeat it).
+
+// The game menu's View result: the end overlay again, played from the start
+const replayListeners = new Set();
+export const replayEndOverlay = () => replayListeners.forEach((listener) => listener());
 
 const eliminatedReasons = {
     decked: 'Ran out of cards',
@@ -21,12 +28,6 @@ const eliminatedReasons = {
     left: 'Left the game',
     disconnected: 'Disconnected',
     time: 'Ran out of time'
-};
-const winReasons = {
-    power: 'Reached 15 power',
-    concede: 'Their opponents conceded',
-    remaining: 'Last player standing',
-    time: 'Most power when time ran out'
 };
 const flyTime = 450;
 const fadeTime = 250;
@@ -147,6 +148,22 @@ const useOverlays = ({ gameId, players, phase, melee, gameOver, roundsEnded, ena
         [gameId]
     );
 
+    useEffect(() => {
+        if (!enabled || !gameOver) {
+            return;
+        }
+        const replay = () => {
+            queued.current.add('over');
+            setQueue((current) =>
+                current.some((item) => item.key === 'over')
+                    ? current
+                    : [...current.filter((item) => item.major), { key: 'over', major: 'over' }]
+            );
+        };
+        replayListeners.add(replay);
+        return () => replayListeners.delete(replay);
+    }, [enabled, gameOver]);
+
     const live = players.filter((player) => !player.eliminated);
     const plots = signature(live, (player) => player.activePlot);
     const titles = melee ? signature(live, (player) => player.title) : null;
@@ -265,21 +282,77 @@ const HideCards = ({ uuids }) =>
 // lose its tosses and start its timers early
 const still = () => document.hidden || motionSettingOff();
 
-const cardShadow = 'rounded-[calc(var(--card-scale)*0.25rem)] shadow-[0_8px_22px_rgba(0,0,0,0.7)]';
+const cardRound = 'rounded-[calc(var(--card-scale)*0.25rem)]';
+const cardShadow = `${cardRound} shadow-[0_8px_22px_rgba(0,0,0,0.7)]`;
 
 // A player's faction card with their agendas tucked behind, tossed in at toss ms, the agendas just after
 const agendaGap = 110;
-const PlayerCards = ({ player, out = false, scale, toss, className }) => {
-    const agendas = (player.agendas || []).filter((agenda) => agenda?.code);
+const agendasOf = (player) => (player.agendas || []).filter((agenda) => agenda?.code);
+const cardsOf = (player, toss) => {
     const name = nameOf(player);
-    const tossed = (id, delay, card) =>
-        toss === undefined ? (
-            card
-        ) : (
-            <Toss id={id} group={name} delay={delay}>
-                {card}
-            </Toss>
-        );
+    return [
+        {
+            id: `${name}:faction`,
+            code: player.faction?.code || 'cardback',
+            type: 'faction',
+            toss
+        },
+        ...agendasOf(player).map((agenda, index) => ({
+            id: `${name}:${agenda.code}:${index}`,
+            code: agenda.code,
+            type: 'agenda',
+            toss: toss + agendaGap * (index + 1)
+        }))
+    ];
+};
+// Where each card lies. Stacked: the faction in front, the agendas tucked behind it in a line, each a little askew.
+// Fanned: side by side in the same order, gap px apart (less than nothing where room is short, so they overlap).
+const cardWidthRem = 4;
+const placeStyle = (cards, place, fanGap) => {
+    const card = cards[place];
+    const zIndex = 10 - place;
+    if (fanGap !== undefined) {
+        return {
+            zIndex,
+            marginLeft: place === 0 ? '0px' : `${fanGap}px`,
+            marginTop: '0px',
+            rotate: `${tiltOf(card.id, 0, 1.5)}deg`,
+            '--nudge': 0
+        };
+    }
+    // --nudge: how far towards its fanned place a card leans under a mouse (overlay-fan-card)
+    if (place === 0) {
+        return {
+            zIndex,
+            marginLeft: '0px',
+            marginTop: '0px',
+            rotate: `${tiltOf(card.id, -3)}deg`,
+            '--nudge': 0
+        };
+    }
+    // Every agenda at the same drop and nearly the same tilt, so they lie level with each other: a card tilted more
+    // lifts its corner higher
+    return {
+        zIndex,
+        marginLeft: 'calc(var(--card-scale) * -2.6rem)',
+        marginTop: 'calc(var(--card-scale) * 0.9rem)',
+        rotate: `${tiltOf(card.id, 4, 1)}deg`,
+        '--nudge': place
+    };
+};
+// fanRoom: px for the cards to fan out across, or nothing to keep them stacked
+// shadow false: the cards cast none of their own, where one is cast round the whole arrangement
+const PlayerCards = ({ player, out = false, scale, toss, fanRoom, shadow = true, className }) => {
+    const cards = cardsOf(player, toss);
+    const look = shadow ? cardShadow : cardRound;
+    const width = cardWidthRem * remSize() * scale;
+    const fanGap =
+        fanRoom === undefined
+            ? undefined
+            : Math.min(
+                  0.5 * remSize() * scale,
+                  (fanRoom - cards.length * width) / Math.max(1, cards.length - 1)
+              );
     return (
         <div
             className={classNames('relative flex shrink-0', className, {
@@ -287,39 +360,132 @@ const PlayerCards = ({ player, out = false, scale, toss, className }) => {
             })}
             style={{ '--card-scale': scale }}
         >
-            <div
-                className='relative z-10'
-                style={{ rotate: `${tiltOf(`${name}:faction`, -3)}deg` }}
-            >
-                {tossed(
-                    `${name}:faction`,
-                    toss,
-                    <CardImage
-                        code={player.faction?.code || 'cardback'}
-                        type='faction'
-                        className={cardShadow}
-                    />
-                )}
-            </div>
-            {agendas.map((agenda, index) => (
+            {cards.map((card, place) => (
                 <div
-                    key={agenda.uuid ?? agenda.code}
-                    className='relative'
-                    style={{
-                        zIndex: 9 - index,
-                        marginLeft: 'calc(var(--card-scale) * -2.6rem)',
-                        marginTop: `calc(var(--card-scale) * ${0.9 + index * 0.6 + tiltOf(`${name}:${agenda.code}:drop`, 0, 0.3)}rem)`,
-                        rotate: `${tiltOf(`${name}:${agenda.code}:${index}`, 4 + index * 3, 3)}deg`
-                    }}
+                    key={card.id}
+                    className='overlay-fan-card relative'
+                    style={placeStyle(cards, place, fanGap)}
                 >
-                    {tossed(
-                        `${name}:${agenda.code}:${index}`,
-                        toss + agendaGap * (index + 1),
-                        <CardImage code={agenda.code} type='agenda' className={cardShadow} />
+                    {toss === undefined ? (
+                        <CardImage code={card.code} type={card.type} className={look} />
+                    ) : (
+                        <Toss id={card.id} group={nameOf(player)} delay={card.toss}>
+                            <CardImage code={card.code} type={card.type} className={look} />
+                        </Toss>
                     )}
                 </div>
             ))}
         </div>
+    );
+};
+
+// The width of an element, kept up to date
+const useWidth = (ref) => {
+    const [width, setWidth] = useState(0);
+    useLayoutEffect(() => {
+        const element = ref.current;
+        if (!element) {
+            return;
+        }
+        const measure = () => setWidth(element.clientWidth);
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(element);
+        return () => observer.disconnect();
+    }, [ref]);
+    return width;
+};
+
+// A player's place at the start or end: their cards and name. With agendas, pressing it fans the cards out side by
+// side (fanned, onFan; one player's at a time), and again stacks them; under a mouse a gold outline round the cards
+// says so. fanRoom: px the fanned cards may take. crown: the winner's crown over the cards and a glow behind them,
+// from crown ms. fade: the cards dim from fade ms (a loser's). children: what shows under the name.
+const Seat = ({
+    player,
+    you,
+    scale,
+    toss,
+    out = false,
+    crown,
+    fade,
+    fanned = false,
+    fanRoom,
+    onFan,
+    children
+}) => {
+    const count = 1 + agendasOf(player).length;
+    const fans = count > 1 && !!onFan;
+    const content = (
+        <>
+            <div className='relative flex flex-col items-center'>
+                {crown !== undefined && (
+                    <>
+                        <div
+                            aria-hidden
+                            className='overlay-glory pointer-events-none absolute left-1/2 top-1/2 -z-10 aspect-square w-[180%] -translate-x-1/2 -translate-y-1/2 rounded-full'
+                            style={after(crown)}
+                        />
+                        {/* Set on the front card's top edge (a card is 4rem across at scale 1), a little askew */}
+                        <Crown
+                            className='overlay-crown pointer-events-none absolute z-20'
+                            style={{
+                                ...after(crown),
+                                width: `${scale * 2.6}rem`,
+                                left: `${scale * 0.5}rem`,
+                                top: `${scale * -1.55}rem`,
+                                rotate: '-10deg'
+                            }}
+                        />
+                    </>
+                )}
+                <div
+                    className={classNames({ 'overlay-dimmed': fade !== undefined })}
+                    style={fade !== undefined ? after(fade) : undefined}
+                >
+                    {/* The ring outlines the cards themselves, so their shadow is cast outside it */}
+                    <div className='[filter:drop-shadow(0_8px_14px_rgba(0,0,0,0.7))]'>
+                        <div className={classNames({ 'overlay-ring': fans })}>
+                            <PlayerCards
+                                player={player}
+                                scale={scale}
+                                toss={toss}
+                                out={out}
+                                fanRoom={fans && fanned ? fanRoom : undefined}
+                                shadow={false}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <Name
+                player={player}
+                you={you}
+                className='overlay-after'
+                style={after(groupLanded(player, toss))}
+            />
+            {children}
+        </>
+    );
+    const seatClass = 'flex min-w-0 max-w-full flex-col items-center gap-5';
+    if (!fans) {
+        return <div className={seatClass}>{content}</div>;
+    }
+    return (
+        <button
+            type='button'
+            onClick={() => onFan(fanned ? null : nameOf(player))}
+            aria-expanded={fanned}
+            aria-label={
+                fanned ? `Stack ${nameOf(player)}'s cards` : `Show all of ${nameOf(player)}'s cards`
+            }
+            title={fanned ? 'Stack the cards' : 'Show all the cards'}
+            className={classNames(
+                seatClass,
+                'group pointer-events-auto cursor-pointer rounded-xl outline-none [-webkit-tap-highlight-color:transparent]'
+            )}
+        >
+            {content}
+        </button>
     );
 };
 
@@ -462,8 +628,36 @@ const Flier = ({ from, to, tilt = 0, children }) => {
     );
 };
 
+// How tall an overlay's laid-out content is, padding included. Absolutely placed parts (the embers, a flash) are left
+// out: they fill the overlay whatever its content.
+const contentHeight = (root) => {
+    const parts = [...root.children].filter(
+        (child) => getComputedStyle(child).position !== 'absolute'
+    );
+    if (parts.length === 0) {
+        return 0;
+    }
+    const boxes = parts.map((part) => part.getBoundingClientRect());
+    const style = getComputedStyle(root);
+    return (
+        Math.max(...boxes.map((box) => box.bottom)) -
+        Math.min(...boxes.map((box) => box.top)) +
+        parseFloat(style.paddingTop) +
+        parseFloat(style.paddingBottom)
+    );
+};
+
+// The overlay's card scale: a first guess from how many card widths across and rem tall it needs, then smaller until
+// everything fits, as its text and buttons are zoomed by the interface's scale. Below a fair size for the cards, the
+// overlay's interface gives way too (its own --ui-scale, a share of the page's), so neither is squeezed to nothing.
+const minCardScale = 0.35;
+const fairCardScale = 0.6;
+const minInterfaceShare = 0.6;
 const useCardScale = (rootRef, across, tall) => {
     const [scale, setScale] = useState(1);
+    const [share, setShare] = useState(1);
+    // Each measure is checked for fit, even where the first guess comes out as it was
+    const [measured, setMeasured] = useState(0);
     useLayoutEffect(() => {
         const root = rootRef.current;
         if (!root) {
@@ -475,13 +669,47 @@ const useCardScale = (rootRef, across, tall) => {
                 root.clientWidth / (across * rem * 1.15),
                 root.clientHeight / (tall * rem)
             );
-            setScale(Math.max(0.6, Math.min(2.4, Math.round(fit * 20) / 20)));
+            setScale(Math.max(minCardScale, Math.min(2.4, Math.round(fit * 20) / 20)));
+            setShare(1);
+            setMeasured((count) => count + 1);
         };
         measure();
         const observer = new ResizeObserver(measure);
         observer.observe(root);
         return () => observer.disconnect();
     }, [rootRef, across, tall]);
+    useLayoutEffect(() => {
+        const root = rootRef.current;
+        if (!root) {
+            return;
+        }
+        const page = parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue('--ui-scale')
+        );
+        if (share < 1 && page) {
+            root.style.setProperty('--ui-scale', String(page * share));
+        } else {
+            root.style.removeProperty('--ui-scale');
+        }
+        const need = contentHeight(root);
+        const have = root.clientHeight;
+        const atLeast = scale <= minCardScale && share <= minInterfaceShare;
+        // Where even the least does not fit, the overlay scrolls from its top rather than cut off its ends
+        const scrolls = atLeast && need > have + 2;
+        root.style.justifyContent = scrolls ? 'flex-start' : '';
+        root.style.overflowY = scrolls ? 'auto' : '';
+        if (need <= have + 2 || atLeast) {
+            return;
+        }
+        const step = Math.max(0.8, have / need);
+        if (scale > fairCardScale) {
+            setScale(Math.max(fairCardScale, Math.floor(scale * step * 20) / 20));
+        } else if (share > minInterfaceShare) {
+            setShare(Math.max(minInterfaceShare, Math.floor(share * step * 20) / 20));
+        } else if (scale > minCardScale) {
+            setScale(Math.max(minCardScale, Math.floor(scale * step * 20) / 20));
+        }
+    }, [rootRef, scale, share, measured]);
     return scale;
 };
 
@@ -601,9 +829,95 @@ const groupWidth = (player) =>
     4 + 1.4 * (player.agendas?.filter((agenda) => agenda?.code).length ?? 0);
 const widestGroup = (players) => Math.max(4, ...players.map(groupWidth));
 
-// The players sit down: their cards tossed in, then their names, and in a joust VS between them
+// Embers drifting up behind the start's table, as from a fire. Each one's place, size and pace is fixed, not random,
+// so a render does not move them; steps of the golden ratio spread them evenly without lining them up.
+const emberCount = 22;
+const spread = (index, step) => (index * step * 0.618034) % 1;
+const Embers = ({ ash = false }) => (
+    <div aria-hidden className='pointer-events-none absolute inset-0 -z-10 overflow-hidden'>
+        {Array.from({ length: emberCount }, (_, index) => {
+            const duration = 7 + spread(index, 3) * 6;
+            const size = 2 + (index % 3);
+            return (
+                <span
+                    key={index}
+                    className={classNames(
+                        'overlay-ember absolute -bottom-2 rounded-full',
+                        ash ? 'bg-zinc-400' : 'bg-amber-300'
+                    )}
+                    style={{
+                        left: `${spread(index, 1) * 100}%`,
+                        width: `${size}px`,
+                        height: `${size}px`,
+                        boxShadow: ash
+                            ? '0 0 4px 1px rgba(161,161,170,0.4)'
+                            : '0 0 6px 2px rgba(251,146,60,0.7)',
+                        '--ember-x': `${Math.round(spread(index, 5) * 120 - 60)}px`,
+                        '--ember-o': 0.35 + spread(index, 7) * 0.5,
+                        animationDuration: `${duration.toFixed(2)}s`,
+                        animationDelay: `-${(spread(index, 2) * duration).toFixed(2)}s`
+                    }}
+                />
+            );
+        })}
+    </div>
+);
+
+// Two longswords crossed, swinging in to cross at delay ms, then glowing slowly as if in firelight. size: rem.
+const CrossedSwords = ({ size, delay }) => {
+    const sword = (side) => (
+        <g className='overlay-sword' style={{ '--sword-side': side, animationDelay: `${delay}ms` }}>
+            <path d='M50 4 L54.5 13 L54.5 66 L45.5 66 L45.5 13 Z' fill='url(#overlay-blade)' />
+            <path d='M50 14 L50 63' stroke='rgba(0,0,0,0.35)' strokeWidth='1.2' />
+            <rect x='33' y='65' width='34' height='5' rx='2.5' fill='url(#overlay-gilt)' />
+            <rect x='47.5' y='70' width='5' height='17' rx='1.5' fill='#4a2a12' />
+            <circle cx='50' cy='91' r='4.5' fill='url(#overlay-gilt)' />
+        </g>
+    );
+    return (
+        <svg
+            aria-hidden
+            viewBox='0 0 100 100'
+            className='overlay-swords pointer-events-none overflow-visible'
+            style={{
+                width: ui(size),
+                height: ui(size),
+                animationDelay: `${delay}ms, ${delay + 600}ms`
+            }}
+        >
+            <defs>
+                <linearGradient id='overlay-blade' x1='0' x2='1'>
+                    <stop offset='0' stopColor='#f4f4f5' />
+                    <stop offset='0.5' stopColor='#a1a1aa' />
+                    <stop offset='1' stopColor='#52525b' />
+                </linearGradient>
+                <linearGradient id='overlay-gilt' x1='0' x2='0' y1='0' y2='1'>
+                    <stop offset='0' stopColor='#fde68a' />
+                    <stop offset='1' stopColor='#b45309' />
+                </linearGradient>
+            </defs>
+            {sword(1)}
+            {sword(-1)}
+        </svg>
+    );
+};
+
+// How wide a player's cards may fan out: a seat's share of the table (the overlay is padded 1rem each side). In a
+// joust across the screen each seat takes at most 40%; in a melee a column of Rows, gap rem apart.
+const fanRoomOf = (width, { melee, portrait, columns, gap }) => {
+    const inner = width - 2 * remSize();
+    if (melee) {
+        return (inner - (columns - 1) * gap * remSize()) / columns;
+    }
+    return portrait ? inner : inner * 0.4;
+};
+
+// The players sit down: their cards tossed in, then their names, and in a joust VS between them. Pressing a player's
+// cards fans them out.
 const Start = ({ players, me, portrait, onClose }) => {
     const rootRef = useRef(null);
+    const width = useWidth(rootRef);
+    const [fanned, setFanned] = useState(null);
     const melee = players.length > 2;
     const ordered = me ? [me, ...players.filter((player) => player !== me)] : players;
     const joust = portrait ? [...ordered].reverse() : ordered;
@@ -620,26 +934,31 @@ const Start = ({ players, me, portrait, onClose }) => {
     const allLanded = Math.max(
         ...players.map((player, index) => groupLanded(player, tossOf(index)))
     );
+    const fanRoom = fanRoomOf(width, { melee, portrait, columns: columnsOf(rows), gap: 2.5 });
     const seat = (player, index) => (
-        <div className='flex min-w-0 max-w-full flex-col items-center gap-5'>
-            <PlayerCards player={player} scale={scale} toss={tossOf(index)} />
-            <Name
-                player={player}
-                you={player === me}
-                className='overlay-after'
-                style={after(groupLanded(player, tossOf(index)))}
-            />
-        </div>
+        <Seat
+            player={player}
+            you={player === me}
+            scale={scale}
+            toss={tossOf(index)}
+            fanned={fanned === nameOf(player)}
+            fanRoom={fanRoom}
+            onFan={setFanned}
+        />
     );
     return (
         <div
             ref={rootRef}
-            className='flex h-full w-full flex-col items-center justify-center gap-6 p-4'
+            className='relative isolate flex h-full w-full flex-col items-center justify-center gap-6 p-4'
         >
+            <Embers />
             {melee && (
-                <Heading className='overlay-after text-xl' style={after(0)}>
-                    Melee · {players.length} players
-                </Heading>
+                <div className='flex flex-col items-center'>
+                    <CrossedSwords size={4.5} delay={0} />
+                    <Heading className='overlay-after text-xl' style={after(0)}>
+                        Melee · {players.length} players
+                    </Heading>
+                </div>
             )}
             {melee ? (
                 <Rows rows={rows} gap={2.5} keyOf={nameOf} render={seat} />
@@ -653,11 +972,16 @@ const Start = ({ players, me, portrait, onClose }) => {
                     {joust.map((player, index) => (
                         <React.Fragment key={nameOf(player)}>
                             {index === 1 && (
-                                <div
-                                    className='overlay-stamp shrink-0 font-[Cinzel,serif] text-5xl font-extrabold text-amber-300 [text-shadow:0_0_24px_rgba(242,184,75,0.6),0_4px_0_#5a3c08]'
-                                    style={{ animationDelay: `${allLanded}ms` }}
-                                >
-                                    VS
+                                <div className='relative flex shrink-0 items-center justify-center'>
+                                    <div className='absolute left-1/2 top-1/2 -z-10 -translate-x-1/2 -translate-y-1/2'>
+                                        <CrossedSwords size={9} delay={allLanded} />
+                                    </div>
+                                    <div
+                                        className='overlay-stamp font-[Cinzel,serif] text-5xl font-extrabold text-amber-300 [text-shadow:0_0_24px_rgba(242,184,75,0.6),0_4px_0_#5a3c08]'
+                                        style={{ animationDelay: `${allLanded}ms` }}
+                                    >
+                                        VS
+                                    </div>
                                 </div>
                             )}
                             <div
@@ -681,30 +1005,95 @@ const Start = ({ players, me, portrait, onClose }) => {
     );
 };
 
-// The game's end: the winner's cards (in a melee everyone's, last place first), then the result. Rematch and Continue
-// playing when the game offers them.
-const Over = ({ players, me, portrait, winners, winReason, buttons, onButtonClick, onClose }) => {
+// A crown of gold, for the winner
+const Crown = ({ className, style }) => (
+    <svg aria-hidden viewBox='0 0 100 72' className={className} style={style}>
+        <defs>
+            <linearGradient id='overlay-crown-gold' x1='0' x2='0' y1='0' y2='1'>
+                <stop offset='0' stopColor='#fef3c7' />
+                <stop offset='0.45' stopColor='#fbbf24' />
+                <stop offset='1' stopColor='#b45309' />
+            </linearGradient>
+        </defs>
+        <path
+            d='M10 58 L5 20 L29 40 L50 9 L71 40 L95 20 L90 58 Z'
+            fill='url(#overlay-crown-gold)'
+            stroke='#78350f'
+            strokeWidth='2.5'
+            strokeLinejoin='round'
+        />
+        <rect
+            x='9'
+            y='56'
+            width='82'
+            height='11'
+            rx='3'
+            fill='url(#overlay-crown-gold)'
+            stroke='#78350f'
+            strokeWidth='2.5'
+        />
+        {[
+            [5, 20],
+            [50, 9],
+            [95, 20]
+        ].map(([cx, cy]) => (
+            <circle
+                key={cx}
+                cx={cx}
+                cy={cy}
+                r='4.5'
+                fill='#fef3c7'
+                stroke='#78350f'
+                strokeWidth='2'
+            />
+        ))}
+        <circle cx='50' cy='45' r='6' fill='#dc2626' stroke='#7f1d1d' strokeWidth='1.5' />
+        <circle cx='29' cy='51' r='3.5' fill='#2563eb' stroke='#1e3a8a' strokeWidth='1.2' />
+        <circle cx='71' cy='51' r='3.5' fill='#16a34a' stroke='#14532d' strokeWidth='1.2' />
+    </svg>
+);
+
+const placeNames = ['1st', '2nd', '3rd'];
+const placeOf = (standing) => placeNames[standing - 1] ?? `${standing}th`;
+
+// The game's end: who won, said plainly, over everyone's cards (in a joust both players, the winner's larger and
+// crowned; in a melee everyone, by place), each with their power. Rematch and Continue playing when the game offers
+// them.
+const Over = ({ players, me, portrait, winners, buttons, onButtonClick, onClose }) => {
+    const dispatch = useDispatch();
     const rootRef = useRef(null);
+    const width = useWidth(rootRef);
+    const [fanned, setFanned] = useState(null);
     const melee = players.length > 2;
-    const winning = players.filter((player) => winners.includes(nameOf(player)));
+    const won = (player) => winners.includes(nameOf(player));
+    const winning = players.filter(won);
     const placed = [...players].sort((a, b) => (a.standing ?? 99) - (b.standing ?? 99));
-    const rows = orderedRows(placed, portrait);
-    const across = melee ? columnsOf(rows) * (widestGroup(players) + 2) : 12;
-    const scale = useCardScale(rootRef, across, melee ? 10 + rows.length * 15 : 18);
+    const rows = melee ? orderedRows(placed, portrait) : null;
+    // In a joust the winner leads: first across, on top in portrait
+    const joust = melee ? [] : [...players].sort((a, b) => Number(won(b)) - Number(won(a)));
+    const across = melee
+        ? columnsOf(rows) * (widestGroup(players) + 2)
+        : portrait
+          ? widestGroup(players) + 2
+          : players.reduce((sum, player) => sum + groupWidth(player), 0) + 10;
+    const tall = melee ? 12 + rows.length * 13 : portrait ? 38 : 21;
+    const scale = useCardScale(rootRef, across, tall);
     useToss(rootRef);
-    const iWon = me && winners.includes(nameOf(me));
+    const iWon = me && won(me);
     const title =
+        winning.length === 0 ? 'No winner' : me ? (iWon ? 'Victory' : 'Defeat') : 'Game over';
+    const winnerNames = winning.map((player) => (player === me ? 'You' : nameOf(player)));
+    const headline =
         winning.length === 0
-            ? 'No winner'
-            : me && !melee
-              ? iWon
-                  ? 'Victory'
-                  : 'Defeat'
-              : `${winning.map(nameOf).join(' and ')} ${winning.length > 1 ? 'win' : 'wins'}`;
-    const tossOf = (player) =>
-        melee ? 150 + (placed.length - 1 - placed.indexOf(player)) * tossGap * 2.2 : 200;
-    const shown = melee ? placed : winning.slice(0, 1);
-    const allLanded = Math.max(300, ...shown.map((player) => groupLanded(player, tossOf(player))));
+            ? 'The game ended without a winner'
+            : `${winnerNames.join(' and ')} ${winning.length > 1 || winning[0] === me ? 'win' : 'wins'} the game`;
+    // The losers' cards land first, the winner's last
+    const order = melee ? [...placed].reverse() : [...joust].reverse();
+    const tossOf = (player) => 150 + order.indexOf(player) * tossGap * 2.2;
+    const allLanded = Math.max(
+        300,
+        ...players.map((player) => groupLanded(player, tossOf(player)))
+    );
     const button = (arg) => buttons?.find((candidate) => candidate.arg === arg);
     const press = (arg) => {
         const found = button(arg);
@@ -713,92 +1102,110 @@ const Over = ({ players, me, portrait, winners, winReason, buttons, onButtonClic
         }
         onClose();
     };
-    const powerLine = players.map((player) => `${nameOf(player)} ${powerOf(player)}`).join(' · ');
-    const lead = (player, cardScale) => (
-        <div className='relative flex justify-center'>
-            {winners.includes(nameOf(player)) && (
-                <div
-                    aria-hidden
-                    className='overlay-rays pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[260%] -translate-x-1/2 -translate-y-1/2 rounded-full'
-                    style={after(allLanded)}
-                />
-            )}
-            <PlayerCards
+    const sizeOf = (player) =>
+        scale * (winning.length === 0 ? 1 : won(player) ? (melee ? 1.15 : 1.1) : melee ? 0.9 : 0.8);
+    const fanRoom = fanRoomOf(width, {
+        melee,
+        portrait,
+        columns: melee ? columnsOf(rows) : 1,
+        gap: 2
+    });
+    const seat = (player) => {
+        const winner = won(player);
+        return (
+            <Seat
                 player={player}
-                scale={cardScale}
-                out={player.eliminated}
+                you={player === me}
+                scale={sizeOf(player)}
                 toss={tossOf(player)}
-            />
-        </div>
-    );
+                fanned={fanned === nameOf(player)}
+                fanRoom={fanRoom}
+                onFan={setFanned}
+                out={player.eliminated}
+                crown={winner ? allLanded : undefined}
+                fade={!winner && winning.length > 0 && !player.eliminated ? allLanded : undefined}
+            >
+                <div
+                    className='overlay-after hud-zoom -mt-2 flex flex-col items-center gap-1'
+                    style={after(groupLanded(player, tossOf(player)) + 100)}
+                >
+                    <span
+                        className={classNames(
+                            'flex items-center gap-1.5 rounded-full border px-3 py-0.5 text-sm font-semibold tabular-nums',
+                            winner
+                                ? 'border-amber-400/80 bg-amber-400/20 text-amber-100 shadow-[0_0_12px_rgba(251,191,36,0.35)]'
+                                : 'border-white/25 bg-black/60 text-zinc-200'
+                        )}
+                    >
+                        {melee && player.standing && (
+                            <span className={winner ? 'text-amber-300' : 'text-default-400'}>
+                                {placeOf(player.standing)} ·
+                            </span>
+                        )}
+                        {!melee && winner && <span className='text-amber-300'>Winner ·</span>}
+                        {powerOf(player)} power
+                    </span>
+                    {player.eliminated && (
+                        <span className='text-xs uppercase tracking-wider text-red-300 [text-shadow:0_1px_4px_#000]'>
+                            {eliminatedReasons[player.eliminatedReason] ?? 'Eliminated'}
+                        </span>
+                    )}
+                </div>
+            </Seat>
+        );
+    };
 
     return (
         <div
             ref={rootRef}
-            className='flex h-full w-full flex-col items-center justify-center gap-5 p-4 text-center'
+            className={classNames(
+                'relative isolate flex h-full w-full flex-col items-center justify-center gap-5 p-4 text-center',
+                { 'pb-12': portrait }
+            )}
         >
-            <div
-                className={classNames(
-                    'overlay-stamp relative z-10 max-w-full break-words font-[Cinzel,serif] font-extrabold tracking-wide [text-shadow:0_0_24px_rgba(242,184,75,0.45),0_4px_0_#000]',
-                    melee ? 'text-3xl' : 'text-5xl',
-                    me && !melee && !iWon && winning.length > 0 ? 'text-red-400' : 'text-amber-300'
-                )}
-                style={{ animationDelay: `${allLanded}ms` }}
-            >
-                {title}
+            <Embers />
+            <div className='flex max-w-full flex-col items-center gap-2'>
+                <div
+                    className={classNames(
+                        'overlay-stamp max-w-full break-words font-[Cinzel,serif] font-extrabold tracking-wide [text-shadow:0_0_24px_rgba(242,184,75,0.45),0_4px_0_#000]',
+                        zoom,
+                        melee ? 'text-4xl' : 'text-5xl',
+                        me && !iWon && winning.length > 0 ? 'text-red-400' : 'text-amber-300'
+                    )}
+                    style={{ animationDelay: `${allLanded}ms` }}
+                >
+                    {title}
+                </div>
+                <div
+                    className='overlay-after hud-zoom max-w-full break-words font-[Cinzel,serif] text-xl font-bold text-amber-50 [text-shadow:0_2px_8px_#000]'
+                    style={after(allLanded + 250)}
+                >
+                    {headline}
+                </div>
             </div>
             {melee ? (
-                <Rows
-                    rows={rows}
-                    gap={2}
-                    keyOf={nameOf}
-                    render={(player) => (
-                        <div className='flex min-w-0 max-w-full flex-col items-center gap-4'>
-                            {lead(player, scale * (player.standing === 1 ? 1.15 : 0.9))}
-                            <div
-                                className='overlay-after flex min-w-0 max-w-full flex-col items-center gap-1'
-                                style={after(groupLanded(player, tossOf(player)))}
-                            >
-                                <Name player={player} you={player === me} />
-                                <div className='hud-zoom flex flex-col items-center gap-1 text-sm leading-tight text-white'>
-                                    <span className='flex items-baseline gap-2'>
-                                        {player.standing && (
-                                            <span className='font-[Cinzel,serif] text-xl font-extrabold text-amber-300'>
-                                                #{player.standing}
-                                            </span>
-                                        )}
-                                        <span>{powerOf(player)} power</span>
-                                    </span>
-                                    {player.eliminated && (
-                                        <span className='text-xs uppercase tracking-wider text-red-300'>
-                                            {eliminatedReasons[player.eliminatedReason] ??
-                                                'Eliminated'}
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                />
+                <Rows rows={rows} gap={2} keyOf={nameOf} render={seat} />
             ) : (
-                winning.length > 0 && (
-                    <div className='flex min-w-0 max-w-full flex-col items-center gap-6'>
-                        {lead(winning[0], scale)}
-                        <Name
-                            player={winning[0]}
-                            you={winning[0] === me}
-                            className='overlay-after'
-                            style={after(allLanded)}
-                        />
-                    </div>
-                )
+                <div
+                    className={classNames(
+                        'flex w-full items-center justify-center',
+                        portrait ? 'flex-col gap-8' : 'gap-16'
+                    )}
+                    style={{ paddingTop: `${scale}rem` }}
+                >
+                    {joust.map((player) => (
+                        <div
+                            key={nameOf(player)}
+                            className={classNames(
+                                'flex min-w-0 justify-center',
+                                portrait ? 'max-w-full' : 'max-w-[40%]'
+                            )}
+                        >
+                            {seat(player)}
+                        </div>
+                    ))}
+                </div>
             )}
-            <div
-                className='overlay-after hud-zoom max-w-full text-sm font-semibold uppercase tracking-widest text-default-200 [text-shadow:0_1px_6px_#000]'
-                style={after(allLanded + 300)}
-            >
-                {[winReasons[winReason], !melee && powerLine].filter(Boolean).join(' · ')}
-            </div>
             <div
                 className='overlay-after hud-zoom flex flex-wrap justify-center gap-2'
                 style={after(allLanded + 450)}
@@ -817,6 +1224,22 @@ const Over = ({ players, me, portrait, winners, winReason, buttons, onButtonClic
                     View board
                 </OverlayButton>
             </div>
+            {/* The game is over, so leaving needs no confirming. Small and set apart from the buttons, so it is not
+                pressed by mistake: on a phone in portrait, at the foot of the screen. */}
+            <button
+                type='button'
+                onClick={() => dispatch(sendLeaveGameMessage())}
+                className={classNames(
+                    'overlay-after hud-zoom pointer-events-auto flex items-center gap-1 rounded px-2 py-1 text-[0.6rem] font-semibold uppercase tracking-wider text-red-300/80 [text-shadow:0_1px_4px_#000] hover:text-red-200 hover:underline',
+                    portrait
+                        ? 'absolute bottom-[calc(0.5rem+var(--safe-bottom))] left-1/2 -translate-x-1/2'
+                        : 'mt-3'
+                )}
+                style={after(allLanded + 600)}
+            >
+                <FontAwesomeIcon icon={faRightFromBracket} />
+                Leave game
+            </button>
         </div>
     );
 };
@@ -827,9 +1250,11 @@ const byPower = (players) =>
     aroundTheTable(players[0], players).sort((a, b) => powerOf(b) - powerOf(a));
 const standingToss = (index) => 150 + index * tossGap;
 
-// Each player in turn, by avatar and name, their power counting up once they are in
+// Each player in turn, by avatar and name, their power counting up once they are in. leads: ahead on power, shown
+// by a small crown once their power has counted up, and a faint glow on their bar.
 const standingShown = (index) => standingToss(index) + 420;
-const Standing = ({ player, me, portrait, index }) => {
+const countTime = 800;
+const Standing = ({ player, me, portrait, index, leads = false }) => {
     const landed = standingShown(index);
     return (
         <div
@@ -849,6 +1274,12 @@ const Standing = ({ player, me, portrait, index }) => {
                 )}
             >
                 <div className={classNames('flex items-baseline gap-2 leading-none', zoom)}>
+                    {leads && (
+                        <Crown
+                            className='overlay-pop w-6 self-center'
+                            style={{ ...after(landed + countTime), rotate: '-10deg' }}
+                        />
+                    )}
                     <span className='font-[Cinzel,serif] text-3xl font-extrabold tabular-nums text-amber-300'>
                         <CountUp value={powerOf(player)} delay={landed} />
                     </span>
@@ -869,7 +1300,10 @@ const Standing = ({ player, me, portrait, index }) => {
                         }}
                     >
                         <div
-                            className='overlay-grow h-full rounded-full bg-amber-400'
+                            className={classNames('overlay-grow h-full rounded-full', {
+                                'bg-amber-400': !leads,
+                                'bg-amber-300 shadow-[0_0_8px_rgba(251,191,36,0.8)]': leads
+                            })}
                             style={after(landed)}
                         />
                     </div>
@@ -879,11 +1313,25 @@ const Standing = ({ player, me, portrait, index }) => {
     );
 };
 
-const Standings = ({ ranked, me, portrait }) =>
-    portrait ? (
+// Whoever has the most power leads, unless everyone is level
+const leadersOf = (ranked) => {
+    const top = powerOf(ranked[0] ?? {});
+    const leaders = ranked.filter((player) => powerOf(player) === top);
+    return top > 0 && leaders.length < ranked.length ? leaders : [];
+};
+const Standings = ({ ranked, me, portrait }) => {
+    const leaders = leadersOf(ranked);
+    return portrait ? (
         <div className='flex w-full max-w-md flex-col items-stretch gap-3'>
             {ranked.map((player, index) => (
-                <Standing key={nameOf(player)} player={player} me={me} portrait index={index} />
+                <Standing
+                    key={nameOf(player)}
+                    player={player}
+                    me={me}
+                    portrait
+                    index={index}
+                    leads={leaders.includes(player)}
+                />
             ))}
         </div>
     ) : (
@@ -891,9 +1339,12 @@ const Standings = ({ ranked, me, portrait }) =>
             rows={orderedRows(ranked)}
             gap={2.5}
             keyOf={nameOf}
-            render={(player, index) => <Standing player={player} me={me} index={index} />}
+            render={(player, index) => (
+                <Standing player={player} me={me} index={index} leads={leaders.includes(player)} />
+            )}
         />
     );
+};
 
 // Whom a player's title rivals and supports, among the players still in, each line popping in after the card lands
 const Relations = ({ player, live, me, delay }) => {
@@ -991,7 +1442,7 @@ const Minor = ({ overlay, players, me, portrait, seconds, released, onLanded }) 
         round: portrait
             ? [14, 4 + live.length * 7]
             : [columnsOf(rankedRows) * 7.5, 5 + rankedRows.length * 13],
-        out: [10, 15]
+        out: [out ? groupWidth(out) + 4 : 10, 16]
     }[overlay.minor];
     const scale = useCardScale(rootRef, across, tall);
     useToss(rootRef);
@@ -1004,6 +1455,8 @@ const Minor = ({ overlay, players, me, portrait, seconds, released, onLanded }) 
         land().then(onLanded, onLanded);
     }, [leaving, land, onLanded]);
 
+    // An eliminated player's cards are tossed in before the seal comes down on them (overlay-seal, from 750ms)
+    const outToss = 100;
     const flipOf = (index) => flyTime + 80 + index * 130;
     const titleLanded = (index) => flyTime + 60 + index * 90;
     const intro = {
@@ -1027,7 +1480,7 @@ const Minor = ({ overlay, players, me, portrait, seconds, released, onLanded }) 
         <div
             ref={rootRef}
             className={classNames(
-                'relative flex h-full w-full flex-col items-center justify-center gap-5 p-4',
+                'relative isolate flex h-full w-full flex-col items-center justify-center gap-5 p-4',
                 {
                     'overlay-leaving': leaving,
                     'overlay-landed': released
@@ -1035,6 +1488,7 @@ const Minor = ({ overlay, players, me, portrait, seconds, released, onLanded }) 
             )}
             style={{ '--card-scale': scale }}
         >
+            {out && <Embers ash />}
             {out && (
                 <div
                     aria-hidden
@@ -1117,14 +1571,9 @@ const Minor = ({ overlay, players, me, portrait, seconds, released, onLanded }) 
                 <div className='overlay-quake flex min-w-0 max-w-full flex-col items-center gap-6'>
                     <div className='relative'>
                         <div className='overlay-thud'>
-                            <PlayerAvatar
-                                name={nameOf(out)}
-                                className='overlay-ashen shadow-[0_8px_22px_rgba(0,0,0,0.7)]'
-                                style={{
-                                    width: 'calc(var(--card-scale) * 5rem)',
-                                    height: 'calc(var(--card-scale) * 5rem)'
-                                }}
-                            />
+                            <div className='overlay-ashen'>
+                                <PlayerCards player={out} scale={scale} toss={outToss} />
+                            </div>
                         </div>
                         <div
                             className='overlay-seal pointer-events-none absolute left-1/2 top-1/2 z-30'
@@ -1146,7 +1595,6 @@ const Minor = ({ overlay, players, me, portrait, seconds, released, onLanded }) 
                     <Name
                         player={out}
                         you={out === me}
-                        avatar={false}
                         className='overlay-after'
                         style={after(1200)}
                     />
@@ -1199,7 +1647,7 @@ const OverlayView = ({
         <div
             data-board-overlay={overlay.key}
             className={classNames(
-                'overlay-root pointer-events-none absolute inset-0 z-[340] overflow-hidden transition-opacity ease-out',
+                'overlay-root pointer-events-none absolute inset-0 overflow-hidden transition-opacity ease-out',
                 { 'opacity-0': fading }
             )}
             style={{ transitionDuration: `${fadeTime}ms` }}
@@ -1230,7 +1678,6 @@ const OverlayView = ({
                                     me={me}
                                     portrait={portrait}
                                     winners={game?.winners ?? []}
-                                    winReason={game?.winReason}
                                     buttons={buttons}
                                     onButtonClick={onButtonClick}
                                     onClose={close}
@@ -1285,21 +1732,28 @@ const BoardOverlays = ({ thisPlayer, otherPlayers, isPlaying, buttons, onButtonC
         return null;
     }
     if (current) {
+        // Over the whole screen, above the board's panels and popups and the site's own (the chat and navbar too):
+        // they are drawn outside the board, so nothing inside it could stand above them
         return (
             <>
                 <HideCards uuids={waiting} />
-                <OverlayView
-                    key={current.key}
-                    overlay={current}
-                    players={players}
-                    me={me}
-                    game={currentGame}
-                    buttons={buttons}
-                    onButtonClick={onButtonClick}
-                    portrait={portrait}
-                    seconds={overlays.seconds}
-                    onDone={done}
-                />
+                {createPortal(
+                    <div className='pointer-events-none fixed inset-0 z-[440]'>
+                        <OverlayView
+                            key={current.key}
+                            overlay={current}
+                            players={players}
+                            me={me}
+                            game={currentGame}
+                            buttons={buttons}
+                            onButtonClick={onButtonClick}
+                            portrait={portrait}
+                            seconds={overlays.seconds}
+                            onDone={done}
+                        />
+                    </div>,
+                    document.querySelector('[data-overlay-container="true"]') || document.body
+                )}
             </>
         );
     }

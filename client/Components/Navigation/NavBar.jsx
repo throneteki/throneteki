@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import ContextMenu from './ContextMenu';
@@ -28,9 +28,10 @@ import ConfirmDialog from '../Site/ConfirmDialog';
 import { sendLeaveGameMessage } from '../../redux/reducers/game';
 import FullScreenButton from './FullScreenButton';
 import NavItem from './NavItem';
-import { useAdaptiveLayoutMode } from '../../boardLayoutStore';
+import { boardNavbarStore, useAdaptiveLayoutMode } from '../../boardLayoutStore';
 
-const NavBar = () => {
+// overBoard: shown over a phone's board (BoardNavBar), which stays while its menu is open
+const NavBar = ({ overBoard = false }) => {
     const dispatch = useDispatch();
     // The adaptive board has its own game menu in our stats bar, with the spectators, conceding and leaving
     const boardHasMenu = !!useAdaptiveLayoutMode();
@@ -51,6 +52,14 @@ const NavBar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showConfirmLeave, setShowConfirmLeave] = useState(false);
     const [dropdownOpenStatus, setDropdownOpenStatus] = useState({});
+
+    useEffect(() => {
+        if (!overBoard) {
+            return;
+        }
+        boardNavbarStore.set('navMenu', isMenuOpen);
+        return () => boardNavbarStore.set('navMenu', false);
+    }, [overBoard, isMenuOpen]);
 
     const userCanSeeMenu = (menuItem, user) => {
         return !menuItem.permission || user.permissions[menuItem.permission];
@@ -194,7 +203,13 @@ const NavBar = () => {
                     <ProfileDropdown menu={ProfileMenu} user={user} />
                 </NavbarContent>
 
-                <NavbarMenu>
+                <NavbarMenu
+                    className={
+                        overBoard
+                            ? 'top-[calc(var(--navbar-height)+var(--safe-top))] h-[calc(100dvh_-_var(--navbar-height)_-_var(--safe-top))]'
+                            : undefined
+                    }
+                >
                     {leftMenu}
                     {!currentGame?.started && numGames}
                     {currentGame?.started ? (

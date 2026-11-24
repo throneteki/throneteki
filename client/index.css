@@ -73,6 +73,13 @@ body {
     --select-ring: 74 222 128;
 }
 
+/* On Android in landscape the board runs under the camera cut-out rather than leaving a band beside it */
+@media (orientation: landscape) {
+    :root[data-android-board] {
+        --safe-top: 0px;
+    }
+}
+
 .rrt-message {
     background: var(--color-black) !important;
 }
@@ -628,20 +635,6 @@ html.card-dragging.card-drop-refused * {
         opacity: 1;
     }
 }
-/* A choice put aside: all but its restore button fades and stops taking the pointer. Wrappers fade, as the parts'
-   entrance animations hold their own opacity. */
-.overlay-away {
-    transition: opacity 250ms ease-out;
-}
-.overlay-aside .overlay-away {
-    opacity: 0;
-}
-.overlay-aside .overlay-away,
-.overlay-aside .overlay-away *,
-.overlay-gone,
-.overlay-gone * {
-    pointer-events: none !important;
-}
 [data-motion='off'] .overlay-dim,
 [data-motion='off'] .overlay-stamp,
 [data-motion='off'] .overlay-text {
@@ -735,6 +728,104 @@ html.card-dragging.card-drop-refused * {
         animation: none;
     }
 }
+/* A player's cards in the start and end overlays slide between stacked and fanned out side by side */
+.overlay-fan-card {
+    transition:
+        margin 450ms cubic-bezier(0.25, 0.8, 0.3, 1),
+        rotate 450ms cubic-bezier(0.25, 0.8, 0.3, 1),
+        translate 250ms ease-out;
+}
+/* Under a mouse, stacked cards lean a little towards where they fan out (--nudge: their place), as a hint that
+   pressing fans them */
+@media (hover: hover) {
+    .group:hover .overlay-fan-card {
+        translate: calc(var(--nudge, 0) * var(--card-scale, 1) * 0.3rem) 0;
+    }
+}
+/* Under a mouse, a gold outline round the whole arrangement of cards (its silhouette), fading in and out. No filter
+   when it is off, so the cards are not filtered all the while they animate; a filter fades from none smoothly. */
+.overlay-ring {
+    transition: filter 250ms ease-out;
+}
+@media (hover: hover) {
+    .group:hover .overlay-ring,
+    .group:focus-visible .overlay-ring {
+        filter: drop-shadow(2px 0 0 rgb(251 191 36 / 0.9))
+            drop-shadow(-2px 0 0 rgb(251 191 36 / 0.9)) drop-shadow(0 2px 0 rgb(251 191 36 / 0.9))
+            drop-shadow(0 -2px 0 rgb(251 191 36 / 0.9)) drop-shadow(0 0 8px rgb(251 191 36 / 0.35));
+    }
+}
+[data-motion='off'] .overlay-fan-card {
+    transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    .overlay-fan-card {
+        transition: none;
+    }
+}
+
+/* The start's ambience: embers rising, and crossed swords that swing in and then glow slowly. With motion off the
+   embers are gone and the swords still. */
+.overlay-ember {
+    opacity: 0;
+    animation: overlay-ember linear infinite;
+}
+@keyframes overlay-ember {
+    0% {
+        translate: 0 0;
+        opacity: 0;
+    }
+    12%,
+    70% {
+        opacity: var(--ember-o, 0.6);
+    }
+    100% {
+        translate: var(--ember-x, 0) -100vh;
+        opacity: 0;
+    }
+}
+.overlay-sword {
+    transform-origin: 50px 50px;
+    transform: rotate(calc(var(--sword-side) * 45deg));
+    animation: overlay-sword-in 560ms cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+@keyframes overlay-sword-in {
+    from {
+        opacity: 0;
+        transform: rotate(calc(var(--sword-side) * 110deg));
+    }
+}
+.overlay-swords {
+    opacity: 0.55;
+    filter: drop-shadow(0 0 6px rgb(251 191 36 / 0.35));
+    animation:
+        overlay-fade 400ms ease-out both,
+        overlay-sword-glow 3.6s ease-in-out infinite;
+}
+@keyframes overlay-sword-glow {
+    50% {
+        opacity: 0.8;
+        scale: 1.04;
+        filter: drop-shadow(0 0 16px rgb(251 191 36 / 0.7));
+    }
+}
+[data-motion='off'] .overlay-ember {
+    display: none;
+}
+[data-motion='off'] .overlay-sword,
+[data-motion='off'] .overlay-swords {
+    animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    .overlay-ember {
+        display: none;
+    }
+    .overlay-sword,
+    .overlay-swords {
+        animation: none;
+    }
+}
+
 /* Once an overlay's cards have landed, the board shows its own again in their place */
 .overlay-landed [data-fly] {
     visibility: hidden;
@@ -859,21 +950,51 @@ html.card-dragging.card-drop-refused * {
         opacity: 0;
     }
 }
-/* Light turning slowly behind the winner */
-.overlay-rays {
-    background: repeating-conic-gradient(
-        from 0deg,
-        rgba(242, 184, 75, 0.22) 0deg 8deg,
-        transparent 8deg 24deg
+/* The winner's crown drops onto their cards and then bobs gently, a warm glow pulsing behind them; a loser's cards
+   dim once everyone's have landed */
+.overlay-crown {
+    filter: drop-shadow(0 0 10px rgb(251 191 36 / 0.6)) drop-shadow(0 4px 6px rgb(0 0 0 / 0.6));
+    animation:
+        overlay-crown-in 620ms cubic-bezier(0.3, 1.6, 0.5, 1) var(--after-delay, 700ms) both,
+        overlay-crown-bob 3.2s ease-in-out calc(var(--after-delay, 700ms) + 620ms) infinite;
+}
+@keyframes overlay-crown-in {
+    from {
+        opacity: 0;
+        translate: 0 -2.5rem;
+        scale: 1.8;
+        rotate: -24deg;
+    }
+}
+@keyframes overlay-crown-bob {
+    50% {
+        translate: 0 -0.3rem;
+    }
+}
+.overlay-glory {
+    background: radial-gradient(
+        circle,
+        rgb(251 191 36 / 0.4),
+        rgb(251 146 60 / 0.14) 40%,
+        transparent 66%
     );
-    mask-image: radial-gradient(circle, #000 15%, transparent 68%);
     animation:
         overlay-fade 900ms ease-out var(--after-delay, 700ms) both,
-        overlay-spin 24s linear infinite;
+        overlay-glory 3.6s ease-in-out calc(var(--after-delay, 700ms) + 900ms) infinite;
 }
-@keyframes overlay-spin {
-    to {
-        rotate: 360deg;
+@keyframes overlay-glory {
+    50% {
+        opacity: 0.6;
+        scale: 1.06;
+    }
+}
+.overlay-dimmed {
+    filter: grayscale(0.7) brightness(0.55);
+    animation: overlay-dimmed 700ms ease-out var(--after-delay, 700ms) both;
+}
+@keyframes overlay-dimmed {
+    from {
+        filter: none;
     }
 }
 [data-motion='off'] .overlay-toss,
@@ -883,7 +1004,9 @@ html.card-dragging.card-drop-refused * {
 [data-motion='off'] .overlay-grow,
 [data-motion='off'] .overlay-quake,
 [data-motion='off'] .overlay-flash,
-[data-motion='off'] .overlay-rays {
+[data-motion='off'] .overlay-crown,
+[data-motion='off'] .overlay-glory,
+[data-motion='off'] .overlay-dimmed {
     animation: none;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -894,7 +1017,9 @@ html.card-dragging.card-drop-refused * {
     .overlay-grow,
     .overlay-quake,
     .overlay-flash,
-    .overlay-rays {
+    .overlay-crown,
+    .overlay-glory,
+    .overlay-dimmed {
         animation: none;
     }
 }

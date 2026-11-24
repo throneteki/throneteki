@@ -120,8 +120,29 @@ const GameConfigurationModal = ({
                     >
                         {dirty ? 'You have unsaved changes' : 'No unsaved changes'}
                     </span>
-                    <Button variant='flat' isDisabled={!dirty} onPress={() => setDraft(saved)}>
-                        Discard
+                    {/* Close, or Discard while there are changes, fading between them at the wider one's width */}
+                    <Button
+                        variant='flat'
+                        aria-label={dirty ? 'Discard' : 'Close'}
+                        onPress={dirty ? () => setDraft(saved) : onClose}
+                    >
+                        <span className='grid'>
+                            {[
+                                ['Close', !dirty],
+                                ['Discard', dirty]
+                            ].map(([label, shown]) => (
+                                <span
+                                    key={label}
+                                    aria-hidden
+                                    className={classNames(
+                                        'col-start-1 row-start-1 transition-opacity duration-200',
+                                        shown ? 'opacity-100' : 'opacity-0'
+                                    )}
+                                >
+                                    {label}
+                                </span>
+                            ))}
+                        </span>
                     </Button>
                     <Button color='success' isDisabled={!dirty} onPress={save}>
                         Save changes

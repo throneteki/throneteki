@@ -1398,7 +1398,6 @@ export const overlayExamples = {
         steps: ['scheme']
     },
     round: { mode: 'joust', label: 'End of round', fixture: 'mid', steps: ['endRound'] },
-    chooseFirst: { mode: 'joust', label: 'Choice: first player', fixture: 'firstPlayer' },
     won: { mode: 'joust', label: 'Game over: won', fixture: 'won' },
     lost: { mode: 'joust', label: 'Game over: lost', fixture: 'lost' },
     drawn: { mode: 'joust', label: 'Game over: no winner', fixture: 'drawn' },
@@ -1407,8 +1406,6 @@ export const overlayExamples = {
     titles: { mode: 'melee', label: 'Titles chosen', fixture: 'melee', steps: ['titles'] },
     meleeRound: { mode: 'melee', label: 'End of round', fixture: 'melee', steps: ['endRound'] },
     out: { mode: 'melee', label: 'Player eliminated', fixture: 'melee', steps: ['eliminate'] },
-    chooseTitle: { mode: 'melee', label: 'Choice: a title', fixture: 'meleeTitles' },
-    meleeChooseFirst: { mode: 'melee', label: 'Choice: first player', fixture: 'meleeFirstPlayer' },
     meleeWon: { mode: 'melee', label: 'Game over', fixture: 'meleeWon' }
 };
 

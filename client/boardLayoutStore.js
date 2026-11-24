@@ -24,3 +24,25 @@ export const boardLayoutStore = {
 export const useAdaptiveLayoutMode = () => useSyncExternalStore(subscribe, boardLayoutStore.get);
 
 export const hidesNavbar = (layoutMode) => ['narrow', 'short'].includes(layoutMode);
+
+// Where the board hides the navbar, it slides in over the board while the game menu, or its own menu, is open
+let navbarOpen = { gameMenu: false, navMenu: false };
+const navbarListeners = new Set();
+
+const subscribeNavbar = (listener) => {
+    navbarListeners.add(listener);
+    return () => navbarListeners.delete(listener);
+};
+
+export const boardNavbarStore = {
+    set(key, open) {
+        if (navbarOpen[key] === open) {
+            return;
+        }
+        navbarOpen = { ...navbarOpen, [key]: open };
+        navbarListeners.forEach((listener) => listener());
+    },
+    get: () => navbarOpen
+};
+
+export const useBoardNavbar = () => useSyncExternalStore(subscribeNavbar, boardNavbarStore.get);

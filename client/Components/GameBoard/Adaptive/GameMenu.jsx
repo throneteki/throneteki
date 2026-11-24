@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import {
@@ -23,6 +23,7 @@ import {
     faFlag,
     faKeyboard,
     faRightFromBracket,
+    faTrophy,
     faUsers,
     faWrench
 } from '@fortawesome/free-solid-svg-icons';
@@ -41,6 +42,10 @@ import {
     sendToggleManualModeMessage,
     sendToggleMuteSpectatorsMessage
 } from '../../../redux/reducers/game';
+import { boardNavbarStore, useBoardNavbar } from '../../../boardLayoutStore';
+import { useHud } from '../../../hudStore';
+import { overlaySettingsOf } from '../../../hud';
+import { replayEndOverlay } from './BoardOverlays';
 
 const pingTones = { success: 'text-success', warning: 'text-warning', danger: 'text-danger' };
 
@@ -56,6 +61,7 @@ const GroupGap = () => (
 // Which items keep their place in the bar first when not all of them fit
 const priority = [
     'settings',
+    'result',
     'leave',
     'manual',
     'concede',
@@ -74,6 +80,21 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
     const [confirmingLeave, setConfirmingLeave] = useState(false);
     const [reporting, setReporting] = useState(false);
     const [watching, setWatching] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
+    // Once the game is over, its end overlay can be seen again (where overlays are shown at all)
+    const overlaysShown = overlaySettingsOf(useHud()).enabled;
+    const canReplay = !!currentGame?.gameOver && overlaysShown;
+    const { navMenu } = useBoardNavbar();
+    useEffect(() => {
+        boardNavbarStore.set('gameMenu', menuOpen);
+    }, [menuOpen]);
+    useEffect(() => () => boardNavbarStore.set('gameMenu', false), []);
+    // The navbar's own menu covers the board, so the game menu gives way to it
+    useEffect(() => {
+        if (navMenu) {
+            setMenuOpen(false);
+        }
+    }, [navMenu]);
     const manualMode = !!currentGame?.manualMode;
     const muted = !!currentGame?.muteSpectators;
     const server = useSelector((state) => state.game);
@@ -97,6 +118,17 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
 
     // In the bar's order. Only the ways out are named in the bar; spectators is a bar button, in the menu a status row.
     const items = [
+        // First, named and gold, so it is found once the game is over
+        canReplay && {
+            key: 'result',
+            group: 'result',
+            label: 'View result',
+            glyph: faTrophy,
+            description: 'Who won, as shown at the end',
+            tone: 'text-warning',
+            run: replayEndOverlay,
+            named: true
+        },
         {
             key: 'spectators',
             group: 'watch',
@@ -311,7 +343,7 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
             key={item.key}
             startContent={icon(item.glyph)}
             description={item.description}
-            className={item.danger ? 'text-danger' : undefined}
+            className={item.danger ? 'text-danger' : item.tone}
             color={item.danger ? 'danger' : undefined}
         >
             {item.label}
@@ -359,7 +391,17 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
             {showMenu && (
                 <Dropdown
                     placement='top-end'
-                    onOpenChange={(open) => open && setSpectatorsSeen(spectators.length)}
+                    isOpen={menuOpen}
+                    onOpenChange={(open) => {
+                        setMenuOpen(open);
+                        if (open) {
+                            setSpectatorsSeen(spectators.length);
+                        }
+                    }}
+                    // The navbar shown with it (BoardNavBar) is used without closing the menu
+                    shouldCloseOnInteractOutside={(element) =>
+                        !element.closest('[data-board-navbar]')
+                    }
                 >
                     <DropdownTrigger>
                         <Button
