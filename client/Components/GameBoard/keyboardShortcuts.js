@@ -13,7 +13,7 @@ export const shortcutList = [
 
 export const keyboardShortcutsEnabled = (settings) => settings?.keyboardShortcuts !== false;
 
-const overlaySelector = '[role="dialog"], [role="menu"], [role="listbox"]';
+const overlaySelector = '[role="dialog"], [role="menu"], [role="listbox"], [data-board-overlay]';
 
 const isEditable = (element) =>
     !!element &&

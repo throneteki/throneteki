@@ -540,10 +540,16 @@ export const holdFlip = (milliseconds) => {
     holdUntil = Math.max(holdUntil, performance.now() + milliseconds);
 };
 
+// Set while a board overlay shows: it animates what changed, so the board must not
+let paused = false;
+export const setFlipPaused = (value) => {
+    paused = value;
+};
+
 export const motionSettingOff = () => document.documentElement.dataset.motion === 'off';
 
 export const motionOff = () =>
-    document.hidden || performance.now() < holdUntil || motionSettingOff();
+    document.hidden || paused || performance.now() < holdUntil || motionSettingOff();
 
 let drawHoldUntil = 0;
 

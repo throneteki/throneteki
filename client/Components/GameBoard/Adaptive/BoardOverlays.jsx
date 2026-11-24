@@ -2,18 +2,19 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 import { createPortal } from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faHandshake, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { sendLeaveGameMessage } from '../../../redux/reducers/game';
 import classNames from 'classnames';
 import PlayerAvatar from './PlayerAvatar';
 import CardImage from '../../Images/CardImage';
 import { useHud } from '../../../hudStore';
 import { overlaySettingsOf } from '../../../hud';
-import { claimFlights, motionSettingOff } from '../../../flip';
+import { claimFlights, motionSettingOff, setFlipPaused } from '../../../flip';
 import { aroundTheTable } from '../seatOrder';
 import { useLayoutMode } from './useBoardLayout';
 import { remSize } from '../../../cardScale';
 import { nameOf } from './followTarget';
+import { Constants } from '../../../constants';
 
 // The board's overlays: the game's start and end (major: wait for a button) and what happens in it (minor: continue
 // on a timer). Each shows once per game (kept in sessionStorage, so a refresh does not repeat it).
@@ -130,7 +131,16 @@ const Rows = ({ rows, gap = 1.5, keyOf, render }) => {
 };
 
 // Which overlays to show, in turn, as the game reaches them
-const useOverlays = ({ gameId, players, phase, melee, gameOver, roundsEnded, enabled }) => {
+const useOverlays = ({
+    gameId,
+    players,
+    phase,
+    melee,
+    gameOver,
+    roundsEnded,
+    initiativeRound,
+    enabled
+}) => {
     const [queue, setQueue] = useState([]);
     const queued = useRef(new Set());
     const add = useCallback(
@@ -212,9 +222,15 @@ const useOverlays = ({ gameId, players, phase, melee, gameOver, roundsEnded, ena
             add({ key: 'start', major: 'start' });
         }
         const before = last.current;
-        last.current = { plots, plotOf, titles, eliminated, roundsEnded };
+        last.current = { plots, plotOf, titles, eliminated, roundsEnded, initiativeRound };
         if (revealed) {
-            add({ key: revealKey, minor: 'plots', cards: revealed });
+            // Tells this reveal's initiative from the last one
+            add({
+                key: revealKey,
+                minor: 'plots',
+                cards: revealed,
+                initiativeBefore: before?.initiativeRound
+            });
         }
         // What was already the case when the board opened has been seen
         if (before) {
@@ -251,6 +267,7 @@ const useOverlays = ({ gameId, players, phase, melee, gameOver, roundsEnded, ena
         titles,
         eliminated,
         roundsEnded,
+        initiativeRound,
         gameOver,
         revealed,
         revealKey,
@@ -1346,21 +1363,41 @@ const Standings = ({ ranked, me, portrait }) => {
     );
 };
 
-// Whom a player's title rivals and supports, among the players still in, each line popping in after the card lands
+const SwordsIcon = ({ className }) => (
+    <svg
+        aria-hidden
+        viewBox='0 0 20 20'
+        className={className}
+        style={{ width: '1em', height: '1em' }}
+    >
+        <g fill='currentColor'>
+            <path d='M2 2 L5 2 L13.5 10.5 L10.5 13.5 L2 5 Z' />
+            <path d='M18 2 L15 2 L6.5 10.5 L9.5 13.5 L18 5 Z' />
+            <path d='M10.5 12 L15 16.5 L16.5 15 L12 10.5 Z M3.5 15 L5 16.5 L9.5 12 L8 10.5 Z' />
+            <circle cx='16.8' cy='16.8' r='1.6' />
+            <circle cx='3.2' cy='16.8' r='1.6' />
+        </g>
+    </svg>
+);
+const relationLooks = {
+    Rivals: {
+        icon: SwordsIcon,
+        row: 'border-red-500/70 bg-red-950/70 text-red-100 [--relation-glow:rgb(248_113_113)]',
+        label: 'text-red-300'
+    },
+    Supports: {
+        icon: ({ className }) => <FontAwesomeIcon icon={faHandshake} className={className} />,
+        row: 'border-emerald-500/70 bg-emerald-950/70 text-emerald-100 [--relation-glow:rgb(52_211_153)]',
+        label: 'text-emerald-300'
+    }
+};
+// Whom a player's title rivals and supports among the players still in, a pill each with every player's avatar
 const Relations = ({ player, live, me, delay }) => {
     const among = (titles) =>
         live.filter((other) => other !== player && titles?.includes(other.title?.name));
     const lines = [
-        {
-            label: 'Rivals',
-            tone: 'border-red-400/60 bg-red-500/25 text-red-200',
-            players: among(player.title?.rivals)
-        },
-        {
-            label: 'Supports',
-            tone: 'border-emerald-400/60 bg-emerald-500/25 text-emerald-200',
-            players: among(player.title?.supports)
-        }
+        { label: 'Rivals', players: among(player.title?.rivals) },
+        { label: 'Supports', players: among(player.title?.supports) }
     ].filter((line) => line.players.length > 0);
     if (lines.length === 0) {
         return null;
@@ -1368,41 +1405,66 @@ const Relations = ({ player, live, me, delay }) => {
     return (
         <div
             className='flex min-w-0 max-w-full flex-col items-center'
-            style={{ gap: ui(0.25), fontSize: ui(0.75) }}
+            style={{ gap: ui(0.375), fontSize: ui(0.75) }}
         >
-            {lines.map((line, index) => (
-                <div
-                    key={line.label}
-                    className='overlay-pop flex min-w-0 max-w-full items-center'
-                    style={{ gap: ui(0.375), ...after(delay + index * 120) }}
-                >
-                    <span
-                        className={classNames(
-                            'shrink-0 rounded border px-1 font-bold uppercase tracking-wider',
-                            line.tone
-                        )}
+            {lines.map((line, index) => {
+                const look = relationLooks[line.label];
+                return (
+                    <div
+                        key={line.label}
+                        className='overlay-pop flex min-w-0 max-w-full'
+                        style={after(delay + index * 160)}
                     >
-                        {line.label}
-                    </span>
-                    <span
-                        className='min-w-0 truncate text-white [text-shadow:0_1px_4px_#000]'
-                        title={line.players.map(nameOf).join(', ')}
-                    >
-                        {line.players.map((other, at) => (
-                            <React.Fragment key={nameOf(other)}>
-                                {at > 0 && ', '}
-                                <span className={classNames({ 'text-amber-200': other === me })}>
-                                    {other === me ? 'You' : nameOf(other)}
-                                </span>
-                            </React.Fragment>
-                        ))}
-                    </span>
-                </div>
-            ))}
+                        <div
+                            className={classNames(
+                                'overlay-relation relative flex min-w-0 max-w-full items-center rounded-full border shadow-[0_4px_12px_rgba(0,0,0,0.5)]',
+                                look.row
+                            )}
+                            style={{
+                                gap: ui(0.375),
+                                padding: `${ui(0.125)} ${ui(0.5)} ${ui(0.125)} ${ui(0.375)}`,
+                                '--relation-delay': `${delay + index * 160}ms`
+                            }}
+                            title={`${line.label} ${line.players.map(nameOf).join(', ')}`}
+                        >
+                            <look.icon className={look.label} />
+                            <span
+                                className={classNames(
+                                    'shrink-0 font-bold uppercase tracking-wider',
+                                    look.label
+                                )}
+                            >
+                                {line.label}
+                            </span>
+                            <span className='flex min-w-0 items-center' style={{ gap: ui(0.5) }}>
+                                {line.players.map((other) => (
+                                    <span
+                                        key={nameOf(other)}
+                                        className='flex min-w-0 items-center'
+                                        style={{ gap: ui(0.25) }}
+                                    >
+                                        <PlayerAvatar
+                                            name={nameOf(other)}
+                                            className='shrink-0'
+                                            style={{ width: ui(1.125), height: ui(1.125) }}
+                                        />
+                                        <span
+                                            className={classNames('truncate font-semibold', {
+                                                'text-amber-200': other === me
+                                            })}
+                                        >
+                                            {other === me ? 'You' : nameOf(other)}
+                                        </span>
+                                    </span>
+                                ))}
+                            </span>
+                        </div>
+                    </div>
+                );
+            })}
         </div>
     );
 };
-
 // A card that lies face down, then is turned face up where it lies
 const flipTime = 560;
 const FaceUp = ({ code, orientation, delay }) => (
@@ -1424,9 +1486,191 @@ const FaceUp = ({ code, orientation, delay }) => (
     </div>
 );
 
+// When each initiative step shows (ms from the overlay opening): the totals, then for a tie the tied totals, the tied
+// players' power, and where power ties too, the coin
+const initiativePlan = (result, from) => {
+    const top = Math.max(...result.values.map((value) => value.initiative));
+    const tied = result.initiativeTied
+        ? result.values.filter((value) => value.initiative === top).map((value) => value.name)
+        : [];
+    const pillsAt = from;
+    if (tied.length === 0) {
+        const decideAt = pillsAt + 400;
+        return { tied, powerTied: [], pillsAt, decideAt, doneAt: decideAt + 350 };
+    }
+    const tiedAt = pillsAt + 350;
+    const powerAt = tiedAt + 300;
+    const tiedValues = result.values.filter((value) => tied.includes(value.name));
+    const lowest = Math.min(...tiedValues.map((value) => value.power));
+    const powerTied =
+        result.powerTied && !result.chosenBy
+            ? tiedValues.filter((value) => value.power === lowest).map((value) => value.name)
+            : [];
+    const powerTiedAt = powerAt + 250;
+    const strikeAt = powerTied.length > 0 ? powerTiedAt + 200 : undefined;
+    const coinAt = strikeAt !== undefined ? strikeAt + 200 : undefined;
+    const decideAt =
+        coinAt !== undefined
+            ? coinAt + coinTime + 50
+            : result.chosenBy
+              ? tiedAt + 300
+              : powerAt + 300;
+    return {
+        tied,
+        powerTied,
+        pillsAt,
+        tiedAt,
+        powerAt,
+        powerTiedAt,
+        strikeAt,
+        coinAt,
+        decideAt,
+        doneAt: decideAt + 350
+    };
+};
+
+// A stat pill: ringed gold as tied from markAt, green or faded from winAt. The rings and colours sit on inner spans,
+// as the pop-in animation holds the outer one.
+const InitiativeStat = ({ stat, value, delay, markAt, winAt, win }) => (
+    <span className='overlay-pop inline-flex' style={after(delay)}>
+        <span
+            className={classNames(
+                'inline-flex rounded-full',
+                markAt !== undefined && [
+                    'overlay-tie',
+                    win ? 'overlay-tie-won' : 'overlay-tie-lost'
+                ]
+            )}
+            style={{ '--tie-delay': `${markAt ?? 0}ms`, '--win-delay': `${winAt}ms` }}
+        >
+            <span
+                className={classNames(
+                    'inline-flex items-center rounded-full border border-white/25 bg-black/70 font-bold tabular-nums text-zinc-100',
+                    win ? 'overlay-win' : 'overlay-lose'
+                )}
+                style={{
+                    gap: ui(0.25),
+                    padding: `${ui(0.125)} ${ui(0.5)} ${ui(0.125)} ${ui(0.25)}`,
+                    fontSize: ui(1)
+                }}
+                title={stat === 'initiative' ? 'Initiative' : 'Power'}
+            >
+                <img
+                    src={Constants.StatIconImagePaths[stat]}
+                    alt=''
+                    style={{ width: ui(1.25), height: ui(1.25) }}
+                />
+                {value}
+            </span>
+        </span>
+    </span>
+);
+
+// The coin for a tie nothing else broke. Both faces show "?" while it spins; only the winner's avatar shows once it
+// lands, so a tie of any size shows one face.
+const coinTime = 800;
+const coinFace =
+    'absolute inset-0 flex items-center justify-center overflow-hidden rounded-full border-[3px] border-amber-200 bg-[radial-gradient(circle_at_35%_30%,#fde68a,#d97706_60%,#92400e)] font-[Cinzel,serif] font-extrabold text-amber-950 shadow-[0_6px_16px_rgba(0,0,0,0.6)] [backface-visibility:hidden]';
+const Coin = ({ winner, delay }) => (
+    <div
+        className='relative'
+        style={{
+            width: ui(3.5),
+            height: ui(3.5),
+            perspective: ui(30),
+            '--coin-delay': `${delay}ms`
+        }}
+    >
+        <div
+            aria-hidden
+            className='overlay-coin-slam pointer-events-none absolute left-1/2 top-1/2 aspect-square w-full -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-amber-300/70'
+        />
+        <div className='overlay-coin-toss h-full w-full'>
+            <div className='overlay-coin relative h-full w-full [transform-style:preserve-3d]'>
+                <div className={coinFace}>
+                    <span style={{ fontSize: ui(1.5) }}>?</span>
+                </div>
+                <div className={classNames(coinFace, '[transform:rotateX(180deg)]')}>
+                    <span style={{ fontSize: ui(1.5) }}>?</span>
+                    <PlayerAvatar
+                        name={winner}
+                        className='overlay-coin-face absolute inset-0 h-full w-full'
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
+// A player's initiative, and their power where a tie came down to it
+const InitiativeStats = ({ value, plan, win, showPower }) => {
+    const tied = plan.tied.includes(value.name);
+    return (
+        <div className='flex items-center' style={{ gap: ui(0.375) }}>
+            <InitiativeStat
+                stat='initiative'
+                value={value.initiative}
+                delay={plan.pillsAt}
+                markAt={tied ? plan.tiedAt : undefined}
+                winAt={plan.decideAt}
+                win={win}
+            />
+            {tied && showPower && (
+                <InitiativeStat
+                    stat='totalPower'
+                    value={value.power}
+                    delay={plan.powerAt}
+                    markAt={plan.powerTied.includes(value.name) ? plan.powerTiedAt : undefined}
+                    winAt={plan.decideAt}
+                    win={win}
+                />
+            )}
+        </div>
+    );
+};
+
+const verdictLine =
+    'overlay-after max-w-full text-center text-xs font-semibold uppercase tracking-[0.2em] text-amber-200/90 [text-shadow:0_1px_6px_#000]';
+// Under the plots: the tie line (struck through when a coin decides), the coin, then who won
+const InitiativeVerdict = ({ result, plan, me }) => {
+    const nameFor = (name) => (me && name === nameOf(me) ? 'You' : name);
+    const winner = nameFor(result.winner);
+    const chooser = result.chosenBy && nameFor(result.chosenBy);
+    return (
+        <div className='hud-zoom flex max-w-full flex-col items-center gap-1.5'>
+            {plan.tied.length > 0 && (
+                <div className={verdictLine} style={after(plan.tiedAt)}>
+                    <span
+                        className={classNames('relative inline-block', {
+                            'overlay-strike': plan.strikeAt !== undefined
+                        })}
+                        style={{ '--strike-delay': `${plan.strikeAt ?? 0}ms` }}
+                    >
+                        {chooser
+                            ? `Tied · ${chooser} ${chooser === 'You' ? 'choose' : 'chooses'}`
+                            : 'Tied · lowest power wins'}
+                    </span>
+                </div>
+            )}
+            {plan.strikeAt !== undefined && (
+                <div className={verdictLine} style={after(plan.strikeAt)}>
+                    Still tied · winner chosen at random
+                </div>
+            )}
+            {plan.coinAt !== undefined && <Coin winner={result.winner} delay={plan.coinAt} />}
+            <div
+                className='overlay-after max-w-full text-center font-[Cinzel,serif] text-lg font-bold text-amber-300 [text-shadow:0_1px_6px_#000]'
+                style={after(plan.decideAt)}
+            >
+                {`${winner} ${winner === 'You' ? 'win' : 'wins'} initiative`}
+            </div>
+        </div>
+    );
+};
+
 // The overlays during the game: plots revealed, titles chosen, the end of a round, a player eliminated. Continue's
 // time starts once each has played out.
-const Minor = ({ overlay, players, me, portrait, seconds, released, onLanded }) => {
+const Minor = ({ overlay, initiative, players, me, portrait, seconds, released, onLanded }) => {
     const rootRef = useRef(null);
     const [leaving, setLeaving] = useState(false);
     const live = players.filter((player) => !player.eliminated);
@@ -1437,7 +1681,7 @@ const Minor = ({ overlay, players, me, portrait, seconds, released, onLanded }) 
     const ranked = byPower(live);
     const rankedRows = orderedRows(ranked);
     const [across, tall] = {
-        plots: [columns * 7.2, 6 + seats.length * 8],
+        plots: [columns * 7.2, 10 + seats.length * 9],
         titles: [columns * 6, 7 + seats.length * 12.5],
         round: portrait
             ? [14, 4 + live.length * 7]
@@ -1459,8 +1703,14 @@ const Minor = ({ overlay, players, me, portrait, seconds, released, onLanded }) 
     const outToss = 100;
     const flipOf = (index) => flyTime + 80 + index * 130;
     const titleLanded = (index) => flyTime + 60 + index * 90;
+    const fresh =
+        overlay.minor === 'plots' && initiative && initiative.round !== overlay.initiativeBefore
+            ? initiative
+            : null;
+    const plan = fresh && initiativePlan(fresh, flipOf(live.length - 1) + flipTime);
+    const valueOf = (player) => fresh?.values.find((value) => value.name === nameOf(player));
     const intro = {
-        plots: flipOf(live.length - 1) + flipTime,
+        plots: plan ? plan.doneAt : flipOf(live.length - 1) + flipTime,
         titles: titleLanded(live.length - 1) + 400,
         round: standingShown(ranked.length - 1),
         out: 1500
@@ -1528,10 +1778,19 @@ const Minor = ({ overlay, players, me, portrait, seconds, released, onLanded }) 
                                 className='overlay-after'
                                 style={after(flipOf(index) + flipTime / 2)}
                             />
+                            {plan && valueOf(player) && (
+                                <InitiativeStats
+                                    value={valueOf(player)}
+                                    plan={plan}
+                                    win={fresh.winner === nameOf(player)}
+                                    showPower={!fresh.chosenBy}
+                                />
+                            )}
                         </div>
                     )}
                 />
             )}
+            {plan && <InitiativeVerdict result={fresh} plan={plan} me={me} />}
             {overlay.minor === 'titles' && (
                 <Rows
                     rows={seats}
@@ -1659,8 +1918,9 @@ const OverlayView = ({
                         so its detail does not show through the text */}
                     <div
                         className={classNames(
-                            'overlay-dim absolute inset-0 backdrop-blur-[3px]',
-                            major ? 'pointer-events-auto bg-black/80' : 'bg-black/65'
+                            // Blocks the board underneath
+                            'overlay-dim pointer-events-auto absolute inset-0 backdrop-blur-[3px]',
+                            major ? 'bg-black/80' : 'bg-black/65'
                         )}
                         style={{
                             backgroundImage:
@@ -1687,6 +1947,7 @@ const OverlayView = ({
                         {overlay.minor && (
                             <Minor
                                 overlay={overlay}
+                                initiative={game?.initiative}
                                 players={players}
                                 me={me}
                                 portrait={portrait}
@@ -1723,10 +1984,16 @@ const BoardOverlays = ({ thisPlayer, otherPlayers, isPlaying, buttons, onButtonC
         melee,
         gameOver: !!currentGame?.gameOver,
         roundsEnded,
+        initiativeRound: currentGame?.initiative?.round,
         enabled: overlays.enabled
     });
     const me = isPlaying ? thisPlayer : null;
     const portrait = mode === 'narrow';
+    const showing = overlays.enabled && !!current;
+    useLayoutEffect(() => {
+        setFlipPaused(showing);
+        return () => setFlipPaused(false);
+    }, [showing]);
 
     if (!overlays.enabled) {
         return null;

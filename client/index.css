@@ -764,6 +764,245 @@ html.card-dragging.card-drop-refused * {
     }
 }
 
+/* Initiative pills: a gold ring when tied, then green for the winner and faded for the rest */
+.overlay-tie {
+    animation:
+        overlay-tie 350ms ease-out var(--tie-delay, 0ms) both,
+        var(--tie-end) 400ms ease-out var(--win-delay, 0ms) both;
+}
+.overlay-tie-won {
+    --tie-end: overlay-tie-won;
+}
+.overlay-tie-lost {
+    --tie-end: overlay-tie-lost;
+}
+@keyframes overlay-tie-won {
+    to {
+        box-shadow: 0 0 0 2px rgb(52 211 153);
+    }
+}
+@keyframes overlay-tie-lost {
+    to {
+        box-shadow: 0 0 0 2px rgb(251 191 36 / 0);
+    }
+}
+@keyframes overlay-tie {
+    0% {
+        box-shadow: 0 0 0 0 rgb(251 191 36 / 0);
+    }
+    40% {
+        scale: 1.15;
+    }
+    100% {
+        box-shadow: 0 0 0 2px rgb(251 191 36 / 0.8);
+    }
+}
+.overlay-win {
+    animation: overlay-win 500ms ease-out var(--win-delay, 0ms) both;
+}
+@keyframes overlay-win {
+    to {
+        border-color: rgb(52 211 153);
+        background-color: rgb(16 185 129 / 0.3);
+        color: rgb(236 253 245);
+        box-shadow: 0 0 14px rgb(52 211 153 / 0.6);
+        scale: 1.1;
+    }
+}
+.overlay-lose {
+    animation: overlay-lose 500ms ease-out var(--win-delay, 0ms) both;
+}
+@keyframes overlay-lose {
+    to {
+        opacity: 0.55;
+    }
+}
+/* The tie line, struck through when a coin decides */
+.overlay-strike {
+    animation: overlay-strike-dim 250ms ease-out var(--strike-delay, 0ms) both;
+}
+.overlay-strike::after {
+    content: '';
+    position: absolute;
+    left: -0.15em;
+    right: -0.15em;
+    top: 50%;
+    height: 2px;
+    margin-top: -1px;
+    border-radius: 1px;
+    background: rgb(248 113 113);
+    box-shadow: 0 0 4px rgb(0 0 0 / 0.8);
+    transform-origin: left;
+    animation: overlay-strike 250ms ease-out var(--strike-delay, 0ms) both;
+}
+@keyframes overlay-strike {
+    from {
+        transform: scaleX(0);
+    }
+}
+@keyframes overlay-strike-dim {
+    to {
+        opacity: 0.6;
+    }
+}
+[data-motion='off'] .overlay-strike,
+[data-motion='off'] .overlay-strike::after {
+    animation-duration: 1ms;
+}
+@media (prefers-reduced-motion: reduce) {
+    .overlay-strike,
+    .overlay-strike::after {
+        animation-duration: 1ms;
+    }
+}
+/* The coin: tossed spinning, it slams down on the winner's face (the back, so with motion off that shows at once) */
+.overlay-coin-toss {
+    animation: overlay-coin-toss 800ms var(--coin-delay, 0ms) both;
+}
+@keyframes overlay-coin-toss {
+    0% {
+        opacity: 0;
+        translate: 0 0;
+        scale: 0.6;
+        animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1);
+    }
+    8% {
+        opacity: 1;
+        scale: 1;
+    }
+    42% {
+        translate: 0 -7rem;
+        scale: 1.15;
+        animation-timing-function: cubic-bezier(0.6, 0, 0.9, 0.5);
+    }
+    86% {
+        translate: 0 0;
+        scale: 1;
+    }
+    91% {
+        scale: 1.2;
+    }
+    100% {
+        opacity: 1;
+        translate: 0 0;
+        scale: 1;
+    }
+}
+.overlay-coin {
+    transform: rotateX(180deg);
+    animation: overlay-coin-spin 800ms cubic-bezier(0.25, 0.6, 0.45, 1) var(--coin-delay, 0ms) both;
+}
+@keyframes overlay-coin-spin {
+    0% {
+        transform: rotateX(0deg);
+    }
+    86%,
+    100% {
+        transform: rotateX(1980deg);
+    }
+}
+.overlay-coin-face {
+    animation: overlay-fade 120ms ease-out calc(var(--coin-delay, 0ms) + 690ms) both;
+}
+.overlay-coin-slam {
+    opacity: 0;
+    animation: overlay-coin-slam 450ms ease-out calc(var(--coin-delay, 0ms) + 690ms) forwards;
+}
+@keyframes overlay-coin-slam {
+    0% {
+        opacity: 0.9;
+        scale: 1;
+    }
+    100% {
+        opacity: 0;
+        scale: 2.2;
+    }
+}
+[data-motion='off'] .overlay-tie,
+[data-motion='off'] .overlay-win,
+[data-motion='off'] .overlay-lose,
+[data-motion='off'] .overlay-coin-toss,
+[data-motion='off'] .overlay-coin,
+[data-motion='off'] .overlay-coin-face {
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+}
+[data-motion='off'] .overlay-coin-slam {
+    animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    .overlay-tie,
+    .overlay-win,
+    .overlay-lose,
+    .overlay-coin-toss,
+    .overlay-coin,
+    .overlay-coin-face {
+        animation-duration: 1ms;
+        animation-delay: 0ms;
+    }
+    .overlay-coin-slam {
+        animation: none;
+    }
+}
+
+/* A title's Rivals or Supports pill: a light runs once round its edge, then it pulses */
+@property --relation-turn {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+}
+.overlay-relation::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: conic-gradient(
+        from var(--relation-turn),
+        transparent 0deg 250deg,
+        var(--relation-glow) 320deg,
+        transparent 360deg
+    );
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    pointer-events: none;
+    animation: overlay-relation-run 900ms ease-in-out calc(var(--relation-delay, 0ms) + 150ms) both;
+}
+@keyframes overlay-relation-run {
+    0% {
+        opacity: 1;
+        --relation-turn: 0deg;
+    }
+    85% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        --relation-turn: 360deg;
+    }
+}
+.overlay-relation {
+    animation: overlay-relation-pulse 700ms ease-out calc(var(--relation-delay, 0ms) + 950ms) both;
+}
+@keyframes overlay-relation-pulse {
+    40% {
+        box-shadow: 0 0 14px 2px var(--relation-glow);
+    }
+}
+[data-motion='off'] .overlay-relation,
+[data-motion='off'] .overlay-relation::before {
+    animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    .overlay-relation,
+    .overlay-relation::before {
+        animation: none;
+    }
+}
+
 /* The start's ambience: embers rising, and crossed swords that swing in and then glow slowly. With motion off the
    embers are gone and the swords still. */
 .overlay-ember {

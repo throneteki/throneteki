@@ -1210,6 +1210,24 @@ From the review on 2026-11-20 (second batch):
       arrangement (its silhouette; the cards' shadow is cast outside it), the stacked cards lean a little towards
       where they fan out, and the cursor is a pointer. Stacked, every agenda lies at the same drop and nearly the same
       tilt, so they are level (a card tilted more lifted its corner higher than the others). This replaces flicking through the cards.
+- [x] **R291 Who won initiative, in the plot overlay**: once the plots have turned, everyone's total initiative pops in
+      under their name at once (the total the game compared, not the plot's printed value). With no
+      tie the winner's turns green and the rest fade. On a tie each step lights all its values at once, kept as quick as
+      it can be: the tied totals are ringed gold with "Tied · lowest power wins" (or who chooses, where a card says), then
+      the tied players' power shows. Where power ties too the lowest are ringed gold, the tie line is struck through in
+      red with "Still tied · winner chosen at random" under it, and a coin is tossed: it spins showing "?", slams down and
+      shows only the winner's avatar, so a melee tie of any size shows one face. Then the winner's values and rings turn
+      green, the rest fade, and a line names the winner. From the plots turning: about 0.7s with no tie, 1.3s for a power
+      tie, 2.5s for a coin. The server sends the result (`initiative` in the game state); where a card has a player
+      choose the winner, the overlay opens before they have chosen and shows the result as soon as it arrives.
+- [x] **R293 The board is still and closed off while an overlay shows**: it plays none of its own moves (`setFlipPaused`
+      in flip.js), so a plot the overlay reveals is not also turned over on the board, even where the reveal reaches the
+      board in more than one update; with overlays off the board shows the reveal itself. Every overlay's backdrop takes
+      presses, hovers and scrolling, and the prompt's keyboard shortcuts do nothing while one shows. **Check in a real
+      game:** the dev board never showed the plot turning on the board, so the cause is inferred.
+- [x] **R292 Titles' rivals and supports stand out**: each is a pill, red with crossed swords or green with a handshake,
+      naming each player with their avatar. As it pops in a light runs once round its edge, then it pulses once in its
+      colour.
 - [x] **R290 Overlays fit the screen with the interface's scale**: their text and buttons follow the interface's
       scale, as the rest of the board does (the end's title and the Leave link too). Each overlay measures what it
       laid out and makes its cards smaller until everything fits; below a fair card size its interface gives way too

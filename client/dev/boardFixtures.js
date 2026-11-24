@@ -1072,6 +1072,45 @@ const opponentOf = (state) =>
     Object.values(state.players).find((each) => each.name !== fixtureUsername)?.name;
 const playing = (state) => Object.values(state.players).filter((each) => !each.eliminated);
 
+// Every player reveals a new plot, with the initiative result the server would send: tie is 'clear', 'power' or 'coin'
+const revealPlots = (state, tie) => {
+    const players = playing(state);
+    players.forEach((each, index) => {
+        each.phase = 'plot';
+        if (each.activePlot) {
+            each.cardPiles.plotDiscard = [...each.cardPiles.plotDiscard, each.activePlot];
+        }
+        revealed++;
+        each.activePlot = fixtureCard(
+            plotCodes[(revealed + index) % plotCodes.length],
+            `revealed-${revealed}`
+        );
+    });
+    const values = players.map((each, index) => ({
+        name: each.name,
+        initiative: tie === 'clear' ? 2 + ((revealed + index) % 4) : 4,
+        power: tie === 'power' ? 3 + index * 2 : 5
+    }));
+    if (tie === 'clear' && values.length > 1 && values[0].initiative === values[1].initiative) {
+        values[1].initiative++;
+    }
+    const top = Math.max(...values.map((value) => value.initiative));
+    const leaders = values.filter((value) => value.initiative === top);
+    const lowest = Math.min(...leaders.map((value) => value.power));
+    const lowestLeaders = leaders.filter((value) => value.power === lowest);
+    state.initiative = {
+        round: revealed,
+        winner: lowestLeaders[revealed % lowestLeaders.length].name,
+        values,
+        initiativeTied: leaders.length > 1,
+        powerTied: lowestLeaders.length > 1
+    };
+    players.forEach((each, index) => {
+        each.stats = { ...each.stats, initiative: values[index].initiative };
+    });
+    return state;
+};
+
 export const fixtureSteps = {
     endRound: {
         label: 'End the round',
@@ -1098,20 +1137,15 @@ export const fixtureSteps = {
     },
     plots: {
         label: 'Reveal new plots',
-        apply: (state) => {
-            playing(state).forEach((each, index) => {
-                each.phase = 'plot';
-                if (each.activePlot) {
-                    each.cardPiles.plotDiscard = [...each.cardPiles.plotDiscard, each.activePlot];
-                }
-                revealed++;
-                each.activePlot = fixtureCard(
-                    plotCodes[(revealed + index) % plotCodes.length],
-                    `revealed-${revealed}`
-                );
-            });
-            return state;
-        }
+        apply: (state) => revealPlots(state, 'clear')
+    },
+    plotsTied: {
+        label: 'Reveal plots (initiative tied, power breaks it)',
+        apply: (state) => revealPlots(state, 'power')
+    },
+    plotsCoin: {
+        label: 'Reveal plots (initiative and power tied, a coin)',
+        apply: (state) => revealPlots(state, 'coin')
     },
     scheme: {
         label: 'Reveal one plot (a scheme)',
@@ -1391,6 +1425,18 @@ export const spectatorName = 'Watcher';
 export const overlayExamples = {
     start: { mode: 'joust', label: 'Game start', fixture: 'starting' },
     plots: { mode: 'joust', label: 'Plots revealed', fixture: 'mid', steps: ['plots'] },
+    plotsTied: {
+        mode: 'joust',
+        label: 'Plots revealed: initiative tied',
+        fixture: 'mid',
+        steps: ['plotsTied']
+    },
+    plotsCoin: {
+        mode: 'joust',
+        label: 'Plots revealed: a coin decides',
+        fixture: 'mid',
+        steps: ['plotsCoin']
+    },
     scheme: {
         mode: 'joust',
         label: 'One plot alone (no overlay)',
@@ -1403,6 +1449,12 @@ export const overlayExamples = {
     drawn: { mode: 'joust', label: 'Game over: no winner', fixture: 'drawn' },
     meleeStart: { mode: 'melee', label: 'Game start', fixture: 'meleeStarting' },
     meleePlots: { mode: 'melee', label: 'Plots revealed', fixture: 'melee', steps: ['plots'] },
+    meleeCoin: {
+        mode: 'melee',
+        label: 'Plots revealed: a coin decides',
+        fixture: 'melee',
+        steps: ['plotsCoin']
+    },
     titles: { mode: 'melee', label: 'Titles chosen', fixture: 'melee', steps: ['titles'] },
     meleeRound: { mode: 'melee', label: 'End of round', fixture: 'melee', steps: ['endRound'] },
     out: { mode: 'melee', label: 'Player eliminated', fixture: 'melee', steps: ['eliminate'] },
