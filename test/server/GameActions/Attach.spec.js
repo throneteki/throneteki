@@ -55,6 +55,22 @@ describe('attach game action', function () {
         expect(this.events.every((event) => event.parent === this.winterfellSteward)).toBe(true);
     });
 
+    it('attaches a card from hand facedown, which enters play', function () {
+        this.attach({
+            attachment: this.risenFromTheSea,
+            target: this.winterfellSteward,
+            facedown: true,
+            asAttachment: {}
+        });
+
+        expect(this.risenFromTheSea.parent).toBe(this.winterfellSteward);
+        expect(this.risenFromTheSea.facedown).toBe(true);
+        expect(this.events.map((event) => event.name)).toEqual([
+            'onCardAttached',
+            'onCardEntersPlay'
+        ]);
+    });
+
     it('moves an attachment that is already in play without it entering play again', function () {
         this.attach({ attachment: this.littleBird, target: this.winterfellSteward });
 

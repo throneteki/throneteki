@@ -117,7 +117,7 @@ class Attach extends GameAction {
         });
         const events = [attachedEvent];
 
-        if (originalLocation !== 'play area' && !facedown) {
+        if (originalLocation !== 'play area') {
             events.push(
                 this.event('onCardEntersPlay', {
                     card: attachment,
