@@ -192,7 +192,9 @@ const Chip = ({ button, onPress, fullWidth = false, shortcut }) => {
                 'relative',
                 fullWidth ? 'h-9 w-full' : 'h-7',
                 shortcut && 'pl-6',
-                button.pending && pendingButtonClass
+                button.pending && pendingButtonClass,
+                // Room for the spinner beside a label the chip is only as wide as
+                button.pending && !fullWidth && 'pr-6'
             )}
             onPress={(event) => onPress(event, button)}
             isDisabled={button.disabled}

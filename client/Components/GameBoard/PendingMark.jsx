@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 
 // A prompt button pressed and not yet answered
-export const pendingButtonClass = 'ring-2 ring-white/80 ring-offset-1 ring-offset-black';
+export const pendingButtonClass = 'ring-2 ring-inset ring-white/80';
 
 const PendingMark = () => (
     <FontAwesomeIcon

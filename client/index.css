@@ -433,7 +433,7 @@ html.card-dragging.card-drop-refused * {
 
 /* On the adaptive board, a card clicked stays pressed in until the game server has answered the click */
 :is([data-layout], [data-sheet]) [data-card-surface][data-pressed] {
-    translate: 0 max(1px, calc(2px * var(--card-scale, 1)));
+    translate: 0 max(2px, calc(5px * var(--card-scale, 1)));
 }
 :is([data-layout], [data-sheet]) [data-card-surface][data-pressed] > .card-body {
     filter: brightness(0.8);
