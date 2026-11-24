@@ -1,4 +1,5 @@
 import {
+    clickActsAtOnce,
     clickDoesSomething,
     pendingKeys,
     pendingStore
@@ -59,5 +60,22 @@ describe('clickDoesSomething', function () {
 
     it('is true for any card in manual mode, where a click can kneel or stand it', function () {
         expect(clickDoesSomething({}, true)).toBe(true);
+    });
+});
+
+describe('clickActsAtOnce', function () {
+    it('is true for a card that can be used, or chosen in a prompt that ends on the first card', function () {
+        expect(clickActsAtOnce({ canPlay: true }, false)).toBe(true);
+        expect(clickActsAtOnce({ selectable: true }, true)).toBe(true);
+    });
+
+    it('is false for a card chosen in a prompt confirmed with Done', function () {
+        expect(clickActsAtOnce({ selectable: true }, false)).toBe(false);
+        expect(clickActsAtOnce({ selected: true }, false)).toBe(false);
+    });
+
+    it('is false for a card the server would ignore', function () {
+        expect(clickActsAtOnce({ unselectable: true }, true)).toBe(false);
+        expect(clickActsAtOnce({}, true)).toBe(false);
     });
 });

@@ -109,9 +109,15 @@ const measureCards = (root = document, clone = true) => {
 const measureDecks = (root = document) => {
     const decks = new Map();
     root.querySelectorAll('[data-flip-deck]').forEach((el) => {
-        decks.set(el.dataset.flipDeck, topOfPile(el));
+        decks.set(el.dataset.flipDeck, { ...topOfPile(el), scale: cardScaleOf(el) });
     });
     return decks;
+};
+
+// How much bigger a card is at one end of its flight than the other, when they are drawn at different sizes
+const sizeBetween = (from, to) => {
+    const ratio = from?.scale && to?.scale ? from.scale / to.scale : 1;
+    return Math.abs(ratio - 1) < 0.01 ? undefined : ratio;
 };
 
 const centre = (rect) => ({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
@@ -166,7 +172,8 @@ const planMove = (uuid, was, arrived, change, config) => {
         liftedFrom: was.source,
         toSource: now.source,
         nested: now.source === 'attached',
-        z: now.z
+        z: now.z,
+        size: sizeBetween(was, now)
     };
     if (turned) {
         return {
@@ -283,6 +290,7 @@ export const planFlip = ({
             rotate: change.rotate,
             travel: change.travel,
             sequential: !now.from.startsWith(plotDeckPrefix),
+            size: sizeBetween(origin, now),
             ...turnOf(change),
             old: { left: origin.left, top: origin.top },
             now: { left: now.left, top: now.top },
@@ -325,6 +333,7 @@ export const planFlip = ({
                 origin: { x: middle.x - was.left, y: middle.y - was.top }
             }),
             ...(change.turnTo && { turnTo: change.turnTo }),
+            size: sizeBetween(pile, was),
             travel: true,
             behind: !!was.under || !!pile.covered || isCovered(was.source),
             area: pile.area,
@@ -350,7 +359,7 @@ const relativeToParents = (plan, after, config) => {
         if (!lead) {
             return true;
         }
-        if (item.type !== 'move' || lead.type !== 'move' || lead.rotate) {
+        if (item.type !== 'move' || lead.type !== 'move' || lead.rotate || lead.size) {
             return false;
         }
 
@@ -515,6 +524,7 @@ const findPile = (uuid) => {
                 covered: !!entry.covered,
                 area: entry.el.closest('[data-flip-layers]'),
                 hidden: !!entry.hidden || !code,
+                scale: cardScaleOf(entry.el),
                 sideways: entry.sideways,
                 face: code ? cardImageSrc(code) : undefined
             };
@@ -660,25 +670,31 @@ const animateCard = (el, frames, options) => {
 // A card turns over across its shorter side, as by hand: a plot turns top over bottom
 export const turnAxis = ({ width, height }) => (width > height ? 'X' : 'Y');
 
-// A card turns over like a real one: the old face turns edge-on, then the new face turns up
+// A card turns over like a real one: the old face turns edge-on, then the new face turns up. The surface turns, so
+// its ring turns with it, and the faces swap while it is edge-on.
 const spin = (outgoing, incoming, { delay, duration }) => {
-    const half = duration / 2;
     const shape = incoming.clientWidth ? incoming : outgoing;
     const axis = turnAxis({ width: shape.clientWidth, height: shape.clientHeight });
-    const turned = (angle) => ({ transform: `perspective(700px) rotate${axis}(${angle}deg)` });
-    const away = outgoing.animate([turned(0), turned(90)], {
-        duration: half,
-        delay,
-        easing: 'ease-in',
-        fill: 'both'
-    });
-    incoming.animate([turned(-90), turned(0)], {
-        duration: half,
-        delay: delay + half,
-        easing: 'ease-out',
-        fill: 'both'
-    });
-    return away;
+    const turned = (angle) => `perspective(700px) rotate${axis}(${angle}deg)`;
+    const card = outgoing.parentElement;
+    card?.animate(
+        [
+            { transform: turned(0), offset: 0, easing: 'ease-in' },
+            { transform: turned(90), offset: 0.5 },
+            { transform: turned(-90), offset: 0.5, easing: 'ease-out' },
+            { transform: turned(0), offset: 1 }
+        ],
+        // Not a 'flip' animation: the next update cancels those, leaving the faces to swap without turning
+        { duration, delay }
+    );
+    const shown = (from, to) => [
+        { opacity: from, offset: 0 },
+        { opacity: from, offset: 0.5 },
+        { opacity: to, offset: 0.5 },
+        { opacity: to, offset: 1 }
+    ];
+    incoming.animate(shown(0, 1), { duration, delay, fill: 'backwards' });
+    return outgoing.animate(shown(1, 0), { duration, delay, fill: 'both' });
 };
 
 // Counters and badges are not part of the face, so they drop out while the card is edge-on
@@ -831,12 +847,21 @@ const landHighlight = (el, { delay, duration, reveal = false }) => {
     }
 };
 
+// A card turning where it lies keeps its ring. Only one without a ring flashes when revealed, as the flash replaces
+// the ring.
+const turnHighlight = (el, { delay, duration, reveal = false }) => {
+    const surface = surfaceOf(el);
+    if (reveal && surface && getComputedStyle(surface).boxShadow === 'none') {
+        surface.animate(revealGlow, { id: 'flip', duration: glowLength, delay: delay + duration });
+    }
+};
+
 // The card rises while it turns, and a reveal flashes
 const turnInPlace = ({ el, turnFrom, turnNode, delay, reveal }) => {
     const duration = flipConfig.turnDuration;
     turnFace(el, { from: turnFrom, node: turnNode, delay, duration });
     animateCard(el, { card: rise }, { id: 'flip', duration, delay, easing: 'ease-in-out' });
-    landHighlight(el, { delay, duration, reveal });
+    turnHighlight(el, { delay, duration, reveal });
 };
 
 // A card knelt or stood rises a little as it turns
@@ -943,13 +968,16 @@ const holdLabel = (label) => {
 
 const animateGhost = (item) => {
     const showLabel = holdLabel(labelOf(item.pileEl));
-    const { rect, dx, dy, rotate, origin, turnTo, delay, duration, returning, toSource } = item;
+    const { rect, dx, dy, rotate, origin, turnTo, delay, duration, returning, toSource, size } =
+        item;
     const el = item.el ?? buildGhost(item.built, rect);
     detach(el, rect, item.behind, item.area);
     // The card is in the air until it is gone, so it never shows a highlight
     surfaceOf(el)?.style.setProperty('box-shadow', 'none');
     if (origin) {
         el.style.transformOrigin = `${origin.x}px ${origin.y}px`;
+    } else if (size) {
+        el.style.transformOrigin = '0 0';
     }
 
     const slap = !returning && slapsInto(toSource);
@@ -964,8 +992,9 @@ const animateGhost = (item) => {
 
     // The card ends at the angle it rests at in the pile, so a kneeling card stands as it goes
     const turn = (angle) => (rotate ? ` rotate(${angle}deg)` : '');
-    const start = { transform: `translate(0, 0)${turn(0)}` };
-    const end = { transform: `translate(${dx}px, ${dy}px)${turn(-rotate)}` };
+    const scaled = (scale) => (size ? ` scale(${scale})` : '');
+    const start = { transform: `translate(0, 0)${turn(0)}${scaled(1)}` };
+    const end = { transform: `translate(${dx}px, ${dy}px)${turn(-rotate)}${scaled(size)}` };
     const animation = slap
         ? el.animate(
               [
@@ -1007,17 +1036,23 @@ export const keyframesFor = (item) => {
         ];
     }
 
-    const origin = item.origin ? { transformOrigin: `${item.origin.x}px ${item.origin.y}px` } : {};
+    // A card that changes size scales from the top left corner, the corner dx and dy line up
+    const origin = item.origin
+        ? { transformOrigin: `${item.origin.x}px ${item.origin.y}px` }
+        : item.size
+          ? { transformOrigin: '0 0' }
+          : {};
+    const size = (scale) => (item.size ? ` scale(${scale})` : '');
     // Attachments slide in at the level they come to rest, behind their card and the attachments already on it
     // A card that lands under the top card of its pile stays under it all the way
     const level = item.nested ? String(item.z ?? 199) : item.travel ? '205' : '200';
     const lifted = { zIndex: item.under ? 'auto' : level };
     const start = {
         ...origin,
-        transform: `translate(${item.dx}px, ${item.dy}px) rotate(${item.rotate}deg)`,
+        transform: `translate(${item.dx}px, ${item.dy}px) rotate(${item.rotate}deg)${size(item.size)}`,
         ...lifted
     };
-    const end = { ...origin, transform: 'translate(0, 0) rotate(0deg)', ...lifted };
+    const end = { ...origin, transform: `translate(0, 0) rotate(0deg)${size(1)}`, ...lifted };
 
     // A drawn card stays hidden until its turn, so the deck keeps showing its own top card
     return item.sequential
@@ -1197,8 +1232,10 @@ export const playPendingFlip = (root = document) => {
             });
         }
 
-        if (flies || item.turnFrom) {
+        if (flies) {
             landHighlight(target, { delay: item.delay, duration, reveal: item.reveal });
+        } else if (item.turnFrom) {
+            turnHighlight(target, { delay: item.delay, duration, reveal: item.reveal });
         }
 
         if (flies) {

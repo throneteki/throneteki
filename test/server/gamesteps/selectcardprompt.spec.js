@@ -691,6 +691,38 @@ describe('the SelectCardPrompt', function () {
         });
     });
 
+    describe('whether a click fires the prompt', function () {
+        it('is set for a single card prompt', function () {
+            this.properties.numCards = 1;
+            this.prompt = new SelectCardPrompt(this.game, this.player, this.properties);
+
+            expect(this.prompt.activePrompt().selectFiresOnClick).toBe(true);
+        });
+
+        it('is not set for a single card prompt that selects through multiSelect', function () {
+            this.properties.numCards = 1;
+            this.properties.multiSelect = true;
+            this.prompt = new SelectCardPrompt(this.game, this.player, this.properties);
+
+            expect(this.prompt.activePrompt().selectFiresOnClick).toBe(false);
+        });
+
+        it('is not set for a prompt choosing exactly one card', function () {
+            this.properties.numCards = 1;
+            this.properties.mode = 'exactly';
+            this.prompt = new SelectCardPrompt(this.game, this.player, this.properties);
+
+            expect(this.prompt.activePrompt().selectFiresOnClick).toBe(false);
+        });
+
+        it('is not set for a multiple card prompt', function () {
+            this.properties.numCards = 2;
+            this.prompt = new SelectCardPrompt(this.game, this.player, this.properties);
+
+            expect(this.prompt.activePrompt().selectFiresOnClick).toBe(false);
+        });
+    });
+
     describe('the done button', function () {
         it('is marked as the done button', function () {
             this.properties.numCards = 1;

@@ -65,6 +65,10 @@ const CardView = ({
     const pending = pendingLook(usePending(pulses ? pendingKeys.card(card.uuid) : null));
     const [showUnderneath, setShowUnderneath] = useState(false);
     const cardRef = useRef(null);
+    const [lastOrder, setLastOrder] = useState(card.order);
+    if (card.order && card.order !== lastOrder) {
+        setLastOrder(card.order);
+    }
 
     // A card shown or hidden by tapping it turns over, rather than its face simply changing
     const wasForcedFaceup = useRef(forceFaceup);
@@ -73,9 +77,10 @@ const CardView = ({
             return;
         }
         wasForcedFaceup.current = forceFaceup;
-        const body = cardRef.current?.querySelector('[data-card-body]');
-        if (body && !motionOff()) {
-            body.animate(
+        // The surface turns, not just the face, so the ring turns with it
+        const surface = cardRef.current?.querySelector('[data-card-surface]');
+        if (surface && !motionOff()) {
+            surface.animate(
                 [{ transform: 'perspective(700px) rotateY(90deg)' }, { transform: 'none' }],
                 { duration: 180, easing: 'ease-out' }
             );
@@ -320,16 +325,26 @@ const CardView = ({
     };
 
     const getCardOrder = () => {
-        if (!card.order) {
-            return null;
+        const badgeClassName =
+            'absolute top-0 left-0 z-[230] flex items-center justify-center card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[calc(var(--badge-size)*0.8)] h-[var(--badge-size)] px-0.5 text-white bg-black/90 font-bold rounded-br-md rounded-tl-[inherit]';
+        if (!adaptive) {
+            return card.order ? (
+                <div data-card-overlay='' className={badgeClassName}>
+                    {card.order}
+                </div>
+            ) : null;
         }
 
+        // Always rendered so it can fade, keeping its last number while it fades out
         return (
             <div
                 data-card-overlay=''
-                className='absolute top-0 left-0 z-[230] flex items-center justify-center card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[calc(var(--badge-size)*0.8)] h-[var(--badge-size)] px-0.5 text-white bg-black/90 font-bold rounded-br-md rounded-tl-[inherit]'
+                aria-hidden={!card.order}
+                className={classNames(badgeClassName, 'order-fade pointer-events-none', {
+                    'opacity-0': !card.order
+                })}
             >
-                {card.order}
+                {card.order || lastOrder}
             </div>
         );
     };

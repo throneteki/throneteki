@@ -546,6 +546,25 @@ html.card-dragging.card-drop-refused * {
     }
 }
 
+.order-fade {
+    transition: opacity 180ms ease-out;
+}
+[data-motion='off'] .order-fade {
+    transition: none;
+}
+
+/* On touch, a card chosen in a squished pile pops in place, staying under the cards that cover it */
+@media (hover: none) {
+    [data-layout] [data-squish-pile] [data-card-surface].ring-selected {
+        animation-name: select-pop-in-place;
+    }
+}
+@keyframes select-pop-in-place {
+    45% {
+        scale: 1.12;
+    }
+}
+
 /* The settings' previews ease between sizes. Only these copies of the scales are registered, so the board itself
    never animates a rescale. */
 @property --preview-card-scale {

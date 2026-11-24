@@ -3,6 +3,7 @@ class PlayerPromptState {
         this.isActivePrompt = false;
         this.selectCard = false;
         this.selectOrder = false;
+        this.selectFiresOnClick = false;
         this.menuTitle = '';
         this.promptTitle = '';
         this.buttons = [];
@@ -35,6 +36,7 @@ class PlayerPromptState {
     setPrompt(prompt) {
         this.selectCard = prompt.selectCard || false;
         this.selectOrder = prompt.selectOrder || false;
+        this.selectFiresOnClick = prompt.selectFiresOnClick || false;
         this.menuTitle = prompt.menuTitle || '';
         this.promptTitle = prompt.promptTitle;
         this.buttons = (prompt.buttons || []).map((button) => {
@@ -55,6 +57,7 @@ class PlayerPromptState {
 
     cancelPrompt() {
         this.selectCard = false;
+        this.selectFiresOnClick = false;
         this.menuTitle = '';
         this.buttons = [];
         this.controls = [];
@@ -84,6 +87,7 @@ class PlayerPromptState {
             isActivePrompt: this.isActivePrompt,
             selectCard: this.selectCard,
             selectOrder: this.selectOrder,
+            selectFiresOnClick: this.selectFiresOnClick,
             menuTitle: this.menuTitle,
             promptTitle: this.promptTitle,
             buttons: this.buttons.map((button) => this.getButtonState(button)),
