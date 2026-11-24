@@ -39,15 +39,15 @@ class CostReducer {
             this.playingTypes.includes('outOfShadows') &&
             card.location === 'shadows'
         ) {
-            return !!this.match(card);
+            return !!this.match(asPlayed(card));
         }
 
-        return this.playingTypes.includes(playingType) && !!this.match(card);
+        return this.playingTypes.includes(playingType) && !!this.match(asPlayed(card));
     }
 
     getAmount(card) {
         if (typeof this.amount === 'function') {
-            return this.amount(card, this.source) || 0;
+            return this.amount(asPlayed(card), this.source) || 0;
         }
 
         return this.amount;
@@ -68,6 +68,12 @@ class CostReducer {
             this.limit.unregisterEvents(this.game);
         }
     }
+}
+
+// A facedown card that can be marshaled or played as if it were in hand (Valyrian's Crew) is
+// matched by its printed attributes, not the ones it has while facedown in play.
+function asPlayed(card) {
+    return card.isFacedownInPlay?.() ? card.createSnapshot() : card;
 }
 
 export default CostReducer;

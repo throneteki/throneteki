@@ -217,7 +217,10 @@ Text without a trigger has its own constructs:
 - Only setup placements enter play facedown. Outside setup, a facedown card in play has no title,
   traits or faction of its own, only what the effect that placed it grants (Rules Reference:
   Facedown Cards); uniqueness checks for the card being played use its printed title. A facedown
-  card ignores its printed attachment restrictions only while it is facedown in play.
+  card ignores its printed attachment restrictions only while it is facedown in play. A card
+  attached facedown from out of play (Valyrian's Crew, Dothraki Handmaiden) enters play; marshaling
+  it later does not, as it is already in play. Cost reducers match a facedown card marshaled or
+  played as if it were in hand by its printed attributes.
 - Round 1 still chooses a first player: the plot phase clears the setup choice.
 - Plot selection follows advance-information dependencies (the Bloodraven FAQ). Independent players
   choose together, a player who can see another's plot waits for it, the first player breaks

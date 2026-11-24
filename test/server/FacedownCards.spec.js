@@ -50,3 +50,32 @@ describe('a facedown card in play', function () {
         });
     });
 });
+
+describe('marshaling a facedown card in play', function () {
+    beforeEach(function () {
+        this.setupTest({
+            phase: 'challenge',
+            player1: {
+                agenda: "A Mummer's Farce",
+                inPlay: ['Jinglebell (HMW)', 'The Kingsroad'],
+                drawDeck: ['Hoster Tully']
+            }
+        });
+        this.facedownCard = this.player1.findCardByName('Hoster Tully', 'draw deck');
+        this.unopposedChallenge(this.player1, 'Intrigue', this.jinglebell);
+        this.completeChallengesPhase();
+        this.player1.selectPlot('Filler Plot');
+        this.player2.selectPlot('Filler Plot');
+        this.selectFirstPlayer(this.player1);
+    });
+
+    it('is reduced by reducers that match its printed attributes', function () {
+        this.player1.clickCard(this.theKingsroad);
+        const gold = this.player1Object.gold;
+        this.player1.clickCard(this.facedownCard);
+
+        expect(this.facedownCard.facedown).toBe(false);
+        expect(this.player1Object.gold).toBe(gold);
+        expect(this.player1).isReadyToTakeAction();
+    });
+});

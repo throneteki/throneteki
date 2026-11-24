@@ -45,6 +45,19 @@ describe("Valyrian's Crew", function () {
             expect(this.topCard.getStrength()).toBe(1);
         });
 
+        it('applies cost reducers to a facedown character by its printed card type', function () {
+            setup.call(this, 'Arya Stark (Core)', {
+                player1: { inPlay: ["Valyrian's Crew", 'The Kingsroad'] }
+            });
+            nextRound.call(this, this.player1);
+            this.player1.clickCard(this.theKingsroad);
+            const gold = this.player1Object.gold;
+            this.player1.clickCard(this.topCard);
+            expect(this.player1Object.cardsInPlay).toContain(this.topCard);
+            expect(this.player1Object.gold).toBe(gold);
+            expect(this.player1).isReadyToTakeAction();
+        });
+
         it('does not stop the opponent marshaling a copy of a facedown unique card', function () {
             setup.call(this, 'Arya Stark (Core)', {
                 player2: { hand: ['Arya Stark (Core)'] },
