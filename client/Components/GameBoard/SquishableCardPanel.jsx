@@ -21,7 +21,7 @@ import { useStagedArrivals } from './useStagedArrivals';
 import { useHiddenDragUuid, useIncomingSlot } from './dragStore';
 import { boardRescaleEvent } from './useHudScale';
 import { useAdaptiveBoard } from './adaptiveContext';
-import { clickActsAtOnce, clickDoesSomething, pendingKeys, usePending } from './pendingActions';
+import { clickActsAtOnce, clickDoesSomething } from './cardClicks';
 import { ManualModeContext } from './ManualModeContext';
 
 const raiseTime = 150;
@@ -132,7 +132,9 @@ const SquishableCardPanel = ({
     const adaptive = useAdaptiveBoard();
     const manualMode = useContext(ManualModeContext);
     const [awaiting, setAwaiting] = useState(null);
-    const awaitingPending = usePending(awaiting ? pendingKeys.card(awaiting) : null);
+    // The card shows as pressed (predictions.js) until the game server has handled its click
+    const awaitingPending =
+        !!awaiting && allCards.some((card) => card.uuid === awaiting && card.pressed);
     useEffect(() => {
         if (awaiting && !awaitingPending) {
             setAwaiting(null);

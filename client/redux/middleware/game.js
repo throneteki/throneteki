@@ -4,8 +4,11 @@ import { createNextState } from '@reduxjs/toolkit';
 import {
     gameConnected,
     gameConnectionFailed,
+    gameConnectionLost,
     gameDisconnected,
     gameReconnecting,
+    gameRetryScheduled,
+    reconnectGameNow,
     receiveResponseTime,
     sendButtonClickedMessage,
     sendCardClickedMessage,
@@ -28,13 +31,20 @@ import {
     startGameConnecting
 } from '../reducers/game';
 import { receiveClearGameState, receiveGameState } from '../reducers/lobby';
-import { pendingKeys, pendingStore } from '../../Components/GameBoard/pendingActions';
 import { patchGameState } from '../../../shared/gameStateDiff';
+import { serverWait } from '../../Components/GameBoard/serverWait';
+import {
+    applyPredictions,
+    predictionFor,
+    predictions,
+    pressFor
+} from '../../Components/GameBoard/predictions';
 
 const GameEvent = Object.freeze({
     Connected: 'connect',
     Disconnected: 'disconnect',
-    Reconnecting: 'reconnect',
+    ConnectError: 'connect_error',
+    ReconnectAttempt: 'reconnect_attempt',
     Error: 'error'
 });
 
@@ -63,59 +73,82 @@ const GameMessage = Object.freeze({
     Ping: 'ping'
 });
 
-// What a game action acts on, so its element can show it is waiting for the game server
-export const pendingKeysOf = (action) => {
-    if (sendCardClickedMessage.match(action)) {
-        return action.meta?.quiet ? null : [pendingKeys.card(action.payload)];
+// Development only: localStorage.simulatedLag = <ms> delays the game socket by that round trip
+const simulatedLag = () => {
+    if (!import.meta.env.DEV) {
+        return 0;
     }
-    if (sendDragDropMessage.match(action)) {
-        return [pendingKeys.card(action.payload.uuid)];
+
+    try {
+        return Math.max(0, Number(localStorage.getItem('simulatedLag')) || 0);
+    } catch {
+        return 0;
     }
-    if (sendButtonClickedMessage.match(action)) {
-        return [pendingKeys.button(action.payload), pendingKeys.prompt(action.payload.promptId)];
-    }
-    if (sendChangeStatMessage.match(action)) {
-        return [pendingKeys.stat(action.payload.type, action.payload.amount)];
-    }
-    if (sendShowDrawDeckMessage.match(action)) {
-        return [pendingKeys.deck('show')];
-    }
-    if (sendShuffleDeckMessage.match(action)) {
-        return [pendingKeys.deck('shuffle')];
-    }
-    if (sendToggleManualModeMessage.match(action)) {
-        return [pendingKeys.menu('manual')];
-    }
-    if (sendToggleMuteSpectatorsMessage.match(action)) {
-        return [pendingKeys.menu('mute')];
-    }
-    if (sendConcedeMessage.match(action)) {
-        return [pendingKeys.menu('concede')];
-    }
-    return null;
 };
 
 const gameMiddleware = (store) => {
     let socket;
     let gameState;
     let resyncing = false;
+    let lag = 0;
+
+    const later = (callback) => (lag > 0 ? setTimeout(callback, lag / 2) : callback());
+    const delayed =
+        (handler) =>
+        (...args) =>
+            later(() => handler(...args));
+
+    // The card clicked last, while its click is unanswered: a second click on it would land on the board the
+    // first one leaves behind
+    let lastClick;
+    // What the message being sent is predicted to do, shown before it goes so no answer can come first
+    let prediction;
+
+    const emitGame = (...args) => {
+        const seq = serverWait.sent();
+        if ([prediction].flat().some(Boolean) && gameState) {
+            predictions.add(seq, prediction);
+            publish();
+        }
+        prediction = undefined;
+        later(() => socket.emit('game', ...args));
+        return seq;
+    };
+
+    const username = () => store.getState().auth.user?.username;
+
+    const publish = () => {
+        store.dispatch(
+            receiveGameState(
+                applyPredictions(gameState, predictions.list(), username()),
+                username()
+            )
+        );
+    };
+
+    const promptId = () => gameState?.players?.[username()]?.promptId;
+
+    const resetPredictions = () => {
+        serverWait.reset();
+        predictions.reset();
+        lastClick = undefined;
+    };
 
     const requestResync = () => {
         gameState = undefined;
         if (!resyncing) {
             resyncing = true;
-            socket.emit(GameMessage.Resync);
+            later(() => socket.emit(GameMessage.Resync));
         }
     };
 
     const receiveState = (state) => {
         gameState = state;
-        store.dispatch(
-            receiveGameState(
-                state,
-                store.getState().auth.user ? store.getState().auth.user.username : undefined
-            )
+        serverWait.handled(state?.handledMessages);
+        predictions.handled(
+            Number.isInteger(state?.handledMessages) ? serverWait.handledCount() : Infinity
         );
+        publish();
     };
 
     return (next) => (action) => {
@@ -130,6 +163,8 @@ const gameMiddleware = (store) => {
 
             gameState = undefined;
             resyncing = false;
+            lag = simulatedLag();
+            resetPredictions();
 
             socket = io(`${action.payload.url}`, {
                 path: `/${action.payload.name}/socket.io`,
@@ -142,62 +177,106 @@ const gameMiddleware = (store) => {
                 }
             });
 
+            // socket.io picks each retry's delay from its backoff without saying what it is, so it is caught here
+            // to count down to the next try
+            const backoff = socket.io.backoff;
+            const delayOf = backoff.duration.bind(backoff);
+            backoff.duration = () => {
+                const delay = delayOf();
+                dispatch(gameRetryScheduled(Date.now() + delay));
+                return delay;
+            };
+
             socket.on(GameEvent.Connected, () => {
                 dispatch(gameConnected());
             });
 
-            socket.on(GameEvent.Disconnected, () => {
+            socket.on(GameEvent.Disconnected, (reason) => {
                 gameState = undefined;
                 resyncing = false;
-                dispatch(gameDisconnected());
+                resetPredictions();
+                dispatch(
+                    reason === 'io client disconnect' || !store.getState().lobby.currentGame
+                        ? gameDisconnected()
+                        : gameConnectionLost(reason)
+                );
             });
 
-            socket.on(GameEvent.Reconnecting, () => {
+            socket.on(GameEvent.ConnectError, (error) => {
+                dispatch(gameConnectionFailed(error?.message));
+            });
+
+            socket.io.on(GameEvent.ReconnectAttempt, () => {
                 dispatch(gameReconnecting());
             });
 
-            socket.io.on(GameEvent.Error, () => {
-                dispatch(gameConnectionFailed());
+            socket.io.on(GameEvent.Error, (error) => {
+                dispatch(gameConnectionFailed(error?.message));
             });
 
-            socket.on(GameMessage.ClearGameState, () => {
-                gameState = undefined;
-                pendingStore.clear();
-                dispatch(receiveClearGameState());
-            });
+            socket.on(
+                GameMessage.ClearGameState,
+                delayed(() => {
+                    gameState = undefined;
+                    dispatch(receiveClearGameState());
+                })
+            );
 
-            socket.on(GameMessage.GameState, (state) => {
-                resyncing = false;
-                receiveState(state);
-            });
+            socket.on(
+                GameMessage.GameState,
+                delayed((state) => {
+                    resyncing = false;
+                    receiveState(state);
+                })
+            );
 
-            socket.on(GameMessage.GameStateDiff, (delta) => {
-                if (!gameState) {
-                    requestResync();
-                    return;
-                }
+            socket.on(
+                GameMessage.GameStateDiff,
+                delayed((delta) => {
+                    if (!gameState) {
+                        requestResync();
+                        return;
+                    }
 
-                let patched;
-                try {
-                    patched = createNextState(gameState, (draft) => {
-                        patchGameState(draft, delta);
-                    });
-                } catch {
-                    requestResync();
-                    return;
-                }
+                    let patched;
+                    try {
+                        patched = createNextState(gameState, (draft) => {
+                            patchGameState(draft, delta);
+                        });
+                    } catch {
+                        requestResync();
+                        return;
+                    }
 
-                receiveState(patched);
-            });
+                    receiveState(patched);
+                })
+            );
 
             setInterval(() => {
                 const start = Date.now();
 
-                socket.volatile.emit(GameMessage.Ping, () => {
-                    const latency = Date.now() - start;
-                    dispatch(receiveResponseTime(latency));
-                });
+                later(() =>
+                    socket.volatile.emit(
+                        GameMessage.Ping,
+                        delayed(() => {
+                            const latency = Date.now() - start;
+                            dispatch(receiveResponseTime(latency));
+                        })
+                    )
+                );
             }, 5000);
+        }
+
+        // Disconnecting first drops any retry the socket has waiting, so this one goes now and the backoff
+        // starts again from it if it fails
+        if (reconnectGameNow.match(action)) {
+            next(action);
+            if (socket && !socket.connected) {
+                socket.disconnect();
+                dispatch(gameReconnecting());
+                socket.connect();
+            }
+            return;
         }
 
         if (!isConnectionEstablished || !socket) {
@@ -206,80 +285,82 @@ const gameMiddleware = (store) => {
             return;
         }
 
+        // Judged on the board as shown, with what is already predicted on it
+        prediction = predictionFor(
+            action,
+            store.getState().lobby.currentGame,
+            store.getState().auth.user
+        );
+
         if (sendToggleKeywordSettingMessage.match(action)) {
-            socket.emit(
-                'game',
-                GameMessage.ToggleKeywordSetting,
-                action.payload.option,
-                action.payload.value
-            );
+            emitGame(GameMessage.ToggleKeywordSetting, action.payload.option, action.payload.value);
         } else if (sendToggleDupesMessage.match(action)) {
-            socket.emit('game', GameMessage.ToggleDupes, action.payload);
+            emitGame(GameMessage.ToggleDupes, action.payload);
         } else if (sendTogglePromptedActionWindowMessage.match(action)) {
-            socket.emit(
-                'game',
+            emitGame(
                 GameMessage.TogglePromptedActionWindow,
                 action.payload.option,
                 action.payload.value
             );
         } else if (sendToggleHideResponsesMessage.match(action)) {
-            socket.emit(
-                'game',
-                GameMessage.ToggleHideResponses,
-                action.payload.option,
-                action.payload.value
-            );
+            emitGame(GameMessage.ToggleHideResponses, action.payload.option, action.payload.value);
         } else if (sendCardClickedMessage.match(action)) {
-            socket.emit('game', GameMessage.CardClicked, action.payload);
+            if (
+                prediction?.kind !== 'select' &&
+                lastClick?.uuid === action.payload &&
+                lastClick.seq > serverWait.handledCount()
+            ) {
+                return;
+            }
+            prediction = [
+                prediction,
+                pressFor(action, store.getState().lobby.currentGame, store.getState().auth.user)
+            ];
+            const seq = emitGame(GameMessage.CardClicked, action.payload, promptId());
+            lastClick = { uuid: action.payload, seq };
         } else if (sendButtonClickedMessage.match(action)) {
-            socket.emit(
-                'game',
+            emitGame(
                 action.payload.command,
                 action.payload.arg,
                 action.payload.method,
                 action.payload.promptId
             );
         } else if (sendShowDrawDeckMessage.match(action)) {
-            socket.emit('game', GameMessage.ShowDrawDeck, action.payload.visible);
+            emitGame(GameMessage.ShowDrawDeck, action.payload);
         } else if (sendShuffleDeckMessage.match(action)) {
-            socket.emit('game', GameMessage.ShuffleDeck, action.payload);
+            emitGame(GameMessage.ShuffleDeck, action.payload);
         } else if (sendDragDropMessage.match(action)) {
-            socket.emit(
-                'game',
+            emitGame(
                 GameMessage.DragDrop,
                 action.payload.uuid,
                 action.payload.source,
                 action.payload.target,
-                action.payload.parentUuid
+                action.payload.parentUuid,
+                promptId()
             );
         } else if (sendGameChatMessage.match(action)) {
-            socket.emit('game', GameMessage.Chat, action.payload);
+            emitGame(GameMessage.Chat, action.payload);
         } else if (sendToggleMuteSpectatorsMessage.match(action)) {
-            socket.emit('game', GameMessage.ToggleMuteSpectators);
+            emitGame(GameMessage.ToggleMuteSpectators);
         } else if (sendToggleManualModeMessage.match(action)) {
-            socket.emit('game', GameMessage.ToggleManualMode);
+            emitGame(GameMessage.ToggleManualMode);
         } else if (sendReportProblemMessage.match(action)) {
-            socket.emit('game', GameMessage.ReportProblem);
+            emitGame(GameMessage.ReportProblem);
         } else if (sendDescribeProblemMessage.match(action)) {
-            socket.emit('game', GameMessage.DescribeProblem, action.payload.description);
+            emitGame(GameMessage.DescribeProblem, action.payload.description);
         } else if (sendCancelProblemReportMessage.match(action)) {
-            socket.emit('game', GameMessage.CancelProblemReport);
+            emitGame(GameMessage.CancelProblemReport);
         } else if (sendChangeStatMessage.match(action)) {
-            socket.emit('game', GameMessage.ChangeStat, action.payload.type, action.payload.amount);
+            emitGame(GameMessage.ChangeStat, action.payload.type, action.payload.amount);
         } else if (sendLeaveGameMessage.match(action)) {
-            socket.emit('game', GameMessage.LeaveGame);
+            emitGame(GameMessage.LeaveGame);
 
             dispatch(gameDisconnected());
         } else if (sendConcedeMessage.match(action)) {
-            socket.emit('game', GameMessage.Concede);
+            emitGame(GameMessage.Concede);
         }
 
-        // The server handles a socket's messages in order, sending any new state before it answers the ping, so the
-        // answer means the action is done, whether or not it changed anything
-        const keys = pendingKeysOf(action);
-        if (keys) {
-            socket.emit(GameMessage.Ping, pendingStore.add(keys));
-        }
+        prediction = undefined;
 
         next(action);
     };

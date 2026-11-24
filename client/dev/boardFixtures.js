@@ -455,6 +455,8 @@ const plotSelection = () => {
         promptState({
             isActivePrompt: true,
             menuTitle: 'Select a plot',
+            selectCard: true,
+            selectToggle: { replace: true },
             buttons: [{ text: 'Done', arg: 'done', promptId: 'p1', disabled: true }]
         })
     );
@@ -635,6 +637,7 @@ const choosingOnBoard = () => {
         promptState({
             isActivePrompt: true,
             selectCard: true,
+            selectToggle: { limit: 2 },
             promptTitle: 'Military claim',
             menuTitle: 'Select 2 characters to kill',
             buttons: [{ text: 'Done', arg: 'done', promptId: 'p1' }]

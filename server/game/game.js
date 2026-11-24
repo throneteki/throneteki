@@ -611,11 +611,11 @@ class Game extends EventEmitter {
         plot.selected = true;
     }
 
-    cardClicked(sourcePlayer, cardId) {
+    cardClicked(sourcePlayer, cardId, promptId) {
         let player = this.getPlayerByName(sourcePlayer);
         let card = this.allCards.find((card) => card.uuid === cardId);
 
-        if (!player || !card) {
+        if (!player || !card || player.isStalePrompt(promptId)) {
             return;
         }
 
@@ -770,11 +770,11 @@ class Game extends EventEmitter {
         }
     }
 
-    drop(playerName, cardId, source, target, parentId) {
+    drop(playerName, cardId, source, target, parentId, promptId) {
         let player = this.getPlayerByName(playerName);
         let card = this.allCards.find((card) => card.uuid === cardId);
 
-        if (!player || !card) {
+        if (!player || !card || player.isStalePrompt(promptId)) {
             return;
         }
 

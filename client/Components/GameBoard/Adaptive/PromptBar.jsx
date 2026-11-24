@@ -16,11 +16,12 @@ import { PromptControls, usePromptActions } from '../usePromptActions';
 import { getButtonShortcutLabel } from '../keyboardShortcuts';
 import PhaseRoll from './PhaseRoll';
 import { chipClass } from './chipClass';
+import PendingMark, { pendingButtonClass } from '../PendingMark';
+import WaitingChip, { WaitingRow } from '../WaitingChip';
+import { useWaitingForServer } from '../serverWait';
 import { motionOff, motionSettingOff } from '../../../flip';
 import Messages from '../Messages';
 import { logTiming, useLogFeed } from './useLogFeed';
-import { pendingKeys, pendingLook, usePending } from '../pendingActions';
-import PendingChip, { PendingRow, usePendingStage } from './PendingChip';
 
 // A log line, on one line: when it does not fit, it scrolls along once to its end, and asks to be shown for as long
 // as that takes. While other lines wait (hurry) it scrolls faster, to be done close to the least time a line shows.
@@ -181,7 +182,6 @@ const useSelection = (active) => {
 };
 
 const Chip = ({ button, onPress, fullWidth = false, shortcut }) => {
-    const pending = pendingLook(usePending(pendingKeys.button(button)));
     const chip = (
         <Button
             type='button'
@@ -192,9 +192,10 @@ const Chip = ({ button, onPress, fullWidth = false, shortcut }) => {
                 'relative',
                 fullWidth ? 'h-9 w-full' : 'h-7',
                 shortcut && 'pl-6',
-                pending.className
+                button.pending && pendingButtonClass,
+                // Room for the spinner beside a label the chip is only as wide as
+                button.pending && !fullWidth && 'pr-6'
             )}
-            style={pending.style}
             onPress={(event) => onPress(event, button)}
             isDisabled={button.disabled}
             disableRipple
@@ -214,6 +215,7 @@ const Chip = ({ button, onPress, fullWidth = false, shortcut }) => {
                 </kbd>
             )}
             <span className='truncate'>{button.text}</span>
+            {button.pending && <PendingMark />}
         </Button>
     );
     return button.card ? <CardHoverable code={button.card.code}>{chip}</CardHoverable> : chip;
@@ -343,7 +345,6 @@ const OneLine = ({ lines, children }) => {
     );
 };
 
-// The round's phases, giving way to new log lines; beside: shown on each side of it (the dock's chevrons)
 const titleFade = {
     initial: { opacity: 0 },
     animate: { opacity: 1 },
@@ -351,6 +352,7 @@ const titleFade = {
     transition: { duration: 0.25 }
 };
 
+// The round's phases, giving way to new log lines; beside: shown on each side of it (the dock's chevrons)
 const PhaseTrack = ({ phase, feed, beside }) => (
     <div className='flex items-center gap-2 px-2 pt-1'>
         <div className='min-w-0 flex-1' />
@@ -530,16 +532,12 @@ const PromptBar = ({
     const waiting = buttons.length === 0 && panelControls.length === 0 && !selection;
     const messages = useSelector((state) => state.lobby.currentGame?.messages);
     const feed = useLogFeed(messages, { enabled: showLog });
-    // A lookup's answer is sent for its whole prompt
-    const controlsPending = pendingLook(
-        usePending(panelControls[0] ? pendingKeys.prompt(panelControls[0].promptId) : null)
-    );
     const press = (event, button) => {
         setMoreOpen(false);
         handleButtonClick(event, button);
     };
 
-    const pendingStage = usePendingStage();
+    const waitingForServer = useWaitingForServer();
     const title = promptTitle && !waiting && (
         <div
             className={classNames(
@@ -564,9 +562,9 @@ const PromptBar = ({
             {dock ? (
                 // The docked bar keeps its height, so a long wait takes the title's line for a while
                 <AnimatePresence mode='wait' initial={false}>
-                    {pendingStage !== 'none' ? (
-                        <motion.div key='pending' {...titleFade}>
-                            <PendingChip stage={pendingStage} small />
+                    {waitingForServer ? (
+                        <motion.div key='waiting' {...titleFade}>
+                            <WaitingChip />
                         </motion.div>
                     ) : (
                         title && (
@@ -602,11 +600,7 @@ const PromptBar = ({
             })}
         >
             {inputsInBar && (
-                <div
-                    data-prompt-controls=''
-                    className={classNames('flex min-w-0', controlsPending.className)}
-                    style={controlsPending.style}
-                >
+                <div data-prompt-controls='' className='flex min-w-0'>
                     <PromptControls
                         controls={panelControls}
                         only={(control) => inputControls.includes(control.type)}
@@ -641,11 +635,7 @@ const PromptBar = ({
     );
 
     const controlsInline = inlineControls && (
-        <div
-            data-prompt-controls=''
-            className={classNames('flex flex-col', controlsPending.className)}
-            style={controlsPending.style}
-        >
+        <div data-prompt-controls='' className='flex flex-col'>
             <PromptControls
                 controls={panelControls}
                 cards={cards}
@@ -660,7 +650,7 @@ const PromptBar = ({
             <PhaseTrack phase={phase} feed={feed} beside={chevrons} />
             <Rule />
             <div className='flex flex-col px-2 pb-1 pt-1'>
-                {!dock && <PendingRow stage={pendingStage} />}
+                {!dock && <WaitingRow waiting={waitingForServer} />}
                 <div className='grid min-w-0 grid-cols-[1fr_auto_1fr] items-center gap-2'>
                     <span />
                     {text}

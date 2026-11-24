@@ -183,7 +183,8 @@ const Message = memo(function Message({ message, compact }) {
     const className = compact
         ? 'break-words'
         : classNames('break-words leading-[1.15rem] text-gray-300', {
-              'p-2 bg-default rounded-md': isChatMessage(message)
+              'p-2 bg-default rounded-md': isChatMessage(message),
+              'opacity-60': message.pending
           });
 
     return <div className={className}>{formatMessageText(message.message, compact)}</div>;

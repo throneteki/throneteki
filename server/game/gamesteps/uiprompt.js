@@ -38,7 +38,7 @@ class UiPrompt extends BaseStep {
     activePrompt() {}
 
     addDefaultCommandToButtons(original) {
-        var prompt = Object.assign({}, original);
+        var prompt = Object.assign({}, original, { promptId: this.promptId });
         if (prompt.buttons) {
             for (let button of prompt.buttons) {
                 button.command = button.command || 'menuButton';

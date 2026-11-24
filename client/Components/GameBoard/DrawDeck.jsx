@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import CardPile from './CardPile';
-import { pendingKeys } from './pendingActions';
 import { faEye, faShuffle } from '@fortawesome/free-solid-svg-icons';
 
 const DrawDeck = ({
@@ -47,15 +46,13 @@ const DrawDeck = ({
             drawDeckPopupMenu.push({
                 text: 'View Hidden',
                 icon: faEye,
-                handler: handleShowDeckClick,
-                pendingKey: pendingKeys.deck('show')
+                handler: handleShowDeckClick
             });
         }
         drawDeckPopupMenu.push({
             text: 'Close and Shuffle',
             icon: faShuffle,
             handler: handleShuffleClick,
-            pendingKey: pendingKeys.deck('shuffle'),
             close: true
         });
     }

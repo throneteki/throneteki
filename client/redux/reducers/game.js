@@ -13,24 +13,51 @@ const gameSlice = createSlice({
             (state, action) => {
                 state.connecting = true;
                 state.host = action.payload.url;
+                state.lost = undefined;
             }
         ),
         gameConnected: (state) => {
             state.connected = true;
             state.connecting = false;
+            state.lost = undefined;
         },
         gameDisconnected: (state) => {
             state.connecting = false;
             state.connected = false;
+            state.lost = undefined;
         },
+        // The game socket dropped while a game was shown, rather than being closed by the client
+        gameConnectionLost: create.preparedReducer(
+            (reason, at = Date.now()) => ({ payload: { reason, at } }),
+            (state, action) => {
+                state.connecting = false;
+                state.connected = false;
+                state.lost = { ...action.payload, attempts: 0, trying: false };
+            }
+        ),
         gameReconnecting: (state) => {
             state.connecting = true;
             state.connected = false;
+            if (state.lost) {
+                state.lost.attempts += 1;
+                state.lost.trying = true;
+                state.lost.retryAt = undefined;
+            }
         },
-        gameConnectionFailed: (state) => {
+        gameRetryScheduled: (state, action) => {
+            if (state.lost) {
+                state.lost.retryAt = action.payload;
+            }
+        },
+        gameConnectionFailed: (state, action) => {
             state.connecting = false;
             state.connected = false;
+            if (state.lost) {
+                state.lost.trying = false;
+                state.lost.error = typeof action.payload === 'string' ? action.payload : undefined;
+            }
         },
+        reconnectGameNow: () => {},
         receiveResponseTime: (state, action) => {
             state.responseTime = action.payload;
         },
@@ -47,11 +74,7 @@ const gameSlice = createSlice({
             (option, value) => ({ payload: { option, value } }),
             () => {}
         ),
-        // quiet: the server says the click does nothing, so the board does not wait for it
-        sendCardClickedMessage: create.preparedReducer(
-            (uuid, quiet = false) => ({ payload: uuid, meta: { quiet } }),
-            () => {}
-        ),
+        sendCardClickedMessage: () => {},
         sendButtonClickedMessage: create.preparedReducer(
             (promptId, command, method, arg) => ({ payload: { promptId, command, method, arg } }),
             () => {}
@@ -86,8 +109,11 @@ export const {
     startGameConnecting,
     gameConnected,
     gameDisconnected,
+    gameConnectionLost,
     gameReconnecting,
     gameConnectionFailed,
+    gameRetryScheduled,
+    reconnectGameNow,
     receiveResponseTime,
     sendToggleKeywordSettingMessage,
     sendToggleDupesMessage,

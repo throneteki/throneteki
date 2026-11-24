@@ -1281,6 +1281,11 @@ class Player extends Spectator {
         this.promptState.cancelPrompt();
     }
 
+    // A click sent from a prompt that has since closed was aimed at a board the player no longer sees
+    isStalePrompt(promptId) {
+        return typeof promptId === 'string' && promptId !== this.promptState.promptId;
+    }
+
     setIsActivePrompt(isActivePrompt) {
         this.promptState.setIsActive(isActivePrompt);
         if (this.chessClock) {

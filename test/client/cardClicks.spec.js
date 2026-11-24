@@ -1,49 +1,7 @@
 import {
     clickActsAtOnce,
-    clickDoesSomething,
-    pendingKeys,
-    pendingStore
-} from '../../client/Components/GameBoard/pendingActions.js';
-
-describe('pendingStore', function () {
-    afterEach(function () {
-        pendingStore.clear();
-    });
-
-    it('holds what an action acted on until it is answered', function () {
-        const key = pendingKeys.card('a');
-        const done = pendingStore.add([key]);
-        expect(pendingStore.has(key)).toBe(true);
-        done();
-        expect(pendingStore.has(key)).toBe(false);
-    });
-
-    it('keeps an action sent again pending when the first send is answered', function () {
-        const key = pendingKeys.card('a');
-        const first = pendingStore.add([key]);
-        const second = pendingStore.add([key]);
-        first();
-        expect(pendingStore.has(key)).toBe(true);
-        second();
-        expect(pendingStore.has(key)).toBe(false);
-    });
-
-    it('says when the longest wait began, and nothing when none is waiting', function () {
-        expect(pendingStore.oldest()).toBe(null);
-        const first = pendingStore.add([pendingKeys.prompt('p1')]);
-        const startedAt = pendingStore.oldest();
-        pendingStore.add([pendingKeys.card('b')]);
-        expect(pendingStore.oldest()).toBe(startedAt);
-        first();
-        expect(pendingStore.oldest()).toBeGreaterThanOrEqual(startedAt);
-    });
-
-    it('keys a prompt button by its prompt, method and argument', function () {
-        expect(pendingKeys.button({ promptId: 'p1', method: 'menuButton', arg: 'done' })).toBe(
-            'button:p1:menuButton:done'
-        );
-    });
-});
+    clickDoesSomething
+} from '../../client/Components/GameBoard/cardClicks.js';
 
 describe('clickDoesSomething', function () {
     it('is true for a card the server says can be chosen, is chosen, or can be used', function () {

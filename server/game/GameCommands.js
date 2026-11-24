@@ -26,8 +26,8 @@ class GameCommands {
         );
     }
 
-    cardClicked(playerName, cardId) {
-        return this.game.cardClicked(playerName, cardId);
+    cardClicked(playerName, cardId, promptId) {
+        return this.game.cardClicked(playerName, cardId, promptId);
     }
 
     changeStat(playerName, stat, value) {
@@ -70,8 +70,8 @@ class GameCommands {
         return this.game.getProblemReport(playerName, 'report', description);
     }
 
-    drop(playerName, cardId, source, target, parentId) {
-        return this.game.drop(playerName, cardId, source, target, parentId);
+    drop(playerName, cardId, source, target, parentId, promptId) {
+        return this.game.drop(playerName, cardId, source, target, parentId, promptId);
     }
 
     menuButton(playerName, arg, method, promptId) {

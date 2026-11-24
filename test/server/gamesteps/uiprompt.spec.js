@@ -44,13 +44,17 @@ describe('the UiPrompt', function () {
                 expect(this.player2.setPrompt).toHaveBeenCalledWith({
                     buttons: [
                         { command: 'menuButton', text: 'foo', promptId: this.prompt.promptId }
-                    ]
+                    ],
+                    promptId: this.prompt.promptId
                 });
             });
 
             it('should set the waiting prompt for players that do not meet the active condition', function () {
                 this.prompt.continue();
-                expect(this.player1.setPrompt).toHaveBeenCalledWith(this.waitingPrompt);
+                expect(this.player1.setPrompt).toHaveBeenCalledWith({
+                    ...this.waitingPrompt,
+                    promptId: this.prompt.promptId
+                });
             });
 
             it('should return false', function () {
