@@ -3,6 +3,7 @@ import $ from 'jquery';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Sentry from '@sentry/react';
 import NavBar from './Components/Navigation/NavBar';
+import BoardNavBar from './Components/Navigation/BoardNavBar';
 import Router from './Router';
 import { tryParseJSON } from './util';
 import AlertPanel from './Components/Site/AlertPanel';
@@ -114,14 +115,14 @@ const Application = () => {
         }
     }, [gameBoardVisible, user]);
 
-    // On a phone the adaptive board takes the whole screen, and its own menu stands in for the navbar
+    // On a phone the adaptive board takes the whole screen, and the navbar shows over it with the game menu
     const fullScreenBoard = hidesNavbar(adaptiveLayoutMode);
     const containerClass = classNames('container h-full relative z-0', {
         'max-w-full': gameBoardVisible || fullScreenBoard || component.key === 'devboard'
     });
     return (
         <>
-            {!fullScreenBoard && <NavBar />}
+            {fullScreenBoard ? <BoardNavBar /> : <NavBar />}
             <main role='main'>
                 <div
                     // On a phone the board is pinned to the edges of what is visible, so the browser sizes it as its

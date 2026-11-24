@@ -1,5 +1,13 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, {
+    useCallback,
+    useContext,
+    useEffect,
+    useLayoutEffect,
+    useRef,
+    useState
+} from 'react';
 import { createPortal } from 'react-dom';
+import { useSelector } from 'react-redux';
 import { motionOff } from '../../flip';
 import { cardHeight, cardScaleOf, remSize } from '../../cardScale';
 import { pressedByTouch } from '../../lastPointer';
@@ -12,6 +20,9 @@ import { useMotionEnabled } from '../../motion';
 import { useStagedArrivals } from './useStagedArrivals';
 import { useHiddenDragUuid, useIncomingSlot } from './dragStore';
 import { boardRescaleEvent } from './useHudScale';
+import { useAdaptiveBoard } from './adaptiveContext';
+import { clickActsAtOnce, clickDoesSomething } from './cardClicks';
+import { ManualModeContext } from './ManualModeContext';
 
 const raiseTime = 150;
 
@@ -87,8 +98,8 @@ const SquishableCardPanel = ({
     const slotCount = cards.length + (incoming ? 1 : 0);
     const needsSquish = slotCount > maxCards;
 
-    // On touch, a tap raises a card (it may be covered) and a second tap uses it. The lowering card is set in the
-    // same update as the raise, so it never loses its transition for a frame and snaps back.
+    // On touch, a tap raises a card (it may be covered). The lowering card is set in the same update as the raise,
+    // so it never loses its transition for a frame and snaps back.
     const [lift, setLift] = useState({ raised: null, lowering: null });
     const raisedUuid = lift.raised;
     const loweringUuid = lift.lowering;
@@ -116,16 +127,50 @@ const SquishableCardPanel = ({
         return () => clearTimeout(timer);
     }, [loweringUuid]);
 
+    // On the adaptive board a raised card that is used stays up until the game answers, so it is not seen to drop
+    // back as though nothing happened
+    const adaptive = useAdaptiveBoard();
+    const manualMode = useContext(ManualModeContext);
+    const [awaiting, setAwaiting] = useState(null);
+    // The card shows as pressed (predictions.js) until the game server has handled its click
+    const awaitingPending =
+        !!awaiting && allCards.some((card) => card.uuid === awaiting && card.pressed);
+    useEffect(() => {
+        if (awaiting && !awaitingPending) {
+            setAwaiting(null);
+            setLift((current) =>
+                current.raised === awaiting ? { raised: null, lowering: awaiting } : current
+            );
+        }
+    }, [awaiting, awaitingPending]);
+
+    const selectFiresOnClick = useSelector(
+        (state) =>
+            !!state.lobby.currentGame?.players?.[state.auth.user?.username]?.selectFiresOnClick
+    );
+
+    // A tap that acts at once is only sent from a raised card, so the player sees which card they hit. A choice
+    // confirmed with Done is sent on the first tap.
     const onSquishedCardClick = useCallback(
         (card) => {
-            if (pressedByTouch() && card.uuid !== raisedUuid) {
+            const raised = card.uuid === raisedUuid;
+            const acts = clickDoesSomething(card, manualMode);
+            if (
+                pressedByTouch() &&
+                !raised &&
+                (!acts || clickActsAtOnce(card, selectFiresOnClick))
+            ) {
                 raise(card.uuid);
                 return;
             }
-            raise(null);
+            if (adaptive && acts && raised) {
+                setAwaiting(card.uuid);
+            } else {
+                raise(null);
+            }
             onCardClick?.(card);
         },
-        [raisedUuid, raise, onCardClick]
+        [adaptive, manualMode, selectFiresOnClick, raisedUuid, raise, onCardClick]
     );
 
     useEffect(() => {
@@ -236,6 +281,7 @@ const SquishableCardPanel = ({
             className={retClassName}
             style={style}
             disableBackground={disableBackground}
+            data-squish-pile=''
         >
             {cardsToRender}
             {floatingCard && (

@@ -221,6 +221,9 @@ Text without a trigger has its own constructs:
   Facedown Cards); uniqueness checks for the card being played use its printed title. A facedown
   card ignores its printed attachment restrictions only while it is facedown in play.
 - Round 1 still chooses a first player: the plot phase clears the setup choice.
+- The game state carries the latest initiative comparison as `initiative` (`RevealPlots.determineWinner`): its round,
+  the winner, each player's total initiative and power as compared, whether initiative and power tied, and who chose
+  when a card let a player choose. The board's plot overlay shows it.
 - Plot selection follows advance-information dependencies (the Bloodraven FAQ). Independent players
   choose together, a player who can see another's plot waits for it, the first player breaks
   cycles, and confirmed choices can't change.

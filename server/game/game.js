@@ -1166,6 +1166,7 @@ class Game extends EventEmitter {
         this.startedAt = new Date();
 
         this.round = 0;
+        this.initiativeResult = undefined;
 
         this.continue();
     }
@@ -1813,6 +1814,7 @@ class Game extends EventEmitter {
                 // results.winner is one name, or a list of names when several won
                 winners: this.results ? [].concat(this.results.winner ?? []) : undefined,
                 winReason: this.results?.winReason,
+                initiative: this.initiativeResult,
                 gameFormat: this.gameFormat,
                 gameVariant: this.gameVariant,
                 maxPlayers: this.maxPlayers,

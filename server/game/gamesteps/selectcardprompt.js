@@ -143,6 +143,7 @@ class SelectCardPrompt extends UiPrompt {
             selectCard: true,
             selectOrder: this.properties.ordered,
             selectToggle: this.selectionToggle(),
+            selectFiresOnClick: this.selector.automaticFireOnSelect(),
             menuTitle:
                 this.activePromptTitleFunc(this.context) ||
                 this.selector.defaultActivePromptTitle(),

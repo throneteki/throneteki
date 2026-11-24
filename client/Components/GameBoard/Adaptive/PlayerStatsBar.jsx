@@ -213,7 +213,9 @@ const PlayerStatsBar = ({
                 style={placeOf(0)}
                 className={classNames(
                     'relative shrink-0',
-                    vertical ? 'px-1 py-1.5' : classNames('h-full', compact ? 'w-10' : 'w-11')
+                    vertical
+                        ? 'px-1 py-1.5'
+                        : classNames('h-full', compact ? 'w-[2.625rem]' : 'w-[2.875rem]')
                 )}
                 title={player.firstPlayer ? `${username} (first player)` : username}
             >
@@ -242,10 +244,10 @@ const PlayerStatsBar = ({
                     {!onEdge && firstBadge('-bottom-0.5 -right-1.5')}
                 </span>
                 {/* In a bar at the screen's edge, on the bar's edge towards the board: the seat at the avatar's left,
-                    first player at its right */}
-                {onEdge && seatBadge(classNames('left-0 -translate-x-1/3', edgeLine))}
+                    first player at its right, mostly clear of the avatar but short of the screen's edge and the power */}
+                {onEdge && seatBadge(classNames('left-0 -translate-x-[45%]', edgeLine))}
                 {onEdge &&
-                    firstBadge(classNames('-translate-x-2/3', edgeLine), { left: avatarWidth })}
+                    firstBadge(classNames('-translate-x-1/2', edgeLine), { left: avatarWidth })}
             </div>
             <div
                 ref={statsRef}

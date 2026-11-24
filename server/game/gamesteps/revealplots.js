@@ -98,6 +98,11 @@ class RevealPlots extends BaseStep {
                 power: player.getTotalPower()
             };
         });
+        result.values = playerInitiatives.map((p) => ({
+            name: p.player.name,
+            initiative: p.initiative,
+            power: p.power
+        }));
         let initiativeValues = playerInitiatives.map((p) => p.initiative);
         let highestInitiative = Math.max(...initiativeValues);
         result.potentialWinners = playerInitiatives.filter(
@@ -159,6 +164,16 @@ class RevealPlots extends BaseStep {
         if (!result.player) {
             return false;
         }
+
+        // Sent to the clients for the board's plot overlay
+        this.game.initiativeResult = {
+            round: this.game.round,
+            winner: result.player.name,
+            values: result.values,
+            initiativeTied: result.initiativeTied,
+            powerTied: result.powerTied,
+            chosenBy: result.chosenBy?.name
+        };
 
         this.game.raiseEvent('onInitiativeDetermined', { winner: result.player }, (event) => {
             if (result.powerTied) {

@@ -497,6 +497,74 @@ describe('keyframesFor', function () {
         expect(frames[0].opacity).toBeUndefined();
         expect(frames[0].zIndex).toBe('205');
     });
+
+    it('starts a card that changes size at its old size, from the corner its move lines up', function () {
+        const frames = keyframesFor({ type: 'move', dx: 5, dy: 6, rotate: 0, size: 1.5 });
+
+        expect(frames[0]).toMatchObject({
+            transform: 'translate(5px, 6px) rotate(0deg) scale(1.5)',
+            transformOrigin: '0 0'
+        });
+        expect(frames[1].transform).toBe('translate(0, 0) rotate(0deg) scale(1)');
+    });
+
+    it('changes the size of a turning card about its middle', function () {
+        const frames = keyframesFor({
+            type: 'move',
+            dx: 5,
+            dy: 6,
+            rotate: 90,
+            size: 0.5,
+            origin: { x: 32, y: 45 }
+        });
+
+        expect(frames[0]).toMatchObject({
+            transform: 'translate(5px, 6px) rotate(90deg) scale(0.5)',
+            transformOrigin: '32px 45px'
+        });
+    });
+});
+
+describe('cards drawn at different sizes', function () {
+    it('gives a card moving from a big hand to a small pile the size it was', function () {
+        const before = new Map([['a', card(100, 200, { source: 'hand', scale: 1.5 })]]);
+        const after = new Map([['a', card(300, 50, { source: 'discard pile', scale: 0.75 })]]);
+
+        expect(planFlip({ before, after })[0].size).toBe(2);
+    });
+
+    it('shrinks a card that flies into a pile to the size the pile draws its cards at', function () {
+        const before = new Map([
+            ['x', card(0, 0)],
+            ['b', card(100, 0, { source: 'hand', scale: 1.5, el: { isConnected: false } })]
+        ]);
+        const after = new Map([['x', card(0, 0)]]);
+        const pile = { source: 'discard pile', left: 800, top: 500, scale: 0.75 };
+
+        const [ghost] = planFlip({ before, after, findPile: () => pile });
+
+        expect(ghost.size).toBe(0.5);
+    });
+
+    it('grows a card drawn from a small deck into a big hand', function () {
+        const before = new Map([['x', card(0, 0)]]);
+        const after = new Map([
+            ['x', card(0, 0)],
+            ['a', card(100, 200, { source: 'hand', from: 'deck:p1', scale: 1.5 })]
+        ]);
+        const decks = new Map([['deck:p1', { left: 500, top: 600, scale: 0.75 }]]);
+
+        const draw = planFlip({ before, after, decks }).find((item) => item.uuid === 'a');
+
+        expect(draw.size).toBe(0.5);
+    });
+
+    it('leaves the size alone when both ends are drawn at the same size', function () {
+        const before = new Map([['a', card(100, 200, { scale: 1 })]]);
+        const after = new Map([['a', card(300, 50, { scale: 1 })]]);
+
+        expect(planFlip({ before, after })[0].size).toBeUndefined();
+    });
 });
 
 describe('landingFrames', function () {

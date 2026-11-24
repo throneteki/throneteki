@@ -25,11 +25,12 @@ export const useAdaptivePage = (active) => {
         if (phantomBottom) {
             html.style.setProperty('--safe-bottom', '0px');
         }
-        // On Android the top safe area is the status bar, which a browser tab sits below and full screen hides, so
-        // keeping clear of it only leaves a gap above the board
-        const phantomTop = /Android/.test(navigator.userAgent);
-        if (phantomTop) {
-            html.style.setProperty('--safe-top', '0px');
+        // In full screen on Android the page runs under the camera cut-out, and the top safe area is the cut-out's
+        // height. Portrait keeps clear of it, the top bar's background filling it; landscape lets the board run
+        // under it (index.css)
+        const android = /Android/.test(navigator.userAgent);
+        if (android) {
+            html.dataset.androidBoard = '';
         }
         // How much of the screen the phone's keyboard leaves, for the chat to fill while it is typed into, so its input
         // and newest messages stay above the keyboard
@@ -99,8 +100,8 @@ export const useAdaptivePage = (active) => {
             if (phantomBottom) {
                 html.style.removeProperty('--safe-bottom');
             }
-            if (phantomTop) {
-                html.style.removeProperty('--safe-top');
+            if (android) {
+                delete html.dataset.androidBoard;
             }
         };
     }, [active]);

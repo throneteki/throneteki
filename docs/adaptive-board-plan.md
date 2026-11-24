@@ -373,7 +373,7 @@ From the review on 2026-11-17 (seventh batch):
 - [x] **R77 A gap above the opponent's bar in portrait full screen**: the top safe area (the status bar) was kept
       clear. On Android `--safe-top` is 0: a browser tab sits below the status bar and full screen hides it.
       **Checked on the phone 2026-11-20: fixed.** The bar running under the camera cut-out is wanted, rather than
-      leaving that space empty.
+      leaving that space empty. Reversed in portrait by R281.
 - [x] **R78 Chat or chat and game log**: a toggle in the chat's header ("Chat" / "Chat + game log"), remembered
       in localStorage. A chat message is one the server starts with the sender's avatar (`isChatMessage`).
 - [x] **R79 New game log lines show in the divider**, fading the prompt out and the line in (not the phase track).
@@ -1190,6 +1190,73 @@ From the review on 2026-11-20 (second batch):
       the dim fades.
 - [x] **R234 Tokens are in the middle of the card again, and their changes stand out**: the +x / −x that floats off a
       counter is a larger bold pill, green or red, and stays a little longer (both boards).
+- [x] **R279 The seat and 1st chips show more of the avatar**: in an edge bar they sit a little further out, the seat
+      about 1px from the screen's edge and 1st about 1px short of the power (checked by measuring at 390px). The
+      avatar's slot is 2px wider to make room.
+- [x] **R280 The navbar on phones**: it was hidden on the phone board, so the rest of the site (profile and so on)
+      could not be reached. It slides down over the board while the game menu is open, and stays while its own menu
+      is open (which closes the game menu). Using it does not close the game menu. **Check on the phone.**
+- [ ] **R281 Portrait keeps clear of the camera cut-out (reverses R77 in portrait)**: in full screen with
+      `viewport-fit=cover` the page runs under the cut-out, and Firefox reports its height as the top safe area so
+      content can keep clear of the camera: intended, unlike the bottom one (R70). Portrait pads the top bar by it,
+      the bar's background filling the space; landscape still zeroes it on Android. **Check on the phone, in a tab
+      and in full screen.**
+- [x] **R282 The game settings' Discard is Close until something changes**: it closes the settings, and fades to
+      Discard while there are unsaved changes. The X stays.
+- [x] **R283 Fan out a player's cards (start and end)**: tapping (or clicking) a player's cards and name fans them
+      out side by side in their order, and again stacks them; one player's at a time, so fanning another stacks the
+      last. The cards slide between the two (margins and tilt, no moving in the page, so nothing flickers or is tossed
+      again); where room is short they overlap to fit. With a mouse a gold outline fades in round the whole
+      arrangement (its silhouette; the cards' shadow is cast outside it), the stacked cards lean a little towards
+      where they fan out, and the cursor is a pointer. Stacked, every agenda lies at the same drop and nearly the same
+      tilt, so they are level (a card tilted more lifted its corner higher than the others). This replaces flicking through the cards.
+- [x] **R291 Who won initiative, in the plot overlay**: once the plots have turned, everyone's total initiative pops in
+      under their name at once (the total the game compared, not the plot's printed value). With no
+      tie the winner's turns green and the rest fade. On a tie each step lights all its values at once, kept as quick as
+      it can be: the tied totals are ringed gold with "Tied · lowest power wins" (or who chooses, where a card says), then
+      the tied players' power shows. Where power ties too the lowest are ringed gold, the tie line is struck through in
+      red with "Still tied · winner chosen at random" under it, and a coin is tossed: it spins showing "?", slams down and
+      shows only the winner's avatar, so a melee tie of any size shows one face. Then the winner's values and rings turn
+      green, the rest fade, and a line names the winner. From the plots turning: about 0.7s with no tie, 1.3s for a power
+      tie, 2.5s for a coin. The server sends the result (`initiative` in the game state); where a card has a player
+      choose the winner, the overlay opens before they have chosen and shows the result as soon as it arrives.
+- [x] **R293 The board is still and closed off while an overlay shows**: it plays none of its own moves (`setFlipPaused`
+      in flip.js), so a plot the overlay reveals is not also turned over on the board, even where the reveal reaches the
+      board in more than one update; with overlays off the board shows the reveal itself. Every overlay's backdrop takes
+      presses, hovers and scrolling, and the prompt's keyboard shortcuts do nothing while one shows. **Check in a real
+      game:** the dev board never showed the plot turning on the board, so the cause is inferred.
+- [x] **R292 Titles' rivals and supports stand out**: each is a pill, red with crossed swords or green with a handshake,
+      naming each player with their avatar. As it pops in a light runs once round its edge, then it pulses once in its
+      colour.
+- [x] **R290 Overlays fit the screen with the interface's scale**: their text and buttons follow the interface's
+      scale, as the rest of the board does (the end's title and the Leave link too). Each overlay measures what it
+      laid out and makes its cards smaller until everything fits; below a fair card size its interface gives way too
+      (to 60%), and where even that does not fit (a melee's end on a phone held sideways) it scrolls from its top
+      rather than cutting off its title or buttons.
+- [x] **R284 Overlays cover everything**: they sit over the whole screen (the chat and navbar on a desktop too),
+      above the board's panels and sheets and the site's popups, which are drawn outside the board and so stood above
+      them (an agenda's deck search during setup showed over the start). Only the card zoom and the dev board's panel
+      are higher.
+- [x] **R285 The start overlay moves gently**: embers rise behind the table, and in a joust crossed swords swing in
+      behind the VS and then glow slowly (above the heading in a melee). Both stop with motion off.
+- [x] **R287 The end of a round shows who leads, quietly**: it passes on its own, so nothing moves after it has
+      played out. The leader (most power, unless everyone is level) gets a small crown beside their power once it has
+      counted up, and their bar glows faintly. No embers, no dimming.
+- [x] **R288 Elimination matches the start and end**: the player's faction and agendas are tossed in, the
+      ELIMINATED seal comes down on them and they turn to ash-grey, with their name (and avatar) and the reason below
+      it; grey ash rises behind. The choice overlays' leftovers (a comment, the dev board's three examples) are gone, as
+      R264 removed them.
+- [x] **R289 Leaving from the game's end, and seeing it again**: the end overlay has a small Leave game set apart
+      below its buttons, at the foot of the screen on a phone in portrait, so it is not pressed by mistake (no
+      confirming, as a finished game is safe to leave). Once the game is over, and where overlays are on,
+      the game menu has View result (a trophy), which plays the end overlay again from the start. It is gold, and
+      first in the bar, named, with a line after it; it is kept there before the rest when room is short. As a bare
+      icon it went unnoticed.
+- [x] **R286 The game's end says who won**: under Victory or Defeat (Game over for a spectator, No winner for a draw)
+      a line names the winner ("Rival wins the game"); how they won is left out, as the dimmed losers show it. Everyone's cards are tossed in as at the start, the
+      winner's last: in a joust both players, the winner's larger, crowned and glowing, the loser's dimmed; in a melee
+      everyone by place. Each has a power pill (Winner, or their place in a melee). Embers rise behind, the cards can
+      be flicked through, and the turning rays are gone.
 
 - [x] `client/hud.js`: add `board: 'classic'` to `defaultHud`, and accept `'classic' | 'adaptive'` in
       `normalizeHud`.

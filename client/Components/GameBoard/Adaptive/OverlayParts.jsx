@@ -34,12 +34,12 @@ export const OverlayButton = ({ primary = false, disabled = false, onPress, chil
 );
 
 // The board softened and darkened behind an overlay, most in the middle where its text is, so the board's detail
-// does not show through the text. A major overlay takes the pointer from the board.
+// does not show through the text. It blocks the board underneath.
 export const OverlayBackdrop = ({ major = false }) => (
     <div
         className={classNames(
-            'overlay-dim absolute inset-0 backdrop-blur-[3px]',
-            major ? 'pointer-events-auto bg-black/80' : 'bg-black/65'
+            'overlay-dim pointer-events-auto absolute inset-0 backdrop-blur-[3px]',
+            major ? 'bg-black/80' : 'bg-black/65'
         )}
         style={{
             backgroundImage:
