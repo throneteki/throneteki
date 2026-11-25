@@ -418,7 +418,8 @@ html.card-dragging.card-drop-refused * {
         0 2px 5px rgba(0, 0, 0, 0.35);
     transition:
         filter 120ms,
-        box-shadow 120ms;
+        box-shadow 120ms,
+        scale 120ms;
 }
 
 .card-body::after {
@@ -431,16 +432,18 @@ html.card-dragging.card-drop-refused * {
     pointer-events: none;
 }
 
-/* On the adaptive board, a card clicked stays pressed in until the game server has answered the click */
-:is([data-layout], [data-sheet]) [data-card-surface][data-pressed] {
-    translate: 0 max(2px, calc(5px * var(--card-scale, 1)));
-}
+/* On the adaptive board, a card clicked stays pressed in until the game server has answered the click. The body
+   shrinks, not the surface, which has its own scale for rings and the selection pop. */
 :is([data-layout], [data-sheet]) [data-card-surface][data-pressed] > .card-body {
+    scale: 0.94;
     filter: brightness(0.8);
     box-shadow: 0 0 1px rgba(0, 0, 0, 0.6);
 }
-[data-motion='off'] :is([data-layout], [data-sheet]) [data-card-surface][data-pressed] {
-    translate: none;
+[data-motion='off']
+    :is([data-layout], [data-sheet])
+    [data-card-surface][data-pressed]
+    > .card-body {
+    scale: none;
 }
 
 /* A card turning to kneel or stand overshoots a little and settles, like it was flicked */

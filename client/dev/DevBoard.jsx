@@ -265,7 +265,7 @@ const buttonClass =
     'rounded-md bg-white/10 px-2 py-1 text-left hover:bg-white/20 disabled:opacity-40';
 
 // Development only: the real game board with a canned state, at /dev/board?fixture=crowded&board=adaptive
-// (&manual=1, &spectate=1, &players=3..6 for melee scenarios, &long=1, &crowd=1, &lag=300|600|1000|3000, &panel=0 to hide the panel). The
+// (&manual=1, &spectate=1, &players=3..6 for melee scenarios, &long=1, &crowd=1, &lag=300|600|1000|3000|5000, &panel=0 to hide the panel). The
 // steps change the game as a server would, to see cards move. An overlay is played on its scenario once the board has
 // loaded it, so what is seen at its start is the overlay, not the board still loading.
 const DevBoard = ({
@@ -287,7 +287,7 @@ const DevBoard = ({
     const [long, setLong] = useState(longParam === '1');
     const [crowd, setCrowd] = useState(crowdParam === '1');
     const [lag, setLag] = useState(
-        ['300', '600', '1000', '3000'].includes(lagParam) ? lagParam : '0'
+        ['300', '600', '1000', '3000', '5000'].includes(lagParam) ? lagParam : '0'
     );
     useEffect(() => {
         devLag = Number(lag);
@@ -542,7 +542,8 @@ const DevBoard = ({
                                         ['300', '0.3s'],
                                         ['600', '0.6s'],
                                         ['1000', '1s'],
-                                        ['3000', '3s']
+                                        ['3000', '3s'],
+                                        ['5000', '5s']
                                     ]}
                                     onChange={setLag}
                                 />

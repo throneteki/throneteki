@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useSyncExternalStore } from 'react';
 
-export const waitingShownAfter = 500;
+export const waitingShownAfter = 3000;
 
 const sentAt = [];
 let sent = 0;

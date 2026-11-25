@@ -16,7 +16,7 @@ import { PromptControls, usePromptActions } from '../usePromptActions';
 import { getButtonShortcutLabel } from '../keyboardShortcuts';
 import PhaseRoll from './PhaseRoll';
 import { chipClass } from './chipClass';
-import PendingMark, { pendingButtonClass } from '../PendingMark';
+import PendingSpinner from './PendingSpinner';
 import WaitingChip, { WaitingRow } from '../WaitingChip';
 import { useWaitingForServer } from '../serverWait';
 import { motionOff, motionSettingOff } from '../../../flip';
@@ -191,10 +191,8 @@ const Chip = ({ button, onPress, fullWidth = false, shortcut }) => {
                 chipClass(button.cancel),
                 'relative',
                 fullWidth ? 'h-9 w-full' : 'h-7',
-                shortcut && 'pl-6',
-                button.pending && pendingButtonClass,
-                // Room for the spinner beside a label the chip is only as wide as
-                button.pending && !fullWidth && 'pr-6'
+                // Room for the shortcut and spinner, keeping the label centred
+                (shortcut || button.pending) && 'px-6'
             )}
             onPress={(event) => onPress(event, button)}
             isDisabled={button.disabled}
@@ -215,7 +213,7 @@ const Chip = ({ button, onPress, fullWidth = false, shortcut }) => {
                 </kbd>
             )}
             <span className='truncate'>{button.text}</span>
-            {button.pending && <PendingMark />}
+            <PendingSpinner pending={button.pending} />
         </Button>
     );
     return button.card ? <CardHoverable code={button.card.code}>{chip}</CardHoverable> : chip;
