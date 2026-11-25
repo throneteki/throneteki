@@ -192,7 +192,7 @@ const Chip = ({ button, onPress, fullWidth = false, shortcut }) => {
                 'relative',
                 fullWidth ? 'h-9 w-full' : 'h-7',
                 // Room for the shortcut and spinner, keeping the label centred
-                (shortcut || button.pending) && 'px-6'
+                (shortcut || (button.pending && fullWidth)) && 'px-6'
             )}
             onPress={(event) => onPress(event, button)}
             isDisabled={button.disabled}
@@ -213,7 +213,8 @@ const Chip = ({ button, onPress, fullWidth = false, shortcut }) => {
                 </kbd>
             )}
             <span className='truncate'>{button.text}</span>
-            <PendingSpinner pending={button.pending} />
+            {/* A chip as wide as its label (on phones) has no room beside it */}
+            <PendingSpinner pending={button.pending} corner={!fullWidth} />
         </Button>
     );
     return button.card ? <CardHoverable code={button.card.code}>{chip}</CardHoverable> : chip;
