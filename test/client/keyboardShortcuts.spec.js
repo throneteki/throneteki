@@ -70,6 +70,14 @@ describe('keyboard shortcuts', function () {
             expect(isShortcutEvent(keyEvent(' '), documentWithOverlay)).toBe(false);
         });
 
+        it('ignores key presses while a board overlay covers the board', function () {
+            const documentWithBoardOverlay = {
+                querySelector: (selector) =>
+                    selector.split(', ').includes('[data-board-overlay]') ? {} : null
+            };
+            expect(isShortcutEvent(keyEvent('1'), documentWithBoardOverlay)).toBe(false);
+        });
+
         it('leaves Space and Enter to a focused button but still accepts other keys', function () {
             const target = element({ tagName: 'BUTTON', matches: ['button'] });
 

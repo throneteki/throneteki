@@ -17,7 +17,6 @@ const defaultKeywordSettings = {
 
 const defaultSettings = {
     background: 'BG1',
-    cardSize: 'normal',
     promptDupes: false,
     hideInterrupts: true,
     hideReactions: true,

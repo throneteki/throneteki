@@ -9,6 +9,7 @@ const ComboField = ({
     onSelectionChange,
     placeholder,
     className,
+    inputClassName,
     'aria-label': ariaLabel
 }) => (
     <ComboBox
@@ -20,7 +21,7 @@ const ComboField = ({
     >
         {label && <Label className='text-sm text-ink-dim'>{label}</Label>}
         <ComboBox.InputGroup>
-            <Input placeholder={placeholder} />
+            <Input placeholder={placeholder} className={inputClassName} />
             <ComboBox.Trigger />
         </ComboBox.InputGroup>
         <ComboBox.Popover>

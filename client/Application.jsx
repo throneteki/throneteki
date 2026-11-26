@@ -3,6 +3,7 @@ import $ from 'jquery';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Sentry from '@sentry/react';
 import NavBar from './Components/Navigation/NavBar';
+import BoardNavBar from './Components/Navigation/BoardNavBar';
 import Router from './Router';
 import { tryParseJSON } from './util';
 import Notice from './Components/Site/Notice';
@@ -16,6 +17,7 @@ import CardHover from './Components/Images/CardHover';
 import ErrorMessage from './Components/Site/ErrorMessage';
 import classNames from 'classnames';
 import PendingGameAlerter from './Components/Games/PendingGameAlerter';
+import { hidesNavbar, useAdaptiveLayoutMode } from './boardLayoutStore';
 import { customBackgroundUrl } from './util';
 import { builtInBackgroundUrl } from './backgrounds';
 
@@ -26,6 +28,7 @@ const Application = () => {
     const path = useSelector((state) => state.navigation.path);
     const { user, token, refreshToken } = useSelector((state) => state.auth);
     const bgRef = useRef();
+    const adaptiveLayoutMode = useAdaptiveLayoutMode();
 
     const [incompatibleBrowser, setIncompatibleBrowser] = useState(false);
     const [cannotLoad, setCannotLoad] = useState(false);
@@ -112,24 +115,39 @@ const Application = () => {
         }
     }, [gameBoardVisible, user]);
 
+    // On a phone the adaptive board takes the whole screen, and the navbar shows over it with the game menu
+    const fullScreenBoard = hidesNavbar(adaptiveLayoutMode);
     const containerClass = classNames('container h-full relative z-0', {
-        'max-w-full': gameBoardVisible
+        'max-w-full': gameBoardVisible || fullScreenBoard || component.key === 'devboard'
     });
     return (
         <>
-            <NavBar />
+            {fullScreenBoard ? <BoardNavBar /> : <NavBar />}
             <main role='main'>
                 <div
-                    className='absolute bottom-0 left-0 right-0 top-[3rem] bg-cover bg-center bg-no-repeat overflow-y-auto'
+                    // On a phone the board is pinned to the edges of what is visible, so the browser sizes it as its
+                    // toolbars come and go (a height in dvh can come out short of the screen on Android). While the
+                    // chat is typed into it keeps its height instead (--board-height), under the keyboard.
+                    className={classNames(
+                        'left-0 right-0 bg-cover bg-center bg-no-repeat',
+                        fullScreenBoard
+                            ? 'fixed inset-0 h-[var(--board-height,auto)] overflow-hidden'
+                            : 'absolute bottom-0 top-[3rem] overflow-y-auto'
+                    )}
                     ref={bgRef}
                 >
                     <Sentry.ErrorBoundary
-                        fallback={
+                        fallback={({ error, componentStack }) => (
                             <ErrorMessage
                                 title='Unexpected Error'
                                 message='Report has been automatically submitted'
+                                details={
+                                    import.meta.env.DEV
+                                        ? `${error?.stack || error}\n${componentStack || ''}`
+                                        : undefined
+                                }
                             />
-                        }
+                        )}
                     >
                         <CardHover>
                             {isLoading ? (

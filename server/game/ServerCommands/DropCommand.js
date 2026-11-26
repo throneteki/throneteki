@@ -1,16 +1,39 @@
 import DiscardCard from '../GameActions/DiscardCard.js';
 import { OpenInformationLocations } from '../CardVisibility.js';
+import RevealPlots from '../gamesteps/revealplots.js';
+import GameActions from '../GameActions/index.js';
+import PlaceCardUnderneath from '../GameActions/PlaceCardUnderneath.js';
+
+import {
+    allowedTypesForPile,
+    drawDeckCardTypes,
+    isPlotPlacement
+} from '../../../shared/dropRules.js';
 
 class DropCommand {
-    constructor(game, player, card, targetLocation) {
+    constructor(game, player, card, targetLocation, parentCard) {
         this.game = game;
         this.player = player;
         this.card = card;
         this.originalLocation = card.location;
         this.targetLocation = targetLocation;
+        this.parentCard = parentCard;
     }
 
     execute() {
+        // An attachment waiting for its target is already on its way into play
+        if (this.game.pendingAttachments?.has(this.card)) {
+            return false;
+        }
+
+        if (this.isPlotPlacement()) {
+            return this.promptPlotPlacement();
+        }
+
+        if (this.targetLocation === 'underneath') {
+            return this.placeUnderneath();
+        }
+
         if (this.originalLocation === this.targetLocation || this.card.controller !== this.player) {
             return false;
         }
@@ -42,31 +65,109 @@ class DropCommand {
         return true;
     }
 
-    isValidDropCombination() {
-        const PlotCardTypes = ['plot'];
-        const DrawDeckCardTypes = ['attachment', 'character', 'event', 'location'];
-        const AllowedTypesForPile = {
-            'active plot': PlotCardTypes,
-            'being played': ['event'],
-            'dead pile': ['character'],
-            'discard pile': DrawDeckCardTypes,
-            'draw deck': DrawDeckCardTypes,
-            hand: DrawDeckCardTypes,
-            'out of game': DrawDeckCardTypes.concat(PlotCardTypes),
-            'play area': ['attachment', 'character', 'location'],
-            'plot deck': PlotCardTypes,
-            'revealed plots': PlotCardTypes,
-            shadows: DrawDeckCardTypes,
-            agenda: DrawDeckCardTypes
+    isPlotPlacement() {
+        return (
+            this.card.controller === this.player &&
+            isPlotPlacement(this.originalLocation, this.targetLocation, this.card.getType())
+        );
+    }
+
+    /**
+     * A plot dropped on the used plots pile is either put with the used plots or revealed on the
+     * spot, so the player is asked. Nothing is moved or recorded until they choose.
+     */
+    promptPlotPlacement() {
+        const handlers = {
+            cancel: () => true,
+            reveal: () => {
+                this.game.addAlert(
+                    'danger',
+                    '{0} has revealed {1} immediately',
+                    this.player,
+                    this.card
+                );
+                this.record(this.originalLocation, 'active plot');
+                this.game.queueStep(new RevealPlots(this.game, [this.card]));
+                return true;
+            }
         };
+        const buttons = [{ text: 'Reveal now', method: 'reveal' }];
 
-        let allowedTypes = AllowedTypesForPile[this.targetLocation];
+        if (this.originalLocation === 'plot deck') {
+            handlers.move = () => {
+                this.game.resolveGameAction(
+                    GameActions.placeCard({
+                        card: this.card,
+                        player: this.player,
+                        location: this.targetLocation
+                    })
+                );
+                this.addGameMessage();
+                this.record(this.originalLocation, this.targetLocation);
+                return true;
+            };
+            buttons.unshift({ text: 'Move to used plots', method: 'move' });
+        }
 
-        if (!allowedTypes) {
+        this.game.promptWithMenu(this.player, handlers, {
+            activePrompt: {
+                menuTitle: 'Place this plot',
+                buttons: [...buttons, { text: 'Cancel', method: 'cancel', cancel: true }]
+            },
+            source: this.card,
+            beforeInitiation: true
+        });
+
+        return false;
+    }
+
+    canPlaceUnderneath() {
+        return (
+            this.parentCard?.location === 'play area' &&
+            this.card.controller === this.player &&
+            drawDeckCardTypes.includes(this.card.getType()) &&
+            PlaceCardUnderneath.canChangeGameState({
+                card: this.card,
+                parentCard: this.parentCard
+            })
+        );
+    }
+
+    placeUnderneath() {
+        if (!this.canPlaceUnderneath()) {
             return false;
         }
 
-        return allowedTypes.includes(this.card.getType());
+        const visible = OpenInformationLocations.includes(this.originalLocation);
+        this.game.resolveGameAction(
+            GameActions.placeCardUnderneath({
+                card: this.card,
+                parentCard: this.parentCard,
+                player: this.player,
+                facedown: true
+            })
+        );
+        this.game.addAlert(
+            'danger',
+            '{0} has placed {1} from their {2} facedown underneath {3}',
+            this.player,
+            visible ? this.card : 'a card',
+            this.originalLocation,
+            this.parentCard
+        );
+
+        return true;
+    }
+
+    record(from, to) {
+        this.game.manualActions.record(this.player, 'drop', {
+            cards: [this.card],
+            args: [from, to]
+        });
+    }
+
+    isValidDropCombination() {
+        return !!allowedTypesForPile[this.targetLocation]?.includes(this.card.getType());
     }
 
     addGameMessage() {

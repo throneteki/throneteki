@@ -1,11 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Button, Spinner } from '@heroui/react';
-import RadioField, { RadioOption } from '../Site/RadioField';
+import RadioField, { RadioOption, tileClassName } from '../Site/RadioField';
 import { toast } from 'react-toastify';
-import CardImage from '../Images/CardImage';
 import Group from '../Site/Group';
-import { CardSizeOptions } from '../../constants';
+import HudSettings from './HudSettings';
+import SettingReveal from './SettingReveal';
 import { customBackgroundUrl } from '../../util';
 import { setUser } from '../../redux/reducers/auth';
 import {
@@ -16,11 +16,6 @@ import { prepareBackground } from './prepareBackground';
 import { AcceptedImageFiles } from '../../imageEncoding';
 import { BuiltInBackgrounds } from '../../backgrounds';
 import { DefaultBackground, MaxBackgroundBytes } from '../../../shared/backgrounds';
-
-const previewCards = ['01144', '01089', '01160', 'cardback'];
-
-const tileClassName =
-    'w-full cursor-pointer rounded-sm border border-gold-hair p-2 hover:bg-quiet data-[selected=true]:border-gold data-[selected=true]:bg-quiet';
 
 const previewClassName = 'mb-1 aspect-video w-full rounded-sm border border-white/10 object-cover';
 
@@ -112,35 +107,7 @@ const AppearanceSettings = ({ user, formProps }) => {
 
     return (
         <>
-            <Group title='Card size' className='grid gap-3 sm:grid-cols-[11rem_minmax(0,1fr)]'>
-                <RadioField
-                    aria-label='Card size'
-                    value={values.cardSize}
-                    onChange={(value) => setFieldValue('cardSize', value)}
-                    optionsClassName='grid grid-cols-2 gap-2 sm:grid-cols-1'
-                >
-                    {CardSizeOptions.map(({ name, label }) => (
-                        <RadioOption key={name} value={name} className={tileClassName}>
-                            {label}
-                        </RadioOption>
-                    ))}
-                </RadioField>
-                <div
-                    aria-hidden
-                    className='flex items-center overflow-hidden rounded-sm bg-well p-3 sm:h-[12.75rem]'
-                >
-                    <div className='mx-auto flex items-end gap-2'>
-                        {previewCards.map((code) => (
-                            <CardImage
-                                key={code}
-                                code={code}
-                                size={values.cardSize}
-                                className='shrink-0 transition-all'
-                            />
-                        ))}
-                    </div>
-                </div>
-            </Group>
+            <HudSettings value={values.hud} onChange={(hud) => setFieldValue('hud', hud)} />
             <Group
                 title='Game board background'
                 description='You can also upload your own image to play on. Large images are resized to fit the screen.'
@@ -198,7 +165,7 @@ const AppearanceSettings = ({ user, formProps }) => {
                         </button>
                     )}
                 </RadioField>
-                {user.customBackground && (
+                <SettingReveal show={!!user.customBackground}>
                     <div className='flex flex-wrap gap-2'>
                         <Button
                             size='sm'
@@ -219,7 +186,7 @@ const AppearanceSettings = ({ user, formProps }) => {
                             {isRemoving && <Spinner color='current' size='sm' />}Remove image
                         </Button>
                     </div>
-                )}
+                </SettingReveal>
                 <input
                     ref={fileInput}
                     type='file'

@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import classNames from 'classnames';
 import { useSelector } from 'react-redux';
 import { Link } from '@heroui/react';
@@ -49,6 +49,14 @@ const alertStyles = {
     }
 };
 
+const alertColours = {
+    success: 'text-success',
+    info: 'text-gold',
+    danger: 'text-danger',
+    bell: 'text-warning',
+    warning: 'text-warning'
+};
+
 const isChatFragment = (fragment) => fragment?.name && fragment.argType === 'player';
 
 const Divider = ({ isRound, children }) => (
@@ -64,7 +72,7 @@ const Divider = ({ isRound, children }) => (
     </div>
 );
 
-const processKeywords = (message) => {
+const processKeywords = (message, compact) => {
     const messages = [];
     let i = 0;
 
@@ -74,10 +82,19 @@ const processKeywords = (message) => {
         if (tokens[lowerToken]) {
             const tokenEntry = tokens[lowerToken];
 
+            // On one line of its own (compact) the image sits in the middle of the text, not on its baseline
             messages.push(
-                <span key={`${token}-${i++}`} className='inline-flex gap-0.5'>
+                <span
+                    key={`${token}-${i++}`}
+                    className={compact ? undefined : 'inline-flex gap-0.5'}
+                >
                     {` ${token} `}
-                    <img className={tokenEntry.className} src={tokenEntry.imageSrc} />
+                    <img
+                        className={classNames(tokenEntry.className, {
+                            '!mt-0 align-middle': compact
+                        })}
+                        src={tokenEntry.imageSrc}
+                    />
                 </span>
             );
             messages.push(' ');
@@ -89,7 +106,7 @@ const processKeywords = (message) => {
     return messages;
 };
 
-const formatMessageText = (message) => {
+const formatMessageText = (message, compact) => {
     let index = 0;
     const messages = [];
 
@@ -101,7 +118,23 @@ const formatMessageText = (message) => {
         }
 
         if (key === 'alert') {
-            const message = formatMessageText(fragment.message);
+            const message = formatMessageText(fragment.message, compact);
+            if (compact) {
+                messages.push(
+                    <span
+                        key={index++}
+                        className={classNames(
+                            alertColours[fragment.type] ?? 'font-semibold text-ink',
+                            {
+                                capitalize: fragment.type === 'phasestart'
+                            }
+                        )}
+                    >
+                        {message}
+                    </span>
+                );
+                continue;
+            }
             switch (fragment.type) {
                 case 'startofround':
                 case 'endofround':
@@ -142,7 +175,7 @@ const formatMessageText = (message) => {
                     break;
             }
         } else if (fragment.message) {
-            messages.concat(formatMessageText(fragment.message));
+            messages.concat(formatMessageText(fragment.message, compact));
         } else if (fragment.link && fragment.label) {
             messages.push(
                 <Link key={index++} href={fragment.link} target='_blank' rel='noopener noreferrer'>
@@ -177,9 +210,15 @@ const formatMessageText = (message) => {
                 </span>
             );
         } else if (ThronesIcons.includes(fragment)) {
-            messages.push(<ThronesIcon key={index++} icon={fragment} />);
+            messages.push(
+                <ThronesIcon
+                    key={index++}
+                    icon={fragment}
+                    className={compact ? 'align-middle leading-none' : undefined}
+                />
+            );
         } else {
-            const messageFragment = processKeywords(fragment.toString());
+            const messageFragment = processKeywords(fragment.toString(), compact);
             messages.push(
                 <span key={index++} className='message-fragment'>
                     {messageFragment}
@@ -191,19 +230,30 @@ const formatMessageText = (message) => {
     return messages;
 };
 
-const Message = memo(function Message({ message, username }) {
+const Message = memo(function Message({ message, username, compact, arrive }) {
+    // Decided once, when it first shows, so a re-render part way through never cuts the fade short
+    const [arriving] = useState(arrive);
     const fragments = Object.values(message.message || {});
     const sender = fragments.find(isChatFragment);
+
+    if (compact) {
+        return (
+            <div className={classNames('break-words', { 'chat-arrive': arriving })}>
+                {formatMessageText(message.message, compact)}
+            </div>
+        );
+    }
 
     if (sender) {
         const text = fragments.slice(fragments.indexOf(sender) + 1);
 
         return (
             <div
-                className={classNames(
-                    'flex gap-2 py-1',
-                    sender.name === username && '-mx-2 bg-white/[0.035] px-2'
-                )}
+                className={classNames('flex gap-2 py-1', {
+                    '-mx-2 bg-white/[0.035] px-2': sender.name === username,
+                    'opacity-60': message.pending,
+                    'chat-arrive': arriving
+                })}
             >
                 <UserAvatar username={sender.name} size='sm' className='mt-0.5 shrink-0' />
                 <div className='min-w-0 flex-1 break-words'>
@@ -222,19 +272,33 @@ const Message = memo(function Message({ message, username }) {
     }
 
     return (
-        <div className='break-words leading-[1.2rem] text-ink-dim'>
+        <div
+            className={classNames('break-words leading-[1.2rem] text-ink-dim', {
+                'opacity-60': message.pending,
+                'chat-arrive': arriving
+            })}
+        >
             {formatMessageText(message.message)}
         </div>
     );
 });
 
-const Messages = ({ messages }) => {
+// compact: each message as a line of text, its alerts inline rather than as rules and panels, for showing one
+// message on its own
+// arriveFrom: the index from which messages are new, and fade in
+const Messages = ({ messages, compact = false, arriveFrom = Infinity }) => {
     const username = useSelector((state) => state.auth.user?.username);
 
     return (
         <>
             {messages.map((message, index) => (
-                <Message key={index} message={message} username={username} />
+                <Message
+                    key={index}
+                    message={message}
+                    username={username}
+                    compact={compact}
+                    arrive={index >= arriveFrom}
+                />
             ))}{' '}
         </>
     );

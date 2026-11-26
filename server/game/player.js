@@ -84,6 +84,7 @@ class Player extends Spectator {
         this.bonusesFromRivals = new Set();
         this.showDeck = false;
         this.shuffleArray = shuffle;
+        this.deckShuffles = 0;
         this.role = user.role;
         this.flags = new ReferenceCountedSetProperty();
         if (game.useChessClocks) {
@@ -335,6 +336,7 @@ class Player extends Spectator {
 
     shuffleDrawDeck() {
         this.drawDeck = this.shuffleArray(this.drawDeck);
+        this.deckShuffles++;
     }
 
     discardFromDraw(number, callback = () => true, options = {}) {
@@ -1272,11 +1274,16 @@ class Player extends Spectator {
     }
 
     getCardSelectionState(card) {
-        return this.promptState.getCardSelectionState(card);
+        return this.promptState.getCardSelectionState(card, this);
     }
 
     cancelPrompt() {
         this.promptState.cancelPrompt();
+    }
+
+    // A click sent from a prompt that has since closed was aimed at a board the player no longer sees
+    isStalePrompt(promptId) {
+        return typeof promptId === 'string' && promptId !== this.promptState.promptId;
     }
 
     setIsActivePrompt(isActivePrompt) {
@@ -1357,7 +1364,6 @@ class Player extends Spectator {
         return {
             id: this.id,
             name: this.name,
-            cardSize: this.cardSize,
             promptDupes: this.promptDupes,
             promptedActionWindows: this.promptedActionWindows,
             hideInterrupts: this.hideInterrupts,
@@ -1367,6 +1373,8 @@ class Player extends Spectator {
             isPlaying: this.isPlaying(),
             left: this.left,
             eliminated: !!this.eliminated,
+            eliminatedReason: this.eliminatedReason,
+            standing: this.standing,
             disconnected: this.game.isDisconnected(this),
             longDisconnected: this.game.isLongDisconnected(this),
             canSafelyLeave: this.game.canSafelyLeave(this),
@@ -1393,6 +1401,7 @@ class Player extends Spectator {
             faction: this.faction.getSummary(activePlayer),
             firstPlayer: this.firstPlayer,
             numDrawCards: this.drawDeck.length,
+            deckShuffles: this.deckShuffles,
             numPlotCards: this.plotDeck.length,
             phase: this.game.currentPhase,
             selectedPlot: this.selectedPlot

@@ -1,8 +1,11 @@
 class PlayerPromptState {
     constructor() {
         this.isActivePrompt = false;
+        this.promptId = undefined;
         this.selectCard = false;
         this.selectOrder = false;
+        this.selectToggle = undefined;
+        this.selectFiresOnClick = false;
         this.menuTitle = '';
         this.promptTitle = '';
         this.buttons = [];
@@ -33,8 +36,11 @@ class PlayerPromptState {
     }
 
     setPrompt(prompt) {
+        this.promptId = prompt.promptId;
         this.selectCard = prompt.selectCard || false;
         this.selectOrder = prompt.selectOrder || false;
+        this.selectToggle = prompt.selectToggle;
+        this.selectFiresOnClick = prompt.selectFiresOnClick || false;
         this.menuTitle = prompt.menuTitle || '';
         this.promptTitle = prompt.promptTitle;
         this.buttons = (prompt.buttons || []).map((button) => {
@@ -54,19 +60,23 @@ class PlayerPromptState {
     }
 
     cancelPrompt() {
+        this.promptId = undefined;
         this.selectCard = false;
+        this.selectToggle = undefined;
+        this.selectFiresOnClick = false;
         this.menuTitle = '';
         this.buttons = [];
         this.controls = [];
     }
 
-    getCardSelectionState(card) {
+    getCardSelectionState(card, player) {
         let selectable = this.selectableCards.includes(card);
         let index = this.selectedCards.indexOf(card);
         let result = {
             // The `card.selected` property here is a hack for plot selection,
-            // which we do differently from normal card selection.
-            selected: card.selected || index !== -1,
+            // which we do differently from normal card selection. The chosen
+            // plot stays secret until revealed, so only its owner sees it.
+            selected: (card.selected && card.owner === player) || index !== -1,
             selectable: selectable,
             unselectable: this.selectCard && !selectable
         };
@@ -81,8 +91,11 @@ class PlayerPromptState {
     getState() {
         return {
             isActivePrompt: this.isActivePrompt,
+            promptId: this.promptId,
             selectCard: this.selectCard,
             selectOrder: this.selectOrder,
+            selectToggle: this.selectToggle,
+            selectFiresOnClick: this.selectFiresOnClick,
             menuTitle: this.menuTitle,
             promptTitle: this.promptTitle,
             buttons: this.buttons.map((button) => this.getButtonState(button)),

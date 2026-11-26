@@ -2,6 +2,7 @@ import React from 'react';
 import { Kbd } from '@heroui/react';
 import Dialog from '../Site/Dialog';
 import { shortcutList } from './keyboardShortcuts';
+import { touchCloseButton } from './touchCloseButton';
 
 export const KeyboardShortcutsTable = () => (
     <table className='w-full text-sm'>
@@ -32,11 +33,14 @@ export const KeyboardShortcutsTable = () => (
     </table>
 );
 
-const KeyboardShortcutsModal = ({ isOpen, onClose }) => (
+const KeyboardShortcutsModal = ({ isOpen, onClose, fullScreen = false }) => (
     <Dialog
         isOpen={isOpen}
         onOpenChange={(open) => !open && onClose()}
         title='Keyboard shortcuts'
+        size={fullScreen ? 'full' : 'md'}
+        className={fullScreen ? 'pt-[var(--safe-top)] pb-[var(--safe-bottom)]' : undefined}
+        closeClassName={touchCloseButton}
         bodyClassName='pb-6'
     >
         <KeyboardShortcutsTable />

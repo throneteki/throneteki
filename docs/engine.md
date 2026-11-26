@@ -95,7 +95,9 @@ parameters. Add an entry when you add or change an event.
 Some low-level operations stay below the action boundary: `placeCardInPile`, `moveTo`, property
 setters, setup consolidation and title-pool helpers are used inside action handlers and must not
 queue actions of their own. Deck construction, snapshots, ability counters and prompt selections
-are bookkeeping. `Player.moveCard` is only used by manual commands and drag and drop.
+are bookkeeping. `Player.moveCard` is only used by manual commands and drag and drop. Dropping a plot from the plot deck or the used
+plots on the used plots pile does not move it: the player is asked whether to move it to the used
+plots or reveal it now (the normal reveal, including when revealed abilities), or to cancel.
 
 ## Abilities
 
@@ -222,6 +224,9 @@ Text without a trigger has its own constructs:
   it later does not, as it is already in play. Cost reducers match a facedown card marshaled or
   played as if it were in hand by its printed attributes.
 - Round 1 still chooses a first player: the plot phase clears the setup choice.
+- The game state carries the latest initiative comparison as `initiative` (`RevealPlots.determineWinner`): its round,
+  the winner, each player's total initiative and power as compared, whether initiative and power tied, and who chose
+  when a card let a player choose. The board's plot overlay shows it.
 - Plot selection follows advance-information dependencies (the Bloodraven FAQ). Independent players
   choose together, a player who can see another's plot waits for it, the first player breaks
   cycles, and confirmed choices can't change.
@@ -250,6 +255,11 @@ cancel such as The Hand's Judgment.
   have interrupts" and "Hide whether I have reactions" turn the fake waits off for interrupt or
   reaction windows; with one off, opponents can tell when that player really holds that kind of
   response. There is no cancel timer.
+- An attachment waiting for its target to be chosen stays in its location (usually the hand), but
+  everyone can see it and its summary has `beingAttached` set while the prompt is open
+  ([attachmentprompt.js](../server/game/gamesteps/attachmentprompt.js)). The client uses it to show
+  the card on the board while the target is chosen. It is not a location, so no rule that looks at
+  where the card is changes.
 - A choice made before anything is initiated (confirming a card action, choosing how to play a
   card, choosing attackers) leaves the opponent's prompt as it was, so it doesn't reveal which card
   or challenge is being considered
@@ -301,6 +311,10 @@ An ability with a declarative game action and no `message` gets a default one bu
 resolved and the costs paid. Abilities add structured entries to `game.logEntries`
 (`{ type, player, source, targets, results }`), and messages and alerts keep a structured template
 and argument snapshot beside the rendered text.
+
+A card's `selected` state in the client view is per player (`PlayerPromptState.getCardSelectionState`).
+Plot selection marks the plot itself (`card.selected`), so that mark is only sent to the plot's
+owner: the chosen plot stays hidden from the opponent until it is revealed.
 
 ## Problem reports and scenarios
 

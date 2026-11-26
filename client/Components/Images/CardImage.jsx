@@ -1,43 +1,36 @@
-import React, { forwardRef, useMemo, useState } from 'react';
+import React, { forwardRef, useMemo } from 'react';
 import classNames from 'classnames';
-import { Constants } from '../../constants';
-import { cardClass } from '../../util';
+import CardFace from './CardFace';
+import { cardBoxClass, resolveImageScale } from '../../cardScale';
 
 const CardImage = forwardRef(function CardImage(
     {
         code,
+        type,
         orientation = 'vertical',
         className,
-        size = 'normal',
+        size,
         disableSkeleton = false,
-        onLoad = () => true,
-        onError = () => true
+        onLoad,
+        onError
     },
     ref
 ) {
-    const containerClass = useMemo(
-        () => classNames('overflow-hidden', className, cardClass(size, orientation)),
-        [className, orientation, size]
-    );
-
-    // When "code" is faction, point to that path instead
-    const src = Constants.FactionsImagePaths[code] || `/img/cards/${code}.png`;
-    const [loadedSrc, setLoadedSrc] = useState(null);
-    const isLoaded = loadedSrc === src;
+    const scale = size === undefined ? null : resolveImageScale(size);
+    const style = useMemo(() => (scale === null ? undefined : { '--card-scale': scale }), [scale]);
 
     return (
-        <div className={containerClass} ref={ref}>
-            <img
-                key={src}
-                src={src}
-                alt=''
-                className={classNames('pointer-events-none h-full w-full', {
-                    'animate-pulse bg-white/5': !disableSkeleton && !isLoaded
-                })}
-                onLoad={(event) => {
-                    setLoadedSrc(src);
-                    onLoad(event);
-                }}
+        <div
+            className={classNames('relative overflow-hidden', cardBoxClass(orientation), className)}
+            style={style}
+            ref={ref}
+        >
+            <CardFace
+                code={code}
+                type={type}
+                orientation={orientation === 'horizontal' ? 'horizontal' : 'vertical'}
+                disableSkeleton={disableSkeleton}
+                onLoad={onLoad}
                 onError={onError}
             />
         </div>

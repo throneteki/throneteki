@@ -1,19 +1,11 @@
 import React, { useMemo } from 'react';
 
 import Card from './Card';
-import { cardClass, getCardDimensions } from '../../util';
+import { cardBoxClass } from '../../cardScale';
+import { useSheetLayout } from './PopupContainer';
 
-// This is super manual and explicit so that tailwindcss realises we are using these css classes and doesn't filter them out
-// Change this list at your peril
-const columnClassMap = {
-    1: 'grid-cols-1',
-    2: 'grid-cols-2',
-    3: 'grid-cols-3',
-    4: 'grid-cols-4',
-    5: 'grid-cols-5',
-    6: 'grid-cols-6',
-    7: 'grid-cols-7'
-};
+const gapRem = 0.375;
+const unit = (rem) => `calc(var(--card-scale, 1) * ${rem}rem)`;
 
 const CardTiledList = ({
     cards,
@@ -21,12 +13,14 @@ const CardTiledList = ({
     numColumns,
     numRows,
     onCardClick,
-    size,
     source,
     title,
     titleCount,
-    showCards
+    showCards,
+    flip = false
 }) => {
+    const sheet = useSheetLayout();
+
     // Returns a card list, or a single "fake card" to ensure grid size is properly reflected
     const cardList = useMemo(() => {
         return cards && cards.length > 0 ? (
@@ -39,35 +33,83 @@ const CardTiledList = ({
                         key={card.uuid}
                         onClick={onCardClick}
                         orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}
-                        size={size}
                         source={source}
+                        flip={flip}
                     />
                 );
             })
         ) : (
-            <div className={cardClass(size)}></div>
+            <div className={cardBoxClass()}></div>
         );
-    }, [cards, disableHover, onCardClick, showCards, size, source]);
+    }, [cards, disableHover, onCardClick, showCards, source, flip]);
 
     const titleText = title && cards ? `${title} (${titleCount || cards.length})` : title;
 
-    const style = useMemo(() => {
-        if (numRows) {
-            const cardDimensions = getCardDimensions(size);
-            const rowHeight = cards.some((card) => card.type !== 'plot')
-                ? cardDimensions.height
-                : cardDimensions.width;
+    const { style, containerStyle } = useMemo(() => {
+        const list = cards || [];
+        const hasPlot = list.some((card) => card.type === 'plot');
+        const hasOther = list.some((card) => card.type !== 'plot');
+        // In a sheet the cards fill its width: one row that scrolls sideways at peek, every card at full, and
+        // one card after another, snapping into place, in a carousel
+        if (sheet) {
+            // In a sheet the cards are at the size the sheet sets: one row that scrolls sideways in a row, and
+            // otherwise rows of as many as the sheet has room for (or as there are cards, so a sheet is only as wide
+            // as its cards), which the sheet scrolls down through. Padding keeps a chosen card's ring in view.
+            const cell = unit(hasPlot ? 5.6 : 4);
+            const full = !sheet.row;
+            const fits = hasPlot ? sheet.plotColumns : sheet.columns;
+            const across = fits
+                ? `repeat(${Math.max(1, Math.min(list.length, fits))}, ${cell})`
+                : null;
             return {
-                maxHeight: `${rowHeight * numRows}rem`
+                containerStyle: { padding: '0.75rem' },
+                style: {
+                    display: 'grid',
+                    gap: unit(gapRem),
+                    ...(full
+                        ? {
+                              gridTemplateColumns: across ?? `repeat(auto-fill, ${cell})`,
+                              justifyContent: 'center'
+                          }
+                        : {
+                              gridAutoFlow: 'column',
+                              gridAutoColumns: cell,
+                              overflowX: 'auto',
+                              overflowY: 'hidden',
+                              padding: '0.5rem',
+                              margin: '-0.5rem'
+                          }),
+                    minHeight: unit(hasOther ? 5.6 : 4)
+                }
             };
         }
-        return null;
-    }, [cards, numRows, size]);
+        // A pile keeps the width of its full column count, so an empty or small pile is not just as wide as its title
+        const columns = Math.max(1, numColumns || list.length);
+        const cellRem = hasPlot ? 5.6 : 4;
+        const rowRem = hasOther || list.length === 0 ? 5.6 : 4;
+        const natural = unit(cellRem * columns + gapRem * (columns - 1));
+        return {
+            containerStyle: { padding: unit(0.5) },
+            style: {
+                gap: unit(gapRem),
+                gridTemplateColumns: `repeat(auto-fill, ${unit(cellRem)})`,
+                width: `min(${natural}, calc(100vw - 2rem))`,
+                minHeight: unit(rowRem),
+                ...(numRows && {
+                    maxHeight: unit(rowRem * numRows + gapRem * Math.ceil(numRows - 1))
+                })
+            }
+        };
+    }, [cards, numColumns, numRows, sheet]);
 
     return (
-        <div className='p-2'>
-            {titleText && <div className='mb-1.5 text-sm text-ink-dim'>{titleText}</div>}
-            <div className={`gap-1.5 grid ${columnClassMap[numColumns]}`} style={style}>
+        <div style={containerStyle}>
+            {titleText && (
+                <div className='text-sm text-ink-dim' style={{ paddingBottom: unit(0.5) }}>
+                    {titleText}
+                </div>
+            )}
+            <div className='grid' style={style}>
                 {cardList}
             </div>
         </div>

@@ -1,15 +1,39 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, {
+    useState,
+    useEffect,
+    useLayoutEffect,
+    useCallback,
+    useContext,
+    useMemo,
+    useRef
+} from 'react';
 import classNames from 'classnames';
+import { useRenderCount } from '../../perf';
 
 import Card from './Card';
 import CardTiledList from './CardTiledList';
 import Droppable from './Droppable';
-import MovablePanel from './MovablePanel';
+import PopupContainer, { PopupHostContext } from './PopupContainer';
+import { sheetStore } from './Adaptive/sheetStore';
+import PileDepth, { pileRise, raisedStackStyle } from './PileDepth';
 import LabelledGameArea from './LabelledGameArea';
 
 import { Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { cardClass } from '../../util';
+import { cardBoxClass, cardWidth } from '../../cardScale';
+import { registerPile } from '../../flip';
+
+// A pile's action in a sheet, as a pill like the sheet's chips
+const PileAction = ({ menuItem, onPress }) => (
+    <button
+        type='button'
+        className='flex h-7 items-center gap-1.5 rounded-full border border-amber-400/60 bg-amber-400/10 px-3 text-xs font-semibold uppercase tracking-wide text-amber-100 transition-colors hover:border-amber-300 hover:bg-amber-400/25 hover:text-white'
+        onClick={() => onPress(menuItem)}
+    >
+        <FontAwesomeIcon icon={menuItem.icon} className='text-[11px]' />
+        {menuItem.text}
+    </button>
+);
 
 const CardPile = ({
     cards,
@@ -23,7 +47,6 @@ const CardPile = ({
     disableHover,
     numColumns,
     numRows,
-    size,
     popupMenu,
     title,
     popupTitle = title?.toLowerCase(),
@@ -32,15 +55,42 @@ const CardPile = ({
     popupLocation = 'bottom',
     popupId,
     className,
+    style,
     cardCount,
     orientation = 'vertical',
     hiddenTopCard,
+    hideUnderCard,
     showCards,
-    selected
+    selected,
+    flipDeck,
+    flipFrom,
+    lockTopCard,
+    showDepth,
+    owner,
+    slotLabel
 }) => {
+    useRenderCount('CardPile');
     const [showPopup, setShowPopup] = useState(cards && cards.some((card) => card.selectable));
     const prevCards = useRef(cards);
     const areaRef = useRef(null);
+
+    useLayoutEffect(
+        () =>
+            registerPile(`${popupId || ''}:${source}`, {
+                el: areaRef.current,
+                source,
+                hidden: !!hiddenTopCard,
+                covered: !!topCard,
+                sideways: orientation === 'horizontal',
+                uuids: new Map((cards || []).map((card, index) => [card.uuid, index])),
+                codes: new Map(
+                    (cards || [])
+                        .filter((card) => card.code && !card.facedown)
+                        .map((card) => [card.uuid, card.code])
+                )
+            }),
+        [cards, popupId, source, hiddenTopCard, orientation, topCard]
+    );
 
     const isTopCardSelectable = useMemo(() => {
         if (!topCard) {
@@ -52,6 +102,36 @@ const CardPile = ({
 
     const topCardHasAction = !!(topCard?.selectable || topCard?.canPlay);
 
+    // Where piles open in sheets, every pile that can be opened is listed in them, to go to from any other
+    const popupHost = useContext(PopupHostContext);
+    const usesSheets = popupHost === 'sheet';
+    const openRef = useRef(null);
+    const hasSelectable = !!cards?.some((card) => card.selectable);
+    useEffect(() => {
+        if (!usesSheets || disablePopup || !title) {
+            return;
+        }
+        return sheetStore.register({
+            id: `${source}:${popupId ?? popupLocation}`,
+            player: owner ?? playerName,
+            side: popupLocation,
+            source,
+            title,
+            selectable: hasSelectable,
+            open: () => openRef.current?.()
+        });
+    }, [
+        usesSheets,
+        disablePopup,
+        title,
+        source,
+        popupId,
+        playerName,
+        owner,
+        popupLocation,
+        hasSelectable
+    ]);
+
     const updatePopupVisibility = useCallback(
         (value) => {
             setShowPopup(value);
@@ -62,6 +142,8 @@ const CardPile = ({
         },
         [onPopupChange, source]
     );
+
+    openRef.current = () => updatePopupVisibility(true);
 
     const onCollectionClick = useCallback(
         (event) => {
@@ -150,10 +232,10 @@ const CardPile = ({
         const listProps = {
             disableHover: disableHover,
             onCardClick: onCardClick,
-            size: size,
             source: source,
             numColumns,
-            numRows
+            numRows,
+            flip: true
         };
 
         if (cards && cards.some((card) => card.group)) {
@@ -178,56 +260,81 @@ const CardPile = ({
             cardList = <CardTiledList cards={cards} {...listProps} showCards={showCards} />;
         }
 
-        if (disablePopup || !showPopup) {
+        if (disablePopup) {
             return null;
         }
 
         const popupClass = classNames('box-content flex flex-col overflow-hidden');
 
-        const retPopupMenu = popupMenu && (
-            <div className='flex gap-1.5 border-b border-gold-hair p-2'>
-                {popupMenu.map((menuItem, index) => {
-                    return (
-                        <Button
-                            className='flex-1'
-                            key={index}
-                            size='sm'
-                            onPress={() => onPopupMenuItemClick(menuItem)}
-                            variant='tertiary'
-                        >
-                            {<FontAwesomeIcon icon={menuItem.icon} />}
-                            {menuItem.text}
-                        </Button>
-                    );
-                })}
-            </div>
-        );
+        // On the adaptive board the pile's actions are pills, as the sheet's own chips are
+        const retPopupMenu =
+            popupHost !== 'panel'
+                ? popupMenu?.length > 0 && (
+                      <div
+                          data-pile-actions=''
+                          className='hud-zoom flex flex-wrap justify-center gap-2 px-3 pb-1 pt-2'
+                      >
+                          {popupMenu.map((menuItem, index) => (
+                              <PileAction
+                                  key={index}
+                                  menuItem={menuItem}
+                                  onPress={onPopupMenuItemClick}
+                              />
+                          ))}
+                      </div>
+                  )
+                : popupMenu && (
+                      <div className='flex gap-1.5 border-b border-gold-hair p-2'>
+                          {popupMenu.map((menuItem, index) => {
+                              return (
+                                  <Button
+                                      className='flex-1'
+                                      key={index}
+                                      size='sm'
+                                      onPress={() => onPopupMenuItemClick(menuItem)}
+                                      variant='tertiary'
+                                  >
+                                      <FontAwesomeIcon icon={menuItem.icon} />
+                                      {menuItem.text}
+                                  </Button>
+                              );
+                          })}
+                      </div>
+                  );
 
         return (
-            <MovablePanel
+            <PopupContainer
                 id={popupId}
+                open={!!showPopup}
                 anchorRef={areaRef}
                 title={
                     playerName
                         ? `${playerName}'s ${popupTitle}`
                         : popupTitle && popupTitle[0].toUpperCase() + popupTitle.slice(1)
                 }
+                pileTitle={title}
+                playerName={owner ?? playerName}
                 name={source}
                 onCloseClick={onCloseClick}
+                onOpen={() => updatePopupVisibility(true)}
+                prompting={!!cards?.some((card) => card.selectable)}
                 side={popupLocation}
             >
-                <div className={popupClass} onClick={(event) => event.stopPropagation()}>
+                <div
+                    data-pile-popup=''
+                    className={popupClass}
+                    onClick={(event) => event.stopPropagation()}
+                >
                     {retPopupMenu}
-                    <Droppable source={source} size={size} className='overflow-auto'>
+                    <Droppable source={source} popup className='overflow-auto'>
                         {cardList}
                     </Droppable>
                 </div>
-            </MovablePanel>
+            </PopupContainer>
         );
     }, [
         disableHover,
         onCardClick,
-        size,
         source,
         numColumns,
         numRows,
@@ -237,48 +344,134 @@ const CardPile = ({
         popupMenu,
         playerName,
         popupTitle,
+        title,
         onCloseClick,
         popupLocation,
         popupId,
         showCards,
-        onPopupMenuItemClick
+        onPopupMenuItemClick,
+        updatePopupVisibility,
+        owner,
+        popupHost
     ]);
 
-    const retClassName = classNames('flex w-fit h-fit', className);
+    // A sideways card is laid out as an upright one, so the area is held to the height of a sideways card
+    const retCardCount = cardCount || (cards ? cards.length : 0);
+    const rise = showDepth ? pileRise(retCardCount) : undefined;
+    const areaStyle = useMemo(
+        () => ({
+            ...(orientation === 'horizontal' && { height: cardWidth }),
+            ...(rise && { '--pile-rise': rise }),
+            ...style
+        }),
+        [orientation, style, rise]
+    );
+    const retClassName = classNames('flex w-fit h-fit', className, {
+        'cursor-pointer': !disablePopup
+    });
 
-    const retCardCount = cardCount || (cards ? cards.length : '0');
     const headerText = title ? title + ' (' + retCardCount + ')' : '';
-    let retTopCard = topCard || (cards ? cards[0] : null);
-    if (retTopCard && hiddenTopCard) {
-        retTopCard = {
-            facedown: true,
-            selected,
-            uuid: retTopCard.uuid,
-            unselectable: retTopCard.unselectable
-        };
-    }
+    const shownTopCard = topCard || (cards ? cards[0] : null);
+    const hiddenUuid = shownTopCard?.uuid;
+    const hiddenUnselectable = shownTopCard?.unselectable;
+    const retTopCard = useMemo(
+        () =>
+            shownTopCard && hiddenTopCard
+                ? {
+                      facedown: true,
+                      selected,
+                      uuid: hiddenUuid,
+                      unselectable: hiddenUnselectable
+                  }
+                : shownTopCard,
+        [shownTopCard, hiddenTopCard, selected, hiddenUuid, hiddenUnselectable]
+    );
+
+    // A pile with cards to choose in it, while they are not on show, breathes as a card to choose does; a top card
+    // that can be chosen already does
+    const pileChoose = hasSelectable && !showPopup && !retTopCard?.selectable;
+
+    // The card under the top one is drawn too, so it is already there when the top card is taken away
+    const nextCard = cards
+        ? topCard
+            ? cards.find((card) => card.uuid !== topCard.uuid)
+            : cards[1]
+        : null;
+    const nextUuid = nextCard?.uuid;
+    const retNextCard = useMemo(
+        () =>
+            nextCard && (hiddenTopCard || hideUnderCard)
+                ? { facedown: true, uuid: nextUuid }
+                : nextCard,
+        [nextCard, hiddenTopCard, hideUnderCard, nextUuid]
+    );
 
     return (
         <LabelledGameArea
             ref={areaRef}
             label={headerText}
+            slotLabel={slotLabel}
+            count={title ? retCardCount : undefined}
+            inspectable={!!title}
+            opens={!disablePopup}
+            upright={orientation !== 'horizontal'}
+            inspectSkip={
+                topCardHasAction || isTopCardSelectable || !!cards?.some((card) => card.selectable)
+            }
             position={titlePosition}
             className={retClassName}
+            style={areaStyle}
             onClick={onCollectionClick}
             disableBackground={disableBackground}
             labelClickable={!disablePopup && topCardHasAction}
+            data-flip-deck={flipDeck}
+            data-sheet-opener=''
         >
             {retTopCard ? (
-                <Card
-                    card={retTopCard}
-                    source={source}
-                    disableHover={hiddenTopCard}
-                    onClick={onTopCardClick}
-                    orientation={orientation}
-                    size={size}
-                />
+                <div className='relative'>
+                    {showDepth && <PileDepth count={retCardCount} orientation={orientation} />}
+                    <div
+                        data-pile-stack=''
+                        className='relative shift-smooth'
+                        style={showDepth ? raisedStackStyle : undefined}
+                    >
+                        {retNextCard && (
+                            <div key={retNextCard.uuid} className='absolute left-0 top-0'>
+                                <Card
+                                    card={retNextCard}
+                                    source={source}
+                                    disableHover
+                                    orientation={orientation}
+                                    under={retTopCard.uuid || true}
+                                    flip={!hiddenTopCard && !hideUnderCard}
+                                    flipFrom={flipFrom}
+                                />
+                            </div>
+                        )}
+                        <div
+                            key={retTopCard.uuid}
+                            data-pile-top=''
+                            data-pile-choose={pileChoose ? '' : undefined}
+                            className={classNames('relative flex', {
+                                'ring-selectable rounded-[calc(var(--card-scale,1)*0.25rem)]':
+                                    pileChoose
+                            })}
+                        >
+                            <Card
+                                card={retTopCard}
+                                source={source}
+                                disableHover={hiddenTopCard}
+                                onClick={onTopCardClick}
+                                dragDisabled={lockTopCard}
+                                orientation={orientation}
+                                flip={!hiddenTopCard}
+                                flipFrom={flipFrom}
+                            />
+                        </div>
+                    </div>
+                </div>
             ) : (
-                <div className={cardClass(size, orientation)} />
+                <div className={cardBoxClass(orientation)} />
             )}
             {getPopup()}
         </LabelledGameArea>

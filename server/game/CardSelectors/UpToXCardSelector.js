@@ -14,6 +14,10 @@ class UpToXCardSelector extends BaseCardSelector {
     hasReachedLimit(selectedCards) {
         return selectedCards.length >= this.numCards;
     }
+
+    selectionToggle() {
+        return { limit: this.numCards };
+    }
 }
 
 export default UpToXCardSelector;

@@ -3,6 +3,7 @@ import { TextAreaField } from '../Site/Field';
 import { Button } from '@heroui/react';
 import Dialog from '../Site/Dialog';
 import { MaxDescriptionLength } from '../../../shared/problemReportLimits';
+import { touchCloseButton } from './touchCloseButton';
 
 const ReportProblemModal = ({ isOpen, onCancel, onSend }) => {
     const [description, setDescription] = useState('');
@@ -27,6 +28,7 @@ const ReportProblemModal = ({ isOpen, onCancel, onSend }) => {
             onOpenChange={(open) => !open && close()}
             isDismissable={false}
             title='Report a problem'
+            closeClassName={touchCloseButton}
             footer={
                 <div className='flex justify-end gap-2'>
                     <Button onPress={close} variant='tertiary'>

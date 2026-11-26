@@ -1,10 +1,17 @@
 import React from 'react';
 
-const StatContainer = ({ children, title = null }) => {
+import classNames from 'classnames';
+
+const StatContainer = ({ children, title = null, className, height = 'h-8', style }) => {
     return (
         <div
             title={title}
-            className='flex h-8 min-w-fit items-center border-r border-r-gold-hair last-of-type:border-none'
+            style={style}
+            className={classNames(
+                'flex min-w-fit items-center border-r border-r-gold-hair last-of-type:border-none',
+                height,
+                className
+            )}
         >
             {children}
         </div>

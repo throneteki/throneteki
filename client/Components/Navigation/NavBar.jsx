@@ -1,5 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons';
 
@@ -15,9 +16,13 @@ import { sendLeaveGameMessage } from '../../redux/reducers/game';
 import FullScreenButton from './FullScreenButton';
 import NavItem from './NavItem';
 import NavDropdown from './NavDropdown';
+import { boardNavbarStore, useAdaptiveLayoutMode } from '../../boardLayoutStore';
 
-const NavBar = () => {
+// overBoard: shown over a phone's board (BoardNavBar), which stays while its menu is open
+const NavBar = ({ overBoard = false }) => {
     const dispatch = useDispatch();
+    // The adaptive board has its own game menu in our stats bar, with the spectators, conceding and leaving
+    const boardHasMenu = !!useAdaptiveLayoutMode();
     const { user } = useSelector((state) => state.auth);
     const {
         connected: lobbySocketConnected,
@@ -34,6 +39,14 @@ const NavBar = () => {
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showConfirmLeave, setShowConfirmLeave] = useState(false);
+
+    useEffect(() => {
+        if (!overBoard) {
+            return;
+        }
+        boardNavbarStore.set('navMenu', isMenuOpen);
+        return () => boardNavbarStore.set('navMenu', false);
+    }, [overBoard, isMenuOpen]);
 
     const filterMenuItems = useCallback(
         (menuItems) =>
@@ -92,7 +105,7 @@ const NavBar = () => {
         />
     );
 
-    const contextMenu = (
+    const contextMenu = !boardHasMenu && (
         <ContextMenu
             onPress={(confirmLeave) => {
                 setIsMenuOpen(false);
@@ -153,7 +166,11 @@ const NavBar = () => {
                 {isMenuOpen && (
                     <nav
                         aria-label='Main'
-                        className='absolute inset-x-0 top-12 flex flex-col gap-4 border-b border-gold-line bg-black/95 px-6 py-5 text-lg lg:hidden'
+                        className={classNames(
+                            'absolute inset-x-0 top-12 flex flex-col gap-4 border-b border-gold-line bg-black/95 px-6 py-5 text-lg lg:hidden',
+                            overBoard &&
+                                'max-h-[calc(100dvh_-_3rem_-_var(--safe-top))] overflow-y-auto'
+                        )}
                     >
                         {renderMenuItems(LeftMenu)}
                         {!currentGame?.started && numGames}

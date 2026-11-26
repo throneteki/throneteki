@@ -13,7 +13,6 @@ const DrawDeck = ({
     onCardClick,
     popupLocation,
     popupId,
-    size,
     spectating,
     onPopupChange,
     onShuffleClick
@@ -63,6 +62,7 @@ const DrawDeck = ({
     return (
         <CardPile
             className='draw'
+            showDepth
             cardCount={cardCount}
             cards={cards}
             disablePopup={!hasVisibleCards && (spectating || !isMe)}
@@ -74,10 +74,10 @@ const DrawDeck = ({
             popupLocation={popupLocation}
             popupId={popupId}
             popupMenu={drawDeckPopupMenu}
-            size={size}
             source='draw deck'
             title='Draw'
             popupTitle='draw deck'
+            flipDeck={playerName}
             playerName={playerName}
         />
     );

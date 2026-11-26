@@ -8,6 +8,7 @@ import admin from './redux/reducers/admin';
 import navigation from './redux/reducers/navigation.js';
 import game from './redux/reducers/game.js';
 import gameMiddleware from './redux/middleware/game.js';
+import flipMiddleware from './redux/middleware/flip.js';
 
 const sentryReduxEnhancer = Sentry.createReduxEnhancer({
     actionTransformer: (action) => {
@@ -28,6 +29,7 @@ export const store = configureStore({
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()
+            .concat(flipMiddleware)
             .concat(apiSlice.middleware)
             .concat(gameMiddleware)
             .concat(lobbyMiddleware)

@@ -1,38 +1,99 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, {
+    memo,
+    useState,
+    useCallback,
+    useContext,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useRef
+} from 'react';
 import classNames from 'classnames';
-import { useSelector } from 'react-redux';
 import { useDraggable } from '@dnd-kit/core';
 import CardCounters from './CardCounters';
 import SquishableCardPanel from './SquishableCardPanel';
 import CardTiledList from './CardTiledList';
-import MovablePanel from './MovablePanel';
+import Droppable from './Droppable';
+import PopupContainer from './PopupContainer';
 
 import { ItemTypes } from '../../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { useUniqueId } from '@dnd-kit/utilities';
-import CardHoverable from '../Images/CardHoverable';
-import CardImage from '../Images/CardImage';
-import { cardClass, standardiseCardSize } from '../../util';
+import { useCardHoverHandlers } from '../Images/CardHoverable';
+import CardFace from '../Images/CardFace';
+import { cardBoxClass } from '../../cardScale';
 import { Tooltip } from '@heroui/react';
 import { getActionRequirementReason, isNotableRequirement } from './actionRequirementReasons';
+import { ManualModeContext } from './ManualModeContext';
+import { useAdaptiveBoard } from './adaptiveContext';
+import { useIsCarried, useIsUnderTarget } from './dragStore';
+import { holdToDrag } from './HoldTouchSensor';
+import { restingAngle } from '../../tableFeel';
+import { motionOff, pulseCard } from '../../flip';
+import { useRenderCount } from '../../perf';
 
-const Card = ({
+const noDrag = {};
+
+const CardView = ({
     card,
     className,
     disableHover,
     hideTokens,
     onClick,
     orientation = 'vertical',
-    size,
     source,
     style,
     wrapped = true,
+    flip = false,
+    flipFrom,
+    under = false,
+    shell = false,
     forceFaceup = false,
-    cardStackIndex = 200
+    cardStackIndex = 200,
+    drag = noDrag
 }) => {
+    useRenderCount('Card');
+    const { attributes, listeners, setNodeRef, isDragging } = drag;
+    const isCarried = useIsCarried(card?.uuid);
+    const isUnderTarget = useIsUnderTarget(wrapped && source === 'play area' ? card?.uuid : null);
+    const adaptive = useAdaptiveBoard();
     const [showUnderneath, setShowUnderneath] = useState(false);
     const cardRef = useRef(null);
+    const [lastOrder, setLastOrder] = useState(card.order);
+    if (card.order && card.order !== lastOrder) {
+        setLastOrder(card.order);
+    }
+
+    // A card shown or hidden by tapping it turns over, rather than its face simply changing
+    const wasForcedFaceup = useRef(forceFaceup);
+    useLayoutEffect(() => {
+        if (wasForcedFaceup.current === forceFaceup) {
+            return;
+        }
+        wasForcedFaceup.current = forceFaceup;
+        // The surface turns, not just the face, so the ring turns with it
+        const surface = cardRef.current?.querySelector('[data-card-surface]');
+        if (surface && !motionOff()) {
+            surface.animate(
+                [{ transform: 'perspective(700px) rotateY(90deg)' }, { transform: 'none' }],
+                { duration: 180, easing: 'ease-out' }
+            );
+        }
+    }, [forceFaceup]);
+    const kneeled = !!card.kneeled;
+    const wasKneeled = useRef(kneeled);
+    useLayoutEffect(() => {
+        if (wasKneeled.current !== kneeled) {
+            wasKneeled.current = kneeled;
+            pulseCard(cardRef.current);
+        }
+    }, [kneeled]);
+
+    const dupeCards = useMemo(
+        () => (card.dupes || []).map((dupe) => ({ ...dupe, facedown: card.facedown })),
+        [card.dupes, card.facedown]
+    );
 
     const hasUnderneathPopup = card.childCards?.length > 0 && card.type !== 'agenda';
     const hasSelectableUnderneath =
@@ -43,8 +104,6 @@ const Card = ({
             setShowUnderneath(true);
         }
     }, [hasSelectableUnderneath]);
-
-    const key = `card-${card.uuid}-${source}`;
 
     const shortNames = {
         count: 'x',
@@ -65,15 +124,6 @@ const Card = ({
         tale: 'A',
         ghost: 'H'
     };
-
-    const standardisedSize = standardiseCardSize(size);
-
-    const manualMode = useSelector((state) => state.lobby.currentGame?.manualMode);
-    const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-        id: useUniqueId(key),
-        disabled: !manualMode,
-        data: { type: ItemTypes.CARD, card, orientation, source, key: key }
-    });
 
     const handleClick = useCallback(
         (event) => {
@@ -144,11 +194,11 @@ const Card = ({
                     cardStackIndex={cardStackIndex--}
                     source={source}
                     card={attachment}
-                    className={`attachment-${standardisedSize}`}
+                    className='card-attachment'
                     wrapped={false}
                     hideTokens
                     onClick={onClick}
-                    size={size}
+                    flip={flip}
                 />
             );
         });
@@ -159,20 +209,16 @@ const Card = ({
             return null;
         }
 
-        return card.dupes.map((dupe) => {
-            const dupeCopy = Object.assign({}, dupe);
-
-            dupeCopy.facedown = card.facedown;
-
+        return dupeCards.map((dupe) => {
             return (
                 <Card
                     key={dupe.uuid}
-                    className={`duplicate-${standardisedSize}`}
+                    className='card-duplicate'
                     source={source}
-                    card={dupeCopy}
+                    card={dupe}
                     wrapped={false}
                     onClick={onClick}
-                    size={size}
+                    flip={flip}
                     facedown={forceFaceup ? false : card.facedown}
                     hideTokens
                 />
@@ -193,12 +239,8 @@ const Card = ({
         return (
             // Using attachment class as to ensure underneath cards are visually shown underneath the stack
             // Attachments & card zIndex's consider these underneath cards to ensure this is rendered at bottom of attachment stack
-            <div
-                className={`relative attachment-${standardisedSize}`}
-                style={{ zIndex: cardStackIndex-- }}
-            >
+            <div className='relative card-attachment' style={{ zIndex: cardStackIndex-- }}>
                 <SquishableCardPanel
-                    cardSize={size}
                     cards={underneathCards}
                     className='underneath'
                     maxCards={maxCards}
@@ -217,8 +259,10 @@ const Card = ({
         return (
             <button
                 type='button'
+                data-card-overlay=''
+                data-sheet-opener=''
                 title='Cards underneath'
-                className='absolute bottom-1 right-1 z-[230] min-w-6 h-6 px-1 text-white bg-black/80 font-bold text-center rounded-md border'
+                className='pointer-events-auto tap-target absolute bottom-1 right-1 z-[230] card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[var(--badge-size)] h-[var(--badge-size)] px-1 text-white bg-black/80 font-bold text-center rounded-md border-1'
                 onClick={(event) => {
                     event.stopPropagation();
                     setShowUnderneath(!showUnderneath);
@@ -230,7 +274,7 @@ const Card = ({
     };
 
     const getUnderneathPopup = () => {
-        if (!hasUnderneathPopup || !showUnderneath) {
+        if (!hasUnderneathPopup) {
             return null;
         }
 
@@ -240,39 +284,62 @@ const Card = ({
         );
 
         return (
-            <MovablePanel
+            <PopupContainer
                 id={card.uuid}
+                open={!!showUnderneath}
                 anchorRef={cardRef}
                 title={`Underneath ${card.name || 'card'}`}
                 name='underneath'
                 onCloseClick={() => setShowUnderneath(false)}
+                onOpen={() => setShowUnderneath(true)}
                 side='bottom'
             >
                 <div
+                    data-pile-popup=''
                     className='flex flex-col box-content border border-white/10 bg-black/75 rounded-b-md overflow-hidden'
                     onClick={(event) => event.stopPropagation()}
                 >
-                    <CardTiledList
-                        cards={cards}
-                        numColumns={Math.min(cards.length, 5)}
-                        numRows={1.2}
-                        onCardClick={onClick}
-                        size={size}
+                    <Droppable
                         source='underneath'
-                    />
+                        parentUuid={card.uuid}
+                        popup
+                        className='overflow-auto'
+                    >
+                        <CardTiledList
+                            cards={cards}
+                            numColumns={Math.min(cards.length, 5)}
+                            numRows={1.2}
+                            onCardClick={onClick}
+                            source='underneath'
+                            flip
+                        />
+                    </Droppable>
                 </div>
-            </MovablePanel>
+            </PopupContainer>
         );
     };
 
     const getCardOrder = () => {
-        if (!card.order) {
-            return null;
+        const badgeClassName =
+            'absolute top-0 left-0 z-[230] flex items-center justify-center card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[calc(var(--badge-size)*0.8)] h-[var(--badge-size)] px-0.5 text-white bg-black/90 font-bold rounded-br-md rounded-tl-[inherit]';
+        if (!adaptive) {
+            return card.order ? (
+                <div data-card-overlay='' className={badgeClassName}>
+                    {card.order}
+                </div>
+            ) : null;
         }
 
+        // Always rendered so it can fade, keeping its last number while it fades out
         return (
-            <div className='absolute w-6 h-6 -ml-3 top-1 z-[230] left-1/2 text-white bg-black/80 font-bold text-center rounded-md border'>
-                {card.order}
+            <div
+                data-card-overlay=''
+                aria-hidden={!card.order}
+                className={classNames(badgeClassName, 'order-fade pointer-events-none', {
+                    'opacity-0': !card.order
+                })}
+            >
+                {card.order || lastOrder}
             </div>
         );
     };
@@ -298,125 +365,160 @@ const Card = ({
         );
     };
 
-    // Need to get classes in priority, as tailwind is not consistent in CSS priority
+    // One ring at a time, the most important first
     const getHighlightClass = () => {
         if (card.selected) {
-            return 'shadow-[0_0_0_3px] shadow-sky-400';
+            return 'ring-selected';
         }
         if (card.selectable) {
-            return 'shadow-[0_0_3px_3px] shadow-green-400';
+            return 'ring-selectable';
         }
         if (card.inChallenge) {
-            return 'shadow-[0_0_1px_2px] shadow-red-500';
+            return 'ring-participating';
         }
         if (card.inDanger) {
-            return 'shadow-[0_0_1px_2px] shadow-red-900';
+            return 'ring-danger';
         }
         if (card.saved) {
-            return 'shadow-[0_0_1px_2px] shadow-green-500';
+            return 'ring-saved';
         }
         if (card.isContributing) {
-            return 'shadow-[0_0_1px_2px] shadow-orange-200';
+            return 'ring-contributing';
         }
         if (card.stealth || card.assault) {
-            return 'shadow-[0_0_1px_2px] shadow-orange-800';
+            return 'ring-keyword';
         }
         if (card.controlled) {
-            return 'shadow-[0_0_1px_2px] shadow-yellow-300';
+            return 'ring-controlled';
         }
         if (card.new) {
-            return 'shadow-[0_0_1px_2px] shadow-blue-100';
+            return 'ring-new';
         }
     };
+    const isFaceup = forceFaceup || (!card.facedown && card.code);
+    const availabilityNotes = useMemo(
+        () =>
+            isFaceup
+                ? [
+                      ...(card.unavailableActions || []).map((action) => ({
+                          ...action,
+                          label: 'Unavailable'
+                      })),
+                      ...(card.unavailableTriggers || []).map((trigger) => ({
+                          ...trigger,
+                          label: 'Did not resolve'
+                      }))
+                  ]
+                      .filter((note) => isNotableRequirement(note.reason))
+                      .map((note) => ({
+                          ...note,
+                          reason: getActionRequirementReason(note.reason)
+                      }))
+                : [],
+        [isFaceup, card.unavailableActions, card.unavailableTriggers]
+    );
+
+    const { handlers: hoverHandlers, touchActive } = useCardHoverHandlers({
+        code: card.code,
+        notes: availabilityNotes,
+        isDisabled: !!disableHover || isDragging,
+        touchDelay: holdToDrag.hold
+    });
+    const previewRef = hoverHandlers.ref;
+    const surfaceRef = useCallback(
+        (element) => {
+            setNodeRef?.(element);
+            previewRef(element);
+        },
+        [setNodeRef, previewRef]
+    );
+
+    // Handles the rotating of knelt or horizontally placed vertical cards (eg. dead pile)
+    const isRotated =
+        !!card && ((card.type !== 'plot' && orientation === 'horizontal') || card.kneeled);
+
+    const resting = restingAngle(card?.uuid, source) || undefined;
+
     const getCard = () => {
         if (!card) {
             return <div />;
         }
 
-        // Image class handles the rotating of knelt or horizontally placed vertical cards (eg. dead pile)
-        const imageClass = classNames(
-            'relative overflow-visible transition-all',
-            cardClass(
-                size,
-                (card.type !== 'plot' && orientation === 'horizontal') || card.kneeled
-                    ? 'rotated'
-                    : orientation
-            ),
+        const isInteractive = card.selectable || card.selected || card.canPlay;
+        const cardClassName = classNames(
+            'relative pointer-events-auto touch-manipulation card-turn',
+            cardBoxClass(isRotated ? 'rotated' : orientation),
             getHighlightClass(),
             {
                 'brightness-[.75] saturate-[.5]':
                     card.unselectable ||
-                    (card.canPlay === false && !card.selected && !card.selectable)
+                    (card.canPlay === false && !card.selected && !card.selectable),
+                // A card that does something when clicked says so, even where it can also be dragged
+                'cursor-grabbing': isDragging,
+                'cursor-pointer': !isDragging && isInteractive,
+                'cursor-grab': !isDragging && !!listeners && !isInteractive,
+                'cursor-not-allowed':
+                    !isDragging && !listeners && !isInteractive && card.unselectable,
+                'select-none': touchActive
             }
         );
-        const isFaceup = forceFaceup || (!card.facedown && card.code);
-        const availabilityNotes = isFaceup
-            ? [
-                  ...(card.unavailableActions || []).map((action) => ({
-                      ...action,
-                      label: 'Unavailable'
-                  })),
-                  ...(card.unavailableTriggers || []).map((trigger) => ({
-                      ...trigger,
-                      label: 'Did not resolve'
-                  }))
-              ]
-                  .filter((note) => isNotableRequirement(note.reason))
-                  .map((note) => ({
-                      ...note,
-                      reason: getActionRequirementReason(note.reason)
-                  }))
-            : [];
         const imageCode = isFaceup
             ? card.code
             : source === 'shadows'
               ? 'cardback_shadow'
               : 'cardback';
-        const image = (
-            <div
-                {...listeners}
-                {...attributes}
-                className={imageClass}
-                onClick={handleClick}
-                style={{ zIndex: cardStackIndex-- }}
-            >
-                {card.name && <span className='absolute left-0 top-0'>{card.name}</span>}
-                <CardImage
-                    ref={setNodeRef}
-                    className='absolute left-0 top-0 touch-none'
-                    size={size}
-                    code={imageCode}
-                    orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}
-                />
-                {!hideTokens && (
-                    <CardCounters
-                        counters={getCountersForCard(card)}
-                        isParentKneeled={card.kneeled}
-                    />
-                )}
-                {isFaceup && getAlertStatus()}
-            </div>
-        );
-        const wrapperClass = classNames(
-            'relative transition-all',
-            cardClass(size, orientation === 'vertical' && card.kneeled ? 'kneeled' : orientation),
-            className
+        const slotClassName = classNames(
+            'relative pointer-events-none transition-[width,height,margin]',
+            cardBoxClass(orientation === 'vertical' && card.kneeled ? 'kneeled' : orientation),
+            className,
+            { invisible: shell || isDragging || isCarried }
         );
         return (
-            <div className={wrapperClass} ref={cardRef}>
-                {disableHover ? (
-                    image
-                ) : (
-                    <CardHoverable
-                        code={card.code}
-                        notes={availabilityNotes}
-                        isDisabled={isDragging}
-                        touchDelay={250}
-                    >
-                        {image}
-                    </CardHoverable>
+            <div
+                className={slotClassName}
+                ref={cardRef}
+                data-flip-slot={flip && wrapped ? '' : undefined}
+                data-flip={flip && !wrapped ? card.uuid : undefined}
+                data-flip-source={flip && !wrapped ? 'attached' : undefined}
+                data-flip-z={flip && !wrapped ? cardStackIndex : undefined}
+                data-flip-rot={flip && !wrapped ? (isRotated ? 90 : 0) : undefined}
+            >
+                <div
+                    {...listeners}
+                    {...attributes}
+                    {...hoverHandlers}
+                    ref={surfaceRef}
+                    data-card-surface=''
+                    data-pressed={card.pressed ? '' : undefined}
+                    className={cardClassName}
+                    onClick={handleClick}
+                    style={{ zIndex: cardStackIndex--, rotate: resting }}
+                >
+                    <div data-card-body='' className='card-body'>
+                        <CardFace
+                            code={imageCode}
+                            type={card.type}
+                            orientation={card.type === 'plot' ? 'horizontal' : 'vertical'}
+                        />
+                        {isFaceup && getAlertStatus()}
+                    </div>
+                    {/* On the card's surface, so it pops and turns with the card when chosen */}
+                    {getCardOrder()}
+                </div>
+                {!hideTokens && (
+                    <CardCounters cardUuid={card.uuid} counters={getCountersForCard(card)} />
                 )}
-                {getCardOrder()}
+                {isUnderTarget && (
+                    <div
+                        data-card-overlay=''
+                        className='under-target pointer-events-none absolute inset-0 z-[235] flex items-end justify-center'
+                    >
+                        <div className='absolute inset-0 rounded-md bg-success opacity-50' />
+                        <span className='relative mb-1 rounded-md bg-black/40 px-1 py-0.5 text-center text-xs leading-tight'>
+                            Place underneath
+                        </span>
+                    </div>
+                )}
                 {getUnderneathBadge()}
                 {getUnderneathPopup()}
             </div>
@@ -429,7 +531,15 @@ const Card = ({
     });
 
     return wrapped ? (
-        <div className={wrapperClass} style={style}>
+        <div
+            className={wrapperClass}
+            style={style}
+            data-flip={flip && !shell ? card.uuid : undefined}
+            data-flip-from={flip ? flipFrom : undefined}
+            data-flip-source={flip ? source : undefined}
+            data-flip-under={flip && under ? (under === true ? '' : under) : undefined}
+            data-flip-rot={flip ? (isRotated ? 90 : 0) : undefined}
+        >
             {getDupes()}
             {getCard()}
             {getAttachments()}
@@ -439,5 +549,46 @@ const Card = ({
         getCard()
     );
 };
+
+const DraggableCard = (props) => {
+    const { card, orientation, source, dragDisabled } = props;
+    const key = `card-${card.uuid}-${source}`;
+    const drag = useDraggable({
+        id: useUniqueId(key),
+        disabled: !!dragDisabled,
+        data: { type: ItemTypes.CARD, card, orientation, source, key }
+    });
+
+    return <CardView {...props} drag={drag} />;
+};
+
+const shallowEqualStyle = (a, b) => {
+    if (a === b) {
+        return true;
+    }
+    if (!a || !b) {
+        return false;
+    }
+    const keys = Object.keys(a);
+    return keys.length === Object.keys(b).length && keys.every((key) => Object.is(a[key], b[key]));
+};
+
+const propsEqual = (previous, next) => {
+    const keys = Object.keys(previous);
+    return (
+        keys.length === Object.keys(next).length &&
+        keys.every((key) =>
+            key === 'style'
+                ? shallowEqualStyle(previous.style, next.style)
+                : Object.is(previous[key], next[key])
+        )
+    );
+};
+
+const Card = memo(function Card(props) {
+    const manualMode = useContext(ManualModeContext);
+
+    return manualMode ? <DraggableCard {...props} /> : <CardView {...props} />;
+}, propsEqual);
 
 export default Card;

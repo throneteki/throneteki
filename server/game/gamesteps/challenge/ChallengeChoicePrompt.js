@@ -44,7 +44,7 @@ class ChallengeChoicePrompt extends UiPrompt {
         }));
 
         return {
-            menuTitle: '',
+            menuTitle: 'Initiate a challenge?',
             buttons: buttons.concat([
                 {
                     text: 'Done',

@@ -55,12 +55,18 @@ describe('the PlayerOrderPrompt', function () {
 
             it('should give the active prompt to the current player', function () {
                 this.prompt.continue();
-                expect(this.player2.setPrompt).toHaveBeenCalledWith(this.activePrompt);
+                expect(this.player2.setPrompt).toHaveBeenCalledWith({
+                    ...this.activePrompt,
+                    promptId: this.prompt.promptId
+                });
             });
 
             it('should give the waiting prompt to the remaining players', function () {
                 this.prompt.continue();
-                expect(this.player1.setPrompt).toHaveBeenCalledWith(this.waitingPrompt);
+                expect(this.player1.setPrompt).toHaveBeenCalledWith({
+                    ...this.waitingPrompt,
+                    promptId: this.prompt.promptId
+                });
             });
 
             it('should return false', function () {
@@ -100,12 +106,18 @@ describe('the PlayerOrderPrompt', function () {
 
             it('should give the active prompt to the current player', function () {
                 this.prompt.continue();
-                expect(this.player1.setPrompt).toHaveBeenCalledWith(this.activePrompt);
+                expect(this.player1.setPrompt).toHaveBeenCalledWith({
+                    ...this.activePrompt,
+                    promptId: this.prompt.promptId
+                });
             });
 
             it('should give the waiting prompt to the remaining players', function () {
                 this.prompt.continue();
-                expect(this.player2.setPrompt).toHaveBeenCalledWith(this.waitingPrompt);
+                expect(this.player2.setPrompt).toHaveBeenCalledWith({
+                    ...this.waitingPrompt,
+                    promptId: this.prompt.promptId
+                });
             });
 
             it('should return false', function () {

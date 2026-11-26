@@ -2,6 +2,9 @@ import React from 'react';
 import { Label, Radio, RadioGroup } from '@heroui/react';
 import classNames from 'classnames';
 
+export const tileClassName =
+    'w-full cursor-pointer rounded-sm border border-gold-hair p-2 hover:bg-quiet data-[selected=true]:border-gold data-[selected=true]:bg-quiet';
+
 // The label is what selects the option, so it is stretched over the whole option; otherwise a
 // tile's padding and the space beside its text ignore clicks
 export const RadioOption = ({ value, className, contentClassName, children }) => (

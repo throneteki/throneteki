@@ -2,6 +2,7 @@ import React from 'react';
 import Field from '../Site/Field';
 import Group from '../Site/Group';
 import SettingSwitch from '../Site/SettingSwitch';
+import SettingReveal from './SettingReveal';
 
 export const isEmailChanged = (email, currentEmail) =>
     (email || '').trim().toLowerCase() !== (currentEmail || '').trim().toLowerCase();
@@ -59,7 +60,7 @@ const AccountSettings = ({ user, formProps }) => {
                     />
                 </div>
             </Group>
-            {needsCurrentPassword && (
+            <SettingReveal show={needsCurrentPassword}>
                 <Group
                     title='Current password'
                     description='Enter your current password to save a new email address or password.'
@@ -74,7 +75,7 @@ const AccountSettings = ({ user, formProps }) => {
                         errorMessage={fieldError('currentPassword')}
                     />
                 </Group>
-            )}
+            </SettingReveal>
         </>
     );
 };

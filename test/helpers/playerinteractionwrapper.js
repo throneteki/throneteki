@@ -295,8 +295,14 @@ class PlayerInteractionWrapper {
         }
     }
 
-    dragCard(card, targetLocation) {
-        this.game.drop(this.player.name, card.uuid, card.location, targetLocation);
+    dragCard(card, targetLocation, parentCard) {
+        this.game.drop(
+            this.player.name,
+            card.uuid,
+            card.location,
+            targetLocation,
+            parentCard?.uuid
+        );
         this.game.continue();
         this.checkUnserializableGameState();
     }

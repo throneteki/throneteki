@@ -34,6 +34,31 @@ import EventEditor from './pages/EventsAdmin/EventEditor';
 import Stats from './pages/Stats';
 import Unsubscribe from './pages/Unsubscribe';
 import Wrapped from './pages/Wrapped';
+import LoadingSpinner from './Components/Site/LoadingSpinner';
+
+const DevBoard = import.meta.env.DEV ? React.lazy(() => import('./dev/DevBoard')) : null;
+const devRoutes = DevBoard
+    ? [
+          {
+              path: '/dev/board',
+              action: (context) => (
+                  <React.Suspense key='devboard' fallback={<LoadingSpinner />}>
+                      <DevBoard
+                          fixture={context.params.fixture}
+                          board={context.params.board}
+                          panel={context.params.panel}
+                          manual={context.params.manual}
+                          spectate={context.params.spectate}
+                          long={context.params.long}
+                          crowd={context.params.crowd}
+                          lag={context.params.lag}
+                          players={context.params.players}
+                      />
+                  </React.Suspense>
+              )
+          }
+      ]
+    : [];
 
 const routes = [
     { path: '/', action: () => <Lobby key='lobby' /> },
@@ -126,7 +151,8 @@ const routes = [
     {
         path: '/events/:id',
         action: (context) => <EventEditor eventId={context.params.id} key='eventsedit' />
-    }
+    },
+    ...devRoutes
 ];
 
 export default routes;

@@ -4,7 +4,6 @@
 @plugin './tailwind-plugin.js';
 
 @source inline('text-{military,intrigue,power}');
-@source inline('{card,card-horizontal,card-rotated,card-kneeled,attachment,duplicate,duplicate-offset,additional-agenda}-{sm,md,lg,xl,2xl,3xl,4xl}');
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -12,21 +11,6 @@
     --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
     --font-display: 'Cinzel', Georgia, serif;
     --font-icons: 'thronesdb';
-
-    --text-xs: 0.75rem;
-    --text-xs--line-height: 1.1rem;
-    --text-sm: 0.85rem;
-    --text-sm--line-height: 1.3rem;
-    --text-base: 0.9375rem;
-    --text-base--line-height: 1.45rem;
-    --text-lg: 1.08rem;
-    --text-lg--line-height: 1.4rem;
-    --text-xl: 1.25rem;
-    --text-xl--line-height: 1.3rem;
-    --text-2xl: 1.55rem;
-    --text-2xl--line-height: 1.2rem;
-    --text-3xl: 1.95rem;
-    --text-3xl--line-height: 1.15rem;
 
     --color-gold: #c9a45c;
     --color-gold-line: rgba(201, 164, 92, 0.38);
@@ -54,6 +38,23 @@
     --color-power: #2a2e5e;
 
     --shadow-selected: 0 0 1px 4px;
+}
+
+@theme inline {
+    --text-xs: calc(var(--font-scale, var(--text-scale, 1)) * 0.75rem);
+    --text-xs--line-height: calc(var(--font-scale, var(--text-scale, 1)) * 1.1rem);
+    --text-sm: calc(var(--font-scale, var(--text-scale, 1)) * 0.85rem);
+    --text-sm--line-height: calc(var(--font-scale, var(--text-scale, 1)) * 1.3rem);
+    --text-base: calc(var(--font-scale, var(--text-scale, 1)) * 0.9375rem);
+    --text-base--line-height: calc(var(--font-scale, var(--text-scale, 1)) * 1.45rem);
+    --text-lg: calc(var(--font-scale, var(--text-scale, 1)) * 1.08rem);
+    --text-lg--line-height: calc(var(--font-scale, var(--text-scale, 1)) * 1.4rem);
+    --text-xl: calc(var(--font-scale, var(--text-scale, 1)) * 1.25rem);
+    --text-xl--line-height: calc(var(--font-scale, var(--text-scale, 1)) * 1.3rem);
+    --text-2xl: calc(var(--font-scale, var(--text-scale, 1)) * 1.55rem);
+    --text-2xl--line-height: calc(var(--font-scale, var(--text-scale, 1)) * 1.2rem);
+    --text-3xl: calc(var(--font-scale, var(--text-scale, 1)) * 1.95rem);
+    --text-3xl--line-height: calc(var(--font-scale, var(--text-scale, 1)) * 1.15rem);
 }
 
 @utility container {
@@ -233,6 +234,32 @@
         background-color: red;
         transform: rotate(45deg);
         transform-origin: top left;
+    }
+
+    .counter-delta {
+        position: absolute;
+        left: 50%;
+        bottom: 60%;
+        z-index: 10;
+        padding: 0.05em 0.4em;
+        border: 1px solid currentColor;
+        border-radius: 9999px;
+        background: rgba(0, 0, 0, 0.8);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+        font-size: max(0.85rem, 1.5em);
+        font-weight: 800;
+        line-height: 1.2;
+        white-space: nowrap;
+        pointer-events: none;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+    }
+
+    .counter-delta-up {
+        color: rgb(134 239 172);
+    }
+
+    .counter-delta-down {
+        color: rgb(252 165 165);
     }
 
     .button {
@@ -446,6 +473,11 @@
 }
 
 :root {
+    /* The top and bottom safe areas; useAdaptivePage zeroes them where a browser reports ones the page never
+       reaches */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --chat-scrim: rgb(0 0 0 / 0.6);
     --throneteki-card-width: 65px;
     --throneteki-card-height: 91px;
 
@@ -465,6 +497,16 @@
     --attachment-offset-xl: calc(var(--attachment-offset) * 2);
 
     --layer-cards: 10;
+
+    /* The colour of the ring round a card that can be chosen, which the board's edges also light in */
+    --select-ring: 74 222 128;
+}
+
+/* On Android in landscape the board runs under the camera cut-out rather than leaving a band beside it */
+@media (orientation: landscape) {
+    :root[data-android-board] {
+        --safe-top: 0px;
+    }
 }
 
 /* Wrapped story cards slide in as you move between them */
@@ -476,5 +518,1326 @@
     to {
         opacity: 1;
         transform: none;
+    }
+}
+
+/* A rescale stills the board, not an overlay playing over it */
+[data-rescaling] *:not(.overlay-root, .overlay-root *),
+[data-rescaling] *:not(.overlay-root, .overlay-root *)::before,
+[data-rescaling] *:not(.overlay-root, .overlay-root *)::after,
+[data-motion='off'] *,
+[data-motion='off'] *::before,
+[data-motion='off'] *::after {
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+}
+
+html.card-dragging,
+html.card-dragging * {
+    cursor: grabbing !important;
+}
+
+/* The top card of a pile opens the pile when it cannot be chosen itself */
+[data-pile-top] .cursor-not-allowed {
+    cursor: inherit;
+}
+
+/* A long press shows the card, not the browser's menu for its image */
+.card-body img {
+    -webkit-touch-callout: none;
+}
+
+/* Small buttons are easy to hit with a finger, however small they are drawn */
+@media (pointer: coarse) {
+    .tap-target::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: max(100%, 44px);
+        height: max(100%, 44px);
+        translate: -50% -50%;
+    }
+}
+
+/* A carried card held over this card goes underneath it when let go */
+.under-target {
+    animation: under-arm 200ms ease-out;
+}
+@keyframes under-arm {
+    from {
+        opacity: 0;
+    }
+}
+[data-motion='off'] .under-target {
+    animation: none;
+}
+
+/* The chat's tab and panel are one shape, the tab's border curving out into the panel's edge. Wide screens: the
+   chat slides in from the right, the tab on its left. Phones: it drops from the top, the tab hanging below. */
+.chat-drawer {
+    --lip-length: max(44px, calc(var(--ui-scale, 1) * 4.5rem));
+    --lip-depth: calc(var(--ui-scale, 1) * 1.75rem);
+    --lip-flare: calc(var(--ui-scale, 1) * 0.5rem);
+    --lip-gap: calc(var(--lip-length) / 2 + var(--lip-flare));
+    --chat-fill: rgb(12 13 17 / 0.9);
+    position: relative;
+    width: 0;
+    transition-property: width, height;
+    transition-duration: 500ms;
+}
+.chat-drawer.chat-open {
+    width: calc(var(--ui-scale, 1) * 24rem);
+}
+.chat-body {
+    min-width: 24rem;
+}
+/* On a phone the board behind the open chat is dimmed, fading in and out with it */
+.chat-dim {
+    display: none;
+    position: absolute;
+    inset: 0;
+    z-index: 299;
+    background: var(--chat-scrim);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 500ms;
+}
+.chat-dim.chat-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+.chat-lip {
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    translate: 0 -50%;
+    flex-direction: column;
+    width: var(--lip-depth);
+    height: var(--lip-length);
+    border-style: solid;
+    border-width: 1px 0 1px 1px;
+    border-radius: 0.375rem 0 0 0.375rem;
+}
+.chat-edge {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    z-index: 1;
+    pointer-events: none;
+    mask-image: linear-gradient(
+        to bottom,
+        #000 calc(50% - var(--lip-gap)),
+        transparent calc(50% - var(--lip-gap)),
+        transparent calc(50% + var(--lip-gap)),
+        #000 calc(50% + var(--lip-gap))
+    );
+}
+/* The tab's icon turns into the other as the chat opens or closes */
+.chat-lip-icon {
+    transition:
+        opacity 250ms,
+        rotate 250ms,
+        scale 250ms;
+}
+.chat-lip-icon-hidden {
+    opacity: 0;
+    rotate: -90deg;
+    scale: 0.6;
+}
+[data-motion='off'] .chat-lip-icon {
+    transition: none;
+}
+.chat-lip-flare {
+    position: absolute;
+    width: var(--lip-flare);
+    height: var(--lip-flare);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 300ms;
+}
+.chat-open .chat-lip-flare {
+    opacity: 1;
+}
+/* Each curve is a ring around one corner of its square, filled outside the ring to meet the tab */
+.chat-lip-flare-start {
+    right: -1px;
+    bottom: 100%;
+    background: radial-gradient(
+        circle at 0 0,
+        transparent calc(var(--lip-flare) - 1px),
+        currentColor calc(var(--lip-flare) - 1px),
+        currentColor var(--lip-flare),
+        var(--chat-fill) var(--lip-flare)
+    );
+}
+.chat-lip-flare-end {
+    right: -1px;
+    top: 100%;
+    background: radial-gradient(
+        circle at 0 100%,
+        transparent calc(var(--lip-flare) - 1px),
+        currentColor calc(var(--lip-flare) - 1px),
+        currentColor var(--lip-flare),
+        var(--chat-fill) var(--lip-flare)
+    );
+}
+
+/* The phone chat: small screens, and the adaptive board laid out for a phone */
+@media (max-width: 767px) {
+    /* The tab sits near the right edge, clear of the opponent's totals in the middle of their bar */
+    .chat-drawer {
+        --lip-at: calc(100% - var(--lip-gap) - 0.5rem);
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        /* Over the board's overlays, which never cover the chat */
+        z-index: 360;
+        width: auto;
+        height: 0;
+    }
+    /* Open, the chat fills the screen down to the tab, which sits on the bottom edge */
+    .chat-drawer.chat-open {
+        width: auto;
+        height: calc(100% - var(--lip-depth));
+    }
+    .chat-dim {
+        display: block;
+    }
+    /* Closed, the tab hangs from the top of the screen, so its count shows below it */
+    .chat-drawer:not(.chat-open) .chat-lip-badge {
+        top: auto;
+        bottom: -0.5rem;
+    }
+    .chat-body {
+        min-width: 0;
+    }
+    .chat-lip {
+        right: auto;
+        left: var(--lip-at);
+        top: 100%;
+        translate: -50% 0;
+        flex-direction: row;
+        width: var(--lip-length);
+        height: var(--lip-depth);
+        border-width: 0 1px 1px 1px;
+        border-radius: 0 0 0.375rem 0.375rem;
+    }
+    .chat-edge {
+        top: auto;
+        right: 0;
+        bottom: 0;
+        width: auto;
+        height: 1px;
+        mask-image: linear-gradient(
+            to right,
+            #000 calc(var(--lip-at) - var(--lip-gap)),
+            transparent calc(var(--lip-at) - var(--lip-gap)),
+            transparent calc(var(--lip-at) + var(--lip-gap)),
+            #000 calc(var(--lip-at) + var(--lip-gap))
+        );
+    }
+    .chat-lip-flare-start {
+        right: 100%;
+        bottom: auto;
+        top: -1px;
+        background: radial-gradient(
+            circle at 0 100%,
+            transparent calc(var(--lip-flare) - 1px),
+            currentColor calc(var(--lip-flare) - 1px),
+            currentColor var(--lip-flare),
+            var(--chat-fill) var(--lip-flare)
+        );
+    }
+    .chat-lip-flare-end {
+        right: auto;
+        left: 100%;
+        top: -1px;
+        background: radial-gradient(
+            circle at 100% 100%,
+            transparent calc(var(--lip-flare) - 1px),
+            currentColor calc(var(--lip-flare) - 1px),
+            currentColor var(--lip-flare),
+            var(--chat-fill) var(--lip-flare)
+        );
+    }
+}
+
+/* On the adaptive board the chat button beside our game menu opens the chat, in place of the tab */
+html[data-board-layout='wide'] .chat-lip {
+    display: none;
+}
+
+html[data-board-layout='narrow'],
+html[data-board-layout='short'] {
+    /* The tab sits near the right edge, clear of the opponent's totals in the middle of their bar */
+    .chat-drawer {
+        --lip-at: calc(100% - var(--lip-gap) - 0.5rem);
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        /* Over the board's overlays, which never cover the chat */
+        z-index: 360;
+        width: auto;
+        height: 0;
+    }
+    /* Open, the chat fills the screen down to the tab, which sits on the bottom edge */
+    .chat-drawer.chat-open {
+        width: auto;
+        height: calc(100% - var(--lip-depth));
+    }
+    .chat-dim {
+        display: block;
+    }
+    /* Closed, the tab hangs from the top of the screen, so its count shows below it */
+    .chat-drawer:not(.chat-open) .chat-lip-badge {
+        top: auto;
+        bottom: -0.5rem;
+    }
+    .chat-body {
+        min-width: 0;
+    }
+    .chat-lip {
+        right: auto;
+        left: var(--lip-at);
+        top: 100%;
+        translate: -50% 0;
+        flex-direction: row;
+        width: var(--lip-length);
+        height: var(--lip-depth);
+        border-width: 0 1px 1px 1px;
+        border-radius: 0 0 0.375rem 0.375rem;
+    }
+    .chat-edge {
+        top: auto;
+        right: 0;
+        bottom: 0;
+        width: auto;
+        height: 1px;
+        mask-image: linear-gradient(
+            to right,
+            #000 calc(var(--lip-at) - var(--lip-gap)),
+            transparent calc(var(--lip-at) - var(--lip-gap)),
+            transparent calc(var(--lip-at) + var(--lip-gap)),
+            #000 calc(var(--lip-at) + var(--lip-gap))
+        );
+    }
+    .chat-lip-flare-start {
+        right: 100%;
+        bottom: auto;
+        top: -1px;
+        background: radial-gradient(
+            circle at 0 100%,
+            transparent calc(var(--lip-flare) - 1px),
+            currentColor calc(var(--lip-flare) - 1px),
+            currentColor var(--lip-flare),
+            var(--chat-fill) var(--lip-flare)
+        );
+    }
+    .chat-lip-flare-end {
+        right: auto;
+        left: 100%;
+        top: -1px;
+        background: radial-gradient(
+            circle at 100% 100%,
+            transparent calc(var(--lip-flare) - 1px),
+            currentColor calc(var(--lip-flare) - 1px),
+            currentColor var(--lip-flare),
+            var(--chat-fill) var(--lip-flare)
+        );
+    }
+
+    /* Opened by the tools' chat button, not the tab, and closed from its own header. It covers the whole screen, the
+       prompt too, down to where the keyboard begins (--visual-height, useAdaptivePage). */
+    .chat-lip,
+    .chat-dim {
+        display: none;
+    }
+    .chat-close {
+        display: flex;
+    }
+    .chat-frame {
+        padding: var(--safe-top) env(safe-area-inset-right, 0px) var(--safe-bottom)
+            env(safe-area-inset-left, 0px);
+        background: rgb(0 0 0 / 0.9);
+    }
+    /* Slides rather than grows, so its height can follow the keyboard at once */
+    .chat-drawer,
+    .chat-drawer.chat-open {
+        top: 0;
+        left: 0;
+        right: 0;
+        height: min(var(--visual-height, 100%), 100%);
+        clip-path: inset(0);
+        transition-property: translate, clip-path;
+        transition-duration: 300ms;
+    }
+    .chat-drawer:not(.chat-open) {
+        translate: 0 -100%;
+        clip-path: inset(100% 0 0 0);
+        visibility: hidden;
+        transition-property: translate, clip-path, visibility;
+        transition-delay: 0s, 0s, 300ms;
+    }
+}
+
+html[data-motion='off'][data-board-layout] .chat-drawer,
+[data-motion='off'] .chat-drawer,
+[data-motion='off'] .chat-dim {
+    transition: none;
+}
+
+/* HeroUI's switches and checkboxes turn off touch gestures on their whole label, so a swipe that starts on one
+   cannot scroll the list it is in. Scrolling from them is let through: a scroll cancels the press, so it never
+   flips the switch. */
+label.touch-none:has(> input[type='checkbox']) {
+    touch-action: pan-x pan-y;
+}
+
+/* Over an area the carried card cannot be put in */
+html.card-dragging.card-drop-refused,
+html.card-dragging.card-drop-refused * {
+    cursor: no-drop !important;
+}
+
+/* The card itself, with its shadow, which turns with it; a deeper shadow while lifted */
+.card-body {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow:
+        0 1px 1px rgba(0, 0, 0, 0.45),
+        0 2px 5px rgba(0, 0, 0, 0.35);
+    transition: box-shadow 120ms;
+}
+
+.card-body::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 14px 22px rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* A card turning to kneel or stand overshoots a little and settles, like it was flicked */
+.card-turn {
+    transition:
+        transform 380ms cubic-bezier(0.34, 1.56, 0.64, 1),
+        translate 80ms,
+        box-shadow 150ms,
+        scale 150ms,
+        filter 150ms;
+}
+
+/* Anything that grows, shrinks or makes room for a neighbour does it smoothly instead of jumping */
+.shift-smooth {
+    transition-property: width, height, margin, padding, grid-template-columns, opacity;
+    transition-duration: 280ms;
+    transition-timing-function: cubic-bezier(0.3, 0.7, 0.3, 1);
+}
+
+[data-motion='off'] .shift-smooth {
+    transition: none;
+}
+
+/* Status rings around cards, sized by --card-scale (or --ring-scale around something else); urgent ones breathe */
+.ring-selected,
+.ring-selectable,
+.ring-participating,
+.ring-danger,
+.ring-saved,
+.ring-contributing,
+.ring-keyword,
+.ring-controlled,
+.ring-new {
+    --ring: max(0.75px, calc(1px * var(--ring-scale, var(--card-scale, 1))));
+}
+.ring-selected {
+    box-shadow: 0 0 0 calc(var(--ring) * 3) rgb(56 189 248);
+    scale: 1.03;
+}
+.ring-selectable {
+    box-shadow: 0 0 calc(var(--ring) * 3) calc(var(--ring) * 3) rgb(var(--select-ring));
+    animation: ring-breathe 1.8s ease-in-out infinite;
+}
+.ring-participating {
+    box-shadow: 0 0 var(--ring) calc(var(--ring) * 2) rgb(239 68 68);
+}
+.ring-danger {
+    box-shadow: 0 0 calc(var(--ring) * 2) calc(var(--ring) * 2) rgb(153 27 27);
+    animation: ring-danger 1.1s ease-in-out infinite;
+}
+.ring-saved {
+    box-shadow: 0 0 var(--ring) calc(var(--ring) * 2) rgb(34 197 94);
+}
+.ring-contributing {
+    box-shadow: 0 0 var(--ring) calc(var(--ring) * 2) rgb(254 215 170);
+}
+.ring-keyword {
+    box-shadow: 0 0 var(--ring) calc(var(--ring) * 2) rgb(154 52 18);
+}
+.ring-controlled {
+    box-shadow: 0 0 var(--ring) calc(var(--ring) * 2) rgb(253 224 71);
+}
+.ring-new {
+    box-shadow: 0 0 var(--ring) calc(var(--ring) * 2) rgb(219 234 254 / 0.5);
+    animation: ring-arrive 1.6s ease-out;
+}
+
+@keyframes ring-breathe {
+    50% {
+        box-shadow: 0 0 calc(var(--ring) * 9) calc(var(--ring) * 3) rgb(var(--select-ring) / 0.55);
+    }
+}
+@keyframes ring-danger {
+    50% {
+        box-shadow: 0 0 calc(var(--ring) * 8) calc(var(--ring) * 4) rgb(220 38 38 / 0.85);
+    }
+}
+@keyframes ring-arrive {
+    from {
+        box-shadow: 0 0 calc(var(--ring) * 12) calc(var(--ring) * 5) rgb(219 234 254 / 0.95);
+    }
+}
+
+[data-motion='off'] .ring-selectable,
+[data-motion='off'] .ring-danger,
+[data-motion='off'] .ring-new {
+    animation: none;
+}
+
+/* A long press previews or picks up a card, so it never selects text or opens the browser's image menu */
+[data-layout],
+[data-sheet] {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+[data-layout] img,
+[data-sheet] img {
+    -webkit-user-drag: none;
+}
+
+/* In a board's sheet the sheet is a pile's cards' only frame */
+[data-sheet] [data-pile-popup] {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+/* A chosen card pops above its neighbours and settles back */
+[data-layout] [data-card-surface].ring-selected {
+    scale: 1;
+    animation: select-pop 320ms ease-out;
+}
+@keyframes select-pop {
+    0% {
+        scale: 1;
+        z-index: 250;
+    }
+    45% {
+        scale: 1.12;
+        z-index: 250;
+    }
+    100% {
+        scale: 1;
+        z-index: 250;
+    }
+}
+
+.order-fade {
+    transition: opacity 180ms ease-out;
+}
+[data-motion='off'] .order-fade {
+    transition: none;
+}
+
+/* On touch, a card chosen in a squished pile pops in place, staying under the cards that cover it */
+@media (hover: none) {
+    [data-layout] [data-squish-pile] [data-card-surface].ring-selected {
+        animation-name: select-pop-in-place;
+    }
+}
+@keyframes select-pop-in-place {
+    45% {
+        scale: 1.12;
+    }
+}
+
+/* On the adaptive board, a card clicked stays pressed in until the game server has answered the click. The whole
+   card presses in: its surface (with its ring) and the tokens and badges over it, so nothing is left standing
+   apart from it. Filters compose with Tailwind's, so an unselectable card stays desaturated. A card chosen while
+   pressed pops once it is let go. */
+:is([data-layout], [data-sheet]) [data-card-surface] ~ [data-card-overlay] {
+    transition:
+        scale 150ms,
+        filter 150ms;
+}
+:is([data-layout], [data-sheet]) [data-card-surface][data-pressed],
+:is([data-layout], [data-sheet]) [data-card-surface][data-pressed] ~ [data-card-overlay] {
+    scale: 0.94;
+    --tw-brightness: brightness(0.8);
+    filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale)
+        var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia)
+        var(--tw-drop-shadow);
+}
+:is([data-layout], [data-sheet]) [data-card-surface][data-pressed].ring-selected {
+    animation: none;
+}
+:is([data-layout], [data-sheet]) [data-card-surface][data-pressed] > .card-body {
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.6);
+}
+[data-motion='off'] :is([data-layout], [data-sheet]) [data-card-surface][data-pressed],
+[data-motion='off']
+    :is([data-layout], [data-sheet])
+    [data-card-surface][data-pressed]
+    ~ [data-card-overlay] {
+    scale: none;
+}
+
+/* A message arriving in the game chat fades in, to its own opacity */
+.chat-arrive {
+    animation: chat-arrive 250ms ease-out;
+}
+@keyframes chat-arrive {
+    from {
+        opacity: 0;
+    }
+}
+[data-motion='off'] .chat-arrive {
+    animation: none;
+}
+
+/* A log line too long for the prompt fades out at the edges it runs past, as the phase wheel does: the end while
+   there is more to come, the start once it has scrolled */
+@property --log-fade-start {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0px;
+}
+@property --log-fade-end {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0px;
+}
+.log-fade {
+    mask-image: linear-gradient(
+        to right,
+        transparent,
+        #000 var(--log-fade-start),
+        #000 calc(100% - var(--log-fade-end)),
+        transparent
+    );
+    transition:
+        --log-fade-start 250ms ease-out,
+        --log-fade-end 250ms ease-out;
+}
+.log-fade[data-fade-start] {
+    --log-fade-start: 1.5rem;
+}
+.log-fade[data-fade-end] {
+    --log-fade-end: 1.5rem;
+}
+[data-motion='off'] .log-fade {
+    transition: none;
+}
+
+/* The settings' previews ease between sizes. Only these copies of the scales are registered, so the board itself
+   never animates a rescale. */
+@property --preview-card-scale {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 1;
+}
+
+@property --preview-ui-scale {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 1;
+}
+
+.preview-cards {
+    --preview-card-scale: var(--card-scale, 1);
+    transition: --preview-card-scale 250ms ease-out;
+}
+
+.preview-cards > * {
+    --card-scale: var(--preview-card-scale);
+}
+
+.preview-interface {
+    --preview-ui-scale: var(--ui-scale, 1);
+    transition: --preview-ui-scale 250ms ease-out;
+}
+
+.preview-interface > * {
+    --ui-scale: var(--preview-ui-scale);
+    --text-scale: var(--preview-ui-scale);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .preview-cards,
+    .preview-interface {
+        transition: none;
+    }
+}
+
+/* Overlay animations. The Continue fill runs even with motion off, as it shows when the overlay continues. */
+.overlay-dim {
+    animation: overlay-fade 300ms ease-out both;
+}
+.overlay-stamp {
+    animation: overlay-stamp 520ms cubic-bezier(0.3, 1.8, 0.5, 1) 450ms both;
+}
+.overlay-text {
+    animation: overlay-fade 350ms ease-out 350ms both;
+}
+/* An animation, not a transition: the entrance animation it replaces held their opacity, so a transition would have
+   nothing to start from and they would vanish at once */
+.overlay-leaving .overlay-text,
+.overlay-leaving .overlay-after,
+.overlay-leaving .overlay-pop {
+    opacity: 0;
+    animation: overlay-out 250ms ease-in;
+}
+@keyframes overlay-out {
+    from {
+        opacity: 1;
+    }
+}
+[data-motion='off'] .overlay-dim,
+[data-motion='off'] .overlay-stamp,
+[data-motion='off'] .overlay-text {
+    animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    .overlay-dim,
+    .overlay-stamp,
+    .overlay-text {
+        animation: none;
+    }
+}
+@keyframes overlay-timer {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}
+@keyframes overlay-stamp {
+    from {
+        opacity: 0;
+        scale: 2.4;
+    }
+}
+@keyframes overlay-fade {
+    from {
+        opacity: 0;
+    }
+}
+.overlay-root {
+    animation: overlay-fade 250ms ease-out backwards;
+}
+/* The eliminated seal slams down and the cards go grey; with motion off, that resting state shows */
+.overlay-seal {
+    animation: overlay-seal 560ms 750ms both;
+}
+.overlay-thud {
+    animation: overlay-thud 300ms ease-out 1120ms both;
+}
+.overlay-ashen {
+    filter: grayscale(1) brightness(0.7);
+    animation: overlay-ashen 600ms ease-out 1120ms both;
+}
+@keyframes overlay-seal {
+    0% {
+        opacity: 0;
+        scale: 3.2;
+        animation-timing-function: cubic-bezier(0.55, 0, 0.9, 0.4);
+    }
+    66% {
+        opacity: 1;
+        scale: 0.9;
+        animation-timing-function: ease-out;
+    }
+    100% {
+        opacity: 1;
+        scale: 1;
+    }
+}
+@keyframes overlay-thud {
+    0% {
+        translate: 0 0;
+    }
+    30% {
+        translate: 0 0.35rem;
+        scale: 0.97;
+    }
+    65% {
+        translate: 0 -0.1rem;
+    }
+    100% {
+        translate: 0 0;
+    }
+}
+@keyframes overlay-ashen {
+    from {
+        filter: none;
+    }
+}
+[data-motion='off'] .overlay-seal,
+[data-motion='off'] .overlay-thud,
+[data-motion='off'] .overlay-ashen {
+    animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    .overlay-seal,
+    .overlay-thud,
+    .overlay-ashen {
+        animation: none;
+    }
+}
+/* A player's cards in the start and end overlays slide between stacked and fanned out side by side */
+.overlay-fan-card {
+    transition:
+        margin 450ms cubic-bezier(0.25, 0.8, 0.3, 1),
+        rotate 450ms cubic-bezier(0.25, 0.8, 0.3, 1),
+        translate 250ms ease-out;
+}
+/* Under a mouse, stacked cards lean a little towards where they fan out (--nudge: their place), as a hint that
+   pressing fans them */
+@media (hover: hover) {
+    .group:hover .overlay-fan-card {
+        translate: calc(var(--nudge, 0) * var(--card-scale, 1) * 0.3rem) 0;
+    }
+}
+/* Under a mouse, a gold outline round the whole arrangement of cards (its silhouette), fading in and out. No filter
+   when it is off, so the cards are not filtered all the while they animate; a filter fades from none smoothly. */
+.overlay-ring {
+    transition: filter 250ms ease-out;
+}
+@media (hover: hover) {
+    .group:hover .overlay-ring,
+    .group:focus-visible .overlay-ring {
+        filter: drop-shadow(2px 0 0 rgb(251 191 36 / 0.9))
+            drop-shadow(-2px 0 0 rgb(251 191 36 / 0.9)) drop-shadow(0 2px 0 rgb(251 191 36 / 0.9))
+            drop-shadow(0 -2px 0 rgb(251 191 36 / 0.9)) drop-shadow(0 0 8px rgb(251 191 36 / 0.35));
+    }
+}
+[data-motion='off'] .overlay-fan-card {
+    transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    .overlay-fan-card {
+        transition: none;
+    }
+}
+
+/* Initiative pills: a gold ring when tied, then green for the winner and faded for the rest */
+.overlay-tie {
+    animation:
+        overlay-tie 350ms ease-out var(--tie-delay, 0ms) both,
+        var(--tie-end) 400ms ease-out var(--win-delay, 0ms) both;
+}
+.overlay-tie-won {
+    --tie-end: overlay-tie-won;
+}
+.overlay-tie-lost {
+    --tie-end: overlay-tie-lost;
+}
+@keyframes overlay-tie-won {
+    to {
+        box-shadow: 0 0 0 2px rgb(52 211 153);
+    }
+}
+@keyframes overlay-tie-lost {
+    to {
+        box-shadow: 0 0 0 2px rgb(251 191 36 / 0);
+    }
+}
+@keyframes overlay-tie {
+    0% {
+        box-shadow: 0 0 0 0 rgb(251 191 36 / 0);
+    }
+    40% {
+        scale: 1.15;
+    }
+    100% {
+        box-shadow: 0 0 0 2px rgb(251 191 36 / 0.8);
+    }
+}
+.overlay-win {
+    animation: overlay-win 500ms ease-out var(--win-delay, 0ms) both;
+}
+@keyframes overlay-win {
+    to {
+        border-color: rgb(52 211 153);
+        background-color: rgb(16 185 129 / 0.3);
+        color: rgb(236 253 245);
+        box-shadow: 0 0 14px rgb(52 211 153 / 0.6);
+        scale: 1.1;
+    }
+}
+.overlay-lose {
+    animation: overlay-lose 500ms ease-out var(--win-delay, 0ms) both;
+}
+@keyframes overlay-lose {
+    to {
+        opacity: 0.55;
+    }
+}
+/* The tie line, struck through when a coin decides */
+.overlay-strike {
+    animation: overlay-strike-dim 250ms ease-out var(--strike-delay, 0ms) both;
+}
+.overlay-strike::after {
+    content: '';
+    position: absolute;
+    left: -0.15em;
+    right: -0.15em;
+    top: 50%;
+    height: 2px;
+    margin-top: -1px;
+    border-radius: 1px;
+    background: rgb(248 113 113);
+    box-shadow: 0 0 4px rgb(0 0 0 / 0.8);
+    transform-origin: left;
+    animation: overlay-strike 250ms ease-out var(--strike-delay, 0ms) both;
+}
+@keyframes overlay-strike {
+    from {
+        transform: scaleX(0);
+    }
+}
+@keyframes overlay-strike-dim {
+    to {
+        opacity: 0.6;
+    }
+}
+[data-motion='off'] .overlay-strike,
+[data-motion='off'] .overlay-strike::after {
+    animation-duration: 1ms;
+}
+@media (prefers-reduced-motion: reduce) {
+    .overlay-strike,
+    .overlay-strike::after {
+        animation-duration: 1ms;
+    }
+}
+/* The coin: tossed spinning, it slams down on the winner's face (the back, so with motion off that shows at once) */
+.overlay-coin-toss {
+    animation: overlay-coin-toss 800ms var(--coin-delay, 0ms) both;
+}
+@keyframes overlay-coin-toss {
+    0% {
+        opacity: 0;
+        translate: 0 0;
+        scale: 0.6;
+        animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1);
+    }
+    8% {
+        opacity: 1;
+        scale: 1;
+    }
+    42% {
+        translate: 0 -7rem;
+        scale: 1.15;
+        animation-timing-function: cubic-bezier(0.6, 0, 0.9, 0.5);
+    }
+    86% {
+        translate: 0 0;
+        scale: 1;
+    }
+    91% {
+        scale: 1.2;
+    }
+    100% {
+        opacity: 1;
+        translate: 0 0;
+        scale: 1;
+    }
+}
+.overlay-coin {
+    transform: rotateX(180deg);
+    animation: overlay-coin-spin 800ms cubic-bezier(0.25, 0.6, 0.45, 1) var(--coin-delay, 0ms) both;
+}
+@keyframes overlay-coin-spin {
+    0% {
+        transform: rotateX(0deg);
+    }
+    86%,
+    100% {
+        transform: rotateX(1980deg);
+    }
+}
+.overlay-coin-face {
+    animation: overlay-fade 120ms ease-out calc(var(--coin-delay, 0ms) + 690ms) both;
+}
+.overlay-coin-slam {
+    opacity: 0;
+    animation: overlay-coin-slam 450ms ease-out calc(var(--coin-delay, 0ms) + 690ms) forwards;
+}
+@keyframes overlay-coin-slam {
+    0% {
+        opacity: 0.9;
+        scale: 1;
+    }
+    100% {
+        opacity: 0;
+        scale: 2.2;
+    }
+}
+[data-motion='off'] .overlay-tie,
+[data-motion='off'] .overlay-win,
+[data-motion='off'] .overlay-lose,
+[data-motion='off'] .overlay-coin-toss,
+[data-motion='off'] .overlay-coin,
+[data-motion='off'] .overlay-coin-face {
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+}
+[data-motion='off'] .overlay-coin-slam {
+    animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    .overlay-tie,
+    .overlay-win,
+    .overlay-lose,
+    .overlay-coin-toss,
+    .overlay-coin,
+    .overlay-coin-face {
+        animation-duration: 1ms;
+        animation-delay: 0ms;
+    }
+    .overlay-coin-slam {
+        animation: none;
+    }
+}
+
+/* A title's Rivals or Supports pill: a light runs once round its edge, then it pulses */
+@property --relation-turn {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+}
+.overlay-relation::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: conic-gradient(
+        from var(--relation-turn),
+        transparent 0deg 250deg,
+        var(--relation-glow) 320deg,
+        transparent 360deg
+    );
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    pointer-events: none;
+    animation: overlay-relation-run 900ms ease-in-out calc(var(--relation-delay, 0ms) + 150ms) both;
+}
+@keyframes overlay-relation-run {
+    0% {
+        opacity: 1;
+        --relation-turn: 0deg;
+    }
+    85% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        --relation-turn: 360deg;
+    }
+}
+.overlay-relation {
+    animation: overlay-relation-pulse 700ms ease-out calc(var(--relation-delay, 0ms) + 950ms) both;
+}
+@keyframes overlay-relation-pulse {
+    40% {
+        box-shadow: 0 0 14px 2px var(--relation-glow);
+    }
+}
+[data-motion='off'] .overlay-relation,
+[data-motion='off'] .overlay-relation::before {
+    animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    .overlay-relation,
+    .overlay-relation::before {
+        animation: none;
+    }
+}
+
+/* The start's ambience: embers rising, and crossed swords that swing in and then glow slowly. With motion off the
+   embers are gone and the swords still. */
+.overlay-ember {
+    opacity: 0;
+    animation: overlay-ember linear infinite;
+}
+@keyframes overlay-ember {
+    0% {
+        translate: 0 0;
+        opacity: 0;
+    }
+    12%,
+    70% {
+        opacity: var(--ember-o, 0.6);
+    }
+    100% {
+        translate: var(--ember-x, 0) -100vh;
+        opacity: 0;
+    }
+}
+.overlay-sword {
+    transform-origin: 50px 50px;
+    transform: rotate(calc(var(--sword-side) * 45deg));
+    animation: overlay-sword-in 560ms cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+@keyframes overlay-sword-in {
+    from {
+        opacity: 0;
+        transform: rotate(calc(var(--sword-side) * 110deg));
+    }
+}
+.overlay-swords {
+    opacity: 0.55;
+    filter: drop-shadow(0 0 6px rgb(251 191 36 / 0.35));
+    animation:
+        overlay-fade 400ms ease-out both,
+        overlay-sword-glow 3.6s ease-in-out infinite;
+}
+@keyframes overlay-sword-glow {
+    50% {
+        opacity: 0.8;
+        scale: 1.04;
+        filter: drop-shadow(0 0 16px rgb(251 191 36 / 0.7));
+    }
+}
+[data-motion='off'] .overlay-ember {
+    display: none;
+}
+[data-motion='off'] .overlay-sword,
+[data-motion='off'] .overlay-swords {
+    animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    .overlay-ember {
+        display: none;
+    }
+    .overlay-sword,
+    .overlay-swords {
+        animation: none;
+    }
+}
+
+/* Once an overlay's cards have landed, the board shows its own again in their place */
+.overlay-landed [data-fly] {
+    visibility: hidden;
+}
+[data-motion='off'] .overlay-root {
+    animation: none;
+}
+
+/* Cards tossed onto the overlays' table; each card's start (--toss-x/y/r) is set by BoardOverlays' useToss */
+.overlay-toss {
+    animation: overlay-toss 620ms var(--toss-delay, 0ms) both;
+}
+@keyframes overlay-toss {
+    0% {
+        opacity: 0;
+        translate: var(--toss-x, 0) var(--toss-y, 40vh);
+        rotate: var(--toss-r, 0deg);
+        scale: 1.3;
+        filter: drop-shadow(0 2.5rem 1.25rem rgba(0, 0, 0, 0.5));
+        animation-timing-function: cubic-bezier(0.2, 0.65, 0.35, 1);
+    }
+    10% {
+        opacity: 1;
+    }
+    76% {
+        translate: 0 0;
+        rotate: 0deg;
+        scale: 0.95;
+        filter: drop-shadow(0 0.2rem 0.3rem rgba(0, 0, 0, 0.7));
+        animation-timing-function: ease-out;
+    }
+    100% {
+        opacity: 1;
+        translate: 0 0;
+        rotate: 0deg;
+        scale: 1;
+        filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
+    }
+}
+.overlay-after {
+    animation: overlay-after 420ms ease-out var(--after-delay, 600ms) both;
+}
+@keyframes overlay-after {
+    from {
+        opacity: 0;
+        translate: 0 0.5rem;
+    }
+}
+.overlay-pop {
+    animation: overlay-pop 380ms cubic-bezier(0.3, 1.8, 0.5, 1) var(--after-delay, 600ms) both;
+}
+@keyframes overlay-pop {
+    from {
+        opacity: 0;
+        scale: 0.4;
+    }
+}
+/* A card turned face up where it lies */
+.overlay-flip {
+    transform-style: preserve-3d;
+    animation: overlay-flip 560ms cubic-bezier(0.3, 1.35, 0.5, 1) var(--flip-delay, 500ms) both;
+}
+.overlay-flip-face {
+    backface-visibility: hidden;
+}
+.overlay-flip-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    transform: rotateY(180deg);
+}
+@keyframes overlay-flip {
+    0% {
+        transform: perspective(60rem) rotateY(180deg);
+    }
+    45% {
+        transform: perspective(60rem) rotateY(90deg) scale(1.08);
+    }
+    100% {
+        transform: perspective(60rem) rotateY(0deg);
+    }
+}
+/* A bar filling to its value */
+.overlay-grow {
+    transform-origin: left;
+    animation: overlay-timer 800ms cubic-bezier(0.2, 0.8, 0.3, 1) var(--after-delay, 600ms) both;
+}
+/* The table jolting, and a flash of red, as the elimination's seal comes down */
+.overlay-quake {
+    animation: overlay-quake 380ms ease-out 1120ms both;
+}
+@keyframes overlay-quake {
+    0%,
+    100% {
+        translate: 0 0;
+    }
+    15% {
+        translate: -0.4rem 0.3rem;
+    }
+    35% {
+        translate: 0.35rem -0.2rem;
+    }
+    55% {
+        translate: -0.2rem 0.15rem;
+    }
+    75% {
+        translate: 0.1rem 0;
+    }
+}
+.overlay-flash {
+    opacity: 0;
+    animation: overlay-flash 700ms ease-out 1120ms both;
+}
+@keyframes overlay-flash {
+    0% {
+        opacity: 0;
+    }
+    12% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+/* The winner's crown drops onto their cards and then bobs gently, a warm glow pulsing behind them; a loser's cards
+   dim once everyone's have landed */
+.overlay-crown {
+    filter: drop-shadow(0 0 10px rgb(251 191 36 / 0.6)) drop-shadow(0 4px 6px rgb(0 0 0 / 0.6));
+    animation:
+        overlay-crown-in 620ms cubic-bezier(0.3, 1.6, 0.5, 1) var(--after-delay, 700ms) both,
+        overlay-crown-bob 3.2s ease-in-out calc(var(--after-delay, 700ms) + 620ms) infinite;
+}
+@keyframes overlay-crown-in {
+    from {
+        opacity: 0;
+        translate: 0 -2.5rem;
+        scale: 1.8;
+        rotate: -24deg;
+    }
+}
+@keyframes overlay-crown-bob {
+    50% {
+        translate: 0 -0.3rem;
+    }
+}
+.overlay-glory {
+    background: radial-gradient(
+        circle,
+        rgb(251 191 36 / 0.4),
+        rgb(251 146 60 / 0.14) 40%,
+        transparent 66%
+    );
+    animation:
+        overlay-fade 900ms ease-out var(--after-delay, 700ms) both,
+        overlay-glory 3.6s ease-in-out calc(var(--after-delay, 700ms) + 900ms) infinite;
+}
+@keyframes overlay-glory {
+    50% {
+        opacity: 0.6;
+        scale: 1.06;
+    }
+}
+.overlay-dimmed {
+    filter: grayscale(0.7) brightness(0.55);
+    animation: overlay-dimmed 700ms ease-out var(--after-delay, 700ms) both;
+}
+@keyframes overlay-dimmed {
+    from {
+        filter: none;
+    }
+}
+[data-motion='off'] .overlay-toss,
+[data-motion='off'] .overlay-after,
+[data-motion='off'] .overlay-pop,
+[data-motion='off'] .overlay-flip,
+[data-motion='off'] .overlay-grow,
+[data-motion='off'] .overlay-quake,
+[data-motion='off'] .overlay-flash,
+[data-motion='off'] .overlay-crown,
+[data-motion='off'] .overlay-glory,
+[data-motion='off'] .overlay-dimmed {
+    animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    .overlay-toss,
+    .overlay-after,
+    .overlay-pop,
+    .overlay-flip,
+    .overlay-grow,
+    .overlay-quake,
+    .overlay-flash,
+    .overlay-crown,
+    .overlay-glory,
+    .overlay-dimmed {
+        animation: none;
     }
 }

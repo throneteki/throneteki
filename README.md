@@ -98,4 +98,4 @@ Unit tests are conducted using [Jasmine](https://jasmine.github.io/), and must p
 ```
 npm test
 ```
-If you are implementing any game engine changes, they will not be accepted without appropriate unit tests to cover them. If you wish to understand how to create unit tests, the Jasmine website has suiteable documentation, and existing tests can be used as guides. Additionally, we would also encourage updating the [card implementation guide](https://github.com/throneteki/throneteki/blob/master/docs/implementing-cards.md) if your changes affect any details within that document.
+If you are implementing any game engine changes, they will not be accepted without appropriate unit tests to cover them. If you wish to understand how to create unit tests, the Jasmine website has suitable documentation, and existing tests can be used as guides. Additionally, we would also encourage updating the [card implementation guide](https://github.com/throneteki/throneteki/blob/master/docs/implementing-cards.md) if your changes affect any details within that document.

@@ -8,6 +8,7 @@ import logger from '../log.js';
 import { wrapAsync } from '../util.js';
 import { writeFile } from 'fs/promises';
 import ServiceFactory from '../services/ServiceFactory.js';
+import { sanitizeHud } from '../hudSettings.js';
 import {
     accountTokenLimiter,
     loginIpLimiter,
@@ -282,9 +283,9 @@ function sanitizeSettings(settings) {
         result.background = background;
     }
 
-    let cardSize = pickString(settings.cardSize, /^[a-z-]{1,16}$/);
-    if (cardSize) {
-        result.cardSize = cardSize;
+    let hud = sanitizeHud(settings.hud);
+    if (hud) {
+        result.hud = hud;
     }
 
     return result;

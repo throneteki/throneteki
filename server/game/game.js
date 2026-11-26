@@ -132,6 +132,8 @@ class Game extends EventEmitter {
         this.restrictedListData = options.restrictedListData || [];
         this.remainingPhases = [];
         this.cardVisibility = new CardVisibility(this);
+        // Attachments waiting for their target to be chosen: shown to everyone, and to the client as being played
+        this.pendingAttachments = new Set();
         this.stats = new GameStats(this);
         this.manualActions = new ManualActions(this);
         this.manualMode = new ManualMode(this, options.manualMode ?? details.manualMode ?? 'auto');
@@ -609,11 +611,11 @@ class Game extends EventEmitter {
         plot.selected = true;
     }
 
-    cardClicked(sourcePlayer, cardId) {
+    cardClicked(sourcePlayer, cardId, promptId) {
         let player = this.getPlayerByName(sourcePlayer);
         let card = this.allCards.find((card) => card.uuid === cardId);
 
-        if (!player || !card) {
+        if (!player || !card || player.isStalePrompt(promptId)) {
             return;
         }
 
@@ -768,11 +770,11 @@ class Game extends EventEmitter {
         }
     }
 
-    drop(playerName, cardId, source, target) {
+    drop(playerName, cardId, source, target, parentId, promptId) {
         let player = this.getPlayerByName(playerName);
         let card = this.allCards.find((card) => card.uuid === cardId);
 
-        if (!player || !card) {
+        if (!player || !card || player.isStalePrompt(promptId)) {
             return;
         }
 
@@ -780,12 +782,10 @@ class Game extends EventEmitter {
             return;
         }
 
-        let command = new DropCommand(this, player, card, target);
+        const parentCard = parentId && this.allCards.find((card) => card.uuid === parentId);
+        let command = new DropCommand(this, player, card, target, parentCard);
         if (command.execute()) {
-            this.manualActions.record(player, 'drop', {
-                cards: [card],
-                args: [command.originalLocation, target]
-            });
+            command.record(command.originalLocation, target);
         }
     }
 
@@ -1124,15 +1124,6 @@ class Game extends EventEmitter {
         }
     }
 
-    cardSizeChange(playerName, value) {
-        var player = this.getPlayersAndSpectators()[playerName];
-        if (!player) {
-            return;
-        }
-
-        player.cardSize = value;
-    }
-
     toggleKeywordSetting(playerName, settingName, toggle) {
         var player = this.getPlayerByName(playerName);
         if (!player) {
@@ -1175,6 +1166,7 @@ class Game extends EventEmitter {
         this.startedAt = new Date();
 
         this.round = 0;
+        this.initiativeResult = undefined;
 
         this.continue();
     }
@@ -1193,6 +1185,7 @@ class Game extends EventEmitter {
 
     beginRound() {
         this.finishEndingDuration('untilEndOfRound');
+        this.pendingAttachments.clear();
         // Reset phases to the standard game flow.
         this.remainingPhases = Phases.names();
 
@@ -1818,7 +1811,10 @@ class Game extends EventEmitter {
                 spectators: this.getSpectators().map((spectator) => spectator.getState()),
                 started: this.started,
                 gameOver: this.isGameOver,
-                winner: this.results?.winner?.name,
+                // results.winner is one name, or a list of names when several won
+                winners: this.results ? [].concat(this.results.winner ?? []) : undefined,
+                winReason: this.results?.winReason,
+                initiative: this.initiativeResult,
                 gameFormat: this.gameFormat,
                 gameVariant: this.gameVariant,
                 maxPlayers: this.maxPlayers,

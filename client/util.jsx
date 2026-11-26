@@ -1,6 +1,5 @@
 import { Link } from '@heroui/react';
 import React from 'react';
-import { cardSizes } from './constants';
 
 const urlMatchingRegex = new RegExp(
     /(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?/,
@@ -62,59 +61,6 @@ export function getMessageWithLinks(message) {
 
     return retMessage;
 }
-
-export function getCardDimensions(cardSize) {
-    const classSize = standardiseCardSize(cardSize);
-
-    const dimensions = cardSizes[classSize];
-    return { width: dimensions[0], height: dimensions[1] };
-}
-
-export function standardiseCardSize(cardSize) {
-    // If given cardsize is legacy, convert to new
-    switch (cardSize) {
-        case 'small':
-            return 'sm';
-        case 'normal':
-            return 'md';
-        case 'large':
-            return 'lg';
-        case 'x-large':
-            return 'xl';
-        case '2x-large':
-            return '2xl';
-        case '3x-large':
-            return '3xl';
-        case '4x-large':
-            return '4xl';
-        // case 'auto': {
-        //     window.innerWidth
-        // }
-    }
-    throw Error(`Card Size '${cardSize}' does not exist`);
-}
-
-export const cardClass = (size, orientation = 'vertical') => {
-    const classSize = standardiseCardSize(size);
-
-    const classes = [];
-
-    if (['kneeled', 'horizontal'].includes(orientation)) {
-        classes.push(`card-${orientation}-${classSize}`);
-
-        if (orientation === 'kneeled') {
-            classes.push(`card-horizontal-${classSize}`);
-        }
-    } else {
-        classes.push(`card-${classSize}`);
-    }
-
-    if (orientation === 'rotated') {
-        classes.push(`card-rotated-${classSize}`);
-    }
-
-    return classes.join(' ');
-};
 
 export const downloadBlob = (blob, fileName) => {
     const url = URL.createObjectURL(blob);

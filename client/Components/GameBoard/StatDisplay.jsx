@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button } from '@heroui/react';
+import Button from '../Site/Button';
+import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { Constants } from '../../constants';
@@ -11,11 +12,36 @@ const StatDisplay = ({
     statName,
     statValue,
     onMinusClick,
-    onPlusClick
+    onPlusClick,
+    compact = false,
+    reach,
+    flank = false
 }) => {
+    // flank (adaptive board): a small round - and + either side of the stat, rather than under its edges
+    const flankButton = (label, icon, onPress) => (
+        <Button
+            isIconOnly
+            title={`${label} ${statName}`}
+            variant='tertiary'
+            size='sm'
+            className='h-5 w-5 min-w-5 shrink-0 rounded-full border border-white/25 bg-white/10 text-[10px] text-white data-[hovered=true]:bg-white/25'
+            onPress={onPress}
+        >
+            <FontAwesomeIcon icon={icon} />
+        </Button>
+    );
     return (
-        <div className={`${statName} min-w-12 flex justify-center items-center`}>
-            {showControls && (
+        // Positioned itself, so the icon stays with its stat when the bar around it scrolls
+        <div
+            className={classNames(
+                statName,
+                'relative flex items-center justify-center',
+                compact ? 'min-w-8' : 'min-w-12',
+                { 'px-2': flank && showControls }
+            )}
+        >
+            {showControls && flank && flankButton('Reduce', faMinus, onMinusClick)}
+            {showControls && !flank && (
                 <div className='flex'>
                     <Button
                         isIconOnly
@@ -39,14 +65,28 @@ const StatDisplay = ({
                     </Button>
                 </div>
             )}
-            <div className='absolute pointer-events-none'>
-                <img className='h-8 w-8' src={Constants.StatIconImagePaths[statCode]} alt='' />
+            {/* reach: the icon stands a little proud of its bar towards the board ('up' or 'down'), as the avatar does,
+                its edge at the screen's side staying where it is */}
+            <div
+                className={classNames('pointer-events-none', flank ? 'relative mx-1' : 'absolute', {
+                    'origin-bottom scale-[1.15]': reach === 'up',
+                    'origin-top scale-[1.15]': reach === 'down'
+                })}
+            >
+                <img
+                    className={compact ? 'h-6 w-6' : 'h-8 w-8'}
+                    src={Constants.StatIconImagePaths[statCode]}
+                    alt=''
+                />
                 <div className='absolute inset-0 flex justify-center items-center'>
-                    <p className='stat-value font-medium text-lg text-center select-none [text-shadow:0_1px_2px_black] text-stroke-sm leading-[initial]'>
+                    <p
+                        className={`stat-value font-medium ${compact ? 'text-base' : 'text-lg'} text-center select-none text-stroke-sm leading-[initial] [text-shadow:0_0_2px_#000,0_0_2px_#000,0_1px_3px_#000]`}
+                    >
                         {statValue}
                     </p>
                 </div>
             </div>
+            {showControls && flank && flankButton('Raise', faPlus, onPlusClick)}
         </div>
     );
 };

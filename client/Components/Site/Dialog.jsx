@@ -12,6 +12,7 @@ const Dialog = ({
     isDismissable = true,
     className,
     bodyClassName,
+    closeClassName,
     children
 }) => (
     <Modal>
@@ -22,7 +23,7 @@ const Dialog = ({
                 >
                     {(renderProps) => (
                         <>
-                            <Modal.CloseTrigger />
+                            <Modal.CloseTrigger className={closeClassName} />
                             {title && (
                                 <Modal.Header className='px-[22px] pt-6 sm:px-7'>
                                     <Modal.Heading className='font-display text-xl font-semibold text-ink'>

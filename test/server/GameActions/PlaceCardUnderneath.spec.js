@@ -42,6 +42,30 @@ describe('PlaceCardUnderneath', function () {
             });
         });
 
+        describe('when the card is being placed under itself', function () {
+            beforeEach(function () {
+                this.cardSpy.location = 'play area';
+                this.cardSpy.underneath = [];
+                this.cardSpy.controller = this.controllerSpy;
+                this.props.parentCard = this.cardSpy;
+            });
+
+            it('returns false', function () {
+                expect(PlaceCardUnderneath.allow(this.props)).toBe(false);
+            });
+        });
+
+        describe('when the card is being placed under a card attached to it', function () {
+            beforeEach(function () {
+                this.parentSpy.location = 'play area';
+                this.parentSpy.parent = this.cardSpy;
+            });
+
+            it('returns false', function () {
+                expect(PlaceCardUnderneath.allow(this.props)).toBe(false);
+            });
+        });
+
         describe('when the card is being placed under a card in an invalid location', function () {
             beforeEach(function () {
                 this.parentSpy.location = 'draw deck';

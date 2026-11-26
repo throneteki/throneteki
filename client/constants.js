@@ -1,6 +1,5 @@
 export const ItemTypes = {
-    CARD: 'card',
-    PANEL: 'panel'
+    CARD: 'card'
 };
 
 export const GameFormats = [
@@ -116,23 +115,6 @@ export const BannersForFaction = {
     '01204': 'targaryen',
     '01205': 'tyrell'
 };
-
-export const cardSizes = {
-    sm: [2.4, 3.36], // * 0.6
-    md: [4, 5.6], // * 1
-    lg: [5.6, 7.84], // * 1.4
-    xl: [8, 11.2], // * 2
-    '2xl': [12, 16.8], // * 3
-    '3xl': [16, 22.4], // * 4
-    '4xl': [20, 28] // * 5
-};
-
-export const CardSizeOptions = [
-    { name: 'small', label: 'Small' },
-    { name: 'normal', label: 'Normal' },
-    { name: 'large', label: 'Large' },
-    { name: 'x-large', label: 'Extra-Large' }
-];
 
 export const ActionWindows = [
     { name: 'plot', phase: 'Plot', label: 'Plots revealed', default: false },

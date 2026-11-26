@@ -142,6 +142,8 @@ class SelectCardPrompt extends UiPrompt {
         return {
             selectCard: true,
             selectOrder: this.properties.ordered,
+            selectToggle: this.selectionToggle(),
+            selectFiresOnClick: this.selector.automaticFireOnSelect(),
             menuTitle:
                 this.activePromptTitleFunc(this.context) ||
                 this.selector.defaultActivePromptTitle(),
@@ -149,6 +151,15 @@ class SelectCardPrompt extends UiPrompt {
             controls: this.properties.additionalControls,
             promptTitle: this.properties.source ? this.properties.source.name : undefined
         };
+    }
+
+    selectionToggle() {
+        const restricted =
+            this.onlyMustSelectMayBeChosen ||
+            (this.cannotUnselectMustSelect && this.mustSelect.length > 0);
+        return this.selector.automaticFireOnSelect() || restricted
+            ? undefined
+            : this.selector.selectionToggle();
     }
 
     getButtons() {

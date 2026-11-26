@@ -33,6 +33,7 @@ class GameServer {
         this.games = {};
         this.pendingProblemReports = new WeakMap();
         this.sentStates = new WeakMap();
+        this.handledMessages = new WeakMap();
 
         this.protocol = 'https';
 
@@ -265,6 +266,7 @@ class GameServer {
 
             const board = game.getState(player.name);
             delete board.messages;
+            board.handledMessages = this.handledMessages.get(player.socket) ?? 0;
             const state = snapshotGameState(board);
             const messages = game.gameChat.messages;
             const sent = sentStates.get(player.name);
@@ -555,7 +557,10 @@ class GameServer {
             return;
         }
 
+        this.handledMessages.set(socket, (this.handledMessages.get(socket) ?? 0) + 1);
+
         if (command !== 'leavegame' && !GameCommands.isCommand(command)) {
+            this.sendGameState(game);
             return;
         }
 

@@ -9,7 +9,15 @@ const TraitNameLookup = (props) => {
 
     uniqueTraits.sort();
 
-    return <TypeaheadLookup values={uniqueTraits} onValueSelected={props.onValueSelected} />;
+    return (
+        <TypeaheadLookup
+            values={uniqueTraits}
+            onValueSelected={props.onValueSelected}
+            compact={props.compact}
+            width='8rem'
+            placeholder='Type a trait'
+        />
+    );
 };
 
 export default TraitNameLookup;

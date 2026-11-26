@@ -1,20 +1,48 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import CardImage from './CardImage';
-import { Spinner } from '@heroui/react';
-import { CardHoverContext } from './CardHoverContext';
+import { useGetCardsQuery } from '../../redux/middleware/api';
+import { useCardHover } from './cardHoverStore';
 import classNames from 'classnames';
 import { createPortal } from 'react-dom';
+import { useAdaptiveLayoutMode } from '../../boardLayoutStore';
+import { remSize } from '../../cardScale';
+
+// On the adaptive board a card held on a touch screen is shown as large as half the screen allows, in the half away
+// from the finger, so the finger never covers it
+const fittedPlacement = ({ x, y }, orientation) => {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const rem = remSize();
+    const portrait = height >= width;
+    const box = portrait
+        ? { w: width * 0.92, h: height * 0.46 }
+        : { w: width * 0.46, h: height * 0.9 };
+    const units = orientation === 'horizontal' ? { w: 5.6, h: 4 } : { w: 4, h: 5.6 };
+    const scale = Math.min(box.w / (units.w * rem), box.h / (units.h * rem));
+    const cardWidth = units.w * rem * scale;
+    const left = portrait
+        ? (width - cardWidth) / 2
+        : x > width / 2
+          ? width * 0.02
+          : width / 2 + width * 0.02;
+    const top = portrait
+        ? y > height / 2
+            ? height * 0.02
+            : height / 2 + height * 0.02
+        : height * 0.05;
+    return { scale, left, top, width: cardWidth };
+};
 
 const CardHover = ({ children, size = '3x-large' }) => {
     const wrapperRef = useRef(null);
-    const spinnerRef = useRef(null);
     const mousePosRef = useRef({ x: 0, y: 0 });
 
-    const [type, setType] = useState(null);
-    const [code, setCode] = useState(null);
-    const [notes, setNotes] = useState(null);
+    const { type, code, notes } = useCardHover();
+    const adaptiveMode = useAdaptiveLayoutMode();
+    const fitted = !!adaptiveMode && type === 'touch';
 
     const [isLoading, setIsLoading] = useState(false);
+    const [failed, setFailed] = useState(false);
     const [imageSize, setImageSize] = useState({});
     const [orientation, setOrientation] = useState(null);
 
@@ -29,57 +57,115 @@ const CardHover = ({ children, size = '3x-large' }) => {
         }
     }, []);
 
-    const positionCallback = useCallback((width, height, type, isLoading) => {
+    const positionCallback = useCallback((width, height, type) => {
         if (wrapperRef.current && mousePosRef.current) {
             let { x, y } = mousePosRef.current;
-            if (isLoading) {
-                // Center the loading spinner to pointer
-                x -= (spinnerRef.current?.clientWidth || 0) / 2;
-                y -= (spinnerRef.current?.clientHeight || 0) / 2;
-            } else if (type === 'touch') {
+            if (type === 'touch') {
                 // Place card center & above touch position
                 x -= width / 2;
                 y -= height;
             }
-            if (!isLoading) {
-                if (y < 0) {
-                    y = 0;
-                } else if (y + height >= window.innerHeight) {
-                    y = window.innerHeight - height;
-                }
-                if (x < 0) {
-                    x = 0;
-                } else if (x + width >= window.innerWidth) {
-                    x = window.innerWidth - width;
-                }
+            if (y < 0) {
+                y = 0;
+            } else if (y + height >= window.innerHeight) {
+                y = window.innerHeight - height;
+            }
+            if (x < 0) {
+                x = 0;
+            } else if (x + width >= window.innerWidth) {
+                x = window.innerWidth - width;
             }
             wrapperRef.current.style.top = `${y}px`;
             wrapperRef.current.style.left = `${x}px`;
         }
     }, []);
 
-    // Update loading status when card code changes
+    // The card is kept hidden until its image has loaded or failed, so it never shows at the wrong shape
     useEffect(() => {
         setIsLoading(true);
+        setFailed(false);
     }, [code]);
+
+    // When the image fails, the card is drawn instead, and its shape comes from the card's details
+    const { data: cards } = useGetCardsQuery({}, { skip: !failed });
+    useEffect(() => {
+        if (failed && cards?.[code]) {
+            setOrientation(cards[code].type === 'plot' ? 'horizontal' : 'vertical');
+        }
+    }, [failed, cards, code]);
 
     // Update card position when any relevant values change
     useEffect(() => {
-        positionCallback(imageSize.width, imageSize.height, type, isLoading);
-    }, [positionCallback, imageSize.height, imageSize.width, isLoading, type]);
+        positionCallback(imageSize.width, imageSize.height, type);
+    }, [positionCallback, imageSize.height, imageSize.width, type]);
 
     // Update mouse position when pointer move or enter, then update card position
     const mousePosHandler = (e) => {
         mousePosRef.current = { x: e.clientX, y: e.clientY };
-        positionCallback(imageSize.width, imageSize.height, type, isLoading);
+        positionCallback(imageSize.width, imageSize.height, type);
     };
     const imageClassName = classNames('transition-opacity', {
         'opacity-100': !isLoading,
         'opacity-0': isLoading
     });
 
+    if (fitted && code) {
+        const place = fittedPlacement(mousePosRef.current, orientation);
+        return (
+            <>
+                <div
+                    onPointerMove={mousePosHandler}
+                    onPointerEnter={mousePosHandler}
+                    className='w-full h-full'
+                >
+                    {children}
+                </div>
+                {createPortal(
+                    <div
+                        className='fixed z-[450] pointer-events-none'
+                        style={{ left: place.left, top: place.top, width: place.width }}
+                    >
+                        <div className={imageClassName} style={{ '--card-scale': place.scale }}>
+                            {!isLoading && notes?.length > 0 && (
+                                <div className='mb-1.5 rounded-sm border border-gold-line bg-[#0e0f13]/95 px-3 py-1.5 text-xs'>
+                                    {notes.map((note, index) => (
+                                        <div key={index}>
+                                            <span className='font-semibold text-warning'>
+                                                {note.title}
+                                            </span>{' '}
+                                            <span className='text-ink-dim'>{note.reason}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            <CardImage
+                                code={code}
+                                orientation={orientation}
+                                className='rounded-xl shadow-[0_12px_32px_rgba(0,0,0,0.7)]'
+                                onLoad={(e) => {
+                                    setOrientation(
+                                        e.target.naturalWidth > e.target.naturalHeight
+                                            ? 'horizontal'
+                                            : 'vertical'
+                                    );
+                                    setIsLoading(false);
+                                }}
+                                onError={() => {
+                                    setFailed(true);
+                                    setIsLoading(false);
+                                }}
+                                disableSkeleton={true}
+                            />
+                        </div>
+                    </div>,
+                    document.body
+                )}
+            </>
+        );
+    }
+
     return (
-        <CardHoverContext.Provider value={{ type, setType, code, setCode, setNotes }}>
+        <>
             <div
                 onPointerMove={mousePosHandler}
                 onPointerEnter={mousePosHandler}
@@ -89,15 +175,7 @@ const CardHover = ({ children, size = '3x-large' }) => {
             </div>
             {code &&
                 createPortal(
-                    <div ref={wrapperRef} className='fixed z-10 pointer-events-none'>
-                        {isLoading && (
-                            <Spinner
-                                ref={spinnerRef}
-                                size='lg'
-                                color='current'
-                                className='text-white'
-                            />
-                        )}
+                    <div ref={wrapperRef} className='fixed z-[450] pointer-events-none'>
                         <div ref={imageCallback} className={imageClassName}>
                             {!isLoading && notes?.length > 0 && (
                                 <div className='mb-1.5 w-0 min-w-full overflow-hidden rounded-sm border border-gold-line bg-[#0e0f13]/95 shadow-lg shadow-black/60'>
@@ -131,13 +209,17 @@ const CardHover = ({ children, size = '3x-large' }) => {
                                     );
                                     setIsLoading(false);
                                 }}
+                                onError={() => {
+                                    setFailed(true);
+                                    setIsLoading(false);
+                                }}
                                 disableSkeleton={true}
                             />
                         </div>
                     </div>,
                     document.body
                 )}
-        </CardHoverContext.Provider>
+        </>
     );
 };
 

@@ -8,6 +8,8 @@ import { useSaveProfileMutation, useVerifyAuthenticationQuery } from '../redux/m
 import { avatarUpdated, setAuthTokens, setUser } from '../redux/reducers/auth';
 import { defaultActionWindows } from '../constants';
 import { DefaultBackground } from '../../shared/backgrounds';
+import { normalizeHud } from '../hud';
+import { estimateBoardMeasure, fitSizedHud } from '../Components/GameBoard/boardScales';
 import Page from './Page';
 import { keyboardShortcutsEnabled } from '../Components/GameBoard/keyboardShortcuts';
 import BannerNav from '../Components/Site/BannerNav';
@@ -34,6 +36,14 @@ const sectionComponents = {
     blocklist: BlockListSettings
 };
 
+// A fixed size is shown, and saved, as the fitted sizes that look the same on this screen
+const fittedHud = (settings) => {
+    const hud = normalizeHud(settings);
+    return fitSizedHud(
+        hud,
+        estimateBoardMeasure(hud, { width: window.innerWidth, height: window.innerHeight })
+    );
+};
 const bannerItems = (dirtySections = [], errorSections = []) =>
     ProfileSections.map((section) => ({
         key: section.key,
@@ -117,7 +127,7 @@ const Profile = ({ section }) => {
         hideInterrupts: settings.hideInterrupts ?? true,
         hideReactions: settings.hideReactions ?? true,
         keyboardShortcuts: keyboardShortcutsEnabled(settings),
-        cardSize: settings.cardSize || 'normal',
+        hud: fittedHud(settings),
         background:
             !settings.background || (settings.background === 'custom' && !user.customBackground)
                 ? DefaultBackground
@@ -162,7 +172,7 @@ const Profile = ({ section }) => {
                                         chooseCards: values.chooseCards
                                     },
                                     background: values.background,
-                                    cardSize: values.cardSize
+                                    hud: values.hud
                                 }
                             }
                         }).unwrap();
