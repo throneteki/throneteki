@@ -86,7 +86,7 @@ const NavBar = ({ overBoard = false }) => {
         });
 
     const numGames = games ? (
-        <span className='font-medium text-nowrap text-white'>{`${games.length} Games`}</span>
+        <span className='font-medium text-nowrap text-ink'>{`${games.length} Games`}</span>
     ) : null;
 
     const serverStatus = currentGame?.started ? (
@@ -116,7 +116,7 @@ const NavBar = ({ overBoard = false }) => {
 
     return (
         <>
-            <header className='relative z-20 h-12 border-b border-white/10 bg-black'>
+            <header data-theme='dark' className='relative z-20 h-12 border-b border-edge bg-black'>
                 <div className='flex h-full items-center gap-4 px-4 lg:hidden'>
                     <button
                         type='button'

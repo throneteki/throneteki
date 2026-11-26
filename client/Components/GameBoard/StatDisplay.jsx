@@ -42,6 +42,7 @@ const StatDisplay = ({
             {/* reach: the icon stands a little proud of its bar towards the board ('up' or 'down'), as the avatar does,
                 its edge at the screen's side staying where it is */}
             <div
+                data-theme='dark'
                 className={classNames('pointer-events-none relative mx-1', {
                     'origin-bottom scale-[1.15]': reach === 'up',
                     'origin-top scale-[1.15]': reach === 'down'
@@ -54,7 +55,7 @@ const StatDisplay = ({
                 />
                 <div className='absolute inset-0 flex justify-center items-center'>
                     <p
-                        className={`stat-value font-medium ${compact ? 'text-base' : 'text-lg'} text-center select-none text-stroke-sm leading-[initial] [text-shadow:0_0_2px_#000,0_0_2px_#000,0_1px_3px_#000]`}
+                        className={`stat-value font-medium text-ink ${compact ? 'text-base' : 'text-lg'} text-center select-none text-stroke-sm leading-[initial] [text-shadow:0_0_2px_#000,0_0_2px_#000,0_1px_3px_#000]`}
                     >
                         {statValue}
                     </p>

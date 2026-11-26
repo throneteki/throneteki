@@ -19,7 +19,7 @@ const Dialog = ({
         <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={isDismissable}>
             <Modal.Container size={size} placement={placement} scroll='inside'>
                 <Modal.Dialog
-                    className={classNames('frame relative rounded-none bg-[#0e0f13]', className)}
+                    className={classNames('frame relative rounded-none bg-overlay', className)}
                 >
                     {(renderProps) => (
                         <>

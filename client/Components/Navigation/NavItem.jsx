@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import NavigationLink from '../Site/NavigationLink';
 
 export const navItemClassName =
-    'cursor-pointer font-medium text-gold transition-colors duration-300 hover:text-white';
+    'cursor-pointer font-medium text-gold transition-colors duration-300 hover:text-ink';
 
 const NavItem = ({ className, children, path }) => {
     const { path: currentPath } = useSelector((state) => state.navigation);

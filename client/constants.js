@@ -58,10 +58,10 @@ export const Constants = {
     FactionsImagePaths: {},
     StatIconImagePaths: {},
     ColorClassByRole: {
-        admin: 'text-red-500',
-        contributor: 'text-blue-400',
-        supporter: 'text-green-500',
-        winner: 'text-yellow-200',
+        admin: 'text-role-admin',
+        contributor: 'text-role-contributor',
+        supporter: 'text-role-supporter',
+        winner: 'text-role-winner',
         previouswinner: 'text-pink-500'
     },
     ColorClassByFaction: {

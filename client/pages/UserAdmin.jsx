@@ -60,7 +60,7 @@ const errorMessage = (err, fallback) => err?.data?.message || err?.message || fa
 const Tag = ({ tone = 'quiet', children }) => (
     <span
         className={classNames('rounded-full border px-2.5 py-0.5 text-xs', {
-            'border-white/10 text-ink-dim': tone === 'quiet',
+            'border-edge text-ink-dim': tone === 'quiet',
             'border-success/40 text-success': tone === 'good',
             'border-warning/40 text-warning': tone === 'warning',
             'border-danger/40 text-danger': tone === 'danger'

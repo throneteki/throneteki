@@ -12,12 +12,10 @@
     --font-display: 'Cinzel', Georgia, serif;
     --font-icons: 'thronesdb';
 
-    --color-baratheon: #e3d852;
     --color-greyjoy: #1d7a99;
     --color-lannister: #c00106;
     --color-martell: #e89521;
     --color-neutral: #a99560;
-    --color-stark: #cfcfcf;
     --color-targaryen: #e54141;
     --color-thenightswatch: #7a7a7a;
     --color-tyrell: #509f16;
@@ -51,6 +49,13 @@
     --color-action-fg: var(--action-fg);
     --color-select: var(--select);
     --color-selected: var(--selected);
+    --color-overlay: var(--overlay);
+    --color-baratheon: var(--baratheon);
+    --color-stark: var(--stark);
+    --color-role-admin: var(--role-admin);
+    --color-role-contributor: var(--role-contributor);
+    --color-role-supporter: var(--role-supporter);
+    --color-role-winner: var(--role-winner);
 }
 
 @theme inline {
@@ -114,6 +119,15 @@
         --select: #c9a45c;
         --selected: #ece6d8;
 
+        /* The faction colours that are too pale to read on a light page */
+        --baratheon: #e3d852;
+        --stark: #cfcfcf;
+
+        --role-admin: #ef4444;
+        --role-contributor: #60a5fa;
+        --role-supporter: #22c55e;
+        --role-winner: #fef08a;
+
         --background: #0b0c10;
         --foreground: #ece6d8;
         --muted: #a8a194;
@@ -147,6 +161,76 @@
         --separator: rgba(201, 164, 92, 0.16);
         --focus: #c9a45c;
         --link: #c9a45c;
+        --radius: 0.5rem;
+    }
+
+    /* The light theme: parchment frames and panels, ink text, and a darker gold that reads on them */
+    .light,
+    [data-theme='light'] {
+        --gold: #85601c;
+        --gold-line: rgba(133, 96, 28, 0.42);
+        --gold-hair: rgba(133, 96, 28, 0.2);
+        --ink: #2b251b;
+        --ink-dim: #5a5143;
+        --ink-faint: #74695a;
+        --frame: rgba(244, 239, 228, 0.95);
+        --panel: #f4efe4;
+        --well: rgba(60, 44, 20, 0.05);
+        --quiet: rgba(60, 44, 20, 0.07);
+        --quiet-hover: rgba(60, 44, 20, 0.12);
+        --edge: rgba(60, 44, 20, 0.18);
+        --banner-idle: #e3dbc9;
+        --banner-current: #dcc48f;
+        --banner-deep: #c8a967;
+
+        --action: #85601c;
+        --action-wash: rgba(133, 96, 28, 0.12);
+        --action-fg: #2b251b;
+
+        --select: #85601c;
+        --selected: #2b251b;
+
+        --baratheon: #8f841a;
+        --stark: #6b6b6b;
+
+        --role-admin: #b91c1c;
+        --role-contributor: #1d4ed8;
+        --role-supporter: #15803d;
+        --role-winner: #9a6a00;
+
+        --background: #ebe4d4;
+        --foreground: #2b251b;
+        --muted: #5a5143;
+
+        --surface: #f7f3ea;
+        --overlay: #faf7f0;
+        --default: #e2dacb;
+        --default-foreground: #2b251b;
+
+        --accent: #c9a45c;
+        --accent-foreground: #17130a;
+        --accent-hover: #b8914a;
+
+        --success: #2f7a4a;
+        --success-foreground: #ffffff;
+        --warning: #94650a;
+        --warning-foreground: #ffffff;
+        --danger: #b3382c;
+        --danger-foreground: #ffffff;
+
+        --field-background: #fffdf8;
+        --field-foreground: #2b251b;
+        --field-placeholder: #74695a;
+        --field-border: rgba(60, 44, 20, 0.2);
+        --field-border-width: 1px;
+        --field-border-hover: rgba(60, 44, 20, 0.35);
+        --field-border-focus: rgba(133, 96, 28, 0.6);
+        --field-radius: 4px;
+
+        --border: rgba(60, 44, 20, 0.15);
+        --separator: rgba(133, 96, 28, 0.2);
+        --focus: #85601c;
+        --link: #85601c;
         --radius: 0.5rem;
     }
 
@@ -356,12 +440,13 @@
     }
 
     .frame::after {
-        --corner: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath d='M4 0 8 4 4 8 0 4z' fill='%23c9a45c'/%3E%3C/svg%3E");
+        --corner: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath d='M4 0 8 4 4 8 0 4z'/%3E%3C/svg%3E");
         content: '';
         position: absolute;
         inset: 2px;
         pointer-events: none;
-        background:
+        background: var(--color-gold);
+        mask:
             var(--corner) top left / 9px no-repeat,
             var(--corner) top right / 9px no-repeat,
             var(--corner) bottom left / 9px no-repeat,
@@ -430,7 +515,7 @@
     .banner-nav a:focus-visible {
         outline: none;
         color: var(--color-ink);
-        background: #2e323b;
+        background: color-mix(in srgb, var(--color-banner-idle), var(--color-ink) 10%);
     }
 
     .banner-nav a[aria-current='page'] {
@@ -472,7 +557,7 @@
         flex: none;
         transform: rotate(45deg);
         border: 1px solid var(--color-gold);
-        background: #101216;
+        background: var(--color-panel);
         cursor: pointer;
         position: relative;
         z-index: 1;

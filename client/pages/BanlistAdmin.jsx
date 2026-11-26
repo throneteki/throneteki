@@ -291,7 +291,7 @@ const BanlistAdmin = () => {
                                 className={
                                     view === item.id
                                         ? 'rounded-full border border-gold-line bg-gold/10 px-3 py-0.5 text-sm text-ink'
-                                        : 'rounded-full border border-white/10 px-3 py-0.5 text-sm text-ink-faint hover:text-ink-dim'
+                                        : 'rounded-full border border-edge px-3 py-0.5 text-sm text-ink-faint hover:text-ink-dim'
                                 }
                             >
                                 {item.label}

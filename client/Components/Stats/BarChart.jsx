@@ -31,7 +31,7 @@ const BarChart = ({ title, bars, describe, summary }) => {
                         <span
                             className={`block w-full rounded-t bg-gold transition-opacity ${
                                 active && active !== bar.key ? 'opacity-40' : ''
-                            } group-focus-visible:ring-2 group-focus-visible:ring-white/40`}
+                            } group-focus-visible:ring-2 group-focus-visible:ring-gold`}
                             style={{
                                 height: bar.value > 0 ? `max(2px, ${(100 * bar.value) / max}%)` : 0
                             }}

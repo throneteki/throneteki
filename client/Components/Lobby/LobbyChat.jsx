@@ -173,10 +173,7 @@ const LobbyChat = ({ isLoggedIn, username, messages, isModerator, lobbyError }) 
                         </div>
                     )}
                     <div
-                        className={classNames(
-                            'flex gap-3',
-                            isMine && '-mx-2 bg-white/[0.035] px-2 py-1.5'
-                        )}
+                        className={classNames('flex gap-3', isMine && '-mx-2 bg-well px-2 py-1.5')}
                     >
                         <UserAvatar username={group.user.username} size='sm' />
                         <div className='min-w-0 flex-1'>

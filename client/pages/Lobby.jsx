@@ -94,7 +94,11 @@ const Lobby = () => {
 
     let newsInfo = null;
     if (newsError) {
-        newsInfo = <Notice kind='error'>The news couldn&apos;t be loaded.</Notice>;
+        newsInfo = (
+            <Notice kind='error' isBoxed>
+                The news couldn&apos;t be loaded.
+            </Notice>
+        );
     } else if (newsSuccess) {
         newsInfo = <News news={news} />;
     }

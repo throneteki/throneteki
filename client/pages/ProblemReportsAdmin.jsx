@@ -56,7 +56,7 @@ const ReportListItem = ({ report, isSelected, isChecked, onSelect, onCheck }) =>
         <li
             className={classNames(
                 'flex gap-3 border-b border-gold-hair px-2 py-2.5 transition-colors',
-                isSelected ? 'bg-gold/[0.08]' : 'hover:bg-white/[0.03]'
+                isSelected ? 'bg-gold/[0.08]' : 'hover:bg-quiet'
             )}
         >
             <Checkbox

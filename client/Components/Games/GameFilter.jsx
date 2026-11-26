@@ -14,7 +14,7 @@ const FilterChip = ({ label, isOn, onToggle }) => (
             'rounded-full border px-3 py-0.5 text-sm transition-colors duration-150',
             isOn
                 ? 'border-gold-line bg-gold/10 text-ink'
-                : 'border-white/10 text-ink-faint hover:text-ink-dim'
+                : 'border-edge text-ink-faint hover:text-ink-dim'
         )}
     >
         {label}

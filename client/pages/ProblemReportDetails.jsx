@@ -50,9 +50,7 @@ const Section = ({ title, aside, tone, children }) => (
     <section
         className={classNames(
             'border px-4 py-3',
-            tone === 'warning'
-                ? 'border-warning/40 bg-warning/[0.06]'
-                : 'border-gold-hair bg-black/20'
+            tone === 'warning' ? 'border-warning/40 bg-warning/[0.06]' : 'border-gold-hair bg-well'
         )}
     >
         {title && (
@@ -115,7 +113,7 @@ const PromptCallout = ({ prompt, cardFor }) => {
                         <span
                             key={index}
                             className={classNames(
-                                'border border-gold-hair bg-white/[0.04] px-2 py-0.5 text-xs text-ink-dim',
+                                'border border-gold-hair bg-well px-2 py-0.5 text-xs text-ink-dim',
                                 button.disabled && 'line-through opacity-50'
                             )}
                         >
@@ -226,7 +224,7 @@ const GameLog = ({ messages }) => {
                     className={
                         chatOnly
                             ? 'rounded-full border border-gold-line bg-gold/10 px-3 py-0.5 text-sm text-ink'
-                            : 'rounded-full border border-white/10 px-3 py-0.5 text-sm text-ink-faint hover:text-ink-dim'
+                            : 'rounded-full border border-edge px-3 py-0.5 text-sm text-ink-faint hover:text-ink-dim'
                     }
                 >
                     Chat only

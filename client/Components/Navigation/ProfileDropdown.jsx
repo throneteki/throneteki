@@ -19,7 +19,7 @@ const ProfileDropdown = ({ user, menu }) => {
                     username={user.username}
                     version={avatarVersion}
                     size='sm'
-                    className='ring-2 ring-white/20 transition-transform'
+                    className='ring-2 ring-edge transition-transform'
                 />
             }
         />

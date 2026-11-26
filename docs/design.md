@@ -34,10 +34,16 @@ These make the site look like a generic template. Don't use them:
 ## Tokens
 
 The tokens are set in [client/index.css](../client/index.css). Each one names a role, not a colour:
-`@theme inline` maps the class names (`text-gold`, `bg-panel`) to variables, and the theme block
-(`.dark` for now) sets their values, along with HeroUI 3's (`--accent`, `--field-*`, `--focus`,
-`--link`). A light theme is a second block with the same names, so components never change with
-the theme.
+`@theme inline` maps the class names (`text-gold`, `bg-panel`) to variables, and the theme blocks
+(`.dark` and `.light`) set their values, along with HeroUI 3's (`--accent`, `--field-*`, `--focus`,
+`--link`). Both blocks have the same names, so components never change with the theme. Players pick
+the theme under Profile, Appearance (dark, light or their device's); it is kept on the device.
+
+The light theme is parchment: frames and panels are cream, text is a dark ink and gold darkens to
+`#85601c` so it reads on them. The throne room art stays behind the page in both themes, so
+anything placed straight on the art (rather than in a frame or a boxed notice) only works in the
+dark theme. The navbar and the game board's surface are always dark: they carry
+`data-theme='dark'` and `data-board-surface`.
 
 Use the token names in class lists. Don't use raw hex values, `white` or `black` tints, or
 Tailwind's default palette in components: they only suit one theme. Shadows can stay black, as
@@ -82,7 +88,7 @@ beside an outlined game action, a breathing gold ring round a card you can choos
 `accent`, `action` and `select` are gold in the dark theme, but are their own tokens so a theme
 can set them apart: gold text on white is too faint to read, for one.
 
-The values above are the dark theme's. The game board's surface keeps them in every theme: see
+The values above are the dark theme's; the light theme's are in `index.css`. The game board's surface keeps them in every theme: see
 [Exceptions](#exceptions).
 
 Faction colours (`baratheon` to `tyrell`) and challenge colours (`military`, `intrigue`, `power`)

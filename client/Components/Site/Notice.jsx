@@ -30,7 +30,7 @@ const Notice = ({ kind = 'info', title, isBoxed, className, children }) => {
             <span
                 aria-hidden
                 className={classNames(
-                    'grid h-[34px] w-[34px] flex-none place-items-center rounded-full border border-gold-line text-[0.95rem] shadow-[inset_0_0_0_3px_#101216,inset_0_0_0_4px_rgba(201,164,92,0.16)]',
+                    'grid h-[34px] w-[34px] flex-none place-items-center rounded-full border border-gold-line text-[0.95rem] shadow-[inset_0_0_0_3px_var(--color-panel),inset_0_0_0_4px_var(--color-gold-hair)]',
                     iconClassName
                 )}
             >

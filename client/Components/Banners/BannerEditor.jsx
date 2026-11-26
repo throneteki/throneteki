@@ -206,7 +206,7 @@ const BannerEditor = ({ banner, onDone }) => {
             description={`Images are cropped from the centre to ${BannerWidth} by ${BannerHeight} pixels. Days run midnight to midnight UTC.`}
         >
             <form
-                className='flex flex-col gap-5 border border-gold-line bg-black/20 px-4 py-4 sm:px-5'
+                className='flex flex-col gap-5 border border-gold-line bg-well px-4 py-4 sm:px-5'
                 onSubmit={(event) => {
                     event.preventDefault();
                     if (!validationError && !isBusy) {

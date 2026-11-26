@@ -127,7 +127,7 @@ const CardHover = ({ children, size = '3x-large' }) => {
                     >
                         <div className={imageClassName} style={{ '--card-scale': place.scale }}>
                             {!isLoading && notes?.length > 0 && (
-                                <div className='mb-1.5 rounded-sm border border-gold-line bg-[#0e0f13]/95 px-3 py-1.5 text-xs'>
+                                <div className='mb-1.5 rounded-sm border border-gold-line bg-overlay/95 px-3 py-1.5 text-xs'>
                                     {notes.map((note, index) => (
                                         <div key={index}>
                                             <span className='font-semibold text-warning'>
@@ -178,7 +178,7 @@ const CardHover = ({ children, size = '3x-large' }) => {
                     <div ref={wrapperRef} className='fixed z-[450] pointer-events-none'>
                         <div ref={imageCallback} className={imageClassName}>
                             {!isLoading && notes?.length > 0 && (
-                                <div className='mb-1.5 w-0 min-w-full overflow-hidden rounded-sm border border-gold-line bg-[#0e0f13]/95 shadow-lg shadow-black/60'>
+                                <div className='mb-1.5 w-0 min-w-full overflow-hidden rounded-sm border border-gold-line bg-overlay/95 shadow-lg shadow-black/60'>
                                     {notes.map((note, index) => (
                                         <div
                                             key={index}

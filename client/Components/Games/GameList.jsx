@@ -85,9 +85,7 @@ const OpenGame = ({ game, canJoin, canWatch, isAdmin, onJoin, onWatch, onRemove 
         <article
             className={classNames(
                 'flex flex-col gap-2 border px-4 py-3.5',
-                isStarting
-                    ? 'border-gold-hair bg-white/[0.02]'
-                    : 'border-gold-line bg-accent/[0.08]'
+                isStarting ? 'border-gold-hair bg-well' : 'border-gold-line bg-accent/[0.08]'
             )}
         >
             <div className='flex items-start justify-between gap-3'>

@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Button, Spinner } from '@heroui/react';
+import { useTheme } from 'next-themes';
 import RadioField, { RadioOption, tileClassName } from '../Site/RadioField';
 import { toast } from 'react-toastify';
 import Group from '../Site/Group';
@@ -17,7 +18,7 @@ import { AcceptedImageFiles } from '../../imageEncoding';
 import { BuiltInBackgrounds } from '../../backgrounds';
 import { DefaultBackground, MaxBackgroundBytes } from '../../../shared/backgrounds';
 
-const previewClassName = 'mb-1 aspect-video w-full rounded-sm border border-white/10 object-cover';
+const previewClassName = 'mb-1 aspect-video w-full rounded-sm border border-edge object-cover';
 
 const uploadErrorMessage = (err) => {
     if (err.status === 413) {
@@ -40,6 +41,7 @@ const AppearanceSettings = ({ user, formProps }) => {
     const [removeBackground, { isLoading: isRemoving }] = useRemoveBackgroundMutation();
     const isUploadBusy = isPreparing || isUploading;
     const isBusy = isUploadBusy || isRemoving;
+    const { theme, setTheme } = useTheme();
 
     const chooseFile = () => fileInput.current?.click();
 
@@ -107,6 +109,22 @@ const AppearanceSettings = ({ user, formProps }) => {
 
     return (
         <>
+            <Group
+                title='Theme'
+                description='Changes straight away, on this device. The game board stays dark.'
+            >
+                <RadioField
+                    aria-label='Theme'
+                    orientation='horizontal'
+                    value={theme}
+                    onChange={setTheme}
+                    options={[
+                        { value: 'dark', label: 'Dark' },
+                        { value: 'light', label: 'Light' },
+                        { value: 'system', label: 'Match my device' }
+                    ]}
+                />
+            </Group>
             <HudSettings value={values.hud} onChange={(hud) => setFieldValue('hud', hud)} />
             <Group
                 title='Game board background'
