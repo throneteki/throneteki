@@ -41,7 +41,7 @@ const fittedHud = (settings) => {
     const hud = normalizeHud(settings);
     return fitSizedHud(
         hud,
-        estimateBoardMeasure(hud, { width: window.innerWidth, height: window.innerHeight })
+        estimateBoardMeasure({ width: window.innerWidth, height: window.innerHeight })
     );
 };
 const bannerItems = (dirtySections = [], errorSections = []) =>

@@ -20,7 +20,6 @@ import { useMotionEnabled } from '../../motion';
 import { useStagedArrivals } from './useStagedArrivals';
 import { useHiddenDragUuid, useIncomingSlot } from './dragStore';
 import { boardRescaleEvent } from './useHudScale';
-import { useAdaptiveBoard } from './adaptiveContext';
 import { clickActsAtOnce, clickDoesSomething } from './cardClicks';
 import { ManualModeContext } from './ManualModeContext';
 
@@ -127,9 +126,8 @@ const SquishableCardPanel = ({
         return () => clearTimeout(timer);
     }, [loweringUuid]);
 
-    // On the adaptive board a raised card tapped again stays up, pressed in, until the game answers, so it is not seen
+    // A raised card tapped again stays up, pressed in, until the game answers, so it is not seen
     // to drop back as though nothing happened. A click the board knows does nothing is not pressed, so it drops at once.
-    const adaptive = useAdaptiveBoard();
     const manualMode = useContext(ManualModeContext);
     const [awaiting, setAwaiting] = useState(null);
     // The card shows as pressed (predictions.js) until the game server has handled its click
@@ -163,14 +161,14 @@ const SquishableCardPanel = ({
                 raise(card.uuid);
                 return;
             }
-            if (adaptive && raised) {
+            if (raised) {
                 setAwaiting(card.uuid);
             } else {
                 raise(null);
             }
             onCardClick?.(card);
         },
-        [adaptive, manualMode, selectFiresOnClick, raisedUuid, raise, onCardClick]
+        [manualMode, selectFiresOnClick, raisedUuid, raise, onCardClick]
     );
 
     useEffect(() => {

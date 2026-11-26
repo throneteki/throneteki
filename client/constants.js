@@ -13,15 +13,13 @@ export const GameFormats = [
         name: 'melee',
         label: 'Melee',
         defaultMaxPlayers: 4,
-        variants: [{ name: 'standard', label: 'Standard' }],
-        experimental: true
+        variants: [{ name: 'standard', label: 'Standard' }]
     },
     {
         name: 'draft',
         label: 'Draft',
         defaultMaxPlayers: 2,
-        variants: [{ name: 'towerofjoy', label: 'Tower of Joy' }],
-        experimental: true
+        variants: [{ name: 'towerofjoy', label: 'Tower of Joy' }]
     }
 ];
 

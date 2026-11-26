@@ -1,6 +1,3 @@
-import { useLayoutEffect } from 'react';
-import { computeAutoCardScale, remSize, settleAutoCardScale } from '../../cardScale';
-import { classicScales } from './boardScales';
 import { holdFlip } from '../../flip';
 
 const rescaleHold = 400;
@@ -37,54 +34,3 @@ export const removeScaleProperties = (names) => {
 
 export const interfaceScaleProperties = (scale) =>
     Object.fromEntries(properties.interface.map((property) => [property, scale]));
-
-export const useHudScale = (hud, containerRef, ready = true) => {
-    const { cards, interface: interfaceSize, auto } = hud;
-
-    useLayoutEffect(() => {
-        if (!ready) {
-            return;
-        }
-
-        const container = containerRef.current;
-        const setting = { cards, interface: interfaceSize, auto };
-        let cardFit = null;
-        let frame = 0;
-
-        const update = () => {
-            const rem = remSize();
-            const size = container
-                ? { width: container.clientWidth, height: container.clientHeight }
-                : null;
-            if (auto && size) {
-                cardFit = settleAutoCardScale(cardFit, computeAutoCardScale({ ...size, rem }));
-            }
-            const measure = {
-                container: size,
-                viewport: { width: window.innerWidth, height: window.innerHeight },
-                rem
-            };
-            const scales = classicScales(setting, { ...measure, cardFit: cardFit ?? 1 });
-            applyScaleProperties({
-                '--card-scale': scales.cards,
-                ...interfaceScaleProperties(scales.interface)
-            });
-        };
-
-        update();
-        const schedule = () => {
-            cancelAnimationFrame(frame);
-            frame = requestAnimationFrame(update);
-        };
-        const observer = auto && container ? new ResizeObserver(schedule) : null;
-        observer?.observe(container);
-        window.addEventListener('resize', schedule);
-
-        return () => {
-            cancelAnimationFrame(frame);
-            observer?.disconnect();
-            window.removeEventListener('resize', schedule);
-            removeScaleProperties(Object.values(properties).flat());
-        };
-    }, [cards, interfaceSize, auto, containerRef, ready]);
-};

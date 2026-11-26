@@ -11,7 +11,6 @@ import PlayerBoard from '../PlayerBoard';
 import SquishableCardPanel from '../SquishableCardPanel';
 import { AreaLabelContext } from '../LabelledGameArea';
 import { PopupHostContext } from '../PopupContainer';
-import { AdaptiveBoardContext } from '../adaptiveContext';
 import { pileRise } from '../PileDepth';
 import { findPendingAttachment, withoutPendingAttachment } from '../pendingAttachment';
 import { findLeftBehind } from '../leftBehind';
@@ -99,8 +98,8 @@ const fullscreenRoom = 28;
 const columnWidth = 'clamp(13rem, 30vw, 20rem)';
 
 // Room at the start of a play area for the prompt lying over the board's left side. With the prompt in it (desktop),
-// the room sticks to the left of the view and the prompt sits at its foot, where classic's prompt is, rising over the
-// opponent's room when it is taller, so it never makes the play area taller
+// the room sticks to the left of the view and the prompt sits at its foot, rising over the opponent's room when it is
+// taller, so it never makes the play area taller
 const Room = ({ width, children }) =>
     children ? (
         <div className='sticky left-0 z-[250] shrink-0' style={{ width }}>
@@ -674,7 +673,7 @@ const AdaptiveGameBoardLayout = ({
             className='pointer-events-none sticky left-0 h-0 shrink-0'
         />
     ) : null;
-    // Desktop: the prompt is where classic's is, at the foot of the bottom row's play area on its side (Room)
+    // Desktop: the prompt is at the foot of the bottom row's play area on its side (Room)
     const floatingPanel = floatingPrompt && (
         <div
             data-region='prompt-float'
@@ -859,9 +858,9 @@ const AdaptiveGameBoardLayout = ({
         : null;
 
     return (
-        <AdaptiveBoardContext.Provider value={true}>
-            {/* A desktop opens each pile in a panel of its own, as classic does; phones in a sheet */}
-            <PopupHostContext.Provider value={phoneLayout ? 'sheet' : 'board-panel'}>
+        <>
+            {/* A desktop opens each pile in a panel of its own; phones in a sheet */}
+            <PopupHostContext.Provider value={phoneLayout ? 'sheet' : 'panel'}>
                 <AreaLabelContext.Provider value={phoneLayout ? 'inspect' : 'full'}>
                     <div
                         data-layout={mode}
@@ -1006,7 +1005,7 @@ const AdaptiveGameBoardLayout = ({
                     <ConnectionLost />
                 </AreaLabelContext.Provider>
             </PopupHostContext.Provider>
-        </AdaptiveBoardContext.Provider>
+        </>
     );
 };
 

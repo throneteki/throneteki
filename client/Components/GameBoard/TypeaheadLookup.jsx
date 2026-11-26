@@ -1,13 +1,11 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Button } from '@heroui/react';
 import ComboField from '../Site/ComboField';
-import { useAdaptiveBoard } from './adaptiveContext';
 import { chipClass } from './Adaptive/chipClass';
 
 // compact: on one line, the size of the prompt's other options, for a prompt bar with no room to spare, its input as
-// wide as width (CSS). placeholder: what to choose, on the adaptive board.
+// wide as width (CSS). placeholder: what to choose.
 const TypeaheadLookup = ({ onValueSelected, values, compact = false, width, placeholder }) => {
-    const adaptive = useAdaptiveBoard();
     const [selectedValue, setSelectedValue] = useState('');
 
     const handleChange = useCallback((value) => {
@@ -57,25 +55,19 @@ const TypeaheadLookup = ({ onValueSelected, values, compact = false, width, plac
             <ComboField
                 className='mt-2 px-2'
                 aria-label={placeholder || 'Choose a value'}
-                placeholder={adaptive ? placeholder : undefined}
+                placeholder={placeholder}
                 items={labelsAndValues}
                 selectedKey={selectedValue || null}
                 onSelectionChange={handleChange}
             />
             <div className='mt-2 mx-2 flex flex-col mb-2'>
-                {adaptive ? (
-                    <Button
-                        variant='outline'
-                        className={`${chipClass(false)} h-9 w-full`}
-                        onPress={handleDoneClick}
-                    >
-                        Done
-                    </Button>
-                ) : (
-                    <Button onPress={handleDoneClick} variant='primary'>
-                        Done
-                    </Button>
-                )}
+                <Button
+                    variant='outline'
+                    className={`${chipClass(false)} h-9 w-full`}
+                    onPress={handleDoneClick}
+                >
+                    Done
+                </Button>
             </div>
         </div>
     );

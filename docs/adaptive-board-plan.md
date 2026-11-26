@@ -2,8 +2,9 @@
 
 A game board built desktop first, with phones as a strong consideration: about 98% of players are on desktop,
 so the board is designed for desktop and built with phones in mind, rather than fitted to phones and scaled up.
-It sits beside the current ("classic") board, and a player chooses between them in their profile. Classic is not
-going away; whether the adaptive board becomes the default later is undecided.
+It was built beside the earlier ("classic") board, which a player could choose in their profile. The classic board
+has since been removed (2026-11-26), with its layout setting, so the adaptive board is the only one. The log below
+keeps its references to classic as the history of the decisions.
 
 **Desktop keeps classic's mechanics** unless there is an extremely good, stated reason a change is better (decided
 2026-11-22). Ideas that suit phones (combined pile sheets, the docked prompt, extra controls) stay on phone

@@ -45,7 +45,6 @@ const devRoutes = DevBoard
                   <React.Suspense key='devboard' fallback={<LoadingSpinner />}>
                       <DevBoard
                           fixture={context.params.fixture}
-                          board={context.params.board}
                           panel={context.params.panel}
                           manual={context.params.manual}
                           spectate={context.params.spectate}

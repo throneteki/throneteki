@@ -1,7 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
 import Counter from './Counter';
-import { useAdaptiveBoard } from './adaptiveContext';
 
 // Tokens, power and dupes are placed one at a time, so several placed at once count up
 const countsUp = (counter) => !counter.icon && counter.name !== 'strength';
@@ -17,23 +16,16 @@ const keysFor = (counters) => {
     });
 };
 
-// On the adaptive board counters are sized to the card, not the screen: one small badge for each kind, its letter and
+// Counters are sized to the card, not the screen: one small badge for each kind, its letter and
 // count ("J5" for five journey tokens), padded so the text stays inside
-const looks = {
-    classic: {
-        container: 'gap-0.5 p-0.5',
-        style: { '--counter-size': 'calc(var(--ui-scale, 1) * 1.5rem)' }
-    },
-    adaptive: {
-        container: 'gap-px px-0.5',
-        style: { '--counter-size': 'max(0.85rem, calc(var(--card-scale, 1) * 1rem))' },
-        counter:
-            '!w-auto min-w-[var(--counter-size)] px-[0.25em] !text-[calc(var(--counter-size)*0.6)] font-bold leading-none border border-black/50 shadow-[0_1px_2px_rgba(0,0,0,0.7)]'
-    }
+const look = {
+    container: 'gap-px px-0.5',
+    style: { '--counter-size': 'max(0.85rem, calc(var(--card-scale, 1) * 1rem))' },
+    counter:
+        '!w-auto min-w-[var(--counter-size)] px-[0.25em] !text-[calc(var(--counter-size)*0.6)] font-bold leading-none border border-black/50 shadow-[0_1px_2px_rgba(0,0,0,0.7)]'
 };
 
 const CardCounters = ({ cardUuid, counters }) => {
-    const look = looks[useAdaptiveBoard() ? 'adaptive' : 'classic'];
     if (counters.length === 0) {
         return null;
     }

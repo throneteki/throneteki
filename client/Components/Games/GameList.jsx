@@ -148,7 +148,7 @@ const GameInProgress = ({ game, cards, canWatch, isAdmin, onWatch, onRemove }) =
             .join(', ');
 
     return (
-        <li className='grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 border-b border-gold-hair px-1 py-2.5 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_4.5rem_7.5rem] sm:gap-x-4'>
+        <li className='grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 border-b border-gold-hair px-1 py-2.5 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_4.5rem_minmax(7.5rem,max-content)] sm:gap-x-4'>
             <div className='flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5'>
                 {players.map((player, index) => (
                     <React.Fragment key={player.name}>

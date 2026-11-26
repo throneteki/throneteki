@@ -3,7 +3,6 @@ import React, { useCallback } from 'react';
 import CardPile from './CardPile';
 import Droppable from './Droppable';
 import classNames from 'classnames';
-import { useAdaptiveBoard } from './adaptiveContext';
 import { AreaBackground } from './LabelledGameArea';
 import { cardWidth } from '../../cardScale';
 
@@ -26,7 +25,6 @@ const PlayerPlots = ({
     popupId,
     popupLocation = isMe ? 'bottom' : 'top'
 }) => {
-    const adaptive = useAdaptiveBoard();
     const renderPlotPiles = useCallback(() => {
         const showSelectedPlot = mustShowPlotSelection && !!selectedPlot;
         const plotsInFront = showSelectedPlot || !activePlot;
@@ -131,7 +129,7 @@ const PlayerPlots = ({
             className='relative flex flex-col self-start'
             style={{ height: plotAreaHeight }}
         >
-            <AreaBackground name='Plots' className={adaptive ? undefined : 'inner-border'} />
+            <AreaBackground name='Plots' />
             {renderPlotPiles()}
         </div>
     );

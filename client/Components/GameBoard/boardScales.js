@@ -1,5 +1,5 @@
-import { computeAutoCardScale, remSize } from '../../cardScale';
-import { computeHudScales, computeScreenScale, resolveHudSize } from '../../hud';
+import { remSize } from '../../cardScale';
+import { computeHudScales, resolveHudSize } from '../../hud';
 import { hidesNavbar } from '../../boardLayoutStore';
 import {
     adaptiveInterfaceScale,
@@ -8,16 +8,8 @@ import {
     computeAdaptiveScales
 } from './Adaptive/adaptiveScale';
 
-// The scales a board draws at, from its settings and measure. Boards and the settings' previews all size through
-// here, so a preview matches its board. cardFit: the classic board's settled fit.
-export const classicScales = (hud, { container, viewport, rem = 16, cardFit }) =>
-    computeHudScales({
-        hud,
-        cardFit: hud.auto ? (cardFit ?? computeAutoCardScale({ ...container, rem })) : 1,
-        screen: computeScreenScale(viewport)
-    });
-
-// Cards are fitted as though the interface were normal, so the two sizes are independent (a larger interface
+// The scales the board draws at, from its settings and measure. The board and the settings' previews both size
+// through here, so a preview matches the board. Cards are fitted as though the interface were normal, so the two sizes are independent (a larger interface
 // scrolls). fits: whether the rows fit without scrolling. overflow: which size is to blame (the cards if they would
 // not fit beside a normal interface, else the interface).
 export const adaptiveScales = (hud, { container, viewport, rem = 16, mode, content }) => {
@@ -49,9 +41,6 @@ export const adaptiveScales = (hud, { container, viewport, rem = 16, mode, conte
     };
 };
 
-export const boardScales = (hud, measure) =>
-    hud.board === 'adaptive' ? adaptiveScales(hud, measure) : classicScales(hud, measure);
-
 // The settings' sliders' ranges
 export const sliderRanges = { cards: { min: 0.5, max: 3 }, interface: { min: 0.6, max: 2 } };
 
@@ -61,8 +50,8 @@ export const fitSizedHud = (hud, measure) => {
     if (hud.auto !== false) {
         return hud;
     }
-    const fixed = boardScales(hud, measure);
-    const fit = boardScales({ ...hud, auto: true, cards: '1', interface: '1' }, measure);
+    const fixed = adaptiveScales(hud, measure);
+    const fit = adaptiveScales({ ...hud, auto: true, cards: '1', interface: '1' }, measure);
     const sizeOf = (kind) => {
         const { min, max } = sliderRanges[kind];
         const size = Math.min(max, Math.max(min, fixed[kind] / fit[kind]));
@@ -73,11 +62,11 @@ export const fitSizedHud = (hud, measure) => {
 
 const navbarHeight = 48;
 
-// Away from a game, the board's room is estimated from the window: the whole of it where the adaptive board hides
+// Away from a game, the board's room is estimated from the window: the whole of it where the board hides
 // the navbar (a phone), below the navbar elsewhere, with nothing yet in play
-export const estimateBoardMeasure = (hud, viewport) => {
+export const estimateBoardMeasure = (viewport) => {
     const rem = remSize();
-    const fullScreen = hud.board === 'adaptive' && hidesNavbar(classifyLayout(viewport));
+    const fullScreen = hidesNavbar(classifyLayout(viewport));
     const container = fullScreen
         ? viewport
         : { width: viewport.width, height: viewport.height - navbarHeight };

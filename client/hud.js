@@ -1,4 +1,4 @@
-import { boardLayouts, hudToggles } from '../shared/hudSettings';
+import { hudToggles } from '../shared/hudSettings';
 
 const sizeKinds = {
     cards: { presets: { small: 0.7, normal: 1, large: 1.4 }, min: 0.5, max: 5 },
@@ -19,8 +19,7 @@ export const defaultHud = {
     cards: 'normal',
     interface: 'normal',
     auto: true,
-    animations: true,
-    board: 'classic'
+    animations: true
 };
 
 const legacyCardSizes = {
@@ -88,9 +87,6 @@ export const normalizeHud = (settings) => {
             if (typeof hud[key] === 'boolean') {
                 result[key] = hud[key];
             }
-        }
-        if (boardLayouts.includes(hud.board)) {
-            result.board = hud.board;
         }
         return result;
     }

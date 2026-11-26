@@ -3,21 +3,18 @@ import { useSelector } from 'react-redux';
 import classNames from 'classnames';
 import { Button, Slider } from '@heroui/react';
 import CardImage from '../Images/CardImage';
-import PlayerStats from '../GameBoard/Classic/PlayerStats';
 import PlayerStatsBar from '../GameBoard/Adaptive/PlayerStatsBar';
 import PhaseRoll from '../GameBoard/Adaptive/PhaseRoll';
 import { chipClass } from '../GameBoard/Adaptive/chipClass';
 import Group from '../Site/Group';
 import SettingSwitch from '../Site/SettingSwitch';
-import RadioField, { RadioOption, tileClassName } from '../Site/RadioField';
-import Tag from '../Site/Tag';
 import { useBrowserReducedMotion } from '../../motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { overlaySettingsOf, resolveHudSize } from '../../hud';
 import SettingReveal from './SettingReveal';
 import { interfaceScaleProperties } from '../GameBoard/useHudScale';
-import { boardScales, estimateBoardMeasure, sliderRanges } from '../GameBoard/boardScales';
+import { adaptiveScales, estimateBoardMeasure, sliderRanges } from '../GameBoard/boardScales';
 
 const previewCards = ['01144', '01089', '01160', 'cardback'];
 
@@ -38,17 +35,7 @@ const useScreen = () => {
 
 // The scales the board would draw at, worked out as the board works them out, against the room a board would have
 // in this window with nothing in play
-const previewScales = (hud, screen) => boardScales(hud, estimateBoardMeasure(hud, screen));
-
-const Choice = ({ label, description, children }) => (
-    <div className='flex flex-col gap-2 py-3'>
-        <div className='flex flex-col'>
-            <span className='text-base text-ink'>{label}</span>
-            {description && <span className='text-sm text-ink-faint'>{description}</span>}
-        </div>
-        {children}
-    </div>
-);
+const previewScales = (hud, screen) => adaptiveScales(hud, estimateBoardMeasure(screen));
 
 const PreviewBox = ({ kind, style, children }) => (
     <div
@@ -71,26 +58,7 @@ const CardPreview = () => (
     </div>
 );
 
-const ClassicPrompt = () => (
-    <div className='hud-zoom w-56 border border-gold-line bg-panel/95 text-center'>
-        <div className='border-b border-gold-hair px-2 py-1 font-display text-sm font-semibold text-gold'>
-            Marshaling phase
-        </div>
-        <div className='px-2 pb-2'>
-            <p className='my-1 text-sm text-ink'>Marshal your cards</p>
-            <span
-                className={classNames(
-                    chipClass(false),
-                    'flex h-8 items-center justify-center text-sm'
-                )}
-            >
-                Done
-            </span>
-        </div>
-    </div>
-);
-
-const AdaptivePrompt = () => (
+const PromptPreview = () => (
     <div className='hud-zoom w-80 border-y border-gold-line bg-panel/90'>
         <div className='px-2 pt-1'>
             <PhaseRoll phase='marshal' className='w-full' />
@@ -108,24 +76,15 @@ const AdaptivePrompt = () => (
     </div>
 );
 
-// Our player bar and a prompt, as the chosen board draws them
-const InterfacePreview = ({ board }) => {
+// Our player bar and a prompt, as the board draws them
+const InterfacePreview = () => {
     const username = useSelector((state) => state.auth.user?.username);
     const player = { user: { username }, stats: previewStats };
 
     return (
         <div className='flex w-max flex-col gap-2'>
-            {board === 'adaptive' ? (
-                <>
-                    <PlayerStatsBar player={player} className='!z-0' />
-                    <AdaptivePrompt />
-                </>
-            ) : (
-                <>
-                    <PlayerStats user={player.user} stats={previewStats} />
-                    <ClassicPrompt />
-                </>
-            )}
+            <PlayerStatsBar player={player} className='!z-0' />
+            <PromptPreview />
         </div>
     );
 };
@@ -198,27 +157,6 @@ const WontFit = ({ show }) => (
     </SettingReveal>
 );
 
-const experimentalChip = (
-    <Tag tone='warning' className='shrink-0'>
-        Experimental
-    </Tag>
-);
-
-// Tagged at the right end of a tile's title line
-const Experimental = ({ children }) => (
-    <span className='flex w-full items-start justify-between gap-2'>
-        <span className='min-w-0'>{children}</span>
-        {experimentalChip}
-    </span>
-);
-
-const TileText = ({ description, children }) => (
-    <span className='flex min-w-0 flex-1 flex-col'>
-        {children}
-        <span className='text-xs text-ink-faint'>{description}</span>
-    </span>
-);
-
 // The board's own settings, in the profile
 const HudSettings = ({ value, onChange }) => {
     const update = (changes) => onChange && onChange({ ...value, ...changes });
@@ -229,39 +167,9 @@ const HudSettings = ({ value, onChange }) => {
 
     return (
         <>
-            <Group title='Game board'>
-                <Choice label='Layout'>
-                    <RadioField
-                        aria-label='Board layout'
-                        value={value.board}
-                        onChange={(board) => update({ board })}
-                        optionsClassName='grid gap-2 sm:grid-cols-2'
-                    >
-                        <RadioOption
-                            value='classic'
-                            className={tileClassName}
-                            contentClassName='items-start'
-                        >
-                            <TileText description="Designed for desktop and laptop screens. It works on a phone, but isn't laid out for one.">
-                                Classic
-                            </TileText>
-                        </RadioOption>
-                        <RadioOption
-                            value='adaptive'
-                            className={tileClassName}
-                            contentClassName='items-start'
-                        >
-                            <TileText description='Rearranges itself to suit any screen: a phone or tablet in portrait or landscape, or a desktop.'>
-                                <Experimental>Adaptive</Experimental>
-                            </TileText>
-                        </RadioOption>
-                    </RadioField>
-                </Choice>
-            </Group>
             <Group
                 title='Board effects'
                 description='Touches that make the game feel more alive. They change only how it looks: turning them off takes nothing away from how you play.'
-                badge={experimentalChip}
             >
                 <SettingSwitch
                     label='Animate the game board'
@@ -273,14 +181,12 @@ const HudSettings = ({ value, onChange }) => {
                     isSelected={value.animations !== false}
                     onValueChange={(animations) => update({ animations })}
                 />
-                <SettingReveal show={value.board === 'adaptive'}>
-                    <SettingSwitch
-                        label='Show board overlays'
-                        hint='Key moments and selections during the game play out over the board.'
-                        isSelected={overlays.enabled}
-                        onValueChange={(enabled) => update({ overlays: enabled })}
-                    />
-                </SettingReveal>
+                <SettingSwitch
+                    label='Show board overlays'
+                    hint='Key moments and selections during the game play out over the board.'
+                    isSelected={overlays.enabled}
+                    onValueChange={(enabled) => update({ overlays: enabled })}
+                />
             </Group>
             <Group
                 title='Sizes'
@@ -317,7 +223,7 @@ const HudSettings = ({ value, onChange }) => {
                                     scalesFor('interface', scale).interface
                                 )}
                             >
-                                <InterfacePreview board={value.board} />
+                                <InterfacePreview />
                             </PreviewBox>
                         )}
                     />

@@ -1,7 +1,6 @@
 import React from 'react';
 import Field from '../Site/Field';
 import Group from '../Site/Group';
-import Notice from '../Site/Notice';
 import SettingSwitch from '../Site/SettingSwitch';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getIn, useFormikContext } from 'formik';
@@ -9,7 +8,6 @@ import { Button, Spinner } from '@heroui/react';
 
 import GameOptions from './GameOptions';
 import GameTypes from './GameTypes';
-import { GameFormats } from '../../constants';
 import FormatSelect from './FormatSelect';
 import VariantSelect from './VariantSelect';
 import LegalitySelect from './LegalitySelect';
@@ -128,8 +126,6 @@ const NewGameForm = ({ quickJoin, defaultEventId, onClosed = () => true }) => {
         [values.gameFormat, values.gameLegality, values.gameVariant]
     );
 
-    const experimental = GameFormats.find((f) => f.name === values.gameFormat)?.experimental;
-    const formatLabel = GameFormats.find((f) => f.name === values.gameFormat)?.label;
     const rowSwitch = (name, label) => (
         <SettingSwitch
             label={label}
@@ -219,12 +215,6 @@ const NewGameForm = ({ quickJoin, defaultEventId, onClosed = () => true }) => {
                                 allowCustom={!!values.eventId}
                             />
                         </div>
-                        {experimental && (
-                            <Notice kind='warning' className='mt-4'>
-                                {formatLabel} is experimental and may not work as expected. Please
-                                report problems on GitHub.
-                            </Notice>
-                        )}
                     </Group>
                 </>
             )}

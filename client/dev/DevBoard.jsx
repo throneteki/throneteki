@@ -130,12 +130,12 @@ const buildFixture = (fixture, { manual, spectate, players, long, crowd }) => {
 const viewerOf = (spectate) => (spectate ? spectatorName : fixtureUsername);
 
 // The board expects a game before it first draws, as it has in a real game
-const loadFixture = (store, state, board, spectate) => {
+const loadFixture = (store, state, spectate) => {
     store.dispatch(
         setUser({
             username: viewerOf(spectate),
             permissions: {},
-            settings: { hud: { board } }
+            settings: {}
         })
     );
     store.dispatch(receiveGameState(state, viewerOf(spectate)));
@@ -266,13 +266,12 @@ const selectClass = 'w-full min-w-0 rounded-md border border-white/15 bg-black p
 const buttonClass =
     'rounded-md bg-white/10 px-2 py-1 text-left hover:bg-white/20 disabled:opacity-40';
 
-// Development only: the real game board with a canned state, at /dev/board?fixture=crowded&board=adaptive
+// Development only: the real game board with a canned state, at /dev/board?fixture=crowded
 // (&manual=1, &spectate=1, &players=3..6 for melee scenarios, &long=1, &crowd=1, &lag=300|600|1000|3000|5000, &panel=0 to hide the panel). The
 // steps change the game as a server would, to see cards move. An overlay is played on its scenario once the board has
 // loaded it, so what is seen at its start is the overlay, not the board still loading.
 const DevBoard = ({
     fixture: initialFixture,
-    board: initialBoard,
     panel,
     manual: manualParam,
     spectate: spectateParam,
@@ -282,7 +281,6 @@ const DevBoard = ({
     lag: lagParam
 }) => {
     const [fixture, setFixture] = useState(boardFixtures[initialFixture] ? initialFixture : 'mid');
-    const [board, setBoard] = useState(initialBoard === 'classic' ? 'classic' : 'adaptive');
     const [players, setPlayers] = useState(
         String(Math.min(6, Math.max(3, Number(playersParam) || 4)))
     );
@@ -304,7 +302,7 @@ const DevBoard = ({
     const [store] = useState(() => {
         const created = createFixtureStore();
         current.current = buildFixture(fixture, { manual, spectate, players, long, crowd });
-        loadFixture(created, current.current, board, spectate);
+        loadFixture(created, current.current, spectate);
         return created;
     });
     const [layout, setLayout] = useState(readLayout);
@@ -357,10 +355,9 @@ const DevBoard = ({
         const built = buildFixture(fixture, { manual, spectate, players, long, crowd });
         const steps = example?.steps ?? [];
         current.current = example && steps.length === 0 ? withoutOverlay(built) : built;
-        loadFixture(store, current.current, board, spectate);
+        loadFixture(store, current.current, spectate);
         setQuery({
             fixture,
-            board,
             players: modeOf(fixture) === 'melee' ? players : undefined,
             long,
             crowd,
@@ -393,7 +390,7 @@ const DevBoard = ({
             setStatus(`Showing ${example.label}`);
         });
         return () => controller.abort();
-    }, [store, fixture, board, manual, spectate, players, long, crowd, overlay]);
+    }, [store, fixture, manual, spectate, players, long, crowd, overlay]);
 
     const fixtures = forMode(boardFixtures, mode);
     const overlays = forMode(overlayExamples, mode);
@@ -527,15 +524,6 @@ const DevBoard = ({
                                 </div>
                             </Section>
                             <Section title='View'>
-                                <Segmented
-                                    label='Board'
-                                    value={board}
-                                    options={[
-                                        ['adaptive', 'Adaptive'],
-                                        ['classic', 'Classic']
-                                    ]}
-                                    onChange={setBoard}
-                                />
                                 <Segmented
                                     label='Lag'
                                     value={lag}

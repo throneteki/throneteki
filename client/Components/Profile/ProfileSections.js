@@ -28,7 +28,7 @@ export const ProfileSections = [
     {
         key: 'appearance',
         label: 'Appearance',
-        description: 'The game board: its layout, sizes, animations and background.',
+        description: 'The game board: its sizes, animations and background.',
         fields: ['hud', 'background']
     },
     {

@@ -179,7 +179,7 @@ const GameChat = ({
                         className='chat-body flex flex-col hud-zoom bg-panel/90 w-full h-full'
                         {...swipe}
                     >
-                        <div className='flex items-center gap-2 border-b border-gold-hair px-3 py-2'>
+                        <div className='box-content flex h-12 shrink-0 items-center gap-2 border-b border-gold-hair px-3'>
                             <Button
                                 aria-label='Copy the game log'
                                 title='Copy the game log'
@@ -225,6 +225,8 @@ const GameChat = ({
                             ref={messagePanel}
                             classNames={{
                                 wrapper: 'flex-1 min-h-0',
+                                input: 'box-content min-h-9 justify-center border-t border-gold-hair px-2 py-1.5',
+                                textarea: 'min-h-0',
                                 messages:
                                     'flex flex-col gap-1.5 overflow-x-hidden px-3 py-2 text-sm'
                             }}

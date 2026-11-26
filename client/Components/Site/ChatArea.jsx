@@ -157,7 +157,10 @@ const ChatArea = forwardRef(function ChatArea(
                     className={
                         typeof classNamesProp?.input === 'string' ? classNamesProp.input : undefined
                     }
-                    inputClassName='max-h-40 min-h-10 resize-none [field-sizing:content]'
+                    inputClassName={classNames(
+                        'max-h-40 resize-none [field-sizing:content]',
+                        classNamesProp?.textarea ?? 'min-h-10'
+                    )}
                     aria-label={placeholder || 'Message'}
                     ref={inputRef}
                     onKeyDown={onKeyDown}

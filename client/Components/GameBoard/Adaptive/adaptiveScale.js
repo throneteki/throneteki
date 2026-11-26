@@ -210,7 +210,7 @@ const interfaceReferences = {
 };
 const interfaceRanges = { phone: { min: 0.85, max: 1.4 }, wide: { min: 0.8, max: 1.15 } };
 
-// A desktop's interface follows the classic board's (desktopInterfaceFit): a step below normal, growing slowly
+// A desktop's interface follows desktopInterfaceFit: a step below normal, growing slowly
 export const adaptiveInterfaceScale = (mode, { width, height } = {}) => {
     const wide = !interfaceReferences[mode] || mode === 'wide';
     const reference = wide ? interfaceReferences.wide : interfaceReferences[mode];
@@ -244,8 +244,7 @@ export const effectiveCardsSize = (cardsSize = 1, { width, height } = {}) => {
 // interfaceScale
 export const cardRoom = (options) => fitScales({ ...options, cardsSize: 1 }).room;
 
-// auto: fit the cards to the board, then apply the chosen size; off, the chosen size is the size, as on the
-// classic board
+// auto: fit the cards to the board, then apply the chosen size; off, the chosen size is the size
 export const computeAdaptiveScales = (options) => {
     const budget = layoutBudgets[options.mode] || layoutBudgets.wide;
     if (options.auto === false) {

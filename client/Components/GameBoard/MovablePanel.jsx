@@ -39,7 +39,6 @@ const PanelBody = ({
     title,
     pileTitle,
     playerName,
-    look = 'classic',
     onCloseClick,
     anchorRef,
     anchorOffset = 10,
@@ -114,60 +113,33 @@ const PanelBody = ({
         }
     }, [open, onExited, anchorRef, panelRef]);
 
-    const board = look === 'board';
     const wrapperClass = classNames(
         className,
-        'max-h-screen max-w-screen fixed top-0 left-0 flex flex-col overflow-hidden',
-        board
-            ? 'border border-gold-line bg-panel/95 shadow-[0_10px_30px_rgba(0,0,0,0.7)]'
-            : 'min-w-60 border border-gold-line bg-panel/95 shadow-[0_18px_40px_rgba(0,0,0,0.6)]'
+        'max-h-screen max-w-screen fixed top-0 left-0 flex flex-col overflow-hidden border border-gold-line bg-panel/95 shadow-[0_10px_30px_rgba(0,0,0,0.7)]'
     );
 
     return createPortal(
-        <div ref={panelRef} data-popup='' data-popup-look={look} className={wrapperClass}>
-            {board ? (
-                // The adaptive board's look: whose pile it is by avatar, its name as the board's labels are
-                <div
-                    ref={handleRef}
-                    className='hud-zoom flex cursor-grab touch-none select-none items-center gap-2 border-b border-gold-hair px-2 py-1.5'
-                    onClick={(event) => event.stopPropagation()}
+        <div ref={panelRef} data-popup='' className={wrapperClass}>
+            {/* Whose pile it is by avatar, its name as the board's labels are */}
+            <div
+                ref={handleRef}
+                className='hud-zoom flex cursor-grab touch-none select-none items-center gap-2 border-b border-gold-hair px-2 py-1.5'
+                onClick={(event) => event.stopPropagation()}
+            >
+                {playerName && <PlayerAvatar name={playerName} className='h-5 w-5 shrink-0' />}
+                <span className='min-w-0 flex-1 truncate font-display text-sm font-semibold text-gold'>
+                    {playerName ? `${playerName} · ${pileTitle ?? title}` : (pileTitle ?? title)}
+                </span>
+                <button
+                    type='button'
+                    aria-label='Close'
+                    data-no-drag
+                    className='tap-target shrink-0 rounded px-1 text-ink-dim hover:text-ink'
+                    onClick={onCloseClick}
                 >
-                    {playerName && <PlayerAvatar name={playerName} className='h-5 w-5 shrink-0' />}
-                    <span className='min-w-0 flex-1 truncate font-display text-sm font-semibold text-gold'>
-                        {playerName
-                            ? `${playerName} · ${pileTitle ?? title}`
-                            : (pileTitle ?? title)}
-                    </span>
-                    <button
-                        type='button'
-                        aria-label='Close'
-                        data-no-drag
-                        className='tap-target shrink-0 rounded px-1 text-ink-dim hover:text-ink'
-                        onClick={onCloseClick}
-                    >
-                        <FontAwesomeIcon icon={faTimes} />
-                    </button>
-                </div>
-            ) : (
-                <div
-                    ref={handleRef}
-                    className='hud-zoom flex h-auto cursor-grab touch-none select-none items-center gap-2 border-b border-gold-line py-1 pl-3 pr-1 active:cursor-grabbing'
-                    onClick={(event) => event.stopPropagation()}
-                >
-                    <span className='min-w-0 flex-1 break-words font-display text-sm font-semibold text-gold'>
-                        {title}
-                    </span>
-                    <button
-                        type='button'
-                        aria-label='Close'
-                        data-no-drag
-                        className='tap-target relative flex size-7 items-center justify-center text-ink-dim hover:text-ink'
-                        onClick={onCloseClick}
-                    >
-                        <FontAwesomeIcon icon={faTimes} />
-                    </button>
-                </div>
-            )}
+                    <FontAwesomeIcon icon={faTimes} />
+                </button>
+            </div>
             {children}
         </div>,
         document.body

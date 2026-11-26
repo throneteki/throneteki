@@ -7,7 +7,7 @@ import StatContainer from '../StatContainer';
 import StatDisplay from '../StatDisplay';
 import { sendChangeStatMessage } from '../../../redux/reducers/game';
 
-// What the bar shows, in classic's order. Power is changed as 'power', the rest by their own name.
+// What the bar shows, in order. Power is changed as 'power', the rest by their own name.
 const stats = [
     { code: 'totalPower', change: 'power', name: 'Power' },
     { code: 'gold', change: 'gold', name: 'Gold' },
@@ -168,7 +168,6 @@ const PlayerStatsBar = ({
             onPlusClick={() => dispatch(sendChangeStatMessage(stat.change, 1))}
             compact={small}
             reach={reach}
-            flank
         />
     );
 
@@ -191,7 +190,7 @@ const PlayerStatsBar = ({
                             // Reaches the screen's edge, its contents clear of a notch or gesture area; above the
                             // cards (so the avatar is never hidden), below the divider
                             'relative z-[245] box-content flex shrink-0 border-edge pl-[max(0.5rem,env(safe-area-inset-left))] pr-[max(0.5rem,env(safe-area-inset-right))]',
-                            compact ? 'h-7' : 'h-8',
+                            compact ? 'h-9' : 'h-12',
                             {
                                 'pt-[var(--safe-top)]': edge === 'top',
                                 'pb-[var(--safe-bottom)]': edge === 'bottom'

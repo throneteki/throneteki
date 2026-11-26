@@ -23,16 +23,12 @@ import { HoldTouchSensor, holdToDrag } from './HoldTouchSensor';
 import CardImage from '../Images/CardImage';
 import CarriedCard from './CarriedCard';
 import { cardScaleOf } from '../../cardScale';
-import ErrorMessage from '../Site/ErrorMessage';
-import JoustGameBoardLayout from './Classic/JoustGameBoardLayout';
-import MeleeGameBoardLayout from './Classic/MeleeGameBoardLayout';
 import AdaptiveGameBoardLayout from './Adaptive/AdaptiveGameBoardLayout';
 import { BoardLayoutProvider, useBoardLayout } from './Adaptive/useBoardLayout';
 import { useAdaptivePage } from './Adaptive/useAdaptivePage';
 import { hidesNavbar } from '../../boardLayoutStore';
 import { ManualModeContext } from './ManualModeContext';
 import { useRenderCount } from '../../perf';
-import { useHudScale } from './useHudScale';
 import { useHud } from '../../hudStore';
 import { MotionConfig } from 'framer-motion';
 import { useMotionEnabled } from '../../motion';
@@ -170,8 +166,6 @@ const GameBoard = () => {
     const onSendChat = useCallback((message) => dispatch(sendGameChatMessage(message)), [dispatch]);
     const onModalClose = useCallback(() => setShowModal(false), []);
 
-    // Cards on the adaptive board are not all drawn at the board's card size
-    const adaptiveRef = useRef(false);
     const onDragStart = useCallback((event) => {
         const data = event.active.data.current;
         if (!data?.card) {
@@ -193,7 +187,7 @@ const GameBoard = () => {
             source: data.source,
             start,
             // The card is carried at the size it was picked up at, which a hand or pile may draw it at
-            scale: adaptiveRef.current ? cardScaleOf(surface) : undefined,
+            scale: cardScaleOf(surface),
             grab: {
                 x: start.x - rect.left,
                 y: start.y - rect.top,
@@ -407,18 +401,15 @@ const GameBoard = () => {
 
     const hud = useHud();
     const boardStarted = !!currentGame?.started;
-    const adaptive = hud.board === 'adaptive';
-    adaptiveRef.current = adaptive;
-    useHudScale(hud, boardAreaRef, boardStarted && !adaptive);
     const layoutMode = useBoardLayout({
         containerRef: boardAreaRef,
         hud,
         players,
-        ready: boardStarted && adaptive
+        ready: boardStarted
     });
-    useAdaptivePage(boardStarted && adaptive);
+    useAdaptivePage(boardStarted);
     // Laid out for a phone, the chat drops over the board, so it starts closed
-    const phoneLayout = adaptive && hidesNavbar(layoutMode);
+    const phoneLayout = hidesNavbar(layoutMode);
     useEffect(() => {
         if (phoneLayout) {
             setShowGameChat(false);
@@ -471,66 +462,27 @@ const GameBoard = () => {
 
     const boardClass = 'relative flex h-full overflow-x-hidden hud-text';
 
-    let gameBoard = null;
-    if (adaptive) {
-        gameBoard = (
-            <BoardLayoutProvider value={layoutMode}>
-                <AdaptiveGameBoardLayout
-                    thisPlayer={thisPlayer}
-                    otherPlayers={otherPlayers}
-                    userPlayer={userPlayer}
-                    onCardClick={onCardClick}
-                    onSettingsClick={onSettingsClick}
-                    onShortcutsClick={() => setShowShortcuts(true)}
-                    chat={{ open: showGameChat, unread: chatUnread, onToggle: onChatToggle }}
-                    isDragging={showDropZones}
-                />
-            </BoardLayoutProvider>
-        );
-    } else if (currentGame.gameFormat === 'joust') {
-        gameBoard = (
-            <JoustGameBoardLayout
-                thisPlayer={thisPlayer}
-                otherPlayer={otherPlayers[0]}
-                userPlayer={userPlayer}
-                onCardClick={onCardClick}
-                onSettingsClick={onSettingsClick}
-                isDragging={showDropZones}
-            />
-        );
-    } else if (currentGame.gameFormat === 'melee') {
-        gameBoard = (
-            <MeleeGameBoardLayout
+    const gameBoard = (
+        <BoardLayoutProvider value={layoutMode}>
+            <AdaptiveGameBoardLayout
                 thisPlayer={thisPlayer}
                 otherPlayers={otherPlayers}
                 userPlayer={userPlayer}
                 onCardClick={onCardClick}
                 onSettingsClick={onSettingsClick}
+                onShortcutsClick={() => setShowShortcuts(true)}
+                chat={{ open: showGameChat, unread: chatUnread, onToggle: onChatToggle }}
                 isDragging={showDropZones}
             />
-        );
-    } else {
-        return (
-            <ErrorMessage
-                title={'Failed to load game board'}
-                message={`Board for ${currentGame.gameFormat} format is not yet implemented`}
-            />
-        );
-    }
+        </BoardLayoutProvider>
+    );
 
     return (
         <>
             <FlipOnDragChange />
             <MotionConfig reducedMotion={motionEnabled ? 'user' : 'always'}>
                 <div className={boardClass}>
-                    <div
-                        className={
-                            adaptive
-                                ? 'overflow-hidden basis-full min-w-0'
-                                : 'overflow-auto basis-full [scrollbar-gutter:stable]'
-                        }
-                        ref={boardAreaRef}
-                    >
+                    <div className='overflow-hidden basis-full min-w-0' ref={boardAreaRef}>
                         <DndContext
                             sensors={sensors}
                             collisionDetection={detectCollisions}
@@ -571,7 +523,7 @@ const GameBoard = () => {
                         muted={!thisPlayer && currentGame.muteSpectators}
                         inputRef={chatInputRef}
                         onUnreadChange={setChatUnread}
-                        animate={adaptive}
+                        animate
                     />
                 </div>
             </MotionConfig>

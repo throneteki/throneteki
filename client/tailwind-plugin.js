@@ -68,9 +68,6 @@ export default plugin(function ({ addUtilities, matchUtilities }) {
         },
         '.card-duplicate-offset': {
             'margin-top': 'calc(var(--card-scale, 1) * 0.56rem)'
-        },
-        '.card-additional-agenda': {
-            'margin-left': 'calc(var(--card-scale, 1) * -2rem)'
         }
     });
     matchUtilities(

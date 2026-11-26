@@ -18,7 +18,6 @@ import { sheetStore } from './Adaptive/sheetStore';
 import PileDepth, { pileRise, raisedStackStyle } from './PileDepth';
 import LabelledGameArea from './LabelledGameArea';
 
-import { Button } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { cardBoxClass, cardWidth } from '../../cardScale';
 import { registerPile } from '../../flip';
@@ -27,7 +26,7 @@ import { registerPile } from '../../flip';
 const PileAction = ({ menuItem, onPress }) => (
     <button
         type='button'
-        className='flex h-7 items-center gap-1.5 rounded border border-edge bg-quiet px-3 text-xs font-medium text-ink transition-colors hover:bg-quiet-hover'
+        className='flex h-7 items-center gap-1.5 rounded border border-edge bg-quiet px-3 text-sm font-medium text-ink transition-colors hover:bg-quiet-hover'
         onClick={() => onPress(menuItem)}
     >
         <FontAwesomeIcon icon={menuItem.icon} className='text-[11px]' />
@@ -266,41 +265,17 @@ const CardPile = ({
 
         const popupClass = classNames('box-content flex flex-col overflow-hidden');
 
-        // On the adaptive board the pile's actions are pills, as the sheet's own chips are
-        const retPopupMenu =
-            popupHost !== 'panel'
-                ? popupMenu?.length > 0 && (
-                      <div
-                          data-pile-actions=''
-                          className='hud-zoom flex flex-wrap justify-center gap-2 px-3 pb-1 pt-2'
-                      >
-                          {popupMenu.map((menuItem, index) => (
-                              <PileAction
-                                  key={index}
-                                  menuItem={menuItem}
-                                  onPress={onPopupMenuItemClick}
-                              />
-                          ))}
-                      </div>
-                  )
-                : popupMenu && (
-                      <div className='flex gap-1.5 border-b border-gold-hair p-2'>
-                          {popupMenu.map((menuItem, index) => {
-                              return (
-                                  <Button
-                                      className='flex-1'
-                                      key={index}
-                                      size='sm'
-                                      onPress={() => onPopupMenuItemClick(menuItem)}
-                                      variant='tertiary'
-                                  >
-                                      <FontAwesomeIcon icon={menuItem.icon} />
-                                      {menuItem.text}
-                                  </Button>
-                              );
-                          })}
-                      </div>
-                  );
+        // The pile's actions are pills, as the sheet's own chips are
+        const retPopupMenu = popupMenu?.length > 0 && (
+            <div
+                data-pile-actions=''
+                className='hud-zoom flex flex-wrap justify-center gap-2 px-3 pb-1 pt-2'
+            >
+                {popupMenu.map((menuItem, index) => (
+                    <PileAction key={index} menuItem={menuItem} onPress={onPopupMenuItemClick} />
+                ))}
+            </div>
+        );
 
         return (
             <PopupContainer
@@ -351,8 +326,7 @@ const CardPile = ({
         showCards,
         onPopupMenuItemClick,
         updatePopupVisibility,
-        owner,
-        popupHost
+        owner
     ]);
 
     // A sideways card is laid out as an upright one, so the area is held to the height of a sideways card

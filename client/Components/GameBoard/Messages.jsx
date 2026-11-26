@@ -48,7 +48,7 @@ const Divider = ({ isRound, children }) => (
     <div
         className={classNames(
             'flex items-center gap-3 font-display font-semibold',
-            isRound ? 'pt-3 text-sm text-gold' : 'pt-1 text-xs text-ink-dim'
+            isRound ? 'pt-3 text-lg text-gold' : 'pt-1 text-base text-ink-dim'
         )}
     >
         <span className='h-px flex-1 bg-gold-hair' />

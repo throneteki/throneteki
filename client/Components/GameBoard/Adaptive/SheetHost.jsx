@@ -738,7 +738,7 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
                         data-choose={choose ? '' : undefined}
                         title={choose ? `${pile.title}: has cards to choose` : pile.title}
                         className={classNames(
-                            'shrink-0 rounded border px-2 text-xs leading-5 lg:px-2.5 lg:py-0.5',
+                            'shrink-0 rounded border px-2 text-sm leading-5 lg:px-2.5 lg:py-0.5',
                             current
                                 ? 'border-gold bg-quiet text-gold'
                                 : choose

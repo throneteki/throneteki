@@ -812,9 +812,12 @@ html.card-dragging * {
     }
 }
 
-/* On the adaptive board the chat button beside our game menu opens the chat, in place of the tab */
+/* On a wide board the chat button beside our game menu opens the chat, in place of the tab, so the edge is whole */
 html[data-board-layout='wide'] .chat-lip {
     display: none;
+}
+html[data-board-layout='wide'] .chat-edge {
+    mask-image: none;
 }
 
 html[data-board-layout='narrow'],

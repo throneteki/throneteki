@@ -115,7 +115,7 @@ const PhaseRoll = ({ phase, className }) => {
     return (
         <div
             className={classNames(
-                'relative h-[1.3em] overflow-hidden font-display text-xs font-semibold leading-[1.3em]',
+                'relative h-[1.3em] overflow-hidden font-display text-sm font-semibold leading-[1.3em]',
                 '[mask-image:linear-gradient(to_right,transparent,black_18%,black_82%,transparent)]',
                 className
             )}

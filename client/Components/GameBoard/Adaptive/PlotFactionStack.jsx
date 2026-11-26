@@ -3,8 +3,7 @@ import Card from '../Card';
 import CardPile from '../CardPile';
 import PlayerPlots from '../PlayerPlots';
 
-// The faction card, then the agenda, then any further agendas, each tucked half under the one before it, as on the
-// classic board. The agenda always shows whole: where the strip is short of room the board grows and scrolls
+// The faction card, then the agenda, then any further agendas, each tucked half under the one before it. The agenda always shows whole: where the strip is short of room the board grows and scrolls
 // sideways rather than sliding the faction card over it.
 const agendaColumn = 'calc(var(--card-scale, 1) * 4rem + 0.25rem)';
 const extraAgendaColumn = 'calc(var(--card-scale, 1) * 2rem)';

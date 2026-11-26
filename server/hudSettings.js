@@ -1,4 +1,4 @@
-import { boardLayouts, hudToggles } from '../shared/hudSettings.js';
+import { hudToggles } from '../shared/hudSettings.js';
 
 const sizePattern = /^(?:small|normal|large|\d{1,2}(?:\.\d{1,2})?)$/;
 
@@ -13,10 +13,6 @@ export function sanitizeHud(hud) {
         if (typeof hud[key] === 'string' && sizePattern.test(hud[key])) {
             result[key] = hud[key];
         }
-    }
-
-    if (boardLayouts.includes(hud.board)) {
-        result.board = hud.board;
     }
 
     for (const key of hudToggles) {

@@ -1,8 +1,4 @@
-import {
-    adaptiveScales,
-    boardScales,
-    fitSizedHud
-} from '../../client/Components/GameBoard/boardScales.js';
+import { adaptiveScales, fitSizedHud } from '../../client/Components/GameBoard/boardScales.js';
 import { cardRoom } from '../../client/Components/GameBoard/Adaptive/adaptiveScale.js';
 
 const phone = {
@@ -16,7 +12,6 @@ const desktop = {
     mode: 'wide'
 };
 const hud = (changes) => ({
-    board: 'adaptive',
     auto: true,
     cards: 'normal',
     interface: 'normal',
@@ -77,14 +72,12 @@ describe('fitSizedHud', function () {
     });
 
     it('turns a fixed size into the fitted sizes that draw the same', function () {
-        for (const board of ['classic', 'adaptive']) {
-            const fixed = hud({ board, auto: false, cards: '1.4', interface: '1.2' });
-            const converted = fitSizedHud(fixed, desktop);
-            expect(converted.auto).toBe(true);
-            const before = boardScales(fixed, desktop);
-            const after = boardScales(converted, desktop);
-            expect(after.cards).toBeCloseTo(before.cards, 1);
-            expect(after.interface).toBeCloseTo(before.interface, 1);
-        }
+        const fixed = hud({ auto: false, cards: '1.4', interface: '1.2' });
+        const converted = fitSizedHud(fixed, desktop);
+        expect(converted.auto).toBe(true);
+        const before = adaptiveScales(fixed, desktop);
+        const after = adaptiveScales(converted, desktop);
+        expect(after.cards).toBeCloseTo(before.cards, 1);
+        expect(after.interface).toBeCloseTo(before.interface, 1);
     });
 });

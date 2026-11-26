@@ -2,10 +2,10 @@
 // scrolls. Needs the dev server running (npm start).
 //
 //   npm run board:shots
-//   npm run board:shots -- --board=adaptive --fixture=crowded --size=phone-portrait
+//   npm run board:shots -- --fixture=crowded --size=phone-portrait
 //   npm run board:shots -- --hold    also holds a finger on a card in play, and shoots the preview (touch sizes)
 //
-// Images go to testoutput/board-shots/<board>-<size>-<fixture>.png. Set BOARD_URL for another server.
+// Images go to testoutput/board-shots/<size>-<fixture>.png. Set BOARD_URL for another server.
 import fs from 'fs';
 import path from 'path';
 import { chromium } from 'playwright';
@@ -18,7 +18,6 @@ const sizes = {
     'tablet-landscape': { width: 1180, height: 820, isMobile: true, hasTouch: true },
     desktop: { width: 1600, height: 950, isMobile: false, hasTouch: false }
 };
-const boards = ['adaptive', 'classic'];
 
 const option = (name) =>
     process.argv
@@ -65,7 +64,7 @@ const findOverflow = () => {
             });
         }
     }
-    // The adaptive board never scrolls, so content too big for a region is cut off instead: report that too.
+    // The board never scrolls, so content too big for a region is cut off instead: report that too.
     // Only where the region hides what spills out; spilling visibly over its neighbours is not cut off.
     const clipped = [];
     const hides = (value) => ['hidden', 'clip'].includes(value);
@@ -126,7 +125,6 @@ const holdOnCard = async (page, file) => {
 };
 
 const run = async () => {
-    const chosenBoards = pick(boards, 'board');
     const chosenSizes = pick(Object.keys(sizes), 'size');
     const chosenFixtures = pick(Object.keys(boardFixtures), 'fixture');
     fs.mkdirSync(outDir, { recursive: true });
@@ -150,37 +148,30 @@ const run = async () => {
                 }
             });
 
-            for (const board of chosenBoards) {
-                for (const fixture of chosenFixtures) {
-                    errors.length = 0;
-                    const url = `${base}/dev/board?fixture=${fixture}&board=${board}&panel=0`;
-                    await load(page, url);
-                    await page.waitForSelector('[data-card-surface]', { timeout: 15000 });
-                    await page.waitForTimeout(settleMs);
+            for (const fixture of chosenFixtures) {
+                errors.length = 0;
+                const url = `${base}/dev/board?fixture=${fixture}&panel=0`;
+                await load(page, url);
+                await page.waitForSelector('[data-card-surface]', { timeout: 15000 });
+                await page.waitForTimeout(settleMs);
 
-                    const file = path.join(outDir, `${board}-${sizeName}-${fixture}.png`);
-                    await page.screenshot({ path: file });
-                    const found = await page.evaluate(findOverflow);
-                    if (holding && device.hasTouch) {
-                        await holdOnCard(
-                            page,
-                            path.join(outDir, `${board}-${sizeName}-${fixture}-hold.png`)
-                        );
-                    }
-                    report.push({
-                        board,
-                        size: sizeName,
-                        fixture,
-                        layout: found.layout,
-                        overflow: found.overflow,
-                        clipped: found.clipped,
-                        errors: [...new Set(errors)].filter(
-                            (text) =>
-                                !/Failed to load resource|favicon|socket|websocket/i.test(text)
-                        ),
-                        file: path.relative(process.cwd(), file)
-                    });
+                const file = path.join(outDir, `${sizeName}-${fixture}.png`);
+                await page.screenshot({ path: file });
+                const found = await page.evaluate(findOverflow);
+                if (holding && device.hasTouch) {
+                    await holdOnCard(page, path.join(outDir, `${sizeName}-${fixture}-hold.png`));
                 }
+                report.push({
+                    size: sizeName,
+                    fixture,
+                    layout: found.layout,
+                    overflow: found.overflow,
+                    clipped: found.clipped,
+                    errors: [...new Set(errors)].filter(
+                        (text) => !/Failed to load resource|favicon|socket|websocket/i.test(text)
+                    ),
+                    file: path.relative(process.cwd(), file)
+                });
             }
             await context.close();
         }
@@ -197,7 +188,7 @@ const run = async () => {
             entry.clipped.length > 0 && `CLIPPED: ${entry.clipped.map(describeClip).join(', ')}`,
             entry.errors.length > 0 && `ERRORS: ${entry.errors.join(' | ')}`
         ].filter(Boolean);
-        console.log(`${entry.board} ${entry.size} ${entry.fixture}: ${flags.join('; ')}`);
+        console.log(`${entry.size} ${entry.fixture}: ${flags.join('; ')}`);
     }
     fs.writeFileSync(path.join(outDir, 'report.json'), JSON.stringify(report, null, 2));
     console.log(`\n${report.length} screenshots in ${path.relative(process.cwd(), outDir)}`);

@@ -329,8 +329,8 @@ Every page works at 390px wide:
 ## Exceptions
 
 - **Game board:** uses the colours, type and buttons here, with its own layout, card piles and
-  prompts. Frames and banner nav aren't used on the board. The rules below cover both boards, classic
-  and adaptive, and `test/client/boardPalette.spec.js` checks them in `client/Components/GameBoard`.
+  prompts. Frames and banner nav aren't used on the board. `test/client/boardPalette.spec.js` checks
+  the rules below in `client/Components/GameBoard`.
     - **Surface and panels.** The surface (the table, cards, play areas and the overlays drawn over
       them) is always dark: it carries `data-board-surface`, which sets the dark theme's values
       whatever the site's theme is. The panels round it (the prompt, the stats bars, pile popups and
@@ -339,11 +339,12 @@ Every page works at 390px wide:
     - **Panels.** They sit over the cards, so they use the `panel` fill at 90% to 95% with a
       `gold-line` border instead of a frame, and are square, like frames. On the surface, black scrims
       (40% to 55%) stay for area backgrounds and the dimmed board behind a phone's chat.
+      The stats bars, the chat's header and its input are all `h-12`, so their edges line up across
+      the screen, and the stat icons sit inside the bar.
     - **Titles.** Panel and sheet titles, phase names and overlay headings are Cinzel 600 in `gold`,
       in title case. Popup titles name the whole pile and its owner: "northern_wolf's dead pile".
-    - **Buttons.** Both boards' prompt buttons are game actions (small ones on the adaptive board,
-      `Adaptive/chipClass.js`), as are the overlays' buttons. Pile actions in a sheet are quiet
-      buttons.
+    - **Buttons.** Prompt buttons are small game actions (`Adaptive/chipClass.js`), as are the
+      overlays' buttons. Pile actions in a sheet are quiet buttons.
     - **Card states.** A card you can choose has a breathing `select` ring, and a chosen card a
       `selected` ring. The rings for game states (attacking, saved, controlled and so on) keep their
       own colours, as do counters and tokens, which are game content.
@@ -355,6 +356,8 @@ Every page works at 390px wide:
       classes in [tailwind-plugin.js](../client/tailwind-plugin.js), so the same classes stay the
       site's size elsewhere. The interface is also scaled to the screen (`--ui-scale`,
       `--text-scale`). Wrapped text in the log and chat sets its own line height.
+      `text-xs` is too small for words in normal case: buttons, prompt titles, phase names and
+      labels are `text-sm` or larger.
     - **Motion.** Cards moving, turning and landing, and the overlays, are animated longer than the
       site's 150ms to 180ms. They follow the board's animation setting and stop under
       `prefers-reduced-motion`.

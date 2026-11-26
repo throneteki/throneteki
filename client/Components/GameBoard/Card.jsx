@@ -26,7 +26,6 @@ import { cardBoxClass } from '../../cardScale';
 import { Tooltip } from '@heroui/react';
 import { getActionRequirementReason, isNotableRequirement } from './actionRequirementReasons';
 import { ManualModeContext } from './ManualModeContext';
-import { useAdaptiveBoard } from './adaptiveContext';
 import { useIsCarried, useIsUnderTarget } from './dragStore';
 import { holdToDrag } from './HoldTouchSensor';
 import { restingAngle } from '../../tableFeel';
@@ -57,7 +56,6 @@ const CardView = ({
     const { attributes, listeners, setNodeRef, isDragging } = drag;
     const isCarried = useIsCarried(card?.uuid);
     const isUnderTarget = useIsUnderTarget(wrapped && source === 'play area' ? card?.uuid : null);
-    const adaptive = useAdaptiveBoard();
     const [showUnderneath, setShowUnderneath] = useState(false);
     const cardRef = useRef(null);
     const [lastOrder, setLastOrder] = useState(card.order);
@@ -322,14 +320,6 @@ const CardView = ({
     const getCardOrder = () => {
         const badgeClassName =
             'absolute top-0 left-0 z-[230] flex items-center justify-center card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[calc(var(--badge-size)*0.8)] h-[var(--badge-size)] px-0.5 text-ink bg-panel/90 font-bold rounded-br-md rounded-tl-[inherit]';
-        if (!adaptive) {
-            return card.order ? (
-                <div data-card-overlay='' className={badgeClassName}>
-                    {card.order}
-                </div>
-            ) : null;
-        }
-
         // Always rendered so it can fade, keeping its last number while it fades out
         return (
             <div

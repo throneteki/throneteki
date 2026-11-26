@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Constants } from '../../constants';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 
+// A stat's icon and value, with a small round - and + either side of it when it can be changed
 const StatDisplay = ({
     showControls = true,
     statCode,
@@ -14,11 +15,9 @@ const StatDisplay = ({
     onMinusClick,
     onPlusClick,
     compact = false,
-    reach,
-    flank = false
+    reach
 }) => {
-    // flank (adaptive board): a small round - and + either side of the stat, rather than under its edges
-    const flankButton = (label, icon, onPress) => (
+    const changeButton = (label, icon, onPress) => (
         <Button
             isIconOnly
             title={`${label} ${statName}`}
@@ -31,44 +30,19 @@ const StatDisplay = ({
         </Button>
     );
     return (
-        // Positioned itself, so the icon stays with its stat when the bar around it scrolls
         <div
             className={classNames(
                 statName,
                 'relative flex items-center justify-center',
                 compact ? 'min-w-8' : 'min-w-12',
-                { 'px-2': flank && showControls }
+                { 'px-2': showControls }
             )}
         >
-            {showControls && flank && flankButton('Reduce', faMinus, onMinusClick)}
-            {showControls && !flank && (
-                <div className='flex'>
-                    <Button
-                        isIconOnly
-                        title={`Reduce ${statName}`}
-                        size='sm'
-                        className='flex-col p-1.5 w-9'
-                        onPress={onMinusClick}
-                        variant='ghost'
-                    >
-                        <FontAwesomeIcon className='self-start' icon={faMinus} />
-                    </Button>
-                    <Button
-                        isIconOnly
-                        title={`Raise ${statName}`}
-                        size='sm'
-                        className='flex-col p-1.5 w-9'
-                        onPress={onPlusClick}
-                        variant='ghost'
-                    >
-                        <FontAwesomeIcon className='self-end' icon={faPlus} />
-                    </Button>
-                </div>
-            )}
+            {showControls && changeButton('Reduce', faMinus, onMinusClick)}
             {/* reach: the icon stands a little proud of its bar towards the board ('up' or 'down'), as the avatar does,
                 its edge at the screen's side staying where it is */}
             <div
-                className={classNames('pointer-events-none', flank ? 'relative mx-1' : 'absolute', {
+                className={classNames('pointer-events-none relative mx-1', {
                     'origin-bottom scale-[1.15]': reach === 'up',
                     'origin-top scale-[1.15]': reach === 'down'
                 })}
@@ -86,7 +60,7 @@ const StatDisplay = ({
                     </p>
                 </div>
             </div>
-            {showControls && flank && flankButton('Raise', faPlus, onPlusClick)}
+            {showControls && changeButton('Raise', faPlus, onPlusClick)}
         </div>
     );
 };

@@ -13,14 +13,6 @@ describe('sanitizeHud', function () {
         ).toEqual({ cards: 'large', interface: '1.25', auto: false, animations: true });
     });
 
-    it('keeps only a known board layout', function () {
-        expect(sanitizeHud({ board: 'adaptive' })).toEqual({ board: 'adaptive' });
-        expect(sanitizeHud({ board: 'classic' })).toEqual({ board: 'classic' });
-        expect(sanitizeHud({ board: 'adaptive<script>', cards: 'small' })).toEqual({
-            cards: 'small'
-        });
-    });
-
     it('drops keys it does not know', function () {
         expect(sanitizeHud({ cards: 'small', layout: 'grid', extra: true })).toEqual({
             cards: 'small'

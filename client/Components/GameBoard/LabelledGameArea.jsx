@@ -14,7 +14,6 @@ import { createPortal } from 'react-dom';
 import { useSyncExternalStore } from 'react';
 import classNames from 'classnames';
 import { raisedStyle } from './PileDepth';
-import { useAdaptiveBoard } from './adaptiveContext';
 
 // How areas show their label: 'full' on the area; 'inspect' (phones) only on a first tap on a stacked pile
 export const AreaLabelContext = createContext('full');
@@ -92,21 +91,17 @@ const InspectTip = ({ anchor, children }) => {
     );
 };
 
-// An area's outline. On the adaptive board it has the same corners as the cards in it, and its name lies faintly
-// behind it, where a card put there would go.
+// An area's outline. It has the same corners as the cards in it, and its name lies faintly behind it, where a card put there would go.
 export const AreaBackground = ({ name, upright = false, className }) => {
-    const adaptive = useAdaptiveBoard();
     return (
         <div
             className={classNames(
                 'absolute h-full w-full',
-                adaptive
-                    ? 'flex items-center justify-center overflow-hidden rounded-[calc(var(--card-scale,1)*0.25rem)] border border-white/5 bg-black/45'
-                    : 'rounded-md border-2 border-white/[0.055] bg-black/55',
+                'flex items-center justify-center overflow-hidden rounded-[calc(var(--card-scale,1)*0.25rem)] border border-white/5 bg-black/45',
                 className
             )}
         >
-            {adaptive && name && (
+            {name && (
                 <span
                     className={classNames(
                         'select-none overflow-hidden whitespace-nowrap text-center text-[calc(var(--card-scale,1)*0.55rem)] font-semibold leading-none text-white/30',

@@ -1134,7 +1134,7 @@ const Over = ({ players, me, portrait, winners, buttons, onButtonClick, onClose 
                         {powerOf(player)} power
                     </span>
                     {player.eliminated && (
-                        <span className='text-xs text-danger [text-shadow:0_1px_4px_#000]'>
+                        <span className='text-sm text-danger [text-shadow:0_1px_4px_#000]'>
                             {eliminatedReasons[player.eliminatedReason] ?? 'Eliminated'}
                         </span>
                     )}
@@ -1218,7 +1218,7 @@ const Over = ({ players, me, portrait, winners, buttons, onButtonClick, onClose 
                 type='button'
                 onClick={() => dispatch(sendLeaveGameMessage())}
                 className={classNames(
-                    'overlay-after hud-zoom pointer-events-auto flex items-center gap-1 rounded px-2 py-1 text-[0.6rem] font-semibold text-danger [text-shadow:0_1px_4px_#000] hover:text-danger hover:underline',
+                    'overlay-after hud-zoom pointer-events-auto flex items-center gap-1 rounded px-2 py-1 text-xs font-semibold text-danger [text-shadow:0_1px_4px_#000] hover:text-danger hover:underline',
                     portrait
                         ? 'absolute bottom-[calc(0.5rem+var(--safe-bottom))] left-1/2 -translate-x-1/2'
                         : 'mt-3'
@@ -1271,7 +1271,7 @@ const Standing = ({ player, me, portrait, index, leads = false }) => {
                     <span className='font-display text-3xl font-semibold tabular-nums text-gold'>
                         <CountUp value={powerOf(player)} delay={landed} />
                     </span>
-                    <span className='text-xs font-semibold text-ink-faint [text-shadow:0_1px_4px_#000]'>
+                    <span className='text-sm font-semibold text-ink-faint [text-shadow:0_1px_4px_#000]'>
                         power
                     </span>
                 </div>
@@ -1596,7 +1596,7 @@ const InitiativeStats = ({ value, plan, win, showPower }) => {
 };
 
 const verdictLine =
-    'overlay-after max-w-full text-center text-xs font-semibold text-gold/90 [text-shadow:0_1px_6px_#000]';
+    'overlay-after max-w-full text-center text-sm font-semibold text-gold/90 [text-shadow:0_1px_6px_#000]';
 // Under the plots: the tie line (struck through when a coin decides), the coin, then who won
 const InitiativeVerdict = ({ result, plan, me }) => {
     const nameFor = (name) => (me && name === nameOf(me) ? 'You' : name);
