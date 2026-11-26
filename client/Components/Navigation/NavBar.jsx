@@ -116,7 +116,7 @@ const NavBar = ({ overBoard = false }) => {
 
     return (
         <>
-            <header data-theme='dark' className='relative z-20 h-12 border-b border-edge bg-black'>
+            <header className='relative z-20 h-12 border-b border-edge bg-panel'>
                 <div className='flex h-full items-center gap-4 px-4 lg:hidden'>
                     <button
                         type='button'
@@ -132,7 +132,7 @@ const NavBar = ({ overBoard = false }) => {
                             src={SmallHeaderIcon}
                             width='32'
                             height='32'
-                            className='inline-block align-top'
+                            className='inline-block align-top light:brightness-[0.3]'
                             alt='The Iron Throne'
                         />
                     </NavigationLink>
@@ -150,7 +150,7 @@ const NavBar = ({ overBoard = false }) => {
                     <NavigationLink href='/'>
                         <img
                             src={currentGame?.started ? SmallHeaderIcon : HeaderIcon}
-                            className='h-12'
+                            className='h-12 light:brightness-[0.3]'
                             alt='The Iron Throne'
                         />
                     </NavigationLink>
@@ -167,7 +167,7 @@ const NavBar = ({ overBoard = false }) => {
                     <nav
                         aria-label='Main'
                         className={classNames(
-                            'absolute inset-x-0 top-12 flex flex-col gap-4 border-b border-gold-line bg-black/95 px-6 py-5 text-lg lg:hidden',
+                            'absolute inset-x-0 top-12 flex flex-col gap-4 border-b border-gold-line bg-panel px-6 py-5 text-lg lg:hidden',
                             overBoard &&
                                 'max-h-[calc(100dvh_-_3rem_-_var(--safe-top))] overflow-y-auto'
                         )}

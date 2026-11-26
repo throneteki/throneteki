@@ -42,8 +42,9 @@ the theme under Profile, Appearance (dark, light or their device's); it is kept 
 The light theme is parchment: frames and panels are cream, text is a dark ink and gold darkens to
 `#85601c` so it reads on them. The throne room art stays behind the page in both themes, so
 anything placed straight on the art (rather than in a frame or a boxed notice) only works in the
-dark theme. The navbar and the game board's surface are always dark: they carry
-`data-theme='dark'` and `data-board-surface`.
+dark theme. The game board's surface is always dark (`data-board-surface`), as are the stat icons
+(`data-theme='dark'`), whose values are drawn for dark art. The navbar's logos are white images, so
+the light theme darkens them with the `light:` variant.
 
 Use the token names in class lists. Don't use raw hex values, `white` or `black` tints, or
 Tailwind's default palette in components: they only suit one theme. Shadows can stay black, as

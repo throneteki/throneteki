@@ -13,7 +13,11 @@ const NavItem = ({ className, children, path }) => {
     return (
         <NavigationLink
             href={path}
-            className={classNames(navItemClassName, { 'brightness-150': isCurrent }, className)}
+            className={classNames(
+                navItemClassName,
+                { 'brightness-150 light:brightness-75': isCurrent },
+                className
+            )}
         >
             {children}
         </NavigationLink>

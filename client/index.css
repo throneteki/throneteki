@@ -6,6 +6,7 @@
 @source inline('text-{military,intrigue,power}');
 
 @custom-variant dark (&:where(.dark, .dark *));
+@custom-variant light (&:where(.light, .light *));
 
 @theme {
     --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
