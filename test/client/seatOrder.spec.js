@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { aroundTheTable, tableRows } from '../../client/Components/GameBoard/seatOrder';
 
 const seats = (count) =>

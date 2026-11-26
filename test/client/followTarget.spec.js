@@ -1,5 +1,7 @@
-import { describe, expect, it } from 'vitest';
-import { activePlayerOf, followTarget } from '../../client/Components/GameBoard/Adaptive/followTarget';
+import {
+    activePlayerOf,
+    followTarget
+} from '../../client/Components/GameBoard/Adaptive/followTarget';
 
 const player = (name, seatNo, { active = false, selectable = [] } = {}) => ({
     name,
