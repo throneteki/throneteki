@@ -51,6 +51,32 @@ describe('serverWait', function () {
         expect(serverWait.oldest()).toBeNull();
     });
 
+    it('never waits on a quiet message, but counts it as sent', function () {
+        serverWait.sent(100, { quiet: true });
+
+        expect(serverWait.oldest()).toBeNull();
+
+        serverWait.sent(200);
+        expect(serverWait.oldest()).toBe(200);
+
+        serverWait.handled(1);
+        expect(serverWait.oldest()).toBe(200);
+
+        serverWait.handled(2);
+        expect(serverWait.oldest()).toBeNull();
+    });
+
+    it('waits past a quiet message on the ones either side of it', function () {
+        serverWait.sent(100);
+        serverWait.sent(200, { quiet: true });
+        serverWait.sent(300);
+
+        expect(serverWait.oldest()).toBe(100);
+
+        serverWait.handled(1);
+        expect(serverWait.oldest()).toBe(300);
+    });
+
     it('starts again when reset', function () {
         serverWait.sent(100);
         serverWait.reset();

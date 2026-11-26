@@ -1,9 +1,12 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { cardImageSrc } from '../../cardImageSrc';
 import { Constants } from '../../constants';
-import CardFallback from './CardFallback';
+import CardFallback, { slowWatermark } from './CardFallback';
 import CardSkeleton, { skeletonKind } from './CardSkeleton';
+
+// An image still loading after this long has the card drawn from its details under it, as a failed one does
+const slowImageMs = 3000;
 
 // Images that have loaded on this page. The browser has them, but may still check with the server (Firefox, where they
 // are sent no-cache) or decode them before a new copy is drawn, which must not bring the placeholder back.
@@ -26,6 +29,16 @@ const CardFace = ({
     const current = status.src === src ? status.value : known(src);
     const ready = current === 'loaded';
     const failed = current === 'error';
+    const [slowSrc, setSlowSrc] = useState(null);
+    const slow = !ready && !failed && slowSrc === src;
+
+    useEffect(() => {
+        if (ready || failed) {
+            return;
+        }
+        const timer = setTimeout(() => setSlowSrc(src), slowImageMs);
+        return () => clearTimeout(timer);
+    }, [src, ready, failed]);
 
     // An image the browser already has is complete before its load event, so it shows at once with no placeholder
     useLayoutEffect(() => {
@@ -38,7 +51,10 @@ const CardFace = ({
     return (
         <div data-card-face='' className='absolute inset-0 overflow-hidden rounded-[inherit]'>
             {failed && <CardFallback code={code} orientation={orientation} />}
-            {!ready && !failed && !disableSkeleton && (
+            {slow && (
+                <CardFallback code={code} orientation={orientation} watermark={slowWatermark} />
+            )}
+            {!ready && !failed && !slow && !disableSkeleton && (
                 <CardSkeleton
                     kind={skeletonKind(
                         code,
@@ -49,6 +65,7 @@ const CardFace = ({
                     orientation={orientation}
                 />
             )}
+            {/* Shown while it loads, over the placeholder, so it reveals itself as it arrives */}
             <img
                 ref={imageRef}
                 src={src}
@@ -57,7 +74,7 @@ const CardFace = ({
                 decoding={ready ? 'sync' : 'async'}
                 className={classNames(
                     'absolute left-0 top-0 h-full w-full pointer-events-none select-none',
-                    { 'opacity-0': !ready, hidden: failed },
+                    { hidden: failed },
                     className
                 )}
                 onLoad={(event) => {

@@ -12,9 +12,9 @@ export const logTiming = {
     // A line too long for its row scrolls at this speed, pausing this long before it starts and after it ends
     scrollSpeed: 45,
     scrollPause: 700,
-    // With others queued behind it, it pauses this long instead, and takes at least this long to scroll
+    // With others queued behind it, it scrolls at this speed instead, however long it is, and pauses this long
+    queuedScrollSpeed: 80,
     queuedScrollPause: 250,
-    queuedScrollLeast: 400,
     // Each line fades in and out over this long
     fade: 300
 };
@@ -92,12 +92,11 @@ export const useLogFeed = (messages, { enabled = true } = {}) => {
         return () => clearTimeout(timer);
     }, [current, queue.length]);
 
-    // dismiss: this line and every one waiting; skip: on to the next line
-    const dismiss = useCallback(() => dispatch({ type: 'clear' }), []);
+    // skip: on to the next line
     const skip = useCallback(
         () => dispatch({ type: 'next', now: Date.now(), id: nextId.current++ }),
         []
     );
     const hold = useCallback((id, time) => dispatch({ type: 'hold', id, time }), []);
-    return { current, queued: queue.length, dismiss, skip, hold };
+    return { current, queued: queue.length, skip, hold };
 };

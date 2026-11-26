@@ -251,9 +251,9 @@ describe('predictions', function () {
         expect(next.players.me.buttons.some((button) => button.pending)).toBe(false);
     });
 
-    it('presses any card the player clicks, whatever the click does', function () {
+    it('presses a card the player clicks that can be chosen, whatever the click does', function () {
         const state = gameState();
-        const presses = ['chosen', 'idle', 'theirs'].map((uuid) =>
+        const presses = ['chosen', 'theirs'].map((uuid) =>
             pressFor(sendCardClickedMessage(uuid), state, user)
         );
         const next = applyPredictions(
@@ -264,13 +264,35 @@ describe('predictions', function () {
 
         expect(presses).toEqual([
             { kind: 'press', uuid: 'chosen' },
-            { kind: 'press', uuid: 'idle' },
             { kind: 'press', uuid: 'theirs' }
         ]);
         expect(
             ['chosen', 'idle', 'theirs', 'ordered'].map((uuid) => !!card(next, uuid).pressed)
-        ).toEqual([true, true, true, false]);
+        ).toEqual([true, false, true, false]);
         expect(card(next, 'chosen').selected).toBe(false);
+    });
+
+    it('presses no card whose click the board shows can do nothing', function () {
+        expect(pressFor(sendCardClickedMessage('idle'), gameState(), user)).toBeUndefined();
+    });
+
+    it('presses a card that can be played or used now', function () {
+        const state = gameState();
+        state.players.me.cardPiles.hand.push({ uuid: 'playable', canPlay: true });
+
+        expect(pressFor(sendCardClickedMessage('playable'), state, user)).toEqual({
+            kind: 'press',
+            uuid: 'playable'
+        });
+    });
+
+    it('presses any card in manual mode, where a click may kneel or stand it', function () {
+        const state = { ...gameState(), manualMode: true };
+
+        expect(pressFor(sendCardClickedMessage('idle'), state, user)).toEqual({
+            kind: 'press',
+            uuid: 'idle'
+        });
     });
 
     it('presses nothing for someone not playing, or a card not on the board', function () {

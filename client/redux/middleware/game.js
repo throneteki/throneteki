@@ -103,9 +103,12 @@ const gameMiddleware = (store) => {
     let lastClick;
     // What the message being sent is predicted to do, shown before it goes so no answer can come first
     let prediction;
+    // Whether the message being sent is a click the board shows does nothing, so it is not waited on (serverWait)
+    let quiet = false;
 
     const emitGame = (...args) => {
-        const seq = serverWait.sent();
+        const seq = serverWait.sent(undefined, { quiet });
+        quiet = false;
         if ([prediction].flat().some(Boolean) && gameState) {
             predictions.add(seq, prediction);
             publish();
@@ -312,10 +315,14 @@ const gameMiddleware = (store) => {
             ) {
                 return;
             }
-            prediction = [
-                prediction,
-                pressFor(action, store.getState().lobby.currentGame, store.getState().auth.user)
-            ];
+            const press = pressFor(
+                action,
+                store.getState().lobby.currentGame,
+                store.getState().auth.user
+            );
+            prediction = [prediction, press];
+            // Waited on exactly when it is pressed, so the press and "Waiting for server" go together
+            quiet = !press;
             const seq = emitGame(GameMessage.CardClicked, action.payload, promptId());
             lastClick = { uuid: action.payload, seq };
         } else if (sendButtonClickedMessage.match(action)) {

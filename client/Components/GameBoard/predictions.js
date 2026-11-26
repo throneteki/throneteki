@@ -10,6 +10,7 @@ import {
     sendToggleKeywordSettingMessage,
     sendTogglePromptedActionWindowMessage
 } from '../../redux/reducers/game';
+import { clickDoesSomething } from './cardClicks';
 
 // What the board shows for messages the server has not answered yet. Only what the client already knows the
 // outcome of is predicted, and each prediction is dropped as soon as the server has handled its message, so a
@@ -81,10 +82,13 @@ const selectionPrediction = (state, me, uuid) => {
     return { kind: 'select', uuid };
 };
 
-// A card clicked shows as pressed until the server has handled the click, whatever the click turns out to do
+// A card clicked shows as pressed until the server has handled the click, unless the board already shows the click
+// can do nothing (a card that cannot be chosen or used now, outside manual mode)
 export const pressFor = (action, state, user) => {
     const me = user?.username && state?.players?.[user.username];
-    return me && sendCardClickedMessage.match(action) && findCard(state, action.payload)
+    const card =
+        me && sendCardClickedMessage.match(action) ? findCard(state, action.payload) : undefined;
+    return card && clickDoesSomething(card, !!state.manualMode)
         ? { kind: 'press', uuid: action.payload }
         : undefined;
 };

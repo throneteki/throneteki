@@ -108,7 +108,8 @@ const GameChat = ({
     muted,
     className,
     inputRef,
-    onUnreadChange
+    onUnreadChange,
+    animate = false
 }) => {
     const messagePanel = useRef(null);
     const [filter, setFilter] = useState(savedFilter);
@@ -126,6 +127,15 @@ const GameChat = ({
         () => (filter === 'chat' ? messages.filter(isChatMessage) : messages),
         [messages, filter]
     );
+    // animate: messages arriving fade in and slide the rest up. Switching the filter swaps the whole list, so nothing
+    // arrives then.
+    const shownBefore = useRef({ filter, count: shown.length });
+    const switched = shownBefore.current.filter !== filter;
+    const arriveFrom = animate && !switched ? shownBefore.current.count : Infinity;
+    useEffect(() => {
+        shownBefore.current = { filter, count: shown.length };
+    }, [filter, shown.length]);
+
     // Every chat message is seen while the chat is open
     const [seen, setSeen] = useState(0);
     useEffect(() => {
@@ -161,7 +171,7 @@ const GameChat = ({
             <div className={classNames(className, 'chat-drawer', { 'chat-open': isOpen })}>
                 <ChatLip isOpen={isOpen} unread={unread} onToggle={onToggle} />
                 <div aria-hidden className='chat-edge bg-default-100' />
-                <div className='h-full w-full overflow-hidden'>
+                <div className='chat-frame h-full w-full overflow-hidden'>
                     <div
                         className='chat-body flex flex-col hud-zoom bg-black/75 w-full h-full'
                         {...swipe}
@@ -186,6 +196,17 @@ const GameChat = ({
                                 <Tab key='chat' title='Chat' />
                                 <Tab key='all' title='Chat + game log' />
                             </Tabs>
+                            {/* Only where the chat covers the whole board, hiding the button that opened it */}
+                            <Button
+                                title='Hide chat'
+                                isIconOnly
+                                variant='light'
+                                radius='sm'
+                                className='chat-close hidden h-10 w-10 min-w-10 text-lg'
+                                onPress={onToggle}
+                            >
+                                <FontAwesomeIcon icon={faCommentSlash} />
+                            </Button>
                         </div>
                         <ChatArea
                             ref={messagePanel}
@@ -199,8 +220,9 @@ const GameChat = ({
                             isInputDisabled={muted}
                             placeholder={placeholder}
                             inputRef={inputRef}
+                            glide={animate && !switched}
                         >
-                            <Messages messages={shown} />
+                            <Messages messages={shown} arriveFrom={arriveFrom} />
                         </ChatArea>
                     </div>
                 </div>

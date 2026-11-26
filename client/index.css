@@ -361,21 +361,27 @@ html[data-board-layout='narrow'],
 html[data-board-layout='short'] {
     @mixin chat-phone;
 
-    /* Opened by the tools' chat button, not the tab; fills down to the tools or what the keyboard leaves */
+    /* Opened by the tools' chat button, not the tab, and closed from its own header. It covers the whole screen, the
+       prompt too, down to where the keyboard begins (--visual-height, useAdaptivePage). */
     .chat-lip,
     .chat-dim {
         display: none;
     }
+    .chat-close {
+        display: flex;
+    }
+    .chat-frame {
+        padding: var(--safe-top) env(safe-area-inset-right, 0px) var(--safe-bottom)
+            env(safe-area-inset-left, 0px);
+        background: rgb(0 0 0 / 0.9);
+    }
     /* Slides rather than grows, so its height can follow the keyboard at once */
     .chat-drawer,
     .chat-drawer.chat-open {
-        top: var(--board-chat-top, 0px);
-        left: var(--board-chat-left, 0px);
-        right: var(--board-chat-right, 0px);
-        height: calc(
-            min(var(--visual-height, 100%), 100% - var(--board-chat-bottom, 0px)) -
-                var(--board-chat-top, 0px)
-        );
+        top: 0;
+        left: 0;
+        right: 0;
+        height: min(var(--visual-height, 100%), 100%);
         clip-path: inset(0);
         transition-property: translate, clip-path;
         transition-duration: 300ms;
@@ -416,10 +422,7 @@ html.card-dragging.card-drop-refused * {
     box-shadow:
         0 1px 1px rgba(0, 0, 0, 0.45),
         0 2px 5px rgba(0, 0, 0, 0.35);
-    transition:
-        filter 120ms,
-        box-shadow 120ms,
-        scale 120ms;
+    transition: box-shadow 120ms;
 }
 
 .card-body::after {
@@ -430,20 +433,6 @@ html.card-dragging.card-drop-refused * {
     box-shadow: 0 14px 22px rgba(0, 0, 0, 0.45);
     opacity: 0;
     pointer-events: none;
-}
-
-/* On the adaptive board, a card clicked stays pressed in until the game server has answered the click. The body
-   shrinks, not the surface, which has its own scale for rings and the selection pop. */
-:is([data-layout], [data-sheet]) [data-card-surface][data-pressed] > .card-body {
-    scale: 0.94;
-    filter: brightness(0.8);
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0.6);
-}
-[data-motion='off']
-    :is([data-layout], [data-sheet])
-    [data-card-surface][data-pressed]
-    > .card-body {
-    scale: none;
 }
 
 /* A card turning to kneel or stand overshoots a little and settles, like it was flicked */
@@ -589,6 +578,84 @@ html.card-dragging.card-drop-refused * {
     45% {
         scale: 1.12;
     }
+}
+
+/* On the adaptive board, a card clicked stays pressed in until the game server has answered the click. The whole
+   card presses in: its surface (with its ring) and the tokens and badges over it, so nothing is left standing
+   apart from it. Filters compose with Tailwind's, so an unselectable card stays desaturated. A card chosen while
+   pressed pops once it is let go. */
+:is([data-layout], [data-sheet]) [data-card-surface] ~ [data-card-overlay] {
+    transition:
+        scale 150ms,
+        filter 150ms;
+}
+:is([data-layout], [data-sheet]) [data-card-surface][data-pressed],
+:is([data-layout], [data-sheet]) [data-card-surface][data-pressed] ~ [data-card-overlay] {
+    scale: 0.94;
+    --tw-brightness: brightness(0.8);
+    filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale)
+        var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia)
+        var(--tw-drop-shadow);
+}
+:is([data-layout], [data-sheet]) [data-card-surface][data-pressed].ring-selected {
+    animation: none;
+}
+:is([data-layout], [data-sheet]) [data-card-surface][data-pressed] > .card-body {
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.6);
+}
+[data-motion='off'] :is([data-layout], [data-sheet]) [data-card-surface][data-pressed],
+[data-motion='off']
+    :is([data-layout], [data-sheet])
+    [data-card-surface][data-pressed]
+    ~ [data-card-overlay] {
+    scale: none;
+}
+
+/* A message arriving in the game chat fades in, to its own opacity */
+.chat-arrive {
+    animation: chat-arrive 250ms ease-out;
+}
+@keyframes chat-arrive {
+    from {
+        opacity: 0;
+    }
+}
+[data-motion='off'] .chat-arrive {
+    animation: none;
+}
+
+/* A log line too long for the prompt fades out at the edges it runs past, as the phase wheel does: the end while
+   there is more to come, the start once it has scrolled */
+@property --log-fade-start {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0px;
+}
+@property --log-fade-end {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0px;
+}
+.log-fade {
+    mask-image: linear-gradient(
+        to right,
+        transparent,
+        #000 var(--log-fade-start),
+        #000 calc(100% - var(--log-fade-end)),
+        transparent
+    );
+    transition:
+        --log-fade-start 250ms ease-out,
+        --log-fade-end 250ms ease-out;
+}
+.log-fade[data-fade-start] {
+    --log-fade-start: 1.5rem;
+}
+.log-fade[data-fade-end] {
+    --log-fade-end: 1.5rem;
+}
+[data-motion='off'] .log-fade {
+    transition: none;
 }
 
 /* The settings' previews ease between sizes. Only these copies of the scales are registered, so the board itself

@@ -127,8 +127,8 @@ const SquishableCardPanel = ({
         return () => clearTimeout(timer);
     }, [loweringUuid]);
 
-    // On the adaptive board a raised card that is used stays up until the game answers, so it is not seen to drop
-    // back as though nothing happened
+    // On the adaptive board a raised card tapped again stays up, pressed in, until the game answers, so it is not seen
+    // to drop back as though nothing happened. A click the board knows does nothing is not pressed, so it drops at once.
     const adaptive = useAdaptiveBoard();
     const manualMode = useContext(ManualModeContext);
     const [awaiting, setAwaiting] = useState(null);
@@ -163,7 +163,7 @@ const SquishableCardPanel = ({
                 raise(card.uuid);
                 return;
             }
-            if (adaptive && acts && raised) {
+            if (adaptive && raised) {
                 setAwaiting(card.uuid);
             } else {
                 raise(null);

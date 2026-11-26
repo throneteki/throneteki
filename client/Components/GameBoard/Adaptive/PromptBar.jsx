@@ -24,7 +24,7 @@ import Messages from '../Messages';
 import { logTiming, useLogFeed } from './useLogFeed';
 
 // A log line, on one line: when it does not fit, it scrolls along once to its end, and asks to be shown for as long
-// as that takes. While other lines wait (hurry) it scrolls faster, to be done close to the least time a line shows.
+// as that takes. While other lines wait (hurry) it scrolls at a faster, steady speed, whatever its length.
 const LogText = ({ entry, hurry, onHold }) => {
     const boxRef = useRef(null);
     const textRef = useRef(null);
@@ -40,25 +40,34 @@ const LogText = ({ entry, hurry, onHold }) => {
             return;
         }
         const over = text.scrollWidth - box.clientWidth;
+        // Set on the element, not in state, so the line is not drawn again as it fades (.log-fade in index.css)
+        const fade = (edge, on) => box.toggleAttribute(`data-fade-${edge}`, on);
+        fade('start', false);
+        fade('end', over > 1);
         if (over <= 1 || motionOff()) {
             return;
         }
         const hurried = hurryRef.current;
         const pause = hurried ? logTiming.queuedScrollPause : logTiming.scrollPause;
-        const relaxed = (over / logTiming.scrollSpeed) * 1000;
-        const duration = hurried
-            ? Math.min(
-                  relaxed,
-                  Math.max(logTiming.queuedScrollLeast, logTiming.queuedShow - pause * 2)
-              )
-            : relaxed;
+        const speed = hurried ? logTiming.queuedScrollSpeed : logTiming.scrollSpeed;
+        const duration = (over / speed) * 1000;
         onHold(id, pause + duration + pause);
         const animation = text.animate(
             [{ transform: 'translateX(0)' }, { transform: `translateX(${-over}px)` }],
             { duration, delay: pause, easing: 'linear', fill: 'forwards' }
         );
         run.current = { animation, start: performance.now(), pause, duration, hurried };
+        // The start fades in once the text moves off it, and the end fades out once the text reaches it
+        let frame = requestAnimationFrame(function moving() {
+            if (animation.currentTime >= pause) {
+                fade('start', true);
+            } else {
+                frame = requestAnimationFrame(moving);
+            }
+        });
+        animation.finished.then(() => fade('end', false)).catch(() => {});
         return () => {
+            cancelAnimationFrame(frame);
             animation.cancel();
             run.current = null;
         };
@@ -73,19 +82,16 @@ const LogText = ({ entry, hurry, onHold }) => {
         current.hurried = true;
         const elapsed = performance.now() - current.start;
         const left = current.pause + current.duration - elapsed;
-        const want = Math.max(
-            logTiming.queuedScrollLeast / 2,
-            logTiming.queuedShow - logTiming.queuedScrollPause - elapsed
-        );
-        if (left <= 0 || want >= left) {
+        if (left <= 0) {
             return;
         }
-        current.animation.updatePlaybackRate(left / want);
-        onHold(id, elapsed + want + logTiming.queuedScrollPause);
+        const rate = logTiming.queuedScrollSpeed / logTiming.scrollSpeed;
+        current.animation.updatePlaybackRate(rate);
+        onHold(id, elapsed + left / rate + logTiming.queuedScrollPause);
     }, [hurry, id, onHold]);
 
     return (
-        <div ref={boxRef} className='min-w-0 flex-1 overflow-hidden'>
+        <div ref={boxRef} className='log-fade min-w-0 flex-1 overflow-hidden'>
             <div ref={textRef} className='mx-auto w-max whitespace-nowrap'>
                 <Messages messages={[entry.message]} compact />
             </div>
@@ -93,8 +99,11 @@ const LogText = ({ entry, hurry, onHold }) => {
     );
 };
 
-// The phase track, giving way to the game log's newest line while one shows. Tapping a line moves to the next; the
-// skip button brings the track back.
+// The skip button is only as wide as its icon; the count of lines waiting is a small badge on the icon's corner
+const skipClass = 'flex h-full items-center px-1.5 text-[11px] leading-none';
+
+// The phase track, giving way to the game log's newest line while one shows. Tapping a line or the skip button moves
+// to the next, and the track comes back once none are left.
 const PhaseOrLog = ({ phase, feed, className }) => (
     <div className={classNames('relative', className)}>
         <PhaseRoll
@@ -112,25 +121,42 @@ const PhaseOrLog = ({ phase, feed, className }) => (
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: logTiming.fade / 1000, ease: 'easeInOut' }}
-                    className='absolute inset-0 flex items-center gap-1'
+                    // The skip button sits at the right, and an unseen copy of it at the left, so the line has the
+                    // same room each side and stays centred while taking the rest of the width
+                    className='absolute inset-0 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center'
                 >
+                    <span aria-hidden className={classNames(skipClass, 'invisible')}>
+                        <FontAwesomeIcon icon={faForwardStep} />
+                    </span>
                     <button
                         type='button'
                         title='Next'
                         onClick={feed.skip}
-                        className='flex h-full min-w-0 flex-1 items-center text-center text-xs leading-none text-foreground'
+                        className='flex h-full min-w-0 items-center text-center text-xs leading-none text-foreground'
                     >
                         <LogText entry={feed.current} hurry={feed.queued > 0} onHold={feed.hold} />
                     </button>
                     <button
                         type='button'
                         data-log-skip=''
-                        title='Skip the game log'
-                        onClick={feed.dismiss}
-                        className='flex h-full shrink-0 items-center gap-0.5 rounded px-1 text-[11px] leading-none text-default-400 hover:text-default-200'
+                        title='Skip this line'
+                        onClick={feed.skip}
+                        className={classNames(
+                            skipClass,
+                            'rounded text-default-400 hover:text-default-200'
+                        )}
                     >
-                        {feed.queued > 0 && <span>{`+${feed.queued}`}</span>}
-                        <FontAwesomeIcon icon={faForwardStep} />
+                        <span className='relative'>
+                            <FontAwesomeIcon icon={faForwardStep} />
+                            {feed.queued > 0 && (
+                                <span
+                                    data-log-queued=''
+                                    className='absolute -right-2 -top-2 flex h-3 min-w-3 items-center justify-center rounded-full bg-default-300 px-0.5 text-[8px] font-bold leading-none text-foreground'
+                                >
+                                    {feed.queued > 99 ? '99+' : feed.queued}
+                                </span>
+                            )}
+                        </span>
                     </button>
                 </motion.div>
             )}
@@ -353,12 +379,10 @@ const titleFade = {
 
 // The round's phases, giving way to new log lines; beside: shown on each side of it (the dock's chevrons)
 const PhaseTrack = ({ phase, feed, beside }) => (
-    <div className='flex items-center gap-2 px-2 pt-1'>
-        <div className='min-w-0 flex-1' />
+    <div className='flex items-center justify-center gap-2 px-2 pt-1'>
         {beside}
-        <PhaseOrLog phase={phase} feed={feed} className='w-[min(100%,36rem)] shrink' />
+        <PhaseOrLog phase={phase} feed={feed} className='w-[min(100%,36rem)] min-w-0 shrink' />
         {beside}
-        <div className='min-w-0 flex-1' />
     </div>
 );
 

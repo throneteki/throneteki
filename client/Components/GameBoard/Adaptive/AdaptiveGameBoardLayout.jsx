@@ -398,7 +398,7 @@ const AdaptiveGameBoardLayout = ({
                 )}
                 style={short ? { paddingLeft: columnWidth } : undefined}
             >
-                <Part area='id' scale={pileScale} className='shrink !min-w-min'>
+                <Part area='id' scale={pileScale} className='shrink-0'>
                     <PlotFactionStack
                         player={player}
                         isMe={isMe}
@@ -702,7 +702,7 @@ const AdaptiveGameBoardLayout = ({
     );
 
     // Publishes overlay positions as CSS variables on :root, for what lies over the board (the docked prompt's panel,
-    // the phone chat, the prompt's column)
+    // the prompt's column)
     const topBarsRef = useRef(null);
     useLayoutEffect(() => {
         const divider = dividerRef.current;
@@ -716,20 +716,14 @@ const AdaptiveGameBoardLayout = ({
             const rectOf = (selector) =>
                 boardRef.current?.querySelector(selector)?.getBoundingClientRect();
             const height = window.innerHeight;
-            const bars = topBarsRef.current?.getBoundingClientRect();
-            const column = columnRef.current?.getBoundingClientRect();
             const tools = rectOf('[data-region="tools"]');
             const topRail = rectOf('[data-rail-side="top"]');
             const bottomRail = rectOf('[data-rail-side="bottom"]');
             const values = {
                 '--board-divider-bottom': divider.getBoundingClientRect().bottom,
-                '--board-chat-top': bars ? bars.bottom : 0,
                 '--board-tools-width': tools ? tools.width : 0,
-                // In portrait the chat stops above our tools, the chat button in reach
-                '--board-chat-bottom': mode === 'narrow' && tools ? height - tools.top + 4 : 0,
                 '--board-rail-top': topRail ? topRail.bottom : 0,
-                '--board-rail-bottom': bottomRail ? height - bottomRail.top : 0,
-                '--board-chat-left': column ? column.right : 0
+                '--board-rail-bottom': bottomRail ? height - bottomRail.top : 0
             };
             for (const [name, value] of Object.entries(values)) {
                 if (written[name] !== value) {

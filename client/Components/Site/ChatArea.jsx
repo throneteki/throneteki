@@ -2,6 +2,8 @@ import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'rea
 import { Button, Textarea } from '@heroui/react';
 import classNames from 'classnames';
 
+const glideDuration = 150;
+
 const ChatArea = forwardRef(function ChatArea(
     {
         className,
@@ -16,7 +18,8 @@ const ChatArea = forwardRef(function ChatArea(
         maxInputLength,
         unreadMessagesLabel = 'Click to view unread messages...',
         onUnreadMessagesChange = () => {},
-        inputRef
+        inputRef,
+        glide = false
     },
     ref
 ) {
@@ -32,9 +35,37 @@ const ChatArea = forwardRef(function ChatArea(
     // Tolerance (px) for scroll position to determine if the user is at the bottom
     const scrollTolerance = 25;
 
+    // glide: messages arriving in the open chat slide the older ones up quickly rather than jumping them. The glide
+    // follows the bottom each frame, so anything else keeping the chat anchored meanwhile leaves it to finish.
+    const glideFrame = useRef(0);
+    const wasOpen = useRef(isOpen);
+    useEffect(() => () => cancelAnimationFrame(glideFrame.current), []);
+    const scrollToBottom = useCallback(
+        (smoothly) => {
+            const el = messagesRef.current;
+            if (!el || glideFrame.current) {
+                return;
+            }
+            if (!smoothly || document.documentElement.dataset.motion === 'off') {
+                el.scrollTop = el.scrollHeight;
+                return;
+            }
+            const from = el.scrollTop;
+            const start = performance.now();
+            const step = (now) => {
+                const progress = Math.min(1, (now - start) / glideDuration);
+                const target = el.scrollHeight - el.clientHeight;
+                el.scrollTop = from + (target - from) * (1 - (1 - progress) ** 3);
+                glideFrame.current = progress < 1 ? requestAnimationFrame(step) : 0;
+            };
+            glideFrame.current = requestAnimationFrame(step);
+        },
+        [messagesRef]
+    );
+
     // Determines if the user is "anchored" to the bottom of the chat
     const onScroll = useCallback(() => {
-        if (messagesRef.current) {
+        if (messagesRef.current && !glideFrame.current) {
             const { scrollTop, scrollHeight, clientHeight } = messagesRef.current;
             const isAtBottom = scrollTop + clientHeight >= scrollHeight - scrollTolerance;
             if (isAtBottom && !isAnchored) {
@@ -48,11 +79,11 @@ const ChatArea = forwardRef(function ChatArea(
     // Handles unread update & anchoring when new messages are received
     useEffect(() => {
         const unread = messageCount - lastMessageCount;
+        const arrivedWhileOpen = wasOpen.current && unread > 0 && lastMessageCount > 0;
+        wasOpen.current = isOpen;
         if (isOpen && isAnchored) {
-            if (messagesRef.current) {
-                // Keep it anchored to the bottom
-                messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
-            }
+            // Keep it anchored to the bottom
+            scrollToBottom(glide && arrivedWhileOpen);
             setLastMessageCount(messageCount);
             setUnreadMessages(0);
             onUnreadMessagesChange(0);
@@ -60,20 +91,28 @@ const ChatArea = forwardRef(function ChatArea(
             setUnreadMessages(unread);
             onUnreadMessagesChange(unread);
         }
-    }, [isOpen, isAnchored, lastMessageCount, messageCount, messagesRef, onUnreadMessagesChange]);
+    }, [
+        isOpen,
+        isAnchored,
+        lastMessageCount,
+        messageCount,
+        glide,
+        scrollToBottom,
+        onUnreadMessagesChange
+    ]);
 
     // Handles anchoring when it changes size (eg. the input box takes up more space due to new line)
     useEffect(() => {
         if (messagesRef.current) {
             const resizeObserver = new ResizeObserver(() => {
                 if (isAnchored) {
-                    messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+                    scrollToBottom(false);
                 }
             });
             resizeObserver.observe(messagesRef.current);
             return () => resizeObserver.disconnect();
         }
-    }, [isAnchored, messagesRef]);
+    }, [isAnchored, messagesRef, scrollToBottom]);
 
     // Triggers send message
     const onKeyDown = (event) => {

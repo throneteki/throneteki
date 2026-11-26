@@ -4,15 +4,10 @@ import CardPile from '../CardPile';
 import PlayerPlots from '../PlayerPlots';
 
 // The faction card, then the agenda, then any further agendas, each tucked half under the one before it, as on the
-// classic board. While the row has room the agenda shows whole; when it has to squeeze, the agenda's column (and
-// each further agenda's) narrows and the card before it slides over it, down to a strip of it and no further. A
-// column's size is fixed, not taken from the card in it, so the row knows how narrow it can go.
-const agendaColumn =
-    'minmax(calc(var(--card-scale, 1) * 1.4rem), calc(var(--card-scale, 1) * 4rem + 0.25rem))';
-// With a title beside it the agenda keeps its whole width, and the row grows to make room for the title
-const fullAgendaColumn = 'calc(var(--card-scale, 1) * 4rem + 0.25rem)';
-const extraAgendaColumn =
-    'minmax(calc(var(--card-scale, 1) * 1rem), calc(var(--card-scale, 1) * 2rem))';
+// classic board. The agenda always shows whole: where the strip is short of room the board grows and scrolls
+// sideways rather than sliding the faction card over it.
+const agendaColumn = 'calc(var(--card-scale, 1) * 4rem + 0.25rem)';
+const extraAgendaColumn = 'calc(var(--card-scale, 1) * 2rem)';
 
 const AgendaSlot = ({ depth, children }) => (
     <div className='relative flex min-w-0 justify-end' style={{ zIndex: 10 - depth }}>
@@ -50,7 +45,7 @@ const PlotFactionStack = ({ player, isMe, side, onCardClick, pileProps, droppabl
                 style={{
                     gridTemplateColumns: [
                         'auto',
-                        ...(hasAgenda ? [player.title ? fullAgendaColumn : agendaColumn] : []),
+                        ...(hasAgenda ? [agendaColumn] : []),
                         ...additionalAgendas.map(() => extraAgendaColumn)
                     ].join(' '),
                     gridAutoColumns: 'auto'

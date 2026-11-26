@@ -12,7 +12,7 @@ export const useAdaptivePage = (active) => {
         const meta = document.querySelector('meta[name="viewport"]');
         const viewport = meta?.getAttribute('content');
         // The keyboard covers the page rather than shrinking it, so the board and the stats rail keep their size
-        // while the chat is typed into; the chat alone follows the keyboard (--visual-height)
+        // while something is typed into. The chat, which covers the whole screen, alone follows the keyboard.
         meta?.setAttribute(
             'content',
             `${viewport}, viewport-fit=cover, interactive-widget=resizes-visual`
@@ -32,14 +32,12 @@ export const useAdaptivePage = (active) => {
         if (android) {
             html.dataset.androidBoard = '';
         }
-        // How much of the screen the phone's keyboard leaves, for the chat to fill while it is typed into, so its input
-        // and newest messages stay above the keyboard
+        // How much of the screen the keyboard leaves, which the chat fills (--visual-height), so its input stays above
+        // the keyboard. Firefox for Android in full screen never reports the keyboard (Mozilla bug 1886881).
         const visual = window.visualViewport;
         const fit = () => html.style.setProperty('--visual-height', `${visual.height}px`);
-        visual?.addEventListener('resize', fit);
-        visual?.addEventListener('scroll', fit);
         if (visual) {
-            window.addEventListener('resize', fit);
+            visual.addEventListener('resize', fit);
             fit();
         }
         // The page itself never scrolls under the board: a touch-drag on the board would otherwise scroll it, leaving
@@ -93,9 +91,7 @@ export const useAdaptivePage = (active) => {
             document.removeEventListener('focusin', holdHeight);
             document.removeEventListener('focusout', afterTyping);
             html.style.removeProperty('--board-height');
-            window.removeEventListener('resize', fit);
             visual?.removeEventListener('resize', fit);
-            visual?.removeEventListener('scroll', fit);
             html.style.removeProperty('--visual-height');
             if (phantomBottom) {
                 html.style.removeProperty('--safe-bottom');

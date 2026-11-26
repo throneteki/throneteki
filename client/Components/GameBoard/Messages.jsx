@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import classNames from 'classnames';
 import { Avatar, Link } from '@heroui/react';
 
@@ -178,7 +178,9 @@ const formatMessageText = (message, compact) => {
     return messages;
 };
 
-const Message = memo(function Message({ message, compact }) {
+const Message = memo(function Message({ message, compact, arrive }) {
+    // Decided once, when it first shows, so a re-render part way through never cuts the fade short
+    const [arriving] = useState(arrive);
     // TODO: Re-add chat bubble triangles (left for this player, right for others)
     const className = compact
         ? 'break-words'
@@ -187,16 +189,26 @@ const Message = memo(function Message({ message, compact }) {
               'opacity-60': message.pending
           });
 
-    return <div className={className}>{formatMessageText(message.message, compact)}</div>;
+    return (
+        <div className={classNames(className, { 'chat-arrive': arriving })}>
+            {formatMessageText(message.message, compact)}
+        </div>
+    );
 });
 
 // compact: each message as a line of text, its alerts inline rather than as rules and panels, for showing one
 // message on its own
-const Messages = ({ messages, compact = false }) => {
+// arriveFrom: the index from which messages are new, and fade in
+const Messages = ({ messages, compact = false, arriveFrom = Infinity }) => {
     return (
         <>
             {messages.map((message, index) => (
-                <Message key={index} message={message} compact={compact} />
+                <Message
+                    key={index}
+                    message={message}
+                    compact={compact}
+                    arrive={index >= arriveFrom}
+                />
             ))}{' '}
         </>
     );

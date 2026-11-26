@@ -76,6 +76,11 @@ These keep the board recognisable when it changes shape:
 - Each player's stats stay with their own board.
 - Our hand is below our board (narrow), or in our strip elsewhere.
 - Our tools (view mode, chat, full screen, menu) sit beside our own stats on every layout (R171).
+- A card is one thing with everything on it (R294). Any effect on a card (pressing, shrinking, dimming, lifting,
+  turning, popping, moving) applies to the card together with all its rings, tokens, counters, badges and order
+  numbers, so nothing is left standing apart from it. The rings are on the card's surface (`[data-card-surface]`)
+  and the tokens and badges are overlays beside it (`[data-card-overlay]`), so an effect styled on the card body
+  alone misses them.
 
 ## Review notes (open concerns)
 
@@ -389,6 +394,7 @@ From the review on 2026-11-17 (seventh batch):
       invisible, to fade in and out).
 - [x] **R82 Faction and agenda side by side when the row has room**; squeezed, the faction slides over the agenda
       down to the strip it showed before and no further. A grid column per agenda, `minmax(strip, card + gap)`.
+      (Superseded by R297: the agenda always shows whole.)
 - [x] **R83 The opponent's hand fans out** over their half of the board, which darkens, when tapped (to count it)
       or when its cards are shown to us or are to be chosen from (then it stays until the choosing ends). A tap
       anywhere else puts it back. The cards fly from and back to the strip. `HandFan`.
@@ -655,7 +661,7 @@ From the review on 2026-11-17 (seventh batch):
 - [x] **R168 The title sits beside the agenda (decided 2026-11-19)**: a title no longer covers the agenda. With a
       title the agenda keeps its whole width and the row grows to make room for it (the board widening); without
       one the agenda still narrows under the faction card when the strip squeezes, keeping to the right of its
-      column so the faction card slides over it.
+      column so the faction card slides over it. (The squeeze is superseded by R297.)
 - [x] **R169 Desktop melee: the seat bars have room for the avatar (decided 2026-11-19)**: the bars are taller, so
       the avatar's ring and seat badge are no longer cut off at the top of the view.
 - [x] **R170 Desktop melee: the end boards reach the screen's edge (decided 2026-11-19)**: the room kept for the
@@ -1257,6 +1263,63 @@ From the review on 2026-11-20 (second batch):
       winner's last: in a joust both players, the winner's larger, crowned and glowing, the loser's dimmed; in a melee
       everyone by place. Each has a power pill (Winner, or their place in a melee). Embers rise behind, the cards can
       be flicked through, and the turning rays are gone.
+
+From a test game on 2026-11-25:
+
+- [x] **R294 A pressed card presses in with its rings and tokens**: the press shrank only the card's image, leaving
+      a gap between it and its ring. The whole card now presses in and dims: its surface (with its ring and order
+      number) and the tokens and badges over it. A card chosen while pressed pops once it is let go. This is now a
+      rule for every layout: any effect on a card takes everything on it along.
+- [x] **R295 Chat messages fade in**: on the adaptive board a message arriving in the game chat fades in, and the
+      older ones slide up quickly (150ms) rather than jumping. Switching between Chat and Chat + game log does
+      neither. The lobby chat and the classic board are unchanged.
+- [ ] **R296 The phone chat's input is under the keyboard again**: this is R75 coming back. Firefox for Android in
+      full screen never reports the keyboard (the visual viewport does not shrink; Mozilla bug 1886881), so
+      `--visual-height` cannot follow it. R75 had worked around this by putting the input at the top with the newest
+      messages below it. R257 moved the input back to the bottom for one chat order everywhere, noting that Firefox
+      in full screen could cover it again. Open: how to fix it without the reversed order. R301 simplifies the
+      chat's sizing but cannot fix this: there is still nothing to follow in Firefox in full screen.
+- [x] **R297 Agendas never tuck behind the faction card**: the agenda always shows whole, and a further agenda is
+      always tucked half under the one before it, as on classic. Where the strip is short of room the board grows
+      and scrolls sideways instead (R148). This supersedes R82 and the squeeze in R168.
+- [x] **R298 Card images show as they load, and slow ones get the drawn card**: an image was hidden until it had
+      fully loaded, so a slow one showed only the skeleton and then appeared at once. It now shows over the skeleton
+      while it loads, so it reveals itself as it arrives. An image still loading after 3s has the card drawn from its
+      details (card-preview, watermarked "Image LOADING slowly") under it, until the image covers it. Before, the drawn
+      card only showed once an image had failed. (There had been a 5s version on 2026-11-23, built on a shared image
+      store; it was never committed, and went when that store was reverted the same day. A backup patch was left in
+      that session's scratchpad.)
+- [x] **R299 A tapped card in a squished pile stays up while it is pressed**: on touch the first tap raises the card
+      and the second sends its click. The card only stayed raised for the server's answer when the client already
+      knew the click did something (selectable, selected or playable); otherwise it dropped back into the hand,
+      pressed in. Every second tap that presses the card now keeps it raised and pressed until the game answers, then
+      lowers it.
+- [x] **R300 A card that can do nothing is not pressed**: the press (from #3841) pressed every card clicked. A card
+      the board shows can do nothing (not selectable, not selected, not playable or usable now, outside manual
+      mode; such as a Bodyguard in hand during challenges) is no longer pressed, as the earlier pulse did. Its click
+      is still sent, and is not waited on either: the press and "Waiting for server" go together. Such a click is sent
+      quiet (`serverWait.sent(now, { quiet })`), keeping its place in the handled count without starting the wait,
+      as the pulse's quiet clicks did before #3841. Checked by probe with 5s lag: a click that does nothing shows
+      neither; a choosable card is pressed at once and shows "Waiting for server" after 3s.
+- [x] **R301 The phone chat covers the whole screen**: in portrait and phone landscape the open chat covers
+      everything, the prompt and both players' bars too, clear of the notch and gesture bar, and closes from a
+      button in its own header (the slashed chat icon, as R63). It no longer measures the bars, the landscape column
+      or our tools (`--board-chat-*` are gone): its height is just what the keyboard leaves (`--visual-height`, from
+      `visualViewport` resize). This supersedes R76's chat opening below the opponent's bar and stopping above our
+      tools. The board's height hold and layout freeze while typing stay, for the prompt's lookups. Checked by probe:
+      390×844 and 844×390 covered and closing; a 450px visible height keeps the input above it.
+- [x] **R302 The prompt's log line is centred, and scrolls at a steady pace when others wait**: the skip button sits
+      at the right and an unseen copy of it at the left, so the line has the same room each side, stays centred on the
+      bar and takes the rest of the width. The gutters are only as wide as the skip icon: the count of lines waiting
+      is a small badge on its corner, taking no room. The row reaches the bar's edges (the phase track's spacers are
+      gone), which gives phone landscape's narrow column most room. A line too long for the row fades out at the
+      edges it runs past, as the phase wheel does: the end while there is more to come, the start once it has
+      scrolled (`.log-fade`). Tapping the line or the skip button moves to the next line only (the skip button used
+      to clear every line waiting). With lines queued behind it, a long line scrolled fast
+      enough to finish in about a second, so the longer it was the faster it went. It now scrolls at a flat 80px a
+      second (45 with nothing waiting), whatever its length, and a line that comes to have others waiting part way
+      through speeds up to that pace (`queuedScrollSpeed` in `logTiming`). Checked by probe: centred at 390px wide
+      and in the desktop panel.
 
 - [x] `client/hud.js`: add `board: 'classic'` to `defaultHud`, and accept `'classic' | 'adaptive'` in
       `normalizeHud`.

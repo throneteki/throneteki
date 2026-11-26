@@ -10,7 +10,8 @@ import game, {
     gameConnectionLost,
     gameReconnecting,
     gameRetryScheduled,
-    reconnectGameNow
+    reconnectGameNow,
+    sendCardClickedMessage
 } from '../redux/reducers/game.js';
 import cards from '../redux/reducers/cards';
 import navigation from '../redux/reducers/navigation.js';
@@ -79,8 +80,10 @@ const lagMiddleware = (store) => (next) => (action) => {
         const user = store.getState().auth.user;
         const shown = store.getState().lobby.currentGame;
         const prediction = predictionFor(action, shown, user);
-        const seq = serverWait.sent();
-        predictions.add(seq, [prediction, pressFor(action, shown, user)]);
+        const press = pressFor(action, shown, user);
+        const quiet = sendCardClickedMessage.match(action) && !press;
+        const seq = serverWait.sent(undefined, { quiet });
+        predictions.add(seq, [prediction, press]);
         const shows = predictions.list().some((one) => one.seq === seq);
         if (shows) {
             store.dispatch(receiveGameState(devTruth, user?.username));

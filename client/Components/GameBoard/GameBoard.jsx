@@ -571,6 +571,7 @@ const GameBoard = () => {
                         muted={!thisPlayer && currentGame.muteSpectators}
                         inputRef={chatInputRef}
                         onUnreadChange={setChatUnread}
+                        animate={adaptive}
                     />
                 </div>
             </MotionConfig>

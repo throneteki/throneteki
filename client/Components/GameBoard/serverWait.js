@@ -18,11 +18,16 @@ const subscribe = (listener) => {
     return () => listeners.delete(listener);
 };
 
+// The oldest message waited on. A quiet one (a click the board already shows does nothing, so it is not pressed) keeps
+// its place in the count, so the server's handled count still lines up, but is never waited on.
+const oldestWaited = () => sentAt.find((at) => at !== null) ?? null;
+
 export const serverWait = {
-    sent(now = performance.now()) {
+    sent(now = performance.now(), { quiet = false } = {}) {
+        const before = oldestWaited();
         sent++;
-        sentAt.push(now);
-        if (sentAt.length === 1) {
+        sentAt.push(quiet ? null : now);
+        if (oldestWaited() !== before) {
             notify();
         }
         return sent;
@@ -46,7 +51,7 @@ export const serverWait = {
         }
     },
     handledCount: () => handled,
-    oldest: () => sentAt[0] ?? null
+    oldest: oldestWaited
 };
 
 export const useWaitingForServer = () => {
