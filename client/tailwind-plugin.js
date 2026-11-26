@@ -2,14 +2,33 @@ import plugin from 'tailwindcss/plugin';
 
 const textStroke = { sm: 0.15, md: 0.3, lg: 0.45 };
 
+// The game board's own type scale, tighter than the site's: text-xs and the rest take these steps inside the board
+// (hud-text) and its panels (hud-zoom), and the site's steps everywhere else
+const boardSteps = Object.fromEntries(
+    Object.entries({
+        xs: 0.6,
+        sm: 0.8,
+        base: 1,
+        lg: 1.125,
+        xl: 1.25,
+        '2xl': 1.563,
+        '3xl': 1.953
+    }).flatMap(([step, rem]) => [
+        [`--step-${step}`, `${rem}rem`],
+        [`--lead-${step}`, `${rem}rem`]
+    ])
+);
+
 export default plugin(function ({ addUtilities, matchUtilities }) {
     addUtilities({
         '.hud-zoom': {
+            ...boardSteps,
             zoom: 'var(--ui-scale, 1)',
             '--font-scale': '1',
             'font-size': '1rem'
         },
         '.hud-text': {
+            ...boardSteps,
             'font-size': 'calc(var(--text-scale, 1) * 1rem)'
         },
         '.card-text': {

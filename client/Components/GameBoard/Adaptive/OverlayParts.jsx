@@ -8,7 +8,7 @@ export const Heading = ({ children, className, style, id }) => (
         id={id}
         style={style}
         className={classNames(
-            'text-center font-[Cinzel,serif] font-extrabold uppercase tracking-[0.3em] text-amber-300 [text-shadow:0_2px_10px_#000]',
+            'text-center font-display font-semibold text-gold [text-shadow:0_2px_10px_#000]',
             zoom,
             className
         )}
@@ -23,10 +23,10 @@ export const OverlayButton = ({ primary = false, disabled = false, onPress, chil
         onClick={onPress}
         disabled={disabled}
         className={classNames(
-            'pointer-events-auto rounded-md border px-4 py-1.5 text-sm font-semibold uppercase tracking-wide disabled:cursor-not-allowed disabled:opacity-50',
+            'pointer-events-auto rounded border border-action px-4 py-1.5 text-sm font-medium text-action-fg transition-colors disabled:cursor-not-allowed disabled:opacity-50',
             primary
-                ? 'border-amber-400 bg-amber-400 text-black enabled:hover:bg-amber-300'
-                : 'border-amber-400/70 bg-black/70 text-amber-100 enabled:hover:bg-amber-400/15'
+                ? 'bg-action/25 enabled:hover:bg-action/35'
+                : 'bg-panel/80 enabled:hover:bg-action-wash'
         )}
     >
         {children}
@@ -39,7 +39,7 @@ export const OverlayBackdrop = ({ major = false }) => (
     <div
         className={classNames(
             'overlay-dim pointer-events-auto absolute inset-0 backdrop-blur-[3px]',
-            major ? 'bg-black/80' : 'bg-black/65'
+            major ? 'bg-panel/90' : 'bg-panel/90'
         )}
         style={{
             backgroundImage:

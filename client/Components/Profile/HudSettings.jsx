@@ -72,13 +72,18 @@ const CardPreview = () => (
 );
 
 const ClassicPrompt = () => (
-    <div className='hud-zoom w-56 border border-gold-line bg-[#0c0d11]/95 text-center'>
+    <div className='hud-zoom w-56 border border-gold-line bg-panel/95 text-center'>
         <div className='border-b border-gold-hair px-2 py-1 font-display text-sm font-semibold text-gold'>
             Marshaling phase
         </div>
         <div className='px-2 pb-2'>
             <p className='my-1 text-sm text-ink'>Marshal your cards</p>
-            <span className='flex h-8 items-center justify-center rounded bg-accent text-sm text-accent-foreground'>
+            <span
+                className={classNames(
+                    chipClass(false),
+                    'flex h-8 items-center justify-center text-sm'
+                )}
+            >
                 Done
             </span>
         </div>
@@ -86,16 +91,14 @@ const ClassicPrompt = () => (
 );
 
 const AdaptivePrompt = () => (
-    <div className='hud-zoom w-80 border-y border-white/20 bg-black/60'>
+    <div className='hud-zoom w-80 border-y border-gold-line bg-panel/90'>
         <div className='px-2 pt-1'>
             <PhaseRoll phase='marshal' className='w-full' />
         </div>
-        <div className='mx-auto mt-1 h-px w-4/5 bg-gradient-to-r from-transparent via-white/30 to-transparent' />
+        <div className='mx-auto mt-1 h-px w-4/5 bg-gold-hair' />
         <div className='flex flex-col items-center gap-1 px-2 py-1'>
-            <div className='text-center text-sm font-semibold leading-snug'>
-                <div className='text-[10px] font-normal uppercase leading-tight tracking-wider text-ink-dim'>
-                    Marshaling
-                </div>
+            <div className='text-center text-sm font-medium leading-snug text-ink'>
+                <div className='text-xs font-normal leading-tight text-ink-dim'>Marshaling</div>
                 Marshal your cards
             </div>
             <span className={classNames(chipClass(false), 'inline-flex h-7 items-center')}>

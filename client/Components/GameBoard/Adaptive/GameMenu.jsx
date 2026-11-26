@@ -51,7 +51,7 @@ const menuButtonWidth = 36;
 // The line between two groups of buttons in the bar, with its margins
 const groupGapWidth = 9;
 const GroupGap = () => (
-    <span aria-hidden className='mx-1 my-2 w-px shrink-0 self-stretch bg-white/[0.060]' />
+    <span aria-hidden className='mx-1 my-2 w-px shrink-0 self-stretch bg-edge' />
 );
 
 // Which items keep their place in the bar first when not all of them fit
@@ -302,7 +302,7 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
                 <Popover.Content
                     placement='top'
                     offset={6}
-                    className='hud-zoom border border-gold-line bg-[#0c0d11]/95 p-2'
+                    className='hud-zoom border border-gold-line bg-panel/95 p-2'
                 >
                     <Popover.Dialog aria-label='Spectators'>
                         <SpectatorList spectators={spectators} />

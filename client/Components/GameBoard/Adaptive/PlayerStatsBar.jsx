@@ -20,13 +20,13 @@ const stats = [
 // the stat as the wide bar draws it, with its +/-, in a small panel off the bar's inner edge
 const StatChanger = ({ placement, display }) => (
     <Popover>
-        <Popover.Trigger className='flex h-full items-center rounded-md data-[pressed=true]:bg-white/10'>
+        <Popover.Trigger className='flex h-full items-center rounded-md data-[pressed=true]:bg-quiet'>
             {display(false, true)}
         </Popover.Trigger>
         <Popover.Content
             placement={placement}
             offset={6}
-            className='hud-zoom border border-gold-line bg-[#0c0d11]/95 p-1'
+            className='hud-zoom border border-gold-line bg-panel/95 p-1'
         >
             <Popover.Dialog aria-label='Change stat'>
                 <div className='flex h-8 items-center'>{display(true, false)}</div>
@@ -116,7 +116,7 @@ const PlayerStatsBar = ({
             <span
                 title={`Seat ${player.seatNo}`}
                 className={classNames(
-                    'absolute z-10 rounded-full border border-zinc-400 bg-zinc-800 px-1 text-[10px] font-bold leading-tight text-zinc-100',
+                    'absolute z-10 rounded-full border border-edge bg-banner-idle px-1 text-[10px] font-bold leading-tight text-ink',
                     place
                 )}
             >
@@ -179,7 +179,7 @@ const PlayerStatsBar = ({
             style={grid ? { gridTemplateColumns: `repeat(${columns}, auto)` } : undefined}
             className={classNames(
                 'hud-zoom items-center',
-                backdrop ? 'relative isolate' : 'bg-black/60',
+                backdrop ? 'relative isolate' : 'bg-panel/90',
                 grid
                     ? 'grid min-h-0 shrink justify-center justify-items-center gap-x-1.5 px-0.5'
                     : vertical
@@ -190,7 +190,7 @@ const PlayerStatsBar = ({
                       : classNames(
                             // Reaches the screen's edge, its contents clear of a notch or gesture area; above the
                             // cards (so the avatar is never hidden), below the divider
-                            'relative z-[245] box-content flex shrink-0 border-white/10 pl-[max(0.5rem,env(safe-area-inset-left))] pr-[max(0.5rem,env(safe-area-inset-right))]',
+                            'relative z-[245] box-content flex shrink-0 border-edge pl-[max(0.5rem,env(safe-area-inset-left))] pr-[max(0.5rem,env(safe-area-inset-right))]',
                             compact ? 'h-7' : 'h-8',
                             {
                                 'pt-[var(--safe-top)]': edge === 'top',
@@ -204,7 +204,7 @@ const PlayerStatsBar = ({
                 <div
                     aria-hidden
                     className={classNames(
-                        'pointer-events-none absolute left-4 right-0 top-1/2 -z-10 h-[1.125rem] -translate-y-1/2 rounded-r-md border border-l-0 border-white/[0.060] shadow-[0_2px_8px_rgba(0,0,0,0.5)]',
+                        'pointer-events-none absolute left-4 right-0 top-1/2 -z-10 h-[1.125rem] -translate-y-1/2 rounded-r-md border border-l-0 border-edge shadow-[0_2px_8px_rgba(0,0,0,0.5)]',
                         backdrop
                     )}
                 />

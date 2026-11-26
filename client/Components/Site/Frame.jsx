@@ -40,7 +40,7 @@ const Frame = forwardRef(function Frame(
                 {children}
             </div>
             {footer && (
-                <div className='sticky bottom-[7px] z-10 mx-2.5 border-t border-gold-line bg-[#0c0d11] px-3 pb-[11px] pt-3 sm:mx-3.5 sm:px-[18px] sm:pb-[13px] sm:pt-3.5'>
+                <div className='sticky bottom-[7px] z-10 mx-2.5 border-t border-gold-line bg-panel px-3 pb-[11px] pt-3 sm:mx-3.5 sm:px-[18px] sm:pb-[13px] sm:pt-3.5'>
                     {footer}
                 </div>
             )}

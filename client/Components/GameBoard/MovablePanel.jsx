@@ -119,8 +119,8 @@ const PanelBody = ({
         className,
         'max-h-screen max-w-screen fixed top-0 left-0 flex flex-col overflow-hidden',
         board
-            ? 'rounded-md border border-amber-400/40 bg-zinc-950/90 shadow-[0_10px_30px_rgba(0,0,0,0.7)]'
-            : 'min-w-60 border border-gold-line bg-[#0c0d11]/95 shadow-[0_18px_40px_rgba(0,0,0,0.6)]'
+            ? 'border border-gold-line bg-panel/95 shadow-[0_10px_30px_rgba(0,0,0,0.7)]'
+            : 'min-w-60 border border-gold-line bg-panel/95 shadow-[0_18px_40px_rgba(0,0,0,0.6)]'
     );
 
     return createPortal(
@@ -129,11 +129,11 @@ const PanelBody = ({
                 // The adaptive board's look: whose pile it is by avatar, its name as the board's labels are
                 <div
                     ref={handleRef}
-                    className='hud-zoom flex cursor-grab touch-none select-none items-center gap-2 border-b border-white/[0.060] bg-black/80 px-2 py-1.5'
+                    className='hud-zoom flex cursor-grab touch-none select-none items-center gap-2 border-b border-gold-hair px-2 py-1.5'
                     onClick={(event) => event.stopPropagation()}
                 >
                     {playerName && <PlayerAvatar name={playerName} className='h-5 w-5 shrink-0' />}
-                    <span className='min-w-0 flex-1 truncate text-xs font-semibold uppercase tracking-wide text-amber-100'>
+                    <span className='min-w-0 flex-1 truncate font-display text-sm font-semibold text-gold'>
                         {playerName
                             ? `${playerName} · ${pileTitle ?? title}`
                             : (pileTitle ?? title)}
@@ -142,7 +142,7 @@ const PanelBody = ({
                         type='button'
                         aria-label='Close'
                         data-no-drag
-                        className='tap-target shrink-0 rounded px-1 text-ink-faint hover:text-white'
+                        className='tap-target shrink-0 rounded px-1 text-ink-dim hover:text-ink'
                         onClick={onCloseClick}
                     >
                         <FontAwesomeIcon icon={faTimes} />

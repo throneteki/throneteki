@@ -6,6 +6,8 @@ import {
     sendLeaveGameMessage
 } from '../../redux/reducers/game';
 import { Tooltip } from '@heroui/react';
+import classNames from 'classnames';
+import { navItemClassName } from './NavItem';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWarning } from '@fortawesome/free-solid-svg-icons';
 
@@ -35,8 +37,7 @@ const ContextMenu = ({ onPress = () => true }) => {
 
     const contextMenu = useMemo(() => {
         const menuOptions = [];
-        const menuItemClass =
-            'cursor-pointer text-base font-medium text-white transition-colors duration-500 ease-in-out hover:text-gray-500 text-nowrap';
+        const menuItemClass = classNames(navItemClassName, 'text-base text-nowrap');
         if (currentGame?.started) {
             menuOptions.unshift(
                 <button type='button' onClick={onLeaveClick} className={menuItemClass}>

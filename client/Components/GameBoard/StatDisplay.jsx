@@ -24,7 +24,7 @@ const StatDisplay = ({
             title={`${label} ${statName}`}
             variant='tertiary'
             size='sm'
-            className='h-5 w-5 min-w-5 shrink-0 rounded-full border border-white/25 bg-white/10 text-[10px] text-white data-[hovered=true]:bg-white/25'
+            className='h-5 w-5 min-w-5 shrink-0 rounded-full border border-edge bg-quiet text-[10px] text-ink data-[hovered=true]:bg-quiet-hover'
             onPress={onPress}
         >
             <FontAwesomeIcon icon={icon} />

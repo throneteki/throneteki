@@ -162,8 +162,8 @@ const DockHint = ({ spot, fromTop }) => (
         aria-hidden
         data-sheet-dock-hint=''
         className={classNames(
-            'pointer-events-none fixed z-[299] border-2 border-amber-400/90 bg-amber-400/15 shadow-[0_0_24px_rgba(251,191,36,0.45)]',
-            fromTop ? 'rounded-b-xl border-t-0' : 'rounded-t-xl border-b-0'
+            'pointer-events-none fixed z-[299] border-2 border-gold bg-gold/10',
+            fromTop ? 'border-t-0' : 'border-b-0'
         )}
         style={{ left: spot.left, top: spot.top, width: spot.width, height: spot.height }}
     />
@@ -738,12 +738,12 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
                         data-choose={choose ? '' : undefined}
                         title={choose ? `${pile.title}: has cards to choose` : pile.title}
                         className={classNames(
-                            'shrink-0 rounded-full border px-2 text-[11px] font-semibold uppercase leading-5 tracking-wide lg:px-2.5 lg:py-0.5 lg:text-xs',
+                            'shrink-0 rounded border px-2 text-xs leading-5 lg:px-2.5 lg:py-0.5',
                             current
-                                ? 'border-amber-400 bg-amber-400/20 text-amber-100'
+                                ? 'border-gold bg-quiet text-gold'
                                 : choose
-                                  ? 'ring-selectable border-[rgb(var(--select-ring))] bg-[rgb(var(--select-ring)/0.15)] text-white [--ring-scale:1]'
-                                  : 'border-white/15 text-ink-faint'
+                                  ? 'ring-selectable border-select bg-select/10 text-ink [--ring-scale:1]'
+                                  : 'border-edge text-ink-dim'
                         )}
                         onClick={() => !current && pile.open()}
                     >
@@ -776,8 +776,8 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
             {/* On a desktop the handle is taller, and wider, to take hold of with a mouse */}
             <div
                 className={classNames(
-                    'mx-auto my-1 rounded-full bg-white/35 transition-colors',
-                    phone ? 'h-1 w-10' : 'h-1.5 w-16 group-hover:bg-white/15'
+                    'mx-auto my-1 rounded-full bg-ink-faint transition-colors',
+                    phone ? 'h-1 w-10' : 'h-1.5 w-16 group-hover:bg-ink-dim'
                 )}
             />
         </div>
@@ -795,12 +795,12 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
                     data-sheet-player={sheet.playerName}
                     data-sheet-floating={floating ? '' : undefined}
                     className={classNames(
-                        'absolute flex w-max flex-col border-white/15 bg-zinc-950/95',
+                        'absolute flex w-max flex-col border-gold-line bg-panel/95',
                         floating
-                            ? 'rounded-xl border shadow-[0_12px_40px_rgba(0,0,0,0.75)]'
+                            ? 'border shadow-[0_12px_40px_rgba(0,0,0,0.75)]'
                             : fromTop
-                              ? 'top-0 flex-col-reverse rounded-b-xl border-x border-b shadow-[0_8px_24px_rgba(0,0,0,0.6)]'
-                              : 'bottom-0 rounded-t-xl border-x border-t shadow-[0_-8px_24px_rgba(0,0,0,0.6)]',
+                              ? 'top-0 flex-col-reverse border-x border-b shadow-[0_8px_24px_rgba(0,0,0,0.6)]'
+                              : 'bottom-0 border-x border-t shadow-[0_-8px_24px_rgba(0,0,0,0.6)]',
                         { 'pointer-events-auto': open }
                     )}
                     style={
@@ -841,7 +841,7 @@ const SheetFrame = ({ sheetKey, sheet, open, mode, piles }) => {
                     >
                         {sheet.playerName && <PlayerTag player={sheet.playerName} />}
                         {chips || (
-                            <span className='min-w-0 flex-1 truncate text-sm font-bold text-amber-100'>
+                            <span className='min-w-0 flex-1 truncate font-display text-sm font-semibold text-gold'>
                                 {sheet.title}
                             </span>
                         )}

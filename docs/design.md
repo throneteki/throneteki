@@ -33,33 +33,57 @@ These make the site look like a generic template. Don't use them:
 
 ## Tokens
 
-The tokens are set in [client/index.css](../client/index.css): Tailwind's `@theme` block holds our own tokens, and the `.dark` block sets HeroUI 3's theme variables (`--accent`, `--field-*`, `--focus`, `--link`). Use the
-token names in class lists. Don't use raw hex values, `bg-black/N` opacities or Tailwind's default
-greys in components.
+The tokens are set in [client/index.css](../client/index.css). Each one names a role, not a colour:
+`@theme inline` maps the class names (`text-gold`, `bg-panel`) to variables, and the theme block
+(`.dark` for now) sets their values, along with HeroUI 3's (`--accent`, `--field-*`, `--focus`,
+`--link`). A light theme is a second block with the same names, so components never change with
+the theme.
+
+Use the token names in class lists. Don't use raw hex values, `white` or `black` tints, or
+Tailwind's default palette in components: they only suit one theme. Shadows can stay black, as
+they read as shadows on light and dark alike.
 
 ### Colour
 
-| Token          | Value                       | Use                                                            |
-| -------------- | --------------------------- | -------------------------------------------------------------- |
-| `accent`       | `#41658a`                   | The main colour: primary buttons, switches on, selection       |
-| `accent-hover` | `#4a79ab`                   | Primary buttons on hover                                       |
-| `banner-deep`  | `#284a70`                   | The lower end of the current banner                            |
-| `banner-idle`  | `#23262d`                   | Banners that aren't current                                    |
-| `gold`         | `#c9a45c`                   | Nav links, headings within a page, frame corners, links, focus |
-| `gold-line`    | `rgba(201, 164, 92, 0.38)`  | The frame rule, table header rule, save bar rule               |
-| `gold-hair`    | `rgba(201, 164, 92, 0.16)`  | Rules between rows                                             |
-| `ink`          | `#ece6d8`                   | Text                                                           |
-| `ink-dim`      | `#a8a194`                   | Descriptions, labels, table headers                            |
-| `ink-faint`    | `#7d776c`                   | Hints under a setting, placeholders, quiet status text         |
-| `frame`        | `rgba(10, 11, 15, 0.88)`    | The frame's fill                                               |
-| `well`         | `rgba(255, 255, 255, 0.05)` | Fields                                                         |
-| `quiet`        | `rgba(255, 255, 255, 0.07)` | Quiet buttons, hover on rows                                   |
-| `danger`       | `#e57a72`                   | Danger text and destructive text actions                       |
-| `danger-solid` | `#c0392b`                   | A destructive button in a confirm dialog                       |
-| `warning`      | `#e0a526`                   | Unsaved changes, warnings                                      |
-| `success`      | `#5fa777`                   | Confirmation text                                              |
+| Token            | Value                       | Use                                                            |
+| ---------------- | --------------------------- | -------------------------------------------------------------- |
+| `accent`         | `#c9a45c`                   | The one accent: primary buttons, switches and checkboxes on    |
+| `accent-hover`   | `#d8b876`                   | Primary buttons on hover                                       |
+| `banner-current` | `#6b5530`                   | The upper end of the current banner                            |
+| `banner-deep`    | `#3a2e18`                   | The lower end of the current banner                            |
+| `banner-idle`    | `#23262d`                   | Banners that aren't current                                    |
+| `gold`           | `#c9a45c`                   | Nav links, headings within a page, frame corners, links, focus |
+| `gold-line`      | `rgba(201, 164, 92, 0.38)`  | The frame rule, table header rule, save bar rule               |
+| `gold-hair`      | `rgba(201, 164, 92, 0.16)`  | Rules between rows                                             |
+| `ink`            | `#ece6d8`                   | Text                                                           |
+| `ink-dim`        | `#a8a194`                   | Descriptions, labels, table headers                            |
+| `ink-faint`      | `#7d776c`                   | Hints under a setting, placeholders, quiet status text         |
+| `frame`          | `rgba(10, 11, 15, 0.88)`    | The frame's fill                                               |
+| `panel`          | `#0c0d11`                   | Panels over the game board, at 90% to 95% (`bg-panel/90`)      |
+| `well`           | `rgba(255, 255, 255, 0.05)` | Fields                                                         |
+| `quiet`          | `rgba(255, 255, 255, 0.07)` | Quiet buttons, hover on rows                                   |
+| `quiet-hover`    | `rgba(255, 255, 255, 0.12)` | Quiet buttons under the pointer                                |
+| `edge`           | `rgba(255, 255, 255, 0.12)` | Neutral borders on quiet buttons, tabs and badges              |
+| `action`         | `#c9a45c`                   | Game actions: their outline (see Buttons)                      |
+| `action-wash`    | `rgba(201, 164, 92, 0.16)`  | Game actions under the pointer                                 |
+| `action-fg`      | `#ece6d8`                   | Game actions' text                                             |
+| `select`         | `#c9a45c`                   | The ring round a card that can be chosen                       |
+| `selected`       | `#ece6d8`                   | The ring round a chosen card                                   |
+| `danger`         | `#e57a72`                   | Danger text and destructive text actions                       |
+| `danger-solid`   | `#c0392b`                   | A destructive button in a confirm dialog                       |
+| `warning`        | `#e0a526`                   | Unsaved changes, warnings                                      |
+| `success`        | `#5fa777`                   | Confirmation text                                              |
 
-There is one gold. The old orange `secondary` (`#da8a2a`) is retired, and its uses move to `gold`.
+Gold is the only accent. The old blue main colour and the orange `secondary` (`#da8a2a`) are
+retired. Things that need telling apart differ in weight, not hue: a solid gold primary button
+beside an outlined game action, a breathing gold ring round a card you can choose beside a bright
+`ink` ring round a chosen one. Text on `accent` uses `--accent-foreground`, a near black.
+
+`accent`, `action` and `select` are gold in the dark theme, but are their own tokens so a theme
+can set them apart: gold text on white is too faint to read, for one.
+
+The values above are the dark theme's. The game board's surface keeps them in every theme: see
+[Exceptions](#exceptions).
 
 Faction colours (`baratheon` to `tyrell`) and challenge colours (`military`, `intrigue`, `power`)
 are for game content only: cards, factions, decks and stats. Don't use them for interface states.
@@ -134,8 +158,8 @@ rows, not tables, with the item's state as tags and its row actions on the right
 or the admin area. It goes above a frame: a gold rod, with one banner per section hanging from it.
 
 - Banners are `banner-idle`, with Cinzel labels in `ink-dim`, 50px long, with a swallowtail end.
-- The current banner is 66px long, `accent` fading to `banner-deep`, with a gold top edge and an
-  `ink` label. Hovering lengthens a banner a little.
+- The current banner is 66px long, `banner-current` fading to `banner-deep` (a dark bronze), with
+  a gold top edge and an `ink` label. Hovering lengthens a banner a little.
 - Each banner is a real link with its own address (`/profile/gameplay`). It marks the current one
   with `aria-current='page'`.
 - A section with unsaved changes shows a small gold diamond after its label.
@@ -162,7 +186,7 @@ choice next to them when there is room, as the profile's Appearance section does
 ### Switch
 
 `<Toggle>` for a switch with a label, or `<SettingSwitch>` inside a setting row. Both wrap HeroUI's
-`Switch` at size `sm` in the main colour. Leave its shape alone.
+`Switch` at size `sm` in the accent. Leave its shape alone.
 
 ### Phase track
 
@@ -185,9 +209,19 @@ HeroUI `Button`, with the font and size from the theme and a 4px radius.
 | Quiet       | `variant='tertiary'`                      | Everything else: Discard, Import, Cancel          |
 | Danger text | `variant='ghost' className='text-danger'` | Destructive actions in a row: Unblock, Remove     |
 | Danger      | `variant='danger'`                        | Confirming a destructive action, in a dialog only |
+| Game action | `<GameActionButton>`                      | Acting in a game: prompt choices, Join, Start     |
+| Game exit   | `<GameActionButton quiet>`                | A way out of a game choice: Cancel, Pass, Watch   |
+
+There are two kinds of button. Site controls (saving, settings, forms, admin) use the ordinary
+buttons, the primary one solid gold. Actions taken in a game, on the board and in the lobby, use `GameActionButton`
+([GameActionButton.jsx](../client/Components/Site/GameActionButton.jsx)): an `action` outline on a
+`panel` fill, washed with `action-wash` under the pointer, in normal case. Its `quiet` form is a
+way out. Over card art a solid block of colour competes with the cards, so game actions are
+outlined.
 
 Use one primary button per view. Icons on buttons are optional, and an icon-only button needs an
-`aria-label`.
+`aria-label`. Use the site's [Button.jsx](../client/Components/Site/Button.jsx) for a button with
+a `title`: HeroUI's drops it.
 
 ### Fields
 
@@ -295,12 +329,36 @@ Every page works at 390px wide:
 ## Exceptions
 
 - **Game board:** uses the colours, type and buttons here, with its own layout, card piles and
-  prompts. Frames and banner nav aren't used on the board. Its panels (the prompt, the game log,
-  card pile popups, the stats bars) sit over the cards, so they use a near opaque `#0c0d11` fill
-  (90% to 95%) with a `gold-line` border instead of a frame. Panel titles and the current phase are
-  Cinzel `gold`. The game log marks rounds and phases with a centred Cinzel divider, and game
-  alerts are a compact row with an icon rather than a notice. Popup titles name the whole pile and
-  its owner: "northern_wolf's dead pile".
+  prompts. Frames and banner nav aren't used on the board. The rules below cover both boards, classic
+  and adaptive, and `test/client/boardPalette.spec.js` checks them in `client/Components/GameBoard`.
+    - **Surface and panels.** The surface (the table, cards, play areas and the overlays drawn over
+      them) is always dark: it carries `data-board-surface`, which sets the dark theme's values
+      whatever the site's theme is. The panels round it (the prompt, the stats bars, pile popups and
+      sheets, menus, the game log and chat) follow the site's theme, so they use theme tints (`edge`,
+      `quiet`, `panel`), never `white` or `black` ones. The spec lists the panel files.
+    - **Panels.** They sit over the cards, so they use the `panel` fill at 90% to 95% with a
+      `gold-line` border instead of a frame, and are square, like frames. On the surface, black scrims
+      (40% to 55%) stay for area backgrounds and the dimmed board behind a phone's chat.
+    - **Titles.** Panel and sheet titles, phase names and overlay headings are Cinzel 600 in `gold`,
+      in title case. Popup titles name the whole pile and its owner: "northern_wolf's dead pile".
+    - **Buttons.** Both boards' prompt buttons are game actions (small ones on the adaptive board,
+      `Adaptive/chipClass.js`), as are the overlays' buttons. Pile actions in a sheet are quiet
+      buttons.
+    - **Card states.** A card you can choose has a breathing `select` ring, and a chosen card a
+      `selected` ring. The rings for game states (attacking, saved, controlled and so on) keep their
+      own colours, as do counters and tokens, which are game content.
+    - **Game log.** Rounds and phases are marked with a centred Cinzel divider. Game alerts are a
+      line like any other, marked by an icon and coloured by tone (`warning`, `danger`, `gold`), with
+      no box.
+    - **Type and scale.** The board has its own, tighter type steps (`text-xs` 0.6rem, `text-sm`
+      0.8rem, `text-base` 1rem, with line heights to match), set by its `hud-text` and `hud-zoom`
+      classes in [tailwind-plugin.js](../client/tailwind-plugin.js), so the same classes stay the
+      site's size elsewhere. The interface is also scaled to the screen (`--ui-scale`,
+      `--text-scale`). Wrapped text in the log and chat sets its own line height.
+    - **Motion.** Cards moving, turning and landing, and the overlays, are animated longer than the
+      site's 150ms to 180ms. They follow the board's animation setting and stop under
+      `prefers-reduced-motion`.
+        - **Artwork.** The overlays' drawings (the crown, the coin, the sword) keep their own colours.
 - **The White Book:** keeps its own book styling.
 - **Card images:** shown as printed, with no frames or effects added.
 

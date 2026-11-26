@@ -145,7 +145,7 @@ const ChatArea = forwardRef(function ChatArea(
                     <button
                         type='button'
                         onClick={() => setIsAnchored(true)}
-                        className='absolute bottom-full left-1/2 z-10 mb-2 flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-gold-line bg-[#0c0d11] px-3 py-1 text-xs text-ink shadow-[0_6px_16px_rgba(0,0,0,0.5)] hover:border-gold'
+                        className='absolute bottom-full left-1/2 z-10 mb-2 flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-gold-line bg-panel px-3 py-1 text-xs text-ink shadow-[0_6px_16px_rgba(0,0,0,0.5)] hover:border-gold'
                     >
                         <FontAwesomeIcon icon={faArrowDown} className='text-[0.7rem] text-gold' />
                         {unreadMessages > 0

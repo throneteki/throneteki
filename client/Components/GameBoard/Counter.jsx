@@ -104,7 +104,7 @@ const counterColours = (name) => ({
     'bg-white/85 text-black': name === 'prayer' || name === 'ghost',
     'bg-gray-400/85': name === 'tale',
     'bg-teal-600/85': name === 'venom',
-    'bg-black/85': name === 'challenge-icon' || name === 'faction'
+    'bg-panel/90': name === 'challenge-icon' || name === 'faction'
 });
 
 const Counter = ({ id, name, cancel, fade, icon, shortName, value, className, countsUp }) => {

@@ -45,7 +45,7 @@ const MoreHint = ({ show, choose, end, axis }) => {
                     style={insetAt[axis][end]}
                     className={classNames(
                         'pointer-events-none absolute z-[240] to-transparent',
-                        kind === 'choose' ? 'from-[rgb(var(--select-ring)/0.18)]' : 'from-black/50',
+                        kind === 'choose' ? 'from-select/20' : 'from-black/50',
                         place
                     )}
                 >
@@ -53,8 +53,8 @@ const MoreHint = ({ show, choose, end, axis }) => {
                         className={classNames(
                             'absolute',
                             kind === 'choose'
-                                ? 'ring-selectable bg-[rgb(var(--select-ring))] [--ring-scale:1]'
-                                : 'bg-amber-300 shadow-[0_0_6px_1px_rgba(252,211,77,0.7)]',
+                                ? 'ring-selectable bg-select [--ring-scale:1]'
+                                : 'bg-gold shadow-[0_0_6px_1px_rgba(201,164,92,0.7)]',
                             line
                         )}
                     />

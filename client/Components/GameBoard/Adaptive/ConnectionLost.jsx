@@ -98,13 +98,14 @@ const ConnectionLost = () => {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.25 }}
                     className='overlay-root fixed inset-0 z-[500] overflow-hidden'
+                    data-board-surface=''
                 >
                     <OverlayBackdrop major />
                     <div className='absolute inset-0 flex flex-col items-center justify-center gap-3 px-4 text-center'>
                         <Heading id='connection-lost-title' className='overlay-text text-xl'>
                             Connection lost
                         </Heading>
-                        <p className='overlay-text hud-zoom max-w-full text-balance text-sm font-semibold uppercase leading-snug tracking-widest text-ink-faint [text-shadow:0_1px_6px_#000]'>
+                        <p className='overlay-text hud-zoom max-w-full text-balance text-sm font-semibold leading-snug text-ink-faint [text-shadow:0_1px_6px_#000]'>
                             {online
                                 ? causes[lost.reason] ||
                                   'The connection to the game server dropped.'
@@ -112,7 +113,7 @@ const ConnectionLost = () => {
                         </p>
                         <p
                             aria-live='polite'
-                            className='hud-zoom flex max-w-full items-center gap-2 rounded-full border border-red-500/40 bg-black/75 px-4 py-1.5 text-sm font-medium text-white shadow-[0_6px_20px_rgba(0,0,0,0.6)]'
+                            className='hud-zoom flex max-w-full items-center gap-2 rounded-full border border-danger/40 bg-panel/90 px-4 py-1.5 text-sm font-medium text-ink shadow-[0_6px_20px_rgba(0,0,0,0.6)]'
                         >
                             {lost.trying && (
                                 <FontAwesomeIcon

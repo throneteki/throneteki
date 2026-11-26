@@ -92,7 +92,7 @@ const floatingPromptWidth = `calc(var(--ui-scale, 1) * ${promptBoost} * clamp(12
 const chatButtonRoom = 36;
 // A melee board's tint while its player is waited on. Its dark bands (the strip, our hand) lay it again over their
 // own darkness, so they stay as much darker than the play area.
-const waitedOn = 'bg-sky-300/5';
+const waitedOn = 'bg-accent/[0.06]';
 const waitedOnBand = 'bg-[linear-gradient(rgb(125_211_252/0.05),rgb(125_211_252/0.05))]';
 const fullscreenRoom = 28;
 // Phone landscape's column down the left: the stats at its top and bottom, the prompt and our tools between
@@ -209,7 +209,7 @@ const StatsCard = ({
                 compact
                 canChange={canChange}
                 showSeat={showSeat}
-                backdrop={active ? 'bg-sky-950/80' : 'bg-black/60'}
+                backdrop={active ? 'bg-banner-deep/80' : 'bg-panel/90'}
             />
         </FitRow>
     </div>
@@ -225,7 +225,7 @@ const EdgeStatsBar = ({ edge, active = false, stick = false, className, ...props
             <PlayerStatsBar
                 {...props}
                 edge={edge}
-                className={classNames(band, { 'bg-sky-950/80': active })}
+                className={classNames(band, { 'bg-banner-deep/80': active })}
             />
         );
     }
@@ -233,8 +233,8 @@ const EdgeStatsBar = ({ edge, active = false, stick = false, className, ...props
         <div
             className={classNames(
                 band,
-                'border-white/10',
-                active ? 'bg-sky-950/80' : 'bg-black/60'
+                'border-edge',
+                active ? 'bg-banner-deep/80' : 'bg-panel/90'
             )}
         >
             <PlayerStatsBar
@@ -256,7 +256,7 @@ const ToolBox = ({ className, children, ...props }) => (
     <div
         {...props}
         className={classNames(
-            'pointer-events-auto flex items-center gap-0.5 rounded-md border border-white/[0.060] bg-black/60 p-0.5 shadow-[0_2px_8px_rgba(0,0,0,0.5)] hud-zoom',
+            'pointer-events-auto flex items-center gap-0.5 rounded-md border border-edge bg-panel/90 p-0.5 shadow-[0_2px_8px_rgba(0,0,0,0.5)] hud-zoom',
             className
         )}
     >
@@ -581,7 +581,7 @@ const AdaptiveGameBoardLayout = ({
                 {!chat.open && chat.unread > 0 && (
                     <span
                         className={classNames(
-                            'absolute flex h-4 min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-bold text-white',
+                            'absolute flex h-4 min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-bold text-ink',
                             inBar ? 'right-0.5 top-0.5' : '-right-1 -top-1'
                         )}
                     >
@@ -598,8 +598,8 @@ const AdaptiveGameBoardLayout = ({
             className={classNames(
                 'h-7 min-w-0 gap-1.5 border px-2 text-xs font-semibold',
                 followed.paused
-                    ? 'border-amber-400/70 bg-amber-500/25 text-amber-300'
-                    : 'border-sky-400/70 bg-sky-500/25 text-sky-300'
+                    ? 'border-gold bg-gold/25 text-gold'
+                    : 'border-edge bg-quiet text-ink'
             )}
             title={
                 followed.paused

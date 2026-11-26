@@ -523,8 +523,8 @@ const Name = ({ player, size = 1.1, you = false, avatar = true, className, style
         )}
         <span
             className={classNames(
-                'min-w-0 truncate font-[Cinzel,serif] font-extrabold tracking-wide [text-shadow:0_2px_8px_#000]',
-                you ? 'text-amber-200' : 'text-white'
+                'min-w-0 truncate font-display font-semibold [text-shadow:0_2px_8px_#000]',
+                you ? 'text-gold' : 'text-ink'
             )}
             style={{ fontSize: ui(size) }}
         >
@@ -544,11 +544,11 @@ const ContinueButton = ({ seconds, delay = 0, onContinue }) => {
         <button
             type='button'
             onClick={onContinue}
-            className='hud-zoom pointer-events-auto relative min-w-[9rem] overflow-hidden rounded-md border border-amber-400/80 bg-black/75 px-6 py-1.5 text-sm font-semibold uppercase tracking-wide text-amber-100 hover:bg-black/90'
+            className='hud-zoom pointer-events-auto relative min-w-[9rem] overflow-hidden rounded-md border border-gold bg-panel/90 px-6 py-1.5 text-sm font-semibold text-ink hover:bg-panel/90'
         >
             <span
                 aria-hidden
-                className='absolute inset-0 origin-left bg-amber-400/35'
+                className='absolute inset-0 origin-left bg-gold/35'
                 style={{ animation: `overlay-timer ${seconds}s linear ${wait}ms both` }}
             />
             <span className='relative'>Continue</span>
@@ -831,7 +831,7 @@ const Embers = ({ ash = false }) => (
                     key={index}
                     className={classNames(
                         'overlay-ember absolute -bottom-2 rounded-full',
-                        ash ? 'bg-zinc-400' : 'bg-amber-300'
+                        ash ? 'bg-white/25' : 'bg-gold'
                     )}
                     style={{
                         left: `${spread(index, 1) * 100}%`,
@@ -965,7 +965,7 @@ const Start = ({ players, me, portrait, onClose }) => {
                                         <CrossedSwords size={9} delay={allLanded} />
                                     </div>
                                     <div
-                                        className='overlay-stamp font-[Cinzel,serif] text-5xl font-extrabold text-amber-300 [text-shadow:0_0_24px_rgba(242,184,75,0.6),0_4px_0_#5a3c08]'
+                                        className='overlay-stamp font-display text-5xl font-semibold text-gold [text-shadow:0_0_24px_rgba(201,164,92,0.6),0_4px_0_#5a3c08]'
                                         style={{ animationDelay: `${allLanded}ms` }}
                                     >
                                         VS
@@ -1121,20 +1121,20 @@ const Over = ({ players, me, portrait, winners, buttons, onButtonClick, onClose 
                         className={classNames(
                             'flex items-center gap-1.5 rounded-full border px-3 py-0.5 text-sm font-semibold tabular-nums',
                             winner
-                                ? 'border-amber-400/80 bg-amber-400/20 text-amber-100 shadow-[0_0_12px_rgba(251,191,36,0.35)]'
-                                : 'border-white/25 bg-black/60 text-zinc-200'
+                                ? 'border-gold bg-gold/20 text-ink shadow-[0_0_12px_rgba(201,164,92,0.35)]'
+                                : 'border-white/25 bg-panel/90 text-ink'
                         )}
                     >
                         {melee && player.standing && (
-                            <span className={winner ? 'text-amber-300' : 'text-ink-faint'}>
+                            <span className={winner ? 'text-gold' : 'text-ink-faint'}>
                                 {placeOf(player.standing)} ·
                             </span>
                         )}
-                        {!melee && winner && <span className='text-amber-300'>Winner ·</span>}
+                        {!melee && winner && <span className='text-gold'>Winner ·</span>}
                         {powerOf(player)} power
                     </span>
                     {player.eliminated && (
-                        <span className='text-xs uppercase tracking-wider text-red-300 [text-shadow:0_1px_4px_#000]'>
+                        <span className='text-xs text-danger [text-shadow:0_1px_4px_#000]'>
                             {eliminatedReasons[player.eliminatedReason] ?? 'Eliminated'}
                         </span>
                     )}
@@ -1155,17 +1155,17 @@ const Over = ({ players, me, portrait, winners, buttons, onButtonClick, onClose 
             <div className='flex max-w-full flex-col items-center gap-2'>
                 <div
                     className={classNames(
-                        'overlay-stamp max-w-full break-words font-[Cinzel,serif] font-extrabold tracking-wide [text-shadow:0_0_24px_rgba(242,184,75,0.45),0_4px_0_#000]',
+                        'overlay-stamp max-w-full break-words font-display font-semibold [text-shadow:0_0_24px_rgba(201,164,92,0.45),0_4px_0_#000]',
                         zoom,
                         melee ? 'text-4xl' : 'text-5xl',
-                        me && !iWon && winning.length > 0 ? 'text-red-400' : 'text-amber-300'
+                        me && !iWon && winning.length > 0 ? 'text-danger' : 'text-gold'
                     )}
                     style={{ animationDelay: `${allLanded}ms` }}
                 >
                     {title}
                 </div>
                 <div
-                    className='overlay-after hud-zoom max-w-full break-words font-[Cinzel,serif] text-xl font-bold text-amber-50 [text-shadow:0_2px_8px_#000]'
+                    className='overlay-after hud-zoom max-w-full break-words font-display text-xl font-semibold text-ink [text-shadow:0_2px_8px_#000]'
                     style={after(allLanded + 250)}
                 >
                     {headline}
@@ -1218,7 +1218,7 @@ const Over = ({ players, me, portrait, winners, buttons, onButtonClick, onClose 
                 type='button'
                 onClick={() => dispatch(sendLeaveGameMessage())}
                 className={classNames(
-                    'overlay-after hud-zoom pointer-events-auto flex items-center gap-1 rounded px-2 py-1 text-[0.6rem] font-semibold uppercase tracking-wider text-red-300/80 [text-shadow:0_1px_4px_#000] hover:text-red-200 hover:underline',
+                    'overlay-after hud-zoom pointer-events-auto flex items-center gap-1 rounded px-2 py-1 text-[0.6rem] font-semibold text-danger [text-shadow:0_1px_4px_#000] hover:text-danger hover:underline',
                     portrait
                         ? 'absolute bottom-[calc(0.5rem+var(--safe-bottom))] left-1/2 -translate-x-1/2'
                         : 'mt-3'
@@ -1268,10 +1268,10 @@ const Standing = ({ player, me, portrait, index, leads = false }) => {
                             style={{ ...after(landed + countTime), rotate: '-10deg' }}
                         />
                     )}
-                    <span className='font-[Cinzel,serif] text-3xl font-extrabold tabular-nums text-amber-300'>
+                    <span className='font-display text-3xl font-semibold tabular-nums text-gold'>
                         <CountUp value={powerOf(player)} delay={landed} />
                     </span>
-                    <span className='text-xs font-semibold uppercase tracking-wider text-ink-faint [text-shadow:0_1px_4px_#000]'>
+                    <span className='text-xs font-semibold text-ink-faint [text-shadow:0_1px_4px_#000]'>
                         power
                     </span>
                 </div>
@@ -1289,8 +1289,8 @@ const Standing = ({ player, me, portrait, index, leads = false }) => {
                     >
                         <div
                             className={classNames('overlay-grow h-full rounded-full', {
-                                'bg-amber-400': !leads,
-                                'bg-amber-300 shadow-[0_0_8px_rgba(251,191,36,0.8)]': leads
+                                'bg-gold': !leads,
+                                'bg-gold shadow-[0_0_8px_rgba(201,164,92,0.8)]': leads
                             })}
                             style={after(landed)}
                         />
@@ -1353,13 +1353,13 @@ const SwordsIcon = ({ className }) => (
 const relationLooks = {
     Rivals: {
         icon: SwordsIcon,
-        row: 'border-red-500/70 bg-red-950/70 text-red-100 [--relation-glow:rgb(248_113_113)]',
-        label: 'text-red-300'
+        row: 'border-danger/70 bg-danger/15 text-danger [--relation-glow:rgb(229_122_114)]',
+        label: 'text-danger'
     },
     Supports: {
         icon: ({ className }) => <FontAwesomeIcon icon={faHandshake} className={className} />,
-        row: 'border-emerald-500/70 bg-emerald-950/70 text-emerald-100 [--relation-glow:rgb(52_211_153)]',
-        label: 'text-emerald-300'
+        row: 'border-success/70 bg-success/15 text-success [--relation-glow:rgb(95_167_119)]',
+        label: 'text-success'
     }
 };
 // Whom a player's title rivals and supports among the players still in, a pill each with every player's avatar
@@ -1399,12 +1399,7 @@ const Relations = ({ player, live, me, delay }) => {
                             title={`${line.label} ${line.players.map(nameOf).join(', ')}`}
                         >
                             <look.icon className={look.label} />
-                            <span
-                                className={classNames(
-                                    'shrink-0 font-bold uppercase tracking-wider',
-                                    look.label
-                                )}
-                            >
+                            <span className={classNames('shrink-0 font-bold', look.label)}>
                                 {line.label}
                             </span>
                             <span className='flex min-w-0 items-center' style={{ gap: ui(0.5) }}>
@@ -1421,7 +1416,7 @@ const Relations = ({ player, live, me, delay }) => {
                                         />
                                         <span
                                             className={classNames('truncate font-semibold', {
-                                                'text-amber-200': other === me
+                                                'text-gold': other === me
                                             })}
                                         >
                                             {other === me ? 'You' : nameOf(other)}
@@ -1516,7 +1511,7 @@ const InitiativeStat = ({ stat, value, delay, markAt, winAt, win }) => (
         >
             <span
                 className={classNames(
-                    'inline-flex items-center rounded-full border border-white/25 bg-black/70 font-bold tabular-nums text-zinc-100',
+                    'inline-flex items-center rounded-full border border-white/25 bg-panel/90 font-bold tabular-nums text-ink',
                     win ? 'overlay-win' : 'overlay-lose'
                 )}
                 style={{
@@ -1541,7 +1536,7 @@ const InitiativeStat = ({ stat, value, delay, markAt, winAt, win }) => (
 // lands, so a tie of any size shows one face.
 const coinTime = 800;
 const coinFace =
-    'absolute inset-0 flex items-center justify-center overflow-hidden rounded-full border-[3px] border-amber-200 bg-[radial-gradient(circle_at_35%_30%,#fde68a,#d97706_60%,#92400e)] font-[Cinzel,serif] font-extrabold text-amber-950 shadow-[0_6px_16px_rgba(0,0,0,0.6)] [backface-visibility:hidden]';
+    'absolute inset-0 flex items-center justify-center overflow-hidden rounded-full border-[3px] border-gold bg-[radial-gradient(circle_at_35%_30%,#fde68a,#d97706_60%,#92400e)] font-display font-semibold text-gold shadow-[0_6px_16px_rgba(0,0,0,0.6)] [backface-visibility:hidden]';
 const Coin = ({ winner, delay }) => (
     <div
         className='relative'
@@ -1554,7 +1549,7 @@ const Coin = ({ winner, delay }) => (
     >
         <div
             aria-hidden
-            className='overlay-coin-slam pointer-events-none absolute left-1/2 top-1/2 aspect-square w-full -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-amber-300/70'
+            className='overlay-coin-slam pointer-events-none absolute left-1/2 top-1/2 aspect-square w-full -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-gold'
         />
         <div className='overlay-coin-toss h-full w-full'>
             <div className='overlay-coin relative h-full w-full [transform-style:preserve-3d]'>
@@ -1601,7 +1596,7 @@ const InitiativeStats = ({ value, plan, win, showPower }) => {
 };
 
 const verdictLine =
-    'overlay-after max-w-full text-center text-xs font-semibold uppercase tracking-[0.2em] text-amber-200/90 [text-shadow:0_1px_6px_#000]';
+    'overlay-after max-w-full text-center text-xs font-semibold text-gold/90 [text-shadow:0_1px_6px_#000]';
 // Under the plots: the tie line (struck through when a coin decides), the coin, then who won
 const InitiativeVerdict = ({ result, plan, me }) => {
     const nameFor = (name) => (me && name === nameOf(me) ? 'You' : name);
@@ -1630,7 +1625,7 @@ const InitiativeVerdict = ({ result, plan, me }) => {
             )}
             {plan.coinAt !== undefined && <Coin winner={result.winner} delay={plan.coinAt} />}
             <div
-                className='overlay-after max-w-full text-center font-[Cinzel,serif] text-lg font-bold text-amber-300 [text-shadow:0_1px_6px_#000]'
+                className='overlay-after max-w-full text-center font-display text-lg font-semibold text-gold [text-shadow:0_1px_6px_#000]'
                 style={after(plan.decideAt)}
             >
                 {`${winner} ${winner === 'You' ? 'win' : 'wins'} initiative`}
@@ -1713,7 +1708,7 @@ const Minor = ({ overlay, initiative, players, me, portrait, seconds, released, 
             {out && (
                 <div
                     aria-hidden
-                    className='overlay-flash pointer-events-none absolute inset-0 bg-[radial-gradient(circle,rgba(220,38,38,0.4),transparent_60%)]'
+                    className='overlay-flash pointer-events-none absolute inset-0 bg-[radial-gradient(circle,rgba(229,122,114,0.4),transparent_60%)]'
                 />
             )}
             {overlay.minor !== 'out' && (
@@ -1812,9 +1807,9 @@ const Minor = ({ overlay, initiative, players, me, portrait, seconds, released, 
                                 rotate: `${tiltOf(`${nameOf(out)}:seal`, -14, 4)}deg`
                             }}
                         >
-                            <div className='rounded-md border-[3px] border-red-600 bg-red-950/75 p-[3px] shadow-[0_0_0_2px_rgba(0,0,0,0.45),0_12px_30px_rgba(0,0,0,0.85)]'>
+                            <div className='rounded-md border-[3px] border-danger bg-danger/15 p-[3px] shadow-[0_0_0_2px_rgba(0,0,0,0.45),0_12px_30px_rgba(0,0,0,0.85)]'>
                                 <div
-                                    className='rounded-sm border border-red-500/80 px-3 py-0.5 font-[Cinzel,serif] font-extrabold tracking-[0.15em] text-red-500 [text-shadow:0_1px_0_rgba(0,0,0,0.6)]'
+                                    className='rounded-sm border border-danger/80 px-3 py-0.5 font-display font-semibold text-danger [text-shadow:0_1px_0_rgba(0,0,0,0.6)]'
                                     style={{ fontSize: 'calc(var(--card-scale, 1) * 1rem)' }}
                                 >
                                     ELIMINATED
@@ -1829,13 +1824,13 @@ const Minor = ({ overlay, initiative, players, me, portrait, seconds, released, 
                         style={after(1200)}
                     />
                     <div
-                        className='overlay-after hud-zoom flex max-w-full flex-wrap items-center justify-center gap-x-2 rounded-full border border-red-500/40 bg-black/75 px-4 py-1.5 text-sm font-medium text-white shadow-[0_6px_20px_rgba(0,0,0,0.6)]'
+                        className='overlay-after hud-zoom flex max-w-full flex-wrap items-center justify-center gap-x-2 rounded-full border border-danger/40 bg-panel/90 px-4 py-1.5 text-sm font-medium text-ink shadow-[0_6px_20px_rgba(0,0,0,0.6)]'
                         style={after(1350)}
                     >
-                        <span className='text-red-300'>
+                        <span className='text-danger'>
                             {eliminatedReasons[out.eliminatedReason] ?? 'Eliminated'}
                         </span>
-                        <span aria-hidden className='text-red-500/70'>
+                        <span aria-hidden className='text-danger'>
                             ·
                         </span>
                         <span>
@@ -1876,6 +1871,7 @@ const OverlayView = ({
     return (
         <div
             data-board-overlay={overlay.key}
+            data-board-surface=''
             className={classNames(
                 'overlay-root pointer-events-none absolute inset-0 overflow-hidden transition-opacity ease-out',
                 { 'opacity-0': fading }

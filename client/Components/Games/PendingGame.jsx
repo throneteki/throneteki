@@ -14,6 +14,7 @@ import {
 import { navigate } from '../../redux/reducers/navigation';
 
 import { Button } from '@heroui/react';
+import GameActionButton from '../Site/GameActionButton';
 import Dialog from '../Site/Dialog';
 import { GameTypeDescriptions } from './GameTypeInfo';
 import PendingGamePlayers from './PendingGamePlayers';
@@ -132,16 +133,15 @@ const PendingGame = forwardRef(function PendingGame({ mockGame }, ref) {
                         Leave
                     </Button>
                     {isOwner && (
-                        <Button
+                        <GameActionButton
                             isDisabled={!canStartGame()}
                             onPress={() => {
                                 setWaiting(true);
                                 dispatch(sendStartGameMessage());
                             }}
-                            variant='primary'
                         >
                             Start game
-                        </Button>
+                        </GameActionButton>
                     )}
                 </>
             }

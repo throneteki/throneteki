@@ -262,7 +262,7 @@ const CardView = ({
                 data-card-overlay=''
                 data-sheet-opener=''
                 title='Cards underneath'
-                className='pointer-events-auto tap-target absolute bottom-1 right-1 z-[230] card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[var(--badge-size)] h-[var(--badge-size)] px-1 text-white bg-black/80 font-bold text-center rounded-md border-1'
+                className='pointer-events-auto tap-target absolute bottom-1 right-1 z-[230] card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[var(--badge-size)] h-[var(--badge-size)] px-1 text-ink bg-panel/90 font-bold text-center rounded-md border-1'
                 onClick={(event) => {
                     event.stopPropagation();
                     setShowUnderneath(!showUnderneath);
@@ -296,7 +296,7 @@ const CardView = ({
             >
                 <div
                     data-pile-popup=''
-                    className='flex flex-col box-content border border-white/10 bg-black/75 rounded-b-md overflow-hidden'
+                    className='flex flex-col box-content border border-white/10 bg-panel/90 rounded-b-md overflow-hidden'
                     onClick={(event) => event.stopPropagation()}
                 >
                     <Droppable
@@ -321,7 +321,7 @@ const CardView = ({
 
     const getCardOrder = () => {
         const badgeClassName =
-            'absolute top-0 left-0 z-[230] flex items-center justify-center card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[calc(var(--badge-size)*0.8)] h-[var(--badge-size)] px-0.5 text-white bg-black/90 font-bold rounded-br-md rounded-tl-[inherit]';
+            'absolute top-0 left-0 z-[230] flex items-center justify-center card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[calc(var(--badge-size)*0.8)] h-[var(--badge-size)] px-0.5 text-ink bg-panel/90 font-bold rounded-br-md rounded-tl-[inherit]';
         if (!adaptive) {
             return card.order ? (
                 <div data-card-overlay='' className={badgeClassName}>
@@ -477,6 +477,7 @@ const CardView = ({
             <div
                 className={slotClassName}
                 ref={cardRef}
+                data-board-surface=''
                 data-flip-slot={flip && wrapped ? '' : undefined}
                 data-flip={flip && !wrapped ? card.uuid : undefined}
                 data-flip-source={flip && !wrapped ? 'attached' : undefined}

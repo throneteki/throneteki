@@ -83,7 +83,7 @@ const InspectTip = ({ anchor, children }) => {
         <div
             ref={tipRef}
             role='tooltip'
-            className='hud-zoom pointer-events-none fixed z-[400] whitespace-nowrap border border-gold-line bg-[#0c0d11]/95 px-2 py-1 text-ink'
+            className='hud-zoom pointer-events-none fixed z-[400] whitespace-nowrap border border-gold-line bg-panel/95 px-2 py-1 text-ink'
             style={place ? { left: place.left, top: place.top } : { left: 0, top: 0, opacity: 0 }}
         >
             {children}
@@ -109,7 +109,7 @@ export const AreaBackground = ({ name, upright = false, className }) => {
             {adaptive && name && (
                 <span
                     className={classNames(
-                        'select-none overflow-hidden whitespace-nowrap text-center text-[calc(var(--card-scale,1)*0.55rem)] font-semibold uppercase leading-none tracking-wider text-white/30',
+                        'select-none overflow-hidden whitespace-nowrap text-center text-[calc(var(--card-scale,1)*0.55rem)] font-semibold leading-none text-white/30',
                         upright
                             ? 'max-h-[90%] rotate-180 [writing-mode:vertical-rl]'
                             : 'max-w-[90%]'
@@ -189,7 +189,7 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
         const pos = `${position.includes('bottom') ? 'bottom' : 'top'}-0 ${position.includes('right') ? 'right' : 'left'}-0`;
         const labelClassName = classNames(
             'absolute text-xs z-[210] leading-tight px-1 py-0.5 bg-black/40 rounded-md shift-smooth',
-            labelClickable ? 'cursor-pointer hover:bg-black/70' : 'pointer-events-none',
+            labelClickable ? 'cursor-pointer hover:bg-panel/90' : 'pointer-events-none',
             pos
         );
         return (
@@ -224,6 +224,7 @@ const LabelledGameArea = forwardRef(function LabelledGameArea(
             onClickCapture={onClickCapture}
             style={style}
             data-labelled-area=''
+            data-board-surface=''
             data-inspect-key={inspectMode && inspectable ? key : undefined}
             title={inspectMode && label && !inspectable ? nameOf(label) : undefined}
             {...rest}

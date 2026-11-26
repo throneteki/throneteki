@@ -43,7 +43,7 @@ const CardCounters = ({ cardUuid, counters }) => {
         <div
             data-card-overlay=''
             className={classNames(
-                'pointer-events-none absolute inset-0 z-[230] flex flex-wrap content-center items-center justify-center text-white',
+                'pointer-events-none absolute inset-0 z-[230] flex flex-wrap content-center items-center justify-center text-ink',
                 look.container
             )}
             style={look.style}

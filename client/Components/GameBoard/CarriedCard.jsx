@@ -145,6 +145,7 @@ const CarriedCard = ({ uuid: carriedUuid, code, orientation, start, grab, scale,
         <div
             ref={ref}
             data-carried=''
+            data-board-surface=''
             className='fixed left-0 top-0 z-[400] pointer-events-none'
             style={{
                 scale: String(elevation.carried),

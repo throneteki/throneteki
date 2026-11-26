@@ -115,7 +115,7 @@ const PhaseRoll = ({ phase, className }) => {
     return (
         <div
             className={classNames(
-                'relative h-[1.2em] overflow-hidden text-[11px] font-semibold uppercase leading-[1.2em] tracking-wider',
+                'relative h-[1.3em] overflow-hidden font-display text-xs font-semibold leading-[1.3em]',
                 '[mask-image:linear-gradient(to_right,transparent,black_18%,black_82%,transparent)]',
                 className
             )}
@@ -137,7 +137,7 @@ const PhaseRoll = ({ phase, className }) => {
                     <span
                         key={position}
                         className={classNames('absolute left-1/2 top-0 whitespace-nowrap', {
-                            'text-warning': distance === 0,
+                            'text-gold': distance === 0,
                             'text-ink-faint/50': distance < 0,
                             'text-ink-faint': distance > 0
                         })}

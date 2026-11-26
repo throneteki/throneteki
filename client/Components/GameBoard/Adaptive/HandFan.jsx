@@ -206,7 +206,7 @@ const HandFan = ({ cards, side = 'top', playerName, onCardClick, children }) => 
                     <div className='pointer-events-none fixed inset-0 z-[290]'>
                         <motion.div
                             className={classNames(
-                                'absolute bg-black/70',
+                                'absolute bg-panel/90',
                                 state === 'open' && 'pointer-events-auto'
                             )}
                             style={layout.backdrop}

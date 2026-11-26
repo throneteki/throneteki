@@ -23,11 +23,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { cardBoxClass, cardWidth } from '../../cardScale';
 import { registerPile } from '../../flip';
 
-// A pile's action in a sheet, as a pill like the sheet's chips
+// A pile's action in a sheet, as a quiet button
 const PileAction = ({ menuItem, onPress }) => (
     <button
         type='button'
-        className='flex h-7 items-center gap-1.5 rounded-full border border-amber-400/60 bg-amber-400/10 px-3 text-xs font-semibold uppercase tracking-wide text-amber-100 transition-colors hover:border-amber-300 hover:bg-amber-400/25 hover:text-white'
+        className='flex h-7 items-center gap-1.5 rounded border border-edge bg-quiet px-3 text-xs font-medium text-ink transition-colors hover:bg-quiet-hover'
         onClick={() => onPress(menuItem)}
     >
         <FontAwesomeIcon icon={menuItem.icon} className='text-[11px]' />

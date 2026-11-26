@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import classNames from 'classnames';
 
-import { Button, Kbd } from '@heroui/react';
+import { Kbd } from '@heroui/react';
+import GameActionButton from '../Site/GameActionButton';
 import ThronesIcon from './ThronesIcon';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import CardHoverable from '../Images/CardHoverable';
@@ -39,9 +40,9 @@ const ActivePlayerPrompt = ({
             const shortcutLabel =
                 shortcutsEnabled && !button.disabled && getButtonShortcutLabel(buttons, index);
             const buttonRet = (
-                <Button
+                <GameActionButton
                     type='button'
-                    variant={button.cancel ? 'tertiary' : 'primary'}
+                    quiet={button.cancel}
                     className={classNames(
                         'text-wrap text-xs h-8 md:h-full md:min-h-10 md:text-sm',
                         button.pending && pendingButtonClass
@@ -60,7 +61,7 @@ const ActivePlayerPrompt = ({
                             <Kbd.Content>{shortcutLabel}</Kbd.Content>
                         </Kbd>
                     )}
-                </Button>
+                </GameActionButton>
             );
 
             return (
@@ -85,8 +86,7 @@ const ActivePlayerPrompt = ({
         promptTextElement.push(promptText);
     }
 
-    const panelClass =
-        'border border-gold-line bg-[#0c0d11]/95 shadow-[0_12px_30px_rgba(0,0,0,0.6)]';
+    const panelClass = 'border border-gold-line bg-panel/95 shadow-[0_12px_30px_rgba(0,0,0,0.6)]';
 
     if (isLoading) {
         return (

@@ -67,13 +67,15 @@ const savedFilter = () => {
 };
 
 // The tab that opens and closes the chat, joined to its panel (on a phone it hangs below it; see index.css)
+const tabClass = 'whitespace-nowrap px-3 text-sm';
+
 const ChatLip = ({ isOpen, unread, onToggle }) => (
     <button
         type='button'
         title={isOpen ? 'Hide chat' : 'Show chat'}
         aria-expanded={isOpen}
         onClick={onToggle}
-        className='chat-lip tap-target z-[260] flex items-center justify-center border-gold-line bg-[#0c0d11]/90 text-ink'
+        className='chat-lip tap-target z-[260] flex items-center justify-center border-gold-line bg-panel/90 text-ink'
     >
         <span aria-hidden className='chat-lip-flare chat-lip-flare-start text-gold-line' />
         <span aria-hidden className='chat-lip-flare chat-lip-flare-end text-gold-line' />
@@ -93,7 +95,7 @@ const ChatLip = ({ isOpen, unread, onToggle }) => (
             />
         </span>
         {unread > 0 && (
-            <span className='chat-lip-badge absolute -top-2 -left-2 min-w-5 h-5 px-1 rounded-full bg-danger text-white text-xs font-bold flex items-center justify-center'>
+            <span className='chat-lip-badge absolute -top-2 -left-2 min-w-5 h-5 px-1 rounded-full bg-danger text-ink text-xs font-bold flex items-center justify-center'>
                 {unread > 99 ? '99+' : unread}
             </span>
         )}
@@ -174,7 +176,7 @@ const GameChat = ({
                 <div aria-hidden className='chat-edge bg-gold-line' />
                 <div className='chat-frame h-full w-full overflow-hidden'>
                     <div
-                        className='chat-body flex flex-col hud-zoom bg-[#0c0d11]/90 w-full h-full'
+                        className='chat-body flex flex-col hud-zoom bg-panel/90 w-full h-full'
                         {...swipe}
                     >
                         <div className='flex items-center gap-2 border-b border-gold-hair px-3 py-2'>
@@ -196,12 +198,12 @@ const GameChat = ({
                             >
                                 <Tabs.ListContainer>
                                     <Tabs.List aria-label='Show'>
-                                        <Tabs.Tab id='chat'>
+                                        <Tabs.Tab id='chat' className={tabClass}>
                                             Chat
                                             <Tabs.Indicator />
                                         </Tabs.Tab>
-                                        <Tabs.Tab id='all'>
-                                            Chat and game log
+                                        <Tabs.Tab id='all' className={tabClass}>
+                                            Chat and log
                                             <Tabs.Indicator />
                                         </Tabs.Tab>
                                     </Tabs.List>

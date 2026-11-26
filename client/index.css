@@ -12,18 +12,6 @@
     --font-display: 'Cinzel', Georgia, serif;
     --font-icons: 'thronesdb';
 
-    --color-gold: #c9a45c;
-    --color-gold-line: rgba(201, 164, 92, 0.38);
-    --color-gold-hair: rgba(201, 164, 92, 0.16);
-    --color-ink: #ece6d8;
-    --color-ink-dim: #a8a194;
-    --color-ink-faint: #7d776c;
-    --color-frame: rgba(10, 11, 15, 0.88);
-    --color-well: rgba(255, 255, 255, 0.05);
-    --color-quiet: rgba(255, 255, 255, 0.07);
-    --color-banner-idle: #23262d;
-    --color-banner-deep: #284a70;
-
     --color-baratheon: #e3d852;
     --color-greyjoy: #1d7a99;
     --color-lannister: #c00106;
@@ -40,21 +28,52 @@
     --shadow-selected: 0 0 1px 4px;
 }
 
+/* The site's colours by role. Each is set per theme (below), so the classes follow the theme of the element they are
+   on: the game board's surface stays dark whatever the site's theme is. */
 @theme inline {
-    --text-xs: calc(var(--font-scale, var(--text-scale, 1)) * 0.75rem);
-    --text-xs--line-height: calc(var(--font-scale, var(--text-scale, 1)) * 1.1rem);
-    --text-sm: calc(var(--font-scale, var(--text-scale, 1)) * 0.85rem);
-    --text-sm--line-height: calc(var(--font-scale, var(--text-scale, 1)) * 1.3rem);
-    --text-base: calc(var(--font-scale, var(--text-scale, 1)) * 0.9375rem);
-    --text-base--line-height: calc(var(--font-scale, var(--text-scale, 1)) * 1.45rem);
-    --text-lg: calc(var(--font-scale, var(--text-scale, 1)) * 1.08rem);
-    --text-lg--line-height: calc(var(--font-scale, var(--text-scale, 1)) * 1.4rem);
-    --text-xl: calc(var(--font-scale, var(--text-scale, 1)) * 1.25rem);
-    --text-xl--line-height: calc(var(--font-scale, var(--text-scale, 1)) * 1.3rem);
-    --text-2xl: calc(var(--font-scale, var(--text-scale, 1)) * 1.55rem);
-    --text-2xl--line-height: calc(var(--font-scale, var(--text-scale, 1)) * 1.2rem);
-    --text-3xl: calc(var(--font-scale, var(--text-scale, 1)) * 1.95rem);
-    --text-3xl--line-height: calc(var(--font-scale, var(--text-scale, 1)) * 1.15rem);
+    --color-gold: var(--gold);
+    --color-gold-line: var(--gold-line);
+    --color-gold-hair: var(--gold-hair);
+    --color-ink: var(--ink);
+    --color-ink-dim: var(--ink-dim);
+    --color-ink-faint: var(--ink-faint);
+    --color-frame: var(--frame);
+    --color-panel: var(--panel);
+    --color-well: var(--well);
+    --color-quiet: var(--quiet);
+    --color-quiet-hover: var(--quiet-hover);
+    --color-edge: var(--edge);
+    --color-banner-idle: var(--banner-idle);
+    --color-banner-current: var(--banner-current);
+    --color-banner-deep: var(--banner-deep);
+    --color-action: var(--action);
+    --color-action-wash: var(--action-wash);
+    --color-action-fg: var(--action-fg);
+    --color-select: var(--select);
+    --color-selected: var(--selected);
+}
+
+@theme inline {
+    --text-xs: calc(var(--font-scale, var(--text-scale, 1)) * var(--step-xs, 0.75rem));
+    --text-xs--line-height: calc(var(--font-scale, var(--text-scale, 1)) * var(--lead-xs, 1.1rem));
+    --text-sm: calc(var(--font-scale, var(--text-scale, 1)) * var(--step-sm, 0.85rem));
+    --text-sm--line-height: calc(var(--font-scale, var(--text-scale, 1)) * var(--lead-sm, 1.3rem));
+    --text-base: calc(var(--font-scale, var(--text-scale, 1)) * var(--step-base, 0.9375rem));
+    --text-base--line-height: calc(
+        var(--font-scale, var(--text-scale, 1)) * var(--lead-base, 1.45rem)
+    );
+    --text-lg: calc(var(--font-scale, var(--text-scale, 1)) * var(--step-lg, 1.08rem));
+    --text-lg--line-height: calc(var(--font-scale, var(--text-scale, 1)) * var(--lead-lg, 1.4rem));
+    --text-xl: calc(var(--font-scale, var(--text-scale, 1)) * var(--step-xl, 1.25rem));
+    --text-xl--line-height: calc(var(--font-scale, var(--text-scale, 1)) * var(--lead-xl, 1.3rem));
+    --text-2xl: calc(var(--font-scale, var(--text-scale, 1)) * var(--step-2xl, 1.55rem));
+    --text-2xl--line-height: calc(
+        var(--font-scale, var(--text-scale, 1)) * var(--lead-2xl, 1.2rem)
+    );
+    --text-3xl: calc(var(--font-scale, var(--text-scale, 1)) * var(--step-3xl, 1.95rem));
+    --text-3xl--line-height: calc(
+        var(--font-scale, var(--text-scale, 1)) * var(--lead-3xl, 1.15rem)
+    );
 }
 
 @utility container {
@@ -66,8 +85,35 @@
 }
 
 @layer base {
+    /* The dark theme, which the game board's surface (cards, play areas and the overlays over them) always uses */
     .dark,
-    [data-theme='dark'] {
+    [data-theme='dark'],
+    [data-board-surface] {
+        --gold: #c9a45c;
+        --gold-line: rgba(201, 164, 92, 0.38);
+        --gold-hair: rgba(201, 164, 92, 0.16);
+        --ink: #ece6d8;
+        --ink-dim: #a8a194;
+        --ink-faint: #7d776c;
+        --frame: rgba(10, 11, 15, 0.88);
+        --panel: #0c0d11;
+        --well: rgba(255, 255, 255, 0.05);
+        --quiet: rgba(255, 255, 255, 0.07);
+        --quiet-hover: rgba(255, 255, 255, 0.12);
+        --edge: rgba(255, 255, 255, 0.12);
+        --banner-idle: #23262d;
+        --banner-current: #6b5530;
+        --banner-deep: #3a2e18;
+
+        /* Taking an action in the game: a gold outline, washed with gold under the pointer */
+        --action: #c9a45c;
+        --action-wash: rgba(201, 164, 92, 0.16);
+        --action-fg: #ece6d8;
+
+        /* A card that can be chosen (gold, breathing), and a chosen card (ink) */
+        --select: #c9a45c;
+        --selected: #ece6d8;
+
         --background: #0b0c10;
         --foreground: #ece6d8;
         --muted: #a8a194;
@@ -77,9 +123,9 @@
         --default: #25272d;
         --default-foreground: #ece6d8;
 
-        --accent: #41658a;
-        --accent-foreground: #ffffff;
-        --accent-hover: #4a79ab;
+        --accent: #c9a45c;
+        --accent-foreground: #17130a;
+        --accent-hover: #d8b876;
 
         --success: #5fa777;
         --success-foreground: #0d1f14;
@@ -389,8 +435,8 @@
 
     .banner-nav a[aria-current='page'] {
         height: 66px;
-        color: #fff;
-        background: linear-gradient(180deg, var(--accent), var(--color-banner-deep));
+        color: var(--color-ink);
+        background: linear-gradient(180deg, var(--banner-current), var(--color-banner-deep));
     }
 
     .banner-nav a[aria-current='page']::before {
@@ -435,7 +481,7 @@
 
     .phase-track .phase-node:checked {
         background: var(--accent);
-        box-shadow: 0 0 0 3px rgba(65, 101, 138, 0.3);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
     }
 
     .phase-track .phase-node:focus-visible {
@@ -497,9 +543,6 @@
     --attachment-offset-xl: calc(var(--attachment-offset) * 2);
 
     --layer-cards: 10;
-
-    /* The colour of the ring round a card that can be chosen, which the board's edges also light in */
-    --select-ring: 74 222 128;
 }
 
 /* On Android in landscape the board runs under the camera cut-out rather than leaving a band beside it */
@@ -583,7 +626,7 @@ html.card-dragging * {
     --lip-depth: calc(var(--ui-scale, 1) * 1.75rem);
     --lip-flare: calc(var(--ui-scale, 1) * 0.5rem);
     --lip-gap: calc(var(--lip-length) / 2 + var(--lip-flare));
-    --chat-fill: rgb(12 13 17 / 0.9);
+    --chat-fill: color-mix(in srgb, var(--panel) 90%, transparent);
     position: relative;
     width: 0;
     transition-property: width, height;
@@ -866,7 +909,7 @@ html[data-board-layout='short'] {
     .chat-frame {
         padding: var(--safe-top) env(safe-area-inset-right, 0px) var(--safe-bottom)
             env(safe-area-inset-left, 0px);
-        background: rgb(0 0 0 / 0.9);
+        background: color-mix(in srgb, var(--panel) 95%, transparent);
     }
     /* Slides rather than grows, so its height can follow the keyboard at once */
     .chat-drawer,
@@ -962,11 +1005,11 @@ html.card-dragging.card-drop-refused * {
     --ring: max(0.75px, calc(1px * var(--ring-scale, var(--card-scale, 1))));
 }
 .ring-selected {
-    box-shadow: 0 0 0 calc(var(--ring) * 3) rgb(56 189 248);
+    box-shadow: 0 0 0 calc(var(--ring) * 3) var(--selected);
     scale: 1.03;
 }
 .ring-selectable {
-    box-shadow: 0 0 calc(var(--ring) * 3) calc(var(--ring) * 3) rgb(var(--select-ring));
+    box-shadow: 0 0 calc(var(--ring) * 3) calc(var(--ring) * 3) var(--select);
     animation: ring-breathe 1.8s ease-in-out infinite;
 }
 .ring-participating {
@@ -995,7 +1038,8 @@ html.card-dragging.card-drop-refused * {
 
 @keyframes ring-breathe {
     50% {
-        box-shadow: 0 0 calc(var(--ring) * 9) calc(var(--ring) * 3) rgb(var(--select-ring) / 0.55);
+        box-shadow: 0 0 calc(var(--ring) * 9) calc(var(--ring) * 3)
+            color-mix(in srgb, var(--select) 55%, transparent);
     }
 }
 @keyframes ring-danger {
@@ -1329,9 +1373,11 @@ html.card-dragging.card-drop-refused * {
 @media (hover: hover) {
     .group:hover .overlay-ring,
     .group:focus-visible .overlay-ring {
-        filter: drop-shadow(2px 0 0 rgb(251 191 36 / 0.9))
-            drop-shadow(-2px 0 0 rgb(251 191 36 / 0.9)) drop-shadow(0 2px 0 rgb(251 191 36 / 0.9))
-            drop-shadow(0 -2px 0 rgb(251 191 36 / 0.9)) drop-shadow(0 0 8px rgb(251 191 36 / 0.35));
+        filter: drop-shadow(2px 0 0 color-mix(in srgb, var(--gold) 90%, transparent))
+            drop-shadow(-2px 0 0 color-mix(in srgb, var(--gold) 90%, transparent))
+            drop-shadow(0 2px 0 color-mix(in srgb, var(--gold) 90%, transparent))
+            drop-shadow(0 -2px 0 color-mix(in srgb, var(--gold) 90%, transparent))
+            drop-shadow(0 0 8px color-mix(in srgb, var(--gold) 35%, transparent));
     }
 }
 [data-motion='off'] .overlay-fan-card {
@@ -1357,23 +1403,23 @@ html.card-dragging.card-drop-refused * {
 }
 @keyframes overlay-tie-won {
     to {
-        box-shadow: 0 0 0 2px rgb(52 211 153);
+        box-shadow: 0 0 0 2px rgb(95 167 119);
     }
 }
 @keyframes overlay-tie-lost {
     to {
-        box-shadow: 0 0 0 2px rgb(251 191 36 / 0);
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 0%, transparent);
     }
 }
 @keyframes overlay-tie {
     0% {
-        box-shadow: 0 0 0 0 rgb(251 191 36 / 0);
+        box-shadow: 0 0 0 0 color-mix(in srgb, var(--gold) 0%, transparent);
     }
     40% {
         scale: 1.15;
     }
     100% {
-        box-shadow: 0 0 0 2px rgb(251 191 36 / 0.8);
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 80%, transparent);
     }
 }
 .overlay-win {
@@ -1381,10 +1427,10 @@ html.card-dragging.card-drop-refused * {
 }
 @keyframes overlay-win {
     to {
-        border-color: rgb(52 211 153);
+        border-color: rgb(95 167 119);
         background-color: rgb(16 185 129 / 0.3);
         color: rgb(236 253 245);
-        box-shadow: 0 0 14px rgb(52 211 153 / 0.6);
+        box-shadow: 0 0 14px rgb(95 167 119 / 0.6);
         scale: 1.1;
     }
 }
@@ -1615,7 +1661,7 @@ html.card-dragging.card-drop-refused * {
 }
 .overlay-swords {
     opacity: 0.55;
-    filter: drop-shadow(0 0 6px rgb(251 191 36 / 0.35));
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--gold) 35%, transparent));
     animation:
         overlay-fade 400ms ease-out both,
         overlay-sword-glow 3.6s ease-in-out infinite;
@@ -1624,7 +1670,7 @@ html.card-dragging.card-drop-refused * {
     50% {
         opacity: 0.8;
         scale: 1.04;
-        filter: drop-shadow(0 0 16px rgb(251 191 36 / 0.7));
+        filter: drop-shadow(0 0 16px color-mix(in srgb, var(--gold) 70%, transparent));
     }
 }
 [data-motion='off'] .overlay-ember {
@@ -1771,7 +1817,8 @@ html.card-dragging.card-drop-refused * {
 /* The winner's crown drops onto their cards and then bobs gently, a warm glow pulsing behind them; a loser's cards
    dim once everyone's have landed */
 .overlay-crown {
-    filter: drop-shadow(0 0 10px rgb(251 191 36 / 0.6)) drop-shadow(0 4px 6px rgb(0 0 0 / 0.6));
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--gold) 60%, transparent))
+        drop-shadow(0 4px 6px rgb(0 0 0 / 0.6));
     animation:
         overlay-crown-in 620ms cubic-bezier(0.3, 1.6, 0.5, 1) var(--after-delay, 700ms) both,
         overlay-crown-bob 3.2s ease-in-out calc(var(--after-delay, 700ms) + 620ms) infinite;
@@ -1792,7 +1839,7 @@ html.card-dragging.card-drop-refused * {
 .overlay-glory {
     background: radial-gradient(
         circle,
-        rgb(251 191 36 / 0.4),
+        color-mix(in srgb, var(--gold) 40%, transparent),
         rgb(251 146 60 / 0.14) 40%,
         transparent 66%
     );

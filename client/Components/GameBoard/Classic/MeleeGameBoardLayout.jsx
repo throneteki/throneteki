@@ -28,13 +28,13 @@ const MeleeGameBoardLayout = ({
             const wrapperClassName = classNames('flex grow', {
                 'flex-col': side === 'top',
                 'flex-col-reverse': side === 'bottom',
-                'bg-blue-300/5': isActivePrompt
+                'bg-accent/[0.06]': isActivePrompt
             });
 
             return (
                 <div key={`seat_${player.seatNo}`} className={wrapperClassName}>
                     <PlayerStats
-                        className={isActivePrompt && 'bg-blue-300/15 border-blue-300/5'}
+                        className={isActivePrompt && 'bg-accent/[0.06] border-accent/5'}
                         showControls={isMe}
                         stats={player.stats}
                         user={player.user}

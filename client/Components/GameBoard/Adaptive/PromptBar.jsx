@@ -151,7 +151,7 @@ const PhaseOrLog = ({ phase, feed, className }) => (
                             {feed.queued > 0 && (
                                 <span
                                     data-log-queued=''
-                                    className='absolute -right-2 -top-2 flex h-3 min-w-3 items-center justify-center rounded-full bg-white/25 px-0.5 text-[8px] font-bold leading-none text-foreground'
+                                    className='absolute -right-2 -top-2 flex h-3 min-w-3 items-center justify-center rounded-full bg-quiet-hover px-0.5 text-[8px] font-bold leading-none text-foreground'
                                 >
                                     {feed.queued > 99 ? '99+' : feed.queued}
                                 </span>
@@ -273,7 +273,7 @@ const ChipRows = ({ buttons, stacked = false, shortcuts = false, fill = true, on
 // (heading) is asked again at its top.
 const MorePanel = ({ heading, buttons, onPress, onClose, children }) => (
     <div
-        className='fixed inset-x-0 bottom-0 z-[320] flex flex-col rounded-t-lg border-t border-white/15 bg-black/90 pb-[var(--safe-bottom)]'
+        className='fixed inset-x-0 bottom-0 z-[320] flex flex-col border-t border-gold-line bg-panel/95 pb-[var(--safe-bottom)]'
         style={{ maxHeight: 'calc(100% - var(--board-divider-bottom, 30%))' }}
     >
         <div className='grid grid-cols-[2rem_1fr_2rem] items-center gap-1 px-1 pt-1'>
@@ -292,12 +292,9 @@ const MorePanel = ({ heading, buttons, onPress, onClose, children }) => (
     </div>
 );
 
-// A thin line between the phase track and the prompt, fading out at both ends
+// A thin line between the phase track and the prompt
 const Rule = () => (
-    <div
-        aria-hidden
-        className='mx-auto mt-1 h-px w-[min(80%,36rem)] shrink-0 bg-gradient-to-r from-transparent via-white/[0.175] to-transparent'
-    />
+    <div aria-hidden className='mx-auto mt-1 h-px w-[min(80%,36rem)] shrink-0 bg-gold-hair' />
 );
 
 // Seconds the line rests at each end before scrolling, and how fast it scrolls (pixels a second)
@@ -563,8 +560,8 @@ const PromptBar = ({
     const title = promptTitle && !waiting && (
         <div
             className={classNames(
-                'text-[11px] uppercase leading-tight tracking-wider',
-                endsTurn ? 'font-bold text-accent' : 'font-normal text-ink-dim'
+                'text-xs leading-tight',
+                endsTurn ? 'font-semibold text-gold' : 'font-normal text-ink-dim'
             )}
         >
             {promptTitle}
@@ -576,7 +573,7 @@ const PromptBar = ({
                 'min-w-0 text-center leading-snug',
                 dock && 'flex h-8 flex-col justify-center overflow-hidden',
                 {
-                    'text-sm font-semibold': !waiting,
+                    'text-sm font-medium text-ink': !waiting,
                     'text-xs italic text-ink-dim': waiting
                 }
             )}
@@ -603,7 +600,7 @@ const PromptBar = ({
             <OneLine lines={dock}>
                 {promptText}
                 {selection && selection.selected > 0 && (
-                    <span className='ml-2 whitespace-nowrap rounded-full bg-warning px-2 text-xs font-bold text-black'>
+                    <span className='ml-2 whitespace-nowrap rounded-full border border-gold-line px-2 text-xs text-gold'>
                         {`${selection.selected} selected`}
                     </span>
                 )}
@@ -711,7 +708,7 @@ const PromptBar = ({
                             ref={hintRef}
                             data-prompt-hint=''
                             aria-hidden={!drawnBack}
-                            className='pointer-events-none absolute inset-x-0 top-0 flex h-8 items-center justify-center gap-1.5 pt-1 text-xs text-amber-200/90'
+                            className='pointer-events-none absolute inset-x-0 top-0 flex h-8 items-center justify-center gap-1.5 pt-1 text-xs text-gold'
                             initial={false}
                             animate={{ opacity: drawnBack ? 1 : 0 }}
                             transition={spillMotion}
@@ -734,8 +731,8 @@ const PromptBar = ({
             ref={barRef}
             data-prompt-bar=''
             className={classNames(
-                'hud-zoom relative w-full border-y border-white/[0.090]',
-                dock && spill.over ? 'cursor-pointer bg-zinc-950/95' : 'bg-black/60',
+                'hud-zoom relative w-full border-y border-gold-line',
+                dock && spill.over ? 'cursor-pointer bg-panel/95' : 'bg-panel/90',
                 { 'pb-[var(--safe-bottom)]': dock },
                 className
             )}

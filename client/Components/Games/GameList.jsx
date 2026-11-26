@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import moment from 'moment';
 import { Button } from '@heroui/react';
+import GameActionButton from '../Site/GameActionButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faTrophy } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
@@ -103,16 +104,16 @@ const OpenGame = ({ game, canJoin, canWatch, isAdmin, onJoin, onWatch, onRemove 
                         </Button>
                     )}
                     {canJoin && (
-                        <Button size='sm' variant='primary' onPress={onJoin}>
+                        <GameActionButton size='sm' onPress={onJoin}>
                             {game.maxPlayers > 2
                                 ? `Join ${players.length}/${game.maxPlayers}`
                                 : 'Join'}
-                        </Button>
+                        </GameActionButton>
                     )}
                     {isStarting && canWatch && (
-                        <Button size='sm' variant='tertiary' onPress={onWatch}>
+                        <GameActionButton size='sm' quiet onPress={onWatch}>
                             Watch
-                        </Button>
+                        </GameActionButton>
                     )}
                 </div>
             </div>
@@ -184,9 +185,9 @@ const GameInProgress = ({ game, cards, canWatch, isAdmin, onWatch, onRemove }) =
                     </Button>
                 )}
                 {canWatch ? (
-                    <Button size='sm' variant='tertiary' onPress={onWatch}>
+                    <GameActionButton size='sm' quiet onPress={onWatch}>
                         Watch
-                    </Button>
+                    </GameActionButton>
                 ) : (
                     !game.allowSpectators && (
                         <span className='text-xs text-ink-faint'>No spectators</span>

@@ -22,7 +22,7 @@ const ThronesIcon = ({ className, icon, color, noSize = true, withBackground = f
         attachment: 'bg-attachment',
         location: 'bg-location',
         event: 'bg-event',
-        'text-white': true
+        'text-ink': true
     };
 
     const fgClasses = {

@@ -25,28 +25,13 @@ const tokens = {
     gold: { className: 'h-3 w-3 inline mt-1', imageSrc: GoldImage }
 };
 
+// A game alert is a line of the log like any other, marked by its icon and coloured by how much it matters
 const alertStyles = {
-    success: {
-        icon: faCircleCheck,
-        className: 'border-gold-hair bg-gold/[0.05]',
-        iconClass: 'text-gold'
-    },
-    info: {
-        icon: faCircleInfo,
-        className: 'border-gold-hair bg-gold/[0.05]',
-        iconClass: 'text-gold'
-    },
-    bell: { icon: faBell, className: 'border-gold-line bg-gold/[0.08]', iconClass: 'text-gold' },
-    warning: {
-        icon: faTriangleExclamation,
-        className: 'border-warning/40 bg-warning/[0.06]',
-        iconClass: 'text-warning'
-    },
-    danger: {
-        icon: faCircleExclamation,
-        className: 'border-danger/40 bg-danger/[0.06]',
-        iconClass: 'text-danger'
-    }
+    success: { icon: faCircleCheck, className: 'text-ink', iconClass: 'text-gold' },
+    info: { icon: faCircleInfo, className: 'text-ink', iconClass: 'text-gold' },
+    bell: { icon: faBell, className: 'text-gold', iconClass: 'text-gold' },
+    warning: { icon: faTriangleExclamation, className: 'text-warning', iconClass: 'text-warning' },
+    danger: { icon: faCircleExclamation, className: 'text-danger', iconClass: 'text-danger' }
 };
 
 const alertColours = {
@@ -156,13 +141,16 @@ const formatMessageText = (message, compact) => {
                             key={index++}
                             role={fragment.type === 'danger' ? 'alert' : undefined}
                             className={classNames(
-                                'flex items-start gap-2 border px-2.5 py-1.5 text-ink',
+                                'flex items-start gap-1.5 font-medium',
                                 style.className
                             )}
                         >
                             <FontAwesomeIcon
                                 icon={style.icon}
-                                className={classNames('mt-0.5 shrink-0', style.iconClass)}
+                                className={classNames(
+                                    'mt-[0.2em] shrink-0 text-[0.9em]',
+                                    style.iconClass
+                                )}
                             />
                             <span className='min-w-0'>{message}</span>
                         </div>
@@ -249,7 +237,7 @@ const Message = memo(function Message({ message, username, compact, arrive }) {
 
         return (
             <div
-                className={classNames('flex gap-2 py-1', {
+                className={classNames('flex gap-2 py-1 leading-[1.2rem]', {
                     '-mx-2 bg-white/[0.035] px-2': sender.name === username,
                     'opacity-60': message.pending,
                     'chat-arrive': arriving
