@@ -1,13 +1,14 @@
 import React, { useCallback } from 'react';
+import Field from '../Components/Site/Field';
 import { useDispatch } from 'react-redux';
 
-import Panel from '../Components/Site/Panel';
+import Frame from '../Components/Site/Frame';
 import { useLoginAccountMutation } from '../redux/middleware/api';
 import { accountLoggedIn } from '../redux/reducers/auth';
 import { navigate } from '../redux/reducers/navigation';
 import { sendAuthenticateMessage } from '../redux/reducers/lobby';
 import * as yup from 'yup';
-import { Button, Input, Link } from '@heroui/react';
+import { Button, Spinner } from '@heroui/react';
 import { Formik } from 'formik';
 import { toast } from 'react-toastify';
 import NavigationLink from '../Components/Site/NavigationLink';
@@ -46,47 +47,55 @@ const Login = () => {
     });
 
     return (
-        <Page size='small'>
-            <Panel title='Login'>
+        <Page size='narrow'>
+            <Frame title='Login'>
                 <Formik
                     initialValues={{ username: '', password: '' }}
                     validationSchema={schema}
                     onSubmit={onLogin}
                 >
                     {(formProps) => (
-                        <form onSubmit={formProps.handleSubmit} className='flex flex-col gap-2'>
-                            <Input
+                        <form onSubmit={formProps.handleSubmit} className='flex flex-col gap-4'>
+                            <Field
                                 label='Username'
+                                autoComplete='username'
                                 {...formProps.getFieldProps('username')}
                                 isInvalid={formProps.errors.username && formProps.touched.username}
                                 errorMessage={formProps.errors.username}
                             />
-                            <div>
-                                <Input
+                            <div className='flex flex-col gap-1.5'>
+                                <Field
                                     label='Password'
                                     type='password'
+                                    autoComplete='current-password'
                                     isInvalid={
                                         formProps.errors.password && formProps.touched.password
                                     }
                                     errorMessage={formProps.errors.password}
                                     {...formProps.getFieldProps('password')}
                                 />
-                                <Link href='/forgot' as={NavigationLink}>
+                                <NavigationLink className='self-end text-sm' href='/forgot'>
                                     Forgot your password?
-                                </Link>
+                                </NavigationLink>
                             </div>
                             <Button
-                                className='sm:self-start'
-                                isLoading={isLoading}
+                                className='w-full'
+                                isPending={isLoading}
                                 type='submit'
-                                color='primary'
+                                variant='primary'
                             >
-                                Login
+                                {isLoading && <Spinner color='current' size='sm' />}Login
                             </Button>
+                            <p className='border-t border-gold-hair pt-4 text-center text-sm text-ink-dim'>
+                                New to the site?{' '}
+                                <NavigationLink href='/register'>
+                                    Register an account
+                                </NavigationLink>
+                            </p>
                         </form>
                     )}
                 </Formik>
-            </Panel>
+            </Frame>
         </Page>
     );
 };

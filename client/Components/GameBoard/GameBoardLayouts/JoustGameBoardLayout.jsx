@@ -23,7 +23,7 @@ const JoustGameBoardLayout = ({
         (player, side) => {
             const isMe = thisPlayer && player === thisPlayer;
 
-            const wrapperClassName = classNames('flex flex-grow', {
+            const wrapperClassName = classNames('flex grow', {
                 'flex-col': side === 'top',
                 'flex-col-reverse': side === 'bottom'
             });
@@ -70,7 +70,7 @@ const JoustGameBoardLayout = ({
                         mustShowPlotSelection={player.mustShowPlotSelection}
                         showHiddenPiles={isMe && isDragging}
                     />
-                    <div className='h-full relative flex flex-row-reverse flex-grow'>
+                    <div className='h-full relative flex flex-row-reverse grow'>
                         <PlayerBoard
                             isDroppable={isMe}
                             cardsInPlay={player.cardPiles.cardsInPlay}

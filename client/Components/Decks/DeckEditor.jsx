@@ -1,20 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
+import Field from '../Site/Field';
+
 import { BannersForFaction, Constants } from '../../constants';
 import ReactTable from '../Table/ReactTable';
 import DeckSummary from './DeckSummary';
-import AlertPanel from '../Site/AlertPanel';
-import {
-    Button,
-    ButtonGroup,
-    Card,
-    CardBody,
-    Input,
-    Link,
-    Select,
-    SelectItem,
-    extendVariants
-} from '@heroui/react';
+import Frame from '../Site/Frame';
+import Notice from '../Site/Notice';
+import { Button, ButtonGroup, buttonVariants, Spinner } from '@heroui/react';
+import SelectField from '../Site/SelectField';
 import LoadingSpinner from '../Site/LoadingSpinner';
 import {
     useAddDeckMutation,
@@ -36,17 +30,7 @@ import LegalitySelect from '../Games/LegalitySelect';
 import FactionSelect from '../Games/FactionSelect';
 import DeckStatus from './DeckStatus';
 import { validateDeck } from '../../../deck-helper';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock } from '@fortawesome/free-solid-svg-icons';
 import { formatDeckAsFullCards } from '../../../deck-helper/formatDeckAsFullCards';
-
-const SmallButton = extendVariants(Button, {
-    variants: {
-        size: {
-            xs: 'px-2 min-w-8 h-8 text-small gap-unit-1 border'
-        }
-    }
-});
 
 const DeckEditor = ({ deck: initial, cards, packs, onBackClick }) => {
     const deck = useMemo(() => formatDeckAsFullCards(initial, { cards }), [cards, initial]);
@@ -289,39 +273,31 @@ const DeckEditor = ({ deck: initial, cards, packs, onBackClick }) => {
                     };
                     return (
                         <>
-                            <Select
+                            <SelectField
                                 className={dropdownClass}
-                                onChange={(e) =>
-                                    setCardQuantity(
-                                        info.row.original.code,
-                                        parseInt(e.target.value)
-                                    )
+                                aria-label='Quantity'
+                                value={count.toString()}
+                                onChange={(value) =>
+                                    setCardQuantity(info.row.original.code, parseInt(value))
                                 }
-                                defaultSelectedKeys={['0']}
-                                selectedKeys={[count.toString()]}
-                                classNames={{ trigger: 'h-8 min-h-8' }}
-                                aria-label='Qty'
-                            >
-                                {[...Array(max).keys()].map((digit) => (
-                                    <SelectItem key={digit.toString()} textValue={digit.toString()}>
-                                        {digit}
-                                    </SelectItem>
-                                ))}
-                            </Select>
+                                items={[...Array(max).keys()].map((digit) => ({
+                                    id: digit.toString(),
+                                    label: digit
+                                }))}
+                            />
                             <ButtonGroup className={buttonsClass}>
                                 {[...Array(max).keys()].map((digit) => (
-                                    <SmallButton
-                                        size='xs'
-                                        className='w-1'
+                                    <Button
+                                        size='sm'
+                                        isIconOnly
                                         key={digit}
-                                        value={digit}
-                                        color={count === digit ? 'primary' : null}
+                                        variant={count === digit ? 'primary' : 'tertiary'}
                                         onPress={() =>
                                             setCardQuantity(info.row.original.code, digit)
                                         }
                                     >
                                         {digit}
-                                    </SmallButton>
+                                    </Button>
                                 ))}
                             </ButtonGroup>
                         </>
@@ -330,7 +306,8 @@ const DeckEditor = ({ deck: initial, cards, packs, onBackClick }) => {
                 meta: {
                     colWidth: '10%',
                     className: 'min-w-20'
-                }
+                },
+                enableColumnFilter: false
             }
         ],
         [deckCards, cardsByCode]
@@ -381,55 +358,64 @@ const DeckEditor = ({ deck: initial, cards, packs, onBackClick }) => {
         return false;
     };
 
+    const isSaving = isAddLoading || isSaveLoading;
+    const count = (cardList) => cardList.reduce((acc, card) => acc + card.count, 0);
+
     return (
-        <div className='flex flex-col gap-3'>
-            <div className='flex flex-wrap gap-2'>
-                <Button color='default' onPress={() => onBackClick()}>
-                    Back
-                </Button>
-                <Button
-                    color='primary'
-                    isLoading={isAddLoading || isSaveLoading}
-                    isDisabled={deck.locked}
-                    onPress={() => onSaveClick(true)}
-                >
-                    Save & Close
-                </Button>
-                <Button
-                    color='primary'
-                    isLoading={isAddLoading || isSaveLoading}
-                    isDisabled={deck.locked}
-                    onPress={() => onSaveClick(false)}
-                >
-                    Save
-                </Button>
-                <Button onPress={() => setShowImportModal(true)} isDisabled={deck.locked}>
-                    Import
-                </Button>
-                {initial.thronesDbUuid && (
-                    <Button
-                        as={Link}
-                        href={`https://thronesdb.com/deck/view/${initial.thronesDbUuid}`}
-                        target='_blank'
-                        rel='noreferrer'
-                    >
-                        View on ThronesDB
+        <Frame
+            title={deckName || 'Untitled deck'}
+            actions={
+                <>
+                    <Button onPress={() => onBackClick()} variant='tertiary'>
+                        Back
                     </Button>
-                )}
-            </div>
-            <div className='columns-1 xl:columns-2 gap-4'>
-                <div className='flex flex-col gap-2 break-inside-avoid'>
-                    <div className='flex gap-2'>
-                        <Input
-                            className='md:basis-2/3'
+                    <Button
+                        onPress={() => setShowImportModal(true)}
+                        isDisabled={deck.locked}
+                        variant='tertiary'
+                    >
+                        Import
+                    </Button>
+                    {initial.thronesDbUuid && (
+                        <a
+                            className={buttonVariants({ variant: 'tertiary' })}
+                            href={`https://thronesdb.com/deck/view/${initial.thronesDbUuid}`}
+                            target='_blank'
+                            rel='noreferrer'
+                        >
+                            View on ThronesDB
+                        </a>
+                    )}
+                    <Button
+                        isPending={isSaving}
+                        isDisabled={deck.locked}
+                        onPress={() => onSaveClick(true)}
+                        variant='tertiary'
+                    >
+                        Save and close
+                    </Button>
+                    <Button
+                        isPending={isSaving}
+                        isDisabled={deck.locked}
+                        onPress={() => onSaveClick(false)}
+                        variant='primary'
+                    >
+                        {isSaving && <Spinner color='current' size='sm' />}Save
+                    </Button>
+                </>
+            }
+        >
+            <div className='grid grid-cols-1 gap-x-10 gap-y-8 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]'>
+                <div className='flex min-w-0 flex-col gap-4'>
+                    <div className='grid grid-cols-1 gap-3 sm:grid-cols-[2fr_1fr]'>
+                        <Field
                             placeholder='Enter a name'
                             value={deckName}
                             onValueChange={setDeckName}
-                            label='Deck Name'
+                            label='Deck name'
                             isDisabled={deck.locked}
                         />
                         <FactionSelect
-                            className='md:basis-1/3'
                             label='Faction'
                             selected={faction}
                             onSelected={setFaction}
@@ -437,14 +423,13 @@ const DeckEditor = ({ deck: initial, cards, packs, onBackClick }) => {
                             isDisabled={deck.locked}
                         />
                     </div>
-                    <div className='flex flex-col md:flex-row gap-2'>
+                    <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
                         <FormatSelect
                             label='Format'
                             selected={gameFormat}
                             onSelected={setGameFormat}
                             isDisabled={!!deck.format || deck.locked}
                             disallowEmptySelection
-                            className='md:basis-1/3'
                         />
                         <VariantSelect
                             label='Variant'
@@ -453,7 +438,6 @@ const DeckEditor = ({ deck: initial, cards, packs, onBackClick }) => {
                             onSelected={setGameVariant}
                             isDisabled={!!deck.variant || deck.locked}
                             disallowEmptySelection
-                            className='md:basis-1/3'
                         />
                         <LegalitySelect
                             label='Legality'
@@ -465,62 +449,44 @@ const DeckEditor = ({ deck: initial, cards, packs, onBackClick }) => {
                                 setGameLegalityObj(legalityObj);
                             }}
                             isDisabled={deck.locked}
-                            className='md:basis-1/3'
                         />
                     </div>
-                    <Card>
+                    <div className='flex min-h-14 flex-wrap items-center gap-x-6 gap-y-2 border-y border-gold-hair py-3 text-sm text-ink-dim'>
                         {deckToSave ? (
-                            <CardBody>
-                                <div className='flex gap-4'>
-                                    <div>
-                                        <div className='space-x-1'>
-                                            <span className='font-bold'>Plot cards:</span>
-                                            <span>
-                                                {deckToSave.plotCards.reduce(
-                                                    (acc, card) => acc + card.count,
-                                                    0
-                                                )}
-                                            </span>
-                                        </div>
-                                        <div className='space-x-1'>
-                                            <span className='font-bold'>Draw cards:</span>
-                                            <span>
-                                                {deckToSave.drawCards.reduce(
-                                                    (acc, card) => acc + card.count,
-                                                    0
-                                                )}
-                                            </span>
-                                        </div>
-                                        {!!deck.pool && (
-                                            <div className='space-x-1'>
-                                                <span className='font-bold'>Cards in pool:</span>
-                                                <span>
-                                                    {deck.pool.reduce(
-                                                        (acc, card) => acc + card.count,
-                                                        0
-                                                    )}
-                                                </span>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className='space-y-1'>
-                                        <div className='font-bold'>Validity:</div>
-                                        <div className='flex gap-1'>
-                                            <DeckStatus deck={deckToSave} />
-                                            <PoolInfo isPool={!!deck.pool} />
-                                        </div>
-                                    </div>
-                                </div>
-                            </CardBody>
+                            <>
+                                <span>
+                                    Plots{' '}
+                                    <span className='tabular-nums text-ink'>
+                                        {count(deckToSave.plotCards)}
+                                    </span>
+                                </span>
+                                <span>
+                                    Draw deck{' '}
+                                    <span className='tabular-nums text-ink'>
+                                        {count(deckToSave.drawCards)}
+                                    </span>
+                                </span>
+                                {!!deck.pool && (
+                                    <span>
+                                        Pool{' '}
+                                        <span className='tabular-nums text-ink'>
+                                            {count(deck.pool)}
+                                        </span>
+                                    </span>
+                                )}
+                                <span className='flex items-center gap-1 sm:ms-auto'>
+                                    <DeckStatus deck={deckToSave} />
+                                    <PoolInfo isPool={!!deck.pool} />
+                                </span>
+                            </>
                         ) : (
                             <LoadingSpinner />
                         )}
-                    </Card>
+                    </div>
                     {!deck.locked ? (
                         <>
                             <div className='flex flex-wrap gap-2'>
                                 <CardTypeFilter
-                                    className='self-start'
                                     filter={typeFilter}
                                     setFilter={setTypeFilter}
                                     types={Constants.CardTypes.filter(
@@ -528,7 +494,6 @@ const DeckEditor = ({ deck: initial, cards, packs, onBackClick }) => {
                                     )}
                                 />
                                 <FactionFilter
-                                    className='self-start'
                                     filter={factionFilter}
                                     setFilter={setFactionFilter}
                                     factions={Constants.Factions.concat({
@@ -537,7 +502,7 @@ const DeckEditor = ({ deck: initial, cards, packs, onBackClick }) => {
                                     })}
                                 />
                             </div>
-                            <div className='min-h-96 h-[50vh]'>
+                            <div className='h-[60vh] min-h-96'>
                                 <ReactTable
                                     dataLoadFn={() => ({
                                         data: cardsMemo,
@@ -558,31 +523,18 @@ const DeckEditor = ({ deck: initial, cards, packs, onBackClick }) => {
                                     columns={columns}
                                     startPageNumber={pageNumber}
                                     onPageChanged={(page) => setPageNumber(page)}
-                                    classNames={{
-                                        td: 'max-sm:px-2',
-                                        th: 'max-sm:px-2'
-                                    }}
                                 />
                             </div>
                         </>
                     ) : (
-                        <AlertPanel
-                            variant='warning'
-                            title={
-                                <span>
-                                    <FontAwesomeIcon icon={faLock} /> Deck Locked
-                                </span>
-                            }
-                            size='md'
-                        >
-                            This deck has been used/locked for{' '}
-                            {lockedEvent ? <b>{lockedEvent.name}</b> : 'an event'}, and cannot be
-                            edited or deleted.
-                        </AlertPanel>
+                        <Notice kind='warning' title='Deck locked'>
+                            This deck has been used for{' '}
+                            {lockedEvent ? <b>{lockedEvent.name}</b> : 'an event'}, so it can&apos;t
+                            be edited or deleted.
+                        </Notice>
                     )}
                 </div>
                 <DeckSummary
-                    className='break-inside-avoid'
                     deck={{
                         name: deckName,
                         deckCards: deckCards,
@@ -590,44 +542,40 @@ const DeckEditor = ({ deck: initial, cards, packs, onBackClick }) => {
                         faction: Constants.Factions.find((f) => f.value === faction)
                     }}
                 />
-
-                <ImportDeckModal
-                    isOpen={showImportModal}
-                    onOpenChange={(open) => setShowImportModal(open)}
-                    submitLabel='Submit & Save'
-                    onProcessed={async (newDeck) => {
-                        newDeck._id = deck._id;
-                        const success = await onSaveClick(false, newDeck);
-                        if (success) {
-                            const formattedDeck = formatDeckAsFullCards(newDeck, { cards });
-                            setFaction(formattedDeck.faction?.value);
-                            setDeckName(formattedDeck.name);
-                            setDeckCards(
-                                (formattedDeck.agenda
-                                    ? [{ card: formattedDeck.agenda, count: 1 }]
-                                    : []
-                                )
-                                    .concat(formattedDeck.drawCards || [])
-                                    .concat(formattedDeck.plotCards || [])
-                                    .concat(
-                                        formattedDeck.bannerCards?.map((bc) => ({
-                                            card: bc,
-                                            count: 1
-                                        })) || []
-                                    )
-                            );
-                            deck.pool = formattedDeck.pool;
-                            setShowImportModal(false);
-                        }
-                    }}
-                    message={
-                        <p className='text-bold text-danger-300'>
-                            Note: The deck you are editing will be overwritten!
-                        </p>
-                    }
-                />
             </div>
-        </div>
+            <ImportDeckModal
+                isOpen={showImportModal}
+                onOpenChange={(open) => setShowImportModal(open)}
+                submitLabel='Import and save'
+                onProcessed={async (newDeck) => {
+                    newDeck._id = deck._id;
+                    const success = await onSaveClick(false, newDeck);
+                    if (success) {
+                        const formattedDeck = formatDeckAsFullCards(newDeck, { cards });
+                        setFaction(formattedDeck.faction?.value);
+                        setDeckName(formattedDeck.name);
+                        setDeckCards(
+                            (formattedDeck.agenda ? [{ card: formattedDeck.agenda, count: 1 }] : [])
+                                .concat(formattedDeck.drawCards || [])
+                                .concat(formattedDeck.plotCards || [])
+                                .concat(
+                                    formattedDeck.bannerCards?.map((bc) => ({
+                                        card: bc,
+                                        count: 1
+                                    })) || []
+                                )
+                        );
+                        deck.pool = formattedDeck.pool;
+                        setShowImportModal(false);
+                    }
+                }}
+                message={
+                    <Notice kind='warning'>
+                        Importing replaces everything in the deck you&apos;re editing.
+                    </Notice>
+                }
+            />
+        </Frame>
     );
 };
 

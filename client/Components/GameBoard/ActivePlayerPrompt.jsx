@@ -154,11 +154,10 @@ const ActivePlayerPrompt = ({
             const buttonRet = (
                 <Button
                     type='button'
-                    color={button.cancel ? 'default' : 'primary'}
-                    className='text-wrap text-xs h-8 md:h-full md:min-h-10 md:text-small'
+                    variant={button.cancel ? 'tertiary' : 'primary'}
+                    className='text-wrap text-xs h-8 md:h-full md:min-h-10 md:text-sm'
                     onPress={(event) => handleButtonClick(event, button)}
                     isDisabled={button.disabled || (button.endsTurn && !endTurnReady)}
-                    disableRipple
                     fullWidth
                 >
                     {button.icon && (
@@ -166,8 +165,8 @@ const ActivePlayerPrompt = ({
                     )}
                     <span>{button.text}</span>
                     {shortcutLabel && (
-                        <Kbd className='hidden md:inline-flex absolute left-1 top-1/2 -translate-y-1/2 text-tiny bg-transparent shadow-none opacity-60'>
-                            {shortcutLabel}
+                        <Kbd className='absolute left-1 top-1/2 hidden -translate-y-1/2 bg-transparent text-xs text-current opacity-60 shadow-none md:inline-flex'>
+                            <Kbd.Content>{shortcutLabel}</Kbd.Content>
                         </Kbd>
                     )}
                 </Button>
@@ -261,19 +260,21 @@ const ActivePlayerPrompt = ({
 
     const promptTextElement = [];
     if (promptText && promptText.includes('\n')) {
-        let split = promptText.split('\n');
-        for (let token of split) {
+        for (const [index, token] of promptText.split('\n').entries()) {
             promptTextElement.push(token);
-            promptTextElement.push(<br />);
+            promptTextElement.push(<br key={index} />);
         }
     } else {
         promptTextElement.push(promptText);
     }
 
+    const panelClass =
+        'border border-gold-line bg-[#0c0d11]/95 shadow-[0_12px_30px_rgba(0,0,0,0.6)]';
+
     if (isLoading) {
         return (
             <div className={className}>
-                <div className='relative border-1 border-default-200 bg-black/65 rounded-md py-8'>
+                <div className={classNames(panelClass, 'py-8')}>
                     <LoadingSpinner />
                 </div>
             </div>
@@ -282,29 +283,23 @@ const ActivePlayerPrompt = ({
 
     return (
         <div className={className}>
-            <div
-                className={
-                    'relative text-xs md:text-small lg:text-medium font-bold text-center uppercase border-1 border-default-200 bg-secondary-200 py-1 rounded-t-md mx-0 mb-0'
-                }
-            >
-                {`${phase} phase`}
-            </div>
-            {promptTitle && (
-                <div
-                    className={classNames(
-                        'text-xs md:text-small lg:text-medium text-center border-1 border-default-200 py-1',
-                        endsTurn ? 'bg-primary font-bold' : 'bg-black/65 font-normal'
-                    )}
-                >
-                    {promptTitle}
+            <div className={classNames(panelClass, 'text-center')}>
+                <div className='border-b border-gold-hair px-2 py-1 font-display text-xs font-semibold text-gold first-letter:uppercase md:text-sm'>
+                    {`${phase} phase`}
                 </div>
-            )}
-            <div className='text-center'>
-                <div className='relative border-1 border-default-200 bg-black/65 rounded-b-md'>
-                    <p className='my-1 mx-2 text-xs md:text-small'>{promptTextElement}</p>
-                    {getControls()}
-                    <div className='flex flex-col mx-2 gap-0.5 md:gap-1 mb-1'>{getButtons()}</div>
-                </div>
+                {promptTitle && (
+                    <div
+                        className={classNames(
+                            'px-2 pt-1.5 text-xs md:text-sm',
+                            endsTurn ? 'font-semibold text-gold' : 'text-ink-dim'
+                        )}
+                    >
+                        {promptTitle}
+                    </div>
+                )}
+                <p className='mx-2 my-1 text-xs text-ink md:text-sm'>{promptTextElement}</p>
+                {getControls()}
+                <div className='mx-2 mb-2 flex flex-col gap-0.5 md:gap-1'>{getButtons()}</div>
             </div>
         </div>
     );

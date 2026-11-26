@@ -1,3 +1,19 @@
+export const AdminSections = [
+    { key: 'news', path: '/news', title: 'News', permission: 'canEditNews' },
+    { key: 'users', path: '/users', title: 'Users', permission: 'canManageUsers' },
+    { key: 'nodes', path: '/nodes', title: 'Nodes', permission: 'canManageNodes' },
+    {
+        key: 'reports',
+        path: '/admin/problem-reports',
+        title: 'Problem Reports',
+        permission: 'canManageProblemReports'
+    },
+    { key: 'motd', path: '/admin/motd', title: 'MOTD', permission: 'canManageMotd' },
+    { key: 'banners', path: '/admin/banners', title: 'Banners', permission: 'canManageBanners' },
+    { key: 'banlist', path: '/banlist', title: 'Ban List', permission: 'canManageBanlist' },
+    { key: 'events', path: '/events', title: 'Events', permission: 'canManageEvents' }
+];
+
 export const LeftMenu = [
     { path: '/decks', title: 'Decks', showOnlyWhenLoggedIn: true },
     { path: '/play', title: 'Play' },
@@ -12,20 +28,7 @@ export const LeftMenu = [
     {
         title: 'Admin',
         showOnlyWhenLoggedIn: true,
-        childItems: [
-            { path: '/news', title: 'News', permission: 'canEditNews' },
-            { path: '/users', title: 'Users', permission: 'canManageUsers' },
-            { path: '/nodes', title: 'Nodes', permission: 'canManageNodes' },
-            {
-                path: '/admin/problem-reports',
-                title: 'Problem Reports',
-                permission: 'canManageProblemReports'
-            },
-            { path: '/admin/motd', title: 'Motd', permission: 'canManageMotd' },
-            { path: '/admin/banners', title: 'Banners', permission: 'canManageBanners' },
-            { path: '/banlist', title: 'Ban List', permission: 'canManageBanlist' },
-            { path: '/events', title: 'Events', permission: 'canManageEvents' }
-        ]
+        childItems: AdminSections
     }
 ];
 
@@ -37,7 +40,5 @@ export const RightMenu = [
 export const ProfileMenu = [
     { title: 'Profile', path: '/profile' },
     { title: 'Stats', path: '/stats' },
-    { title: 'Security', path: '/security' },
-    { title: 'Block List', path: '/blocklist' },
     { title: 'Logout', path: '/logout' }
 ];

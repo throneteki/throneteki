@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Progress } from '@heroui/react';
+import { Label, ProgressBar } from '@heroui/react';
 
 const ResponseDelay = ({ duration, paused }) => {
     const startTime = useRef(Date.now());
@@ -25,15 +25,19 @@ const ResponseDelay = ({ duration, paused }) => {
 
     return (
         <div className='mx-2 my-1'>
-            <Progress
+            <ProgressBar
                 aria-label='Response delay'
-                label={paused ? 'Paused' : 'Passing automatically'}
-                classNames={{ label: 'text-xs md:text-small italic' }}
                 size='sm'
                 color={paused ? 'default' : 'warning'}
                 value={remaining}
-                disableAnimation
-            />
+            >
+                <Label className='text-xs italic md:text-sm'>
+                    {paused ? 'Paused' : 'Passing automatically'}
+                </Label>
+                <ProgressBar.Track>
+                    <ProgressBar.Fill className='transition-none' />
+                </ProgressBar.Track>
+            </ProgressBar>
         </div>
     );
 };

@@ -106,7 +106,7 @@ const PlayerBoard = ({
 
     if (isDroppable) {
         return (
-            <Droppable source='play area' className='flex flex-grow'>
+            <Droppable source='play area' className='flex grow'>
                 {content}
             </Droppable>
         );

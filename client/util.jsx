@@ -24,6 +24,16 @@ export function tryParseJSON(jsonString) {
     return false;
 }
 
+// Tracking parameters make links long and hard to read, so show only the site and path
+function linkLabel(link) {
+    try {
+        const url = new URL(link);
+        return `${url.hostname.replace(/^www\./, '')}${url.pathname.replace(/\/$/, '')}`;
+    } catch {
+        return link;
+    }
+}
+
 export function getMessageWithLinks(message) {
     const links = message.match(urlMatchingRegex);
     const retMessage = [];
@@ -36,16 +46,16 @@ export function getMessageWithLinks(message) {
     let linkCount = 0;
 
     for (const link of links) {
-        const index = message.indexOf(link);
+        const index = message.indexOf(link, lastIndex);
 
         retMessage.push(message.substring(lastIndex, index));
         retMessage.push(
-            <Link key={linkCount++} href={link}>
-                {link}
+            <Link key={linkCount++} href={link} target='_blank' rel='noopener noreferrer'>
+                {linkLabel(link)}
             </Link>
         );
 
-        lastIndex += index + link.length;
+        lastIndex = index + link.length;
     }
 
     retMessage.push(message.substr(lastIndex, message.length - lastIndex));

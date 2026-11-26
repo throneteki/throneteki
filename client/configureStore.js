@@ -1,11 +1,9 @@
-import thunkMiddleware from 'redux-thunk';
 import * as Sentry from '@sentry/react';
 import { configureStore } from '@reduxjs/toolkit';
 import auth from './redux/reducers/auth.js';
 import { apiSlice } from './redux/middleware/api';
 import lobbyMiddleware from './redux/middleware/lobby';
 import lobby from './redux/reducers/lobby';
-import cards from './redux/reducers/cards';
 import admin from './redux/reducers/admin';
 import navigation from './redux/reducers/navigation.js';
 import game from './redux/reducers/game.js';
@@ -21,7 +19,6 @@ export const store = configureStore({
         admin,
         api: apiSlice.reducer,
         auth,
-        cards,
         navigation,
         lobby,
         game
@@ -31,7 +28,6 @@ export const store = configureStore({
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()
-            .concat(thunkMiddleware)
             .concat(apiSlice.middleware)
             .concat(gameMiddleware)
             .concat(lobbyMiddleware)

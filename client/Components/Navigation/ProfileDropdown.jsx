@@ -1,7 +1,7 @@
 import React from 'react';
-import { Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
 import { useSelector } from 'react-redux';
-import NavItem from './NavItem';
+import NavDropdown from './NavDropdown';
+import UserAvatar from '../Site/UserAvatar';
 
 const ProfileDropdown = ({ user, menu }) => {
     const avatarVersion = useSelector((state) => state.auth.avatarVersion);
@@ -11,27 +11,18 @@ const ProfileDropdown = ({ user, menu }) => {
     }
 
     return (
-        <Dropdown>
-            <DropdownTrigger>
-                <Avatar
-                    isBordered
-                    as='button'
-                    className='transition-transform'
-                    name={user.name}
+        <NavDropdown
+            items={menu}
+            triggerLabel='Profile menu'
+            trigger={
+                <UserAvatar
+                    username={user.username}
+                    version={avatarVersion}
                     size='sm'
-                    src={`/img/avatar/${user.username}.png?v=${avatarVersion}`}
+                    className='ring-2 ring-white/20 transition-transform'
                 />
-            </DropdownTrigger>
-            <DropdownMenu variant='flat'>
-                {menu.map((mi) => (
-                    <DropdownItem key={mi.title} textValue={mi.title}>
-                        <NavItem className='w-full' size='md' path={mi.path}>
-                            {mi.title}
-                        </NavItem>
-                    </DropdownItem>
-                ))}
-            </DropdownMenu>
-        </Dropdown>
+            }
+        />
     );
 };
 

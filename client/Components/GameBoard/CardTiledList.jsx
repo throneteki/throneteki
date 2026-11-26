@@ -66,7 +66,7 @@ const CardTiledList = ({
 
     return (
         <div className='p-2'>
-            {titleText && <div>{titleText}</div>}
+            {titleText && <div className='mb-1.5 text-sm text-ink-dim'>{titleText}</div>}
             <div className={`gap-1.5 grid ${columnClassMap[numColumns]}`} style={style}>
                 {cardList}
             </div>

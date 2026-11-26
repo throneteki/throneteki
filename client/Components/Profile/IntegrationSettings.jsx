@@ -1,13 +1,14 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Avatar, Button, Chip, Link } from '@heroui/react';
+import { Button, buttonVariants, Chip, Link, Spinner } from '@heroui/react';
+import UserAvatar from '../Site/UserAvatar';
 import { toast } from 'react-toastify';
 import { useUnlinkPatreonMutation, useUpdateAvatarMutation } from '../../redux/middleware/api';
 import { avatarUpdated, setUser } from '../../redux/reducers/auth';
 import { getOAuthState, PatreonStateKey } from '../../util';
 import PatreonImage from '../../assets/img/Patreon_Mark_Coral.jpg';
-import SettingsGroup from './SettingsGroup';
-import SettingSwitch from './SettingSwitch';
+import Group from '../Site/Group';
+import SettingSwitch from '../Site/SettingSwitch';
 
 const getPatreonLinkUrl = () => {
     const clientId = import.meta.env.VITE_PATREON_CLIENT_ID;
@@ -67,7 +68,9 @@ const IntegrationSettings = ({ user, formProps }) => {
             toast.success('Patreon unlinked successfully');
         } catch (err) {
             toast.error(
-                err.message || 'An error occured unlinking from Patreon. Please try again later.'
+                err.data?.message ||
+                    err.message ||
+                    'An error occured unlinking from Patreon. Please try again later.'
             );
         }
     }, [dispatch, unlinkPatreon]);
@@ -79,7 +82,9 @@ const IntegrationSettings = ({ user, formProps }) => {
             toast.success('Avatar updated successfully');
         } catch (err) {
             toast.error(
-                err.message || 'An error occured updating your avatar. Please try again later.'
+                err.data?.message ||
+                    err.message ||
+                    'An error occured updating your avatar. Please try again later.'
             );
         }
     }, [dispatch, updateAvatar, user.username]);
@@ -93,12 +98,17 @@ const IntegrationSettings = ({ user, formProps }) => {
 
     return (
         <>
-            <SettingsGroup
+            <Group
                 title='Avatar'
                 description={
                     <>
                         Your avatar comes from the{' '}
-                        <Link href='https://gravatar.com/' size='sm' isExternal>
+                        <Link
+                            href='https://gravatar.com/'
+                            className='text-gold'
+                            target='_blank'
+                            rel='noopener noreferrer'
+                        >
                             Gravatar
                         </Link>{' '}
                         account for the email address on your profile.
@@ -107,37 +117,37 @@ const IntegrationSettings = ({ user, formProps }) => {
             >
                 <SettingSwitch
                     label='Use my Gravatar'
-                    description='Otherwise you get the default avatar.'
+                    hint='Otherwise you get the default avatar.'
                     isSelected={formProps.values.enableGravatar}
                     onValueChange={(isSelected) =>
                         formProps.setFieldValue('enableGravatar', isSelected)
                     }
                 />
-                <div className='flex flex-wrap items-center gap-3 px-3 py-2.5'>
-                    <Avatar
-                        src={`/img/avatar/${user.username}.png?v=${avatarVersion}`}
-                        showFallback
-                    />
-                    <span className='min-w-48 flex-1 text-small text-default-500'>
-                        {avatarHint}
-                    </span>
+                <div className='flex flex-wrap items-center gap-3 border-b border-gold-hair px-0.5 py-3'>
+                    <UserAvatar username={user.username} version={avatarVersion} />
+                    <span className='min-w-48 flex-1 text-sm text-ink-faint'>{avatarHint}</span>
                     <Button
                         size='sm'
-                        variant='flat'
-                        isLoading={avatarLoading}
+                        isPending={avatarLoading}
                         isDisabled={!user.enableGravatar || gravatarChanged}
                         onPress={onRefreshAvatarClick}
+                        variant='tertiary'
                     >
-                        Refresh avatar
+                        {avatarLoading && <Spinner color='current' size='sm' />}Refresh avatar
                     </Button>
                 </div>
-            </SettingsGroup>
-            <SettingsGroup
+            </Group>
+            <Group
                 title='Patreon'
                 description={
                     <>
                         Link your{' '}
-                        <Link href='https://www.patreon.com/' size='sm' isExternal>
+                        <Link
+                            href='https://www.patreon.com/'
+                            className='text-gold'
+                            target='_blank'
+                            rel='noopener noreferrer'
+                        >
                             Patreon
                         </Link>{' '}
                         account to receive supporter benefits on this site. Thank you for your
@@ -145,26 +155,26 @@ const IntegrationSettings = ({ user, formProps }) => {
                     </>
                 }
             >
-                <div className='flex flex-wrap items-center gap-3 px-3 py-2.5'>
-                    <img src={PatreonImage} alt='' className='h-8 rounded-small' />
+                <div className='flex flex-wrap items-center gap-3 border-y border-gold-hair px-0.5 py-3'>
+                    <img src={PatreonImage} alt='' className='h-8 rounded-sm' />
                     <div className='flex min-w-48 flex-1 flex-col gap-1'>
                         <span>
                             {isPatreonLinked ? (
                                 <Chip
                                     size='sm'
-                                    variant='flat'
+                                    variant='soft'
                                     color={patreonState?.needsRelink ? 'warning' : 'success'}
                                 >
                                     {patreonState?.needsRelink ? 'Link expired' : 'Linked'}
                                 </Chip>
                             ) : (
-                                <Chip size='sm' variant='flat'>
+                                <Chip size='sm' variant='soft'>
                                     Not linked
                                 </Chip>
                             )}
                         </span>
                         {patreonState?.needsRelink && (
-                            <span className='text-small text-warning'>
+                            <span className='text-sm text-warning'>
                                 {patreonState.message ||
                                     'Your Patreon link has expired. Please relink your account.'}
                             </span>
@@ -172,30 +182,30 @@ const IntegrationSettings = ({ user, formProps }) => {
                     </div>
                     <div className='flex flex-wrap gap-2'>
                         {(!isPatreonLinked || patreonState?.needsRelink) && (
-                            <Button
-                                size='sm'
-                                color={isPatreonLinked ? 'warning' : 'default'}
-                                variant='flat'
+                            <a
                                 href={patreonLinkUrl}
-                                as={Link}
-                                isDisabled={!patreonLinkUrl}
+                                aria-disabled={!patreonLinkUrl || undefined}
+                                className={buttonVariants({
+                                    size: 'sm',
+                                    variant: isPatreonLinked ? 'primary' : 'tertiary'
+                                })}
                             >
                                 {isPatreonLinked ? 'Relink' : 'Link Patreon account'}
-                            </Button>
+                            </a>
                         )}
                         {isPatreonLinked && (
                             <Button
                                 size='sm'
-                                variant='flat'
-                                isLoading={unlinkLoading}
+                                isPending={unlinkLoading}
                                 onPress={onUnlinkClick}
+                                variant='tertiary'
                             >
-                                Unlink
+                                {unlinkLoading && <Spinner color='current' size='sm' />}Unlink
                             </Button>
                         )}
                     </div>
                 </div>
-            </SettingsGroup>
+            </Group>
         </>
     );
 };

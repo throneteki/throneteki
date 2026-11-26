@@ -59,7 +59,7 @@ const GameBoard = () => {
     const user = useSelector((state) => state.auth.user);
     const token = useSelector((state) => state.auth.token);
 
-    const [showGameChat, setShowGameChat] = useState(window.innerWidth > 768);
+    const [showGameChat, setShowGameChat] = useState(window.innerWidth >= 1024);
     const [unreadMessages, setUnreadMessages] = useState(0);
     const [showModal, setShowModal] = useState(false);
     const [showShortcuts, setShowShortcuts] = useState(false);

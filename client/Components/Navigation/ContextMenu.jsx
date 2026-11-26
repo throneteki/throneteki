@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { sendConcedeMessage, sendLeaveGameMessage } from '../../redux/reducers/game';
-import { Link, NavbarMenuItem, Tooltip } from '@heroui/react';
+import { Tooltip } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWarning } from '@fortawesome/free-solid-svg-icons';
 
@@ -33,18 +33,18 @@ const ContextMenu = ({ onPress = () => true }) => {
     const contextMenu = useMemo(() => {
         const menuOptions = [];
         const menuItemClass =
-            'cursor-pointer text-medium font-[PoppinsMedium] text-white transition-colors duration-500 ease-in-out hover:text-gray-500 text-nowrap';
+            'cursor-pointer text-base font-medium text-white transition-colors duration-500 ease-in-out hover:text-gray-500 text-nowrap';
         if (currentGame?.started) {
             menuOptions.unshift(
-                <Link onPress={onLeaveClick} className={menuItemClass}>
+                <button type='button' onClick={onLeaveClick} className={menuItemClass}>
                     Leave Game
-                </Link>
+                </button>
             );
             if (currentGame.players[user?.username]) {
                 menuOptions.unshift(
-                    <Link onPress={onConcedeClick} className={menuItemClass}>
+                    <button type='button' onClick={onConcedeClick} className={menuItemClass}>
                         Concede
-                    </Link>
+                    </button>
                 );
             }
             const spectators =
@@ -69,11 +69,18 @@ const ContextMenu = ({ onPress = () => true }) => {
             }
 
             menuOptions.unshift(
-                <Tooltip content={spectators} closeDelay={0}>
-                    <a className={menuItemClass} onMouseOver={() => setShowSpectatorWarning(false)}>
-                        {showSpectatorWarning ? <FontAwesomeIcon icon={faWarning} /> : null}{' '}
-                        {'Spectators: ' + currentGame.spectators.length}
-                    </a>
+                <Tooltip delay={0} closeDelay={0}>
+                    <Tooltip.Trigger>
+                        <button
+                            type='button'
+                            className={menuItemClass}
+                            onMouseOver={() => setShowSpectatorWarning(false)}
+                        >
+                            {showSpectatorWarning ? <FontAwesomeIcon icon={faWarning} /> : null}{' '}
+                            {'Spectators: ' + currentGame.spectators.length}
+                        </button>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>{spectators}</Tooltip.Content>
                 </Tooltip>
             );
 
@@ -82,8 +89,8 @@ const ContextMenu = ({ onPress = () => true }) => {
 
         return menuOptions.map((menuItem, index) => {
             return (
-                <div key={index}>
-                    <NavbarMenuItem>{menuItem}</NavbarMenuItem>{' '}
+                <div key={index} className='flex items-center'>
+                    {menuItem}
                 </div>
             );
         });

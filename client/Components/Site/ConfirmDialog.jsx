@@ -1,5 +1,6 @@
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
 import React from 'react';
+import { Button } from '@heroui/react';
+import Dialog from './Dialog';
 
 const ConfirmDialog = ({
     isOpen,
@@ -8,44 +9,42 @@ const ConfirmDialog = ({
     message,
     onOk,
     onCancel,
-    placement = 'center'
-}) => {
-    return (
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement={placement}>
-            <ModalContent>
-                {(onClose) => (
-                    <>
-                        <ModalHeader className='flex flex-col gap-1'>{title}</ModalHeader>
-                        <ModalBody>{message}</ModalBody>
-                        <ModalFooter>
-                            <Button
-                                color='primary'
-                                onPress={() => {
-                                    onClose();
-
-                                    if (onOk) {
-                                        onOk();
-                                    }
-                                }}
-                            >
-                                Yes
-                            </Button>
-                            <Button
-                                onPress={(e) => {
-                                    onClose(e);
-                                    if (onCancel) {
-                                        onCancel();
-                                    }
-                                }}
-                            >
-                                No
-                            </Button>
-                        </ModalFooter>
-                    </>
-                )}
-            </ModalContent>
-        </Modal>
-    );
-};
+    okLabel = 'Yes',
+    cancelLabel = 'No',
+    placement = 'center',
+    isDestructive = false
+}) => (
+    <Dialog
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        title={title}
+        placement={placement}
+        size='sm'
+        footer={({ close }) => (
+            <div className='flex justify-end gap-2'>
+                <Button
+                    variant='tertiary'
+                    onPress={() => {
+                        close();
+                        onCancel?.();
+                    }}
+                >
+                    {cancelLabel}
+                </Button>
+                <Button
+                    variant={isDestructive ? 'danger' : 'primary'}
+                    onPress={() => {
+                        close();
+                        onOk?.();
+                    }}
+                >
+                    {okLabel}
+                </Button>
+            </div>
+        )}
+    >
+        <p className='text-ink-dim'>{message}</p>
+    </Dialog>
+);
 
 export default ConfirmDialog;

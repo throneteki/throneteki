@@ -3,10 +3,11 @@ import React, { forwardRef } from 'react';
 
 const Page = forwardRef(function Page({ className, children, size = 'normal' }, ref) {
     const wrapperClassName = classNames(
-        'p-2 mx-auto w-full flex flex-col gap-1',
+        'mx-auto flex w-full flex-col gap-6 px-2 py-4 sm:px-4 sm:py-6',
         {
             'md:w-3/5 lg:w-2/5': size === 'small',
-            'lg:w-4/5': size === 'normal'
+            'max-w-[440px]': size === 'narrow',
+            'max-w-[940px]': size === 'normal'
         },
         className
     );

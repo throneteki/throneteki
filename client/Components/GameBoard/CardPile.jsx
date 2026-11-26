@@ -26,6 +26,7 @@ const CardPile = ({
     size,
     popupMenu,
     title,
+    popupTitle = title?.toLowerCase(),
     titlePosition,
     playerName,
     popupLocation = 'bottom',
@@ -181,21 +182,20 @@ const CardPile = ({
             return null;
         }
 
-        const popupClass = classNames(
-            'flex flex-col box-content border-1 border-default-200 bg-black/75 rounded-b-md overflow-hidden'
-        );
+        const popupClass = classNames('box-content flex flex-col overflow-hidden');
 
         const retPopupMenu = popupMenu && (
-            <div className='flex gap-1.5 p-2'>
+            <div className='flex gap-1.5 border-b border-gold-hair p-2'>
                 {popupMenu.map((menuItem, index) => {
                     return (
                         <Button
-                            color='primary'
                             className='flex-1'
                             key={index}
+                            size='sm'
                             onPress={() => onPopupMenuItemClick(menuItem)}
-                            startContent={<FontAwesomeIcon icon={menuItem.icon} />}
+                            variant='tertiary'
                         >
+                            {<FontAwesomeIcon icon={menuItem.icon} />}
                             {menuItem.text}
                         </Button>
                     );
@@ -207,7 +207,11 @@ const CardPile = ({
             <MovablePanel
                 id={popupId}
                 anchorRef={areaRef}
-                title={playerName ? `${playerName}'s ${title}` : title}
+                title={
+                    playerName
+                        ? `${playerName}'s ${popupTitle}`
+                        : popupTitle && popupTitle[0].toUpperCase() + popupTitle.slice(1)
+                }
                 name={source}
                 onCloseClick={onCloseClick}
                 side={popupLocation}
@@ -232,7 +236,7 @@ const CardPile = ({
         showPopup,
         popupMenu,
         playerName,
-        title,
+        popupTitle,
         onCloseClick,
         popupLocation,
         popupId,

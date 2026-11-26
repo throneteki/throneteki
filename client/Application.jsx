@@ -5,7 +5,7 @@ import * as Sentry from '@sentry/react';
 import NavBar from './Components/Navigation/NavBar';
 import Router from './Router';
 import { tryParseJSON } from './util';
-import AlertPanel from './Components/Site/AlertPanel';
+import Notice from './Components/Site/Notice';
 import { useVerifyAuthenticationQuery } from './redux/middleware/api';
 import { setAuthTokens, setUser } from './redux/reducers/auth';
 import { startConnecting } from './redux/reducers/lobby';
@@ -83,17 +83,17 @@ const Application = () => {
 
     if (incompatibleBrowser) {
         component = (
-            <AlertPanel
-                variant='danger'
-                message='Your browser does not provide the required functionality for this site to work. Please upgrade your browser. The site works best with a recet version of Chrome, Safari or Firefox.'
-            />
+            <Notice kind='error' isBoxed className='mx-auto mt-10 max-w-xl'>
+                Your browser can’t run this site. Please update it: the site works best with a
+                recent version of Chrome, Safari or Firefox.
+            </Notice>
         );
     } else if (cannotLoad) {
         component = (
-            <AlertPanel
-                variant='danger'
-                message='This site requires the ability to store cookies and local site data to function. Please enable these features to use the site.'
-            />
+            <Notice kind='error' isBoxed className='mx-auto mt-10 max-w-xl'>
+                This site needs cookies and local site data to work. Please allow them for this
+                site.
+            </Notice>
         );
     }
 

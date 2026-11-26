@@ -12,8 +12,8 @@ import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 
 import Page from './Page';
-import Panel from '../Components/Site/Panel';
-import AlertPanel, { AlertType } from '../Components/Site/AlertPanel';
+import Frame from '../Components/Site/Frame';
+import Notice from '../Components/Site/Notice';
 import LoadingSpinner from '../Components/Site/LoadingSpinner';
 import ReactTable from '../Components/Table/ReactTable';
 import {
@@ -80,13 +80,13 @@ const LinkAccount = ({ needsRelink }) => {
     };
 
     return (
-        <div className='flex flex-col gap-2 items-start'>
-            <p>
+        <div className='flex flex-col items-start gap-4'>
+            <p className='max-w-prose text-ink-dim'>
                 {needsRelink
                     ? 'Your ThronesDB link has expired. Link your account again to import decks.'
                     : 'Link your ThronesDB account to import your decks from there, and keep them up to date.'}
             </p>
-            <Button color='primary' isLoading={isLoading} onPress={onLinkClick}>
+            <Button variant='primary' isPending={isLoading} onPress={onLinkClick}>
                 Link ThronesDB account
             </Button>
         </div>
@@ -141,7 +141,7 @@ const DeckTable = () => {
     }
 
     if (error) {
-        return <AlertPanel variant={AlertType.Danger} message={error} />;
+        return <Notice kind='error'>{error}</Notice>;
     }
 
     const newDeckIds = (decks || []).filter((deck) => !deck.isImported).map((deck) => deck.id);
@@ -150,7 +150,7 @@ const DeckTable = () => {
         {
             color: 'default',
             icon: <FontAwesomeIcon icon={faDownload} />,
-            label: 'Import Selected',
+            label: 'Import selected',
             disabled: selectedRows.length === 0,
             isLoading: isImportLoading,
             onPress: () => runImport(() => importDecks(selectedRows))
@@ -158,7 +158,7 @@ const DeckTable = () => {
         {
             color: 'default',
             icon: <FontAwesomeIcon icon={faCloudArrowDown} />,
-            label: 'Import All New',
+            label: 'Import all new',
             disabled: newDeckIds.length === 0,
             isLoading: isImportLoading,
             onPress: () => runImport(() => importDecks(newDeckIds))
@@ -166,7 +166,7 @@ const DeckTable = () => {
         {
             color: 'default',
             icon: <FontAwesomeIcon icon={faRightLeft} />,
-            label: 'Sync Imported',
+            label: 'Sync imported',
             disabled: !decks?.some((deck) => deck.isImported),
             isLoading: isSyncLoading,
             onPress: () => runImport(() => syncDecks())
@@ -192,11 +192,7 @@ const DeckTable = () => {
             dataLoadFn={useThronesDbDecks}
             columns={columns}
             defaultSort={[{ id: 'dateUpdate', desc: true }]}
-            emptyContent={
-                <AlertPanel variant={AlertType.Info}>
-                    There are no decks in your ThronesDB account to import.
-                </AlertPanel>
-            }
+            emptyContent='There are no decks in your ThronesDB account to import.'
             onRowSelectionChange={(rows) => setSelectedRows(rows.map((row) => row.original.id))}
         />
     );
@@ -210,22 +206,19 @@ const ThronesDbDecks = () => {
     if (isLoading) {
         content = <LoadingSpinner label='Checking your ThronesDB link...' />;
     } else if (error) {
-        content = <AlertPanel variant={AlertType.Danger} message={error} />;
+        content = <Notice kind='error'>{error}</Notice>;
     } else if (!status.configured) {
         content = (
-            <AlertPanel
-                variant={AlertType.Info}
-                message='Importing from ThronesDB is not available at the moment.'
-            />
+            <Notice kind='info'>Importing from ThronesDB is not available at the moment.</Notice>
         );
     } else if (!status.linked || status.needsRelink) {
         content = <LinkAccount needsRelink={status.needsRelink} />;
     } else {
         content = (
-            <div className='flex flex-col gap-2'>
-                <p>
+            <div className='flex flex-col gap-5'>
+                <p className='max-w-prose text-sm text-ink-dim'>
                     Importing only adds decks you have not imported yet. Imported decks stay linked
-                    to ThronesDB, and Sync Imported updates them with any changes made there,
+                    to ThronesDB, and Sync imported updates them with any changes made there,
                     replacing changes made here.
                 </p>
                 <DeckTable />
@@ -234,15 +227,18 @@ const ThronesDbDecks = () => {
     }
 
     return (
-        <Page>
-            <Panel title='Import from ThronesDB'>
-                <div className='flex flex-col gap-3'>
-                    <div>
-                        <Button onPress={() => dispatch(navigate('/decks'))}>Back to decks</Button>
-                    </div>
-                    {content}
-                </div>
-            </Panel>
+        <Page size='wide'>
+            <Frame
+                title='Import from ThronesDB'
+                description='Bring your ThronesDB decks here and keep them up to date.'
+                actions={
+                    <Button variant='tertiary' onPress={() => dispatch(navigate('/decks'))}>
+                        Back to decks
+                    </Button>
+                }
+            >
+                {content}
+            </Frame>
         </Page>
     );
 };

@@ -22,12 +22,10 @@ const ThronesDb = () => {
 
     if (!oauthCode) {
         return (
-            <Page className='h-full'>
-                <ErrorMessage
-                    title='This page is not intended to be viewed directly'
-                    message='Please click on one of the links at the top of the page or your browser back button to return to the site.'
-                />
-            </Page>
+            <ErrorMessage
+                title='Nothing to show here'
+                message='This page is only reached from ThronesDB. Use the links at the top of the page to return to the site.'
+            />
         );
     }
 

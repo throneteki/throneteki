@@ -1,8 +1,7 @@
 import React from 'react';
-import { Switch } from '@heroui/react';
-import SettingsGroup from './SettingsGroup';
-import SettingSwitch from './SettingSwitch';
-import { ActionWindows } from '../../constants';
+import Group from '../Site/Group';
+import PhaseTrack from '../Site/PhaseTrack';
+import SettingSwitch from '../Site/SettingSwitch';
 
 const GameplaySettings = ({ formProps }) => {
     const { values, setFieldValue } = formProps;
@@ -10,47 +9,39 @@ const GameplaySettings = ({ formProps }) => {
 
     return (
         <>
-            <SettingsGroup
+            <Group
                 title='Action windows'
-                description='Choose where the game stops to ask whether you want to take an action. Anywhere else you pass automatically, and a window nobody stops in (such as dominance) may be skipped. You can also change these during a game from the settings button.'
-                className='grid gap-2 p-3 sm:grid-cols-3'
+                description='The game stops at the windows you choose to ask whether you want to act. Anywhere else you pass automatically, and a window nobody stops in (such as dominance) may be skipped. You can also change these during a game from the settings button.'
             >
-                {ActionWindows.map((window) => (
-                    <Switch
-                        key={window.name}
-                        size='sm'
-                        isSelected={values.actionWindows[window.name]}
-                        onValueChange={toggle(`actionWindows.${window.name}`)}
-                        classNames={{
-                            base: 'm-0 inline-flex w-full max-w-full cursor-pointer flex-row-reverse items-center justify-between gap-2 rounded-medium border border-default-200 px-3 py-2 hover:bg-default-100/50 data-[selected=true]:border-primary',
-                            label: 'ms-0 text-small'
-                        }}
-                    >
-                        {window.label}
-                    </Switch>
-                ))}
-            </SettingsGroup>
-            <SettingsGroup title='Automation'>
+                <PhaseTrack
+                    idPrefix='profile-window'
+                    value={values.actionWindows}
+                    onChange={(name, isSelected) =>
+                        setFieldValue(`actionWindows.${name}`, isSelected)
+                    }
+                />
+            </Group>
+            <Group title='Automation' description='Choices the game can make for you.'>
                 <SettingSwitch
                     label='Choose order of keywords'
-                    description='When you are first player, pick the order challenge keywords resolve in.'
+                    hint='When you are first player, pick the order challenge keywords resolve in.'
                     isSelected={values.chooseOrder}
                     onValueChange={toggle('chooseOrder')}
                 />
                 <SettingSwitch
                     label='Ask before resolving challenge keywords'
-                    description='Pick which of your cards resolve each keyword, instead of all of them resolving automatically.'
+                    hint='Pick which of your cards resolve each keyword, instead of all of them resolving automatically.'
                     isSelected={values.chooseCards}
                     onValueChange={toggle('chooseCards')}
                 />
                 <SettingSwitch
                     label='Prompt before using dupes to save'
-                    description='Otherwise a duplicate saves your card automatically.'
+                    hint='Otherwise a duplicate saves your card automatically.'
                     isSelected={values.promptDupes}
                     onValueChange={toggle('promptDupes')}
                 />
-            </SettingsGroup>
-            <SettingsGroup
+            </Group>
+            <Group
                 title='Hidden information'
                 description="Pause at windows where you could have a response, even when you don't, so your opponent can't tell what is in your hand."
             >
@@ -64,15 +55,15 @@ const GameplaySettings = ({ formProps }) => {
                     isSelected={values.hideReactions}
                     onValueChange={toggle('hideReactions')}
                 />
-            </SettingsGroup>
-            <SettingsGroup title='Controls'>
+            </Group>
+            <Group title='Controls'>
                 <SettingSwitch
                     label='Keyboard shortcuts in games'
-                    description='Press ? during a game to see them.'
+                    hint='Press ? during a game to see them.'
                     isSelected={values.keyboardShortcuts}
                     onValueChange={toggle('keyboardShortcuts')}
                 />
-            </SettingsGroup>
+            </Group>
         </>
     );
 };

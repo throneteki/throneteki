@@ -1,5 +1,6 @@
 import React from 'react';
-import { Modal, ModalBody, ModalContent, ModalHeader, Tab, Tabs } from '@heroui/react';
+import { Tabs } from '@heroui/react';
+import Dialog from '../Site/Dialog';
 import DeckList from '../Decks/DeckList';
 import { useGetDecksQuery, useGetStandaloneDecksQuery } from '../../redux/middleware/api';
 
@@ -9,34 +10,39 @@ const SelectDeckModal = ({ isOpen, onClose, onDeckSelected, game }) => {
         { title: 'Standalone Decks', dataQuery: useGetStandaloneDecksQuery }
     ];
     return (
-        <Modal
-            className='max-h-screen'
+        <Dialog
             isOpen={isOpen}
-            onClose={onClose}
-            size='5xl'
-            scrollBehavior='inside'
+            onOpenChange={(open) => !open && onClose()}
+            title='Select deck'
+            size='lg'
+            className='w-full max-w-[calc(100vw-1rem)] sm:max-w-[38rem] md:max-w-[46rem] lg:max-w-[62rem] xl:max-w-[78rem] 2xl:max-w-[94rem]'
         >
-            <ModalContent>
-                <ModalHeader>{'Select Deck'}</ModalHeader>
-                <ModalBody>
-                    <Tabs items={deckTabs}>
-                        {(item) => (
-                            <Tab key={item.title} title={item.title}>
-                                <DeckList
-                                    deckLoadFn={item.dataQuery}
-                                    onDeckSelected={onDeckSelected}
-                                    readOnly={true}
-                                    format={game.gameFormat}
-                                    variant={game.gameVariant}
-                                    legality={game.restrictedList?._id}
-                                    eventId={game.event?._id}
-                                />
-                            </Tab>
-                        )}
-                    </Tabs>
-                </ModalBody>
-            </ModalContent>
-        </Modal>
+            <Tabs>
+                <Tabs.ListContainer>
+                    <Tabs.List aria-label='Deck lists'>
+                        {deckTabs.map((item) => (
+                            <Tabs.Tab key={item.title} id={item.title}>
+                                {item.title}
+                                <Tabs.Indicator />
+                            </Tabs.Tab>
+                        ))}
+                    </Tabs.List>
+                </Tabs.ListContainer>
+                {deckTabs.map((item) => (
+                    <Tabs.Panel key={item.title} id={item.title}>
+                        <DeckList
+                            deckLoadFn={item.dataQuery}
+                            onDeckSelected={onDeckSelected}
+                            readOnly={true}
+                            format={game.gameFormat}
+                            variant={game.gameVariant}
+                            legality={game.restrictedList?._id}
+                            eventId={game.event?._id}
+                        />
+                    </Tabs.Panel>
+                ))}
+            </Tabs>
+        </Dialog>
     );
 };
 

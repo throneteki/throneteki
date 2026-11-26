@@ -29,6 +29,8 @@ Online implementation of A Game of Thrones: The Card Game (Second Edition).
 - [Engine guide](server/game/CLAUDE.md): architecture and rules for engine changes.
 - [Card guide](server/game/cards/CLAUDE.md): rules for implementing cards.
 - [Testing guide](test/CLAUDE.md): rules for specs. Reference: [docs/testing-cards.md](docs/testing-cards.md).
+- [Site design](docs/design.md): the look of the site, its tokens and shared components. Read it
+  before building or restyling anything in `client/`.
 - [Docs index](docs/README.md), including the card API in
   [docs/implementing-cards.md](docs/implementing-cards.md).
 

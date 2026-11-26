@@ -23,19 +23,19 @@ const GameChat = ({
         if (messagePanel.current) {
             navigator.clipboard
                 .writeText(messagePanel.current.innerText)
-                .then(() => toast.success('Copied game chat to clipboard', null))
-                .catch((err) => toast.error(`Could not copy game chat: ${err}`, null));
+                .then(() => toast.success('Game log copied'))
+                .catch(() => toast.error('The game log could not be copied'));
         }
     }, []);
 
-    const placeholder = muted ? 'Spectators cannot chat in this game' : 'Chat...';
+    const placeholder = muted ? 'Spectators can’t chat in this game' : 'Chat';
 
     // Drawer wrapper ensures we can "squish" the chat without it flowing off screen, as to avoid DnD-kit trying to auto-scroll off-screen whilst dragging near edge
     const drawerClass = useMemo(
         () =>
             classNames(
                 className,
-                'overflow-hidden transition-[width] duration-500 border-l-1 border-default-100',
+                'overflow-hidden transition-[width] duration-500 border-l border-gold-hair',
                 {
                     'w-full md:w-96': isOpen,
                     'w-0': !isOpen
@@ -46,33 +46,39 @@ const GameChat = ({
 
     return (
         <div className={drawerClass}>
-            <div className='flex flex-col bg-black/75 w-full h-full min-w-96'>
-                <div className='flex p-2 gap-2 justify-end items-center'>
-                    <span className='w-full text-large font-bold'>Game Log</span>
+            <div className='flex h-full w-full min-w-96 flex-col bg-[#0c0d11]/90'>
+                <div className='flex items-center gap-1 border-b border-gold-hair px-3 py-2'>
+                    <h2 className='flex-1 font-display text-base font-semibold text-gold'>
+                        Game log
+                    </h2>
                     <Button
-                        title={'Copy Chat Log to Clipboard'}
-                        isIconOnly={true}
-                        startContent={<FontAwesomeIcon icon={faCopy} />}
-                        variant='faded'
-                        radius='sm'
-                        className='h-8'
+                        aria-label='Copy the game log'
+                        title='Copy the game log'
+                        isIconOnly
+                        size='sm'
+                        variant='ghost'
+                        className='text-ink-dim'
                         onPress={writeChatToClipboard}
-                    />
+                    >
+                        <FontAwesomeIcon icon={faCopy} />
+                    </Button>
                     <Button
-                        title={'Hide Chat Log'}
-                        isIconOnly={true}
-                        startContent={<FontAwesomeIcon icon={faArrowRight} />}
-                        variant='faded'
-                        radius='sm'
-                        className='h-8'
+                        aria-label='Hide the game log'
+                        title='Hide the game log'
+                        isIconOnly
+                        size='sm'
+                        variant='ghost'
+                        className='text-ink-dim'
                         onPress={onClose}
-                    />
+                    >
+                        <FontAwesomeIcon icon={faArrowRight} />
+                    </Button>
                 </div>
                 <ChatArea
                     ref={messagePanel}
                     classNames={{
                         wrapper: 'flex-1 min-h-0',
-                        messages: 'flex flex-col gap-1.5 p-2'
+                        messages: 'flex flex-col gap-1.5 overflow-x-hidden px-3 py-2 text-sm'
                     }}
                     isOpen={isOpen}
                     messageCount={messages.length}

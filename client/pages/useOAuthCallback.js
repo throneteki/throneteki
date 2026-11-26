@@ -64,7 +64,12 @@ export const useOAuthCallback = ({
                 await link(oauthCode);
                 toast.success(successMessage);
             } catch (err) {
-                toast.error(err?.message || err || 'An error occurred linking your account');
+                toast.error(
+                    err?.data?.message ||
+                        err?.message ||
+                        err ||
+                        'An error occurred linking your account'
+                );
             }
 
             removeItem(stateKey);

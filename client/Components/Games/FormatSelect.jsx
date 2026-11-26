@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, SelectItem } from '@heroui/react';
+import SelectField from '../Site/SelectField';
 import { GameFormats } from '../../constants';
 
 const FormatSelect = ({
@@ -10,31 +10,24 @@ const FormatSelect = ({
     onSelected,
     isInvalid,
     errorMessage,
-    disallowEmptySelection,
     isDisabled
 }) => {
-    const handleChange = (e) => {
-        onSelected(e.target.value);
+    const handleChange = (value) => {
+        onSelected(value);
     };
 
     return (
-        <Select
+        <SelectField
             label={label}
-            selectedKeys={selected ? [selected] : []}
+            value={selected || null}
             onChange={handleChange}
             isInvalid={isInvalid}
             errorMessage={errorMessage}
-            disallowEmptySelection={disallowEmptySelection}
             isDisabled={isDisabled}
             className={className}
             style={style}
-        >
-            {GameFormats.map((f) => (
-                <SelectItem key={f.name} value={f.name}>
-                    {f.label}
-                </SelectItem>
-            ))}
-        </Select>
+            items={GameFormats.map((f) => ({ id: f.name, label: f.label }))}
+        />
     );
 };
 

@@ -18,7 +18,7 @@ const AbilityTargeting = ({ targets, source }) => {
                 size='normal'
             />
             {card.shadowPosition ? (
-                <div className='absolute bottom-0 right-0 pr-2 text-large'>
+                <div className='absolute bottom-0 right-0 pr-2 text-lg'>
                     {'#' + card.shadowPosition}
                 </div>
             ) : null}

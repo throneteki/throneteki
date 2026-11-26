@@ -1,88 +1,75 @@
 import React from 'react';
-import { Input, Switch } from '@heroui/react';
+import Field from '../Site/Field';
+import SettingSwitch from '../Site/SettingSwitch';
 import { useFormikContext } from 'formik';
 
-const GameOptions = ({ isDisabled }) => {
-    const { values, errors, touched, handleChange, getFieldProps } = useFormikContext();
-    const options = [
-        { name: 'allowSpectators', label: 'Allow spectators' },
-        { name: 'showHand', label: 'Show hands to spectators' },
-        { name: 'muteSpectators', label: 'Mute spectators' },
-        { name: 'gamePrivate', label: 'Private (requires game link)' },
-        { name: 'useGameTimeLimit', label: 'Use game time limit' },
-        {
-            name: 'useChessClocks',
-            label: 'Use chess clocks (time limit per player)'
-        }
-    ];
+const options = [
+    { name: 'allowSpectators', label: 'Allow spectators' },
+    { name: 'showHand', label: 'Show hands to spectators' },
+    { name: 'muteSpectators', label: 'Mute spectators', hint: "Spectators can't post in the chat" },
+    {
+        name: 'gamePrivate',
+        label: 'Private',
+        hint: 'Hidden from the list, so only people with the link can join'
+    },
+    {
+        name: 'useGameTimeLimit',
+        label: 'Game time limit',
+        hint: 'When time runs out, the player with the most power wins',
+        fields: [{ name: 'gameTimeLimit', label: 'Length', unit: 'min' }]
+    },
+    {
+        name: 'useChessClocks',
+        label: 'Chess clocks',
+        hint: 'Each player has their own clock',
+        fields: [
+            { name: 'chessClockTimeLimit', label: 'Clock', unit: 'min' },
+            { name: 'chessClockDelay', label: 'Delay per move', unit: 'sec' }
+        ]
+    }
+];
+
+const GameOptions = ({ isDisabled, isSpectatorsDisabled = false }) => {
+    const { values, errors, touched, setFieldValue, getFieldProps } = useFormikContext();
 
     return (
-        <>
-            <div>
-                <div className='font-bold'>Options</div>
-                <div className='mt-2 grid md:grid-cols-2 lg:grid-cols-3'>
-                    {options.map((option) => (
-                        <div key={option.name}>
-                            <Switch
-                                className='mb-2'
-                                classNames={{ label: 'text-sm' }}
-                                name={option.name}
-                                onChange={handleChange}
-                                isSelected={values[option.name]}
-                                isDisabled={isDisabled}
-                            >
-                                {option.label}
-                            </Switch>
+        <div className='grid grid-cols-1 gap-x-8 border-t border-gold-hair md:grid-cols-2'>
+            {options.map((option) => (
+                <div key={option.name} className='border-b border-gold-hair'>
+                    <SettingSwitch
+                        label={option.label}
+                        hint={option.hint}
+                        isSelected={values[option.name]}
+                        isDisabled={
+                            option.name === 'allowSpectators' ? isSpectatorsDisabled : isDisabled
+                        }
+                        onValueChange={(selected) => setFieldValue(option.name, selected)}
+                        className='flex w-full items-stretch'
+                    />
+                    {option.fields && values[option.name] && (
+                        <div className='flex flex-wrap items-start gap-3 px-0.5 pb-3'>
+                            {option.fields.map((field) => (
+                                <Field
+                                    key={field.name}
+                                    label={field.label}
+                                    className='w-32'
+                                    type='number'
+                                    endContent={
+                                        <span className='text-sm text-ink-faint'>{field.unit}</span>
+                                    }
+                                    {...getFieldProps(field.name)}
+                                    isInvalid={!!(errors[field.name] && touched[field.name])}
+                                    errorMessage={
+                                        touched[field.name] ? errors[field.name] : undefined
+                                    }
+                                    isDisabled={isDisabled}
+                                />
+                            ))}
                         </div>
-                    ))}
+                    )}
                 </div>
-            </div>
-            <div className='flex flex-row gap-2 flex-wrap'>
-                {values.useGameTimeLimit && (
-                    <div>
-                        <span className='relative text-foreground-500'>Time Limit</span>
-                        <div className='flex gap-2'>
-                            <Input
-                                label={'Limit (minutes)'}
-                                className='max-w-32'
-                                type='number'
-                                {...getFieldProps('gameTimeLimit')}
-                                isInvalid={errors.gameTimeLimit && touched.gameTimeLimit}
-                                errorMessage={errors.gameTimeLimit}
-                                isDisabled={isDisabled}
-                            />
-                        </div>
-                    </div>
-                )}
-                {values.useChessClocks && (
-                    <div>
-                        <span className='relative text-foreground-500'>Chess Clock</span>
-                        <div className='flex gap-2'>
-                            <Input
-                                label={'Limit (minutes)'}
-                                className='max-w-32'
-                                type='number'
-                                {...getFieldProps('chessClockTimeLimit')}
-                                isInvalid={
-                                    errors.chessClockTimeLimit && touched.chessClockTimeLimit
-                                }
-                                errorMessage={errors.chessClockTimeLimit}
-                                isDisabled={isDisabled}
-                            />
-                            <Input
-                                label={'Delay (seconds)'}
-                                className='max-w-32'
-                                type='number'
-                                {...getFieldProps('chessClockDelay')}
-                                isInvalid={errors.chessClockDelay && touched.chessClockDelay}
-                                errorMessage={errors.chessClockDelay}
-                                isDisabled={isDisabled}
-                            />
-                        </div>
-                    </div>
-                )}
-            </div>
-        </>
+            ))}
+        </div>
     );
 };
 

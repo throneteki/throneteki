@@ -94,13 +94,13 @@ const Droppable = ({ className, children, source }) => {
     const innerClass = classNames(
         'pointer-events-none absolute top-0 left-0 h-full w-full opacity-50 z-[240]',
         {
-            'bg-success-500': isOver && canDrop,
-            'bg-danger-500':
+            'bg-success': isOver && canDrop,
+            'bg-danger':
                 isOver &&
                 active?.data.type === ItemTypes.CARD &&
                 !canDrop &&
                 source !== active?.data.current.source,
-            'bg-warning-500': !isOver && canDrop
+            'bg-warning': !isOver && canDrop
         }
     );
 

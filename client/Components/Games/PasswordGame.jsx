@@ -1,14 +1,15 @@
 import React, { useState, useCallback, forwardRef } from 'react';
+import Field from '../Site/Field';
 import { useDispatch, useSelector } from 'react-redux';
 
-import AlertPanel from '../Site/AlertPanel';
-import Panel from '../Site/Panel';
+import Frame from '../Site/Frame';
+import Notice from '../Site/Notice';
 import {
     cancelPasswordJoin,
     sendJoinGameMessage,
     sendWatchGameMessage
 } from '../../redux/reducers/lobby';
-import { Button, Input } from '@heroui/react';
+import { Button } from '@heroui/react';
 
 const PasswordGame = forwardRef(function PasswordGame(_, ref) {
     const [password, setPassword] = useState('');
@@ -35,34 +36,39 @@ const PasswordGame = forwardRef(function PasswordGame(_, ref) {
     }
 
     return (
-        <div>
-            <Panel title={passwordGame.name} ref={ref}>
-                <div className='flex gap-2 flex-col'>
-                    {passwordError ? (
-                        <AlertPanel variant='danger'>{passwordError}</AlertPanel>
-                    ) : null}
-                    <div className='game-password'>
-                        <Input
-                            autoComplete='off'
-                            type='password'
-                            onValueChange={setPassword}
-                            value={password}
-                            label='Game password'
-                            placeholder='Enter the password'
-                        />
-                    </div>
-
-                    <div className='flex gap-2'>
-                        <Button color='primary' onPress={onJoinClick}>
-                            {passwordJoinType}
-                        </Button>
-                        <Button color='default' onPress={onCancelClick}>
-                            Cancel
-                        </Button>
-                    </div>
+        <Frame
+            title={passwordGame.name}
+            description={`This game has a password. Enter it to ${passwordJoinType === 'Watch' ? 'watch' : 'join'}.`}
+            ref={ref}
+            bodyClassName='gap-4'
+        >
+            {passwordError && <Notice kind='error'>{passwordError}</Notice>}
+            <form
+                className='flex flex-wrap items-end gap-3'
+                onSubmit={(event) => {
+                    event.preventDefault();
+                    onJoinClick();
+                }}
+            >
+                <Field
+                    autoComplete='off'
+                    type='password'
+                    onValueChange={setPassword}
+                    value={password}
+                    label='Password'
+                    className='w-full max-w-xs'
+                    autoFocus
+                />
+                <div className='flex gap-2'>
+                    <Button onPress={onCancelClick} variant='tertiary'>
+                        Cancel
+                    </Button>
+                    <Button type='submit' variant='primary'>
+                        {passwordJoinType}
+                    </Button>
                 </div>
-            </Panel>
-        </div>
+            </form>
+        </Frame>
     );
 });
 

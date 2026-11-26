@@ -2,15 +2,13 @@ import React, { useCallback } from 'react';
 import classNames from 'classnames';
 import ThronesIcon from './ThronesIcon';
 
-import './Counter.css';
-
 const Counter = ({ name, cancel, fade, icon, shortName, value, className }) => {
     const getClassName = useCallback(() => {
         return classNames(
             'p-0 text-sm w-6 h-6 flex justify-center items-center rounded-md',
             `${name}-token`,
             {
-                'bg-success-100/85': name === 'dupe',
+                'bg-green-900/85': name === 'dupe',
                 'bg-red-800/85': name === 'strength' || name === 'blood',
                 'bg-blue-900/85': name === 'card-power',
                 'bg-gray-500/85': name === 'stand',
@@ -26,7 +24,7 @@ const Counter = ({ name, cancel, fade, icon, shortName, value, className }) => {
                 'bg-gray-400/85': name === 'tale',
                 'bg-teal-600/85': name === 'venom',
                 'bg-black/85': name === 'challenge-icon' || name === 'faction',
-                'cancel relative': cancel,
+                'counter-cancel relative': cancel,
                 'fade-out': fade
             },
             className

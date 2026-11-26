@@ -27,15 +27,20 @@ const TableGroupFilter = ({ args, fetchData, onOkClick, filter, onCancelClick })
                     return (
                         <div key={option}>
                             <Checkbox
-                                isSelected={filters[option]}
-                                onValueChange={(value) => {
+                                isSelected={!!filters[option]}
+                                onChange={(value) => {
                                     setFilters((prevState) => ({
                                         ...prevState,
                                         [option]: value
                                     }));
                                 }}
                             >
-                                {option}
+                                <Checkbox.Content className='flex items-center gap-2'>
+                                    <Checkbox.Control>
+                                        <Checkbox.Indicator />
+                                    </Checkbox.Control>
+                                    {option}
+                                </Checkbox.Content>
                             </Checkbox>
                         </div>
                     );
@@ -49,7 +54,6 @@ const TableGroupFilter = ({ args, fetchData, onOkClick, filter, onCancelClick })
             {content}
             <div className='mb-2 mt-2'>
                 <Button
-                    color='primary'
                     onPress={() => {
                         const filterResult = [];
 
@@ -60,10 +64,11 @@ const TableGroupFilter = ({ args, fetchData, onOkClick, filter, onCancelClick })
                         }
                         onOkClick(filterResult);
                     }}
+                    variant='primary'
                 >
                     Ok
                 </Button>
-                <Button className='ml-2' color='default' onPress={onCancelClick}>
+                <Button className='ml-2' onPress={onCancelClick} variant='tertiary'>
                     Cancel
                 </Button>
             </div>
