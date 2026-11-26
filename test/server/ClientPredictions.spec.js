@@ -9,6 +9,7 @@ import game, {
 } from '../../client/redux/reducers/game.js';
 import gameMiddleware from '../../client/redux/middleware/game.js';
 import { predictions } from '../../client/Components/GameBoard/predictions.js';
+import { serverWait } from '../../client/Components/GameBoard/serverWait.js';
 
 // The client's socket, wired straight to a game server in the same process
 const network = {
@@ -159,7 +160,7 @@ describe('the client predicting a choice against the game server', function () {
             expect(this.player1).toHavePrompt('Select 2 characters to fulfill military claim');
         });
 
-        it('shows a card that cannot be chosen as pressed too, until the server has answered', function () {
+        it('does not press or wait on a card that cannot be chosen', function () {
             this.connect(100);
             const theirs = () =>
                 Object.values(this.store.getState().lobby.currentGame.players)
@@ -167,8 +168,9 @@ describe('the client predicting a choice against the game server', function () {
                     .find((shown) => shown.uuid === this.hedgeKnight.uuid);
 
             this.click(this.hedgeKnight);
-            expect(theirs().pressed).toBe(true);
+            expect(theirs().pressed).toBeUndefined();
             expect(theirs().selected).toBeFalsy();
+            expect(serverWait.oldest()).toBeNull();
 
             vi.advanceTimersByTime(200);
             expect(theirs().pressed).toBeUndefined();
