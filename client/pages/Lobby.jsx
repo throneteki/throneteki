@@ -11,7 +11,12 @@ import { getMessageWithLinks } from '../util';
 import { createSelector } from '@reduxjs/toolkit';
 import { useGetNewsQuery } from '../redux/middleware/api';
 import Page from './Page';
-import { createMockLobbyMessages, createMockLobbyUsers, isMockMode } from '../dev/mockData';
+import {
+    createMockLobbyMessages,
+    createMockLobbyUsers,
+    createMockMotd,
+    isMockMode
+} from '../dev/mockData';
 import { Button, Link } from '@heroui/react';
 
 const PatreonRelinkDismissKey = 'dismissedPatreonRelinkNotice';
@@ -33,7 +38,11 @@ const Lobby = () => {
     const lobbyUsers = useSelector(getUsers);
     const [mock] = useState(() =>
         import.meta.env.DEV && isMockMode()
-            ? { messages: createMockLobbyMessages(), users: createMockLobbyUsers() }
+            ? {
+                  messages: createMockLobbyMessages(),
+                  users: createMockLobbyUsers(),
+                  motd: createMockMotd()
+              }
             : null
     );
     const messages = mock?.messages ?? lobbyMessages;
@@ -42,7 +51,8 @@ const Lobby = () => {
     const bannerNotice = useSelector(getBannerNotice);
     const lobbyError = useSelector(getLobbyError);
 
-    const motd = useSelector(getMotd);
+    const lobbyMotd = useSelector(getMotd);
+    const motd = mock?.motd ?? lobbyMotd;
     const [patreonNoticeDismissed, setPatreonNoticeDismissed] = useState(false);
 
     const patreonState = useMemo(() => {
@@ -132,7 +142,7 @@ const Lobby = () => {
     ].filter(Boolean);
 
     return (
-        <Page size='wide' className='max-w-[1040px] lg:h-full'>
+        <Page size='wide' className='h-full max-w-[1040px] max-sm:gap-3'>
             {notices.length > 0 && <div className='flex flex-col gap-3'>{notices}</div>}
             <EventBanners />
             {newsInfo}
@@ -141,7 +151,7 @@ const Lobby = () => {
                 description={
                     users.length === 1 ? '1 person online' : `${users.length} people online`
                 }
-                className='h-[75dvh] min-h-[26rem] lg:h-auto lg:min-h-[24rem] lg:flex-1'
+                className='min-h-[16rem] flex-1 sm:min-h-[22rem] lg:min-h-[24rem]'
                 bodyClassName='min-h-0'
             >
                 <LobbyChat

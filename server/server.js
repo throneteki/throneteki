@@ -76,7 +76,10 @@ class Server {
             })
         );
         app.use(express.static(__dirname + '/../public'));
-        app.use(express.static(__dirname + '/../dist'));
+        // In development Vite serves the client, so a dist folder left by a local build must not shadow it
+        if (!this.isDeveloping) {
+            app.use(express.static(__dirname + '/../dist'));
+        }
 
         // Define error middleware last
         app.use(function (err, req, res, next) {

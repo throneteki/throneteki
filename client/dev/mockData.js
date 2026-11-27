@@ -211,6 +211,12 @@ export const createMockLobbyUsers = () =>
         (name) => ({ name })
     );
 
+export const createMockMotd = () => ({
+    motdType: 'info',
+    message:
+        'Winter Kingdoms 2026 starts on Saturday. Sign up on the event page and check your deck is legal before the first round.'
+});
+
 export const createMockLobbyMessages = () => {
     const pounce = lobbyUser('Ser_Pounce', 'supporter');
     const stoneheart = lobbyUser('Lady_Stoneheart');
