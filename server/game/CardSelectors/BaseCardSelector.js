@@ -133,12 +133,7 @@ class BaseCardSelector {
         return false;
     }
 
-    /**
-     * How a click on a card the player can choose changes the selection, for the client to show it before the
-     * server answers: { limit } when it toggles the card and adds at most limit cards, {} when there is no limit,
-     * and undefined when the client cannot tell. (Choosing a plot sends { replace: true }: the card clicked
-     * becomes the only one chosen.)
-     */
+    // For the client's prediction: { limit }, {} for no limit, { replace: true }, or undefined when it can't tell
     selectionToggle() {
         return undefined;
     }

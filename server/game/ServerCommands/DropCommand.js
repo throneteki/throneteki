@@ -72,10 +72,6 @@ class DropCommand {
         );
     }
 
-    /**
-     * A plot dropped on the used plots pile is either put with the used plots or revealed on the
-     * spot, so the player is asked. Nothing is moved or recorded until they choose.
-     */
     promptPlotPlacement() {
         const handlers = {
             cancel: () => true,
@@ -167,9 +163,14 @@ class DropCommand {
                 facedown: true
             })
         );
+        const messages = {
+            'play area': '{0} has placed {1} from play facedown underneath {3}',
+            underneath: '{0} has placed {1} from underneath another card facedown underneath {3}'
+        };
         this.game.addAlert(
             'danger',
-            '{0} has placed {1} from their {2} facedown underneath {3}',
+            messages[this.originalLocation] ??
+                '{0} has placed {1} from their {2} facedown underneath {3}',
             this.player,
             visible ? this.card : 'a card',
             this.originalLocation,

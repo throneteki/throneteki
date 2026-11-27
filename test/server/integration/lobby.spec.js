@@ -120,6 +120,22 @@ describe('lobby', function () {
                 expect(Object.values(this.lobby.games)[0].allowSpectators).toBe(true);
             });
 
+            it('should let the creator make the game private', async function () {
+                this.eventService.getEventById.mockResolvedValue({
+                    _id: '7',
+                    name: 'Regionals',
+                    format: 'joust',
+                    variant: 'standard',
+                    legality: 'latest',
+                    gameType: 'competitive',
+                    useEventGameOptions: true,
+                    eventGameOptions: { spectators: false, gamePrivate: false }
+                });
+                await this.lobby.onNewGame(this.socketSpy, { eventId: '7', gamePrivate: true });
+
+                expect(Object.values(this.lobby.games)[0].gamePrivate).toBe(true);
+            });
+
             it('should let the creator turn spectators off', async function () {
                 await this.lobby.onNewGame(this.socketSpy, {
                     eventId: '7',

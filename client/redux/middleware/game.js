@@ -91,6 +91,8 @@ const gameMiddleware = (store) => {
     let gameState;
     let resyncing = false;
     let lag = 0;
+    // Once the player has left, nothing they send is answered, so none of it is waited on
+    let left = false;
 
     const later = (callback) => (lag > 0 ? setTimeout(callback, lag / 2) : callback());
     const delayed =
@@ -107,7 +109,7 @@ const gameMiddleware = (store) => {
     let quiet = false;
 
     const emitGame = (...args) => {
-        const seq = serverWait.sent(undefined, { quiet });
+        const seq = serverWait.sent(undefined, { quiet: quiet || left });
         quiet = false;
         if ([prediction].flat().some(Boolean) && gameState) {
             predictions.add(seq, prediction);
@@ -166,6 +168,7 @@ const gameMiddleware = (store) => {
 
             gameState = undefined;
             resyncing = false;
+            left = false;
             lag = simulatedLag();
             resetPredictions();
 
@@ -361,6 +364,8 @@ const gameMiddleware = (store) => {
             emitGame(GameMessage.ChangeStat, action.payload.type, action.payload.amount);
         } else if (sendLeaveGameMessage.match(action)) {
             emitGame(GameMessage.LeaveGame);
+            left = true;
+            resetPredictions();
 
             dispatch(gameDisconnected());
         } else if (sendConcedeMessage.match(action)) {

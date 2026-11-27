@@ -69,16 +69,6 @@ class Server {
 
         await ApiInit(app, options);
 
-        app.use(
-            '/img/cards',
-            express.static(__dirname + '/../public/img/cards', {
-                setHeaders: (res) =>
-                    res.setHeader(
-                        'Cache-Control',
-                        'public, max-age=604800, stale-while-revalidate=86400'
-                    )
-            })
-        );
         app.use(express.static(__dirname + '/../public'));
         // In development Vite serves the client, so a dist folder left by a local build must not shadow it
         if (!this.isDeveloping) {

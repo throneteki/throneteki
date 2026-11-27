@@ -557,12 +557,13 @@ class GameServer {
     }
 
     onGameMessage(socket, command, ...args) {
+        // Counted even when dropped, as the client counts every message it sends
+        this.handledMessages.set(socket, (this.handledMessages.get(socket) ?? 0) + 1);
+
         var game = this.findGameForUser(socket.user.username);
         if (!game) {
             return;
         }
-
-        this.handledMessages.set(socket, (this.handledMessages.get(socket) ?? 0) + 1);
 
         if (command !== 'leavegame' && !GameCommands.isCommand(command)) {
             // Only the sender's count of handled messages has changed

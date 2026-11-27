@@ -577,12 +577,15 @@ class Lobby {
                     details.gameType = event.gameType;
 
                     if (event.useEventGameOptions && event.eventGameOptions) {
-                        const { spectators, ...options } = event.eventGameOptions;
+                        const { spectators, gamePrivate, ...options } = event.eventGameOptions;
                         Object.assign(details, options);
-                        // Events have always stored spectators: false by default, so only true is
-                        // treated as a decision; false leaves it to the game's creator
+                        // Events store these as false by default, so only true is treated as a
+                        // decision; false leaves it to the game's creator
                         if (spectators === true) {
                             details.allowSpectators = true;
+                        }
+                        if (gamePrivate === true) {
+                            details.gamePrivate = true;
                         }
                     }
 

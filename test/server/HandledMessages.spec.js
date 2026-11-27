@@ -65,6 +65,13 @@ describe('handled game messages', function () {
         expect(this.handledIn(this.sent1)).toBe(1);
     });
 
+    it('counts a message sent after leaving', function () {
+        this.player1.player.left = true;
+        this.send(this.player1, 'chat', 'hello');
+
+        expect(this.server.handledMessages.get(this.player1.player.socket)).toBe(1);
+    });
+
     it("leaves the other player's count alone", function () {
         this.send(this.player1, 'chat', 'hello');
 
