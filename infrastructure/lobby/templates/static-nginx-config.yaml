@@ -57,7 +57,7 @@ data:
                 }
 
                 # Vite puts a content hash in these names
-                location /img/assets/ {
+                location ~ ^/(assets|img/assets)/ {
                     root /usr/share/nginx/site;
                     add_header Cache-Control "public, max-age=31536000, immutable";
                     access_log off;
