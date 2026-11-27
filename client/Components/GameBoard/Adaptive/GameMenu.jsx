@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import { Description, Dropdown, Label, Popover, Separator } from '@heroui/react';
@@ -16,8 +17,10 @@ import {
     faRightFromBracket,
     faTrophy,
     faUsers,
+    faVideo,
     faWrench
 } from '@fortawesome/free-solid-svg-icons';
+import { toolButtonClass } from './toolButton';
 import ConfirmDialog from '../../Site/ConfirmDialog';
 import { connectionIconOf, pingLevelOf, pingTextOf } from '../../Navigation/ServerStatus';
 import { SpectatorList, SpectatorSheet, spectatorPreview } from './SpectatorList';
@@ -32,7 +35,13 @@ import {
     sendToggleManualModeMessage,
     sendToggleMuteSpectatorsMessage
 } from '../../../redux/reducers/game';
-import { boardNavbarStore, useBoardNavbar } from '../../../boardLayoutStore';
+import {
+    boardNavbarStore,
+    hidesNavbar,
+    navbarMenuOpen,
+    useAdaptiveLayoutMode,
+    useBoardNavbar
+} from '../../../boardLayoutStore';
 import { useHud } from '../../../hudStore';
 import { overlaySettingsOf } from '../../../hud';
 import { replayEndOverlay } from './BoardOverlays';
@@ -40,14 +49,14 @@ import { replayEndOverlay } from './BoardOverlays';
 const pingTones = { success: 'text-success', warning: 'text-warning', danger: 'text-danger' };
 
 const icon = (glyph) => <FontAwesomeIcon icon={glyph} className='w-4' />;
-const MenuText = ({ label, description }) => (
+const MenuText = ({ label, description, labelTone }) => (
     <span className='flex min-w-0 flex-col'>
-        <Label>{label}</Label>
+        <Label className={labelTone}>{label}</Label>
         {description && <Description>{description}</Description>}
     </span>
 );
-// Room kept for the menu button, when anything is left for it to hold
-const menuButtonWidth = 36;
+// Room kept for the menu button: a square as tall as the desktop's bar
+const menuButtonWidth = 40;
 // The line between two groups of buttons in the bar, with its margins
 const groupGapWidth = 9;
 const GroupGap = () => (
@@ -68,24 +77,37 @@ const priority = [
 ];
 
 // The game's menu, standing in for the navbar on phones. room (px): space in the desktop bar for items as buttons;
-// as many as fit are shown there, the rest in the menu. With no room, a wrench beside it shows manual mode is on.
-const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) => {
+// as many as fit are shown there, the rest in the menu, a wrench badge on its button showing manual mode is on.
+// view: a melee table's view mode ({ paused, resume, stop }) as a menu item. pinned: keys always shown as buttons.
+// before: just before the menu's button.
+const GameMenu = ({
+    isPlaying,
+    onSettingsClick,
+    onShortcutsClick,
+    room = 0,
+    view,
+    pinned = [],
+    before
+}) => {
     const dispatch = useDispatch();
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const user = useSelector((state) => state.auth.user);
     const [confirmingLeave, setConfirmingLeave] = useState(false);
     const [reporting, setReporting] = useState(false);
     const [watching, setWatching] = useState(false);
+    // On a phone the navbar shows above the board with the menu: the menu keeps below it, so the navbar can be used
+    const belowNavbar = hidesNavbar(useAdaptiveLayoutMode());
+    const [navbarBounds, setNavbarBounds] = useState(null);
     const [menuOpen, setMenuOpen] = useState(false);
     // Once the game is over, its end overlay can be seen again (where overlays are shown at all)
     const overlaysShown = overlaySettingsOf(useHud()).enabled;
     const canReplay = !!currentGame?.gameOver && overlaysShown;
-    const { navMenu } = useBoardNavbar();
+    const navMenu = navbarMenuOpen(useBoardNavbar());
     useEffect(() => {
         boardNavbarStore.set('gameMenu', menuOpen);
     }, [menuOpen]);
     useEffect(() => () => boardNavbarStore.set('gameMenu', false), []);
-    // The navbar's own menu covers the board, so the game menu gives way to it
+    // The navbar's own menus cover the board, so the game menu gives way to them
     useEffect(() => {
         if (navMenu) {
             setMenuOpen(false);
@@ -142,6 +164,17 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
             glyph: muted ? faEyeSlash : faEye,
             description: muted ? 'Spectators cannot chat' : 'Spectators can chat',
             run: () => dispatch(sendToggleMuteSpectatorsMessage())
+        },
+        view && {
+            key: 'view',
+            group: 'tools',
+            // As the desktop's button: Auto or Free, gold while free
+            label: view.paused ? 'Free' : 'Auto',
+            glyph: faVideo,
+            tone: view.paused ? 'bg-gold/25 text-gold' : undefined,
+            labelTone: view.paused ? 'text-gold' : undefined,
+            description: view.paused ? 'Moving freely: tap to follow' : 'Following the action',
+            run: view.paused ? view.resume : view.stop
         },
         { key: 'settings', group: 'tools', label: 'Settings', glyph: faCogs, run: onSettingsClick },
         hasKeyboard && {
@@ -228,7 +261,8 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
         }
     }, [itemsKey, measuring]);
     const widthOf = (item) => widths[item.key] ?? Infinity;
-    let inBar = new Set();
+    const pinnedItems = items.filter((item) => pinned.includes(item.key));
+    let inBar = new Set(pinnedItems.map((item) => item.key));
     if (measuring) {
         const groups = new Set(items.map((item) => item.group)).size;
         const total = items.reduce(
@@ -238,10 +272,13 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
         if (total <= room) {
             inBar = new Set(items.map((item) => item.key));
         } else {
-            let used = menuButtonWidth + groups * groupGapWidth;
+            let used = pinnedItems.reduce(
+                (sum, item) => sum + widthOf(item),
+                menuButtonWidth + groups * groupGapWidth
+            );
             for (const key of priority) {
                 const item = items.find((entry) => entry.key === key);
-                if (item && used + widthOf(item) <= room) {
+                if (item && !inBar.has(key) && used + widthOf(item) <= room) {
                     used += widthOf(item);
                     inBar.add(key);
                 }
@@ -331,17 +368,16 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
             className={classNames('gap-2', item.danger ? 'text-danger' : item.tone)}
         >
             {icon(item.glyph)}
-            <MenuText label={item.label} description={item.description} />
+            <MenuText
+                label={item.label}
+                description={item.description}
+                labelTone={item.labelTone}
+            />
         </Dropdown.Item>
     );
 
     return (
-        <div
-            className={classNames(
-                'relative flex',
-                measuring ? 'h-full items-stretch' : 'items-center'
-            )}
-        >
+        <div className='relative flex h-full items-stretch'>
             {measuring && (
                 <div
                     ref={measureRef}
@@ -357,22 +393,8 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
                     {grouped.map((item) => barButton(item))}
                 </React.Fragment>
             ))}
-            {bar.length > 0 && showMenu && <GroupGap />}
-            {manualMode && isPlaying && !inBar.has('manual') && (
-                <Button
-                    isIconOnly
-                    size='sm'
-                    variant='ghost'
-                    className={classNames(
-                        'min-w-7 text-danger',
-                        measuring ? 'h-full w-9' : 'h-7 w-7'
-                    )}
-                    title='Manual mode is on: the rules are not fully enforced. Tap to turn it off.'
-                    onPress={() => run('manual')}
-                >
-                    <FontAwesomeIcon icon={faWrench} className='text-base' />
-                </Button>
-            )}
+            {bar.length > 0 && (before || showMenu) && <GroupGap />}
+            {before}
             {showMenu && (
                 <Dropdown
                     isOpen={menuOpen}
@@ -387,15 +409,19 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
                         isIconOnly
                         size='sm'
                         variant='ghost'
-                        className={classNames(
-                            'relative min-w-7 overflow-visible',
-                            measuring ? 'h-full w-9 rounded-none' : 'h-7 w-7'
-                        )}
+                        className={classNames(toolButtonClass, 'relative overflow-visible')}
                         title={
                             newSpectators ? 'Game menu: the spectators have changed' : 'Game menu'
                         }
                     >
                         <FontAwesomeIcon icon={faBars} className='text-base' />
+                        {manualMode && isPlaying && !inBar.has('manual') && (
+                            <FontAwesomeIcon
+                                icon={faWrench}
+                                title='Manual mode is on'
+                                className='absolute left-0.5 top-0.5 text-[0.6rem] text-danger'
+                            />
+                        )}
                         {newSpectators && !inBar.has('spectators') && (
                             <span
                                 data-spectators-changed=''
@@ -406,10 +432,7 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
                     <Dropdown.Popover
                         placement='top end'
                         className='min-w-56'
-                        // The navbar shown with it (BoardNavBar) is used without closing the menu
-                        shouldCloseOnInteractOutside={(element) =>
-                            !element.closest('[data-board-navbar]')
-                        }
+                        boundaryElement={(belowNavbar && navbarBounds) || undefined}
                     >
                         <Dropdown.Menu
                             aria-label='Game menu'
@@ -462,6 +485,15 @@ const GameMenu = ({ isPlaying, onSettingsClick, onShortcutsClick, room = 0 }) =>
                     </Dropdown.Popover>
                 </Dropdown>
             )}
+            {belowNavbar &&
+                createPortal(
+                    <div
+                        ref={setNavbarBounds}
+                        aria-hidden
+                        className='pointer-events-none invisible fixed inset-x-0 bottom-0 top-[calc(3rem+var(--safe-top))]'
+                    />,
+                    document.body
+                )}
             <SpectatorSheet
                 isOpen={watching}
                 onOpenChange={setWatching}

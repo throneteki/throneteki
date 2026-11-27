@@ -76,7 +76,8 @@ These keep the board recognisable when it changes shape:
   play areas (wide). It never changes the board's size.
 - Each player's stats stay with their own board.
 - Our hand is below our board (narrow), or in our strip elsewhere.
-- Our tools (view mode, chat, full screen, menu) sit beside our own stats on every layout (R171).
+- Our tools (view mode, chat, full screen, menu) sit beside our own stats on every layout (R171), except on phones
+  in joust, where full screen and the chat sit in the opponent's bar and ours keeps the menu (R303).
 - A card is one thing with everything on it (R294). Any effect on a card (pressing, shrinking, dimming, lifting,
   turning, popping, moving) applies to the card together with all its rings, tokens, counters, badges and order
   numbers, so nothing is left standing apart from it. The rings are on the card's surface (`[data-card-surface]`)
@@ -1321,6 +1322,45 @@ From a test game on 2026-11-25:
       second (45 with nothing waiting), whatever its length, and a line that comes to have others waiting part way
       through speeds up to that pace (`queuedScrollSpeed` in `logTiming`). Checked by probe: centred at 390px wide
       and in the desktop panel.
+- [x] **R303 The phone tools move (decided 2026-11-26)**:
+    - Phones (joust): full screen and the chat go to the opponent's bar (portrait) at the corner where the open chat
+      has its close button; our bar keeps only the menu. Phone landscape: see R304. **Supersedes R171's portrait chat button beside our stats**, which kept it in
+      thumb reach; it now sits with the chat's own close button. The desktop's tools are unchanged.
+    - Showing the round (challenges, dominance) on the board was tried, in the stat bars and then in a band between
+      the boards, and taken out (2026-11-27).
+- [x] **R304 The stat bars and phone tools after the site restyle (decided 2026-11-27)**:
+    - The stat icons and avatar are centred in the bar and fill it but for about 3px each side (30px in the phone
+      bar's 36px, 34px in the desktop's 40px, h-10 since the pulled restyle); they no longer stand proud of the bar
+      towards the board. Every avatar has a thin `ink-faint` ring, the first player's the thicker `first-player`
+      one, both drawn inside it. In a bar the badges sit on the avatar's edge towards the board, the seat at its left
+      and "1st" at its right, as before the restyle. A stat's value is sized from its icon (53% of the icon's height,
+      as the phone bar had it), so the two keep one ratio on every layout.
+    - Portrait: the bottom right holds only the menu, a bordered square as tall as the bar, with the manual-mode
+      wrench as a badge on it. Full screen and the chat are at the top right in joust and melee (melee: a box at
+      the view's top corner, which the top seat bars keep clear of with `--board-top-tools-width`).
+    - The melee view mode (following the action, or moving freely) is an item in the menu on phones, named as the
+      desktop's button is ("Auto" or "Free", gold while free). Desktop melee keeps its button.
+    - The navbar shown with the game menu stays usable while that menu is open (`data-react-aria-top-layer`): a tap
+      on it is not a tap outside the menu. Each of its own menus and dropdowns keeps it shown while open (keys in
+      `boardNavbarStore`), the game menu giving way to them. On phones the game menu keeps below the navbar (a
+      `boundaryElement` from just under it), scrolling if it must, so it never covers the navbar.
+    - Phone landscape (joust and melee): the tools float in the screen's right corners, bordered as the stats cards
+      are: full screen and the chat at the top right, the menu alone at the bottom right. The stats cards and the
+      prompt's column no longer hold tools.
+    - Wherever the chat covers the screen, its button stays in view and closes it, its icon switching; the chat's own
+      close button is gone there. Portrait: the chat opens below the bar holding the button (`data-chat-anchor`,
+      `--board-chat-top`). Phone landscape: the chat covers the whole screen and the button's group floats over it
+      (raised while the chat is open), the chat's header leaving room for it (`--board-top-tools-width`).
+    - Checked by probe: the chat's button stays uncovered and closes it in portrait and landscape, joust and melee.
+    - Every set of tools is a `ToolGroup`, with no fade, its buttons filling its height with their icons centred
+      (`toolButtonClass`). In a stats bar or card, and in melee's corners (`cornerTools`), it is framed by the bar's own
+      edges, with only a `border-edge` line on its left to part it from the stats; it is as tall as the bars (h-9 on
+      phones, h-10 on a desktop; desktop melee's was h-8) and flush with the screen's right edge. On its own (phone
+      landscape's floating groups) it has a border and shadow of its own. Melee's corner groups are solid, as the stats of boards
+      further along a row can run under them. The manual-mode wrench is a badge on the menu's button on every layout.
+    - On a desktop, "View result" (once the game is over) is always a button, pinned in the menu's bar
+      (`GameMenu` `pinned`); in melee it sits to the left of the view mode's button (`before`). The view mode's
+      button has the same text size as the other named buttons.
 
 - [x] `client/hud.js`: add `board: 'classic'` to `defaultHud`, and accept `'classic' | 'adaptive'` in
       `normalizeHud`.
@@ -1457,7 +1497,7 @@ change, because they measure the real elements.
 
 ```
 ┌───────────────────────────┐
-│ [opponent stats card]     │  screen bar (outside the scroll)
+│ [their stats]     ⛶ chat  │  screen bar (outside the scroll; R303)
 │ opponent strip            │ ┐
 │ opponent locations        │ │
 │ opponent characters       │ │ the board, scrolling as one, both ways (R150)
@@ -1466,7 +1506,7 @@ change, because they measure the real elements.
 │ our locations             │ │
 │ our strip                 │ │
 │ hand · shadows            │ ┘ (R153)
-│ [our stats card] [tools]  │  screen bar
+│ [our stats]            ☰  │  screen bar
 │ phase track · prompt      │  docked prompt, fixed height (R162, R178)
 └───────────────────────────┘
 ```
@@ -1479,11 +1519,11 @@ change, because they measure the real elements.
 ```
 ┌────────┬──────────────────────────────────┐
 │ [their │ opponent strip                   │
-│ stats] │ opponent locations · characters  │  the board scrolls under the column;
-│ PROMPT │ ──────────────────────────────── │  its cards stick beside it (R166, R184)
-│ [tools]│ our characters · locations       │
+│ stats  │ opponent locations · characters  │  the board scrolls under the column;
+│ ⛶ chat]│ ──────────────────────────────── │  its cards stick beside it (R166, R184)
+│ PROMPT │ our characters · locations       │
 │ [our   │ our strip (hand included)        │
-│ stats] │                                  │
+│ ☰]     │                                  │  stats cards: stats, then tools (R303)
 └────────┴──────────────────────────────────┘
 ```
 

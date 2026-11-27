@@ -144,7 +144,7 @@ const GameChat = ({
                         className='chat-body flex flex-col hud-zoom bg-panel/90 w-full h-full'
                         {...swipe}
                     >
-                        <div className='box-content flex h-10 shrink-0 items-center gap-2 border-b border-gold-hair px-3'>
+                        <div className='chat-head box-content flex h-10 shrink-0 items-center gap-2 border-b border-gold-hair px-3'>
                             <Button
                                 aria-label='Copy the game log'
                                 title='Copy the game log'

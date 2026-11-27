@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Dropdown, Label } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -6,10 +6,17 @@ import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
 import { navigate } from '../../redux/reducers/navigation';
 import { navItemClassName } from './NavItem';
+import { boardNavbarStore } from '../../boardLayoutStore';
 
 const NavDropdown = ({ title, items, trigger, triggerLabel, onNavigate }) => {
     const dispatch = useDispatch();
     const [isOpen, setIsOpen] = useState(false);
+    // Over a phone's board, the navbar stays while it is open
+    const id = useId();
+    useEffect(() => {
+        boardNavbarStore.set(id, isOpen);
+        return () => boardNavbarStore.set(id, false);
+    }, [id, isOpen]);
 
     return (
         <Dropdown isOpen={isOpen} onOpenChange={setIsOpen}>

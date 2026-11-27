@@ -103,11 +103,11 @@ const PlayerStatsBar = ({
     }
     const username = player.user?.username;
     const statClass = 'border-none';
-    const statHeight = vertical ? 'h-7' : compact ? 'h-6' : 'h-8';
+    // In a bar (h-9 or h-10) the stat icons and avatar fill it but for a few pixels each side
+    const fill = vertical ? undefined : compact ? 'h-7.5 w-7.5' : 'h-8.5 w-8.5';
+    const statHeight = vertical ? 'h-7' : compact ? 'h-7.5' : 'h-8.5';
     const end = typeof children === 'function' ? children(vertical ? 0 : room) : children;
-    const onEdge = !vertical && (edge === 'top' || edge === 'bottom');
-    const edgeLine = edge === 'bottom' ? 'top-0 -translate-y-1/2' : 'bottom-0 translate-y-1/2';
-    const avatarWidth = compact ? '1.5rem' : '2rem';
+    const grid = vertical && columns > 1;
     const seatBadge = (place) =>
         showSeat &&
         player.seatNo !== undefined && (
@@ -121,18 +121,23 @@ const PlayerStatsBar = ({
                 {player.seatNo}
             </span>
         );
-    const firstBadge = (place, style) =>
+    const firstBadge = (place) =>
         player.firstPlayer && (
             <span
                 className={classNames(
                     'absolute z-10 rounded-full bg-first-player px-1 pt-0.5 text-[10px] font-bold leading-tight text-first-player-fg',
                     place
                 )}
-                style={style}
             >
                 1st
             </span>
         );
+    // In a bar, on the avatar's edge towards the board
+    const [seatPlace, firstPlace] = vertical
+        ? ['-left-1.5 -top-1', '-bottom-0.5 -right-1.5']
+        : edge === 'bottom'
+          ? ['-left-2 -top-1', '-right-2.5 -top-1']
+          : ['-left-2 -bottom-1', '-right-2.5 -bottom-1'];
     const changerPlacement = vertical
         ? edge === 'right'
             ? 'left'
@@ -140,7 +145,6 @@ const PlayerStatsBar = ({
         : edge === 'top'
           ? 'bottom'
           : 'top';
-    const grid = vertical && columns > 1;
     // In the grid each item's place: the avatar, then the stats, then the children filling out the last row, in
     // reverse row order when mirrored
     const items = 1 + stats.length;
@@ -165,6 +169,7 @@ const PlayerStatsBar = ({
             onMinusClick={() => dispatch(sendChangeStatMessage(stat.change, -1))}
             onPlusClick={() => dispatch(sendChangeStatMessage(stat.change, 1))}
             compact={small}
+            iconClassName={fill}
         />
     );
 
@@ -186,11 +191,11 @@ const PlayerStatsBar = ({
                       : classNames(
                             // Reaches the screen's edge, its contents clear of a notch or gesture area; above the
                             // cards (so the avatar is never hidden), below the divider
-                            'relative z-[245] box-content flex shrink-0 border-edge pl-[max(0.5rem,env(safe-area-inset-left))] pr-[max(0.5rem,env(safe-area-inset-right))]',
+                            'relative z-245 box-content flex shrink-0 border-edge pl-[max(0.5rem,env(safe-area-inset-left))] pr-[max(0.5rem,env(safe-area-inset-right))]',
                             compact ? 'h-9' : 'h-10',
                             {
-                                'pt-[var(--safe-top)]': edge === 'top',
-                                'pb-[var(--safe-bottom)]': edge === 'bottom'
+                                'pt-(--safe-top)': edge === 'top',
+                                'pb-(--safe-bottom)': edge === 'bottom'
                             }
                         ),
                 className
@@ -200,7 +205,11 @@ const PlayerStatsBar = ({
                 <div
                     aria-hidden
                     className={classNames(
-                        'pointer-events-none absolute left-4 right-0 top-1/2 -z-10 h-[1.125rem] -translate-y-1/2 rounded-r-md border border-l-0 border-edge shadow-[0_2px_8px_rgba(0,0,0,0.5)]',
+                        'pointer-events-none absolute right-0 -z-10 border-edge shadow-[0_2px_8px_rgba(0,0,0,0.5)]',
+                        // With a row of tools under the stats it backs both, its edges framing them
+                        grid && end
+                            ? 'inset-y-0 left-0 rounded border'
+                            : 'left-4 top-1/2 h-4.5 -translate-y-1/2 rounded-r-md border border-l-0',
                         backdrop
                     )}
                 />
@@ -212,35 +221,25 @@ const PlayerStatsBar = ({
                     'relative shrink-0',
                     vertical
                         ? 'px-1 py-1.5'
-                        : classNames('h-full', compact ? 'w-[2.125rem]' : 'w-[2.625rem]')
+                        : classNames('flex h-full items-center', compact ? 'w-10.5' : 'w-11')
                 )}
                 title={player.firstPlayer ? `${username} (first player)` : username}
             >
-                <span
-                    className={classNames(
-                        'block',
-                        vertical ? 'relative' : 'absolute left-0 top-1/2 -translate-y-1/2'
-                    )}
-                >
+                <span className='relative block'>
                     <PlayerAvatar
                         name={username}
                         className={classNames(
                             'shadow-[0_2px_6px_rgba(0,0,0,0.6)]',
-                            vertical ? 'h-6 w-6' : compact ? 'h-6 w-6' : 'h-8 w-8',
-                            {
-                                'outline-2 -outline-offset-2 outline-first-player':
-                                    player.firstPlayer
-                            }
+                            fill ?? 'h-6 w-6',
+                            // Drawn inside the avatar; the first player's thicker and in its own colour
+                            player.firstPlayer
+                                ? 'outline-2 -outline-offset-2 outline-first-player'
+                                : 'outline-1 -outline-offset-1 outline-ink-faint'
                         )}
                     />
-                    {!onEdge && seatBadge('-left-1.5 -top-0.5')}
-                    {!onEdge && firstBadge('-bottom-0.5 -right-1.5')}
+                    {seatBadge(seatPlace)}
+                    {firstBadge(firstPlace)}
                 </span>
-                {/* In a bar at the screen's edge, on the bar's edge towards the board: the seat at the avatar's left,
-                    first player at its right, mostly clear of the avatar but short of the screen's edge and the power */}
-                {onEdge && seatBadge(classNames('left-0 -translate-x-[45%]', edgeLine))}
-                {onEdge &&
-                    firstBadge(classNames('-translate-x-1/2', edgeLine), { left: avatarWidth })}
             </div>
             <div
                 ref={statsRef}
@@ -249,14 +248,14 @@ const PlayerStatsBar = ({
                         ? 'contents'
                         : vertical
                           ? classNames(
-                                'flex min-h-0 w-full flex-1 items-center overflow-y-auto overflow-x-hidden [scrollbar-width:none] [&>*]:shrink-0',
+                                'flex min-h-0 w-full flex-1 items-center overflow-y-auto overflow-x-hidden [scrollbar-width:none] *:shrink-0',
                                 mirrored ? 'flex-col-reverse' : 'flex-col'
                             )
-                          : 'flex h-full min-w-0 flex-1 items-center overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&>*]:shrink-0'
+                          : 'flex h-full min-w-0 flex-1 items-center overflow-x-auto overflow-y-hidden [scrollbar-width:none] *:shrink-0'
                 )}
             >
                 {!vertical && (
-                    <span className='max-w-[8rem] truncate pr-2 font-bold max-md:hidden'>
+                    <span className='max-w-32 truncate pr-2 font-bold max-md:hidden'>
                         {username || 'Noone'}
                     </span>
                 )}
@@ -285,10 +284,11 @@ const PlayerStatsBar = ({
                     className={classNames(
                         'flex shrink-0 items-center',
                         grid
-                            ? 'flex-row justify-center'
+                            ? 'justify-end justify-self-stretch pl-1'
                             : vertical
                               ? 'mt-auto flex-col'
-                              : 'self-stretch pl-1'
+                              : // Flush with the screen's edge, through the bar's padding
+                                'self-stretch -mr-[max(0.5rem,env(safe-area-inset-right))]'
                     )}
                 >
                     {end}

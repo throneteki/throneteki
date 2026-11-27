@@ -30,6 +30,7 @@ import SheetHost from './SheetHost';
 import BoardOverlays from './BoardOverlays';
 import ConnectionLost from './ConnectionLost';
 import FullscreenToggle from './FullscreenToggle';
+import { toolButtonClass } from './toolButton';
 import { tableRows } from '../seatOrder';
 import { activePlayerOf, followTarget } from './followTarget';
 import useAutoFollow from './useAutoFollow';
@@ -88,12 +89,11 @@ const useEqualPlayAreas = (boardRef, mode) => {
 const promptBoost = 1.15;
 const floatingPromptWidth = `calc(var(--ui-scale, 1) * ${promptBoost} * clamp(12rem, 20vw, 16rem))`;
 // Pixels at the interface's size
-const chatButtonRoom = 36;
+const chatButtonRoom = 50;
 // A melee board's tint while its player is waited on. Its dark bands (the strip, our hand) lay it again over their
 // own darkness, so they stay as much darker than the play area.
-const waitedOn = 'bg-accent/[0.06]';
+const waitedOn = 'bg-accent/6';
 const waitedOnBand = 'bg-[linear-gradient(rgb(125_211_252/0.05),rgb(125_211_252/0.05))]';
-const fullscreenRoom = 28;
 // Phone landscape's column down the left: the stats at its top and bottom, the prompt and our tools between
 const columnWidth = 'clamp(13rem, 30vw, 20rem)';
 
@@ -102,7 +102,7 @@ const columnWidth = 'clamp(13rem, 30vw, 20rem)';
 // taller, so it never makes the play area taller
 const Room = ({ width, children }) =>
     children ? (
-        <div className='sticky left-0 z-[250] shrink-0' style={{ width }}>
+        <div className='sticky left-0 z-250 shrink-0' style={{ width }}>
             <div className='absolute inset-x-0 bottom-1'>{children}</div>
         </div>
     ) : (
@@ -115,7 +115,7 @@ const coverBefore = 'var(--board-cover-left, 0px)';
 const PlayArea = ({ inline, column, prompt, children }) => {
     const cards = children(inline ? 'inline' : 'nowrap');
     return (
-        <Part area='play' className='flex flex-1 !min-h-[auto]'>
+        <Part area='play' className='flex flex-1 min-h-auto!'>
             <Room width={coverBefore}>{prompt}</Room>
             {column ? (
                 <div className='flex min-w-0 flex-1'>
@@ -197,6 +197,7 @@ const StatsCard = ({
     active = false,
     start = false,
     className,
+    children,
     ...props
 }) => (
     <div {...props} className={classNames('pointer-events-auto', className)}>
@@ -209,7 +210,9 @@ const StatsCard = ({
                 canChange={canChange}
                 showSeat={showSeat}
                 backdrop={active ? 'bg-banner-deep/80' : 'bg-panel/90'}
-            />
+            >
+                {children}
+            </PlayerStatsBar>
         </FitRow>
     </div>
 );
@@ -240,22 +243,33 @@ const EdgeStatsBar = ({ edge, active = false, stick = false, className, ...props
                 {...props}
                 edge={edge}
                 className={classNames(
-                    'sticky left-0 w-fit !bg-transparent',
+                    'sticky left-0 w-fit bg-transparent!',
                     edge === 'top'
-                        ? 'max-w-[calc(var(--scroll-view-width,100vw)_/_var(--ui-scale,1)_-_1rem)]'
-                        : 'max-w-[calc((var(--scroll-view-width,100vw)_-_var(--board-tools-width,0px))_/_var(--ui-scale,1)_-_1.5rem)]'
+                        ? 'max-w-[calc((var(--scroll-view-width,100vw)-var(--board-top-tools-width,0px))/var(--ui-scale,1)-1.5rem)]'
+                        : 'max-w-[calc((var(--scroll-view-width,100vw)-var(--board-tools-width,0px))/var(--ui-scale,1)-1.5rem)]'
                 )}
             />
         </div>
     );
 };
 
-// Tools beside a stats card, in a box of their own
-const ToolBox = ({ className, children, ...props }) => (
+// Tools (menu, chat, full screen), their buttons filling its height. inBar: framed by its stats bar, with only a line
+// on its left; otherwise bordered. zoom: scales with the interface, outside a bar. solid: hides what lies under it.
+const ToolGroup = ({
+    className,
+    zoom = false,
+    inBar = false,
+    solid = false,
+    children,
+    ...props
+}) => (
     <div
         {...props}
+        data-tool-group=''
         className={classNames(
-            'pointer-events-auto flex items-center gap-0.5 rounded-md border border-edge bg-panel/90 p-0.5 shadow-[0_2px_8px_rgba(0,0,0,0.5)] hud-zoom',
+            'pointer-events-auto flex shrink-0 items-stretch overflow-hidden border-edge',
+            inBar ? 'border-l' : 'rounded border bg-panel/90 shadow-[0_2px_8px_rgba(0,0,0,0.5)]',
+            { 'bg-panel': solid, 'hud-zoom': zoom },
             className
         )}
     >
@@ -391,9 +405,7 @@ const AdaptiveGameBoardLayout = ({
                                     : 'pb-1 pt-[calc(var(--pile-scale,1)*0.75rem+0.25rem)]'
                             )
                           : 'gap-2 py-3',
-                    side === 'top'
-                        ? 'border-b border-white/[0.060]'
-                        : 'border-t border-white/[0.060]'
+                    side === 'top' ? 'border-b border-white/6' : 'border-t border-white/6'
                 )}
                 style={short ? { paddingLeft: columnWidth } : undefined}
             >
@@ -484,7 +496,7 @@ const AdaptiveGameBoardLayout = ({
         const rail = short && (
             <div
                 className={classNames(
-                    'pointer-events-none absolute inset-0 z-[300] flex flex-col items-start',
+                    'pointer-events-none absolute inset-0 z-300 flex flex-col items-start',
                     side === 'top' ? 'justify-start' : 'justify-end'
                 )}
             >
@@ -509,7 +521,7 @@ const AdaptiveGameBoardLayout = ({
             <div
                 data-seat-bar={side}
                 className={classNames(
-                    'sticky z-[245] shrink-0',
+                    'sticky z-245 shrink-0',
                     side === 'top' ? 'top-0' : 'bottom-0'
                 )}
             >
@@ -558,17 +570,13 @@ const AdaptiveGameBoardLayout = ({
         dispatch(
             sendButtonClickedMessage(button.promptId, button.command, button.method, button.arg)
         );
-    // inBar: in the desktop's stats bar, as tall as the bar
-    const chatButton = (inBar = false) =>
+    const chatButton = () =>
         chat && (
             <Button
                 isIconOnly
                 size='sm'
                 variant='ghost'
-                className={classNames(
-                    'relative min-w-7 overflow-visible',
-                    inBar ? 'h-full w-9 rounded-none' : 'h-7 w-7'
-                )}
+                className={classNames(toolButtonClass, 'relative')}
                 title={chat.open ? 'Hide chat' : 'Show chat'}
                 aria-expanded={chat.open}
                 onPress={chat.onToggle}
@@ -578,27 +586,21 @@ const AdaptiveGameBoardLayout = ({
                     className='text-base'
                 />
                 {!chat.open && chat.unread > 0 && (
-                    <span
-                        className={classNames(
-                            'absolute flex h-4 min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-bold text-ink',
-                            inBar ? 'right-0.5 top-0.5' : '-right-1 -top-1'
-                        )}
-                    >
+                    <span className='absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-bold text-ink'>
                         {chat.unread > 99 ? '99+' : chat.unread}
                     </span>
                 )}
             </Button>
         );
-    const followToggle = melee && (
+    // Phones have the view mode in the menu instead
+    const followToggle = melee && !phoneLayout && (
         <Button
             size='sm'
-            variant='tertiary'
+            variant='ghost'
             data-follow={followed.paused ? 'manual' : 'directed'}
             className={classNames(
-                'h-7 min-w-0 gap-1.5 border px-2 text-xs font-semibold',
-                followed.paused
-                    ? 'border-gold bg-gold/25 text-gold'
-                    : 'border-edge bg-quiet text-ink'
+                'h-full min-w-0 gap-1.5 rounded-none px-2.5 text-sm',
+                followed.paused ? 'bg-gold/25 text-gold' : 'text-ink'
             )}
             title={
                 followed.paused
@@ -607,45 +609,68 @@ const AdaptiveGameBoardLayout = ({
             }
             onPress={followed.paused ? followed.resume : followed.stop}
         >
-            <FontAwesomeIcon icon={faVideo} className='text-sm' />
+            <FontAwesomeIcon icon={faVideo} className='text-base' />
             {followed.paused ? 'Free' : 'Auto'}
         </Button>
     );
-    // room: what our stats leave in the desktop's joust bar, for menu items shown as buttons
-    const gameMenu = (room) => (
+    // room: what our stats leave in the desktop's joust bar, for menu items shown as buttons. before: beside the menu's
+    // button. A desktop always shows the game's result as a button.
+    const gameMenu = (room, before) => (
         <GameMenu
             isPlaying={isPlaying}
             onSettingsClick={onSettingsClick}
             onShortcutsClick={onShortcutsClick}
             room={room}
+            view={melee && phoneLayout ? followed : undefined}
+            pinned={phoneLayout ? undefined : ['result']}
+            before={before}
         />
     );
 
-    // Phone landscape's tools, beside our stats
-    const tools = (className) => (
-        <ToolBox data-region='tools' className={className}>
-            {followToggle}
+    // Phones: at the top of the screen, so the open chat leaves its button in view (portrait: the chat starts below
+    // them; landscape: they float over it)
+    const screenTools = (
+        <>
+            <FullscreenToggle />
             {chatButton()}
-            {phoneLayout && <FullscreenToggle />}
-            {gameMenu(0)}
-        </ToolBox>
+        </>
     );
-    // Melee: our tools on the stats band in the view's bottom corner; stats passing under them fade, not cut
-    const barTools = (className) => (
+    // Melee: tools in a corner of the view, lined up with the seat bars (h-9 or h-10). Solid, as the stats of boards
+    // further along the row run under them.
+    const cornerTools = (edge, props, children) => (
         <div
-            data-region='tools'
+            {...props}
             className={classNames(
-                "pointer-events-auto flex items-center gap-1 bg-black pr-2 hud-zoom before:pointer-events-none before:absolute before:inset-y-0 before:right-full before:w-5 before:bg-gradient-to-l before:from-black before:from-20% before:to-transparent before:content-['']",
-                phoneLayout ? 'h-7' : 'h-8',
-                className
+                'pointer-events-none absolute right-0 z-246 box-content flex hud-zoom',
+                portrait ? 'h-9' : 'h-10',
+                edge === 'top' ? 'top-0 pt-(--safe-top)' : 'bottom-0 pb-(--safe-bottom)'
             )}
         >
-            {followToggle}
-            {gameMenu(0)}
-            {phoneLayout && <FullscreenToggle />}
-            {chatButton(true)}
+            <ToolGroup inBar solid>
+                {children}
+            </ToolGroup>
         </div>
     );
+    // Portrait keeps only the menu at the bottom (full screen and the chat are at the top)
+    const barTools =
+        melee &&
+        !short &&
+        cornerTools(
+            'bottom',
+            { 'data-region': 'tools' },
+            portrait ? (
+                gameMenu(0)
+            ) : (
+                <>
+                    {gameMenu(0, followToggle)}
+                    {chatButton()}
+                </>
+            )
+        );
+    const topTools =
+        portrait &&
+        melee &&
+        cornerTools('top', { 'data-region': 'top-tools', 'data-chat-anchor': '' }, screenTools);
     const promptBar = (barMode, className, stackOptions = false) => (
         <PromptBar
             className={className}
@@ -717,9 +742,22 @@ const AdaptiveGameBoardLayout = ({
             const tools = rectOf('[data-region="tools"]');
             const topRail = rectOf('[data-rail-side="top"]');
             const bottomRail = rectOf('[data-rail-side="bottom"]');
+            // Outside the board in phone landscape, floating over it
+            const topTools = document
+                .querySelector('[data-region="top-tools"]')
+                ?.getBoundingClientRect();
+            // Where a phone's chat starts: below the bar holding its button, from the chat's own container
+            const chatAnchor = document
+                .querySelector('[data-chat-anchor]')
+                ?.getBoundingClientRect();
+            const chatBase =
+                document.querySelector('.chat-drawer')?.offsetParent?.getBoundingClientRect().top ??
+                0;
             const values = {
                 '--board-divider-bottom': divider.getBoundingClientRect().bottom,
                 '--board-tools-width': tools ? tools.width : 0,
+                '--board-top-tools-width': topTools ? topTools.width : 0,
+                '--board-chat-top': chatAnchor ? Math.max(0, chatAnchor.bottom - chatBase) : 0,
                 '--board-rail-top': topRail ? topRail.bottom : 0,
                 '--board-rail-bottom': bottomRail ? height - bottomRail.top : 0
             };
@@ -745,6 +783,7 @@ const AdaptiveGameBoardLayout = ({
             topBarsRef.current,
             columnRef.current,
             boardRef.current?.querySelector('[data-region="tools"]'),
+            document.querySelector('[data-chat-anchor]'),
             boardRef.current?.querySelector('[data-board-scroll]'),
             document.querySelector('[data-prompt-bar]'),
             boardRef.current?.querySelector('[data-side="top"]'),
@@ -766,7 +805,7 @@ const AdaptiveGameBoardLayout = ({
     const opponents = otherPlayers.map((player) => (
         <div
             key={player.name ?? player.seatNo}
-            className='flex flex-1 border-b border-white/[0.045]'
+            className='flex flex-1 border-b border-white/4.5'
             style={sideFlex.top}
         >
             {renderSide(player, 'top')}
@@ -808,7 +847,7 @@ const AdaptiveGameBoardLayout = ({
                   <div
                       key={player.user?.username ?? player.seatNo}
                       data-seat={player.user?.username}
-                      className={classNames('flex border-white/[0.045]', {
+                      className={classNames('flex border-white/4.5', {
                           'border-l': index > 0,
                           'border-b': side === 'top'
                       })}
@@ -874,7 +913,7 @@ const AdaptiveGameBoardLayout = ({
                             <div
                                 data-region='prompt-column'
                                 className={classNames(
-                                    'pointer-events-none absolute z-[305] flex flex-col pb-[calc(var(--board-rail-bottom,0px)+0.25rem)] pt-[calc(var(--board-rail-top,0px)+0.25rem)]',
+                                    'pointer-events-none absolute z-305 flex flex-col pb-[calc(var(--board-rail-bottom,0px)+0.25rem)] pt-[calc(var(--board-rail-top,0px)+0.25rem)]',
                                     'bottom-0 left-0 top-0 pl-[env(safe-area-inset-left)]'
                                 )}
                                 style={{ width: columnWidth }}
@@ -895,28 +934,50 @@ const AdaptiveGameBoardLayout = ({
                                         )}
                                     </div>
                                 </div>
-                                <div
-                                    data-region='column-tools'
-                                    className='flex shrink-0 justify-start px-1'
-                                >
-                                    {tools('flex-row-reverse')}
-                                </div>
                             </div>
+                        )}
+                        {short && (
+                            <>
+                                {/* Over the open chat, which covers the whole screen, so its button closes it */}
+                                <div
+                                    data-region='top-tools'
+                                    className={classNames(
+                                        'pointer-events-none absolute right-[calc(env(safe-area-inset-right)+0.25rem)] top-[calc(var(--safe-top)+0.25rem)] flex',
+                                        chat?.open ? 'z-361' : 'z-305'
+                                    )}
+                                >
+                                    <ToolGroup zoom className='h-8'>
+                                        {screenTools}
+                                    </ToolGroup>
+                                </div>
+                                <div className='pointer-events-none absolute bottom-[calc(var(--safe-bottom)+0.25rem)] right-[calc(env(safe-area-inset-right)+0.25rem)] z-305 flex'>
+                                    <ToolGroup zoom data-region='tools' className='h-8'>
+                                        {gameMenu(0)}
+                                    </ToolGroup>
+                                </div>
+                            </>
                         )}
                         <div ref={boardRef} className='flex min-w-0 flex-1 flex-col'>
                             {!short && !melee && (
                                 <div
                                     ref={topBarsRef}
                                     data-sheet-edge={portrait ? 'top' : undefined}
-                                    className='relative z-[305] shrink-0'
+                                    data-chat-anchor={portrait ? '' : undefined}
+                                    className='relative z-305 shrink-0'
                                 >
-                                    {otherPlayers.map((player) => (
+                                    {otherPlayers.map((player, index) => (
                                         <EdgeStatsBar
                                             key={player.name ?? player.seatNo}
                                             player={player}
                                             compact={phoneLayout}
                                             edge='top'
-                                        />
+                                        >
+                                            {portrait && index === 0 && (
+                                                <ToolGroup inBar className='h-full'>
+                                                    {screenTools}
+                                                </ToolGroup>
+                                            )}
+                                        </EdgeStatsBar>
                                     ))}
                                 </div>
                             )}
@@ -924,7 +985,7 @@ const AdaptiveGameBoardLayout = ({
                                 className={classNames('flex min-h-0 flex-1 flex-col', {
                                     'pl-[env(safe-area-inset-left)]': !short,
                                     'pr-[env(safe-area-inset-right)]': true,
-                                    'pb-[var(--safe-bottom)] pt-[var(--safe-top)]': short
+                                    'pb-(--safe-bottom) pt-(--safe-top)': short
                                 })}
                             >
                                 <div
@@ -950,43 +1011,41 @@ const AdaptiveGameBoardLayout = ({
                                         <div
                                             data-flight-layer=''
                                             aria-hidden
-                                            className='pointer-events-none absolute inset-0 z-[290]'
+                                            className='pointer-events-none absolute inset-0 z-290'
                                         />
                                     </ScrollArea>
                                     {midline}
-                                    {melee &&
-                                        !short &&
-                                        barTools('absolute bottom-0 right-0 z-[246]')}
+                                    {barTools}
+                                    {topTools}
                                 </div>
                             </div>
                             {!short && !melee && (
                                 <div
                                     data-sheet-edge={portrait ? 'bottom' : undefined}
                                     data-region='tools'
-                                    className='relative z-[306] shrink-0'
+                                    className='relative z-306 shrink-0'
                                 >
-                                    {/* Our tools are in this bar (data-region), so the phone chat stops above it. In portrait
-                                        the prompt lies below, clear of the screen's bottom edge. */}
+                                    {/* In portrait the prompt lies below, clear of the screen's bottom edge */}
                                     <EdgeStatsBar
                                         player={thisPlayer}
                                         canChange={canChangeStats}
                                         compact={phoneLayout}
                                         edge='bottom'
-                                        className={classNames({ '!pb-0': portrait })}
+                                        className={classNames({ 'pb-0!': portrait })}
                                     >
                                         {(room) => (
-                                            <>
-                                                {gameMenu(
-                                                    Math.max(
-                                                        0,
-                                                        room -
-                                                            chatButtonRoom -
-                                                            (phoneLayout ? fullscreenRoom : 0)
-                                                    )
+                                            <ToolGroup inBar className='h-full'>
+                                                {portrait ? (
+                                                    gameMenu(0)
+                                                ) : (
+                                                    <>
+                                                        {gameMenu(
+                                                            Math.max(0, room - chatButtonRoom)
+                                                        )}
+                                                        {chatButton()}
+                                                    </>
                                                 )}
-                                                {phoneLayout && <FullscreenToggle />}
-                                                {chatButton(true)}
-                                            </>
+                                            </ToolGroup>
                                         )}
                                     </EdgeStatsBar>
                                 </div>

@@ -842,37 +842,41 @@ html[data-board-layout='short'] {
         height: 1px;
     }
 
-    /* Opened by the tools' chat button and closed from its own header. It covers the whole screen, the prompt too,
-       down to where the keyboard begins (--visual-height, useAdaptivePage). */
+    /* Opened and closed by the chat button at the top of the screen, which stays in view: in portrait the chat starts
+       just below the bar holding it (--board-chat-top); in landscape it covers the whole screen, the button floating
+       over it. It covers the prompt too, down to where the keyboard begins (--visual-height, useAdaptivePage). */
     .chat-dim {
         display: none;
     }
-    .chat-close {
-        display: flex;
-    }
     .chat-frame {
-        padding: var(--safe-top) env(safe-area-inset-right, 0px) var(--safe-bottom)
-            env(safe-area-inset-left, 0px);
+        padding: max(0px, calc(var(--safe-top) - var(--board-chat-top, 0px)))
+            env(safe-area-inset-right, 0px) var(--safe-bottom) env(safe-area-inset-left, 0px);
         background: color-mix(in srgb, var(--panel) 95%, transparent);
     }
-    /* Slides rather than grows, so its height can follow the keyboard at once */
+    /* Slides rather than grows, so its height can follow the keyboard at once; unrolls within its own box, clear of
+       the bar above */
     .chat-drawer,
     .chat-drawer.chat-open {
-        top: 0;
+        top: var(--board-chat-top, 0px);
         left: 0;
         right: 0;
-        height: min(var(--visual-height, 100%), 100%);
+        height: max(0px, min(var(--visual-height, 100%), 100%) - var(--board-chat-top, 0px));
         clip-path: inset(0);
         transition-property: translate, clip-path;
         transition-duration: 300ms;
     }
     .chat-drawer:not(.chat-open) {
-        translate: 0 -100%;
-        clip-path: inset(100% 0 0 0);
+        translate: 0 -0.75rem;
+        clip-path: inset(0 0 100% 0);
         visibility: hidden;
         transition-property: translate, clip-path, visibility;
         transition-delay: 0s, 0s, 300ms;
     }
+}
+
+/* Phone landscape: the chat's button floats over its header */
+html[data-board-layout='short'] .chat-head {
+    padding-right: calc(var(--board-top-tools-width, 0px) / var(--ui-scale, 1) + 0.5rem);
 }
 
 html[data-motion='off'][data-board-layout] .chat-drawer,

@@ -25,7 +25,8 @@ export const useAdaptiveLayoutMode = () => useSyncExternalStore(subscribe, board
 
 export const hidesNavbar = (layoutMode) => ['narrow', 'short'].includes(layoutMode);
 
-// Where the board hides the navbar, it slides in over the board while the game menu, or its own menu, is open
+// Where the board hides the navbar, it slides in over the board while the game menu, or one of its own menus, is open.
+// Keyed by who opened it: gameMenu, navMenu (the navbar's menu) or one of the navbar's dropdowns.
 let navbarOpen = { gameMenu: false, navMenu: false };
 const navbarListeners = new Set();
 
@@ -46,3 +47,7 @@ export const boardNavbarStore = {
 };
 
 export const useBoardNavbar = () => useSyncExternalStore(subscribeNavbar, boardNavbarStore.get);
+
+// Whether one of the navbar's own menus is open
+export const navbarMenuOpen = (open) =>
+    Object.entries(open).some(([key, isOpen]) => key !== 'gameMenu' && isOpen);

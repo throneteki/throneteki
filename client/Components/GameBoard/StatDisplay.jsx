@@ -14,7 +14,8 @@ const StatDisplay = ({
     statValue,
     onMinusClick,
     onPlusClick,
-    compact = false
+    compact = false,
+    iconClassName
 }) => {
     const changeButton = (label, icon, onPress) => (
         <Button
@@ -40,14 +41,13 @@ const StatDisplay = ({
             {showControls && changeButton('Reduce', faMinus, onMinusClick)}
             <div data-theme='dark' className='pointer-events-none relative mx-1'>
                 <img
-                    className={compact ? 'h-6 w-6' : 'h-8 w-8'}
+                    className={iconClassName ?? (compact ? 'h-6 w-6' : 'h-8 w-8')}
                     src={Constants.StatIconImagePaths[statCode]}
                     alt=''
                 />
-                <div className='absolute inset-0 flex justify-center items-center'>
-                    <p
-                        className={`stat-value font-medium text-ink ${compact ? 'text-base' : 'text-lg'} text-center select-none text-stroke-sm leading-[initial] [text-shadow:0_0_2px_#000,0_0_2px_#000,0_1px_3px_#000]`}
-                    >
+                {/* The value is sized from the icon's height (cqh), one ratio at every size */}
+                <div className='absolute inset-0 flex justify-center items-center @container-size'>
+                    <p className='stat-value font-medium text-ink text-[53.3cqh] text-center select-none text-stroke-sm leading-[initial] [text-shadow:0_0_2px_#000,0_0_2px_#000,0_1px_3px_#000]'>
                         {statValue}
                     </p>
                 </div>

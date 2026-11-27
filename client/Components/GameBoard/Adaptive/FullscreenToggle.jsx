@@ -6,6 +6,7 @@ import {
     faDownLeftAndUpRightToCenter,
     faUpRightAndDownLeftFromCenter
 } from '@fortawesome/free-solid-svg-icons';
+import { toolButtonClass } from './toolButton';
 
 const useFullscreen = () => {
     const [full, setFull] = useState(() => screenfull.isEnabled && screenfull.isFullscreen);
@@ -31,7 +32,7 @@ const FullscreenToggle = () => {
             isIconOnly
             size='sm'
             variant='ghost'
-            className='h-7 w-7 min-w-7'
+            className={toolButtonClass}
             title={full ? 'Leave full screen' : 'Full screen'}
             onPress={() => screenfull.toggle().catch(() => {})}
         >
