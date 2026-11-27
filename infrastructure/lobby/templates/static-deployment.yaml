@@ -34,6 +34,9 @@ spec:
                       - name: avatars
                         mountPath: /usr/share/nginx/html/img/avatar
                         readOnly: true
+                      - name: site-files
+                        mountPath: /usr/share/nginx/site
+                        readOnly: true
                       - name: down-page
                         mountPath: /usr/share/nginx/html/down.html
                         subPath: down.html
@@ -48,6 +51,9 @@ spec:
                 - name: avatars
                   persistentVolumeClaim:
                       claimName: throneteki-avatars
+                - name: site-files
+                  persistentVolumeClaim:
+                      claimName: throneteki-site-files
                 - name: down-page
                   configMap:
                       name: throneteki-static-down-page

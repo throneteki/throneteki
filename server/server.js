@@ -63,6 +63,10 @@ class Server {
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: false }));
 
+        app.get('/health', (req, res) => {
+            res.set('Cache-Control', 'no-store').send('OK');
+        });
+
         await ApiInit(app, options);
 
         app.use(express.static(__dirname + '/../public'));

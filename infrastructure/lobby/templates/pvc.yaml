@@ -31,3 +31,20 @@ spec:
         requests:
             # prettier-ignore
             storage: {{ .Values.storage.avatars | default "10Gi" }}
+---
+# Images and bundles built into the lobby image, copied out by the lobby pod so nginx can serve them
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: throneteki-site-files
+    # prettier-ignore
+    namespace: {{ .Values.namespace }}
+spec:
+    accessModes:
+        - ReadWriteOnce
+    # prettier-ignore
+    storageClassName: {{ .Values.storage.className | default "local-path" }}
+    resources:
+        requests:
+            # prettier-ignore
+            storage: {{ .Values.storage.siteFiles | default "1Gi" }}

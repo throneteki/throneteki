@@ -22,6 +22,15 @@ export default defineConfig({
     })],
 
     build: {
-        sourcemap: true
+        sourcemap: true,
+        rollupOptions: {
+            output: {
+                // Images go under /img/ so that nginx, not the lobby, serves them in production
+                assetFileNames: (asset) =>
+                    /\.(png|jpe?g|webp|gif|svg|ico)$/i.test(asset.names[0] ?? '')
+                        ? 'img/assets/[name]-[hash][extname]'
+                        : 'assets/[name]-[hash][extname]'
+            }
+        }
     }
 });
