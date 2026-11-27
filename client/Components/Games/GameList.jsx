@@ -14,11 +14,13 @@ import {
     sendRemoveGameMessage,
     sendWatchGameMessage
 } from '../../redux/reducers/lobby';
-import { useGetCardsQuery } from '../../redux/middleware/api';
 import { GameFormats } from '../../constants';
 import GameTypeMark from './GameTypeMark';
 import ThronesIcon from '../GameBoard/ThronesIcon';
 import UserAvatar from '../Site/UserAvatar';
+import CardImage from '../Images/CardImage';
+import CardHoverable from '../Images/CardHoverable';
+import Tag from '../Site/Tag';
 
 const labelFor = (list, name) => list.find((item) => item.name === name)?.label ?? name;
 
@@ -35,43 +37,51 @@ const gameAge = (createdAt) => {
 
 const playersBySeat = (game) => Object.values(game.players).sort((a, b) => a.seatNo - b.seatNo);
 
-const GameDetails = ({ game, isAdmin, className }) => {
+const TypeAndFormat = ({ game }) => (
+    <span className='flex shrink-0 items-center gap-1.5 text-sm font-medium'>
+        <GameTypeMark gameType={game.gameType} />
+        <span className='text-ink'>{labelFor(GameFormats, game.gameFormat)}</span>
+    </span>
+);
+
+// The event and the game's options, after its type and format unless they are shown elsewhere
+const GameDetails = ({ game, isAdmin, showType = true, className }) => {
     const flags = [
         game.needsPassword && (
-            <span key='password' className='flex items-center gap-1'>
-                <FontAwesomeIcon icon={faLock} className='text-[0.7em]' />
+            <Tag key='password' className='gap-1'>
+                <FontAwesomeIcon icon={faLock} className='text-[0.8em]' />
                 Password
-            </span>
+            </Tag>
         ),
-        game.useGameTimeLimit && <span key='time'>Time limit</span>,
-        game.useChessClocks && <span key='clocks'>Chess clocks</span>,
-        game.showHand && <span key='hands'>Shows hands</span>,
+        game.useGameTimeLimit && <Tag key='time'>Time limit</Tag>,
+        game.useChessClocks && <Tag key='clocks'>Chess clocks</Tag>,
+        game.showHand && <Tag key='hands'>Shows hands</Tag>,
+        !game.allowSpectators && <Tag key='spectators'>No spectators</Tag>,
         game.started && game.spectators?.length > 0 && (
-            <span key='watching'>{game.spectators.length} watching</span>
+            <Tag key='watching'>{game.spectators.length} watching</Tag>
         ),
-        isAdmin && game.node && <span key='node'>{game.node}</span>
+        isAdmin && game.node && <Tag key='node'>{game.node}</Tag>
     ].filter(Boolean);
+
+    if (!showType && !game.event?.name && flags.length === 0) {
+        return null;
+    }
 
     return (
         <div
             className={classNames(
-                'flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-sm text-ink-dim',
+                'flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-dim',
                 className
             )}
         >
+            {showType && <TypeAndFormat game={game} />}
             {game.event?.name && (
                 <span className='inline-flex items-center gap-1.5 border border-gold-line px-1.5 py-px text-xs text-gold'>
                     <FontAwesomeIcon icon={faTrophy} className='text-[0.85em]' />
                     {game.event.name}
                 </span>
             )}
-            <GameTypeMark gameType={game.gameType} />
-            <span>{labelFor(GameFormats, game.gameFormat)}</span>
-            {flags.length > 0 && (
-                <span className='flex flex-wrap items-center gap-x-2.5 text-xs text-ink-faint'>
-                    {flags}
-                </span>
-            )}
+            {flags}
         </div>
     );
 };
@@ -137,59 +147,97 @@ const OpenGame = ({ game, canJoin, canWatch, isAdmin, onJoin, onWatch, onRemove 
     );
 };
 
-const GameInProgress = ({ game, cards, canWatch, isAdmin, onWatch, onRemove }) => {
-    const players = playersBySeat(game);
-    const agendaLabel = (player) =>
-        player.agendas
-            ?.map((code) => cards?.[code]?.label)
-            .filter(Boolean)
-            .join(', ');
+// A player's agenda as a card, with any further agendas (banners) fanned behind it and the faction as a badge on
+// its corner. Hidden agendas (a private game) leave the faction on its own, in the same space.
+const Seat = ({ player }) => {
+    const agendas = player.agendas?.filter(Boolean) ?? [];
 
     return (
-        <li className='grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 border-b border-gold-hair px-1 py-2.5 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_4.5rem_minmax(7.5rem,max-content)] sm:gap-x-4'>
-            <div className='flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5'>
+        <span className='flex min-w-0 items-center gap-1.5 sm:gap-2.5'>
+            <span className='relative flex min-w-[2.35rem] shrink-0 py-0.5 sm:w-[2.9rem]'>
+                {agendas.length > 0 ? (
+                    agendas.map((code, index) => (
+                        <span
+                            key={code}
+                            className={classNames('relative', index > 0 && '-ml-5')}
+                            style={{ zIndex: agendas.length - index }}
+                        >
+                            <CardHoverable code={code}>
+                                <CardImage
+                                    code={code}
+                                    className='rounded-sm shadow-[0_1px_3px_var(--frame-shadow)] [--card-scale:0.45]'
+                                />
+                            </CardHoverable>
+                        </span>
+                    ))
+                ) : (
+                    <span className='w-[1.8rem]' />
+                )}
+                {player.faction && (
+                    <span
+                        className={classNames(
+                            'absolute flex items-center justify-center rounded-full',
+                            agendas.length > 0
+                                ? 'bottom-0 left-[1.05rem] z-10 h-5 w-5 border border-gold-hair bg-panel text-[0.8rem]'
+                                : 'inset-y-0 left-0 w-[1.8rem] text-lg'
+                        )}
+                    >
+                        <ThronesIcon icon={player.faction} />
+                    </span>
+                )}
+            </span>
+            <span className='truncate max-sm:text-sm' title={player.name}>
+                {player.name}
+            </span>
+        </span>
+    );
+};
+
+const GameInProgress = ({ game, canWatch, isAdmin, onWatch, onRemove }) => {
+    const players = playersBySeat(game);
+    const isJoust = players.length === 2;
+
+    return (
+        <li className='grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 border-b border-gold-hair py-2.5 sm:col-span-4 sm:px-1 sm:grid-cols-subgrid'>
+            <div className='col-span-2 grid min-w-0 grid-cols-2 items-center gap-x-2 sm:grid-cols-[minmax(0,1fr)_1rem_minmax(0,1fr)] gap-y-1.5 sm:col-span-1 sm:gap-x-3'>
                 {players.map((player, index) => (
                     <React.Fragment key={player.name}>
-                        {index > 0 && players.length === 2 && (
-                            <span className='font-display text-xs text-ink-faint'>vs</span>
-                        )}
-                        <span className='flex min-w-0 items-center gap-2'>
-                            {player.faction && (
-                                <ThronesIcon icon={player.faction} className='text-lg' />
-                            )}
-                            <span className='flex min-w-0 flex-col leading-tight'>
-                                <span className='truncate'>{player.name}</span>
-                                {agendaLabel(player) && (
-                                    <span className='truncate text-xs text-ink-faint'>
-                                        {agendaLabel(player)}
-                                    </span>
-                                )}
+                        {index === 1 && isJoust && (
+                            <span className='hidden text-center font-display text-xs text-ink-faint sm:block'>
+                                vs
                             </span>
+                        )}
+                        <span
+                            className={classNames(
+                                'min-w-0',
+                                index % 2 === 0 ? 'col-start-1' : 'col-start-2 sm:col-start-3'
+                            )}
+                        >
+                            <Seat player={player} />
                         </span>
                     </React.Fragment>
                 ))}
             </div>
             <div className='col-start-1 row-start-2 min-w-0 sm:col-start-auto sm:row-start-auto'>
-                <span className='block truncate text-sm text-ink-dim'>{game.name}</span>
-                <GameDetails game={game} isAdmin={isAdmin} className='text-xs sm:text-sm' />
+                <div className='flex min-w-0 flex-col sm:flex-row sm:items-center sm:gap-2.5'>
+                    <TypeAndFormat game={game} />
+                    <span className='truncate text-sm text-ink-dim'>{game.name}</span>
+                </div>
+                <GameDetails game={game} isAdmin={isAdmin} showType={false} className='mt-1' />
             </div>
             <span className='hidden text-xs tabular-nums text-ink-faint sm:block'>
                 {gameAge(game.createdAt)}
             </span>
-            <div className='col-start-2 row-span-2 row-start-1 flex items-center justify-end gap-1 sm:col-start-auto sm:row-span-1 sm:row-start-auto'>
+            <div className='col-start-2 row-start-2 flex items-center justify-end gap-1 sm:col-start-auto sm:row-start-auto'>
                 {isAdmin && (
                     <Button size='sm' variant='ghost' className='text-danger' onPress={onRemove}>
                         Remove
                     </Button>
                 )}
-                {canWatch ? (
+                {canWatch && (
                     <GameActionButton size='sm' quiet onPress={onWatch}>
                         Watch
                     </GameActionButton>
-                ) : (
-                    !game.allowSpectators && (
-                        <span className='text-xs text-ink-faint'>No spectators</span>
-                    )
                 )}
             </div>
         </li>
@@ -208,7 +256,6 @@ const GameList = ({ gameFilter, games, onJoinOrWatch = () => true }) => {
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const user = useSelector((state) => state.auth.user);
     const isAdmin = !!user?.permissions?.canManageGames;
-    const { data: cards } = useGetCardsQuery({});
 
     const joinGame = useCallback(
         (game) => {
@@ -311,14 +358,9 @@ const GameList = ({ gameFilter, games, onJoinOrWatch = () => true }) => {
             {inProgress.length > 0 && (
                 <section className='flex flex-col gap-2'>
                     <SectionHeading count={inProgress.length}>Being played</SectionHeading>
-                    <ul className='border-t border-gold-hair'>
+                    <ul className='border-t border-gold-hair sm:grid sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_4.5rem_minmax(7.5rem,max-content)] sm:gap-x-4'>
                         {inProgress.map((game) => (
-                            <GameInProgress
-                                key={game.id}
-                                game={game}
-                                cards={cards}
-                                {...handlers(game)}
-                            />
+                            <GameInProgress key={game.id} game={game} {...handlers(game)} />
                         ))}
                     </ul>
                 </section>
