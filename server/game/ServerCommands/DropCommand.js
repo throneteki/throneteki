@@ -80,6 +80,9 @@ class DropCommand {
         const handlers = {
             cancel: () => true,
             reveal: () => {
+                if (!this.isUnmoved() || this.isChoosingPlots()) {
+                    return true;
+                }
                 this.game.addAlert(
                     'danger',
                     '{0} has revealed {1} immediately',
@@ -91,10 +94,13 @@ class DropCommand {
                 return true;
             }
         };
-        const buttons = [{ text: 'Reveal now', method: 'reveal' }];
+        const buttons = this.isChoosingPlots() ? [] : [{ text: 'Reveal now', method: 'reveal' }];
 
         if (this.originalLocation === 'plot deck') {
             handlers.move = () => {
+                if (!this.isUnmoved()) {
+                    return true;
+                }
                 this.game.resolveGameAction(
                     GameActions.placeCard({
                         card: this.card,
@@ -109,6 +115,10 @@ class DropCommand {
             buttons.unshift({ text: 'Move to used plots', method: 'move' });
         }
 
+        if (buttons.length === 0) {
+            return false;
+        }
+
         this.game.promptWithMenu(this.player, handlers, {
             activePrompt: {
                 menuTitle: 'Place this plot',
@@ -119,6 +129,15 @@ class DropCommand {
         });
 
         return false;
+    }
+
+    isUnmoved() {
+        return this.card.location === this.originalLocation && this.card.controller === this.player;
+    }
+
+    // Revealing one plot then would compare initiative while the other players are still choosing
+    isChoosingPlots() {
+        return this.game.currentPhase === 'plot' && !this.game.getFirstPlayer?.();
     }
 
     canPlaceUnderneath() {
@@ -138,7 +157,8 @@ class DropCommand {
             return false;
         }
 
-        const visible = OpenInformationLocations.includes(this.originalLocation);
+        const visible =
+            OpenInformationLocations.includes(this.originalLocation) && !this.card.facedown;
         this.game.resolveGameAction(
             GameActions.placeCardUnderneath({
                 card: this.card,

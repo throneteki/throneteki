@@ -48,6 +48,17 @@ describe('DropCommand with plots', function () {
             expect(this.playerSpy.moveCard).not.toHaveBeenCalled();
         });
 
+        it('does nothing if the plot has moved since it was dropped', function () {
+            this.cardSpy.location = 'active plot';
+            this.handlers.move();
+            this.handlers.reveal();
+
+            expect(this.gameSpy.resolveGameAction).not.toHaveBeenCalled();
+            expect(this.gameSpy.queueStep).not.toHaveBeenCalled();
+            expect(this.gameSpy.addAlert).not.toHaveBeenCalled();
+            expect(this.gameSpy.manualActions.record).not.toHaveBeenCalled();
+        });
+
         it('does nothing when cancelled', function () {
             expect(this.handlers.cancel()).toBe(true);
 
@@ -65,6 +76,27 @@ describe('DropCommand with plots', function () {
 
         it('only offers to reveal it', function () {
             expect(this.methods()).toEqual(['reveal', 'cancel']);
+        });
+    });
+
+    describe('while plots are being chosen', function () {
+        beforeEach(function () {
+            this.gameSpy.currentPhase = 'plot';
+            this.gameSpy.getFirstPlayer = vi.fn().mockReturnValue(undefined);
+        });
+
+        it('only offers to move a plot from the plot deck', function () {
+            this.drop('revealed plots');
+
+            expect(this.methods()).toEqual(['move', 'cancel']);
+        });
+
+        it('does not ask about a used plot', function () {
+            this.cardSpy.location = 'revealed plots';
+            this.drop('revealed plots');
+
+            expect(this.gameSpy.promptWithMenu).not.toHaveBeenCalled();
+            expect(this.result).toBe(false);
         });
     });
 

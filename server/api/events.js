@@ -2,6 +2,11 @@ import passport from 'passport';
 import { getPublicEvent, wrapAsync } from '../util.js';
 import ServiceFactory from '../services/ServiceFactory.js';
 
+function meleeTableSize(value) {
+    const size = Number(value);
+    return Number.isInteger(size) && size >= 2 && size <= 8 ? size : undefined;
+}
+
 function extractEventFromRequest(req) {
     const {
         name,
@@ -31,7 +36,7 @@ function extractEventFromRequest(req) {
             ? {
                   password: eventGameOptions.password,
                   gamePrivate: eventGameOptions.gamePrivate,
-                  maxPlayers: eventGameOptions.maxPlayers || undefined,
+                  maxPlayers: meleeTableSize(eventGameOptions.maxPlayers),
                   spectators: eventGameOptions.spectators,
                   muteSpectators: eventGameOptions.muteSpectators,
                   showHand: eventGameOptions.showHand,

@@ -244,7 +244,7 @@ class GameServer {
         });
     }
 
-    sendGameState(game) {
+    sendGameState(game, onlyFor) {
         let sentStates = this.sentStates.get(game);
         if (!sentStates) {
             sentStates = new Map();
@@ -260,7 +260,12 @@ class GameServer {
         }
 
         for (const player of Object.values(players)) {
-            if (player.left || game.isDisconnected(player) || !player.socket) {
+            if (
+                player.left ||
+                game.isDisconnected(player) ||
+                !player.socket ||
+                (onlyFor && player.name !== onlyFor)
+            ) {
                 continue;
             }
 
@@ -560,7 +565,8 @@ class GameServer {
         this.handledMessages.set(socket, (this.handledMessages.get(socket) ?? 0) + 1);
 
         if (command !== 'leavegame' && !GameCommands.isCommand(command)) {
-            this.sendGameState(game);
+            // Only the sender's count of handled messages has changed
+            this.sendGameState(game, socket.user.username);
             return;
         }
 

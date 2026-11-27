@@ -165,7 +165,6 @@ class RevealPlots extends BaseStep {
             return false;
         }
 
-        // Sent to the clients for the board's plot overlay
         this.game.initiativeResult = {
             round: this.game.round,
             winner: result.player.name,

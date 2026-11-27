@@ -2,7 +2,6 @@ import { hudToggles } from '../shared/hudSettings.js';
 
 const sizePattern = /^(?:small|normal|large|\d{1,2}(?:\.\d{1,2})?)$/;
 
-// The board settings a player may save, in their profile or for one game
 export function sanitizeHud(hud) {
     if (!hud || typeof hud !== 'object') {
         return undefined;

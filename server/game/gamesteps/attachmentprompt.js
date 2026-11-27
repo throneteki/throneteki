@@ -17,7 +17,7 @@ class AttachmentPrompt extends UiPrompt {
         const finish = () => pending.delete(this.attachmentCard);
 
         pending.add(this.attachmentCard);
-        this.game.promptForSelect(this.player, {
+        const prompt = this.game.promptForSelect(this.player, {
             activePromptTitle: 'Select target for attachment',
             cancelsWhenEmpty: !this.event,
             canCancel: !this.event,
@@ -48,6 +48,17 @@ class AttachmentPrompt extends UiPrompt {
                 return true;
             }
         });
+
+        // The prompt can also end without a choice (cancelled as a step, the player leaving)
+        if (prompt.isComplete()) {
+            finish();
+            return;
+        }
+        const complete = prompt.complete.bind(prompt);
+        prompt.complete = () => {
+            finish();
+            return complete();
+        };
     }
 
     attachToEvent(player, card) {

@@ -55,6 +55,21 @@ describe('DropCommand placing a card underneath another', function () {
         );
     });
 
+    it('does not name a facedown card from a pile everyone can see', function () {
+        this.cardSpy.location = 'play area';
+        this.cardSpy.facedown = true;
+        this.drop();
+
+        expect(this.gameSpy.addAlert).toHaveBeenCalledWith(
+            'danger',
+            expect.any(String),
+            this.playerSpy,
+            'a card',
+            'play area',
+            this.parentSpy
+        );
+    });
+
     it('does not name a card that comes from hand', function () {
         this.drop();
 

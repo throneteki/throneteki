@@ -1,6 +1,5 @@
 export const drawDeckCardTypes = ['attachment', 'character', 'event', 'location'];
 
-// The card types each pile accepts from a drag (manual mode)
 export const allowedTypesForPile = {
     'active plot': ['plot'],
     'being played': ['event'],

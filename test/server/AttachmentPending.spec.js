@@ -53,6 +53,14 @@ describe('an attachment waiting for its target', function () {
             expect(this.player1).not.toHavePromptButton('Cancel');
         });
 
+        it('is not marked once the prompt is skipped as a step', function () {
+            this.game.pipeline.cancelStep();
+            this.game.continue();
+
+            expect(this.game.pendingAttachments.size).toBe(0);
+            expect(this.summaryFor(this.player2.player).code).toBeUndefined();
+        });
+
         it('is not marked once it is attached', function () {
             this.player1.clickCard(this.character);
 
