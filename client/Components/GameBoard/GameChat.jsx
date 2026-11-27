@@ -3,7 +3,7 @@ import Messages from './Messages';
 import { Tabs } from '@heroui/react';
 import Button from '../Site/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComment, faCommentSlash, faCopy } from '@fortawesome/free-solid-svg-icons';
+import { faCommentSlash, faCopy } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
 import classNames from 'classnames';
 import ChatArea from '../Site/ChatArea';
@@ -66,41 +66,7 @@ const savedFilter = () => {
     }
 };
 
-// The tab that opens and closes the chat, joined to its panel (on a phone it hangs below it; see index.css)
 const tabClass = 'whitespace-nowrap px-3 text-sm';
-
-const ChatLip = ({ isOpen, unread, onToggle }) => (
-    <button
-        type='button'
-        title={isOpen ? 'Hide chat' : 'Show chat'}
-        aria-expanded={isOpen}
-        onClick={onToggle}
-        className='chat-lip tap-target z-[260] flex items-center justify-center border-gold-line bg-panel/90 text-ink'
-    >
-        <span aria-hidden className='chat-lip-flare chat-lip-flare-start text-gold-line' />
-        <span aria-hidden className='chat-lip-flare chat-lip-flare-end text-gold-line' />
-        {/* A chat bubble while closed and a cross while open, one fading into the other in the same place */}
-        <span className='relative grid place-items-center'>
-            <FontAwesomeIcon
-                icon={faComment}
-                className={classNames('chat-lip-icon col-start-1 row-start-1', {
-                    'chat-lip-icon-hidden': isOpen
-                })}
-            />
-            <FontAwesomeIcon
-                icon={faCommentSlash}
-                className={classNames('chat-lip-icon col-start-1 row-start-1', {
-                    'chat-lip-icon-hidden': !isOpen
-                })}
-            />
-        </span>
-        {unread > 0 && (
-            <span className='chat-lip-badge absolute -top-2 -left-2 min-w-5 h-5 px-1 rounded-full bg-danger text-ink text-xs font-bold flex items-center justify-center'>
-                {unread > 99 ? '99+' : unread}
-            </span>
-        )}
-    </button>
-);
 
 // onUnreadChange: chat messages that arrived while closed
 const GameChat = ({
@@ -172,14 +138,13 @@ const GameChat = ({
                 onClick={isOpen ? onToggle : undefined}
             />
             <div className={classNames(className, 'chat-drawer', { 'chat-open': isOpen })}>
-                <ChatLip isOpen={isOpen} unread={unread} onToggle={onToggle} />
-                <div aria-hidden className='chat-edge bg-gold-line' />
+                <div aria-hidden className='chat-edge bg-gold-hair' />
                 <div className='chat-frame h-full w-full overflow-hidden'>
                     <div
                         className='chat-body flex flex-col hud-zoom bg-panel/90 w-full h-full'
                         {...swipe}
                     >
-                        <div className='box-content flex h-12 shrink-0 items-center gap-2 border-b border-gold-hair px-3'>
+                        <div className='box-content flex h-10 shrink-0 items-center gap-2 border-b border-gold-hair px-3'>
                             <Button
                                 aria-label='Copy the game log'
                                 title='Copy the game log'
@@ -225,8 +190,8 @@ const GameChat = ({
                             ref={messagePanel}
                             classNames={{
                                 wrapper: 'flex-1 min-h-0',
-                                input: 'box-content min-h-9 justify-center border-t border-gold-hair px-2 py-1.5',
-                                textarea: 'min-h-0',
+                                input: 'box-content min-h-[2.125rem] justify-center border-t border-gold-hair p-[3px]',
+                                textarea: 'min-h-[2.125rem] py-[calc((2.125rem-1lh)/2-1.5px)]',
                                 messages:
                                     'flex flex-col gap-1.5 overflow-x-hidden px-3 py-2 text-sm'
                             }}

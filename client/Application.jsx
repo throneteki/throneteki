@@ -11,7 +11,6 @@ import { useVerifyAuthenticationQuery } from './redux/middleware/api';
 import { setAuthTokens, setUser } from './redux/reducers/auth';
 import { startConnecting } from './redux/reducers/lobby';
 import { navigate } from './redux/reducers/navigation';
-import Background from './assets/img/bgs/mainbg.webp';
 import LoadingSpinner from './Components/Site/LoadingSpinner';
 import CardHover from './Components/Images/CardHover';
 import ErrorMessage from './Components/Site/ErrorMessage';
@@ -101,19 +100,26 @@ const Application = () => {
     }
 
     const gameBoardVisible = currentGame && currentGame.started && component.key === 'gameboard';
+    const boardBackground = gameBoardVisible || component.key === 'devboard';
     useEffect(() => {
-        if (gameBoardVisible && user) {
-            const background = user.settings?.background;
-
-            if (bgRef.current && background === 'custom' && user.customBackground) {
-                bgRef.current.style.backgroundImage = `url('${customBackgroundUrl(user.customBackground)}')`;
-            } else if (bgRef.current) {
-                bgRef.current.style.backgroundImage = `url('${builtInBackgroundUrl(background)}')`;
-            }
-        } else if (bgRef.current) {
-            bgRef.current.style.backgroundImage = `url('${Background}')`;
+        const element = bgRef.current;
+        if (!element) {
+            return;
         }
-    }, [gameBoardVisible, user]);
+
+        if (boardBackground) {
+            const background = user?.settings?.background;
+            const url =
+                background === 'custom' && user?.customBackground
+                    ? customBackgroundUrl(user.customBackground)
+                    : builtInBackgroundUrl(background);
+            element.style.backgroundImage = `url('${url}')`;
+            element.style.backgroundSize = 'cover';
+        } else {
+            element.style.backgroundImage = '';
+            element.style.backgroundSize = '';
+        }
+    }, [boardBackground, user]);
 
     // On a phone the adaptive board takes the whole screen, and the navbar shows over it with the game menu
     const fullScreenBoard = hidesNavbar(adaptiveLayoutMode);
@@ -129,7 +135,7 @@ const Application = () => {
                     // toolbars come and go (a height in dvh can come out short of the screen on Android). While the
                     // chat is typed into it keeps its height instead (--board-height), under the keyboard.
                     className={classNames(
-                        'left-0 right-0 bg-cover bg-center bg-no-repeat',
+                        'site-bg left-0 right-0 bg-center',
                         fullScreenBoard
                             ? 'fixed inset-0 h-[var(--board-height,auto)] overflow-hidden'
                             : 'absolute bottom-0 top-[3rem] overflow-y-auto'

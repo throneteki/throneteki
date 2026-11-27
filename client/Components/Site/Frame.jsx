@@ -11,7 +11,7 @@ const Frame = forwardRef(function Frame(
         <section
             ref={ref}
             className={classNames(
-                'frame relative flex flex-col bg-frame shadow-[0_18px_40px_rgba(0,0,0,0.55)]',
+                'frame relative flex flex-col bg-frame shadow-[0_18px_40px_var(--frame-shadow)]',
                 className
             )}
         >

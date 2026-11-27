@@ -216,6 +216,7 @@ const Chip = ({ button, onPress, fullWidth = false, shortcut }) => {
             className={classNames(
                 chipClass(button.cancel),
                 'relative',
+                button.icon && 'gap-2',
                 fullWidth ? 'h-9 w-full' : 'h-7',
                 // Room for the shortcut and spinner, keeping the label centred
                 (shortcut || (button.pending && fullWidth)) && 'px-6'
@@ -228,7 +229,7 @@ const Chip = ({ button, onPress, fullWidth = false, shortcut }) => {
                     icon={button.icon}
                     withBackground
                     noSize={false}
-                    className='!flex !h-[1.15rem] !w-[1.15rem] shrink-0 items-center justify-center rounded-full text-[0.75rem] !leading-none'
+                    className='!flex !h-[1.4rem] !w-[1.4rem] shrink-0 items-center justify-center rounded-full text-[0.75rem] !leading-none'
                 />
             )}
             {/* At the left, apart from the label so it stays put however the label shortens */}

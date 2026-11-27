@@ -5,8 +5,8 @@ follows the colour and type rules here but keeps its own layout (see [Exceptions
 
 ## The idea
 
-The site is a hall in Westeros: the throne room art is always behind the content, and pages sit on
-dark frames ruled like the cards. The theme comes from a few larger pieces:
+The site is a hall in Westeros: pages sit on frames ruled like the cards, over a plain surface lit
+from above. The theme comes from a few larger pieces:
 
 - the **frame**, a printed rule with diamond corners, the way card frames are ruled
 - the **banner nav**, where sections hang from a gold rod
@@ -40,10 +40,14 @@ The tokens are set in [client/index.css](../client/index.css). Each one names a 
 the theme under Profile, Appearance (dark, light or their device's); it is kept on the device.
 
 The light theme is parchment: frames and panels are cream, text is a dark ink and gold darkens to
-`#85601c` so it reads on them. The throne room art stays behind the page in both themes, so
-anything placed straight on the art (rather than in a frame or a boxed notice) only works in the
-dark theme. The game board's surface is always dark (`data-board-surface`), as are the stat icons
-(`data-theme='dark'`), whose values are drawn for dark art. The navbar's logos are white images, so
+`#85601c` so it reads on them.
+
+Behind every page is the `site-bg` utility: the theme's base colour, a fine grain (stone in dark,
+paper in light), a glow from the top and darker edges. No pattern: a repeating motif behind the
+frames is too busy. It is drawn in CSS from the `--site-*` tokens, so it follows
+the theme; there is no background image. During a game the player's chosen board background
+replaces it. The game board's surface is always dark (`data-board-surface`), as are the stat icons
+(`data-theme='dark'`), whose values are drawn for dark icons. The navbar's logos are white images, so
 the light theme darkens them with the `light:` variant.
 
 Use the token names in class lists. Don't use raw hex values, `white` or `black` tints, or
@@ -52,34 +56,35 @@ they read as shadows on light and dark alike.
 
 ### Colour
 
-| Token            | Value                       | Use                                                            |
-| ---------------- | --------------------------- | -------------------------------------------------------------- |
-| `accent`         | `#c9a45c`                   | The one accent: primary buttons, switches and checkboxes on    |
-| `accent-hover`   | `#d8b876`                   | Primary buttons on hover                                       |
-| `banner-current` | `#6b5530`                   | The upper end of the current banner                            |
-| `banner-deep`    | `#3a2e18`                   | The lower end of the current banner                            |
-| `banner-idle`    | `#23262d`                   | Banners that aren't current                                    |
-| `gold`           | `#c9a45c`                   | Nav links, headings within a page, frame corners, links, focus |
-| `gold-line`      | `rgba(201, 164, 92, 0.38)`  | The frame rule, table header rule, save bar rule               |
-| `gold-hair`      | `rgba(201, 164, 92, 0.16)`  | Rules between rows                                             |
-| `ink`            | `#ece6d8`                   | Text                                                           |
-| `ink-dim`        | `#a8a194`                   | Descriptions, labels, table headers                            |
-| `ink-faint`      | `#7d776c`                   | Hints under a setting, placeholders, quiet status text         |
-| `frame`          | `rgba(10, 11, 15, 0.88)`    | The frame's fill                                               |
-| `panel`          | `#0c0d11`                   | Panels over the game board, at 90% to 95% (`bg-panel/90`)      |
-| `well`           | `rgba(255, 255, 255, 0.05)` | Fields                                                         |
-| `quiet`          | `rgba(255, 255, 255, 0.07)` | Quiet buttons, hover on rows                                   |
-| `quiet-hover`    | `rgba(255, 255, 255, 0.12)` | Quiet buttons under the pointer                                |
-| `edge`           | `rgba(255, 255, 255, 0.12)` | Neutral borders on quiet buttons, tabs and badges              |
-| `action`         | `#c9a45c`                   | Game actions: their outline (see Buttons)                      |
-| `action-wash`    | `rgba(201, 164, 92, 0.16)`  | Game actions under the pointer                                 |
-| `action-fg`      | `#ece6d8`                   | Game actions' text                                             |
-| `select`         | `#c9a45c`                   | The ring round a card that can be chosen                       |
-| `selected`       | `#ece6d8`                   | The ring round a chosen card                                   |
-| `danger`         | `#e57a72`                   | Danger text and destructive text actions                       |
-| `danger-solid`   | `#c0392b`                   | A destructive button in a confirm dialog                       |
-| `warning`        | `#e0a526`                   | Unsaved changes, warnings                                      |
-| `success`        | `#5fa777`                   | Confirmation text                                              |
+| Token            | Value                       | Use                                                               |
+| ---------------- | --------------------------- | ----------------------------------------------------------------- |
+| `accent`         | `#c9a45c`                   | The one accent: primary buttons, switches and checkboxes on       |
+| `accent-hover`   | `#d8b876`                   | Primary buttons on hover                                          |
+| `banner-current` | `#6b5530`                   | The upper end of the current banner                               |
+| `banner-deep`    | `#3a2e18`                   | The lower end of the current banner                               |
+| `banner-idle`    | `#23262d`                   | Banners that aren't current                                       |
+| `gold`           | `#c9a45c`                   | Nav links, headings within a page, frame corners, links, focus    |
+| `gold-line`      | `rgba(201, 164, 92, 0.38)`  | The frame rule, table header rule, save bar rule                  |
+| `gold-hair`      | `rgba(201, 164, 92, 0.16)`  | Rules between rows                                                |
+| `ink`            | `#ece6d8`                   | Text                                                              |
+| `ink-dim`        | `#a8a194`                   | Descriptions, labels, table headers                               |
+| `ink-faint`      | `#7d776c`                   | Hints under a setting, placeholders, quiet status text            |
+| `frame`          | `rgba(10, 11, 15, 0.88)`    | The frame's fill                                                  |
+| `panel`          | `#0c0d11`                   | Panels over the game board, at 90% to 95% (`bg-panel/90`)         |
+| `well`           | `rgba(255, 255, 255, 0.05)` | Fields                                                            |
+| `quiet`          | `rgba(255, 255, 255, 0.07)` | Quiet buttons, hover on rows                                      |
+| `quiet-hover`    | `rgba(255, 255, 255, 0.12)` | Quiet buttons under the pointer                                   |
+| `edge`           | `rgba(255, 255, 255, 0.12)` | Neutral borders on quiet buttons, tabs and badges                 |
+| `action`         | `#c9a45c`                   | Game actions: their outline (see Buttons)                         |
+| `action-wash`    | `rgba(201, 164, 92, 0.16)`  | Game actions under the pointer                                    |
+| `action-fg`      | `#ece6d8`                   | Game actions' text                                                |
+| `select`         | `#c9a45c`                   | The ring round a card that can be chosen                          |
+| `selected`       | `#ece6d8`                   | The ring round a chosen card                                      |
+| `danger`         | `#e57a72`                   | Danger text and destructive text actions                          |
+| `danger-solid`   | `#c0392b`                   | A destructive button in a confirm dialog                          |
+| `warning`        | `#e0a526`                   | Unsaved changes, warnings                                         |
+| `success`        | `#5fa777`                   | Confirmation text                                                 |
+| `first-player`   | `#e0a526`                   | The first player's avatar ring and badge (`first-player-fg` text) |
 
 Gold is the only accent. The old blue main colour and the orange `secondary` (`#da8a2a`) are
 retired. Things that need telling apart differ in weight, not hue: a solid gold primary button
@@ -136,8 +141,7 @@ from these rather than styling containers by hand.
 
 ### Page
 
-`<Page size='narrow' | 'normal' | 'wide'>`. Centres the content at its width over the background
-art.
+`<Page size='narrow' | 'normal' | 'wide'>`. Centres the content at its width over the background.
 
 ### Frame
 
@@ -241,7 +245,7 @@ in `text-sm` `danger`.
 
 `<Notice kind='info' | 'success' | 'warning' | 'error'>`. A seal (a round
 `gold-line` ring) holds an icon, with the message beside it in `text-sm`
-`ink-dim`. It has no box and no coloured fill. Outside a frame, straight on the background art, pass
+`ink-dim`. It has no box and no coloured fill. Outside a frame, straight on the background, pass
 `isBoxed` so it gets the `frame` fill and a `gold-line` border.
 
 | Kind      | Icon        | Icon colour |
@@ -346,8 +350,10 @@ Every page works at 390px wide:
     - **Panels.** They sit over the cards, so they use the `panel` fill at 90% to 95% with a
       `gold-line` border instead of a frame, and are square, like frames. On the surface, black scrims
       (40% to 55%) stay for area backgrounds and the dimmed board behind a phone's chat.
-      The stats bars, the chat's header and its input are all `h-12`, so their edges line up across
-      the screen, and the stat icons sit inside the bar.
+      The stats bars, the chat's header and its input strip are all `h-10`, each with its border outside
+      that height (`box-content`), so their edges line up across the screen. The avatar, name and stat
+      icons sit centred in the bar. The chat's text box fills its strip, leaving room for its focus
+      ring, with its text centred by its line height.
     - **Titles.** Panel and sheet titles, phase names and overlay headings are Cinzel 600 in `gold`,
       in title case. Popup titles name the whole pile and its owner: "northern_wolf's dead pile".
     - **Buttons.** Prompt buttons are small game actions (`Adaptive/chipClass.js`), as are the

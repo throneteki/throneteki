@@ -93,7 +93,8 @@ const CardTiledList = ({
             style: {
                 gap: unit(gapRem),
                 gridTemplateColumns: `repeat(auto-fill, ${unit(cellRem)})`,
-                width: `min(${natural}, calc(100vw - 2rem))`,
+                // A pixel to spare, or rounding can leave room for one column fewer (Firefox does at many scales)
+                width: `min(calc(${natural} + 1px), calc(100vw - 2rem))`,
                 minHeight: unit(rowRem),
                 ...(numRows && {
                     maxHeight: unit(rowRem * numRows + gapRem * Math.ceil(numRows - 1))

@@ -57,6 +57,8 @@
     --color-role-contributor: var(--role-contributor);
     --color-role-supporter: var(--role-supporter);
     --color-role-winner: var(--role-winner);
+    --color-first-player: var(--first-player);
+    --color-first-player-fg: var(--first-player-fg);
 }
 
 @theme inline {
@@ -129,6 +131,25 @@
         --role-supporter: #22c55e;
         --role-winner: #fef08a;
 
+        /* The first player's ring and badge, and the badge's text (8.45:1) */
+        --first-player: #e0a526;
+        --first-player-fg: #17130a;
+
+        /* Behind every page: the base, a fine grain, light from above and darker edges */
+        --site-base: #0b0c10;
+        --frame-shadow: rgba(0, 0, 0, 0.55);
+        --site-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.79 0 0 0 0 0.64 0 0 0 0 0.36 0 0 0 0.14 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        --site-glow: radial-gradient(
+            ellipse 70% 45% at 50% 0%,
+            rgba(201, 164, 92, 0.17),
+            transparent 70%
+        );
+        --site-vignette: radial-gradient(
+            ellipse 120% 90% at 50% 30%,
+            transparent 50%,
+            rgba(0, 0, 0, 0.7)
+        );
+
         --background: #0b0c10;
         --foreground: #ece6d8;
         --muted: #a8a194;
@@ -198,6 +219,24 @@
         --role-contributor: #1d4ed8;
         --role-supporter: #15803d;
         --role-winner: #9a6a00;
+
+        /* Deep enough to stand out from parchment and carry light text (7.17:1) */
+        --first-player: #6b4806;
+        --first-player-fg: #f4efe4;
+
+        --site-base: #ded4c0;
+        --frame-shadow: rgba(60, 44, 20, 0.2);
+        --site-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.26 0 0 0 0 0.11 0 0 0 0.14 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        --site-glow: radial-gradient(
+            ellipse 70% 45% at 50% 0%,
+            rgba(255, 251, 240, 0.9),
+            transparent 70%
+        );
+        --site-vignette: radial-gradient(
+            ellipse 120% 90% at 50% 30%,
+            transparent 50%,
+            rgba(90, 66, 30, 0.28)
+        );
 
         --background: #ebe4d4;
         --foreground: #2b251b;
@@ -276,6 +315,15 @@
     a {
         color: var(--color-gold);
     }
+}
+
+@utility site-bg {
+    background-color: var(--site-base);
+    background-image: var(--site-vignette), var(--site-glow), var(--site-texture);
+    background-size:
+        100% 100%,
+        100% 100%,
+        160px 160px;
 }
 
 @layer components {
@@ -705,14 +753,9 @@ html.card-dragging * {
     animation: none;
 }
 
-/* The chat's tab and panel are one shape, the tab's border curving out into the panel's edge. Wide screens: the
-   chat slides in from the right, the tab on its left. Phones: it drops from the top, the tab hanging below. */
+/* The chat panel. Wide screens: it slides in from the right. Phones: it drops from the top, opened by the tools' chat
+   button. */
 .chat-drawer {
-    --lip-length: max(44px, calc(var(--ui-scale, 1) * 4.5rem));
-    --lip-depth: calc(var(--ui-scale, 1) * 1.75rem);
-    --lip-flare: calc(var(--ui-scale, 1) * 0.5rem);
-    --lip-gap: calc(var(--lip-length) / 2 + var(--lip-flare));
-    --chat-fill: color-mix(in srgb, var(--panel) 90%, transparent);
     position: relative;
     width: 0;
     transition-property: width, height;
@@ -739,18 +782,6 @@ html.card-dragging * {
     opacity: 1;
     pointer-events: auto;
 }
-.chat-lip {
-    position: absolute;
-    right: 100%;
-    top: 50%;
-    translate: 0 -50%;
-    flex-direction: column;
-    width: var(--lip-depth);
-    height: var(--lip-length);
-    border-style: solid;
-    border-width: 1px 0 1px 1px;
-    border-radius: 0.375rem 0 0 0.375rem;
-}
 .chat-edge {
     position: absolute;
     left: 0;
@@ -759,69 +790,11 @@ html.card-dragging * {
     width: 1px;
     z-index: 1;
     pointer-events: none;
-    mask-image: linear-gradient(
-        to bottom,
-        #000 calc(50% - var(--lip-gap)),
-        transparent calc(50% - var(--lip-gap)),
-        transparent calc(50% + var(--lip-gap)),
-        #000 calc(50% + var(--lip-gap))
-    );
-}
-/* The tab's icon turns into the other as the chat opens or closes */
-.chat-lip-icon {
-    transition:
-        opacity 250ms,
-        rotate 250ms,
-        scale 250ms;
-}
-.chat-lip-icon-hidden {
-    opacity: 0;
-    rotate: -90deg;
-    scale: 0.6;
-}
-[data-motion='off'] .chat-lip-icon {
-    transition: none;
-}
-.chat-lip-flare {
-    position: absolute;
-    width: var(--lip-flare);
-    height: var(--lip-flare);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 300ms;
-}
-.chat-open .chat-lip-flare {
-    opacity: 1;
-}
-/* Each curve is a ring around one corner of its square, filled outside the ring to meet the tab */
-.chat-lip-flare-start {
-    right: -1px;
-    bottom: 100%;
-    background: radial-gradient(
-        circle at 0 0,
-        transparent calc(var(--lip-flare) - 1px),
-        currentColor calc(var(--lip-flare) - 1px),
-        currentColor var(--lip-flare),
-        var(--chat-fill) var(--lip-flare)
-    );
-}
-.chat-lip-flare-end {
-    right: -1px;
-    top: 100%;
-    background: radial-gradient(
-        circle at 0 100%,
-        transparent calc(var(--lip-flare) - 1px),
-        currentColor calc(var(--lip-flare) - 1px),
-        currentColor var(--lip-flare),
-        var(--chat-fill) var(--lip-flare)
-    );
 }
 
 /* The phone chat: small screens, and the adaptive board laid out for a phone */
 @media (max-width: 767px) {
-    /* The tab sits near the right edge, clear of the opponent's totals in the middle of their bar */
     .chat-drawer {
-        --lip-at: calc(100% - var(--lip-gap) - 0.5rem);
         position: absolute;
         left: 0;
         right: 0;
@@ -831,32 +804,15 @@ html.card-dragging * {
         width: auto;
         height: 0;
     }
-    /* Open, the chat fills the screen down to the tab, which sits on the bottom edge */
     .chat-drawer.chat-open {
         width: auto;
-        height: calc(100% - var(--lip-depth));
+        height: 100%;
     }
     .chat-dim {
         display: block;
     }
-    /* Closed, the tab hangs from the top of the screen, so its count shows below it */
-    .chat-drawer:not(.chat-open) .chat-lip-badge {
-        top: auto;
-        bottom: -0.5rem;
-    }
     .chat-body {
         min-width: 0;
-    }
-    .chat-lip {
-        right: auto;
-        left: var(--lip-at);
-        top: 100%;
-        translate: -50% 0;
-        flex-direction: row;
-        width: var(--lip-length);
-        height: var(--lip-depth);
-        border-width: 0 1px 1px 1px;
-        border-radius: 0 0 0.375rem 0.375rem;
     }
     .chat-edge {
         top: auto;
@@ -864,88 +820,19 @@ html.card-dragging * {
         bottom: 0;
         width: auto;
         height: 1px;
-        mask-image: linear-gradient(
-            to right,
-            #000 calc(var(--lip-at) - var(--lip-gap)),
-            transparent calc(var(--lip-at) - var(--lip-gap)),
-            transparent calc(var(--lip-at) + var(--lip-gap)),
-            #000 calc(var(--lip-at) + var(--lip-gap))
-        );
     }
-    .chat-lip-flare-start {
-        right: 100%;
-        bottom: auto;
-        top: -1px;
-        background: radial-gradient(
-            circle at 0 100%,
-            transparent calc(var(--lip-flare) - 1px),
-            currentColor calc(var(--lip-flare) - 1px),
-            currentColor var(--lip-flare),
-            var(--chat-fill) var(--lip-flare)
-        );
-    }
-    .chat-lip-flare-end {
-        right: auto;
-        left: 100%;
-        top: -1px;
-        background: radial-gradient(
-            circle at 100% 100%,
-            transparent calc(var(--lip-flare) - 1px),
-            currentColor calc(var(--lip-flare) - 1px),
-            currentColor var(--lip-flare),
-            var(--chat-fill) var(--lip-flare)
-        );
-    }
-}
-
-/* On a wide board the chat button beside our game menu opens the chat, in place of the tab, so the edge is whole */
-html[data-board-layout='wide'] .chat-lip {
-    display: none;
-}
-html[data-board-layout='wide'] .chat-edge {
-    mask-image: none;
 }
 
 html[data-board-layout='narrow'],
 html[data-board-layout='short'] {
-    /* The tab sits near the right edge, clear of the opponent's totals in the middle of their bar */
     .chat-drawer {
-        --lip-at: calc(100% - var(--lip-gap) - 0.5rem);
         position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
         /* Over the board's overlays, which never cover the chat */
         z-index: 360;
         width: auto;
-        height: 0;
-    }
-    /* Open, the chat fills the screen down to the tab, which sits on the bottom edge */
-    .chat-drawer.chat-open {
-        width: auto;
-        height: calc(100% - var(--lip-depth));
-    }
-    .chat-dim {
-        display: block;
-    }
-    /* Closed, the tab hangs from the top of the screen, so its count shows below it */
-    .chat-drawer:not(.chat-open) .chat-lip-badge {
-        top: auto;
-        bottom: -0.5rem;
     }
     .chat-body {
         min-width: 0;
-    }
-    .chat-lip {
-        right: auto;
-        left: var(--lip-at);
-        top: 100%;
-        translate: -50% 0;
-        flex-direction: row;
-        width: var(--lip-length);
-        height: var(--lip-depth);
-        border-width: 0 1px 1px 1px;
-        border-radius: 0 0 0.375rem 0.375rem;
     }
     .chat-edge {
         top: auto;
@@ -953,42 +840,10 @@ html[data-board-layout='short'] {
         bottom: 0;
         width: auto;
         height: 1px;
-        mask-image: linear-gradient(
-            to right,
-            #000 calc(var(--lip-at) - var(--lip-gap)),
-            transparent calc(var(--lip-at) - var(--lip-gap)),
-            transparent calc(var(--lip-at) + var(--lip-gap)),
-            #000 calc(var(--lip-at) + var(--lip-gap))
-        );
-    }
-    .chat-lip-flare-start {
-        right: 100%;
-        bottom: auto;
-        top: -1px;
-        background: radial-gradient(
-            circle at 0 100%,
-            transparent calc(var(--lip-flare) - 1px),
-            currentColor calc(var(--lip-flare) - 1px),
-            currentColor var(--lip-flare),
-            var(--chat-fill) var(--lip-flare)
-        );
-    }
-    .chat-lip-flare-end {
-        right: auto;
-        left: 100%;
-        top: -1px;
-        background: radial-gradient(
-            circle at 100% 100%,
-            transparent calc(var(--lip-flare) - 1px),
-            currentColor calc(var(--lip-flare) - 1px),
-            currentColor var(--lip-flare),
-            var(--chat-fill) var(--lip-flare)
-        );
     }
 
-    /* Opened by the tools' chat button, not the tab, and closed from its own header. It covers the whole screen, the
-       prompt too, down to where the keyboard begins (--visual-height, useAdaptivePage). */
-    .chat-lip,
+    /* Opened by the tools' chat button and closed from its own header. It covers the whole screen, the prompt too,
+       down to where the keyboard begins (--visual-height, useAdaptivePage). */
     .chat-dim {
         display: none;
     }

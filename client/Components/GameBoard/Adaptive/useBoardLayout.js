@@ -52,7 +52,8 @@ export const useBoardLayout = ({ containerRef, hud, players, ready }) => {
         let frame = 0;
 
         const update = () => {
-            if (frozen || !container) {
+            // Typing holds the layout still, but the board is always measured once
+            if ((frozen && measured) || !container) {
                 return;
             }
             const size = { width: container.clientWidth, height: container.clientHeight };

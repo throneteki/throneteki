@@ -104,12 +104,10 @@ const PlayerStatsBar = ({
     const username = player.user?.username;
     const statClass = 'border-none';
     const statHeight = vertical ? 'h-7' : compact ? 'h-6' : 'h-8';
-    // In a bar at the screen's edge the stats stand a little proud of it towards the board, as the avatar does
-    const reach = vertical ? undefined : { bottom: 'up', top: 'down' }[edge];
     const end = typeof children === 'function' ? children(vertical ? 0 : room) : children;
-    const onEdge = !vertical && !!reach;
+    const onEdge = !vertical && (edge === 'top' || edge === 'bottom');
     const edgeLine = edge === 'bottom' ? 'top-0 -translate-y-1/2' : 'bottom-0 translate-y-1/2';
-    const avatarWidth = compact ? '2rem' : '2.25rem';
+    const avatarWidth = compact ? '1.5rem' : '2rem';
     const seatBadge = (place) =>
         showSeat &&
         player.seatNo !== undefined && (
@@ -127,7 +125,7 @@ const PlayerStatsBar = ({
         player.firstPlayer && (
             <span
                 className={classNames(
-                    'absolute z-10 rounded-full bg-warning px-1 text-[10px] font-bold leading-tight text-black',
+                    'absolute z-10 rounded-full bg-first-player px-1 pt-0.5 text-[10px] font-bold leading-tight text-first-player-fg',
                     place
                 )}
                 style={style}
@@ -167,7 +165,6 @@ const PlayerStatsBar = ({
             onMinusClick={() => dispatch(sendChangeStatMessage(stat.change, -1))}
             onPlusClick={() => dispatch(sendChangeStatMessage(stat.change, 1))}
             compact={small}
-            reach={reach}
         />
     );
 
@@ -190,7 +187,7 @@ const PlayerStatsBar = ({
                             // Reaches the screen's edge, its contents clear of a notch or gesture area; above the
                             // cards (so the avatar is never hidden), below the divider
                             'relative z-[245] box-content flex shrink-0 border-edge pl-[max(0.5rem,env(safe-area-inset-left))] pr-[max(0.5rem,env(safe-area-inset-right))]',
-                            compact ? 'h-9' : 'h-12',
+                            compact ? 'h-9' : 'h-10',
                             {
                                 'pt-[var(--safe-top)]': edge === 'top',
                                 'pb-[var(--safe-bottom)]': edge === 'bottom'
@@ -215,29 +212,25 @@ const PlayerStatsBar = ({
                     'relative shrink-0',
                     vertical
                         ? 'px-1 py-1.5'
-                        : classNames('h-full', compact ? 'w-[2.625rem]' : 'w-[2.875rem]')
+                        : classNames('h-full', compact ? 'w-[2.125rem]' : 'w-[2.625rem]')
                 )}
                 title={player.firstPlayer ? `${username} (first player)` : username}
             >
-                {/* Larger than the bar, so it reaches out of it towards the board, never past the screen */}
                 <span
                     className={classNames(
                         'block',
-                        vertical
-                            ? 'relative'
-                            : classNames('absolute left-0', {
-                                  'bottom-0.5': edge === 'bottom',
-                                  'top-0.5': edge === 'top',
-                                  'top-1/2 -translate-y-1/2': !edge
-                              })
+                        vertical ? 'relative' : 'absolute left-0 top-1/2 -translate-y-1/2'
                     )}
                 >
                     <PlayerAvatar
                         name={username}
                         className={classNames(
                             'shadow-[0_2px_6px_rgba(0,0,0,0.6)]',
-                            vertical ? 'h-6 w-6' : compact ? 'h-8 w-8' : 'h-9 w-9',
-                            { 'ring-2 ring-warning': player.firstPlayer }
+                            vertical ? 'h-6 w-6' : compact ? 'h-6 w-6' : 'h-8 w-8',
+                            {
+                                'outline-2 -outline-offset-2 outline-first-player':
+                                    player.firstPlayer
+                            }
                         )}
                     />
                     {!onEdge && seatBadge('-left-1.5 -top-0.5')}
@@ -259,15 +252,7 @@ const PlayerStatsBar = ({
                                 'flex min-h-0 w-full flex-1 items-center overflow-y-auto overflow-x-hidden [scrollbar-width:none] [&>*]:shrink-0',
                                 mirrored ? 'flex-col-reverse' : 'flex-col'
                             )
-                          : classNames(
-                                'flex min-w-0 flex-1 items-center overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&>*]:shrink-0',
-                                // Room for them to stand proud of the bar, which the scrolling would clip
-                                {
-                                    'h-full': !reach,
-                                    '-mt-1.5 h-[calc(100%+0.375rem)] pt-1.5': reach === 'up',
-                                    '-mb-1.5 h-[calc(100%+0.375rem)] pb-1.5': reach === 'down'
-                                }
-                            )
+                          : 'flex h-full min-w-0 flex-1 items-center overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&>*]:shrink-0'
                 )}
             >
                 {!vertical && (

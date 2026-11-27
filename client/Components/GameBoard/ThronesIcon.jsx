@@ -2,6 +2,13 @@ import React from 'react';
 import classNames from 'classnames';
 import { Constants } from '../../constants';
 
+// Where the font draws a glyph off the middle of its box, the nudge (in em) that centres it on a disc
+const discNudge = {
+    military: '0.02em -0.028em',
+    intrigue: '0.026em -0.069em',
+    power: '0.006em 0.017em'
+};
+
 const ThronesIcon = ({ className, icon, color, noSize = true, withBackground = false }) => {
     const bgClasses = {
         military: 'bg-military',
@@ -21,8 +28,7 @@ const ThronesIcon = ({ className, icon, color, noSize = true, withBackground = f
         character: 'bg-character',
         attachment: 'bg-attachment',
         location: 'bg-location',
-        event: 'bg-event',
-        'text-ink': true
+        event: 'bg-event'
     };
 
     const fgClasses = {
@@ -40,7 +46,9 @@ const ThronesIcon = ({ className, icon, color, noSize = true, withBackground = f
 
     const wrapperClassName = classNames(
         'rounded-xl font-icons inline text-center leading-6',
-        withBackground ? bgClasses[color || icon] : fgClasses[color || icon],
+        withBackground
+            ? classNames(bgClasses[color || icon], 'text-ink')
+            : fgClasses[color || icon],
         {
             'w-6 h-6': !noSize
         },
@@ -68,7 +76,18 @@ const ThronesIcon = ({ className, icon, color, noSize = true, withBackground = f
         event: ''
     };
 
-    return <span className={wrapperClassName}>{iconText[icon]}</span>;
+    // A disc and its glyph are game art, drawn the same in either theme
+    return (
+        <span data-theme={withBackground ? 'dark' : undefined} className={wrapperClassName}>
+            {withBackground && discNudge[icon] ? (
+                <span className='inline-block' style={{ translate: discNudge[icon] }}>
+                    {iconText[icon]}
+                </span>
+            ) : (
+                iconText[icon]
+            )}
+        </span>
+    );
 };
 
 export default ThronesIcon;

@@ -14,8 +14,7 @@ const StatDisplay = ({
     statValue,
     onMinusClick,
     onPlusClick,
-    compact = false,
-    reach
+    compact = false
 }) => {
     const changeButton = (label, icon, onPress) => (
         <Button
@@ -39,15 +38,7 @@ const StatDisplay = ({
             )}
         >
             {showControls && changeButton('Reduce', faMinus, onMinusClick)}
-            {/* reach: the icon stands a little proud of its bar towards the board ('up' or 'down'), as the avatar does,
-                its edge at the screen's side staying where it is */}
-            <div
-                data-theme='dark'
-                className={classNames('pointer-events-none relative mx-1', {
-                    'origin-bottom scale-[1.15]': reach === 'up',
-                    'origin-top scale-[1.15]': reach === 'down'
-                })}
-            >
+            <div data-theme='dark' className='pointer-events-none relative mx-1'>
                 <img
                     className={compact ? 'h-6 w-6' : 'h-8 w-8'}
                     src={Constants.StatIconImagePaths[statCode]}
