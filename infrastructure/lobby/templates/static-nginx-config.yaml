@@ -56,6 +56,19 @@ data:
                     access_log off;
                 }
 
+                # Vite puts a content hash in these names
+                location /img/assets/ {
+                    root /usr/share/nginx/site;
+                    add_header Cache-Control "public, max-age=31536000, immutable";
+                    access_log off;
+                }
+
+                location /img/ {
+                    root /usr/share/nginx/site;
+                    add_header Cache-Control "public, max-age=86400";
+                    access_log off;
+                }
+
                 location = /down.html {
                     add_header Cache-Control "no-store";
                 }

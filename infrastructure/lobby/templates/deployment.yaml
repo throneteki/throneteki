@@ -26,6 +26,27 @@ spec:
                 #prettier-ignore
                 deployTime: {{ .Values.deployTime | default "0" | quote }}
         spec:
+            initContainers:
+                # Runs before the pod is ready, so nginx has the new build's images before any page
+                # references them. Unchanged files are left alone to keep their ETags, and old hashed
+                # files stay for clients still on the previous build.
+                - name: copy-site-images
+                  image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
+                  command:
+                      - sh
+                      - -c
+                      - |
+                          cd /usr/src/app/dist/img
+                          find . -type f ! -path './cards/*' ! -path './avatar/*' | while read -r f; do
+                              dest="/data/site-images/$f"
+                              if ! cmp -s "$f" "$dest"; then
+                                  mkdir -p "$(dirname "$dest")"
+                                  cp "$f" "$dest.tmp" && mv "$dest.tmp" "$dest"
+                              fi
+                          done
+                  volumeMounts:
+                      - name: site-images
+                        mountPath: /data/site-images
             containers:
                 - name: throneteki-lobby
                   image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
@@ -52,3 +73,6 @@ spec:
                 - name: avatars
                   persistentVolumeClaim:
                       claimName: throneteki-avatars
+                - name: site-images
+                  persistentVolumeClaim:
+                      claimName: throneteki-site-images
