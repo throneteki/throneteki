@@ -63,8 +63,19 @@ class Server {
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: false }));
 
+        app.get('/health', (req, res) => {
+            res.set('Cache-Control', 'no-store').send('OK');
+        });
+
         await ApiInit(app, options);
 
+        // Each deploy gives every file a new mtime, and so a new ETag, so don't rely on revalidation
+        app.use(
+            '/assets',
+            express.static(__dirname + '/../dist/assets', { immutable: true, maxAge: '1y' }),
+            (req, res) => res.sendStatus(404)
+        );
+        app.use('/img', express.static(__dirname + '/../public/img', { maxAge: '1d' }));
         app.use(express.static(__dirname + '/../public'));
         app.use(express.static(__dirname + '/../dist'));
 

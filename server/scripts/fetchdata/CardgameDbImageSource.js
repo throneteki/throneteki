@@ -1,5 +1,6 @@
 /*eslint no-console:0 */
 import fs from 'fs';
+import { rename, writeFile } from 'fs/promises';
 
 import { Jimp } from 'jimp';
 
@@ -46,9 +47,14 @@ class CardgameDbImageSource {
                 'image for ' +
                 card.code
         );
+        // nginx serves this directory live, so write a temp file and rename it into place rather
+        // than letting a browser cache a half-written image
         Jimp.read(url)
-            .then((lenna) => {
-                return lenna.write(imagePath);
+            .then((image) => image.getBuffer('image/png'))
+            .then(async (buffer) => {
+                const tempPath = `${imagePath}.tmp`;
+                await writeFile(tempPath, buffer);
+                await rename(tempPath, imagePath);
             })
             .catch((err) => {
                 console.log(`Error converting image for ${card.code}: ${err}`);
