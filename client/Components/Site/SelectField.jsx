@@ -30,8 +30,8 @@ const SelectField = ({
         aria-label={label ? undefined : ariaLabel}
     >
         {label && <Label className='text-sm text-ink-dim'>{label}</Label>}
-        <Select.Trigger>
-            <Select.Value>
+        <Select.Trigger className='min-w-0'>
+            <Select.Value className='min-w-0 truncate'>
                 {({ defaultChildren, isPlaceholder, state }) => {
                     if (isPlaceholder || state.selectedItems.length === 0) {
                         return defaultChildren;

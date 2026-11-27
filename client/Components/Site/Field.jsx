@@ -84,13 +84,25 @@ const Field = forwardRef(function Field(props, ref) {
         return (
             <FieldShell {...shell}>
                 <InputGroup>
-                    {startContent && <InputGroup.Prefix>{startContent}</InputGroup.Prefix>}
+                    {startContent && (
+                        <InputGroup.Prefix className='border-e-0 pe-0'>
+                            {startContent}
+                        </InputGroup.Prefix>
+                    )}
                     <InputGroup.Input
                         ref={ref}
-                        className={classNames('w-full', inputClassName)}
+                        className={classNames(
+                            'w-full',
+                            { 'ps-2.5': startContent, 'pe-2.5': endContent },
+                            inputClassName
+                        )}
                         {...inputProps(rest)}
                     />
-                    {endContent && <InputGroup.Suffix>{endContent}</InputGroup.Suffix>}
+                    {endContent && (
+                        <InputGroup.Suffix className='border-s-0 ps-0'>
+                            {endContent}
+                        </InputGroup.Suffix>
+                    )}
                 </InputGroup>
             </FieldShell>
         );

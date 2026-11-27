@@ -25,7 +25,7 @@ const Dialog = ({
                         <>
                             <Modal.CloseTrigger className={closeClassName} />
                             {title && (
-                                <Modal.Header className='px-[22px] pt-6 sm:px-7'>
+                                <Modal.Header className='pl-[22px] pr-12 pt-4 sm:px-7 sm:pt-6'>
                                     <Modal.Heading className='font-display text-xl font-semibold text-ink'>
                                         {title}
                                     </Modal.Heading>

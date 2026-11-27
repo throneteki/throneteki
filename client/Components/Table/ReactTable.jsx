@@ -135,7 +135,21 @@ function ReactTable({
 
     const table = useReactTable(tableOptions);
 
-    const topContent = (
+    const refreshButton = refetch && (
+        <Button
+            aria-label='Refresh'
+            className='ms-auto shrink-0 text-ink-dim'
+            isIconOnly
+            onPress={() => refetch()}
+            variant='ghost'
+        >
+            <FontAwesomeIcon icon={faRefresh} />
+        </Button>
+    );
+    // Without buttons of its own, the list keeps refresh with its filters (phone) or its pages (desktop)
+    const hasButtons = buttons.length > 0;
+
+    const topContent = hasButtons && (
         <div className='flex flex-wrap items-center gap-2'>
             {buttons.map((b) => (
                 <Button
@@ -155,17 +169,7 @@ function ReactTable({
                     </span>
                 </Button>
             ))}
-            {refetch && (
-                <Button
-                    aria-label='Refresh'
-                    className='ms-auto text-ink-dim'
-                    isIconOnly
-                    onPress={() => refetch()}
-                    variant='ghost'
-                >
-                    <FontAwesomeIcon icon={faRefresh} />
-                </Button>
-            )}
+            {refreshButton}
         </div>
     );
 
@@ -213,13 +217,13 @@ function ReactTable({
 
     const headers = table.getHeaderGroups()[0].headers.filter((header) => !header.isPlaceholder);
 
-    const filterField = (header, className) => (
+    const filterField = (header, className, withIcon = true) => (
         <Field
             className={classNames('select-text font-sans font-normal', className)}
             inputClassName='font-sans'
             aria-label={header.column.columnDef.header}
             placeholder={header.column.columnDef.header}
-            startContent={<FontAwesomeIcon icon={faSearch} />}
+            startContent={withIcon && <FontAwesomeIcon icon={faSearch} />}
             onKeyDown={(event) => event.stopPropagation()}
             onValueChange={header.column.setFilterValue}
             value={header.column.getFilterValue() || ''}
@@ -273,25 +277,29 @@ function ReactTable({
     const currentSort = sorting?.[0];
 
     const cardList = renderCard && (
-        <div className='flex flex-col gap-3 sm:hidden'>
+        <div className='flex min-h-0 flex-1 flex-col gap-3 sm:hidden'>
             {sortOptions.length > 0 && (
-                <SelectField
-                    aria-label='Sort by'
-                    items={sortOptions}
-                    value={
-                        currentSort
-                            ? `${currentSort.id}:${currentSort.desc ? 'desc' : 'asc'}`
-                            : null
-                    }
-                    placeholder='Sort by'
-                    renderValue={(key) =>
-                        `Sort: ${sortOptions.find((option) => option.id === key)?.label ?? ''}`
-                    }
-                    onChange={(key) => {
-                        const [id, direction] = String(key).split(':');
-                        setSorting([{ id, desc: direction === 'desc' }]);
-                    }}
-                />
+                <div className='flex gap-2'>
+                    <SelectField
+                        className='min-w-0 flex-1'
+                        aria-label='Sort by'
+                        items={sortOptions}
+                        value={
+                            currentSort
+                                ? `${currentSort.id}:${currentSort.desc ? 'desc' : 'asc'}`
+                                : null
+                        }
+                        placeholder='Sort by'
+                        renderValue={(key) =>
+                            `Sort: ${sortOptions.find((option) => option.id === key)?.label ?? ''}`
+                        }
+                        onChange={(key) => {
+                            const [id, direction] = String(key).split(':');
+                            setSorting([{ id, desc: direction === 'desc' }]);
+                        }}
+                    />
+                    {!hasButtons && refreshButton}
+                </div>
             )}
             <div className='flex gap-2'>
                 {headers
@@ -306,13 +314,14 @@ function ReactTable({
                                       {header.column.columnDef.header}
                                   </Button>
                               )
-                            : filterField(header, 'min-w-0 flex-1')
+                            : filterField(header, 'min-w-0 flex-1', false)
                     )}
+                {!hasButtons && sortOptions.length === 0 && refreshButton}
             </div>
             {table.getRowModel().rows.length === 0 ? (
                 <p className='py-8 text-center text-sm text-ink-dim'>{emptyMessage}</p>
             ) : (
-                <ul className='border-t border-gold-hair'>
+                <ul className='min-h-0 overflow-y-auto border-t border-gold-hair'>
                     {table.getRowModel().rows.map((row) => (
                         <li key={row.id} className='border-b border-gold-hair'>
                             {renderCard(row, {
@@ -327,7 +336,7 @@ function ReactTable({
     );
 
     return (
-        <div className={classNames('flex h-full flex-col gap-3', tableClasses?.base)}>
+        <div className={classNames('flex h-full min-h-0 flex-col gap-3', tableClasses?.base)}>
             {topContent}
             {cardList}
             <Table
@@ -436,28 +445,42 @@ function ReactTable({
                     </Table.Content>
                 </Table.ScrollContainer>
             </Table>
-            {totalCount > 10 && (
-                <div className='flex flex-wrap items-center gap-3'>
+            {(totalCount > 10 || (!hasButtons && refetch)) && (
+                <div
+                    className={classNames('flex flex-wrap items-center gap-3', {
+                        'max-sm:hidden': totalCount <= 10
+                    })}
+                >
                     {pageCount > 1 && (
                         <Pager
+                            className='w-auto'
                             page={currPage}
                             total={pageCount}
                             onChange={(page) => table.setPageIndex(page - 1)}
                         />
                     )}
-                    <span className='text-sm tabular-nums text-ink-dim'>
-                        Page {currPage} of {pageCount}, {totalCount} in all
+                    <span
+                        className={classNames('text-sm tabular-nums text-ink-dim', {
+                            'max-sm:hidden': pageCount > 1
+                        })}
+                    >
+                        {pageCount > 1
+                            ? `Page ${currPage} of ${pageCount}, ${totalCount} in all`
+                            : `${totalCount} in all`}
                     </span>
-                    <SelectField
-                        aria-label='Rows per page'
-                        className='ms-auto w-20'
-                        value={table.getState().pagination.pageSize.toString()}
-                        onChange={(value) => table.setPageSize(parseInt(value))}
-                        items={[10, 25, 50].map((pageSize) => ({
-                            id: pageSize.toString(),
-                            label: pageSize.toString()
-                        }))}
-                    />
+                    {!hasButtons && <span className='ms-auto max-sm:hidden'>{refreshButton}</span>}
+                    {totalCount > 10 && (
+                        <SelectField
+                            aria-label='Rows per page'
+                            className={classNames('w-20 max-sm:hidden', { 'ms-auto': hasButtons })}
+                            value={table.getState().pagination.pageSize.toString()}
+                            onChange={(value) => table.setPageSize(parseInt(value))}
+                            items={[10, 25, 50].map((pageSize) => ({
+                                id: pageSize.toString(),
+                                label: pageSize.toString()
+                            }))}
+                        />
+                    )}
                 </div>
             )}
         </div>

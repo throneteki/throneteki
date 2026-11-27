@@ -15,13 +15,18 @@ const SelectDeckModal = ({ isOpen, onClose, onDeckSelected, game }) => {
             onOpenChange={(open) => !open && onClose()}
             title='Select deck'
             size='lg'
+            bodyClassName='flex min-h-0 flex-1 flex-col overflow-hidden'
             className='w-full max-w-[calc(100vw-1rem)] sm:max-w-[38rem] md:max-w-[46rem] lg:max-w-[62rem] xl:max-w-[78rem] 2xl:max-w-[94rem]'
         >
-            <Tabs>
+            <Tabs className='flex min-h-0 flex-1 flex-col'>
                 <Tabs.ListContainer>
                     <Tabs.List aria-label='Deck lists'>
                         {deckTabs.map((item) => (
-                            <Tabs.Tab key={item.title} id={item.title}>
+                            <Tabs.Tab
+                                key={item.title}
+                                id={item.title}
+                                className='whitespace-nowrap px-2 max-sm:text-sm'
+                            >
                                 {item.title}
                                 <Tabs.Indicator />
                             </Tabs.Tab>
@@ -29,7 +34,11 @@ const SelectDeckModal = ({ isOpen, onClose, onDeckSelected, game }) => {
                     </Tabs.List>
                 </Tabs.ListContainer>
                 {deckTabs.map((item) => (
-                    <Tabs.Panel key={item.title} id={item.title}>
+                    <Tabs.Panel
+                        key={item.title}
+                        id={item.title}
+                        className='flex min-h-0 flex-1 flex-col'
+                    >
                         <DeckList
                             deckLoadFn={item.dataQuery}
                             onDeckSelected={onDeckSelected}
