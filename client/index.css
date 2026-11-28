@@ -1026,24 +1026,9 @@ html.card-dragging.card-drop-refused * {
     background: transparent;
 }
 
-/* A chosen card pops above its neighbours and settles back */
+/* On the adaptive board a chosen card keeps its size; its ring shows it is chosen */
 [data-layout] [data-card-surface].ring-selected {
     scale: 1;
-    animation: select-pop 320ms ease-out;
-}
-@keyframes select-pop {
-    0% {
-        scale: 1;
-        z-index: 250;
-    }
-    45% {
-        scale: 1.12;
-        z-index: 250;
-    }
-    100% {
-        scale: 1;
-        z-index: 250;
-    }
 }
 
 .order-fade {
@@ -1053,22 +1038,9 @@ html.card-dragging.card-drop-refused * {
     transition: none;
 }
 
-/* On touch, a card chosen in a squished pile pops in place, staying under the cards that cover it */
-@media (hover: none) {
-    [data-layout] [data-squish-pile] [data-card-surface].ring-selected {
-        animation-name: select-pop-in-place;
-    }
-}
-@keyframes select-pop-in-place {
-    45% {
-        scale: 1.12;
-    }
-}
-
 /* On the adaptive board, a card clicked stays pressed in until the game server has answered the click. The whole
    card presses in: its surface (with its ring) and the tokens and badges over it, so nothing is left standing
-   apart from it. Filters compose with Tailwind's, so an unselectable card stays desaturated. A card chosen while
-   pressed pops once it is let go. */
+   apart from it. Filters compose with Tailwind's, so an unselectable card stays desaturated. */
 :is([data-layout], [data-sheet]) [data-card-surface] ~ [data-card-overlay] {
     transition:
         scale 150ms,
@@ -1081,9 +1053,6 @@ html.card-dragging.card-drop-refused * {
     filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale)
         var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia)
         var(--tw-drop-shadow);
-}
-:is([data-layout], [data-sheet]) [data-card-surface][data-pressed].ring-selected {
-    animation: none;
 }
 :is([data-layout], [data-sheet]) [data-card-surface][data-pressed] > .card-body {
     box-shadow: 0 0 1px rgba(0, 0, 0, 0.6);

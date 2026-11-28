@@ -190,10 +190,35 @@ const planMove = (uuid, was, arrived, change, config) => {
     const dx = was.left - now.left;
     const dy = was.top - now.top;
     if (Math.abs(dx) < config.minDistance && Math.abs(dy) < config.minDistance) {
-        return null;
+        return slotShift(uuid, was, now, config);
     }
 
     return { type: 'move', uuid, el: now.el, dx, dy, rotate: 0, travel: change.travel, ...places };
+};
+
+// A card moving inside a holder that stays put (a duplicate put on it) slides alone; what the holder carries moves itself
+const slotShift = (uuid, was, now, config) => {
+    if (!was.slot || !now.slot || now.slotEl === now.el) {
+        return null;
+    }
+    const dx = was.slot.left - now.slot.left;
+    const dy = was.slot.top - now.slot.top;
+    if (Math.abs(dx) < config.minDistance && Math.abs(dy) < config.minDistance) {
+        return null;
+    }
+    return {
+        type: 'move',
+        uuid,
+        el: now.slotEl,
+        dx,
+        dy,
+        rotate: 0,
+        travel: false,
+        slotOnly: true,
+        old: { left: was.slot.left, top: was.slot.top },
+        now: { left: now.slot.left, top: now.slot.top },
+        toSource: now.source
+    };
 };
 
 // A hand card that has vanished most likely went back to its owner's draw deck
@@ -356,7 +381,7 @@ const relativeToParents = (plan, after, config) => {
     const leads = new Map(plan.filter((item) => item.uuid).map((item) => [item.uuid, item]));
     return plan.filter((item) => {
         const lead = leads.get(item.uuid && after.get(item.uuid)?.parent);
-        if (!lead) {
+        if (!lead || lead.slotOnly) {
             return true;
         }
         if (item.type !== 'move' || lead.type !== 'move' || lead.rotate || lead.size) {
@@ -1111,6 +1136,25 @@ const flyAbove = (el) => {
     };
 };
 
+// A duplicate rests behind its card, which its copy above the board cannot: the card makes the same move under the
+// copy, which goes as the card drops to its resting level
+const handOver = (copy, item, { duration, easing }) => {
+    const { el } = item;
+    el.style.visibility = '';
+    const options = { id: 'flip', duration, easing, delay: item.delay, fill: 'backwards' };
+    el.animate(keyframesFor(item), options);
+    el.animate(landingFrames(item), options);
+    liftCard(el, item);
+    copy.animate(
+        [
+            { visibility: 'visible', offset: 0 },
+            { visibility: 'visible', offset: landingPoint, easing: 'steps(1, jump-start)' },
+            { visibility: 'hidden', offset: 1 }
+        ],
+        { duration, delay: item.delay, easing, fill: 'forwards' }
+    );
+};
+
 // Once every animation the card was given has ended
 const settledFlight = (el) =>
     Promise.allSettled(endingAnimations(el).map((animation) => animation.finished));
@@ -1269,6 +1313,9 @@ export const playPendingFlip = (root = document) => {
                 delay: item.delay,
                 fill: 'backwards'
             });
+        }
+        if (target !== item.el && item.toSource === 'duplicate') {
+            handOver(target, item, { duration, easing });
         }
         const landed = () => {
             if (target !== item.el && flights.get(item.uuid)?.copy === target) {

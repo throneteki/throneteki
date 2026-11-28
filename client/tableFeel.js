@@ -73,7 +73,7 @@ export const slapConfig = { move: 230, settle: 300, easing: 'cubic-bezier(0.55, 
 export const slapsInto = (toSource) =>
     toSource !== undefined &&
     toSource !== null &&
-    !['hand', 'shadows', 'attached'].includes(toSource);
+    !['hand', 'shadows', 'attached', 'duplicate'].includes(toSource);
 
 const slapTilt = (uuid) => {
     const angle = seededAngle(uuid, 3.5);

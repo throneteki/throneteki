@@ -1362,6 +1362,36 @@ From a test game on 2026-11-25:
       (`GameMenu` `pinned`); in melee it sits to the left of the view mode's button (`before`). The view mode's
       button has the same text size as the other named buttons.
 
+From the review on 2026-11-28:
+
+- [x] **R305 Prompt chip labels are not cut off**: a chip's label clipped its own overflow (`truncate`) with a line
+      height no taller than its text, so descenders (the g in "Littlefinger") were cut off at the bottom. The label
+      has a normal line height; the chips keep their size. Checked by probe at 4x on a phone and a desktop.
+- [x] **R306 Breathing rings breathe together**: a CSS animation starts its cycle when its class is added, so a card
+      unselected and selectable again breathed out of step. Each `ring-breathe` and `ring-danger` animation is put
+      on the page's clock as it starts (`pulseClock.js`). Checked by probe: three rings in phase after a card is
+      selected and unselected.
+- [x] **R307 A chosen card stays where it is in its pile**: the pop raised the card above its neighbours
+      (`z-index: 250` while it played), so a card chosen in a hand was drawn over the cards that cover it.
+- [x] **R308 The select pop is gone (decided 2026-11-28)**: a CSS animation on `.ring-selected`, it played whenever a
+      card came to be selected or was drawn selected: after a click's press was let go (so the card pressed in, then
+      jumped out), when a selected card was drawn afresh (moved, shown in a sheet, a layout change, a flying copy),
+      and when a selected card was pressed again and stayed selected. It is removed on every layout; the ring alone
+      shows the card is chosen, at the card's own size. A dev board step, "Choose from your hand", makes our hand
+      choosable. Checked by probe on a phone, phone landscape and a desktop: the chosen card stays under the card to
+      its right while chosen and after.
+- [x] **R309 A duplicate marshaled flies to its place**: it flew at its resting level, behind every card after it, so
+      only its top edge was seen rising behind its card, and its card jumped down to make room. A duplicate has its own
+      flight source (`duplicate`): it flies above the board like any card travelling, its copy giving way to it as
+      it drops to its resting level, so it slips behind its card. A card that moves inside a holder that stays put
+      (its duplicates' column growing) slides there (`slotShift`). A dev board step, "Marshal a duplicate", shows it.
+- [x] **R310 A card's order badge shows over the area's label (decided 2026-11-28)**: the badge was on the card's
+      surface, so it was drawn under the label (`z-[210]`) wherever the first card of a pile sat beneath it, as the
+      card does. It is now an overlay of its own, shaped and turned as the card is (the card's box class and resting
+      angle), so it keeps to the card's corner and shows over the label while the card stays under it. The "Choose
+      from your hand" dev step asks for the cards in order. Checked by probe: the badge's box matches the card's on a
+      phone and a desktop, and shows over "Hand (9)".
+
 - [x] `client/hud.js`: add `board: 'classic'` to `defaultHud`, and accept `'classic' | 'adaptive'` in
       `normalizeHud`.
 - [x] `server/hudSettings.js`: allow `board` through `sanitizeHud`, as one of those two values only.

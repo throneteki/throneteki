@@ -238,7 +238,7 @@ const Chip = ({ button, onPress, fullWidth = false, shortcut }) => {
                     {shortcut}
                 </kbd>
             )}
-            <span className='truncate'>{button.text}</span>
+            <span className='truncate leading-normal'>{button.text}</span>
             {/* A chip as wide as its label (on phones) has no room beside it */}
             <PendingSpinner pending={button.pending} corner={!fullWidth} />
         </Button>

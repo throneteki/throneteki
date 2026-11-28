@@ -1317,6 +1317,24 @@ export const fixtureSteps = {
             return state;
         }
     },
+    dupe: {
+        label: 'Marshal a duplicate',
+        apply: (state) => {
+            const me = state.players[fixtureUsername];
+            const target = me.cardPiles.cardsInPlay.find((entry) => entry.type === 'character');
+            const card = me.cardPiles.hand.find((entry) => entry.type === 'character');
+            if (!card || !target) {
+                return state;
+            }
+            // Made a copy of the target, as a real duplicate is
+            me.cardPiles.hand = me.cardPiles.hand.filter((entry) => entry !== card);
+            target.dupes = [
+                ...(target.dupes || []),
+                { ...card, code: target.code, name: target.name }
+            ];
+            return state;
+        }
+    },
     kill: {
         label: 'Kill a character',
         apply: (state) => {
@@ -1396,6 +1414,33 @@ export const fixtureSteps = {
                       }
                     : { uuid: card.uuid, facedown: true };
             });
+            return state;
+        }
+    },
+    chooseOwnHand: {
+        label: 'Choose from your hand',
+        apply: (state) => {
+            const me = state.players[fixtureUsername];
+            const choosing = !me.cardPiles.hand.some((card) => card.selectable);
+            me.cardPiles.hand = me.cardPiles.hand.map((card) => ({
+                ...card,
+                selectable: choosing,
+                selected: false
+            }));
+            Object.assign(
+                me,
+                choosing
+                    ? promptState({
+                          isActivePrompt: true,
+                          selectCard: true,
+                          selectToggle: { limit: 2 },
+                          selectOrder: true,
+                          promptTitle: 'Intrigue claim',
+                          menuTitle: 'Select 2 cards to discard',
+                          buttons: [{ text: 'Done', arg: 'done', promptId: 'p1' }]
+                      })
+                    : promptState()
+            );
             return state;
         }
     },

@@ -34,6 +34,9 @@ import { useRenderCount } from '../../perf';
 
 const noDrag = {};
 
+const orderBadgeClass =
+    'absolute top-0 left-0 flex items-center justify-center card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[calc(var(--badge-size)*0.8)] h-[var(--badge-size)] px-0.5 text-ink bg-panel/90 font-bold rounded-br-md rounded-tl-[inherit]';
+
 const CardView = ({
     card,
     className,
@@ -47,6 +50,7 @@ const CardView = ({
     flip = false,
     flipFrom,
     under = false,
+    duplicate = false,
     shell = false,
     forceFaceup = false,
     cardStackIndex = 200,
@@ -212,6 +216,7 @@ const CardView = ({
                 <Card
                     key={dupe.uuid}
                     className='card-duplicate'
+                    duplicate
                     source={source}
                     card={dupe}
                     wrapped={false}
@@ -318,18 +323,29 @@ const CardView = ({
     };
 
     const getCardOrder = () => {
-        const badgeClassName =
-            'absolute top-0 left-0 z-[230] flex items-center justify-center card-text [--badge-size:calc(var(--ui-scale,1)*1.5rem)] min-w-[calc(var(--badge-size)*0.8)] h-[var(--badge-size)] px-0.5 text-ink bg-panel/90 font-bold rounded-br-md rounded-tl-[inherit]';
-        // Always rendered so it can fade, keeping its last number while it fades out
+        if (!card.order && !lastOrder) {
+            return null;
+        }
+
+        // Apart from the surface so it shows over the area's label, which the card stays under; shaped and turned as
+        // the card is. Kept once shown so it fades with its last number.
         return (
             <div
                 data-card-overlay=''
-                aria-hidden={!card.order}
-                className={classNames(badgeClassName, 'order-fade pointer-events-none', {
-                    'opacity-0': !card.order
-                })}
+                className={classNames(
+                    'pointer-events-none absolute left-0 top-0 z-[230] card-turn',
+                    cardBoxClass(isRotated ? 'rotated' : orientation)
+                )}
+                style={{ rotate: resting }}
             >
-                {card.order || lastOrder}
+                <div
+                    aria-hidden={!card.order}
+                    className={classNames(orderBadgeClass, 'order-fade', {
+                        'opacity-0': !card.order
+                    })}
+                >
+                    {card.order || lastOrder}
+                </div>
             </div>
         );
     };
@@ -470,7 +486,9 @@ const CardView = ({
                 data-board-surface=''
                 data-flip-slot={flip && wrapped ? '' : undefined}
                 data-flip={flip && !wrapped ? card.uuid : undefined}
-                data-flip-source={flip && !wrapped ? 'attached' : undefined}
+                data-flip-source={
+                    flip && !wrapped ? (duplicate ? 'duplicate' : 'attached') : undefined
+                }
                 data-flip-z={flip && !wrapped ? cardStackIndex : undefined}
                 data-flip-rot={flip && !wrapped ? (isRotated ? 90 : 0) : undefined}
             >
@@ -493,9 +511,8 @@ const CardView = ({
                         />
                         {isFaceup && getAlertStatus()}
                     </div>
-                    {/* On the card's surface, so it pops and turns with the card when chosen */}
-                    {getCardOrder()}
                 </div>
+                {getCardOrder()}
                 {!hideTokens && (
                     <CardCounters cardUuid={card.uuid} counters={getCountersForCard(card)} />
                 )}

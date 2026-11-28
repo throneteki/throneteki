@@ -15,7 +15,10 @@ import { store } from './configureStore';
 import { navigate } from './redux/reducers/navigation';
 
 import './index.css';
+import { keepPulsesInStep } from './pulseClock';
 import ErrorMessage from './Components/Site/ErrorMessage';
+
+keepPulsesInStep();
 
 $.validator.setDefaults({
     highlight: function (element) {
